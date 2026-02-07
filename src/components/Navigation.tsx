@@ -1,11 +1,14 @@
 import { Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDemo } from '../contexts/DemoContext';
 
 export default function Navigation() {
   const navigate = useNavigate();
+  const { enterDemo } = useDemo();
 
   const handleTryDemo = () => {
-    navigate('/demo');
+    enterDemo();
+    navigate('/dashboard');
   };
 
   return (
