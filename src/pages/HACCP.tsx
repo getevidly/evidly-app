@@ -1,222 +1,409 @@
 import { useState } from 'react';
 import { Layout } from '../components/layout/Layout';
-import { ClipboardList, Plus, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
-import { format } from 'date-fns';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+
+// ── Types ──────────────────────────────────────────────────────────
 
 interface HACCPPlan {
   id: string;
   name: string;
-  product_process: string;
-  ccp_count: number;
-  last_reviewed: string;
-  status: 'active' | 'needs_review' | 'draft';
+  description: string;
+  ccps: CriticalControlPoint[];
+  lastReviewed: string;
+  status: 'active' | 'needs_review';
 }
 
-interface CCP {
+interface CriticalControlPoint {
   id: string;
-  ccp_number: number;
+  ccpNumber: string;
   hazard: string;
-  critical_limits: string;
-  monitoring_procedure: string;
-  corrective_action: string;
+  criticalLimit: string;
+  monitoringProcedure: string;
+  correctiveAction: string;
   verification: string;
-}
-
-interface MonitoringRecord {
-  id: string;
-  plan_name: string;
-  ccp_number: number;
-  ccp_hazard: string;
-  result: 'pass' | 'fail';
-  recorded_value: string;
-  corrective_action: string | null;
-  monitored_by: string;
-  monitored_at: string;
+  // Roll-up from temp logs / checklists
+  lastReading?: string;
+  lastReadingValue?: number;
+  lastReadingUnit?: string;
+  isWithinLimit: boolean;
+  lastMonitoredAt: string;
+  lastMonitoredBy: string;
+  source: 'temp_log' | 'checklist';
+  equipmentName?: string;
 }
 
 interface CorrectiveActionRecord {
   id: string;
-  plan_name: string;
-  ccp_number: number;
+  planName: string;
+  ccpNumber: string;
+  ccpHazard: string;
   deviation: string;
-  action_taken: string;
-  verified_by: string | null;
-  status: 'open' | 'resolved';
-  created_at: string;
+  criticalLimit: string;
+  recordedValue: string;
+  actionTaken: string;
+  actionBy: string;
+  verifiedBy: string | null;
+  status: 'open' | 'in_progress' | 'resolved';
+  createdAt: string;
+  resolvedAt: string | null;
+  source: string;
 }
 
-const demoPlans: HACCPPlan[] = [
+// ── Helper ─────────────────────────────────────────────────────────
+
+const now = new Date();
+
+const getRelativeTime = (dateStr: string) => {
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+};
+
+// ── Demo Data (references same equipment/staff from TempLogs) ──────
+
+const HACCP_PLANS: HACCPPlan[] = [
   {
-    id: '1',
+    id: 'cooking',
     name: 'Cooking Process',
-    product_process: 'Cooking of meat, poultry, and seafood',
-    ccp_count: 3,
-    last_reviewed: '2025-01-15',
+    description: 'Cooking of meat, poultry, and seafood to safe internal temperatures',
+    lastReviewed: '2025-01-15',
     status: 'active',
+    ccps: [
+      {
+        id: 'cook-1',
+        ccpNumber: 'CCP-1',
+        hazard: 'Bacterial survival (Salmonella, E. coli)',
+        criticalLimit: 'Internal temp: Poultry ≥165°F, Ground meat ≥155°F, Whole meat ≥145°F',
+        monitoringProcedure: 'Check internal temperature with calibrated thermometer for each batch',
+        correctiveAction: 'Continue cooking until proper temperature reached. Discard if held in danger zone >4 hrs.',
+        verification: 'Supervisor review of cooking logs daily. Thermometer calibration weekly.',
+        lastReading: '168°F (Chicken breast)',
+        lastReadingValue: 168,
+        lastReadingUnit: '°F',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 45 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Mike Johnson',
+        source: 'checklist',
+      },
+      {
+        id: 'cook-2',
+        ccpNumber: 'CCP-2',
+        hazard: 'Cross-contamination during prep',
+        criticalLimit: 'Separate cutting boards/utensils for raw and ready-to-eat foods',
+        monitoringProcedure: 'Visual inspection of color-coded equipment use every 2 hours',
+        correctiveAction: 'Retrain staff. Sanitize equipment. Discard contaminated food.',
+        verification: 'Manager spot checks during service',
+        lastReading: 'Pass — color-coded boards in use',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Sarah Chen',
+        source: 'checklist',
+      },
+    ],
   },
   {
-    id: '2',
+    id: 'cold-storage',
     name: 'Cold Storage Management',
-    product_process: 'Refrigeration and freezer storage',
-    ccp_count: 2,
-    last_reviewed: '2025-01-15',
+    description: 'Refrigeration and freezer storage temperature control',
+    lastReviewed: '2025-01-15',
     status: 'active',
+    ccps: [
+      {
+        id: 'cold-1',
+        ccpNumber: 'CCP-3',
+        hazard: 'Bacterial growth in refrigerated foods',
+        criticalLimit: 'Refrigerator temperature: 32–41°F',
+        monitoringProcedure: 'Check and log temperature at opening, mid-shift, and closing',
+        correctiveAction: 'Adjust thermostat. Transfer food to working unit. Call for repair.',
+        verification: 'Manager reviews temperature logs daily',
+        lastReading: '38°F',
+        lastReadingValue: 38,
+        lastReadingUnit: '°F',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Mike Johnson',
+        source: 'temp_log',
+        equipmentName: 'Walk-in Cooler #1',
+      },
+      {
+        id: 'cold-2',
+        ccpNumber: 'CCP-4',
+        hazard: 'Bacterial growth in frozen foods',
+        criticalLimit: 'Freezer temperature: -10 to 0°F',
+        monitoringProcedure: 'Check and log temperature at opening and closing',
+        correctiveAction: 'Adjust thermostat. Transfer food to working freezer. Call for repair.',
+        verification: 'Manager reviews temperature logs daily',
+        lastReading: '-2°F',
+        lastReadingValue: -2,
+        lastReadingUnit: '°F',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Mike Johnson',
+        source: 'temp_log',
+        equipmentName: 'Walk-in Freezer',
+      },
+    ],
+  },
+  {
+    id: 'hot-holding',
+    name: 'Hot Holding',
+    description: 'Maintaining hot foods at safe temperatures during service',
+    lastReviewed: '2025-01-10',
+    status: 'needs_review',
+    ccps: [
+      {
+        id: 'hot-1',
+        ccpNumber: 'CCP-5',
+        hazard: 'Bacterial growth from time-temperature abuse',
+        criticalLimit: 'Hot foods held at ≥135°F',
+        monitoringProcedure: 'Check holding temperatures every 2 hours with calibrated thermometer',
+        correctiveAction: 'Reheat to 165°F if below 135°F for <2 hrs. Discard if >2 hrs in danger zone.',
+        verification: 'Review holding logs daily. Spot checks by supervisor.',
+        lastReading: '127°F',
+        lastReadingValue: 127,
+        lastReadingUnit: '°F',
+        isWithinLimit: false,
+        lastMonitoredAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Sarah Chen',
+        source: 'temp_log',
+        equipmentName: 'Hot Hold Cabinet',
+      },
+    ],
+  },
+  {
+    id: 'receiving',
+    name: 'Receiving Inspection',
+    description: 'Verifying food safety at point of delivery',
+    lastReviewed: '2025-01-15',
+    status: 'active',
+    ccps: [
+      {
+        id: 'recv-1',
+        ccpNumber: 'CCP-6',
+        hazard: 'Contaminated or temperature-abused deliveries',
+        criticalLimit: 'Refrigerated items ≤41°F, Frozen items ≤0°F at delivery',
+        monitoringProcedure: 'Temperature check all TCS items on receipt. Visual inspection of packaging.',
+        correctiveAction: 'Reject delivery if temp exceeds limits. Document and notify vendor.',
+        verification: 'Manager reviews receiving logs. Cross-check with purchase orders.',
+        lastReading: '36°F (Dairy delivery)',
+        lastReadingValue: 36,
+        lastReadingUnit: '°F',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Emma Davis',
+        source: 'checklist',
+      },
+    ],
+  },
+  {
+    id: 'cooling',
+    name: 'Cooling Process',
+    description: 'Two-stage cooling of cooked foods',
+    lastReviewed: '2025-01-12',
+    status: 'active',
+    ccps: [
+      {
+        id: 'cool-1',
+        ccpNumber: 'CCP-7',
+        hazard: 'Bacterial growth during slow cooling',
+        criticalLimit: '135°F to 70°F within 2 hours, then 70°F to 41°F within 4 hours',
+        monitoringProcedure: 'Log temperature at start, 2-hour mark, and 6-hour mark',
+        correctiveAction: 'Use rapid cooling methods (ice bath, blast chiller). Discard if limits not met.',
+        verification: 'Review cooling logs daily. Verify cooling equipment function weekly.',
+        lastReading: '68°F at 1.5 hrs (Soup batch)',
+        lastReadingValue: 68,
+        lastReadingUnit: '°F',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Mike Johnson',
+        source: 'temp_log',
+      },
+    ],
+  },
+  {
+    id: 'cross-contamination',
+    name: 'Cross-Contamination Prevention',
+    description: 'Preventing cross-contamination between raw and ready-to-eat foods',
+    lastReviewed: '2025-01-15',
+    status: 'active',
+    ccps: [
+      {
+        id: 'xc-1',
+        ccpNumber: 'CCP-8',
+        hazard: 'Pathogen transfer between raw and RTE foods',
+        criticalLimit: 'Color-coded equipment enforced. No shared surfaces without sanitizing.',
+        monitoringProcedure: 'Visual inspection every 2 hours during prep and service',
+        correctiveAction: 'Stop production. Sanitize area. Discard affected RTE foods. Retrain staff.',
+        verification: 'Supervisor spot checks. Monthly staff competency assessment.',
+        lastReading: 'Pass — all protocols followed',
+        isWithinLimit: true,
+        lastMonitoredAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'Sarah Chen',
+        source: 'checklist',
+      },
+    ],
   },
 ];
 
-const cookingCCPs: CCP[] = [
+// Auto-generated corrective actions from out-of-range readings
+const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
   {
-    id: '1',
-    ccp_number: 1,
-    hazard: 'Bacterial survival (Salmonella, E. coli)',
-    critical_limits: 'Internal temp: Poultry 165°F, Ground meat 155°F, Whole meat 145°F',
-    monitoring_procedure: 'Check internal temperature with calibrated thermometer',
-    corrective_action: 'Continue cooking until proper temperature reached. Discard if unsafe.',
-    verification: 'Supervisor review of logs daily. Thermometer calibration weekly.',
+    id: 'ca-1',
+    planName: 'Hot Holding',
+    ccpNumber: 'CCP-5',
+    ccpHazard: 'Bacterial growth from time-temperature abuse',
+    deviation: 'Hot Hold Cabinet reading 127°F — below critical limit of 135°F',
+    criticalLimit: '≥135°F',
+    recordedValue: '127°F',
+    actionTaken: 'Food reheated to 165°F within 30 minutes. Hot hold cabinet thermostat adjusted. Maintenance notified for inspection.',
+    actionBy: 'Sarah Chen',
+    verifiedBy: null,
+    status: 'open',
+    createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+    resolvedAt: null,
+    source: 'Temperature Log — Hot Hold Cabinet',
   },
   {
-    id: '2',
-    ccp_number: 2,
-    hazard: 'Cross-contamination during prep',
-    critical_limits: 'Separate cutting boards and utensils for raw and cooked foods',
-    monitoring_procedure: 'Visual inspection of color-coded equipment use',
-    corrective_action: 'Retrain staff. Sanitize equipment. Discard contaminated food.',
-    verification: 'Manager spot checks during service',
-  },
-  {
-    id: '3',
-    ccp_number: 3,
-    hazard: 'Time-temperature abuse during holding',
-    critical_limits: 'Hot foods held at 135°F or above',
-    monitoring_procedure: 'Check holding temperatures every 2 hours',
-    corrective_action: 'Reheat to 165°F if below 135°F for less than 2 hours. Discard if longer.',
-    verification: 'Review holding logs daily',
-  },
-];
-
-const coldStorageCCPs: CCP[] = [
-  {
-    id: '4',
-    ccp_number: 1,
-    hazard: 'Bacterial growth in refrigerated foods',
-    critical_limits: 'Refrigerator temperature: 32-41°F',
-    monitoring_procedure: 'Check and log temperature at opening, mid-shift, and closing',
-    corrective_action: 'Adjust thermostat. Transfer food to working unit. Call for repair.',
-    verification: 'Manager reviews temperature logs daily',
-  },
-  {
-    id: '5',
-    ccp_number: 2,
-    hazard: 'Bacterial growth in frozen foods',
-    critical_limits: 'Freezer temperature: -10 to 0°F',
-    monitoring_procedure: 'Check and log temperature at opening and closing',
-    corrective_action: 'Adjust thermostat. Transfer food to working freezer. Call for repair.',
-    verification: 'Manager reviews temperature logs daily',
-  },
-];
-
-const demoMonitoring: MonitoringRecord[] = [
-  {
-    id: '1',
-    plan_name: 'Cooking Process',
-    ccp_number: 1,
-    ccp_hazard: 'Bacterial survival',
-    result: 'pass',
-    recorded_value: '167°F (Chicken breast)',
-    corrective_action: null,
-    monitored_by: 'John Smith',
-    monitored_at: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    plan_name: 'Cold Storage Management',
-    ccp_number: 1,
-    ccp_hazard: 'Bacterial growth in refrigerated foods',
-    result: 'fail',
-    recorded_value: '45°F (Walk-in cooler)',
-    corrective_action: 'Adjusted thermostat to lower setting. Called repair technician.',
-    monitored_by: 'Sarah Johnson',
-    monitored_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-  },
-];
-
-const demoCorrectiveActions: CorrectiveActionRecord[] = [
-  {
-    id: '1',
-    plan_name: 'Cold Storage Management',
-    ccp_number: 1,
-    deviation: 'Walk-in cooler temperature at 45°F (Critical limit: 32-41°F)',
-    action_taken: 'Adjusted thermostat to lower setting. HVAC technician called and scheduled for repair. Temperature returned to 38°F within 1 hour. All food items inspected and deemed safe.',
-    verified_by: 'Mike Davis (Kitchen Manager)',
+    id: 'ca-2',
+    planName: 'Cold Storage Management',
+    ccpNumber: 'CCP-3',
+    ccpHazard: 'Bacterial growth in refrigerated foods',
+    deviation: 'Walk-in Cooler #1 reached 44°F during morning check — above critical limit of 41°F',
+    criticalLimit: '32–41°F',
+    recordedValue: '44°F',
+    actionTaken: 'Thermostat adjusted to lower setting. Door seal inspected — found slight gap, gasket replaced. Temperature returned to 38°F within 45 minutes. All food items inspected and deemed safe (exposure <1 hr).',
+    actionBy: 'Mike Johnson',
+    verifiedBy: 'Emma Davis (Kitchen Manager)',
     status: 'resolved',
-    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
+    resolvedAt: new Date(now.getTime() - 23 * 60 * 60 * 1000).toISOString(),
+    source: 'Temperature Log — Walk-in Cooler #1',
   },
   {
-    id: '2',
-    plan_name: 'Cooking Process',
-    ccp_number: 2,
-    deviation: 'Raw chicken observed on cutting board designated for vegetables',
-    action_taken: 'Cutting board and area sanitized immediately. Staff member retrained on color-coded equipment system. Contaminated vegetables discarded.',
-    verified_by: 'Sarah Johnson (Supervisor)',
+    id: 'ca-3',
+    planName: 'Cooking Process',
+    ccpNumber: 'CCP-1',
+    ccpHazard: 'Bacterial survival (Salmonella, E. coli)',
+    deviation: 'Grilled chicken breast measured at 158°F — below critical limit of 165°F for poultry',
+    criticalLimit: '≥165°F (Poultry)',
+    recordedValue: '158°F',
+    actionTaken: 'Chicken returned to grill. Continued cooking until 170°F reached. Staff reminded of proper poultry cook temps. No food served below temp.',
+    actionBy: 'Mike Johnson',
+    verifiedBy: 'Sarah Chen (Supervisor)',
     status: 'resolved',
-    created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    resolvedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+    source: 'Cooking Temperature Log',
+  },
+  {
+    id: 'ca-4',
+    planName: 'Receiving Inspection',
+    ccpNumber: 'CCP-6',
+    ccpHazard: 'Contaminated or temperature-abused deliveries',
+    deviation: 'Seafood delivery measured at 48°F — above critical limit of 41°F',
+    criticalLimit: '≤41°F',
+    recordedValue: '48°F',
+    actionTaken: 'Delivery rejected and returned to vendor. Incident documented. Vendor notified of non-compliance. Alternative supplier contacted for replacement order.',
+    actionBy: 'Emma Davis',
+    verifiedBy: 'Mike Johnson (Kitchen Manager)',
+    status: 'resolved',
+    createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    resolvedAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
+    source: 'Receiving Inspection Checklist',
   },
 ];
+
+// ── Component ──────────────────────────────────────────────────────
 
 export function HACCP() {
   const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
-  const [showPlanDetails, setShowPlanDetails] = useState(false);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'needs_review':
-        return 'bg-amber-100 text-amber-800';
-      case 'draft':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  // Aggregate stats
+  const allCCPs = HACCP_PLANS.flatMap((p) => p.ccps);
+  const totalCCPs = allCCPs.length;
+  const passingCCPs = allCCPs.filter((c) => c.isWithinLimit).length;
+  const failingCCPs = totalCCPs - passingCCPs;
+  const overallCompliance = totalCCPs > 0 ? Math.round((passingCCPs / totalCCPs) * 100) : 100;
+  const openActions = CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length;
+
+  const getPlanCompliance = (plan: HACCPPlan) => {
+    const total = plan.ccps.length;
+    const passing = plan.ccps.filter((c) => c.isWithinLimit).length;
+    return total > 0 ? Math.round((passing / total) * 100) : 100;
   };
 
-  const handleViewPlan = (plan: HACCPPlan) => {
-    setSelectedPlan(plan);
-    setShowPlanDetails(true);
-  };
-
-  const getCurrentCCPs = () => {
-    if (!selectedPlan) return [];
-    return selectedPlan.id === '1' ? cookingCCPs : coldStorageCCPs;
+  const getPlanStatus = (plan: HACCPPlan) => {
+    const hasFailures = plan.ccps.some((c) => !c.isWithinLimit);
+    if (hasFailures) return 'critical';
+    if (plan.status === 'needs_review') return 'review';
+    return 'good';
   };
 
   return (
     <Layout title="HACCP">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
-            <p className="text-sm text-gray-600 mt-1">Hazard Analysis and Critical Control Points</p>
-          </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors shadow-sm">
-            <Plus className="h-5 w-5" />
-            <span>Create New Plan</span>
-          </button>
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Roll-up view — data pulled from Temperature Logs and Checklists
+          </p>
         </div>
 
+        {/* Summary Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="flex items-center space-x-2 mb-1">
+              <Shield className="h-5 w-5 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-600">Active Plans</span>
+            </div>
+            <p className="text-2xl font-bold text-[#1e4d6b]">{HACCP_PLANS.length}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="flex items-center space-x-2 mb-1">
+              <Activity className="h-5 w-5 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-600">Overall Compliance</span>
+            </div>
+            <p className={`text-2xl font-bold ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+              {overallCompliance}%
+            </p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="flex items-center space-x-2 mb-1">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <span className="text-sm text-gray-600">CCPs in Compliance</span>
+            </div>
+            <p className="text-2xl font-bold text-green-600">{passingCCPs}/{totalCCPs}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4">
+            <div className="flex items-center space-x-2 mb-1">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <span className="text-sm text-gray-600">Open Actions</span>
+            </div>
+            <p className={`text-2xl font-bold ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
+          </div>
+        </div>
+
+        {/* Tabs */}
         <div className="flex space-x-2 border-b border-gray-200">
           <button
-            onClick={() => setActiveTab('plans')}
+            onClick={() => { setActiveTab('plans'); setSelectedPlan(null); }}
             className={`px-6 py-3 font-medium ${
               activeTab === 'plans'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Plans
+            Plans ({HACCP_PLANS.length})
           </button>
           <button
             onClick={() => setActiveTab('monitoring')}
@@ -226,237 +413,377 @@ export function HACCP() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Monitoring
+            Monitoring ({totalCCPs} CCPs)
           </button>
           <button
             onClick={() => setActiveTab('corrective')}
-            className={`px-6 py-3 font-medium ${
+            className={`px-6 py-3 font-medium flex items-center space-x-2 ${
               activeTab === 'corrective'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Corrective Actions
+            <span>Corrective Actions</span>
+            {openActions > 0 && (
+              <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{openActions}</span>
+            )}
           </button>
         </div>
 
-        {activeTab === 'plans' && !showPlanDetails && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {demoPlans.map((plan) => (
-              <div key={plan.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{plan.name}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{plan.product_process}</p>
-                  </div>
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(plan.status)}`}>
-                    {plan.status === 'active' ? 'Active' : plan.status === 'needs_review' ? 'Needs Review' : 'Draft'}
-                  </span>
-                </div>
+        {/* ── Plans Tab ─────────────────────────────────────── */}
+        {activeTab === 'plans' && !selectedPlan && (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {HACCP_PLANS.map((plan) => {
+              const compliance = getPlanCompliance(plan);
+              const planStatus = getPlanStatus(plan);
+              const lastMonitored = plan.ccps.reduce((latest, ccp) => {
+                const t = new Date(ccp.lastMonitoredAt).getTime();
+                return t > latest ? t : latest;
+              }, 0);
 
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-600">Critical Control Points</p>
-                    <p className="text-2xl font-bold text-[#1e4d6b]">{plan.ccp_count}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Last Reviewed</p>
-                    <p className="text-sm font-medium text-gray-900">{format(new Date(plan.last_reviewed), 'MMM d, yyyy')}</p>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => handleViewPlan(plan)}
-                  className="w-full px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium"
+              return (
+                <div
+                  key={plan.id}
+                  onClick={() => setSelectedPlan(plan)}
+                  className="bg-white rounded-lg shadow p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
+                  style={{
+                    borderLeftColor: planStatus === 'critical' ? '#dc2626' : planStatus === 'review' ? '#d97706' : '#16a34a',
+                  }}
                 >
-                  View Details
-                </button>
-              </div>
-            ))}
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">{plan.name}</h3>
+                      <p className="text-sm text-gray-600 mt-0.5">{plan.description}</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0 mt-1" />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div>
+                      <p className="text-xs text-gray-500">CCPs</p>
+                      <p className="text-lg font-bold text-[#1e4d6b]">{plan.ccps.length}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Compliance</p>
+                      <p className={`text-lg font-bold ${compliance === 100 ? 'text-green-600' : compliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+                        {compliance}%
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Last Check</p>
+                      <p className="text-sm font-medium text-gray-700">{getRelativeTime(new Date(lastMonitored).toISOString())}</p>
+                    </div>
+                  </div>
+
+                  {/* Status badges */}
+                  <div className="flex items-center space-x-2">
+                    {planStatus === 'critical' && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                        CCP Out of Limit
+                      </span>
+                    )}
+                    {planStatus === 'review' && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                        <Clock className="h-3 w-3 mr-1" />
+                        Needs Review
+                      </span>
+                    )}
+                    {planStatus === 'good' && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        All CCPs Passing
+                      </span>
+                    )}
+                    <span className="text-xs text-gray-400">
+                      Reviewed {new Date(plan.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
-        {activeTab === 'plans' && showPlanDetails && selectedPlan && (
+        {/* ── Plan Detail View ──────────────────────────────── */}
+        {activeTab === 'plans' && selectedPlan && (
           <div>
             <button
-              onClick={() => setShowPlanDetails(false)}
+              onClick={() => setSelectedPlan(null)}
               className="mb-4 text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
             >
               ← Back to Plans
             </button>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <div className="flex items-start justify-between mb-6">
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
-                  <p className="text-gray-600 mt-1">{selectedPlan.product_process}</p>
+                  <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
                 </div>
-                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedPlan.status)}`}>
-                  {selectedPlan.status === 'active' ? 'Active' : 'Needs Review'}
-                </span>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Flow Diagram</h3>
-                <p className="text-gray-700">
-                  {selectedPlan.id === '1'
-                    ? 'Receiving → Cold Storage → Prep → Cooking → Holding/Service → Cooling (if applicable) → Reheating (if applicable)'
-                    : 'Receiving → Temperature Check → Cold Storage → Temperature Monitoring → Service Prep'}
-                </p>
-              </div>
-
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Hazard Analysis Summary</h3>
-                <p className="text-gray-700">
-                  {selectedPlan.id === '1'
-                    ? 'Primary biological hazards: Salmonella, E. coli, Listeria. Chemical hazards: Cleaning agents. Physical hazards: Foreign objects.'
-                    : 'Primary biological hazards: Bacterial growth due to temperature abuse. Time-temperature relationship critical for safety.'}
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Critical Control Points</h3>
-                <div className="space-y-4">
-                  {getCurrentCCPs().map((ccp) => (
-                    <div key={ccp.id} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex items-center mb-3">
-                        <div className="w-10 h-10 bg-[#1e4d6b] text-white rounded-full flex items-center justify-center font-bold mr-3">
-                          {ccp.ccp_number}
-                        </div>
-                        <h4 className="text-lg font-semibold text-gray-900">{ccp.hazard}</h4>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <p className="font-medium text-gray-700 mb-1">Critical Limits</p>
-                          <p className="text-gray-600">{ccp.critical_limits}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-700 mb-1">Monitoring Procedure</p>
-                          <p className="text-gray-600">{ccp.monitoring_procedure}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-700 mb-1">Corrective Action</p>
-                          <p className="text-gray-600">{ccp.corrective_action}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-700 mb-1">Verification</p>
-                          <p className="text-gray-600">{ccp.verification}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="text-right">
+                  <p className={`text-3xl font-bold ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
+                    {getPlanCompliance(selectedPlan)}%
+                  </p>
+                  <p className="text-xs text-gray-500">Compliance</p>
                 </div>
               </div>
             </div>
-          </div>
-        )}
 
-        {activeTab === 'monitoring' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Daily CCP Monitoring</h2>
-              <p className="text-sm text-gray-600">Record monitoring data for Critical Control Points</p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">Date/Time</th>
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">Plan</th>
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">CCP</th>
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">Recorded Value</th>
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">Result</th>
-                    <th className="text-left py-3 px-6 text-xs font-semibold text-gray-700">Monitored By</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {demoMonitoring.map((record) => (
-                    <tr key={record.id} className={record.result === 'fail' ? 'bg-red-50' : 'hover:bg-gray-50'}>
-                      <td className="py-3 px-6 text-sm text-gray-900">
-                        {format(new Date(record.monitored_at), 'MMM d, yyyy h:mm a')}
-                      </td>
-                      <td className="py-3 px-6 text-sm text-gray-900">{record.plan_name}</td>
-                      <td className="py-3 px-6 text-sm text-gray-600">
-                        <div>
-                          <p className="font-medium">CCP {record.ccp_number}</p>
-                          <p className="text-xs">{record.ccp_hazard}</p>
-                        </div>
-                      </td>
-                      <td className="py-3 px-6 text-sm text-gray-900">{record.recorded_value}</td>
-                      <td className="py-3 px-6">
-                        {record.result === 'pass' ? (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Pass
-                          </span>
-                        ) : (
-                          <div>
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              <AlertTriangle className="h-4 w-4 mr-1" />
-                              Fail
-                            </span>
-                            {record.corrective_action && (
-                              <p className="text-xs text-gray-600 mt-1">{record.corrective_action}</p>
-                            )}
-                          </div>
-                        )}
-                      </td>
-                      <td className="py-3 px-6 text-sm text-gray-900">{record.monitored_by}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'corrective' && (
-          <div className="bg-white rounded-lg shadow">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Corrective Action Log</h2>
-              <p className="text-sm text-gray-600">All corrective actions taken across HACCP monitoring</p>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {demoCorrectiveActions.map((action) => (
-                <div key={action.id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-start space-x-3">
-                      <AlertTriangle className="h-6 w-6 text-amber-600 mt-1" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Critical Control Points</h3>
+            <div className="space-y-4">
+              {selectedPlan.ccps.map((ccp) => (
+                <div
+                  key={ccp.id}
+                  className={`bg-white rounded-lg shadow p-5 border-l-4 ${ccp.isWithinLimit ? 'border-l-green-500' : 'border-l-red-500'}`}
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${ccp.isWithinLimit ? 'bg-green-600' : 'bg-red-600'}`}>
+                        {ccp.isWithinLimit ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                      </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">{action.plan_name} - CCP {action.ccp_number}</h3>
-                        <p className="text-sm text-gray-600">{format(new Date(action.created_at), 'MMM d, yyyy h:mm a')}</p>
+                        <h4 className="text-lg font-semibold text-gray-900">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                        {ccp.equipmentName && (
+                          <p className="text-sm text-gray-500">Source: {ccp.equipmentName} (Temperature Log)</p>
+                        )}
+                        {!ccp.equipmentName && (
+                          <p className="text-sm text-gray-500">Source: {ccp.source === 'checklist' ? 'Checklist' : 'Temperature Log'}</p>
+                        )}
                       </div>
                     </div>
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        action.status === 'resolved' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'
-                      }`}
-                    >
-                      {action.status === 'resolved' ? 'Resolved' : 'Open'}
-                    </span>
+                    <div className="text-right">
+                      {ccp.isWithinLimit ? (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                          <CheckCircle className="h-3 w-3 mr-1" /> Pass
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                          <AlertTriangle className="h-3 w-3 mr-1" /> Fail
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Deviation:</p>
-                      <p className="text-sm text-gray-900">{action.deviation}</p>
+                      <p className="font-medium text-gray-700 mb-1">Critical Limit</p>
+                      <p className="text-gray-600">{ccp.criticalLimit}</p>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Action Taken:</p>
-                      <p className="text-sm text-gray-900">{action.action_taken}</p>
+                      <p className="font-medium text-gray-700 mb-1">Last Reading</p>
+                      <p className={`font-semibold ${ccp.isWithinLimit ? 'text-green-700' : 'text-red-700'}`}>
+                        {ccp.lastReading || 'N/A'}
+                      </p>
+                      <p className="text-xs text-gray-500">{ccp.lastMonitoredBy} · {getRelativeTime(ccp.lastMonitoredAt)}</p>
                     </div>
-                    {action.verified_by && (
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">Verified By:</p>
-                        <p className="text-sm text-gray-900">{action.verified_by}</p>
-                      </div>
-                    )}
+                    <div>
+                      <p className="font-medium text-gray-700 mb-1">Monitoring Procedure</p>
+                      <p className="text-gray-600">{ccp.monitoringProcedure}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700 mb-1">Corrective Action (if limit exceeded)</p>
+                      <p className="text-gray-600">{ccp.correctiveAction}</p>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-100 pt-3">
+                    <p className="text-xs text-gray-500">
+                      <span className="font-medium">Verification:</span> {ccp.verification}
+                    </p>
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Monitoring Tab (Real-time CCP Grid) ───────────── */}
+        {activeTab === 'monitoring' && (
+          <div>
+            <div className="mb-4">
+              <p className="text-sm text-gray-600">
+                Real-time status of all Critical Control Points across HACCP plans. Readings pulled from Temperature Logs and Checklists.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {HACCP_PLANS.flatMap((plan) =>
+                plan.ccps.map((ccp) => (
+                  <div
+                    key={ccp.id}
+                    className={`bg-white rounded-lg shadow p-4 border-t-4 ${ccp.isWithinLimit ? 'border-t-green-500' : 'border-t-red-500'}`}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.name}</p>
+                        <h4 className="text-sm font-bold text-gray-900 mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
+                      </div>
+                      {ccp.isWithinLimit ? (
+                        <CheckCircle className="h-6 w-6 text-green-500 flex-shrink-0" />
+                      ) : (
+                        <AlertTriangle className="h-6 w-6 text-red-500 flex-shrink-0" />
+                      )}
+                    </div>
+
+                    {/* Reading */}
+                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-gray-500">Last Reading</p>
+                          <p className={`text-lg font-bold ${ccp.isWithinLimit ? 'text-green-700' : 'text-red-700'}`}>
+                            {ccp.lastReading || 'N/A'}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-gray-500">Status</p>
+                          {ccp.isWithinLimit ? (
+                            <span className="text-sm font-semibold text-green-700">PASS</span>
+                          ) : (
+                            <span className="text-sm font-semibold text-red-700">FAIL</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Details */}
+                    <div className="space-y-1.5 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Critical Limit</span>
+                        <span className="text-gray-700 font-medium text-right" style={{ maxWidth: '60%' }}>{ccp.criticalLimit}</span>
+                      </div>
+                      {ccp.equipmentName && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Equipment</span>
+                          <span className="text-gray-700 font-medium">{ccp.equipmentName}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Source</span>
+                        <span className="text-gray-700 font-medium">{ccp.source === 'temp_log' ? 'Temperature Log' : 'Checklist'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Monitored By</span>
+                        <span className="text-gray-700 font-medium">{ccp.lastMonitoredBy}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Last Checked</span>
+                        <span className="text-gray-700 font-medium">{getRelativeTime(ccp.lastMonitoredAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Corrective Actions Tab ────────────────────────── */}
+        {activeTab === 'corrective' && (
+          <div>
+            <div className="mb-4">
+              <p className="text-sm text-gray-600">
+                Auto-generated when critical limits are exceeded. Actions are linked to the source monitoring data.
+              </p>
+            </div>
+
+            {/* Open Actions First */}
+            {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-red-700 uppercase tracking-wide mb-3">
+                  Open Actions ({CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length})
+                </h3>
+                <div className="space-y-4">
+                  {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').map((action) => (
+                    <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-red-500">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-start space-x-3">
+                          <AlertTriangle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
+                            <p className="text-sm text-gray-600">{action.ccpHazard}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
+                          </div>
+                        </div>
+                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 flex-shrink-0">
+                          {action.status === 'open' ? 'Open' : 'In Progress'}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-3">
+                        <div className="bg-red-50 rounded-lg p-3">
+                          <p className="text-xs font-medium text-red-700">Deviation</p>
+                          <p className="text-red-900 mt-1">{action.deviation}</p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-xs font-medium text-gray-600">Critical Limit</p>
+                          <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-xs font-medium text-gray-600">Recorded Value</p>
+                          <p className="text-red-700 font-semibold mt-1">{action.recordedValue}</p>
+                        </div>
+                      </div>
+
+                      <div className="text-sm">
+                        <p className="font-medium text-gray-700 mb-1">Action Taken:</p>
+                        <p className="text-gray-900">{action.actionTaken}</p>
+                        <p className="text-xs text-gray-500 mt-1">By: {action.actionBy}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Resolved Actions */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
+                Resolved ({CORRECTIVE_ACTIONS.filter((a) => a.status === 'resolved').length})
+              </h3>
+              <div className="space-y-4">
+                {CORRECTIVE_ACTIONS.filter((a) => a.status === 'resolved').map((action) => (
+                  <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-green-500">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start space-x-3">
+                        <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-semibold text-gray-900">{action.planName} — {action.ccpNumber}</h4>
+                          <p className="text-sm text-gray-600">{action.ccpHazard}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 flex-shrink-0">
+                        Resolved
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs font-medium text-gray-600">Deviation</p>
+                        <p className="text-gray-900 mt-1">{action.deviation}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs font-medium text-gray-600">Critical Limit</p>
+                        <p className="text-gray-900 mt-1">{action.criticalLimit}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs font-medium text-gray-600">Recorded Value</p>
+                        <p className="text-gray-900 mt-1">{action.recordedValue}</p>
+                      </div>
+                    </div>
+
+                    <div className="text-sm">
+                      <p className="font-medium text-gray-700 mb-1">Action Taken:</p>
+                      <p className="text-gray-900">{action.actionTaken}</p>
+                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                        <span>By: {action.actionBy}</span>
+                        {action.verifiedBy && <span>Verified by: {action.verifiedBy}</span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
