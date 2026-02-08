@@ -12,7 +12,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid #e5e7eb' }}>
+    <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'white' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/')}>
         <Shield style={{ color: '#d4af37', width: '32px', height: '32px' }} />
         <span style={{ fontSize: '24px', fontWeight: 'bold' }}>

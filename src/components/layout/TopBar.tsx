@@ -36,10 +36,18 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   };
 
   return (
-    <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
+    <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-white shadow">
       <div className="flex-1 px-4 flex justify-between items-center">
-        <div className="text-xl font-semibold text-gray-900">
-          {isDemoMode ? 'Pacific Coast Dining' : profile?.organization_name || title}
+        <div className="flex items-center space-x-3">
+          <div style={{ width: '40px', height: '40px', border: '2px dashed #d1d5db', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ fontSize: '10px', color: '#9ca3af', textAlign: 'center', lineHeight: '1.2' }}>Logo</span>
+          </div>
+          <div>
+            <div className="text-xl font-semibold text-gray-900">
+              {isDemoMode ? 'Pacific Coast Dining' : profile?.organization_name || title}
+            </div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>Compliance Simplified</div>
+          </div>
         </div>
 
         <div className="ml-4 flex items-center md:ml-6 space-x-4">

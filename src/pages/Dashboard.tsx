@@ -620,12 +620,7 @@ export function Dashboard() {
 
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
-                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
-                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
-                </select>
-              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
               {/* Onboarding Checklist - shows for new users */}
               <OnboardingChecklist />
 
@@ -692,12 +687,7 @@ export function Dashboard() {
 
           {activeTab === 'overview' && selectedLocation !== 'all' && (
             <div className="mt-6">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
-                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
-                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
-                </select>
-              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Overview</h3>
               <div className="flex items-center space-x-2 mb-4">
                 <Activity className="h-5 w-5 text-green-500" />
                 <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
