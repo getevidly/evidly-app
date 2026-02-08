@@ -33,10 +33,18 @@ export function Reports() {
   }
 
   const scoreData = [
-    { week: 'Week 1', score: 72 },
-    { week: 'Week 2', score: 75 },
-    { week: 'Week 3', score: 78 },
-    { week: 'Week 4', score: 75 },
+    { week: 'Wk 1', score: 68 },
+    { week: 'Wk 2', score: 67 },
+    { week: 'Wk 3', score: 69 },
+    { week: 'Wk 4', score: 68 },
+    { week: 'Wk 5', score: 70 },
+    { week: 'Wk 6', score: 69 },
+    { week: 'Wk 7', score: 71 },
+    { week: 'Wk 8', score: 72 },
+    { week: 'Wk 9', score: 71 },
+    { week: 'Wk 10', score: 73 },
+    { week: 'Wk 11', score: 72 },
+    { week: 'Wk 12', score: 74 },
   ];
 
   const locationComparison = demoLocations.map(loc => {
@@ -48,7 +56,7 @@ export function Reports() {
       equipment: scores?.equipment || 0,
       documentation: scores?.documentation || 0,
       change: '+5%',
-      status: scores?.overall >= 90 ? 'Excellent' : scores?.overall >= 70 ? 'Good' : 'Needs Work',
+      status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 80 ? 'Good Standing' : scores?.overall >= 70 ? 'Needs Attention' : scores?.overall >= 60 ? 'At Risk' : 'Critical',
     };
   });
 
@@ -61,10 +69,18 @@ export function Reports() {
   ];
 
   const tempComplianceData = [
-    { week: 'Week 1', compliance: 95 },
-    { week: 'Week 2', compliance: 92 },
-    { week: 'Week 3', compliance: 97 },
-    { week: 'Week 4', compliance: 94 },
+    { week: 'Wk 1', compliance: 88 },
+    { week: 'Wk 2', compliance: 90 },
+    { week: 'Wk 3', compliance: 89 },
+    { week: 'Wk 4', compliance: 91 },
+    { week: 'Wk 5', compliance: 93 },
+    { week: 'Wk 6', compliance: 92 },
+    { week: 'Wk 7', compliance: 94 },
+    { week: 'Wk 8', compliance: 93 },
+    { week: 'Wk 9', compliance: 95 },
+    { week: 'Wk 10', compliance: 92 },
+    { week: 'Wk 11', compliance: 97 },
+    { week: 'Wk 12', compliance: 94 },
   ];
 
   const checklistCompletion = [
@@ -247,8 +263,8 @@ export function Reports() {
   };
 
   const getStatusColor = (status: string) => {
-    if (status.includes('Excellent') || status.includes('Current') || status.includes('Compliant')) return 'text-green-600';
-    if (status.includes('Good') || status.includes('Expiring') || status.includes('At Risk')) return 'text-yellow-600';
+    if (status.includes('Inspection Ready') || status.includes('Current') || status.includes('Compliant')) return 'text-green-600';
+    if (status.includes('Good Standing') || status.includes('Needs Attention') || status.includes('Expiring') || status.includes('At Risk')) return 'text-yellow-600';
     return 'text-red-600';
   };
 
@@ -341,9 +357,9 @@ export function Reports() {
                   <p className="text-xs text-gray-500 mb-1">Equipment ({Math.round(getWeights().equipment * 100)}%)</p>
                   <p className="text-xl font-bold text-green-700">{complianceScores.equipment}</p>
                 </div>
-                <div className="text-center p-3 bg-amber-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Documentation ({Math.round(getWeights().documentation * 100)}%)</p>
-                  <p className="text-xl font-bold text-amber-700">{complianceScores.documentation}</p>
+                <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#fdf6e3' }}>
+                  <p className="text-xs mb-1" style={{ color: '#78716c' }}>Documentation ({Math.round(getWeights().documentation * 100)}%)</p>
+                  <p className="text-xl font-bold" style={{ color: '#92400e' }}>{complianceScores.documentation}</p>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={250}>
@@ -380,7 +396,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{loc.score}%</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-700 font-medium">{loc.operational}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-medium">{loc.equipment}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-amber-700 font-medium">{loc.documentation}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#92400e' }}>{loc.documentation}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <span className={`font-semibold ${getStatusColor(loc.status)}`}>{loc.status}</span>
                         </td>
