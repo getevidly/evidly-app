@@ -421,11 +421,10 @@ export function Dashboard() {
 
   const locationDropdownOptions = (() => {
     const options = filteredLocationOptions.map(loc => ({ id: loc.urlId, name: loc.name }));
-    if (availableLocations.includes('all') && userRole === 'management') {
-      return [{ id: 'all', name: 'All Locations' }, ...options];
-    }
     return options;
   })();
+
+  const tabLocationOptions = [{ id: 'all', name: 'All Locations' }, ...locationDropdownOptions];
 
   const showLocationDropdown = locationDropdownOptions.length > 1;
 
@@ -624,14 +623,6 @@ export function Dashboard() {
               {/* Onboarding Checklist - shows for new users */}
               <OnboardingChecklist />
 
-              {/* Time Saved Counter */}
-              <TimeSavedCounter
-                hoursSaved={86}
-                moneySaved={3010}
-                logsCompleted={312}
-                docsStored={47}
-              />
-
               <h3 className="text-md font-semibold text-gray-900 mb-3">Locations</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -756,7 +747,12 @@ export function Dashboard() {
 
           {activeTab === 'progress' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Today's Progress</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Today's Progress</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <div style={{ marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600' }}>Temperature Checks</span>
@@ -780,7 +776,12 @@ export function Dashboard() {
 
           {activeTab === 'action' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Action Items</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               {[
                 { priority: 'red', title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors' },
                 { priority: 'red', title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs' },
@@ -803,7 +804,12 @@ export function Dashboard() {
 
           {activeTab === 'vendors' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Vendor Services</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Vendor Services</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
@@ -837,7 +843,12 @@ export function Dashboard() {
 
           {activeTab === 'history' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Score History</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Score History</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <p style={{ color: '#64748b' }}>12-week compliance score trend</p>
               <div style={{ height: '300px', background: '#f8fafc', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
                 Score history chart renders here
@@ -847,7 +858,12 @@ export function Dashboard() {
 
           {activeTab === 'metrics' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Key Metrics</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Key Metrics</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <TimeSavedCounter
                 hoursSaved={86}
                 moneySaved={3010}
@@ -859,7 +875,12 @@ export function Dashboard() {
 
           {activeTab === 'passport' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>QR Compliance Passport</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>QR Compliance Passport</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <div style={{ display: 'flex', gap: '16px' }}>
                 {[
                   { name: 'Downtown Kitchen', address: '425 Market St, SF', score: 92, color: '#22c55e' },
