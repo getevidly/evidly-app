@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '../components/layout/Layout';
-import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight } from 'lucide-react';
+import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
@@ -62,70 +62,224 @@ const ITEM_TYPES = [
   { value: 'text_input', label: 'Text Input' },
 ];
 
+const TEMPLATE_CATEGORIES = [
+  {
+    category: 'Daily Operations',
+    templates: [
+      {
+        key: 'opening',
+        name: 'Opening Checklist',
+        itemCount: 14,
+        estimatedTime: '15-20 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Check sanitizer concentration',
+          'Verify hot water temp',
+          'Inspect handwash stations',
+          'Check first aid kit',
+          'Verify pest traps',
+          'Temp check walk-in cooler',
+          'Temp check walk-in freezer',
+          'Temp check prep cooler',
+          'Check dry storage',
+          'Inspect prep surfaces',
+          'Verify date labels',
+          'Check FIFO rotation',
+          'Review daily specials/allergens',
+          'Verify staff certifications on duty',
+        ],
+      },
+      {
+        key: 'closing',
+        name: 'Closing Checklist',
+        itemCount: 10,
+        estimatedTime: '20-25 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Final temp check all units',
+          'Clean and sanitize all prep surfaces',
+          'Empty and clean grease traps',
+          'Check floor drains',
+          'Secure chemical storage',
+          'Set pest control devices',
+          'Check all doors/windows sealed',
+          'Equipment shut down properly',
+          'Waste removal complete',
+          'Closing manager sign-off',
+        ],
+      },
+      {
+        key: 'midday',
+        name: 'Mid-Day Food Safety Check',
+        itemCount: 8,
+        estimatedTime: '10-15 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Hot holding temps above 135°F',
+          'Cold holding temps below 41°F',
+          'Check sanitizer buckets refreshed',
+          'Handwashing compliance spot check',
+          'Cross-contamination check',
+          'Date label compliance',
+          'Employee hygiene check',
+          'Corrective action review',
+        ],
+      },
+    ],
+  },
+  {
+    category: 'HACCP Checklists',
+    templates: [
+      {
+        key: 'cooking_temp',
+        name: 'Cooking Temperature Log',
+        itemCount: 6,
+        estimatedTime: '10 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Verify internal temp of each protein type',
+          'Check cooking equipment calibration',
+          'Document any corrective actions',
+          'Verify thermometer accuracy',
+          'Record cook time',
+          'Supervisor verification',
+        ],
+      },
+      {
+        key: 'cooling_log',
+        name: 'Cooling Log',
+        itemCount: 5,
+        estimatedTime: '5 min per check',
+        role: 'Kitchen Staff',
+        items: [
+          'Record start temp and time',
+          'Check temp at 2-hour mark (must reach 70°F)',
+          'Check temp at 6-hour mark (must reach 41°F)',
+          'Document cooling method used',
+          'Corrective action if temps not met',
+        ],
+      },
+      {
+        key: 'receiving',
+        name: 'Receiving Inspection',
+        itemCount: 8,
+        estimatedTime: '10-15 min',
+        role: 'Manager',
+        items: [
+          'Check delivery truck temp',
+          'Inspect packaging integrity',
+          'Verify product temps (cold <41°F, frozen <0°F)',
+          'Check date codes and expiration',
+          'Inspect for pest evidence',
+          'Verify order matches invoice',
+          'Check for damaged goods',
+          'Sign delivery receipt',
+        ],
+      },
+      {
+        key: 'hot_holding',
+        name: 'Hot Holding Monitoring',
+        itemCount: 4,
+        estimatedTime: '5 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Verify all items above 135°F',
+          'Check food covers in place',
+          'Verify holding time labels',
+          'Document any items discarded',
+        ],
+      },
+      {
+        key: 'cold_holding',
+        name: 'Cold Holding Monitoring',
+        itemCount: 4,
+        estimatedTime: '5 min',
+        role: 'Facilities',
+        items: [
+          'Verify all items below 41°F',
+          'Check cooler door seals',
+          'Verify date labels current',
+          'Document any items discarded',
+        ],
+      },
+    ],
+  },
+];
+
+const DEMO_TODAY_CHECKLISTS = [
+  {
+    id: 't1',
+    name: 'Opening Checklist',
+    completed: 14,
+    total: 14,
+    status: 'complete' as const,
+    assignee: 'Marcus J.',
+    completedAt: '6:15 AM',
+    location: 'Downtown Kitchen',
+  },
+  {
+    id: 't2',
+    name: 'Mid-Day Food Safety Check',
+    completed: 5,
+    total: 8,
+    status: 'in_progress' as const,
+    assignee: 'Sarah T.',
+    completedAt: '',
+    location: 'Downtown Kitchen',
+  },
+  {
+    id: 't3',
+    name: 'Closing Checklist',
+    completed: 0,
+    total: 10,
+    status: 'not_started' as const,
+    assignee: 'Evening Shift',
+    completedAt: '',
+    location: 'Downtown Kitchen',
+  },
+];
+
+const DEMO_HISTORY = (() => {
+  const now = new Date();
+  const entries: { id: string; date: string; name: string; completedBy: string; score: number }[] = [];
+  const checklists = ['Opening Checklist', 'Mid-Day Food Safety Check', 'Closing Checklist', 'Receiving Inspection', 'Cooking Temperature Log'];
+  const people = ['Marcus J.', 'Sarah T.', 'Emma D.', 'David P.', 'Mike R.'];
+  let id = 1;
+  for (let day = 0; day < 7; day++) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - day);
+    const count = day === 0 ? 2 : 3;
+    for (let j = 0; j < count; j++) {
+      entries.push({
+        id: String(id++),
+        date: date.toISOString(),
+        name: checklists[(day + j) % checklists.length],
+        completedBy: people[(day + j) % people.length],
+        score: day === 0 && j === 0 ? 100 : 85 + Math.floor(Math.random() * 16),
+      });
+    }
+  }
+  return entries;
+})();
+
 const PREBUILT_TEMPLATES = {
   opening: {
     name: 'Opening Checklist',
     type: 'opening',
     frequency: 'daily',
-    items: [
-      { title: 'Handwashing stations stocked with soap and paper towels', type: 'checkbox', required: true },
-      { title: 'All food storage temperatures verified and logged', type: 'checkbox', required: true },
-      { title: 'Prep surfaces sanitized', type: 'yes_no', required: true },
-      { title: 'Equipment turned on and functioning properly', type: 'yes_no', required: true },
-      { title: 'Floors swept and free of debris', type: 'checkbox', required: true },
-      { title: 'Fresh sanitizer solution prepared', type: 'checkbox', required: true },
-      { title: 'Date labels checked on all open products', type: 'checkbox', required: true },
-      { title: 'Waste containers emptied and cleaned', type: 'checkbox', required: false },
-      { title: 'Walk-in cooler organized', type: 'yes_no', required: false },
-      { title: 'Staff hygiene checklist completed', type: 'yes_no', required: true },
-      { title: 'Fire exits clear and accessible', type: 'yes_no', required: true },
-      { title: 'Daily specials and menu changes communicated', type: 'checkbox', required: false },
-    ],
+    items: TEMPLATE_CATEGORIES[0].templates[0].items.map(title => ({ title, type: 'checkbox', required: true })),
   },
   closing: {
     name: 'Closing Checklist',
     type: 'closing',
     frequency: 'daily',
-    items: [
-      { title: 'All equipment cleaned and sanitized', type: 'checkbox', required: true },
-      { title: 'Floors swept and mopped', type: 'checkbox', required: true },
-      { title: 'Walk-in cooler organized and temperature logged', type: 'yes_no', required: true },
-      { title: 'All food properly stored and labeled', type: 'yes_no', required: true },
-      { title: 'Prep surfaces cleaned and sanitized', type: 'checkbox', required: true },
-      { title: 'Trash taken out and containers cleaned', type: 'checkbox', required: true },
-      { title: 'Dish area cleaned and organized', type: 'checkbox', required: true },
-      { title: 'All equipment turned off', type: 'yes_no', required: true },
-      { title: 'Doors and windows secured', type: 'yes_no', required: true },
-      { title: 'Security system armed', type: 'yes_no', required: false },
-    ],
+    items: TEMPLATE_CATEGORIES[0].templates[1].items.map(title => ({ title, type: 'checkbox', required: true })),
   },
   receiving: {
-    name: 'Receiving Checklist',
+    name: 'Receiving Inspection',
     type: 'receiving',
     frequency: 'daily',
-    items: [
-      { title: 'Delivery temperature checked and logged', type: 'yes_no', required: true },
-      { title: 'Packaging intact with no damage', type: 'yes_no', required: true },
-      { title: 'Expiration dates verified', type: 'yes_no', required: true },
-      { title: 'Items match purchase order', type: 'yes_no', required: true },
-      { title: 'Products stored immediately at proper temperature', type: 'checkbox', required: true },
-      { title: 'Vendor name and delivery time recorded', type: 'text_input', required: true },
-      { title: 'Invoice signed and filed', type: 'checkbox', required: true },
-      { title: 'Any damaged items documented', type: 'text_input', required: false },
-    ],
-  },
-  restroom: {
-    name: 'Restroom Check',
-    type: 'restroom',
-    frequency: 'daily',
-    items: [
-      { title: 'Soap dispensers filled', type: 'checkbox', required: true },
-      { title: 'Paper towels stocked', type: 'checkbox', required: true },
-      { title: 'Toilet paper stocked', type: 'checkbox', required: true },
-      { title: 'Floors clean and dry', type: 'yes_no', required: true },
-      { title: 'Mirrors and fixtures clean', type: 'yes_no', required: true },
-      { title: 'Waste containers emptied', type: 'checkbox', required: true },
-    ],
+    items: TEMPLATE_CATEGORIES[1].templates[2].items.map(title => ({ title, type: 'checkbox', required: true })),
   },
 };
 
@@ -601,58 +755,77 @@ export function Checklists() {
 
         {/* Today's Checklists View */}
         {activeView === 'today' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates
-              .filter((t) => t.is_active)
-              .map((template) => (
-                <div key={template.id} className="bg-white rounded-lg shadow p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-3 bg-green-100 rounded-lg">
-                        <CheckSquare className="h-6 w-6 text-green-600" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
-                        <p className="text-sm text-gray-500 capitalize">{template.checklist_type.replace('_', ' ')}</p>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-900">Today's Checklists</h2>
+              <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {DEMO_TODAY_CHECKLISTS.map((cl) => {
+                const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
+                const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
+                const statusLabel = cl.status === 'complete' ? 'Complete' : cl.status === 'in_progress' ? 'In Progress' : 'Not Started';
+                const statusBg = cl.status === 'complete' ? 'bg-green-100 text-green-800' : cl.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600';
+                const barColor = cl.status === 'complete' ? '#22c55e' : cl.status === 'in_progress' ? '#eab308' : '#d1d5db';
+                const iconBg = cl.status === 'complete' ? 'bg-green-100' : cl.status === 'in_progress' ? 'bg-yellow-100' : 'bg-gray-100';
+                const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-gray-400';
+
+                return (
+                  <div key={cl.id} className="bg-white rounded-lg shadow p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className={`p-3 rounded-lg ${iconBg}`}>
+                          {cl.status === 'complete' ? <Check className={`h-6 w-6 ${iconColor}`} /> : <CheckSquare className={`h-6 w-6 ${iconColor}`} />}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{cl.name}</h3>
+                          <p className="text-sm text-gray-500">{cl.location}</p>
+                        </div>
                       </div>
                     </div>
+
+                    <div className="mb-3">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-600">{cl.completed}/{cl.total} items</span>
+                        <span className="font-semibold" style={{ color: barColor }}>{pct}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="h-2.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: barColor }} />
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
+                      <div className="flex items-center space-x-1">
+                        <User className="h-4 w-4" />
+                        <span>{cl.assignee}</span>
+                      </div>
+                      {cl.completedAt && (
+                        <div className="flex items-center space-x-1">
+                          <Clock className="h-4 w-4" />
+                          <span>{cl.completedAt}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
+                      {cl.status !== 'complete' && (
+                        <button className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium">
+                          {cl.status === 'in_progress' ? 'Continue' : 'Start'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-                    <Clock className="h-4 w-4" />
-                    <span className="capitalize">{template.frequency}</span>
-                    <span>•</span>
-                    <span>{template.items_count} items</span>
-                  </div>
-
-                  <button
-                    onClick={() => handleStartChecklist(template)}
-                    className="w-full px-4 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium flex items-center justify-center space-x-2 shadow-sm"
-                  >
-                    <Play className="h-5 w-5" />
-                    <span>Start Checklist</span>
-                  </button>
-                </div>
-              ))}
-
-            {templates.filter((t) => t.is_active).length === 0 && (
-              <div className="col-span-full text-center py-12">
-                <CheckSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">No checklists available. Create one to get started.</p>
-                <button
-                  onClick={() => setActiveView('templates')}
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium shadow-sm"
-                >
-                  Go to Templates
-                </button>
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
         )}
 
         {/* Templates View */}
         {activeView === 'templates' && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900">Checklist Templates</h2>
               <button
@@ -664,140 +837,144 @@ export function Checklists() {
               </button>
             </div>
 
-            {/* Pre-built Templates Section */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Pre-built Templates</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Object.entries(PREBUILT_TEMPLATES).map(([key, template]) => (
-                  <button
-                    key={key}
-                    onClick={() => createPrebuiltTemplate(key as keyof typeof PREBUILT_TEMPLATES)}
-                    disabled={loading}
-                    className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1e4d6b] hover:bg-gray-50 transition-all text-left disabled:opacity-50"
-                  >
-                    <h4 className="font-semibold text-gray-900 mb-1">{template.name}</h4>
-                    <p className="text-sm text-gray-600">{template.items.length} items</p>
-                  </button>
-                ))}
+            {TEMPLATE_CATEGORIES.map((cat) => (
+              <div key={cat.category}>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                  <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
+                  <span>{cat.category}</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {cat.templates.map((tmpl) => {
+                    const roleBg = tmpl.role === 'Manager' ? 'bg-purple-100 text-purple-700' : tmpl.role === 'Facilities' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
+                    return (
+                      <div key={tmpl.key} className="bg-white rounded-lg shadow p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
+                        <div className="flex items-start justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900 text-base">{tmpl.name}</h4>
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{tmpl.role}</span>
+                        </div>
+                        <div className="flex items-center space-x-3 text-sm text-gray-500 mb-4">
+                          <span>{tmpl.itemCount} items</span>
+                          <span>·</span>
+                          <div className="flex items-center space-x-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span>{tmpl.estimatedTime}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-1.5 mb-4 max-h-40 overflow-y-auto">
+                          {tmpl.items.map((item, idx) => (
+                            <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
+                              <span className="text-gray-400 flex-shrink-0 mt-0.5">○</span>
+                              <span>{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                        {PREBUILT_TEMPLATES[tmpl.key as keyof typeof PREBUILT_TEMPLATES] && (
+                          <button
+                            onClick={() => createPrebuiltTemplate(tmpl.key as keyof typeof PREBUILT_TEMPLATES)}
+                            disabled={loading}
+                            className="w-full px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#1e4d6b] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
+                          >
+                            Use Template
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ))}
 
             {/* Custom Templates */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Templates</h3>
-              <div className="bg-white rounded-lg shadow overflow-hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Frequency</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {templates.map((template) => (
-                      <tr key={template.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {template.name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
-                          {template.checklist_type.replace('_', ' ')}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
-                          {template.frequency}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{template.items_count}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              template.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {template.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button
-                            onClick={() => handleDeleteTemplate(template.id)}
-                            className="text-red-600 hover:text-red-900 ml-4"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </td>
+            {templates.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Templates</h3>
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {templates.length === 0 && (
-                  <div className="text-center py-12">
-                    <CheckSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No templates yet. Create one or use a pre-built template.</p>
-                  </div>
-                )}
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {templates.map((template) => (
+                        <tr key={template.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{template.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">{template.checklist_type.replace('_', ' ')}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{template.items_count}</td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${template.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                              {template.is_active ? 'Active' : 'Inactive'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 
         {/* History View */}
         {activeView === 'history' && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900">Checklist History</h2>
+            <h2 className="text-xl font-bold text-gray-900">Checklist History — Last 7 Days</h2>
 
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Checklist</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed By</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {completions.map((completion) => (
-                    <tr key={completion.id} className="hover:bg-gray-50">
+                  {(profile?.organization_id ? completions.map(c => ({
+                    id: c.id,
+                    date: c.completed_at,
+                    name: c.template_name,
+                    completedBy: c.completed_by_name,
+                    score: c.score_percentage,
+                  })) : DEMO_HISTORY).map((entry) => (
+                    <tr key={entry.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {format(new Date(completion.completed_at), 'MMM d, yyyy h:mm a')}
+                        {format(new Date(entry.date), 'MMM d, yyyy')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {completion.template_name}
+                        {entry.name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {completion.completed_by_name}
+                        {entry.completedBy}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2">
                           <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${
-                                completion.score_percentage >= 90
-                                  ? 'bg-green-500'
-                                  : completion.score_percentage >= 70
-                                  ? 'bg-yellow-500'
-                                  : 'bg-red-500'
+                                entry.score >= 90 ? 'bg-green-500' : entry.score >= 70 ? 'bg-yellow-500' : 'bg-red-500'
                               }`}
-                              style={{ width: `${completion.score_percentage}%` }}
+                              style={{ width: `${entry.score}%` }}
                             />
                           </div>
-                          <span className="text-sm font-medium text-gray-900">{completion.score_percentage}</span>
+                          <span className="text-sm font-medium text-gray-900">{entry.score}%</span>
                         </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-
-              {completions.length === 0 && (
-                <div className="text-center py-12">
-                  <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No completed checklists yet.</p>
-                </div>
-              )}
             </div>
           </div>
         )}
