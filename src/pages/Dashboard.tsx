@@ -706,11 +706,11 @@ export function Dashboard() {
               <div className="space-y-3">
                 {(() => {
                   const allActivities = [
-                    { initials: 'MJ', name: 'Marcus J.', action: 'logged Walk-in Cooler: 38°F ✓', time: '15 min ago', url: '/temp-logs', borderColor: 'green', bgColor: 'blue', roles: ['management', 'kitchen'] },
-                    { initials: 'SC', name: 'Sarah C.', action: 'completed Opening Checklist', time: '45 min ago', url: '/checklists', borderColor: 'green', bgColor: 'green', roles: ['management', 'kitchen'] },
-                    { initials: 'DP', name: 'David P.', action: 'logged Freezer: 15°F ✓', time: '1h ago', url: '/temp-logs', borderColor: 'green', bgColor: 'purple', roles: ['management', 'kitchen'] },
-                    { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents', borderColor: 'blue', bgColor: 'pink', roles: ['management', 'facilities'] },
-                    { initials: 'AT', name: 'Alex T.', action: 'logged Hot Hold: 127°F ✗', time: '3h ago', url: '/temp-logs', borderColor: 'red', bgColor: 'orange', roles: ['management', 'kitchen'] },
+                    { initials: 'MJ', name: 'Marcus J.', action: 'logged Walk-in Cooler: 38°F ✓', time: '15 min ago', url: '/temp-logs?id=walk-in-cooler-downtown', borderColor: 'green', bgColor: 'blue', roles: ['management', 'kitchen'] },
+                    { initials: 'SC', name: 'Sarah C.', action: 'completed Opening Checklist', time: '45 min ago', url: '/checklists?id=opening-checklist', borderColor: 'green', bgColor: 'green', roles: ['management', 'kitchen'] },
+                    { initials: 'DP', name: 'David P.', action: 'logged Freezer: 15°F ✓', time: '1h ago', url: '/temp-logs?id=freezer-downtown', borderColor: 'green', bgColor: 'purple', roles: ['management', 'kitchen'] },
+                    { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents?id=food-handler-cert', borderColor: 'blue', bgColor: 'pink', roles: ['management', 'facilities'] },
+                    { initials: 'AT', name: 'Alex T.', action: 'logged Hot Hold: 127°F ✗', time: '3h ago', url: '/temp-logs?id=hot-hold-airport', borderColor: 'red', bgColor: 'orange', roles: ['management', 'kitchen'] },
                   ];
 
                   const filteredActivities = allActivities.filter(activity => activity.roles.includes(userRole));
@@ -765,7 +765,7 @@ export function Dashboard() {
                   {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
                 </select>
               </div>
-              <div style={{ marginBottom: '20px' }}>
+              <div onClick={() => navigate('/temp-logs')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600' }}>Temperature Checks</span>
                   <span>{locationParam === 'downtown' ? '10/12' : locationParam === 'airport' ? '4/12' : locationParam === 'university' ? '0/12' : '14/36'}</span>
@@ -774,7 +774,7 @@ export function Dashboard() {
                   <div style={{ height: '10px', borderRadius: '5px', width: locationParam === 'downtown' ? '83%' : locationParam === 'airport' ? '33%' : locationParam === 'university' ? '0%' : '39%', backgroundColor: locationParam === 'downtown' ? '#22c55e' : '#ef4444' }}></div>
                 </div>
               </div>
-              <div style={{ marginBottom: '20px' }}>
+              <div onClick={() => navigate('/checklists')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600' }}>Checklists</span>
                   <span>{locationParam === 'downtown' ? '2/3' : locationParam === 'airport' ? '1/3' : locationParam === 'university' ? '0/3' : '3/9'}</span>
@@ -937,8 +937,8 @@ export function Dashboard() {
                     </div>
                     <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '14px', fontWeight: '700', color: loc.color, border: '2px solid ' + loc.color }}>{loc.score}</div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
-                      <button style={{ background: '#1e4d6b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Print</button>
-                      <button style={{ background: 'white', color: '#1e4d6b', border: '1px solid #1e4d6b', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Download</button>
+                      <button onClick={() => window.print()} style={{ background: '#1e4d6b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Print</button>
+                      <button onClick={() => navigate(`/passport/${loc.id}`)} style={{ background: 'white', color: '#1e4d6b', border: '1px solid #1e4d6b', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>View Passport</button>
                     </div>
                   </div>
                 ))}

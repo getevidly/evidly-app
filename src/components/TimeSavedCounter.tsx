@@ -1,5 +1,6 @@
 import { useCountUp } from '../hooks/useCountUp';
 import { Clock, DollarSign, FileCheck, Thermometer } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface TimeSavedCounterProps {
   hoursSaved: number;
@@ -9,6 +10,7 @@ interface TimeSavedCounterProps {
 }
 
 export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsStored }: TimeSavedCounterProps) {
+  const navigate = useNavigate();
   const animatedHours = useCountUp(hoursSaved, 1800);
   const animatedMoney = useCountUp(moneySaved, 2000);
   const animatedLogs = useCountUp(logsCompleted, 1600);
@@ -23,6 +25,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '',
       color: '#8b5cf6',
       bgColor: '#f5f3ff',
+      link: '/reports',
     },
     {
       icon: DollarSign,
@@ -32,6 +35,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '$',
       color: '#d4af37',
       bgColor: '#fefce8',
+      link: '/reports',
     },
     {
       icon: Thermometer,
@@ -41,6 +45,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '',
       color: '#22c55e',
       bgColor: '#f0fdf4',
+      link: '/temp-logs',
     },
     {
       icon: FileCheck,
@@ -50,6 +55,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
       prefix: '',
       color: '#3b82f6',
       bgColor: '#eff6ff',
+      link: '/documents',
     },
   ];
 
@@ -60,11 +66,13 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
         return (
           <div
             key={stat.label}
+            onClick={() => navigate(stat.link)}
             className="bg-white rounded-xl border border-gray-200 p-5 animate-slide-up"
             style={{
               animationDelay: `${index * 150}ms`,
               animationFillMode: 'both',
               borderLeft: `4px solid ${stat.color}`,
+              cursor: 'pointer',
             }}
           >
             <div className="flex items-center gap-3 mb-3">
