@@ -77,13 +77,13 @@ export function Login() {
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#d4af37]">Evid</span>
-                <span className="text-[#1b4965]">LY</span>
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
 
-          <p className="text-center text-lg font-semibold text-[#1b4965] mb-2">Compliance Simplified</p>
+          <p className="text-center text-lg font-semibold text-[#1e4d6b] mb-2">Compliance Simplified</p>
           <h2 className="text-center text-xl font-bold text-gray-900 mb-6">Sign in to your account</h2>
 
           {error && (

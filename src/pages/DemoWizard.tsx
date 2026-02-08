@@ -122,10 +122,10 @@ export function DemoWizard() {
       <div className="max-w-2xl w-full">
         <div className="text-center mb-6">
           <span className="text-3xl font-bold">
-            <span className="text-[#d4af37]">Evid</span>
-            <span className="text-[#1b4965]">LY</span>
+            <span className="text-[#1e4d6b]">Evid</span>
+            <span className="text-[#d4af37]">LY</span>
           </span>
-          <p className="text-[#1b4965] font-semibold mt-1">Interactive Demo</p>
+          <p className="text-[#1e4d6b] font-semibold mt-1">Interactive Demo</p>
         </div>
 
         <div className="flex items-center justify-center gap-1 mb-8">

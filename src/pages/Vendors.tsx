@@ -220,7 +220,7 @@ export function Vendors() {
 
         {activeTab === 'scorecard' && (
           <>
-            <div className="bg-gradient-to-r from-[#1b4965] to-[#2c5f7f] rounded-lg p-6 text-white">
+            <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
               <h3 className="text-2xl font-bold mb-2">Vendor Performance Overview</h3>
               <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
               <div className="flex items-center space-x-4">

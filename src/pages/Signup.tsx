@@ -144,8 +144,8 @@ export function Signup() {
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <span className="text-3xl font-bold">
-                <span className="text-[#d4af37]">Evid</span>
-                <span className="text-[#1b4965]">LY</span>
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
@@ -181,13 +181,13 @@ export function Signup() {
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#d4af37]">Evid</span>
-                <span className="text-[#1b4965]">LY</span>
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>
 
-          <p className="text-center text-lg font-semibold text-[#1b4965] mb-2">Compliance Simplified</p>
+          <p className="text-center text-lg font-semibold text-[#1e4d6b] mb-2">Compliance Simplified</p>
           <h2 className="text-center text-2xl font-bold text-gray-900 mb-6">Create your account</h2>
 
           {error && (

@@ -97,7 +97,7 @@ export function Settings() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-[#1b4965] text-white'
+                    ? 'bg-[#1e4d6b] text-white'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -333,7 +333,7 @@ export function Settings() {
           {activeTab === 'billing' && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">Billing & Subscription</h3>
-              <div className="bg-gradient-to-r from-[#1b4965] to-[#2c5f7f] rounded-lg p-6 text-white">
+              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
                 <h4 className="text-lg font-semibold mb-2">Professional Plan</h4>
                 <div className="text-3xl font-bold mb-1">$99<span className="text-lg font-normal">/month</span></div>
                 <p className="text-gray-200 text-sm">Unlimited users • All features</p>
@@ -348,7 +348,7 @@ export function Settings() {
                       <div className="text-sm text-gray-500">Expires 12/24</div>
                     </div>
                   </div>
-                  <button className="text-sm text-[#1b4965] hover:text-[#1e4d6b] font-medium">
+                  <button className="text-sm text-[#1e4d6b] hover:text-[#1e4d6b] font-medium">
                     Update
                   </button>
                 </div>

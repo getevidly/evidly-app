@@ -161,7 +161,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors"
             >
-              <div className="h-8 w-8 rounded-full bg-[#1b4965] flex items-center justify-center text-white font-medium">
+              <div className="h-8 w-8 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium">
                 {profile?.full_name?.charAt(0) || 'U'}
               </div>
               <span className="hidden md:block text-sm font-medium text-gray-700">

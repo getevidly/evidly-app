@@ -77,8 +77,8 @@ export function ResetPassword() {
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="flex justify-center mb-4">
             <span className="text-3xl font-bold">
-              <span className="text-[#d4af37]">Evid</span>
-              <span className="text-[#1b4965]">LY</span>
+              <span className="text-[#1e4d6b]">Evid</span>
+              <span className="text-[#d4af37]">LY</span>
             </span>
           </div>
           <h2 className="text-center text-xl font-bold text-gray-900 mb-6">Set New Password</h2>

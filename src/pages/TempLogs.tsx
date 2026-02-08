@@ -1306,7 +1306,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('equipment')}
             className={`px-4 py-2 font-medium ${
               activeTab === 'equipment'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1316,7 +1316,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('history')}
             className={`px-4 py-2 font-medium ${
               activeTab === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1326,7 +1326,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('receiving')}
             className={`px-4 py-2 font-medium ${
               activeTab === 'receiving'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1336,7 +1336,7 @@ export function TempLogs() {
             onClick={() => setActiveTab('cooldown')}
             className={`px-4 py-2 font-medium ${
               activeTab === 'cooldown'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >

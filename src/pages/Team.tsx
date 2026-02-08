@@ -171,7 +171,7 @@ export function Team() {
 
   const getRoleBadge = (role: string) => {
     const badges = {
-      admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1b4965]' },
+      admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1e4d6b]' },
       manager: { label: 'Manager', color: 'bg-blue-100 text-blue-800' },
       staff: { label: 'Staff', color: 'bg-gray-100 text-gray-800' },
     };
@@ -358,7 +358,7 @@ export function Team() {
                 <tr key={member.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-[#1b4965] flex items-center justify-center text-white font-medium flex-shrink-0">
+                      <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium flex-shrink-0">
                         {member.full_name.charAt(0)}
                       </div>
                       <div className="ml-4">
@@ -406,7 +406,7 @@ export function Team() {
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-[#1b4965] flex items-center justify-center text-white text-2xl font-medium">
+                <div className="h-16 w-16 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-2xl font-medium">
                   {selectedMember.full_name.charAt(0)}
                 </div>
                 <div>

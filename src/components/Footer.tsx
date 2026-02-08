@@ -11,8 +11,8 @@ export default function Footer() {
             </svg>
           </div>
           <span className="font-['Outfit'] text-[1.25rem] font-bold tracking-tight">
-            <span className="text-[var(--color-gold)]">Evid</span>
-            <span className="text-white">LY</span>
+            <span className="text-white">Evid</span>
+            <span className="text-[var(--color-gold)]">LY</span>
           </span>
         </div>
         <div className="text-[0.875rem] text-[rgba(255,255,255,0.6)]">

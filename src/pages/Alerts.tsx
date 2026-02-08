@@ -258,7 +258,7 @@ export function Alerts() {
     <Layout title="Alerts">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Alerts' }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1b4965] to-[#2c5f7f] rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
             <h2 className="text-2xl font-bold">Compliance Alerts</h2>

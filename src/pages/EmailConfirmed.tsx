@@ -40,8 +40,8 @@ export function EmailConfirmed() {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
         <div className="flex justify-center mb-4">
           <span className="text-3xl font-bold">
-            <span className="text-[#d4af37]">Evid</span>
-            <span className="text-[#1b4965]">LY</span>
+            <span className="text-[#1e4d6b]">Evid</span>
+            <span className="text-[#d4af37]">LY</span>
           </span>
         </div>
 

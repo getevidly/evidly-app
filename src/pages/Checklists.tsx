@@ -571,7 +571,7 @@ export function Checklists() {
             onClick={() => setActiveView('today')}
             className={`px-4 py-2 font-medium ${
               activeView === 'today'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -581,7 +581,7 @@ export function Checklists() {
             onClick={() => setActiveView('templates')}
             className={`px-4 py-2 font-medium ${
               activeView === 'templates'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -591,7 +591,7 @@ export function Checklists() {
             onClick={() => setActiveView('history')}
             className={`px-4 py-2 font-medium ${
               activeView === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -949,7 +949,7 @@ export function Checklists() {
               {templateItems.map((item, index) => (
                 <div key={item.id} className="p-4 border border-gray-200 rounded-lg">
                   <div className="flex items-start space-x-3 mb-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-[#1b4965] text-white rounded-full flex items-center justify-center font-bold">
+                    <div className="flex-shrink-0 w-8 h-8 bg-[#1e4d6b] text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <div className="flex-1">{renderItemInput(item)}</div>

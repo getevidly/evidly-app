@@ -76,8 +76,8 @@ export function SignupLocations() {
                 </svg>
               </div>
               <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#d4af37]">Evid</span>
-                <span className="text-[#1b4965]">LY</span>
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
               </span>
             </div>
           </div>

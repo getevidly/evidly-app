@@ -16,7 +16,7 @@ export default function Navigation() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/')}>
         <Shield style={{ color: '#d4af37', width: '32px', height: '32px' }} />
         <span style={{ fontSize: '24px', fontWeight: 'bold' }}>
-          <span style={{ color: '#1b4965' }}>Evid</span>
+          <span style={{ color: '#1e4d6b' }}>Evid</span>
           <span style={{ color: '#d4af37' }}>LY</span>
         </span>
       </div>

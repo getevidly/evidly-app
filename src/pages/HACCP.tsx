@@ -212,7 +212,7 @@ export function HACCP() {
             onClick={() => setActiveTab('plans')}
             className={`px-6 py-3 font-medium ${
               activeTab === 'plans'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -222,7 +222,7 @@ export function HACCP() {
             onClick={() => setActiveTab('monitoring')}
             className={`px-6 py-3 font-medium ${
               activeTab === 'monitoring'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -232,7 +232,7 @@ export function HACCP() {
             onClick={() => setActiveTab('corrective')}
             className={`px-6 py-3 font-medium ${
               activeTab === 'corrective'
-                ? 'border-b-2 border-[#d4af37] text-[#1b4965]'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >

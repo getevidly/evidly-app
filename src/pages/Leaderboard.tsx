@@ -67,7 +67,7 @@ export function Leaderboard() {
     <Layout title="Leaderboard">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1b4965] to-[#2c5f7f] rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Trophy className="h-8 w-8 text-[#d4af37]" />
             <h2 className="text-2xl font-bold">Location Leaderboard</h2>
@@ -110,7 +110,7 @@ export function Leaderboard() {
                 <div key={location.location_id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
                   <div className="flex items-center space-x-4 flex-1">
                     <div className="w-12 flex justify-center">{getRankIcon(index)}</div>
-                    <div className="h-10 w-10 rounded-full bg-[#1b4965] flex items-center justify-center text-white font-medium">
+                    <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium">
                       {location.location_name.charAt(0)}
                     </div>
                     <div className="flex-1">

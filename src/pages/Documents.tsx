@@ -251,7 +251,7 @@ export function Documents() {
               <button
                 onClick={() => setSelectedCategory('All')}
                 className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors ${
-                  selectedCategory === 'All' ? 'bg-[#1b4965] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 All ({documents.length})
@@ -263,7 +263,7 @@ export function Documents() {
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors ${
-                      selectedCategory === cat ? 'bg-[#1b4965] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      selectedCategory === cat ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                   >
                     {cat} {count > 0 ? `(${count})` : ''}

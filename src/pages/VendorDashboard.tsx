@@ -92,8 +92,8 @@ export function VendorDashboard() {
                 </svg>
               </div>
               <span className="ml-3 text-2xl font-bold">
-                <span className="text-[#d4af37]">Evid</span>
-                <span className="text-[#1b4965]">LY</span>
+                <span className="text-[#1e4d6b]">Evid</span>
+                <span className="text-[#d4af37]">LY</span>
                 <span className="ml-2 text-sm text-gray-600">Vendor Portal</span>
               </span>
             </div>
