@@ -795,12 +795,12 @@ export function Dashboard() {
                 </select>
               </div>
               {[
-                { priority: 'red', title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors' },
-                { priority: 'red', title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs' },
-                { priority: 'yellow', title: 'Health Permit Renewal in 14 Days', desc: 'Downtown Kitchen — expires Feb 20', link: '/documents' },
-                { priority: 'yellow', title: 'Food Handler Certs Expiring', desc: '2 team members need renewal by Mar 7', link: '/team' },
-                { priority: 'yellow', title: 'Grease Trap Service Due Soon', desc: 'Grease Masters — due Mar 20', link: '/vendors' },
-                { priority: 'blue', title: 'Weekly Compliance Digest Ready', desc: 'View your weekly summary', link: '/reports' }
+                { priority: 'red', title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors?id=vendor-valley-fire' },
+                { priority: 'red', title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs?id=airport-missing' },
+                { priority: 'yellow', title: 'Health Permit Renewal in 14 Days', desc: 'Downtown Kitchen — expires Feb 20', link: '/documents?id=health-permit-downtown' },
+                { priority: 'yellow', title: 'Food Handler Certs Expiring', desc: '2 team members need renewal by Mar 7', link: '/team?id=food-handler-certs' },
+                { priority: 'yellow', title: 'Grease Trap Service Due Soon', desc: 'Grease Masters — due Mar 20', link: '/vendors?id=vendor-grease-masters' },
+                { priority: 'blue', title: 'Weekly Compliance Digest Ready', desc: 'View your weekly summary', link: '/reports?id=weekly-digest' }
               ].map((item, i) => (
                 <div key={i} onClick={() => { navigate(item.link) }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: item.priority === 'red' ? '#ef4444' : item.priority === 'yellow' ? '#eab308' : '#3b82f6', flexShrink: 0 }}></div>
@@ -834,13 +834,13 @@ export function Dashboard() {
                 </thead>
                 <tbody>
                   {[
-                    { vendor: 'Valley Fire Systems', service: 'Fire Suppression', last: 'Aug 10', next: 'Feb 10', status: 'Overdue', color: '#ef4444' },
-                    { vendor: 'Pacific Pest Control', service: 'Pest Control', last: 'Feb 1', next: 'Mar 1', status: 'Due Soon', color: '#eab308' },
-                    { vendor: 'Grease Masters', service: 'Grease Trap', last: 'Sep 20', next: 'Mar 20', status: 'Due Soon', color: '#eab308' },
-                    { vendor: 'ABC Fire Protection', service: 'Hood Cleaning', last: 'Jan 15', next: 'Apr 15', status: 'On Track', color: '#22c55e' },
-                    { vendor: 'CleanAir HVAC', service: 'HVAC Service', last: 'Dec 5', next: 'Jun 5', status: 'On Track', color: '#22c55e' }
+                    { id: 'valley-fire', vendor: 'Valley Fire Systems', service: 'Fire Suppression', last: 'Aug 10', next: 'Feb 10', status: 'Overdue', color: '#ef4444' },
+                    { id: 'pacific-pest', vendor: 'Pacific Pest Control', service: 'Pest Control', last: 'Feb 1', next: 'Mar 1', status: 'Due Soon', color: '#eab308' },
+                    { id: 'grease-masters', vendor: 'Grease Masters', service: 'Grease Trap', last: 'Sep 20', next: 'Mar 20', status: 'Due Soon', color: '#eab308' },
+                    { id: 'abc-fire', vendor: 'ABC Fire Protection', service: 'Hood Cleaning', last: 'Jan 15', next: 'Apr 15', status: 'On Track', color: '#22c55e' },
+                    { id: 'cleanair-hvac', vendor: 'CleanAir HVAC', service: 'HVAC Service', last: 'Dec 5', next: 'Jun 5', status: 'On Track', color: '#22c55e' }
                   ].map((v, i) => (
-                    <tr key={i} onClick={() => { navigate('/vendors') }} style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }}>
+                    <tr key={i} onClick={() => { navigate('/vendors?id=' + v.id) }} style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }}>
                       <td style={{ padding: '12px 10px', fontWeight: '500' }}>{v.vendor}</td>
                       <td style={{ padding: '12px 10px' }}>{v.service}</td>
                       <td style={{ padding: '12px 10px', textAlign: 'center' }}>{v.last}</td>
@@ -925,14 +925,16 @@ export function Dashboard() {
               </div>
               <div style={{ display: 'flex', gap: '16px' }}>
                 {[
-                  { name: 'Downtown Kitchen', address: '425 Market St, SF', score: 92, color: '#22c55e' },
-                  { name: 'Airport Cafe', address: '780 Terminal Dr, SF', score: 74, color: '#eab308' },
-                  { name: 'University Dining', address: '1200 Campus Way, Berkeley', score: 58, color: '#ef4444' }
+                  { id: 'downtown', name: 'Downtown Kitchen', address: '425 Market St, SF', score: 92, color: '#22c55e' },
+                  { id: 'airport', name: 'Airport Cafe', address: '780 Terminal Dr, SF', score: 74, color: '#eab308' },
+                  { id: 'university', name: 'University Dining', address: '1200 Campus Way, Berkeley', score: 58, color: '#ef4444' }
                 ].map((loc, i) => (
                   <div key={i} style={{ flex: 1, background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                     <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '4px' }}>{loc.name}</div>
                     <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>{loc.address}</div>
-                    <div style={{ width: '150px', height: '150px', background: '#f1f5f9', margin: '0 auto 16px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: '12px' }}>QR Code</div>
+                    <div style={{ margin: '0 auto 16px', display: 'flex', justifyContent: 'center' }}>
+                      <QRCodeSVG value={`https://evidly-app.vercel.app/passport/${loc.id}`} size={150} level="M" />
+                    </div>
                     <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '14px', fontWeight: '700', color: loc.color, border: '2px solid ' + loc.color }}>{loc.score}</div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
                       <button style={{ background: '#1e4d6b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Print</button>
