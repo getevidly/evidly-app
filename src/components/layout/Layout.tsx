@@ -31,7 +31,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <main className="flex-1 pb-20 md:pb-8">
-          <div className="py-6 px-4 sm:px-6 lg:px-8">{children}</div>
+          <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
         </main>
       </div>
       <MobileTabBar />

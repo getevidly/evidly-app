@@ -3,7 +3,6 @@ import { Layout } from '../components/layout/Layout';
 import { Trophy, Medal, Award, TrendingUp, Flame, Target, Zap, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 interface LocationLeaderboard {
@@ -22,6 +21,21 @@ const DEMO_LEADERBOARD: LocationLeaderboard[] = [
   { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_score: 58, total_points: 1240 },
 ];
 
+function HorizontalBar({ label, value, max, color, suffix }: { label: string; value: number; max: number; color: string; suffix?: string }) {
+  const pct = Math.round((value / max) * 100);
+  return (
+    <div style={{ marginBottom: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+        <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{label}</span>
+        <span style={{ fontSize: '13px', color: '#6b7280', fontWeight: 600 }}>{value}{suffix || ''}</span>
+      </div>
+      <div style={{ height: '10px', backgroundColor: '#e5e7eb', borderRadius: '5px', overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${pct}%`, backgroundColor: color, borderRadius: '5px', transition: 'width 0.8s ease' }} />
+      </div>
+    </div>
+  );
+}
+
 export function Leaderboard() {
   const { profile } = useAuth();
   const [locations, setLocations] = useState<LocationLeaderboard[]>([]);
@@ -30,13 +44,12 @@ export function Leaderboard() {
     if (profile?.organization_id) {
       fetchLeaderboard();
     } else {
-      // Demo mode
       setLocations(DEMO_LEADERBOARD);
     }
   }, [profile]);
 
   const fetchLeaderboard = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('v_location_leaderboard')
       .select('*')
       .eq('organization_id', profile?.organization_id)
@@ -45,7 +58,6 @@ export function Leaderboard() {
     if (data && data.length > 0) {
       setLocations(data);
     } else {
-      // Fall back to demo data if view doesn't exist or returns empty
       setLocations(DEMO_LEADERBOARD);
     }
   };
@@ -53,76 +65,85 @@ export function Leaderboard() {
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0:
-        return <Trophy className="h-6 w-6 text-yellow-500" />;
+        return <Trophy className="h-6 w-6" style={{ color: '#d4af37' }} />;
       case 1:
-        return <Medal className="h-6 w-6 text-gray-400" />;
+        return <Medal className="h-6 w-6" style={{ color: '#9ca3af' }} />;
       case 2:
-        return <Award className="h-6 w-6 text-amber-700" />;
+        return <Award className="h-6 w-6" style={{ color: '#92400e' }} />;
       default:
         return <span className="text-lg font-semibold text-gray-500">#{index + 1}</span>;
     }
   };
 
+  const maxPoints = Math.max(...locations.map(l => l.total_points), 1);
+
   return (
     <Layout title="Leaderboard">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
+        {/* Header */}
+        <div style={{ background: 'linear-gradient(135deg, #1e4d6b 0%, #2c5f7f 100%)', borderRadius: '12px', padding: '24px', color: 'white' }}>
           <div className="flex items-center space-x-3 mb-2">
-            <Trophy className="h-8 w-8 text-[#d4af37]" />
+            <Trophy className="h-8 w-8" style={{ color: '#d4af37' }} />
             <h2 className="text-2xl font-bold">Location Leaderboard</h2>
           </div>
-          <p className="text-gray-200">Track performance across all your locations</p>
+          <p style={{ color: '#cbd5e1' }}>Track performance across all your locations</p>
         </div>
 
+        {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <TrendingUp className="h-8 w-8 text-green-500 mx-auto mb-2" />
-            <div className="text-3xl font-bold text-gray-900">
+          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <TrendingUp className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>
               {locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0}
             </div>
-            <div className="text-sm text-gray-500">Avg Compliance</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Avg Compliance</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <Trophy className="h-8 w-8 text-[#d4af37] mx-auto mb-2" />
-            <div className="text-3xl font-bold text-gray-900">{locations.length}</div>
-            <div className="text-sm text-gray-500">Active Locations</div>
+          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <Trophy className="h-8 w-8 mx-auto mb-2" style={{ color: '#d4af37' }} />
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>{locations.length}</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Active Locations</div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <Award className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-            <div className="text-3xl font-bold text-gray-900">{locations.reduce((sum, l) => sum + l.total_points, 0)}</div>
-            <div className="text-sm text-gray-500">Total Points</div>
+          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <Award className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#d4af37' }}>{locations.reduce((sum, l) => sum + l.total_points, 0).toLocaleString()}</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Points</div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Rankings</h3>
+        {/* Rankings Table */}
+        <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+          <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>Rankings</h3>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div>
             {locations.length === 0 ? (
-              <div className="p-12 text-center">
-                <Trophy className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500">No locations yet</p>
+              <div style={{ padding: '48px', textAlign: 'center' }}>
+                <Trophy className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+                <p style={{ color: '#6b7280' }}>No locations yet</p>
               </div>
             ) : (
               locations.map((location, index) => (
-                <div key={location.location_id} className="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
-                  <div className="flex items-center space-x-4 flex-1">
-                    <div className="w-12 flex justify-center">{getRankIcon(index)}</div>
-                    <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium">
+                <div
+                  key={location.location_id}
+                  style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: index < locations.length - 1 ? '1px solid #f3f4f6' : 'none' }}
+                  className="hover:bg-gray-50"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                    <div style={{ width: '48px', display: 'flex', justifyContent: 'center' }}>{getRankIcon(index)}</div>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 500, flexShrink: 0 }}>
                       {location.location_name.charAt(0)}
                     </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900">{location.location_name}</div>
-                      <div className="text-sm text-gray-500">
-                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_score} compliance
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 500, color: '#111827' }}>{location.location_name}</div>
+                      <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_score}% compliance
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-[#d4af37]">{location.total_points}</div>
-                    <div className="text-sm text-gray-500">points</div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '24px', fontWeight: 700, color: '#d4af37' }}>{location.total_points.toLocaleString()}</div>
+                    <div style={{ fontSize: '13px', color: '#6b7280' }}>points</div>
                   </div>
                 </div>
               ))
@@ -130,75 +151,103 @@ export function Leaderboard() {
           </div>
         </div>
 
+        {/* Two side-by-side charts */}
         {locations.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Location Comparison</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={locations.slice(0, 5)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="location_name" angle={-45} textAnchor="end" height={100} />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="compliance_score" fill="#d4af37" name="Compliance Score" />
-                <Bar dataKey="total_points" fill="#1e4d6b" name="Total Points" />
-              </BarChart>
-            </ResponsiveContainer>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            {/* Compliance Scores Chart */}
+            <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Compliance Score</h3>
+              {locations.map((loc) => (
+                <HorizontalBar
+                  key={loc.location_id}
+                  label={loc.location_name}
+                  value={loc.compliance_score}
+                  max={100}
+                  color={loc.compliance_score >= 90 ? '#1e4d6b' : loc.compliance_score >= 70 ? '#d4af37' : '#9ca3af'}
+                  suffix="%"
+                />
+              ))}
+              <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '11px', color: '#6b7280' }}>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#1e4d6b', marginRight: '4px' }} />90+</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#d4af37', marginRight: '4px' }} />70-89</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#9ca3af', marginRight: '4px' }} />&lt;70</span>
+              </div>
+            </div>
+
+            {/* Total Points Chart */}
+            <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Total Points</h3>
+              {locations.map((loc) => (
+                <HorizontalBar
+                  key={loc.location_id}
+                  label={loc.location_name}
+                  value={loc.total_points}
+                  max={maxPoints}
+                  color="#1e4d6b"
+                />
+              ))}
+            </div>
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievement Badges</h3>
-          <p className="text-sm text-gray-600 mb-6">
+        {/* Achievement Badges */}
+        <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '4px' }}>Achievement Badges</h3>
+          <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
             Earn badges by maintaining excellent compliance across your locations
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-lg p-6 text-center">
-              <div className="w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Flame className="h-8 w-8 text-yellow-900" />
+            {/* Perfect Week - EARNED */}
+            <div style={{ background: 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)', border: '2px solid #1e4d6b', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <Flame className="h-8 w-8" style={{ color: '#d4af37' }} />
               </div>
-              <h4 className="font-bold text-gray-900 mb-1">Perfect Week</h4>
-              <p className="text-sm text-gray-600 mb-2">100% compliance for 7 consecutive days</p>
-              <span className="text-xs text-yellow-800 font-semibold bg-yellow-200 px-2 py-1 rounded">EARNED</span>
+              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>Perfect Week</h4>
+              <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>100% compliance for 7 consecutive days</p>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
             </div>
 
-            <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-300 rounded-lg p-6 text-center">
-              <div className="w-16 h-16 bg-green-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Target className="h-8 w-8 text-green-900" />
+            {/* 100% Temp Logs - EARNED */}
+            <div style={{ background: 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)', border: '2px solid #1e4d6b', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <Target className="h-8 w-8" style={{ color: '#d4af37' }} />
               </div>
-              <h4 className="font-bold text-gray-900 mb-1">100% Temp Logs</h4>
-              <p className="text-sm text-gray-600 mb-2">All temperature logs current for 30 days</p>
-              <span className="text-xs text-green-800 font-semibold bg-green-200 px-2 py-1 rounded">EARNED</span>
+              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>100% Temp Logs</h4>
+              <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>All temperature logs current for 30 days</p>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-lg p-6 text-center">
-              <div className="w-16 h-16 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Zap className="h-8 w-8 text-blue-900" />
+            {/* Zero Overdue Docs - LOCKED */}
+            <div style={{ background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '12px', padding: '24px', textAlign: 'center', opacity: 0.7 }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <Zap className="h-8 w-8" style={{ color: '#9ca3af' }} />
               </div>
-              <h4 className="font-bold text-gray-900 mb-1">Zero Overdue Docs</h4>
-              <p className="text-sm text-gray-600 mb-2">All vendor documents current and valid</p>
-              <span className="text-xs text-gray-600 font-semibold bg-gray-200 px-2 py-1 rounded">LOCKED</span>
+              <h4 style={{ fontWeight: 700, color: '#6b7280', marginBottom: '4px' }}>Zero Overdue Docs</h4>
+              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>All vendor documents current and valid</p>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', backgroundColor: '#e5e7eb', padding: '3px 10px', borderRadius: '4px' }}>LOCKED</span>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-lg p-6 text-center">
-              <div className="w-16 h-16 bg-purple-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Star className="h-8 w-8 text-purple-900" />
+            {/* Gold Standard - LOCKED (grayed out) */}
+            <div style={{ background: '#f9fafb', border: '2px dashed #d1d5db', borderRadius: '12px', padding: '24px', textAlign: 'center', opacity: 0.5 }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#d1d5db', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                <Star className="h-8 w-8" style={{ color: '#9ca3af' }} />
               </div>
-              <h4 className="font-bold text-gray-900 mb-1">Gold Standard</h4>
-              <p className="text-sm text-gray-600 mb-2">90%+ compliance score for 90 days</p>
-              <span className="text-xs text-gray-600 font-semibold bg-gray-200 px-2 py-1 rounded">LOCKED</span>
+              <h4 style={{ fontWeight: 700, color: '#9ca3af', marginBottom: '4px' }}>Gold Standard</h4>
+              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>90%+ compliance score for 90 days</p>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#e5e7eb', padding: '3px 10px', borderRadius: '4px' }}>LOCKED</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-semibold text-blue-900 mb-2">How to earn points:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Complete temperature logs: 10 points</li>
-            <li>• Finish checklists: 25 points</li>
-            <li>• Upload documents: 15 points</li>
-            <li>• Resolve alerts: 20 points</li>
-            <li>• Perfect week streak: 100 bonus points</li>
+        {/* How to earn points */}
+        <div style={{ background: '#f0f7fc', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '20px' }}>
+          <h4 style={{ fontWeight: 600, color: '#1e4d6b', marginBottom: '8px' }}>How to earn points:</h4>
+          <ul style={{ fontSize: '14px', color: '#1e4d6b', listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '4px' }}>· Complete temperature logs: 10 points</li>
+            <li style={{ marginBottom: '4px' }}>· Finish checklists: 25 points</li>
+            <li style={{ marginBottom: '4px' }}>· Upload documents: 15 points</li>
+            <li style={{ marginBottom: '4px' }}>· Resolve alerts: 20 points</li>
+            <li>· Perfect week streak: 100 bonus points</li>
           </ul>
         </div>
       </div>
