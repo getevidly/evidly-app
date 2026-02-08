@@ -46,7 +46,6 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             <div className="text-xl font-semibold text-gray-900">
               {isDemoMode ? 'Pacific Coast Dining' : profile?.organization_name || title}
             </div>
-            <div style={{ fontSize: '12px', color: '#6b7280' }}>Compliance Simplified</div>
           </div>
         </div>
 
@@ -209,10 +208,13 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
 
           <div className="hidden md:flex items-center space-x-1 ml-2">
             <ShieldCheck className="h-6 w-6" style={{ color: '#d4af37' }} />
-            <span className="font-bold text-lg">
-              <span style={{ color: '#1e4d6b' }}>Evid</span>
-              <span style={{ color: '#d4af37' }}>LY</span>
-            </span>
+            <div>
+              <span className="font-bold text-lg">
+                <span style={{ color: '#1e4d6b' }}>Evid</span>
+                <span style={{ color: '#d4af37' }}>LY</span>
+              </span>
+              <div style={{ fontSize: '9px', color: '#6b7280', letterSpacing: '0.5px', lineHeight: '1' }}>Compliance Simplified</div>
+            </div>
           </div>
         </div>
       </div>

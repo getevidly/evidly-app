@@ -19,6 +19,7 @@ interface TemperatureEquipment {
     temperature_value: number;
     created_at: string;
     is_within_range: boolean;
+    recorded_by_name?: string;
   };
 }
 
@@ -163,6 +164,7 @@ export function TempLogs() {
           temperature_value: 38,
           created_at: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
           is_within_range: true,
+          recorded_by_name: 'Mike Johnson',
         },
       },
       {
@@ -177,6 +179,7 @@ export function TempLogs() {
           temperature_value: -2,
           created_at: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
           is_within_range: true,
+          recorded_by_name: 'Mike Johnson',
         },
       },
       {
@@ -191,6 +194,7 @@ export function TempLogs() {
           temperature_value: 40,
           created_at: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
           is_within_range: true,
+          recorded_by_name: 'Sarah Chen',
         },
       },
       {
@@ -205,6 +209,7 @@ export function TempLogs() {
           temperature_value: 127,
           created_at: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
           is_within_range: false,
+          recorded_by_name: 'Sarah Chen',
         },
       },
       {
@@ -219,6 +224,7 @@ export function TempLogs() {
           temperature_value: 39,
           created_at: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
           is_within_range: true,
+          recorded_by_name: 'Emma Davis',
         },
       },
       {
@@ -233,6 +239,7 @@ export function TempLogs() {
           temperature_value: 0,
           created_at: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
           is_within_range: true,
+          recorded_by_name: 'Mike Johnson',
         },
       },
     ];
@@ -954,6 +961,19 @@ export function TempLogs() {
     );
   };
 
+  const getRelativeTime = (dateStr: string) => {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return 'just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  };
+
   const isEquipmentOutOfRange = (eq: TemperatureEquipment) => {
     if (!eq.last_check) return true;
     const isToday = new Date(eq.last_check.created_at).toDateString() === new Date().toDateString();
@@ -1350,21 +1370,19 @@ export function TempLogs() {
             {/* Filters Section */}
             <div className="bg-white rounded-lg shadow p-4">
               <div className="flex flex-wrap gap-4 items-end">
-                {profile?.role === 'manager' && (
-                  <div className="flex-1 min-w-[200px]">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <select
-                      value={locationFilter}
-                      onChange={(e) => setLocationFilter(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                    >
-                      <option value="all">All Locations</option>
-                      {locations.map(loc => (
-                        <option key={loc} value={loc}>{loc}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+                <div className="flex-1 min-w-[200px]">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                  <select
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="all">All Locations</option>
+                    {locations.map(loc => (
+                      <option key={loc} value={loc}>{loc}</option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="flex-1 min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Sort By</label>
@@ -1412,7 +1430,11 @@ export function TempLogs() {
                         {eq.last_check.temperature_value}°{eq.unit}
                       </div>
                       <p className="text-xs text-gray-500">
-                        {format(new Date(eq.last_check.created_at), 'MMM d, h:mm a')}
+                        {eq.last_check.recorded_by_name && (
+                          <span className="font-medium text-gray-600">{eq.last_check.recorded_by_name}</span>
+                        )}
+                        {eq.last_check.recorded_by_name && ' · '}
+                        {getRelativeTime(eq.last_check.created_at)}
                       </p>
                     </div>
                   )}
@@ -1425,9 +1447,9 @@ export function TempLogs() {
 
                   <button
                     onClick={() => handleLogTemp(eq)}
-                    className="w-full px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium shadow-sm"
+                    className={`w-full px-4 py-2 text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#2a6a8f]'}`}
                   >
-                    Log Temp
+                    {isEquipmentOutOfRange(eq) ? '⚠ Log Temp Now' : 'Log Temp'}
                   </button>
                 </div>
               ))}
