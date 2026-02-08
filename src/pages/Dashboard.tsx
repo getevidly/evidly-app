@@ -620,6 +620,12 @@ export function Dashboard() {
 
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               {/* Onboarding Checklist - shows for new users */}
               <OnboardingChecklist />
 
@@ -686,6 +692,12 @@ export function Dashboard() {
 
           {activeTab === 'overview' && selectedLocation !== 'all' && (
             <div className="mt-6">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
+                <select value={selectedLocation} onChange={(e) => { const loc = e.target.value; if (loc === 'all') navigate('/dashboard'); else navigate('/dashboard?location=' + loc); }} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '14px', color: '#334155' }}>
+                  {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
+                </select>
+              </div>
               <div className="flex items-center space-x-2 mb-4">
                 <Activity className="h-5 w-5 text-green-500" />
                 <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
@@ -849,9 +861,39 @@ export function Dashboard() {
                   {tabLocationOptions.map(loc => (<option key={loc.id} value={loc.id}>{loc.name}</option>))}
                 </select>
               </div>
-              <p style={{ color: '#64748b' }}>12-week compliance score trend</p>
-              <div style={{ height: '300px', background: '#f8fafc', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>
-                Score history chart renders here
+              <p style={{ color: '#64748b', marginBottom: '16px' }}>12-week compliance score trend</p>
+              <div style={{ height: '300px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  {selectedLocation === 'all' ? (
+                    <LineChart data={historicalData.downtown.map((item, i) => ({
+                      date: item.date,
+                      Downtown: item.score,
+                      Airport: historicalData.airport[i].score,
+                      University: historicalData.university[i].score,
+                    }))}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" fontSize={12} />
+                      <YAxis domain={[0, 100]} fontSize={12} />
+                      <Tooltip />
+                      <Legend />
+                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'A', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'B', position: 'right', fontSize: 11 }} />
+                      <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
+                      <Line type="monotone" dataKey="Airport" stroke="#eab308" strokeWidth={2} dot={{ r: 3 }} />
+                      <Line type="monotone" dataKey="University" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
+                    </LineChart>
+                  ) : (
+                    <LineChart data={historicalData[selectedLocation as keyof typeof historicalData] || historicalData.downtown}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" fontSize={12} />
+                      <YAxis domain={[0, 100]} fontSize={12} />
+                      <Tooltip />
+                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'A', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: 'B', position: 'right', fontSize: 11 }} />
+                      <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Compliance Score" />
+                    </LineChart>
+                  )}
+                </ResponsiveContainer>
               </div>
             </div>
           )}
