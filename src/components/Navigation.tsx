@@ -1,19 +1,19 @@
 import { Shield, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDemo } from '../contexts/DemoContext';
+import { LeadCaptureModal } from './LeadCaptureModal';
 
 export default function Navigation() {
   const navigate = useNavigate();
-  const { enterDemo } = useDemo();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLeadModal, setShowLeadModal] = useState(false);
 
   const handleTryDemo = () => {
-    enterDemo();
-    navigate('/dashboard');
+    setShowLeadModal(true);
   };
 
   return (
+    <>
     <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'white' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => navigate('/')}>
         <Shield style={{ color: '#d4af37', width: '32px', height: '32px' }} />
@@ -27,7 +27,7 @@ export default function Navigation() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="hidden md:flex">
         <a href="#features" style={{ color: '#4b5563', textDecoration: 'none' }}>Features</a>
         <a href="#pricing" style={{ color: '#4b5563', textDecoration: 'none' }}>Pricing</a>
-        <a href="#contact" style={{ color: '#4b5563', textDecoration: 'none' }}>Contact</a>
+        <a href="mailto:launch@getevidly.com" style={{ color: '#4b5563', textDecoration: 'none' }}>Contact</a>
         <button onClick={handleTryDemo} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#d4af37', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>
           Try Demo
         </button>
@@ -69,7 +69,7 @@ export default function Navigation() {
         >
           <a href="#features" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Features</a>
           <a href="#pricing" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Pricing</a>
-          <a href="#contact" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Contact</a>
+          <a href="mailto:launch@getevidly.com" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Contact</a>
           <button onClick={() => { setMenuOpen(false); handleTryDemo(); }} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px 16px', background: '#d4af37', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>
             Try Demo
           </button>
@@ -82,5 +82,7 @@ export default function Navigation() {
         </div>
       )}
     </nav>
+    <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
+    </>
   );
 }

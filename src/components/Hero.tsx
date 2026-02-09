@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDemo } from '../contexts/DemoContext';
+import { LeadCaptureModal } from './LeadCaptureModal';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const { enterDemo } = useDemo();
+  const [showLeadModal, setShowLeadModal] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,11 +13,11 @@ export default function Hero() {
   };
 
   const handleTryDemo = () => {
-    enterDemo();
-    navigate('/dashboard');
+    setShowLeadModal(true);
   };
 
   return (
+    <>
     <section className="pt-[140px] pb-[100px] px-6 relative overflow-hidden bg-gradient-to-b from-white to-[var(--color-gold-bg)]">
       <div className="absolute top-[-100px] right-[-200px] w-[600px] h-[600px] pointer-events-none">
         <div className="w-full h-full rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.2)_0%,transparent_70%)]" />
@@ -63,5 +63,7 @@ export default function Hero() {
         </button>
       </div>
     </section>
+    <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
+    </>
   );
 }

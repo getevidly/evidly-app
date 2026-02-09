@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { DocumentScanAnimation } from '../components/DocumentScanAnimation';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ShareModal } from '../components/ShareModal';
+import { useRole } from '../contexts/RoleContext';
 
 interface Document {
   id: string;
@@ -82,7 +83,30 @@ const SHARED_ITEMS: SharedItem[] = [
   { id: '3', document: 'Fire Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
-const LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const ALL_DOC_LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+
+// Equipment/vendor documents — visible to Facilities + Management/Executive
+const FACILITIES_DOC_CATEGORIES = new Set(['Other']); // Hood cleaning, HVAC, fire suppression, pest control, grease trap, etc.
+const FACILITIES_DOC_TITLES = new Set([
+  'Ansul System Certification',
+  'Fire Safety Inspection Report',
+]);
+const FACILITIES_DOC_INSURANCE_KEYWORDS = ['vendor coi', 'coi -'];
+
+// Operational documents — visible to Kitchen Staff + Management/Executive
+// License, Permit (health dept), Certificate (ServSafe), Training, general Insurance
+// Anything NOT flagged as facilities-type
+
+function isFacilitiesDoc(doc: Document): boolean {
+  if (FACILITIES_DOC_CATEGORIES.has(doc.category)) return true;
+  if (FACILITIES_DOC_TITLES.has(doc.title)) return true;
+  if (doc.category === 'Insurance' && doc.provided_by) return true; // Vendor COIs
+  return false;
+}
+
+function isKitchenDoc(doc: Document): boolean {
+  return !isFacilitiesDoc(doc);
+}
 
 function getDocStatus(doc: Document): 'current' | 'expiring' | 'expired' {
   if (!doc.expiration_date) return 'current';
@@ -121,9 +145,21 @@ export function Documents() {
   const [selectedLocation, setSelectedLocation] = useState<string>('All Locations');
   const [searchQuery, setSearchQuery] = useState('');
   const [docStatusFilter, setDocStatusFilter] = useState<'all' | 'expired' | 'expiring'>('all');
+  const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
+  const docAccessibleLocs = getAccessibleLocations();
+  const DOC_LOCATIONS = showAllLocationsOption()
+    ? ['All Locations', ...docAccessibleLocs.map(l => l.locationName)]
+    : docAccessibleLocs.map(l => l.locationName);
+
+  // Role-based document visibility: kitchen sees operational docs, facilities sees equipment/vendor docs
+  const roleFilteredDocuments = useMemo(() => {
+    if (userRole === 'kitchen') return documents.filter(isKitchenDoc);
+    if (userRole === 'facilities') return documents.filter(isFacilitiesDoc);
+    return documents; // executive & management see all
+  }, [documents, userRole]);
 
   const filteredDocuments = useMemo(() => {
-    let filtered = documents;
+    let filtered = roleFilteredDocuments;
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(d => d.category === selectedCategory);
     }
@@ -142,12 +178,12 @@ export function Documents() {
       filtered = filtered.filter(d => getDocStatus(d) === docStatusFilter);
     }
     return filtered;
-  }, [documents, selectedCategory, selectedLocation, searchQuery, docStatusFilter]);
+  }, [roleFilteredDocuments, selectedCategory, selectedLocation, searchQuery, docStatusFilter]);
 
   // Documents filtered by location only (for category counts and summary)
   const locationFilteredDocs = useMemo(() => {
-    if (selectedLocation === 'All Locations') return documents;
-    return documents.filter(d => d.location === selectedLocation || d.location === 'All Locations');
+    if (selectedLocation === 'All Locations') return roleFilteredDocuments;
+    return roleFilteredDocuments.filter(d => d.location === selectedLocation || d.location === 'All Locations');
   }, [documents, selectedLocation]);
 
   // Summary counts (reflect location filter)
@@ -385,7 +421,7 @@ export function Documents() {
                 onChange={(e) => setSelectedLocation(e.target.value)}
                 style={{ padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', backgroundColor: 'white', cursor: 'pointer' }}
               >
-                {LOCATIONS.map(loc => (
+                {DOC_LOCATIONS.map(loc => (
                   <option key={loc} value={loc}>{loc}</option>
                 ))}
               </select>

@@ -43,7 +43,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="py-[100px] px-6 bg-[var(--color-gold-bg)] border-t border-b border-[var(--color-gold-border)]">
+    <section id="features" className="py-[100px] px-6 bg-[var(--color-gold-bg)] border-t border-b border-[var(--color-gold-border)]">
       <div className="max-w-[1200px] mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">

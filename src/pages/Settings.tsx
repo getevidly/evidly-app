@@ -1,15 +1,29 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2 } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole, UserRole } from '../contexts/RoleContext';
+import { useDemo } from '../contexts/DemoContext';
+
+const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
+  executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
+  management: { name: 'Sarah Chen', role: 'Management', email: 'sarah.chen@pacificcoastdining.com' },
+  kitchen: { name: 'Marcus Johnson', role: 'Kitchen Staff', email: 'marcus.johnson@pacificcoastdining.com' },
+  facilities: { name: 'Mike Thompson', role: 'Facilities', email: 'mike.thompson@pacificcoastdining.com' },
+};
 
 export function Settings() {
   const { profile } = useAuth();
   const { userRole } = useRole();
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState('profile');
+  const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
+  const [pwError, setPwError] = useState('');
+  const [pwSuccess, setPwSuccess] = useState('');
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
   const [notificationSettings, setNotificationSettings] = useState({
     email_enabled: true,
     sms_enabled: false,
@@ -20,12 +34,12 @@ export function Settings() {
   const [saving, setSaving] = useState(false);
 
   const allTabs = [
-    { id: 'profile', name: 'Profile', icon: User, roles: ['management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'organization', name: 'Organization', icon: Building2, roles: ['management'] as UserRole[] },
-    { id: 'notifications', name: 'Notifications', icon: Bell, roles: ['management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'integrations', name: 'Integrations', icon: Plug, roles: ['management'] as UserRole[] },
-    { id: 'security', name: 'Security', icon: Lock, roles: ['management', 'facilities'] as UserRole[] },
-    { id: 'billing', name: 'Billing', icon: CreditCard, roles: ['management'] as UserRole[] },
+    { id: 'profile', name: 'Profile', icon: User, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'organization', name: 'Organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'notifications', name: 'Notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'integrations', name: 'Integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'security', name: 'Security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'billing', name: 'Billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
   ];
 
   const tabs = allTabs.filter(tab => tab.roles.includes(userRole));
@@ -122,15 +136,27 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input
                   type="text"
-                  defaultValue={profile?.full_name}
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].name : profile?.full_name}
+                  key={`name-${userRole}`}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : profile?.email || ''}
+                  key={`email-${userRole}`}
+                  disabled
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <input
                   type="text"
-                  defaultValue={profile?.role}
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : profile?.role}
+                  key={`role-${userRole}`}
                   disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
@@ -487,29 +513,85 @@ export function Settings() {
 
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Security Settings</h3>
+              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
+              <p className="text-sm text-gray-600">Update your account password. You must enter your current password to confirm changes.</p>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                <input
-                  type="password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                />
+                <div className="relative">
+                  <input
+                    type={showCurrentPw ? 'text' : 'password'}
+                    value={pwForm.current}
+                    onChange={(e) => { setPwForm({ ...pwForm, current: e.target.value }); setPwError(''); setPwSuccess(''); }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
+                    placeholder="Enter current password"
+                  />
+                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                <input
-                  type="password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPw ? 'text' : 'password'}
+                    value={pwForm.newPw}
+                    onChange={(e) => { setPwForm({ ...pwForm, newPw: e.target.value }); setPwError(''); setPwSuccess(''); }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
+                    placeholder="Enter new password (min 8 characters)"
+                  />
+                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                 <input
                   type="password"
+                  value={pwForm.confirm}
+                  onChange={(e) => { setPwForm({ ...pwForm, confirm: e.target.value }); setPwError(''); setPwSuccess(''); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  placeholder="Re-enter new password"
                 />
               </div>
-              <button onClick={() => alert('Password updated.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              {pwError && (
+                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{pwError}</div>
+              )}
+              {pwSuccess && (
+                <div className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">{pwSuccess}</div>
+              )}
+              <button
+                onClick={() => {
+                  setPwError('');
+                  setPwSuccess('');
+                  if (!pwForm.current || !pwForm.newPw || !pwForm.confirm) {
+                    setPwError('All fields are required.');
+                    return;
+                  }
+                  if (pwForm.newPw.length < 8) {
+                    setPwError('New password must be at least 8 characters.');
+                    return;
+                  }
+                  if (pwForm.newPw !== pwForm.confirm) {
+                    setPwError('New passwords do not match.');
+                    return;
+                  }
+                  if (isDemoMode) {
+                    setPwSuccess('Password changes are available in live accounts only.');
+                    return;
+                  }
+                  supabase.auth.updateUser({ password: pwForm.newPw }).then(({ error }) => {
+                    if (error) {
+                      setPwError(error.message);
+                    } else {
+                      setPwSuccess('Password updated successfully.');
+                      setPwForm({ current: '', newPw: '', confirm: '' });
+                    }
+                  });
+                }}
+                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+              >
                 Update Password
               </button>
             </div>

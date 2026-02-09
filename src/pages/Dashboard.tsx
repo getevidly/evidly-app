@@ -59,14 +59,10 @@ export function Dashboard() {
 
   const scoreInfo = getGrade(complianceScore);
 
-  const roleLocations: Record<string, string[]> = {
-    management: ['all', 'downtown', 'airport', 'university'],
-    kitchen: ['downtown'],
-    facilities: ['downtown', 'airport']
-  };
-
-  const availableLocations = roleLocations[userRole] || ['all'];
-  const filteredLocationOptions = locations.filter(loc => availableLocations.includes(loc.urlId));
+  const { getAccessibleLocationUrlIds, hasMultipleLocations, canAccessLocation } = useRole();
+  const accessibleUrlIds = getAccessibleLocationUrlIds();
+  const availableLocations = hasMultipleLocations() ? ['all', ...accessibleUrlIds] : accessibleUrlIds;
+  const filteredLocationOptions = locations.filter(loc => accessibleUrlIds.includes(loc.urlId));
 
   const getScoreHexColor = (score: number) => {
     if (score >= 90) return '#22c55e';
@@ -233,7 +229,7 @@ export function Dashboard() {
           );
         })()}
 
-        {userRole === 'management' && (
+        {['executive', 'management'].includes(userRole) && (
           <>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Compliance Overview</h2>
 

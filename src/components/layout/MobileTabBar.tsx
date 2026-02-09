@@ -33,6 +33,12 @@ export function MobileTabBar() {
 
   // Role-specific primary tabs — the 4 things each role uses most
   const tabsByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
+    executive: [
+      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+    ],
     management: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
@@ -43,7 +49,7 @@ export function MobileTabBar() {
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
       { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-      { path: '/alerts', icon: Bell, label: 'Alerts' },
+      { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
     ],
     facilities: [
       { path: '/dashboard', icon: Home, label: 'Home' },
@@ -55,6 +61,18 @@ export function MobileTabBar() {
 
   // Role-specific "More" items — everything else they have access to
   const moreByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
+    executive: [
+      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
+      { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
+      { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
+      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
+      { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
+      { path: '/team', icon: Users, label: 'Team' },
+      { path: '/alerts', icon: Bell, label: 'Alerts' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
     management: [
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
@@ -68,13 +86,10 @@ export function MobileTabBar() {
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     kitchen: [
-      { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
-      { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     facilities: [
-      { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
   };

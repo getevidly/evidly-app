@@ -3,6 +3,7 @@ import { Trophy, Medal, Award, TrendingUp, Flame, Target, Zap, Star } from 'luci
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useRole } from '../contexts/RoleContext';
 
 interface LocationLeaderboard {
   location_id: string;
@@ -37,15 +38,17 @@ function HorizontalBar({ label, value, max, color, suffix }: { label: string; va
 
 export function Leaderboard() {
   const { profile } = useAuth();
+  const { getAccessibleLocations } = useRole();
+  const accessibleLocationIds = getAccessibleLocations().map(l => l.locationId);
   const [locations, setLocations] = useState<LocationLeaderboard[]>([]);
 
   useEffect(() => {
     if (profile?.organization_id) {
       fetchLeaderboard();
     } else {
-      setLocations(DEMO_LEADERBOARD);
+      setLocations(DEMO_LEADERBOARD.filter(l => accessibleLocationIds.includes(l.location_id)));
     }
-  }, [profile]);
+  }, [profile, accessibleLocationIds]);
 
   const fetchLeaderboard = async () => {
     const { data } = await supabase
@@ -55,9 +58,9 @@ export function Leaderboard() {
       .order('total_points', { ascending: false });
 
     if (data && data.length > 0) {
-      setLocations(data);
+      setLocations(data.filter(l => accessibleLocationIds.includes(l.location_id)));
     } else {
-      setLocations(DEMO_LEADERBOARD);
+      setLocations(DEMO_LEADERBOARD.filter(l => accessibleLocationIds.includes(l.location_id)));
     }
   };
 

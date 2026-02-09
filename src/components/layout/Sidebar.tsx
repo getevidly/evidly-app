@@ -30,20 +30,20 @@ interface NavItem {
 }
 
 const navigation: NavItem[] = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, tourId: '', roles: ['management', 'kitchen', 'facilities'], section: 'operations' },
-  { name: 'Temperatures', href: '/temp-logs', icon: Thermometer, tourId: 'temp-logs-nav', roles: ['management', 'kitchen'], section: 'operations' },
-  { name: 'Checklists', href: '/checklists', icon: CheckSquare, tourId: 'checklists-nav', roles: ['management', 'kitchen'], section: 'operations' },
-  { name: 'HACCP', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['management', 'kitchen'], section: 'operations' },
-  { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['management', 'facilities'], section: 'operations' },
-  { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['management', 'facilities'], section: 'operations' },
-  { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['management'], section: 'insights' },
-  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['management'], section: 'insights' },
-  { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['management'], section: 'insights' },
-  { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['management', 'kitchen'], section: 'insights' },
-  { name: 'Alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['management', 'kitchen', 'facilities'], section: 'insights' },
-  { name: 'Teams', href: '/team', icon: Users, tourId: '', roles: ['management'], section: 'system' },
-  { name: 'Settings', href: '/settings', icon: Settings, tourId: '', roles: ['management', 'kitchen', 'facilities'], section: 'system' },
-  { name: 'Help', href: '/help', icon: HelpCircle, tourId: '', roles: ['management', 'kitchen', 'facilities'], section: 'system' },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
+  { name: 'Temperatures', href: '/temp-logs', icon: Thermometer, tourId: 'temp-logs-nav', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
+  { name: 'Checklists', href: '/checklists', icon: CheckSquare, tourId: 'checklists-nav', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
+  { name: 'HACCP', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
+  { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
+  { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
+  { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
+  { name: 'Teams', href: '/team', icon: Users, tourId: '', roles: ['executive', 'management'], section: 'system' },
+  { name: 'Settings', href: '/settings', icon: Settings, tourId: '', roles: ['executive', 'management'], section: 'system' },
+  { name: 'Help', href: '/help', icon: HelpCircle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'system' },
 ];
 
 const sectionLabels: Record<Section, string> = {

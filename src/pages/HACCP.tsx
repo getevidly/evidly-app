@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useRole } from '../contexts/RoleContext';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -342,6 +343,8 @@ export function HACCP() {
   const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
+  const { getAccessibleLocations } = useRole();
+  const haccpAccessibleLocs = getAccessibleLocations();
 
   // Aggregate stats — filtered by selected location
   const locId = selectedLocation !== 'all' ? LOCATION_ID_MAP[selectedLocation] : null;
@@ -390,10 +393,10 @@ export function HACCP() {
               onChange={(e) => setSelectedLocation(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
-              <option value="all">All Locations</option>
-              <option value="downtown">Downtown Kitchen</option>
-              <option value="airport">Airport Cafe</option>
-              <option value="university">University Dining</option>
+              {haccpAccessibleLocs.length > 1 && <option value="all">All Locations</option>}
+              {haccpAccessibleLocs.map(loc => (
+                <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
+              ))}
             </select>
           </div>
         </div>

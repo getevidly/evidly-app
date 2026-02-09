@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
 import { TeamInviteModal } from '../components/TeamInviteModal';
 import { format } from 'date-fns';
@@ -155,6 +156,9 @@ export function Team() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [memberCertifications, setMemberCertifications] = useState<Certification[]>([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const { userRole, canAssignTempCoverage, canManageTeam, getAccessibleLocations, tempCoverageAssignments, addTempCoverage, removeTempCoverage } = useRole();
+  const accessibleLocations = getAccessibleLocations();
+  const [tempForm, setTempForm] = useState({ userId: '', userName: '', locationId: '', locationName: '', startDate: '', endDate: '' });
 
   const isDemoMode = !profile?.organization_id;
 
@@ -398,13 +402,15 @@ export function Team() {
                 ))}
               </select>
             )}
-            <button
-              onClick={() => setShowInviteModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
-            >
-              <Plus className="h-5 w-5" />
-              <span>Invite Member</span>
-            </button>
+            {canManageTeam() && (
+              <button
+                onClick={() => setShowInviteModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+              >
+                <Plus className="h-5 w-5" />
+                <span>Invite Member</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -496,6 +502,141 @@ export function Team() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Temporary Coverage Assignments */}
+        {canAssignTempCoverage() && (
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[#1e4d6b]" />
+                Temporary Coverage Assignments
+              </h3>
+            </div>
+
+            {tempCoverageAssignments.length > 0 && (
+              <div className="space-y-3 mb-6">
+                {tempCoverageAssignments.map((assignment) => {
+                  const now = new Date();
+                  const start = new Date(assignment.startDate);
+                  const end = new Date(assignment.endDate);
+                  const isActive = start <= now && end >= now;
+                  const isExpired = end < now;
+                  const isPending = start > now;
+                  const statusLabel = isActive ? 'Active' : isExpired ? 'Expired' : 'Pending';
+                  const statusColor = isActive ? 'bg-green-100 text-green-800' : isExpired ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-800';
+                  const formatDate = (d: string) => {
+                    const dt = new Date(d);
+                    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                  };
+                  return (
+                    <div key={assignment.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold" style={{ backgroundColor: '#1e4d6b' }}>
+                          {assignment.userName.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900">{assignment.userName}</div>
+                          <div className="text-sm text-gray-500">
+                            Temporary access to <span className="font-medium">{assignment.locationName}</span> ({formatDate(assignment.startDate)} – {formatDate(assignment.endDate)})
+                          </div>
+                          <div className="text-xs text-gray-400 mt-0.5">Granted by {assignment.grantedBy}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusColor}`}>{statusLabel}</span>
+                        <button
+                          onClick={() => removeTempCoverage(assignment.id)}
+                          className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition-colors"
+                          title="Revoke access"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="border border-dashed border-gray-300 rounded-lg p-4">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Grant Temporary Access</h4>
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block text-xs text-gray-500 mb-1">Team Member</label>
+                  <select
+                    value={tempForm.userId}
+                    onChange={(e) => {
+                      const member = filteredMembers.find(m => m.id === e.target.value);
+                      setTempForm(f => ({ ...f, userId: e.target.value, userName: member?.full_name || '' }));
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="">Select member...</option>
+                    {filteredMembers.map(m => (
+                      <option key={m.id} value={m.id}>{m.full_name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1 min-w-[150px]">
+                  <label className="block text-xs text-gray-500 mb-1">Location</label>
+                  <select
+                    value={tempForm.locationId}
+                    onChange={(e) => {
+                      const loc = accessibleLocations.find(l => l.locationId === e.target.value);
+                      setTempForm(f => ({ ...f, locationId: e.target.value, locationName: loc?.locationName || '' }));
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="">Select location...</option>
+                    {accessibleLocations.map(loc => (
+                      <option key={loc.locationId} value={loc.locationId}>{loc.locationName}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="min-w-[130px]">
+                  <label className="block text-xs text-gray-500 mb-1">Start Date</label>
+                  <input
+                    type="date"
+                    value={tempForm.startDate}
+                    onChange={(e) => setTempForm(f => ({ ...f, startDate: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  />
+                </div>
+                <div className="min-w-[130px]">
+                  <label className="block text-xs text-gray-500 mb-1">End Date</label>
+                  <input
+                    type="date"
+                    value={tempForm.endDate}
+                    onChange={(e) => setTempForm(f => ({ ...f, endDate: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  />
+                </div>
+                <button
+                  onClick={() => {
+                    if (!tempForm.userId || !tempForm.locationId || !tempForm.startDate || !tempForm.endDate) {
+                      alert('Please fill in all fields.');
+                      return;
+                    }
+                    addTempCoverage({
+                      userId: tempForm.userId,
+                      userName: tempForm.userName,
+                      locationId: tempForm.locationId,
+                      locationName: tempForm.locationName,
+                      grantedBy: 'Sarah Chen',
+                      grantedByRole: userRole,
+                      startDate: tempForm.startDate,
+                      endDate: tempForm.endDate,
+                    });
+                    setTempForm({ userId: '', userName: '', locationId: '', locationName: '', startDate: '', endDate: '' });
+                  }}
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm font-medium whitespace-nowrap"
+                >
+                  Grant Access
+                </button>
+              </div>
             </div>
           </div>
         )}

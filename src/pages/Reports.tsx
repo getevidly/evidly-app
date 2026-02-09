@@ -88,12 +88,13 @@ function getScoreColor(score: number): string {
 }
 
 export function Reports() {
-  const { userRole } = useRole();
+  const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
+  const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
   const [dateRange, setDateRange] = useState('this-month');
   const [selectedLocation, setSelectedLocation] = useState('all');
 
-  if (userRole !== 'management') {
+  if (!['executive', 'management'].includes(userRole)) {
     return (
       <div className="p-6">
         <Breadcrumb items={[{ label: 'Reporting' }]} />
@@ -463,9 +464,9 @@ export function Reports() {
               onChange={(e) => setSelectedLocation(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg"
             >
-              <option value="all">All Locations</option>
-              {demoLocations.map(loc => (
-                <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
+              {showAllLocs() && <option value="all">All Locations</option>}
+              {reportAccessibleLocs.map(loc => (
+                <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
               ))}
             </select>
             <select

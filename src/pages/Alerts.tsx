@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useRole } from '../contexts/RoleContext';
 
 interface Alert {
   id: string;
@@ -26,6 +27,8 @@ interface Alert {
 
 export function Alerts() {
   const navigate = useNavigate();
+  const { getAccessibleLocations } = useRole();
+  const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
   const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
@@ -204,7 +207,7 @@ export function Alerts() {
     { id: '5', name: 'Alex Thompson', role: 'Staff' },
   ];
 
-  const alertLocations = [...new Set(alerts.map(a => a.location))].sort();
+  const alertLocations = [...new Set(alerts.map(a => a.location))].filter(loc => alertAccessibleLocNames.includes(loc)).sort();
   const alertTypes: { value: string; label: string }[] = [
     { value: 'all', label: 'All Types' },
     { value: 'document_expiring', label: 'Document Expiring' },
@@ -332,6 +335,9 @@ export function Alerts() {
   };
 
   const filteredAlerts = alerts.filter(a => {
+    // Role-based location access filter
+    if (!alertAccessibleLocNames.includes(a.location)) return false;
+
     // Status filter
     if (filter === 'all' && a.status !== 'active') return false;
     if (filter === 'urgent' && !(a.status === 'active' && a.severity === 'high')) return false;

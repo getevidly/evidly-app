@@ -10,6 +10,7 @@ import { vendors as demoVendors, locations as demoLocations } from '../data/demo
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { VendorContactActions } from '../components/VendorContactActions';
+import { useRole } from '../contexts/RoleContext';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -198,6 +199,8 @@ export function Vendors() {
   const [serviceFilter, setServiceFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
   const [detailTab, setDetailTab] = useState('overview');
+  const { getAccessibleLocations, showAllLocationsOption } = useRole();
+  const vendorAccessibleLocs = getAccessibleLocations();
   const [autoRequestStates, setAutoRequestStates] = useState<Record<string, boolean>>({
     '3': true, // Valley Fire auto-request enabled by default
   });
@@ -859,9 +862,9 @@ export function Vendors() {
                   onChange={(e) => setLocationFilter(e.target.value)}
                   className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]"
                 >
-                  <option value="all">All Locations</option>
-                  {demoLocations.map((loc) => (
-                    <option key={loc.id} value={loc.id}>{loc.name}</option>
+                  {showAllLocationsOption() && <option value="all">All Locations</option>}
+                  {vendorAccessibleLocs.map((loc) => (
+                    <option key={loc.locationId} value={loc.locationId}>{loc.locationName}</option>
                   ))}
                 </select>
                 {(statusFilter !== 'all' || serviceFilter !== 'all' || locationFilter !== 'all') && (

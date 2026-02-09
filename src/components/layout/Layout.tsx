@@ -3,6 +3,8 @@ import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
 import { GuidedTour } from '../GuidedTour';
+import { DemoTour } from '../DemoTour';
+import { useDemo } from '../../contexts/DemoContext';
 
 interface LocationOption {
   id: string;
@@ -19,6 +21,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
+  const { tourActive } = useDemo();
   return (
     <div className="min-h-screen bg-[#faf8f3]">
       <Sidebar />
@@ -35,7 +38,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
         </main>
       </div>
       <MobileTabBar />
-      <GuidedTour />
+      {tourActive ? <DemoTour /> : <GuidedTour />}
     </div>
   );
 }

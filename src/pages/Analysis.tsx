@@ -4,9 +4,12 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
 import { scoreImpactData, locations, getWeights } from '../data/demoData';
+import { useRole } from '../contexts/RoleContext';
 
 export function Analysis() {
   const navigate = useNavigate();
+  const { getAccessibleLocations, showAllLocationsOption } = useRole();
+  const analysisAccessibleLocs = getAccessibleLocations();
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [actionLocationFilter, setActionLocationFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
@@ -195,9 +198,9 @@ export function Analysis() {
             onChange={(e) => setSelectedLocation(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium"
           >
-            <option value="all">All Locations (Org Average)</option>
-            {locations.map(loc => (
-              <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
+            {showAllLocationsOption() && <option value="all">All Locations (Org Average)</option>}
+            {analysisAccessibleLocs.map(loc => (
+              <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
             ))}
           </select>
         </div>
@@ -271,9 +274,9 @@ export function Analysis() {
                   onChange={(e) => setActionLocationFilter(e.target.value)}
                   style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', cursor: 'pointer' }}
                 >
-                  <option value="all">All Locations</option>
-                  {locations.map(loc => (
-                    <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
+                  {showAllLocationsOption() && <option value="all">All Locations</option>}
+                  {analysisAccessibleLocs.map(loc => (
+                    <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
                   ))}
                 </select>
                 <select

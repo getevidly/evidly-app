@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useDemo } from '../contexts/DemoContext';
 import { Eye, EyeOff, Play } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { LeadCaptureModal } from '../components/LeadCaptureModal';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -14,8 +14,8 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [showLeadModal, setShowLeadModal] = useState(false);
   const { signIn, user } = useAuth();
-  const { enterDemo } = useDemo();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
@@ -197,7 +197,7 @@ export function Login() {
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <button
-              onClick={() => { enterDemo(); navigate('/dashboard'); }}
+              onClick={() => setShowLeadModal(true)}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-md text-sm font-semibold text-[#1e4d6b] bg-[#d4af37]/10 border-2 border-[#d4af37]/30 hover:bg-[#d4af37]/20 hover:border-[#d4af37]/50 transition-all"
             >
               <Play className="h-4 w-4" />
@@ -209,6 +209,7 @@ export function Login() {
           </div>
         </div>
       </div>
+      <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
     </div>
   );
 }
