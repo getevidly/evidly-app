@@ -1,84 +1,41 @@
 import { Check } from 'lucide-react';
 
-const featureCategories = [
+interface Feature {
+  name: string;
+  description: string;
+  comingSoon?: boolean;
+}
+
+const featureCategories: { title: string; features: Feature[] }[] = [
   {
-    title: 'Temperature Management',
+    title: 'Compliance Management',
     features: [
-      'Digital temperature logging',
-      'FDA limit auto-checking',
-      'Pass/fail instant feedback',
-      'Receiving temperature logs',
-      '2-stage cooldown tracking',
-      'Temperature history & reports',
-      'Equipment management',
-      'Corrective action tracking',
+      { name: 'Compliance Scoring', description: 'Real-time scores across Operational (45%), Equipment (30%), and Documentation (25%) pillars with trend tracking' },
+      { name: 'Multi-Location Dashboard', description: 'Aggregate and per-location compliance views with drill-down to individual scores' },
+      { name: 'Temperature Logging', description: 'Digital temp checks for walk-ins, freezers, hot hold with in-range/out-of-range alerts' },
+      { name: 'Daily Checklists', description: 'Opening, closing, and shift checklists with completion tracking and timestamps' },
+      { name: 'Document Management', description: 'Store and track permits, licenses, certifications, and vendor docs with expiration alerts' },
+      { name: 'Vendor Services', description: 'Track hood cleaning, fire suppression, grease trap, and HVAC service schedules and compliance' },
     ],
   },
   {
-    title: 'Checklists & Tasks',
+    title: 'Operations & Workflow',
     features: [
-      'Opening/closing checklists',
-      'Custom checklist templates',
-      'Daily/weekly/monthly schedules',
-      'Photo documentation',
-      'Corrective action workflows',
-      'Completion tracking & reports',
+      { name: 'Role-Based Views', description: 'Management, Kitchen Staff, and Facilities dashboards tailored to each role' },
+      { name: 'Action Center', description: 'Prioritized task management with overdue, due today, and upcoming items' },
+      { name: 'Corrective Actions', description: 'Log, assign, and track corrective actions with photo documentation' },
+      { name: 'QR Passport', description: 'Equipment-level QR codes linking to service history, compliance docs, and quick actions' },
+      { name: 'Share Reports', description: 'One-click compliance reports for inspectors, management, and insurance' },
     ],
   },
   {
-    title: 'Document Management',
+    title: 'Coming Soon',
     features: [
-      'Unlimited document storage',
-      'Expiration tracking & alerts',
-      'AI document analysis',
-      'Category organization',
-      'Version history',
-      'Bulk upload',
-    ],
-  },
-  {
-    title: 'Vendor Management',
-    features: [
-      'Vendor profiles & contacts',
-      'Upload request portal (no vendor login needed)',
-      'Document tracking per vendor',
-      'Performance scorecards',
-      'Service history',
-      'Automated reminders',
-    ],
-  },
-  {
-    title: 'Compliance & Scoring',
-    features: [
-      'Real-time compliance scoring',
-      '3-pillar breakdown (Operational, Equipment, Documentation)',
-      'QR compliance passports',
-      'Inspection-ready reports',
-      'Score trend tracking',
-      'Predictive compliance alerts',
-    ],
-  },
-  {
-    title: 'AI & Automation',
-    features: [
-      'AI compliance advisor (chat)',
-      'Automated email/SMS alerts',
-      'Weekly compliance digests',
-      'Predictive risk alerts',
-      'Smart notifications',
-      'Automated report delivery',
-    ],
-  },
-  {
-    title: 'Team & Locations',
-    features: [
-      'Unlimited users',
-      'Role-based access (Owner, Manager, Staff)',
-      'Employee certification tracking',
-      'Multi-location management',
-      'Location leaderboard',
-      'Team activity reports',
-      'SMS & email team invites',
+      { name: 'AI Compliance Advisor', description: 'Intelligent recommendations and risk predictions powered by Claude AI', comingSoon: true },
+      { name: 'Weekly Digest', description: 'Automated compliance summaries delivered to management via email', comingSoon: true },
+      { name: 'Predictive Alerts', description: 'AI-driven early warnings before compliance issues become violations', comingSoon: true },
+      { name: 'Leaderboard', description: 'Gamified compliance scoring across locations to drive accountability', comingSoon: true },
+      { name: 'PSE Insurance Integration', description: 'Connect compliance data to insurance for potential premium savings', comingSoon: true },
     ],
   },
 ];
@@ -95,7 +52,7 @@ export default function AllFeatures() {
             Everything you need for food safety compliance
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            45+ features built for restaurants, food manufacturers, and food service operations
+            Built for restaurants, healthcare, senior living, and food service operations
           </p>
         </div>
 
@@ -105,12 +62,25 @@ export default function AllFeatures() {
               key={idx}
               className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#d4af37] transition-all hover:shadow-lg"
             >
-              <h3 className="text-[1.3rem] font-bold text-[#1e4d6b] mb-4">{category.title}</h3>
-              <ul className="space-y-3">
+              <div className="flex items-center gap-3 mb-5">
+                <h3 className="text-[1.3rem] font-bold text-[#1e4d6b]">{category.title}</h3>
+                {category.title !== 'Coming Soon' && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Available Now</span>
+                )}
+              </div>
+              <ul className="space-y-4">
                 {category.features.map((feature, featureIdx) => (
                   <li key={featureIdx} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[#d4af37] flex-shrink-0 mt-0.5" strokeWidth={3} />
-                    <span className="text-gray-700">{feature}</span>
+                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${feature.comingSoon ? 'text-gray-400' : 'text-[#d4af37]'}`} strokeWidth={3} />
+                    <div>
+                      <span className="font-semibold text-gray-800">
+                        {feature.name}
+                        {feature.comingSoon && (
+                          <span className="ml-2 text-[10px] font-bold uppercase tracking-wider text-[#d4af37] bg-[#d4af37]/10 px-2 py-0.5 rounded-full">Coming Soon</span>
+                        )}
+                      </span>
+                      <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">{feature.description}</p>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -69,10 +69,9 @@ export default function Hero() {
       {/* Dashboard Preview */}
       <div className="max-w-[960px] mx-auto mt-16 px-4">
         <img
-          src="/dashboard-overview.png"
-          alt="EvidLY Compliance Dashboard — Pacific Coast Dining overview with compliance score, pillar breakdown, and location table"
-          className="w-full rounded-2xl shadow-[0_25px_60px_-12px_rgba(0,0,0,0.25)] border border-gray-200/60"
-          style={{ transform: 'perspective(1200px) rotateX(2deg)', transformOrigin: 'bottom center' }}
+          src="/dashboard-hero.png"
+          alt="EvidLY Compliance Dashboard"
+          style={{ width: '100%', borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}
         />
         <p className="text-center mt-6 text-[0.95rem] font-semibold text-[var(--color-blue)]">
           Manage 1 to 1,000+ locations from a single dashboard
