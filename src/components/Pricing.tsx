@@ -61,7 +61,20 @@ export default function Pricing() {
                 Best Value
               </div>
 
-              <div className="mb-6 pt-4">
+              {/* Founder Urgency Banner */}
+              <div className="mb-4 pt-6 -mx-8 px-8">
+                <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-[#1e4d6b]">Founder Pricing — Only 87 of 100 spots remaining</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div className="bg-[#d4af37] h-2.5 rounded-full" style={{ width: '13%' }} />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1.5">13 spots claimed — price locks forever when you sign up</p>
+                </div>
+              </div>
+
+              <div className="mb-6">
                 <div className="text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-1">
                   {founderTier.name}
                 </div>
@@ -175,12 +188,12 @@ export default function Pricing() {
                     <span>
                       {feature}
                       {idx === 0 && (
-                        <a
-                          href="#all-features"
-                          className="ml-2 text-sm text-[#1e4d6b] hover:text-[#2a6a8f] underline font-medium"
+                        <button
+                          onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                          className="ml-2 text-sm text-[#1e4d6b] hover:text-[#2a6a8f] underline font-medium bg-transparent border-none cursor-pointer p-0"
                         >
                           See all features
-                        </a>
+                        </button>
                       )}
                     </span>
                   </li>
@@ -224,6 +237,8 @@ export default function Pricing() {
             <div className="space-y-4">
               <a
                 href="mailto:founders@getevidly.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-md hover:shadow-lg text-center"
               >
                 Contact Sales

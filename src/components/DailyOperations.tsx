@@ -28,7 +28,7 @@ export default function DailyOperations() {
   ];
 
   return (
-    <section id="features" className="py-[100px] px-6 bg-white">
+    <section id="how-it-works" className="py-[100px] px-6 bg-white">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -36,10 +36,10 @@ export default function DailyOperations() {
               How It Works
             </span>
             <h2 className="font-['Outfit'] text-[2.5rem] font-bold text-[var(--color-blue)] tracking-tight mb-5">
-              Your staff does the checks. EvidLY does the paperwork.
+              Your staff does the checks. EvidLY does the notes.
             </h2>
             <p className="text-[1.125rem] text-[var(--color-text-light)] leading-[1.7] mb-8">
-              Replace clipboards and paper logs with a simple app your team will actually use — and you can actually trust.
+              Replace clipboards and handwritten notes with a simple app your team will actually use — and you can actually trust.
             </p>
             <ul className="list-none">
               {features.map((feature, index) => (

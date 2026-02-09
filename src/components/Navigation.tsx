@@ -25,9 +25,9 @@ export default function Navigation() {
 
       {/* Desktop nav */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }} className="hidden md:flex">
-        <a href="#features" style={{ color: '#4b5563', textDecoration: 'none' }}>Features</a>
-        <a href="#pricing" style={{ color: '#4b5563', textDecoration: 'none' }}>Pricing</a>
-        <a href="mailto:launch@getevidly.com" style={{ color: '#4b5563', textDecoration: 'none' }}>Contact</a>
+        <button onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontFamily: 'inherit' }}>Features</button>
+        <button onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontFamily: 'inherit' }}>Pricing</button>
+        <button onClick={() => window.open('mailto:founders@getevidly.com')} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', fontSize: 'inherit', fontFamily: 'inherit' }}>Contact</button>
         <button onClick={handleTryDemo} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#d4af37', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>
           Try Demo
         </button>
@@ -67,9 +67,9 @@ export default function Navigation() {
             zIndex: 50,
           }}
         >
-          <a href="#features" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Features</a>
-          <a href="#pricing" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Pricing</a>
-          <a href="mailto:launch@getevidly.com" onClick={() => setMenuOpen(false)} style={{ color: '#4b5563', textDecoration: 'none', padding: '8px 0', fontSize: '16px' }}>Contact</a>
+          <button onClick={() => { setMenuOpen(false); document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0', fontSize: '16px', textAlign: 'left' }}>Features</button>
+          <button onClick={() => { setMenuOpen(false); document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0', fontSize: '16px', textAlign: 'left' }}>Pricing</button>
+          <button onClick={() => { setMenuOpen(false); window.open('mailto:founders@getevidly.com'); }} style={{ color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0', fontSize: '16px', textAlign: 'left' }}>Contact</button>
           <button onClick={() => { setMenuOpen(false); handleTryDemo(); }} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px 16px', background: '#d4af37', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '14px' }}>
             Try Demo
           </button>

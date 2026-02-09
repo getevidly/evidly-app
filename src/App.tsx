@@ -63,8 +63,8 @@ function LandingPage() {
       <Features />
       <BeforeAfter />
       <QRFeature />
-      <Pricing />
       <AllFeatures />
+      <Pricing />
       <PlatformStats />
       <Trust />
       <FinalCTA />

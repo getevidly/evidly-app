@@ -3,7 +3,7 @@ export default function Problem() {
     {
       icon: '⏰',
       title: '5+ hours/week wasted',
-      description: "That's 260+ hours per year on paperwork. Time you could spend training staff, improving compliance operations, or actually running your business."
+      description: "That's 260+ hours per year on manual notes. Time you could spend training staff, improving compliance operations, or actually running your business."
     },
     {
       icon: '📁',
@@ -27,7 +27,7 @@ export default function Problem() {
       <div className="max-w-[1000px] mx-auto">
         <div className="text-center mb-16">
           <h2 className="font-['Outfit'] text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
-            Your kitchen compliance operations are held together by paper, spreadsheets, and hope.
+            Your kitchen compliance operations are held together by notes, spreadsheets, and hope.
           </h2>
           <p className="text-[1.125rem] text-[var(--color-text-light)]">Sound familiar?</p>
         </div>

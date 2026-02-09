@@ -14,10 +14,10 @@ export default function FinalCTA() {
     <section className="py-[100px] px-6 bg-gradient-to-br from-[var(--color-blue)] to-[var(--color-blue-dark)] text-white">
       <div className="max-w-[700px] mx-auto text-center">
         <h2 className="font-['Outfit'] text-[clamp(2rem,5vw,3rem)] font-extrabold tracking-tight mb-5">
-          Ready for <span className="text-[var(--color-gold)]">peace of mind</span>?
+          Ready to <span className="text-[var(--color-gold)]">simplify compliance</span>?
         </h2>
         <p className="text-[1.25rem] text-[rgba(255,255,255,0.8)] mb-10">
-          Stop worrying about the next inspection. Sign up and relax at night.
+          Start your free demo and see why commercial kitchens trust EvidLY.
         </p>
         <form className="flex gap-3 max-w-[480px] mx-auto flex-col sm:flex-row" onSubmit={handleSubmit}>
           <input

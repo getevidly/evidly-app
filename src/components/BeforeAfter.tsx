@@ -35,7 +35,7 @@ export default function BeforeAfter() {
             Before EvidLY vs. After EvidLY
           </h2>
           <p className="text-[1.125rem] text-[var(--color-text-light)]">
-            See what changes when you move from paper and hope to verified digital compliance
+            See what changes when you move from handwritten notes and hope to verified digital compliance
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
