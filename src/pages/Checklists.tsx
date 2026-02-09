@@ -288,6 +288,7 @@ export function Checklists() {
   const { isDemoMode } = useDemo();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
+  const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
   const [completions, setCompletions] = useState<ChecklistCompletion[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -391,8 +392,20 @@ export function Checklists() {
         is_required: item.required,
       }));
       setDemoItemsMap(prev => ({ ...prev, [newId]: newItems }));
+      // Add to today's checklists and switch tab
+      const userName = profile?.full_name || 'You';
+      setTodayChecklists(prev => [{
+        id: `today-${Date.now()}`,
+        name: template.name,
+        completed: 0,
+        total: template.items.length,
+        status: 'not_started' as const,
+        assignee: userName,
+        completedAt: 'Just now',
+        location: 'Downtown Kitchen',
+      }, ...prev]);
       setLoading(false);
-      alert('Template created!');
+      setActiveView('today');
       return;
     }
 
@@ -499,12 +512,24 @@ export function Checklists() {
         is_required: item.required,
       }));
       setDemoItemsMap(prev => ({ ...prev, [newId]: newItems }));
+      // Add to today's checklists and switch tab
+      const userName = profile?.full_name || 'You';
+      setTodayChecklists(prev => [{
+        id: `today-${Date.now()}`,
+        name: templateName,
+        completed: 0,
+        total: items.length,
+        status: 'not_started' as const,
+        assignee: userName,
+        completedAt: 'Just now',
+        location: 'Downtown Kitchen',
+      }, ...prev]);
       setLoading(false);
       setShowTemplateModal(false);
       setTemplateName('');
       setTemplateType('');
       setItems([]);
-      alert('Template created!');
+      setActiveView('today');
       return;
     }
 
@@ -852,7 +877,7 @@ export function Checklists() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {DEMO_TODAY_CHECKLISTS.map((cl) => {
+              {todayChecklists.map((cl) => {
                 const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
                 const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
                 const statusLabel = cl.status === 'complete' ? 'Complete' : cl.status === 'in_progress' ? 'In Progress' : 'Not Started';
