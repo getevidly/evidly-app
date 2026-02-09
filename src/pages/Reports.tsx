@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Printer, Download, TrendingUp, ShieldX } from 'lucide-react';
+import { Printer, Download, TrendingUp, ShieldX, Activity, Thermometer, FileText } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRole } from '../contexts/RoleContext';
 
@@ -531,25 +531,34 @@ export function Reports() {
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
-                  <p className="text-xs mb-1" style={{ color: '#64748b' }}>Operational ({Math.round(getWeights().operational * 100)}%)</p>
-                  <p className="text-xl font-bold" style={{ color: '#1e4d6b' }}>
+                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #1e4d6b' }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Activity className="h-3.5 w-3.5 text-[#1e4d6b]" />
+                    <span className="text-xs text-gray-500 font-medium">Operational ({Math.round(getWeights().operational * 100)}%)</span>
+                  </div>
+                  <p className="text-xl font-bold text-center" style={{ color: '#1e4d6b' }}>
                     {selectedLocation !== 'all' && locationScores[selectedLocation]
                       ? locationScores[selectedLocation].operational
                       : complianceScores.operational}
                   </p>
                 </div>
-                <div className="text-center p-3 bg-green-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Equipment ({Math.round(getWeights().equipment * 100)}%)</p>
-                  <p className="text-xl font-bold text-green-700">
+                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #16a34a' }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Thermometer className="h-3.5 w-3.5 text-green-600" />
+                    <span className="text-xs text-gray-500 font-medium">Equipment ({Math.round(getWeights().equipment * 100)}%)</span>
+                  </div>
+                  <p className="text-xl font-bold text-center text-green-700">
                     {selectedLocation !== 'all' && locationScores[selectedLocation]
                       ? locationScores[selectedLocation].equipment
                       : complianceScores.equipment}
                   </p>
                 </div>
-                <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#fdf6e3' }}>
-                  <p className="text-xs mb-1" style={{ color: '#78716c' }}>Documentation ({Math.round(getWeights().documentation * 100)}%)</p>
-                  <p className="text-xl font-bold" style={{ color: '#92400e' }}>
+                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #d4af37' }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <FileText className="h-3.5 w-3.5 text-[#d4af37]" />
+                    <span className="text-xs text-gray-500 font-medium">Documentation ({Math.round(getWeights().documentation * 100)}%)</span>
+                  </div>
+                  <p className="text-xl font-bold text-center" style={{ color: '#92400e' }}>
                     {selectedLocation !== 'all' && locationScores[selectedLocation]
                       ? locationScores[selectedLocation].documentation
                       : complianceScores.documentation}

@@ -376,35 +376,35 @@ export function HACCP() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center space-x-2 mb-1">
-              <Shield className="h-5 w-5 text-[#1e4d6b]" />
-              <span className="text-sm text-gray-600">Active Plans</span>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Shield className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">Active Plans</span>
             </div>
-            <p className="text-2xl font-bold text-[#1e4d6b] text-center">{HACCP_PLANS.length}</p>
+            <p className="text-3xl font-bold text-[#1e4d6b] text-center">{HACCP_PLANS.length}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center space-x-2 mb-1">
-              <Activity className="h-5 w-5 text-[#1e4d6b]" />
-              <span className="text-sm text-gray-600">Overall Compliance</span>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444'}` }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="h-4 w-4" style={{ color: overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444' }} />
+              <span className="text-sm text-gray-500 font-medium">Overall Compliance</span>
             </div>
-            <p className={`text-2xl font-bold text-center ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+            <p className={`text-3xl font-bold text-center ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
             </p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center space-x-2 mb-1">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="text-sm text-gray-600">CCPs in Compliance</span>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance</span>
             </div>
-            <p className="text-2xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
+            <p className="text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <div className="flex items-center space-x-2 mb-1">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <span className="text-sm text-gray-600">Open Actions</span>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
+              <span className="text-sm text-gray-500 font-medium">Open Actions</span>
             </div>
-            <p className={`text-2xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
+            <p className={`text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
         </div>
 

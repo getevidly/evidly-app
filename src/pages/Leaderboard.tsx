@@ -15,9 +15,9 @@ interface LocationLeaderboard {
 }
 
 const DEMO_LEADERBOARD: LocationLeaderboard[] = [
-  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_score: 92, total_points: 3420 },
-  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_score: 74, total_points: 2180 },
-  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_score: 58, total_points: 1240 },
+  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_score: 92, total_points: 4520 },
+  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_score: 74, total_points: 3640 },
+  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_score: 57, total_points: 2285 },
 ];
 
 function HorizontalBar({ label, value, max, color, suffix }: { label: string; value: number; max: number; color: string; suffix?: string }) {
@@ -90,23 +90,29 @@ export function Leaderboard() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <TrendingUp className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
+            </div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">
               {locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0}
             </div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Avg Compliance</div>
           </div>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <Trophy className="h-8 w-8 mx-auto mb-2" style={{ color: '#d4af37' }} />
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>{locations.length}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Active Locations</div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Trophy className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">Active Locations</span>
+            </div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{locations.length}</div>
           </div>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '24px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <Award className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#d4af37' }}>{locations.reduce((sum, l) => sum + l.total_points, 0).toLocaleString()}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Points</div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Award className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">Total Points</span>
+            </div>
+            <div className="text-3xl font-bold text-[#d4af37] text-center">{locations.reduce((sum, l) => sum + l.total_points, 0).toLocaleString()}</div>
           </div>
         </div>
 

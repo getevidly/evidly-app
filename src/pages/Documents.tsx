@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle } from 'lucide-react';
+import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
@@ -268,22 +268,34 @@ export function Documents() {
         </div>
 
         {/* Summary Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Documents</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b', textAlign: 'center' }}>{locationFilteredDocs.length}</div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <FileText className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">Total Documents</span>
+            </div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
           </div>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Current</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#166534', textAlign: 'center' }}>{statusCounts.current}</div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-gray-500 font-medium">Current</span>
+            </div>
+            <div className="text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
           </div>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Expiring Soon</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#854d0e', textAlign: 'center' }}>{statusCounts.expiring}</div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">Expiring Soon</span>
+            </div>
+            <div className="text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
           </div>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Expired</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#991b1b', textAlign: 'center' }}>{statusCounts.expired}</div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #ef4444' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <span className="text-sm text-gray-500 font-medium">Expired</span>
+            </div>
+            <div className="text-3xl font-bold text-red-600 text-center">{statusCounts.expired}</div>
           </div>
         </div>
 

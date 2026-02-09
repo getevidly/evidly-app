@@ -366,12 +366,18 @@ export function Alerts() {
           <p className="text-gray-200">AI-powered predictive alerts and notifications</p>
           <div className="flex items-center space-x-6 mt-4">
             <div>
-              <div className="text-3xl font-bold text-center">{activeCount}</div>
-              <div className="text-sm text-gray-300">Active Alerts</div>
+              <div className="flex items-center gap-2 mb-1">
+                <Bell className="h-4 w-4 text-[#d4af37]" />
+                <span className="text-sm text-gray-300 font-medium">Active Alerts</span>
+              </div>
+              <div className="text-3xl font-bold text-white text-center">{activeCount}</div>
             </div>
             <div>
+              <div className="flex items-center gap-2 mb-1">
+                <AlertCircle className="h-4 w-4 text-red-400" />
+                <span className="text-sm text-gray-300 font-medium">Critical</span>
+              </div>
               <div className="text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
-              <div className="text-sm text-gray-300">Critical</div>
             </div>
           </div>
         </div>

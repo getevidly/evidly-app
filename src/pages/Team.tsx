@@ -319,50 +319,42 @@ export function Team() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Team' }]} />
       <div className="space-y-6">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#eef4f8]">
-              <Users className="h-6 w-6 text-[#1e4d6b]" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">Team Members</span>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900 text-center">{members.length}</div>
-              <div className="text-sm text-gray-500">Team Members</div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{members.length}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-gray-500 font-medium">Certs Current</span>
+            </div>
+            <div className="text-3xl font-bold text-green-600 text-center">
+              {members.filter(m => m.certifications && m.certifications.every(c => {
+                if (!c.expiration_date) return true;
+                return new Date(c.expiration_date) > new Date();
+              })).length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-50">
-              <CheckCircle2 className="h-6 w-6 text-green-600" />
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <Award className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">Total Certs</span>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900 text-center">
-                {members.filter(m => m.certifications && m.certifications.every(c => {
-                  if (!c.expiration_date) return true;
-                  return new Date(c.expiration_date) > new Date();
-                })).length}
-              </div>
-              <div className="text-sm text-gray-500">Certs Current</div>
+            <div className="text-3xl font-bold text-[#d4af37] text-center">
+              {members.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-50">
-              <Award className="h-6 w-6 text-amber-600" />
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900 text-center">
-                {members.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-500">Total Certs</div>
-            </div>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#eef4f8]">
-              <TrendingUp className="h-6 w-6 text-[#1e4d6b]" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900 text-center">
-                {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / members.length) : 0}%
-              </div>
-              <div className="text-sm text-gray-500">Avg Compliance</div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">
+              {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / members.length) : 0}%
             </div>
           </div>
         </div>

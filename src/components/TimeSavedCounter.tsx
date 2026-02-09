@@ -75,13 +75,9 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
               cursor: 'pointer',
             }}
           >
-            <div className="flex items-center gap-3 mb-3">
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: stat.bgColor }}
-              >
-                <Icon className="w-5 h-5" style={{ color: stat.color }} />
-              </div>
+            <div className="flex items-center gap-2 mb-2">
+              <Icon className="h-4 w-4" style={{ color: stat.color }} />
+              <span className="text-sm text-gray-500 font-medium">{stat.label}</span>
             </div>
             <div
               className="text-3xl font-bold animate-counter-glow text-center"
@@ -89,7 +85,6 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
             >
               {stat.prefix}{stat.value.toLocaleString()}{stat.suffix}
             </div>
-            <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
           </div>
         );
       })}

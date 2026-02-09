@@ -13,7 +13,9 @@ const suggestions = [
   'Am I ready for a health inspection?',
   'What corrective actions are overdue?',
   'Show me temperature trends for Downtown Kitchen',
-  'What do I need for my fire suppression inspection?',
+  'Which team members have expiring certifications?',
+  'Compare compliance across all my locations',
+  'What are the biggest risks at University Dining?',
 ];
 
 const getDemoResponse = (question: string): string => {
@@ -154,6 +156,85 @@ Would you like me to send reminder notifications to the assigned team members?`;
 • All hoods must have current UL 300 listed systems
 
 Your monthly visual checks are up to date at all locations.`;
+  }
+
+  if (lowerQ.includes('team') && lowerQ.includes('certif')) {
+    return `You have **3 team members with expiring certifications** in the next 60 days:
+
+🔴 **Michael Torres** — Food Handler Certificate
+   📍 Airport Cafe · Expires **Feb 26, 2026** (19 days away)
+   _Action: Register for renewal course immediately_
+
+🟡 **Sarah Chen** — ServSafe Manager Certification
+   📍 Downtown Kitchen · Expires **Mar 15, 2026** (36 days away)
+   _Action: Schedule exam retake_
+
+🟡 **David Park** — Food Handler Certificate
+   📍 University Dining · Expires **Apr 2, 2026** (54 days away)
+   _Action: Schedule renewal before expiry_
+
+**All other team certifications are current.** Your organization has 12 active team members with 28 total certifications on file.
+
+Would you like me to send renewal reminders to these team members?`;
+  }
+
+  if (lowerQ.includes('compare') && lowerQ.includes('compliance') || lowerQ.includes('compare') && lowerQ.includes('location')) {
+    return `Here's a **compliance comparison** across all your locations:
+
+**Downtown Kitchen — 92%** 🟢 (↑2% from last month)
+• Operational: 95% · Equipment: 91% · Documentation: 89%
+• Strengths: Consistent temp logging, all certs current
+• Watch: Pest control report gap in January
+
+**Airport Cafe — 74%** 🟡 (↓7% from last month)
+• Operational: 78% · Equipment: 70% · Documentation: 72%
+• Issues: 3 missed temp logs, expired hood cleaning cert
+• Priority: Equipment maintenance falling behind
+
+**University Dining — 57%** 🔴 (↓4% from last month)
+• Operational: 62% · Equipment: 55% · Documentation: 52%
+• Issues: Incomplete checklists, multiple expired docs
+• Priority: Needs immediate attention on documentation
+
+**Key Insights:**
+1. Downtown Kitchen leads across all three pillars
+2. Airport Cafe's score dropped mainly due to equipment issues
+3. University Dining needs a focused improvement plan — especially documentation
+
+Would you like me to create an action plan for the underperforming locations?`;
+  }
+
+  if (lowerQ.includes('risk') && lowerQ.includes('university')) {
+    return `Here are the **top risks at University Dining** ranked by compliance impact:
+
+🔴 **Critical Risks**
+1. **Documentation gaps** — Score: 52%
+   • 4 expired vendor certificates not renewed
+   • Employee training records incomplete for 3 staff
+   • Impact: Could fail health inspection documentation review
+
+2. **Equipment maintenance overdue** — Score: 55%
+   • Walk-in cooler last serviced 4 months ago
+   • Fire extinguisher monthly check missed twice
+   • Impact: Equipment failure risk + code violation
+
+🟡 **Medium Risks**
+3. **Inconsistent temperature logging** — Score: 62%
+   • 12 missed logs in the past 30 days
+   • Opening shift logs frequently skipped on weekends
+   • Impact: Cannot demonstrate continuous monitoring
+
+4. **Checklist completion rate at 68%**
+   • Closing checklists skipped 3x per week on average
+   • Impact: Cleaning and sanitation gaps
+
+**Recommended Action Plan:**
+1. Assign a documentation lead to clear the expired cert backlog (2 days)
+2. Schedule equipment service visits this week
+3. Set up automated temp log reminders for weekend shifts
+4. Brief the team on checklist importance — tie to leaderboard points
+
+Addressing these items could raise University Dining's score to **72%+** within 2 weeks.`;
   }
 
   if (lowerQ.includes('temperature') || lowerQ.includes('cooler') || lowerQ.includes('freezer')) {

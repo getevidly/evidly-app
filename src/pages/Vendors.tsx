@@ -285,6 +285,12 @@ export function Vendors() {
     return 'bg-red-100';
   };
 
+  const getScoreBorder = (score: number) => {
+    if (score >= 90) return '#16a34a';
+    if (score >= 70) return '#d97706';
+    return '#ef4444';
+  };
+
   // ── Detail View ────────────────────────────────────────────────
 
   if (selectedVendor) {
@@ -445,17 +451,26 @@ export function Vendors() {
                 <div className="bg-white rounded-lg shadow p-6 lg:col-span-2">
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
                   <div className="grid grid-cols-3 gap-4">
-                    <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.reliabilityScore)}`}>
-                      <div className="text-xs text-gray-600 mb-1">Reliability Score</div>
-                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</div>
+                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Shield className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.reliabilityScore) }} />
+                        <span className="text-sm text-gray-500 font-medium">Reliability Score</span>
+                      </div>
+                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
                     </div>
-                    <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.onTimeRate)}`}>
-                      <div className="text-xs text-gray-600 mb-1">On-Time Rate</div>
-                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</div>
+                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.onTimeRate)}` }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.onTimeRate) }} />
+                        <span className="text-sm text-gray-500 font-medium">On-Time Rate</span>
+                      </div>
+                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</p>
                     </div>
-                    <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.docComplianceRate)}`}>
-                      <div className="text-xs text-gray-600 mb-1">Doc Compliance</div>
-                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</div>
+                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.docComplianceRate)}` }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.docComplianceRate) }} />
+                        <span className="text-sm text-gray-500 font-medium">Doc Compliance</span>
+                      </div>
+                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</p>
                     </div>
                   </div>
                 </div>
@@ -1044,13 +1059,19 @@ export function Vendors() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className={`p-3 rounded-lg ${getScoreBg(perf.onTimeRate)}`}>
-                        <div className="text-xs text-gray-600 mb-1">On-time Service</div>
-                        <div className={`text-xl font-bold text-center ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</div>
+                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.onTimeRate)}` }}>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Clock className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.onTimeRate) }} />
+                          <span className="text-xs text-gray-500 font-medium">On-time Service</span>
+                        </div>
+                        <p className={`text-xl font-bold text-center ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</p>
                       </div>
-                      <div className={`p-3 rounded-lg ${getScoreBg(perf.docComplianceRate)}`}>
-                        <div className="text-xs text-gray-600 mb-1">Doc Compliance</div>
-                        <div className={`text-xl font-bold text-center ${getScoreColor(perf.docComplianceRate)}`}>{perf.docComplianceRate}%</div>
+                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.docComplianceRate)}` }}>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <FileText className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.docComplianceRate) }} />
+                          <span className="text-xs text-gray-500 font-medium">Doc Compliance</span>
+                        </div>
+                        <p className={`text-xl font-bold text-center ${getScoreColor(perf.docComplianceRate)}`}>{perf.docComplianceRate}%</p>
                       </div>
                     </div>
 

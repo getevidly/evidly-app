@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
@@ -23,6 +23,7 @@ export function Settings() {
     { id: 'profile', name: 'Profile', icon: User, roles: ['management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'organization', name: 'Organization', icon: Building2, roles: ['management'] as UserRole[] },
     { id: 'notifications', name: 'Notifications', icon: Bell, roles: ['management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'integrations', name: 'Integrations', icon: Plug, roles: ['management'] as UserRole[] },
     { id: 'security', name: 'Security', icon: Lock, roles: ['management', 'facilities'] as UserRole[] },
     { id: 'billing', name: 'Billing', icon: CreditCard, roles: ['management'] as UserRole[] },
   ];
@@ -137,11 +138,37 @@ export function Settings() {
           {activeTab === 'organization' && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">Organization Settings</h3>
+
+              {/* Logo Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
+                <div className="flex items-center gap-4">
+                  <div
+                    className="flex items-center justify-center"
+                    style={{ width: '80px', height: '80px', border: '2px dashed #d1d5db', borderRadius: '12px', backgroundColor: '#f9fafb' }}
+                  >
+                    <div className="text-center">
+                      <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                      <span style={{ fontSize: '10px', color: '#9ca3af' }}>Upload</span>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => alert('Logo upload coming soon. (Demo mode)')}
+                      className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
+                    >
+                      Choose File
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, or SVG. Max 2MB. Recommended 200x200px.</p>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Organization Name</label>
                 <input
                   type="text"
-                  placeholder="Your Organization"
+                  defaultValue="Pacific Coast Dining"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
@@ -154,6 +181,36 @@ export function Settings() {
                   <option>Retail Food</option>
                 </select>
               </div>
+
+              {/* Locations */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Locations</label>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Downtown Kitchen', address: '123 Main St, San Francisco, CA 94105', status: 'Active' },
+                    { name: 'Airport Cafe', address: '450 Terminal Blvd, SFO, CA 94128', status: 'Active' },
+                    { name: 'University Dining', address: '800 Campus Dr, San Francisco, CA 94132', status: 'Active' },
+                  ].map((loc) => (
+                    <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{loc.name}</div>
+                          <div className="text-xs text-gray-500">{loc.address}</div>
+                        </div>
+                      </div>
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{loc.status}</span>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => alert('Add location coming soon. (Demo mode)')}
+                  className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
+                >
+                  + Add Location
+                </button>
+              </div>
+
               <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Save Changes
               </button>
@@ -192,6 +249,31 @@ export function Settings() {
                         <p className="text-xs text-gray-500">Receive urgent alerts via text message</p>
                       </div>
                     </label>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 mb-4">Alert Types</h4>
+                  <div className="space-y-3">
+                    {[
+                      { label: 'Document Expiration Alerts', desc: 'Alerts when vendor or employee documents are expiring', checked: true },
+                      { label: 'Temperature Violations', desc: 'Alerts when temperature readings exceed safe limits', checked: true },
+                      { label: 'HACCP CCP Failures', desc: 'Critical alerts for food safety violations', checked: true },
+                      { label: 'Checklist Reminders', desc: 'Reminders for incomplete daily checklists', checked: true },
+                      { label: 'Compliance Score Changes', desc: 'Weekly compliance score updates', checked: false },
+                    ].map((item) => (
+                      <label key={item.label} className="flex items-start space-x-3">
+                        <input
+                          type="checkbox"
+                          defaultChecked={item.checked}
+                          className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-gray-900">{item.label}</span>
+                          <p className="text-xs text-gray-500">{item.desc}</p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
@@ -299,6 +381,104 @@ export function Settings() {
             </div>
           )}
 
+          {activeTab === 'integrations' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900">Integration Settings</h3>
+              <p className="text-gray-600">Connect EvidLY with your existing tools and services.</p>
+
+              <div className="space-y-4">
+                {/* Restaurant365 */}
+                <div className="border border-gray-200 rounded-lg p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                        <span className="text-orange-600 font-bold text-lg">R365</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Restaurant365</h4>
+                        <p className="text-sm text-gray-500">Sync inventory, recipes, and financial data</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => alert('Restaurant365 integration coming soon. Contact support for early access.')}
+                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                    >
+                      Connect
+                    </button>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span>Auto-sync vendor data and purchase orders</span>
+                  </div>
+                </div>
+
+                {/* Cintas */}
+                <div className="border border-gray-200 rounded-lg p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <span className="text-blue-700 font-bold text-sm">CINTAS</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Cintas</h4>
+                        <p className="text-sm text-gray-500">Fire protection, uniforms, and facility services</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => alert('Cintas integration coming soon. Contact support for early access.')}
+                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                    >
+                      Connect
+                    </button>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span>Auto-import service records and certificates</span>
+                  </div>
+                </div>
+
+                {/* Ecosure / Ecolab */}
+                <div className="border border-gray-200 rounded-lg p-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                        <span className="text-green-700 font-bold text-sm">ECO</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Ecolab / EcoSure</h4>
+                        <p className="text-sm text-gray-500">Food safety audits and sanitation services</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => alert('Ecolab integration coming soon. Contact support for early access.')}
+                      className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
+                    >
+                      Connect
+                    </button>
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span>Import audit scores and corrective actions</span>
+                  </div>
+                </div>
+
+                {/* API Access */}
+                <div className="border border-dashed border-gray-300 rounded-lg p-5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Plug className="h-6 w-6 text-gray-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">API Access</h4>
+                      <p className="text-sm text-gray-500">Build custom integrations with the EvidLY API</p>
+                      <p className="text-xs text-gray-400 mt-1">Available on Enterprise plan</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'security' && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">Security Settings</h3>
@@ -335,7 +515,27 @@ export function Settings() {
               <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
                 <h4 className="text-lg font-semibold mb-2">Professional Plan</h4>
                 <div className="text-3xl font-bold mb-1">$99<span className="text-lg font-normal">/month</span></div>
-                <p className="text-gray-200 text-sm">Unlimited users • All features</p>
+                <p className="text-gray-200 text-sm">Unlimited users • All features • 3 locations</p>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-3">Plan Features</h4>
+                <div className="space-y-2">
+                  {[
+                    'Unlimited team members',
+                    'Up to 10 locations',
+                    'AI Compliance Advisor',
+                    'HACCP plan management',
+                    'Vendor compliance tracking',
+                    'Custom reports & analytics',
+                    'Email & SMS notifications',
+                    'Priority support',
+                  ].map((feature) => (
+                    <div key={feature} className="flex items-center gap-2 text-sm text-gray-700">
+                      <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3">Payment Method</h4>
