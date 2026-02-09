@@ -321,14 +321,14 @@ export function Team() {
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Users className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Team Members</span>
             </div>
             <div className="text-3xl font-bold text-[#1e4d6b] text-center">{members.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">Certs Current</span>
             </div>
@@ -340,7 +340,7 @@ export function Team() {
             </div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Award className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm text-gray-500 font-medium">Total Certs</span>
             </div>
@@ -349,7 +349,7 @@ export function Team() {
             </div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
             </div>

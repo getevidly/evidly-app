@@ -75,7 +75,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
               cursor: 'pointer',
             }}
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Icon className="h-4 w-4" style={{ color: stat.color }} />
               <span className="text-sm text-gray-500 font-medium">{stat.label}</span>
             </div>

@@ -377,14 +377,14 @@ export function HACCP() {
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Active Plans</span>
             </div>
             <p className="text-3xl font-bold text-[#1e4d6b] text-center">{HACCP_PLANS.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444'}` }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Activity className="h-4 w-4" style={{ color: overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444' }} />
               <span className="text-sm text-gray-500 font-medium">Overall Compliance</span>
             </div>
@@ -393,14 +393,14 @@ export function HACCP() {
             </p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">CCPs in Compliance</span>
             </div>
             <p className="text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
               <span className="text-sm text-gray-500 font-medium">Open Actions</span>
             </div>
@@ -475,18 +475,18 @@ export function HACCP() {
 
                   <div className="grid grid-cols-3 gap-3 mb-3">
                     <div>
-                      <p className="text-xs text-gray-500">CCPs</p>
+                      <p className="text-xs text-gray-500 text-center">CCPs</p>
                       <p className="text-lg font-bold text-[#1e4d6b] text-center">{plan.ccps.length}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Compliance</p>
+                      <p className="text-xs text-gray-500 text-center">Compliance</p>
                       <p className={`text-lg font-bold text-center ${compliance === 100 ? 'text-green-600' : compliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
                         {compliance}%
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500">Last Check</p>
-                      <p className="text-sm font-medium text-gray-700">{getRelativeTime(new Date(lastMonitored).toISOString())}</p>
+                      <p className="text-xs text-gray-500 text-center">Last Check</p>
+                      <p className="text-sm font-medium text-gray-700 text-center">{getRelativeTime(new Date(lastMonitored).toISOString())}</p>
                     </div>
                   </div>
 
@@ -551,11 +551,11 @@ export function HACCP() {
                   <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
                   <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
-                <div className="text-right">
+                <div className="text-center">
                   <p className={`text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
                     {getPlanCompliance(selectedPlan)}%
                   </p>
-                  <p className="text-xs text-gray-500">Compliance</p>
+                  <p className="text-xs text-gray-500 text-center">Compliance</p>
                 </div>
               </div>
             </div>

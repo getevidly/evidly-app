@@ -270,28 +270,28 @@ export function Documents() {
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <FileText className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Total Documents</span>
             </div>
             <div className="text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">Current</span>
             </div>
             <div className="text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm text-gray-500 font-medium">Expiring Soon</span>
             </div>
             <div className="text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #ef4444' }}>
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
               <span className="text-sm text-gray-500 font-medium">Expired</span>
             </div>

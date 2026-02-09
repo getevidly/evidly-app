@@ -452,21 +452,21 @@ export function Vendors() {
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center justify-center gap-2 mb-2">
                         <Shield className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.reliabilityScore) }} />
                         <span className="text-sm text-gray-500 font-medium">Reliability Score</span>
                       </div>
                       <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
                     </div>
                     <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.onTimeRate)}` }}>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center justify-center gap-2 mb-2">
                         <Clock className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.onTimeRate) }} />
                         <span className="text-sm text-gray-500 font-medium">On-Time Rate</span>
                       </div>
                       <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</p>
                     </div>
                     <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.docComplianceRate)}` }}>
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center justify-center gap-2 mb-2">
                         <FileText className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.docComplianceRate) }} />
                         <span className="text-sm text-gray-500 font-medium">Doc Compliance</span>
                       </div>
@@ -1060,14 +1060,14 @@ export function Vendors() {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.onTimeRate)}` }}>
-                        <div className="flex items-center gap-1.5 mb-1">
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Clock className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.onTimeRate) }} />
                           <span className="text-xs text-gray-500 font-medium">On-time Service</span>
                         </div>
                         <p className={`text-xl font-bold text-center ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</p>
                       </div>
                       <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.docComplianceRate)}` }}>
-                        <div className="flex items-center gap-1.5 mb-1">
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
                           <FileText className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.docComplianceRate) }} />
                           <span className="text-xs text-gray-500 font-medium">Doc Compliance</span>
                         </div>

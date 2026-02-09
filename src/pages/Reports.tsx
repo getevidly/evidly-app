@@ -532,7 +532,7 @@ export function Reports() {
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #1e4d6b' }}>
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
                     <Activity className="h-3.5 w-3.5 text-[#1e4d6b]" />
                     <span className="text-xs text-gray-500 font-medium">Operational ({Math.round(getWeights().operational * 100)}%)</span>
                   </div>
@@ -543,7 +543,7 @@ export function Reports() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #16a34a' }}>
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
                     <Thermometer className="h-3.5 w-3.5 text-green-600" />
                     <span className="text-xs text-gray-500 font-medium">Equipment ({Math.round(getWeights().equipment * 100)}%)</span>
                   </div>
@@ -554,7 +554,7 @@ export function Reports() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #d4af37' }}>
-                  <div className="flex items-center gap-1.5 mb-1">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
                     <FileText className="h-3.5 w-3.5 text-[#d4af37]" />
                     <span className="text-xs text-gray-500 font-medium">Documentation ({Math.round(getWeights().documentation * 100)}%)</span>
                   </div>
