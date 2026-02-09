@@ -368,6 +368,33 @@ export function Dashboard() {
             ))}
           </div>
 
+          {/* Location Filter Dropdown — shown on every tab */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+            <select
+              value={selectedLocation}
+              onChange={(e) => {
+                const val = e.target.value;
+                navigate(val === 'all' ? '/dashboard' : `/dashboard?location=${val}`);
+              }}
+              style={{
+                padding: '8px 32px 8px 12px',
+                fontSize: '14px',
+                fontWeight: 500,
+                color: '#1e4d6b',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                backgroundColor: 'white',
+                cursor: 'pointer',
+                appearance: 'auto',
+              }}
+            >
+              <option value="all">All Locations</option>
+              {locations.map((loc) => (
+                <option key={loc.id} value={loc.urlId}>{loc.name}</option>
+              ))}
+            </select>
+          </div>
+
           {/* Overview — All Locations */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
