@@ -26,8 +26,8 @@ function HorizontalBar({ label, value, max, color, suffix }: { label: string; va
   return (
     <div style={{ marginBottom: '12px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-        <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>{label}</span>
-        <span style={{ fontSize: '13px', color: '#6b7280', fontWeight: 600 }}>{value}{suffix || ''}</span>
+        <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>{label}</span>
+        <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: 600 }}>{value}{suffix || ''}</span>
       </div>
       <div style={{ height: '10px', backgroundColor: '#e5e7eb', borderRadius: '5px', overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${pct}%`, backgroundColor: color, borderRadius: '5px', transition: 'width 0.8s ease' }} />
@@ -94,15 +94,21 @@ export function Leaderboard() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
-              <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
-            </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">
-              {locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0}
-            </div>
-          </div>
+          {(() => {
+            const avgScore = locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0;
+            const avgColor = avgScore >= 80 ? '#22c55e' : avgScore >= 60 ? '#d4af37' : '#dc2626';
+            return (
+              <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${avgColor}` }}>
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <TrendingUp className="h-4 w-4" style={{ color: avgColor }} />
+                  <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
+                </div>
+                <div className="text-3xl font-bold text-center" style={{ color: avgColor }}>
+                  {avgScore}
+                </div>
+              </div>
+            );
+          })()}
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Trophy className="h-4 w-4 text-[#d4af37]" />
@@ -122,7 +128,7 @@ export function Leaderboard() {
         {/* Rankings Table */}
         <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
           <div style={{ padding: '16px 24px', borderBottom: '1px solid #e5e7eb' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>Rankings</h3>
+            <h3 style={{ fontSize: '20px', fontWeight: 600, color: '#111827' }}>Rankings</h3>
           </div>
           <div>
             {locations.length === 0 ? (
@@ -144,14 +150,14 @@ export function Leaderboard() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 500, color: '#111827' }}>{location.location_name}</div>
-                      <div style={{ fontSize: '13px', color: '#6b7280' }}>
-                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_score}% compliance
+                      <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_score} compliance
                       </div>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '24px', fontWeight: 700, color: '#d4af37' }}>{location.total_points.toLocaleString()}</div>
-                    <div style={{ fontSize: '13px', color: '#6b7280' }}>points</div>
+                    <div style={{ fontSize: '14px', color: '#6b7280' }}>points</div>
                   </div>
                 </div>
               ))
@@ -171,14 +177,14 @@ export function Leaderboard() {
                   label={loc.location_name}
                   value={loc.compliance_score}
                   max={100}
-                  color={loc.compliance_score >= 90 ? '#1e4d6b' : loc.compliance_score >= 70 ? '#d4af37' : '#9ca3af'}
+                  color={loc.compliance_score >= 80 ? '#22c55e' : loc.compliance_score >= 60 ? '#d4af37' : '#dc2626'}
                   suffix="%"
                 />
               ))}
               <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '11px', color: '#6b7280' }}>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#1e4d6b', marginRight: '4px' }} />90+</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#d4af37', marginRight: '4px' }} />70-89</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#9ca3af', marginRight: '4px' }} />&lt;70</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#22c55e', marginRight: '4px' }} />80+</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#d4af37', marginRight: '4px' }} />60-79</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#dc2626', marginRight: '4px' }} />&lt;60</span>
               </div>
             </div>
 
@@ -200,7 +206,7 @@ export function Leaderboard() {
 
         {/* Achievement Badges */}
         <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '4px' }}>Achievement Badges</h3>
+          <h3 style={{ fontSize: '20px', fontWeight: 600, color: '#111827', marginBottom: '4px' }}>Achievement Badges</h3>
           <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '24px' }}>
             Earn badges by maintaining excellent compliance across your locations
           </p>

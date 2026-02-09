@@ -65,9 +65,9 @@ export function Dashboard() {
   const filteredLocationOptions = locations.filter(loc => accessibleUrlIds.includes(loc.urlId));
 
   const getScoreHexColor = (score: number) => {
-    if (score >= 90) return '#22c55e';
-    if (score >= 70) return '#eab308';
-    return '#ef4444';
+    if (score >= 80) return '#22c55e';
+    if (score >= 60) return '#d4af37';
+    return '#dc2626';
   };
 
   const historicalData = {
@@ -368,7 +368,7 @@ export function Dashboard() {
                   borderBottom: activeTab === tab.id ? '2px solid #1e4d6b' : '2px solid transparent',
                   color: activeTab === tab.id ? '#1e4d6b' : '#64748b',
                   fontWeight: activeTab === tab.id ? '600' : '400',
-                  fontSize: '14px',
+                  fontSize: '15px',
                   whiteSpace: 'nowrap'
                 }}>
                   {tab.label}
@@ -409,7 +409,7 @@ export function Dashboard() {
           {/* Overview — All Locations */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
-              <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Overview</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600' }}>Overview</h3>
               <OnboardingChecklist />
 
               <h3 className="text-md font-semibold text-gray-900 mb-3">Locations</h3>
@@ -417,13 +417,13 @@ export function Dashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>Location</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Overall</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Operational</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Equipment</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Documentation</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Trend</th>
-                      <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>Status</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>Location</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Overall</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Operational</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Equipment</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Documentation</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Trend</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>Status</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -475,7 +475,7 @@ export function Dashboard() {
           {/* Overview — Specific Location */}
           {activeTab === 'overview' && selectedLocation !== 'all' && (
             <div className="mt-6">
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Overview</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Overview</h3>
               <div className="flex items-center space-x-2 mb-4">
                 <Activity className="h-5 w-5" style={{ color: '#1e4d6b' }} />
                 <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
@@ -523,7 +523,7 @@ export function Dashboard() {
           {/* Today's Progress — dynamically computed, All = sum of locations */}
           {activeTab === 'progress' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Today's Progress</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Today's Progress</h3>
               <div onClick={() => navigate('/temp-logs')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} className="hover:bg-gray-50 transition-colors">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600', color: '#1e293b' }}>Temperature Checks</span>
@@ -568,7 +568,7 @@ export function Dashboard() {
 
             return (
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
+                <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                   {[
                     { key: null, label: 'All', count: allActionItems.length },
@@ -606,8 +606,8 @@ export function Dashboard() {
                     <div key={i} onClick={() => { navigate(item.link) }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', borderRadius: '8px' }} className="hover:bg-gray-50 transition-colors">
                       <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: ps.dot, flexShrink: 0 }}></div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: '600', fontSize: '14px', color: '#1e293b' }}>{item.title}</div>
-                        <div style={{ fontSize: '13px', color: '#64748b' }}>{item.desc}</div>
+                        <div style={{ fontWeight: '600', fontSize: '15px', color: '#1e293b' }}>{item.title}</div>
+                        <div style={{ fontSize: '14px', color: '#64748b' }}>{item.desc}</div>
                       </div>
                       <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0', marginRight: '4px' }}>{item.pillar}</span>
                       <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: ps.bg, color: ps.dot, border: `1px solid ${ps.border}` }}>{ps.label}</span>
@@ -635,7 +635,7 @@ export function Dashboard() {
             const formatDate = (d: string) => { const dt = new Date(d); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
             return (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Vendor Services</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Vendor Services</h3>
               <div className="overflow-x-auto">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
@@ -669,7 +669,7 @@ export function Dashboard() {
           {/* Score History */}
           {activeTab === 'history' && (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Score History</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Score History</h3>
               <p style={{ color: '#64748b', marginBottom: '16px', fontSize: '14px' }}>12-week compliance score trend</p>
               <div style={{ height: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
@@ -722,7 +722,7 @@ export function Dashboard() {
               : metricsPerLocation[selectedLocation] || { hoursSaved: 86, moneySaved: 3010, logsCompleted: 312, docsStored: 47 };
             return (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Key Metrics</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Key Metrics</h3>
               <TimeSavedCounter
                 hoursSaved={m.hoursSaved}
                 moneySaved={m.moneySaved}
@@ -743,7 +743,7 @@ export function Dashboard() {
             const qrLocations = selectedLocation === 'all' ? allQrLocations : allQrLocations.filter(l => l.id === selectedLocation);
             return (
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>QR Compliance Passport</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>QR Compliance Passport</h3>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                 {qrLocations.map((loc, i) => (
                   <div key={i} style={{ flex: '1 1 280px', background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>

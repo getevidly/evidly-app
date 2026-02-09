@@ -103,7 +103,7 @@ export default function Passport() {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-7xl font-bold text-[#1e4d6b]">{locationData.overall}%</div>
+                <div className="text-7xl font-bold" style={{ color: locationData.overall >= 80 ? '#22c55e' : locationData.overall >= 60 ? '#d4af37' : '#dc2626' }}>{locationData.overall}</div>
                 <div className="text-lg text-gray-600 font-medium">Compliant</div>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Operational</span>
-                <span className="font-bold text-[#1e4d6b]">{locationData.operational}%</span>
+                <span className="font-bold" style={{ color: locationData.operational >= 80 ? '#22c55e' : locationData.operational >= 60 ? '#d4af37' : '#dc2626' }}>{locationData.operational}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -131,7 +131,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Equipment</span>
-                <span className="font-bold text-[#1e4d6b]">{locationData.equipment}%</span>
+                <span className="font-bold" style={{ color: locationData.equipment >= 80 ? '#22c55e' : locationData.equipment >= 60 ? '#d4af37' : '#dc2626' }}>{locationData.equipment}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -144,7 +144,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Documentation</span>
-                <span className="font-bold text-[#1e4d6b]">{locationData.documentation}%</span>
+                <span className="font-bold" style={{ color: locationData.documentation >= 80 ? '#22c55e' : locationData.documentation >= 60 ? '#d4af37' : '#dc2626' }}>{locationData.documentation}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div

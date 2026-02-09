@@ -92,7 +92,7 @@ export function Sidebar() {
     if (sectionItems.length === 0) return null;
     return (
       <div key={sectionKey}>
-        <div className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-4 pb-1">
+        <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-4 pb-1">
           {sectionLabels[sectionKey]}
         </div>
         <div className="space-y-0.5">
@@ -128,7 +128,7 @@ export function Sidebar() {
         {/* Pinned bottom: System */}
         {systemItems.length > 0 && (
           <div className="px-3 pb-4 pt-2 border-t border-white/10">
-            <div className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-2 pb-1">
+            <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-2 pb-1">
               {sectionLabels.system}
             </div>
             <div className="space-y-0.5">

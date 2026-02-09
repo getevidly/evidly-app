@@ -24,10 +24,8 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
 
   // Color transitions as score climbs
   const getAnimatedColor = (currentScore: number) => {
-    if (currentScore < 60) return '#ef4444';
-    if (currentScore < 70) return '#f97316';
-    if (currentScore < 80) return '#eab308';
-    if (currentScore < 90) return '#84cc16';
+    if (currentScore < 60) return '#dc2626';
+    if (currentScore < 80) return '#d4af37';
     return '#22c55e';
   };
 
@@ -89,7 +87,7 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
           >
             {animatedScore}
           </div>
-          <div className="text-sm text-gray-500 mt-1">Overall</div>
+          <div className="text-base text-gray-500 mt-1">Overall</div>
         </div>
       </div>
 

@@ -35,7 +35,7 @@ function StatusBadge({ status }: { status: string }) {
       display: 'inline-block',
       padding: '2px 10px',
       borderRadius: '12px',
-      fontSize: '12px',
+      fontSize: '13px',
       fontWeight: '600',
       backgroundColor: s.bg,
       color: s.text,
@@ -58,7 +58,7 @@ function PriorityBadge({ priority }: { priority: string }) {
       display: 'inline-block',
       padding: '2px 10px',
       borderRadius: '12px',
-      fontSize: '12px',
+      fontSize: '13px',
       fontWeight: '600',
       backgroundColor: s.bg,
       color: s.text,
@@ -75,16 +75,15 @@ function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: stri
       <div style={{ flex: 1, height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${value}%`, backgroundColor: color, borderRadius: '4px', transition: 'width 0.5s ease' }} />
       </div>
-      <span style={{ fontSize: '13px', fontWeight: '600', color: '#374151', minWidth: '36px', textAlign: 'right' }}>{value}%</span>
+      <span style={{ fontSize: '14px', fontWeight: '600', color: '#374151', minWidth: '36px', textAlign: 'right' }}>{value}%</span>
     </div>
   );
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 95) return '#22c55e';
-  if (score >= 90) return '#1e4d6b';
-  if (score >= 80) return '#d4af37';
-  return '#ef4444';
+  if (score >= 80) return '#22c55e';
+  if (score >= 60) return '#d4af37';
+  return '#dc2626';
 }
 
 export function Reports() {
@@ -525,50 +524,59 @@ export function Reports() {
                 Overall Compliance Score{selectedLocName ? ` — ${selectedLocName}` : ''}
               </h3>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-5xl font-bold text-center" style={{ color: '#1e4d6b' }}>
-                  {selectedLocation !== 'all' && locationScores[selectedLocation]
+                {(() => {
+                  const overallScore = selectedLocation !== 'all' && locationScores[selectedLocation]
                     ? locationScores[selectedLocation].overall
-                    : complianceScores.overall}%
-                </div>
+                    : complianceScores.overall;
+                  const overallColor = getScoreColor(overallScore);
+                  return (
+                    <div className="text-5xl font-bold text-center" style={{ color: overallColor }}>
+                      {overallScore}
+                    </div>
+                  );
+                })()}
                 <div className="flex items-center text-green-600">
                   <TrendingUp className="h-5 w-5 mr-1" />
                   <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% from last month</span>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #1e4d6b' }}>
-                  <div className="flex items-center justify-center gap-1.5 mb-1">
-                    <Activity className="h-3.5 w-3.5 text-[#1e4d6b]" />
-                    <span className="text-xs text-gray-500 font-medium">Operational ({Math.round(getWeights().operational * 100)}%)</span>
-                  </div>
-                  <p className="text-xl font-bold text-center" style={{ color: '#1e4d6b' }}>
-                    {selectedLocation !== 'all' && locationScores[selectedLocation]
-                      ? locationScores[selectedLocation].operational
-                      : complianceScores.operational}
-                  </p>
-                </div>
-                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #16a34a' }}>
-                  <div className="flex items-center justify-center gap-1.5 mb-1">
-                    <Thermometer className="h-3.5 w-3.5 text-green-600" />
-                    <span className="text-xs text-gray-500 font-medium">Equipment ({Math.round(getWeights().equipment * 100)}%)</span>
-                  </div>
-                  <p className="text-xl font-bold text-center text-green-700">
-                    {selectedLocation !== 'all' && locationScores[selectedLocation]
-                      ? locationScores[selectedLocation].equipment
-                      : complianceScores.equipment}
-                  </p>
-                </div>
-                <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: '4px solid #d4af37' }}>
-                  <div className="flex items-center justify-center gap-1.5 mb-1">
-                    <FileText className="h-3.5 w-3.5 text-[#d4af37]" />
-                    <span className="text-xs text-gray-500 font-medium">Documentation ({Math.round(getWeights().documentation * 100)}%)</span>
-                  </div>
-                  <p className="text-xl font-bold text-center" style={{ color: '#92400e' }}>
-                    {selectedLocation !== 'all' && locationScores[selectedLocation]
-                      ? locationScores[selectedLocation].documentation
-                      : complianceScores.documentation}
-                  </p>
-                </div>
+                {(() => {
+                  const opScore = selectedLocation !== 'all' && locationScores[selectedLocation]
+                    ? locationScores[selectedLocation].operational : complianceScores.operational;
+                  const eqScore = selectedLocation !== 'all' && locationScores[selectedLocation]
+                    ? locationScores[selectedLocation].equipment : complianceScores.equipment;
+                  const docScore = selectedLocation !== 'all' && locationScores[selectedLocation]
+                    ? locationScores[selectedLocation].documentation : complianceScores.documentation;
+                  const opColor = getScoreColor(opScore);
+                  const eqColor = getScoreColor(eqScore);
+                  const docColor = getScoreColor(docScore);
+                  return (
+                    <>
+                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                          <Activity className="h-3.5 w-3.5" style={{ color: opColor }} />
+                          <span className="text-sm text-gray-500 font-medium">Operational ({Math.round(getWeights().operational * 100)}%)</span>
+                        </div>
+                        <p className="text-xl font-bold text-center" style={{ color: opColor }}>{opScore}</p>
+                      </div>
+                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                          <Thermometer className="h-3.5 w-3.5" style={{ color: eqColor }} />
+                          <span className="text-sm text-gray-500 font-medium">Equipment ({Math.round(getWeights().equipment * 100)}%)</span>
+                        </div>
+                        <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
+                      </div>
+                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${docColor}` }}>
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                          <FileText className="h-3.5 w-3.5" style={{ color: docColor }} />
+                          <span className="text-sm text-gray-500 font-medium">Documentation ({Math.round(getWeights().documentation * 100)}%)</span>
+                        </div>
+                        <p className="text-xl font-bold text-center" style={{ color: docColor }}>{docScore}</p>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={scoreData}>
@@ -601,10 +609,10 @@ export function Reports() {
                     {locationComparison.map((loc, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loc.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{loc.score}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#1e4d6b' }}>{loc.operational}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-medium">{loc.equipment}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#92400e' }}>{loc.documentation}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: getScoreColor(loc.score) }}>{loc.score}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.operational) }}>{loc.operational}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.equipment) }}>{loc.equipment}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.documentation) }}>{loc.documentation}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <StatusBadge status={loc.status} />
                         </td>

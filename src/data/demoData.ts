@@ -56,10 +56,9 @@ export const complianceScoresThirtyDaysAgo = computeCompanyScores(locationScores
 
 export const getGrade = (score: number) => {
   if (score >= 90) return { label: 'Inspection Ready', color: 'green', hex: '#22c55e' };
-  if (score >= 80) return { label: 'Good Standing', color: 'amber', hex: '#eab308' };
-  if (score >= 70) return { label: 'Needs Attention', color: 'amber', hex: '#eab308' };
-  if (score >= 60) return { label: 'At Risk', color: 'red', hex: '#ef4444' };
-  return { label: 'Critical', color: 'red', hex: '#ef4444' };
+  if (score >= 80) return { label: 'Good Standing', color: 'green', hex: '#22c55e' };
+  if (score >= 60) return { label: 'Needs Attention', color: 'amber', hex: '#d4af37' };
+  return { label: 'Critical', color: 'red', hex: '#dc2626' };
 };
 
 export const getTrend = (current: number, thirtyDaysAgo: number) => {

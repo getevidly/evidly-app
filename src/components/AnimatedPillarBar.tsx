@@ -12,7 +12,7 @@ interface AnimatedPillarBarProps {
 
 export function AnimatedPillarBar({ name, score, tooltip, trend, delay = 0, onClick, isExpanded }: AnimatedPillarBarProps) {
   const animatedScore = useCountUp(score, 1500 + delay);
-  const color = animatedScore >= 90 ? '#22c55e' : animatedScore >= 70 ? '#eab308' : '#ef4444';
+  const color = animatedScore >= 80 ? '#22c55e' : animatedScore >= 60 ? '#d4af37' : '#dc2626';
 
   return (
     <div
@@ -22,9 +22,10 @@ export function AnimatedPillarBar({ name, score, tooltip, trend, delay = 0, onCl
       <div
         onClick={onClick}
         className="bg-white border border-gray-200 rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-md"
+        style={{ borderLeft: `4px solid ${color}` }}
       >
         <div className="text-center">
-          <div className="font-semibold text-sm text-gray-700 mb-2">{name}</div>
+          <div className="font-semibold text-base text-gray-700 mb-2">{name}</div>
           <div
             className="text-4xl font-bold transition-colors duration-300"
             style={{ color }}
@@ -46,7 +47,7 @@ export function AnimatedPillarBar({ name, score, tooltip, trend, delay = 0, onCl
               }}
             />
           </div>
-          <div className="text-xs text-gray-500 mt-2">{tooltip}</div>
+          <div className="text-sm text-gray-500 mt-2">{tooltip}</div>
         </div>
       </div>
     </div>
