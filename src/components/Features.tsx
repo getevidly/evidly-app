@@ -72,6 +72,18 @@ export default function Features() {
             </div>
           ))}
         </div>
+
+        {/* Location Detail Screenshot */}
+        <div className="mt-16 max-w-[800px] mx-auto">
+          <p className="text-center text-[1.1rem] font-semibold text-[var(--color-blue)] mb-6">
+            Drill into any location for a detailed compliance breakdown
+          </p>
+          <img
+            src="/dashboard-location.png"
+            alt="EvidLY Downtown Kitchen detail view — 92 compliance score with operational, equipment, and documentation breakdown"
+            className="w-full rounded-2xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-gray-200/60"
+          />
+        </div>
       </div>
     </section>
   );

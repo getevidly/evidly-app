@@ -20,13 +20,6 @@ export default function DailyOperations() {
     }
   ];
 
-  const checklistItems = [
-    { completed: true, title: 'Walk-in Cooler Temp Check', detail: 'Logged: 38°F ✓ In range', time: '6:42 AM' },
-    { completed: true, title: 'Freezer Temp Check', detail: 'Logged: -4°F ✓ In range', time: '6:43 AM' },
-    { completed: true, title: 'Opening Checklist', detail: '12/12 items completed', time: '6:58 AM' },
-    { completed: false, title: 'Lunch Temp Check', detail: 'Due by 11:00 AM', time: null }
-  ];
-
   return (
     <section id="how-it-works" className="py-[100px] px-6 bg-white">
       <div className="max-w-[1200px] mx-auto">
@@ -53,31 +46,12 @@ export default function DailyOperations() {
               ))}
             </ul>
           </div>
-          <div className="bg-gradient-to-br from-[var(--color-blue)] to-[var(--color-blue-dark)] rounded-[24px] p-10 text-white">
-            <h3 className="font-['Outfit'] text-[1.25rem] mb-6 text-[var(--color-gold)]">📋 Today's Tasks</h3>
-            {checklistItems.map((item, index) => (
-              <div
-                key={index}
-                className={`flex items-center gap-4 p-4 rounded-xl mb-3 ${
-                  item.completed ? 'bg-[rgba(212,175,55,0.15)]' : 'bg-[rgba(255,255,255,0.08)]'
-                }`}
-              >
-                <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                  item.completed
-                    ? 'bg-[var(--color-gold)] border-[var(--color-gold)]'
-                    : 'border-[rgba(255,255,255,0.3)]'
-                }`}>
-                  {item.completed && <Check className="w-4 h-4 text-[var(--color-blue)]" />}
-                </div>
-                <div className="flex-1">
-                  <strong className="block text-[0.95rem]">{item.title}</strong>
-                  <span className="text-[0.8rem] text-[rgba(255,255,255,0.6)]">{item.detail}</span>
-                </div>
-                {item.time && (
-                  <div className="text-[0.8rem] text-[var(--color-gold)] font-semibold">{item.time}</div>
-                )}
-              </div>
-            ))}
+          <div>
+            <img
+              src="/temp-logs.png"
+              alt="EvidLY Temperature Logs — real-time cooler, freezer, and hot hold readings with pass/fail status"
+              className="w-full rounded-[24px] shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-gray-200/60"
+            />
           </div>
         </div>
       </div>
