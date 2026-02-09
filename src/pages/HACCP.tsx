@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -72,7 +72,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'cooking',
     name: 'Cooking Process',
     description: 'Cooking of meat, poultry, and seafood to safe internal temperatures',
-    lastReviewed: '2025-01-15',
+    lastReviewed: '2026-02-15',
     status: 'active',
     ccps: [
       {
@@ -111,7 +111,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'cold-storage',
     name: 'Cold Storage Management',
     description: 'Refrigeration and freezer storage temperature control',
-    lastReviewed: '2025-01-15',
+    lastReviewed: '2026-02-15',
     status: 'active',
     ccps: [
       {
@@ -129,7 +129,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Mike Johnson',
         source: 'temp_log',
-        equipmentName: 'Walk-in Cooler #1',
+        equipmentName: 'Walk-in Cooler',
       },
       {
         id: 'cold-2',
@@ -154,7 +154,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'hot-holding',
     name: 'Hot Holding',
     description: 'Maintaining hot foods at safe temperatures during service',
-    lastReviewed: '2025-01-10',
+    lastReviewed: '2026-02-10',
     status: 'needs_review',
     ccps: [
       {
@@ -180,7 +180,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'receiving',
     name: 'Receiving Inspection',
     description: 'Verifying food safety at point of delivery',
-    lastReviewed: '2025-01-15',
+    lastReviewed: '2026-02-15',
     status: 'active',
     ccps: [
       {
@@ -205,7 +205,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'cooling',
     name: 'Cooling Process',
     description: 'Two-stage cooling of cooked foods',
-    lastReviewed: '2025-01-12',
+    lastReviewed: '2026-02-12',
     status: 'active',
     ccps: [
       {
@@ -230,7 +230,7 @@ const HACCP_PLANS: HACCPPlan[] = [
     id: 'cross-contamination',
     name: 'Cross-Contamination Prevention',
     description: 'Preventing cross-contamination between raw and ready-to-eat foods',
-    lastReviewed: '2025-01-15',
+    lastReviewed: '2026-02-15',
     status: 'active',
     ccps: [
       {
@@ -264,7 +264,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     actionTaken: 'Food reheated to 165°F within 30 minutes. Hot hold cabinet thermostat adjusted. Maintenance notified for inspection.',
     actionBy: 'Sarah Chen',
     verifiedBy: null,
-    status: 'open',
+    status: 'in_progress',
     createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
     resolvedAt: null,
     source: 'Temperature Log — Hot Hold Cabinet',
@@ -274,7 +274,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     planName: 'Cold Storage Management',
     ccpNumber: 'CCP-3',
     ccpHazard: 'Bacterial growth in refrigerated foods',
-    deviation: 'Walk-in Cooler #1 reached 44°F during morning check — above critical limit of 41°F',
+    deviation: 'Walk-in Cooler reached 44°F during morning check — above critical limit of 41°F',
     criticalLimit: '32–41°F',
     recordedValue: '44°F',
     actionTaken: 'Thermostat adjusted to lower setting. Door seal inspected — found slight gap, gasket replaced. Temperature returned to 38°F within 45 minutes. All food items inspected and deemed safe (exposure <1 hr).',
@@ -283,7 +283,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     status: 'resolved',
     createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
     resolvedAt: new Date(now.getTime() - 23 * 60 * 60 * 1000).toISOString(),
-    source: 'Temperature Log — Walk-in Cooler #1',
+    source: 'Temperature Log — Walk-in Cooler',
   },
   {
     id: 'ca-3',
@@ -324,6 +324,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
 export function HACCP() {
   const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState('all');
 
   // Aggregate stats
   const allCCPs = HACCP_PLANS.flatMap((p) => p.ccps);
@@ -351,11 +352,26 @@ export function HACCP() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Roll-up view — data pulled from Temperature Logs and Checklists
-          </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
+            <p className="text-sm text-gray-600 mt-1">
+              Roll-up view — data pulled from Temperature Logs and Checklists
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <MapPin className="h-4 w-4 text-gray-500" />
+            <select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            >
+              <option value="all">All Locations</option>
+              <option value="downtown">Downtown</option>
+              <option value="airport">Airport Terminal</option>
+              <option value="university">University District</option>
+            </select>
+          </div>
         </div>
 
         {/* Summary Cards */}
@@ -475,28 +491,37 @@ export function HACCP() {
                   </div>
 
                   {/* Status badges */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col space-y-1.5">
+                    <div className="flex items-center space-x-2">
+                      {planStatus === 'critical' && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          CCP Out of Limit
+                        </span>
+                      )}
+                      {planStatus === 'review' && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                          <Clock className="h-3 w-3 mr-1" />
+                          Needs Review
+                        </span>
+                      )}
+                      {planStatus === 'good' && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          All CCPs Passing
+                        </span>
+                      )}
+                      <span className="text-xs text-gray-400">
+                        Reviewed {new Date(plan.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </div>
                     {planStatus === 'critical' && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        <AlertTriangle className="h-3 w-3 mr-1" />
-                        CCP Out of Limit
-                      </span>
+                      <p className="text-xs text-red-600">
+                        {plan.ccps.filter(c => !c.isWithinLimit).map(c =>
+                          `${c.equipmentName || c.ccpNumber}: ${c.lastReading} (limit: ${c.criticalLimit})`
+                        ).join('; ')}
+                      </p>
                     )}
-                    {planStatus === 'review' && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                        <Clock className="h-3 w-3 mr-1" />
-                        Needs Review
-                      </span>
-                    )}
-                    {planStatus === 'good' && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        All CCPs Passing
-                      </span>
-                    )}
-                    <span className="text-xs text-gray-400">
-                      Reviewed {new Date(plan.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </span>
                   </div>
                 </div>
               );
@@ -507,18 +532,24 @@ export function HACCP() {
         {/* ── Plan Detail View ──────────────────────────────── */}
         {activeTab === 'plans' && selectedPlan && (
           <div>
-            <button
-              onClick={() => setSelectedPlan(null)}
-              className="mb-4 text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
-            >
-              ← Back to Plans
-            </button>
+            {/* Breadcrumb navigation */}
+            <div className="flex items-center space-x-2 text-sm mb-4">
+              <span
+                onClick={() => setSelectedPlan(null)}
+                className="text-[#1e4d6b] hover:text-[#2a6a8f] cursor-pointer font-medium"
+              >
+                HACCP Plans
+              </span>
+              <span className="text-gray-400">›</span>
+              <span className="text-gray-600">{selectedPlan.name}</span>
+            </div>
 
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
                   <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
+                  <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 <div className="text-right">
                   <p className={`text-3xl font-bold ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
@@ -693,7 +724,10 @@ export function HACCP() {
                   Open Actions ({CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length})
                 </h3>
                 <div className="space-y-4">
-                  {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').map((action) => (
+                  {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').map((action) => {
+                    const workflowSteps = ['Identified', 'Assigned', 'In Progress', 'Resolved'];
+                    const currentStep = action.status === 'open' ? 0 : action.status === 'in_progress' ? 2 : 3;
+                    return (
                     <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-red-500">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-start space-x-3">
@@ -704,9 +738,34 @@ export function HACCP() {
                             <p className="text-xs text-gray-400 mt-0.5">{getRelativeTime(action.createdAt)} · Source: {action.source}</p>
                           </div>
                         </div>
-                        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 flex-shrink-0">
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full flex-shrink-0 ${action.status === 'in_progress' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'}`}>
                           {action.status === 'open' ? 'Open' : 'In Progress'}
                         </span>
+                      </div>
+
+                      {/* Workflow Progress */}
+                      <div className="mb-4 bg-gray-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between">
+                          {workflowSteps.map((step, i) => (
+                            <div key={step} className="flex items-center" style={{ flex: i < workflowSteps.length - 1 ? 1 : 'none' }}>
+                              <div className="flex flex-col items-center">
+                                <div
+                                  className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                                    i < currentStep ? 'bg-green-500 text-white' :
+                                    i === currentStep ? 'bg-[#1e4d6b] text-white' :
+                                    'bg-gray-300 text-gray-500'
+                                  }`}
+                                >
+                                  {i < currentStep ? '✓' : i + 1}
+                                </div>
+                                <span className={`text-xs mt-1 ${i <= currentStep ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>{step}</span>
+                              </div>
+                              {i < workflowSteps.length - 1 && (
+                                <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${i < currentStep ? 'bg-green-500' : 'bg-gray-300'}`} />
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-3">
@@ -730,7 +789,8 @@ export function HACCP() {
                         <p className="text-xs text-gray-500 mt-1">By: {action.actionBy}</p>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
