@@ -1,13 +1,92 @@
 import { useState } from 'react';
 import { Layout } from '../components/layout/Layout';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Calendar, Printer, Download, Share2, TrendingUp, TrendingDown, ArrowUp, ArrowDown, ShieldX } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Printer, Download, TrendingUp, ShieldX } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRole } from '../contexts/RoleContext';
 
-import { complianceScores, locationScores, locations as demoLocations, PILLAR_WEIGHTS, getWeights } from '../data/demoData';
+import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
 
 type TabType = 'executive' | 'operational' | 'equipment' | 'documentation' | 'team';
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, { bg: string; text: string; border: string }> = {
+    'Inspection Ready': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Good Standing': { bg: '#eff6ff', text: '#1e4d6b', border: '#bfdbfe' },
+    'Needs Attention': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
+    'At Risk': { bg: '#fff7ed', text: '#9a3412', border: '#fed7aa' },
+    'Critical': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Current': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Compliant': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'On Track': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Pass': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Resolved': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Expiring Soon': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
+    'In Progress': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
+    'Expired': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Non-Compliant': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Overdue': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Missing': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Open': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+    'Fail': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
+  };
+  const s = styles[status] || { bg: '#f9fafb', text: '#374151', border: '#e5e7eb' };
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 10px',
+      borderRadius: '12px',
+      fontSize: '12px',
+      fontWeight: '600',
+      backgroundColor: s.bg,
+      color: s.text,
+      border: `1px solid ${s.border}`,
+    }}>
+      {status}
+    </span>
+  );
+}
+
+function PriorityBadge({ priority }: { priority: string }) {
+  const styles: Record<string, { bg: string; text: string; border: string }> = {
+    'HIGH': { bg: '#fef2f2', text: '#ef4444', border: '#fecaca' },
+    'MEDIUM': { bg: '#fffbeb', text: '#d4af37', border: '#fef3c7' },
+    'LOW': { bg: '#eff6ff', text: '#1e4d6b', border: '#dbeafe' },
+  };
+  const s = styles[priority] || { bg: '#f9fafb', text: '#374151', border: '#e5e7eb' };
+  return (
+    <span style={{
+      display: 'inline-block',
+      padding: '2px 10px',
+      borderRadius: '12px',
+      fontSize: '12px',
+      fontWeight: '600',
+      backgroundColor: s.bg,
+      color: s.text,
+      border: `1px solid ${s.border}`,
+    }}>
+      {priority}
+    </span>
+  );
+}
+
+function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ flex: 1, height: '8px', backgroundColor: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${value}%`, backgroundColor: color, borderRadius: '4px', transition: 'width 0.5s ease' }} />
+      </div>
+      <span style={{ fontSize: '13px', fontWeight: '600', color: '#374151', minWidth: '36px', textAlign: 'right' }}>{value}%</span>
+    </div>
+  );
+}
+
+function getScoreColor(score: number): string {
+  if (score >= 95) return '#22c55e';
+  if (score >= 90) return '#1e4d6b';
+  if (score >= 80) return '#d4af37';
+  return '#ef4444';
+}
 
 export function Reports() {
   const { userRole } = useRole();
@@ -253,21 +332,6 @@ export function Reports() {
     URL.revokeObjectURL(url);
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'HIGH': return 'text-red-600 font-semibold';
-      case 'MEDIUM': return 'text-yellow-600 font-semibold';
-      case 'LOW': return 'text-green-600 font-semibold';
-      default: return 'text-gray-600';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    if (status.includes('Inspection Ready') || status.includes('Current') || status.includes('Compliant')) return 'text-green-600';
-    if (status.includes('Good Standing') || status.includes('Needs Attention') || status.includes('Expiring') || status.includes('At Risk')) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
   return (
     <Layout title="Reports">
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reports' }]} />
@@ -277,7 +341,7 @@ export function Reports() {
             <h1 className="text-2xl font-bold text-gray-900">Management Reports</h1>
             <p className="text-gray-600 mt-1">Comprehensive insights and analytics</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
@@ -300,14 +364,17 @@ export function Reports() {
             </select>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               <Printer className="h-5 w-5" />
               Print
             </button>
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f]"
+              className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
+              style={{ backgroundColor: '#1e4d6b' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#163a52'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1e4d6b'}
             >
               <Download className="h-5 w-5" />
               Export CSV
@@ -342,16 +409,16 @@ export function Reports() {
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Overall Compliance Score</h3>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-5xl font-bold text-[#1e4d6b]">{complianceScores.overall}%</div>
+                <div className="text-5xl font-bold" style={{ color: '#1e4d6b' }}>{complianceScores.overall}%</div>
                 <div className="flex items-center text-green-600">
                   <TrendingUp className="h-5 w-5 mr-1" />
                   <span className="font-medium">+8% from last month</span>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-3 bg-blue-50 rounded-lg">
-                  <p className="text-xs text-gray-500 mb-1">Operational ({Math.round(getWeights().operational * 100)}%)</p>
-                  <p className="text-xl font-bold text-blue-700">{complianceScores.operational}</p>
+                <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
+                  <p className="text-xs mb-1" style={{ color: '#64748b' }}>Operational ({Math.round(getWeights().operational * 100)}%)</p>
+                  <p className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{complianceScores.operational}</p>
                 </div>
                 <div className="text-center p-3 bg-green-50 rounded-lg">
                   <p className="text-xs text-gray-500 mb-1">Equipment ({Math.round(getWeights().equipment * 100)}%)</p>
@@ -368,7 +435,7 @@ export function Reports() {
                   <XAxis dataKey="week" />
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} />
+                  <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -394,11 +461,11 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loc.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{loc.score}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-700 font-medium">{loc.operational}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#1e4d6b' }}>{loc.operational}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-700 font-medium">{loc.equipment}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#92400e' }}>{loc.documentation}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`font-semibold ${getStatusColor(loc.status)}`}>{loc.status}</span>
+                          <StatusBadge status={loc.status} />
                         </td>
                       </tr>
                     ))}
@@ -416,7 +483,7 @@ export function Reports() {
                       <div className="font-medium text-gray-900">{issue.issue}</div>
                       <div className="text-sm text-gray-600">{issue.affected}</div>
                     </div>
-                    <span className={getPriorityColor(issue.priority)}>{issue.priority}</span>
+                    <PriorityBadge priority={issue.priority} />
                   </div>
                 ))}
               </div>
@@ -434,7 +501,7 @@ export function Reports() {
                   <XAxis dataKey="week" />
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
-                  <Bar dataKey="compliance" fill="#1e4d6b" />
+                  <Bar dataKey="compliance" fill="#1e4d6b" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -448,7 +515,7 @@ export function Reports() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '200px' }}>Rate</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Missed</th>
                     </tr>
@@ -457,9 +524,11 @@ export function Reports() {
                     {checklistCompletion.map((item, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.template}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{item.rate}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{item.completed}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">{item.missed}</td>
+                        <td className="px-6 py-4 text-sm">
+                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 80 ? '#d4af37' : '#ef4444'} />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{item.completed}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.missed}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -487,7 +556,12 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.date}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{task.task}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{task.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{task.responsible}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {task.responsible === 'Unassigned'
+                            ? <span style={{ color: '#ef4444', fontWeight: '600' }}>Unassigned</span>
+                            : <span className="text-gray-600">{task.responsible}</span>
+                          }
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -515,13 +589,7 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm text-gray-900">{action.action}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            action.status === 'Resolved' ? 'bg-green-100 text-green-800' :
-                            action.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            {action.status}
-                          </span>
+                          <StatusBadge status={action.status} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{action.daysOpen || 'Closed'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{action.location}</td>
@@ -550,9 +618,9 @@ export function Reports() {
                     {haccpCompliance.map((item, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.monitoring}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.records}%</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.corrective}%</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: getScoreColor(item.monitoring) }}>{item.monitoring}%</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: getScoreColor(item.records) }}>{item.records}%</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: getScoreColor(item.corrective) }}>{item.corrective}%</td>
                       </tr>
                     ))}
                   </tbody>
@@ -586,9 +654,7 @@ export function Reports() {
                         <td className="px-6 py-4 text-sm text-gray-900">{service.service}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{service.date}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={service.result === 'Pass' ? 'text-green-600' : 'text-red-600'}>
-                            {service.result}
-                          </span>
+                          <StatusBadge status={service.result} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{service.location}</td>
                       </tr>
@@ -618,7 +684,7 @@ export function Reports() {
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{cert.equipment}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{cert.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(cert.status)}>{cert.status}</span>
+                          <StatusBadge status={cert.status} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{cert.expires}</td>
                       </tr>
@@ -649,9 +715,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.dueDate}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.lastService}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={item.adherence === 'On Track' ? 'text-green-600' : 'text-red-600'}>
-                            {item.adherence}
-                          </span>
+                          <StatusBadge status={item.adherence} />
                         </td>
                       </tr>
                     ))}
@@ -678,7 +742,7 @@ export function Reports() {
                     {vendorSpend.map((item, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.category}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{item.amount}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1e4d6b' }}>{item.amount}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.services}</td>
                       </tr>
                     ))}
@@ -704,18 +768,25 @@ export function Reports() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiring</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expired</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '160px' }}>Health</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {documentInventory.map((item, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.type}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.total}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{item.current}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">{item.expiring}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">{item.expired}</td>
-                      </tr>
-                    ))}
+                    {documentInventory.map((item, idx) => {
+                      const healthPct = Math.round((item.current / item.total) * 100);
+                      return (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.type}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{item.total}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{item.current}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#d4af37' }}>{item.expiring || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.expired || '-'}</td>
+                          <td className="px-6 py-4 text-sm">
+                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 75 ? '#d4af37' : '#ef4444'} />
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -743,7 +814,10 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{item.type}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{item.expires}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={item.daysLeft <= 14 ? 'text-red-600' : item.daysLeft <= 30 ? 'text-yellow-600' : 'text-green-600'}>
+                          <span style={{
+                            fontWeight: '600',
+                            color: item.daysLeft <= 14 ? '#ef4444' : item.daysLeft <= 30 ? '#d4af37' : '#22c55e'
+                          }}>
                             {item.daysLeft} days
                           </span>
                         </td>
@@ -775,7 +849,7 @@ export function Reports() {
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{doc.document}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{doc.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{doc.category}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">{doc.daysOverdue}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600">{doc.daysOverdue > 0 ? doc.daysOverdue : 'Due today'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -802,18 +876,10 @@ export function Reports() {
                     {vendorDocCompliance.map((vendor, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{vendor.vendor}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(vendor.coi)}>{vendor.coi}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(vendor.certs)}>{vendor.certs}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(vendor.insurance)}>{vendor.insurance}</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(vendor.status)}>{vendor.status}</span>
-                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.coi} /></td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.certs} /></td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.insurance} /></td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.status} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -846,11 +912,14 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{staff.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{staff.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={getStatusColor(staff.status)}>{staff.status}</span>
+                          <StatusBadge status={staff.status} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{staff.expires}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={staff.daysLeft < 0 ? 'text-red-600' : staff.daysLeft <= 30 ? 'text-yellow-600' : 'text-green-600'}>
+                          <span style={{
+                            fontWeight: '600',
+                            color: staff.daysLeft < 0 ? '#ef4444' : staff.daysLeft <= 30 ? '#d4af37' : '#22c55e'
+                          }}>
                             {staff.daysLeft < 0 ? `${Math.abs(staff.daysLeft)} days ago` : `${staff.daysLeft} days`}
                           </span>
                         </td>
@@ -872,16 +941,18 @@ export function Reports() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Missed</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '180px' }}>Rate</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {taskCompletionByEmployee.map((emp, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{emp.employee}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{emp.completed}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">{emp.missed}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{emp.rate}%</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{emp.completed}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{emp.missed}</td>
+                        <td className="px-6 py-4 text-sm">
+                          <ProgressBar value={emp.rate} color={emp.rate >= 95 ? '#22c55e' : emp.rate >= 90 ? '#1e4d6b' : emp.rate >= 85 ? '#d4af37' : '#ef4444'} />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -900,16 +971,18 @@ export function Reports() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pending</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '180px' }}>Rate</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {trainingRecords.map((training, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{training.training}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">{training.completed}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-yellow-600">{training.pending}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{training.rate}%</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{training.completed}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: training.pending > 0 ? '#d4af37' : '#22c55e' }}>{training.pending}</td>
+                        <td className="px-6 py-4 text-sm">
+                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 75 ? '#d4af37' : '#ef4444'} />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -937,7 +1010,14 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{activity.employee}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{activity.lastLogin}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{activity.logins}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{activity.avgPerWeek}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span style={{
+                            fontWeight: '600',
+                            color: activity.avgPerWeek >= 5 ? '#22c55e' : activity.avgPerWeek >= 3 ? '#d4af37' : '#ef4444'
+                          }}>
+                            {activity.avgPerWeek}
+                          </span>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
