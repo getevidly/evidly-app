@@ -241,21 +241,57 @@ const DEMO_TODAY_CHECKLISTS = [
 
 const DEMO_HISTORY = (() => {
   const now = new Date();
-  const entries: { id: string; date: string; name: string; completedBy: string; score: number }[] = [];
-  const checklists = ['Opening Checklist', 'Mid-Day Food Safety Check', 'Closing Checklist', 'Receiving Inspection', 'Cooking Temperature Log'];
-  const people = ['Marcus J.', 'Sarah T.', 'Emma D.', 'David P.', 'Mike R.'];
+  const entries: { id: string; date: string; name: string; completedBy: string; score: number; status: 'complete' | 'incomplete' | 'missed'; detail?: string }[] = [];
+  const checklists = ['Opening Checklist', 'Mid-Day Food Safety Check', 'Closing Checklist', 'Receiving Inspection', 'Cooking Temperature Log', 'Hot Holding Monitoring', 'Cold Holding Monitoring', 'Cooling Log'];
+  const people = ['Marcus J.', 'Sarah T.', 'Emma D.', 'David P.', 'Mike R.', 'Alex K.', 'Lisa W.'];
+  // Deterministic seed for consistent data
+  const pRand = (seed: number) => { const x = Math.sin(seed * 12.9898 + seed * 78.233) * 43758.5453; return x - Math.floor(x); };
   let id = 1;
-  for (let day = 0; day < 7; day++) {
+  for (let day = 0; day < 30; day++) {
     const date = new Date(now);
     date.setDate(date.getDate() - day);
-    const count = day === 0 ? 2 : 3;
+    // More checklists on weekdays (3-5), fewer on weekends (2-3)
+    const dayOfWeek = date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const count = isWeekend ? 2 + Math.floor(pRand(day * 7) * 2) : 3 + Math.floor(pRand(day * 7 + 1) * 3);
     for (let j = 0; j < count; j++) {
+      const seed = day * 100 + j * 13;
+      const r = pRand(seed);
+      const checklistIdx = Math.floor(pRand(seed + 3) * checklists.length);
+      const personIdx = Math.floor(pRand(seed + 7) * people.length);
+      let score: number;
+      let status: 'complete' | 'incomplete' | 'missed';
+      let detail: string | undefined;
+      if (r < 0.06) {
+        // ~6% missed
+        score = 0;
+        status = 'missed';
+        detail = 'MISSED — not completed';
+      } else if (r < 0.18) {
+        // ~12% incomplete
+        const completed = 5 + Math.floor(pRand(seed + 11) * 6);
+        const total = completed + 1 + Math.floor(pRand(seed + 13) * 4);
+        score = Math.round((completed / total) * 100);
+        status = 'incomplete';
+        detail = `Incomplete ${completed}/${total}`;
+      } else {
+        // ~82% complete
+        score = 85 + Math.floor(pRand(seed + 17) * 16);
+        status = 'complete';
+      }
+      // Vary the time of day
+      const hour = 6 + Math.floor(pRand(seed + 19) * 14); // 6am - 8pm
+      const minute = Math.floor(pRand(seed + 23) * 60);
+      const entryDate = new Date(date);
+      entryDate.setHours(hour, minute, 0, 0);
       entries.push({
         id: String(id++),
-        date: date.toISOString(),
-        name: checklists[(day + j) % checklists.length],
-        completedBy: people[(day + j) % people.length],
-        score: day === 0 && j === 0 ? 100 : 85 + Math.floor(Math.random() * 16),
+        date: entryDate.toISOString(),
+        name: checklists[checklistIdx],
+        completedBy: status === 'missed' ? '—' : people[personIdx],
+        score,
+        status,
+        detail,
       });
     }
   }
@@ -289,6 +325,9 @@ export function Checklists() {
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
+  const [historyRange, setHistoryRange] = useState('7days');
+  const [historyFrom, setHistoryFrom] = useState('');
+  const [historyTo, setHistoryTo] = useState('');
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
   const [completions, setCompletions] = useState<ChecklistCompletion[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -1044,9 +1083,70 @@ export function Checklists() {
         )}
 
         {/* History View */}
-        {activeView === 'history' && (
+        {activeView === 'history' && (() => {
+          const now = new Date();
+          const demoEntries = profile?.organization_id
+            ? completions.map(c => ({ id: c.id, date: c.completed_at, name: c.template_name, completedBy: c.completed_by_name, score: c.score_percentage, status: 'complete' as const, detail: undefined as string | undefined }))
+            : DEMO_HISTORY;
+          // Filter by date range
+          const filteredEntries = demoEntries.filter(entry => {
+            const entryDate = new Date(entry.date);
+            if (historyRange === 'today') {
+              return entryDate.toDateString() === now.toDateString();
+            } else if (historyRange === '7days') {
+              return entryDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            } else if (historyRange === '14days') {
+              return entryDate >= new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+            } else if (historyRange === '30days') {
+              return entryDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            } else if (historyRange === '90days') {
+              return entryDate >= new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            } else if (historyRange === 'custom' && historyFrom && historyTo) {
+              const from = new Date(historyFrom);
+              const to = new Date(historyTo);
+              to.setHours(23, 59, 59, 999);
+              return entryDate >= from && entryDate <= to;
+            }
+            return true;
+          });
+          const rangeLabel = historyRange === 'today' ? 'Today' : historyRange === '7days' ? 'Last 7 Days' : historyRange === '14days' ? 'Last 14 Days' : historyRange === '30days' ? 'Last 30 Days' : historyRange === '90days' ? 'Last 90 Days' : 'Custom Range';
+
+          return (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900">Checklist History — Last 7 Days</h2>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <h2 className="text-xl font-bold text-gray-900">Checklist History — {rangeLabel}</h2>
+              <div className="flex flex-wrap items-end gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                  <select
+                    value={historyRange}
+                    onChange={(e) => setHistoryRange(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm"
+                  >
+                    <option value="today">Today</option>
+                    <option value="7days">Last 7 Days</option>
+                    <option value="14days">Last 14 Days</option>
+                    <option value="30days">Last 30 Days</option>
+                    <option value="90days">Last 90 Days</option>
+                    <option value="custom">Custom Range</option>
+                  </select>
+                </div>
+                {historyRange === 'custom' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+                      <input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+                      <input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm" />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="text-sm text-gray-500">{filteredEntries.length} entries</div>
 
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
@@ -1055,28 +1155,38 @@ export function Checklists() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Checklist</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed By</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {(profile?.organization_id ? completions.map(c => ({
-                    id: c.id,
-                    date: c.completed_at,
-                    name: c.template_name,
-                    completedBy: c.completed_by_name,
-                    score: c.score_percentage,
-                  })) : DEMO_HISTORY).map((entry) => (
+                  {filteredEntries.map((entry) => {
+                    const statusBadge = entry.status === 'missed'
+                      ? 'bg-red-100 text-red-800'
+                      : entry.status === 'incomplete'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-green-100 text-green-800';
+                    const statusLabel = entry.status === 'missed' ? 'Missed' : entry.status === 'incomplete' ? 'Incomplete' : 'Complete';
+                    return (
                     <tr key={entry.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {format(new Date(entry.date), 'MMM d, yyyy')}
+                        <span className="text-gray-400 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         {entry.name}
+                        {entry.detail && <span className="block text-xs text-gray-500">{entry.detail}</span>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {entry.completedBy}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${statusBadge}`}>{statusLabel}</span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {entry.status === 'missed' ? (
+                          <span className="text-sm font-medium text-red-600">—</span>
+                        ) : (
                         <div className="flex items-center space-x-2">
                           <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div
@@ -1088,14 +1198,24 @@ export function Checklists() {
                           </div>
                           <span className="text-sm font-medium text-gray-900">{entry.score}%</span>
                         </div>
+                        )}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
+                  {filteredEntries.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                        No checklist entries found for this date range.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
-        )}
+          );
+        })()}
       </div>
 
       {/* Create Template Modal */}
