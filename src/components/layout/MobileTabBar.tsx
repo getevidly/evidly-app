@@ -109,7 +109,7 @@ export function MobileTabBar() {
         style={{ maxHeight: '70vh' }}
       >
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">More Options</h3>
+          <h3 className="text-lg font-semibold text-[#1e4d6b]">More Options</h3>
           <button
             onClick={() => setShowMoreMenu(false)}
             className="p-2 hover:bg-gray-100 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center"
@@ -126,18 +126,19 @@ export function MobileTabBar() {
                 <button
                   key={item.path}
                   onClick={() => handleNavigation(item.path)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-lg min-h-[80px] transition-all ${
+                  className={`flex flex-col items-center justify-center p-4 rounded-lg min-h-[80px] transition-all duration-150 ${
                     active
-                      ? 'bg-[#d4af37] bg-opacity-10 border-2 border-[#d4af37]'
+                      ? 'bg-[#d4af37]/10'
                       : 'hover:bg-gray-100'
                   }`}
+                  style={active ? { boxShadow: 'inset 0 -2px 0 #d4af37' } : undefined}
                 >
                   <Icon
-                    className={`h-6 w-6 mb-2 ${active ? 'text-[#d4af37]' : 'text-gray-500'}`}
+                    className={`h-6 w-6 mb-2 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
                   />
                   <span
                     className={`text-xs font-medium text-center ${
-                      active ? 'text-[#d4af37]' : 'text-gray-600'
+                      active ? 'text-[#d4af37]' : 'text-gray-500'
                     }`}
                   >
                     {item.label}
@@ -150,7 +151,7 @@ export function MobileTabBar() {
         <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center justify-center gap-2 py-3 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors"
+            className="w-full flex items-center justify-center gap-2 py-3 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors duration-150"
           >
             <LogOut className="h-5 w-5" />
             Sign Out
@@ -167,7 +168,10 @@ export function MobileTabBar() {
               <button
                 key={tab.path}
                 onClick={() => handleNavigation(tab.path)}
-                className="flex flex-col items-center justify-center min-h-[56px] transition-colors active:bg-gray-50"
+                className={`flex flex-col items-center justify-center min-h-[56px] transition-colors duration-150 active:bg-gray-50 ${
+                  active ? 'bg-[#d4af37]/10' : ''
+                }`}
+                style={active ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
               >
                 <Icon
                   className={`h-6 w-6 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
@@ -182,7 +186,10 @@ export function MobileTabBar() {
           })}
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
-            className="flex flex-col items-center justify-center min-h-[56px] transition-colors active:bg-gray-50"
+            className={`flex flex-col items-center justify-center min-h-[56px] transition-colors duration-150 active:bg-gray-50 ${
+              showMoreMenu ? 'bg-[#d4af37]/10' : ''
+            }`}
+            style={showMoreMenu ? { boxShadow: 'inset 0 2px 0 #d4af37' } : undefined}
           >
             <MoreHorizontal className={`h-6 w-6 ${showMoreMenu ? 'text-[#d4af37]' : 'text-gray-400'}`} />
             <span className={`text-[10px] mt-1 ${showMoreMenu ? 'text-[#d4af37] font-semibold' : 'text-gray-500'}`}>More</span>
