@@ -251,10 +251,7 @@ export function Documents() {
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}
-                className="flex items-center space-x-2 px-4 py-2 text-white rounded-md shadow-sm transition-all"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#163a52'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1e4d6b'}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
               >
                 <Share2 className="h-5 w-5" />
                 <span>Share {selectedDocs.length} Selected</span>
@@ -262,7 +259,7 @@ export function Documents() {
             )}
             <button
               onClick={() => setShowScanAnimation(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f] shadow-sm transition-all hover:scale-105"
+              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
               <span>Upload Document</span>
@@ -398,7 +395,7 @@ export function Documents() {
             <div className="flex space-x-2 overflow-x-auto pb-2">
               <button
                 onClick={() => setSelectedCategory('All')}
-                className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
                   selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -410,7 +407,7 @@ export function Documents() {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
-                    className={`px-4 py-2 rounded-md text-sm whitespace-nowrap transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap transition-colors duration-150 ${
                       selectedCategory === cat ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                   >

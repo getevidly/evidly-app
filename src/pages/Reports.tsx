@@ -112,13 +112,7 @@ export function Reports() {
     ? demoLocations.find(l => l.urlId === selectedLocation)?.name || ''
     : '';
 
-  const scoreDataByLocation: Record<string, { week: string; score: number }[]> = {
-    'all': [
-      { week: 'Wk 1', score: 68 }, { week: 'Wk 2', score: 67 }, { week: 'Wk 3', score: 69 },
-      { week: 'Wk 4', score: 68 }, { week: 'Wk 5', score: 70 }, { week: 'Wk 6', score: 69 },
-      { week: 'Wk 7', score: 71 }, { week: 'Wk 8', score: 72 }, { week: 'Wk 9', score: 71 },
-      { week: 'Wk 10', score: 73 }, { week: 'Wk 11', score: 72 }, { week: 'Wk 12', score: 74 },
-    ],
+  const scoreDataLocations = {
     'downtown': [
       { week: 'Wk 1', score: 82 }, { week: 'Wk 2', score: 83 }, { week: 'Wk 3', score: 84 },
       { week: 'Wk 4', score: 83 }, { week: 'Wk 5', score: 85 }, { week: 'Wk 6', score: 86 },
@@ -137,6 +131,14 @@ export function Reports() {
       { week: 'Wk 7', score: 56 }, { week: 'Wk 8', score: 57 }, { week: 'Wk 9', score: 56 },
       { week: 'Wk 10', score: 58 }, { week: 'Wk 11', score: 57 }, { week: 'Wk 12', score: 59 },
     ],
+  };
+  // All = average of 3 locations (e.g. Wk1: (82+65+52)/3 = 66)
+  const scoreDataByLocation: Record<string, { week: string; score: number }[]> = {
+    ...scoreDataLocations,
+    'all': scoreDataLocations.downtown.map((item, i) => ({
+      week: item.week,
+      score: Math.round((item.score + scoreDataLocations.airport[i].score + scoreDataLocations.university[i].score) / 3),
+    })),
   };
   const scoreData = scoreDataByLocation[selectedLocation] || scoreDataByLocation['all'];
 
@@ -161,13 +163,7 @@ export function Reports() {
     { issue: 'Vendor COI documents expiring', priority: 'LOW', affected: '2 vendors' },
   ];
 
-  const tempComplianceByLocation: Record<string, { week: string; compliance: number }[]> = {
-    'all': [
-      { week: 'Wk 1', compliance: 88 }, { week: 'Wk 2', compliance: 90 }, { week: 'Wk 3', compliance: 89 },
-      { week: 'Wk 4', compliance: 91 }, { week: 'Wk 5', compliance: 93 }, { week: 'Wk 6', compliance: 92 },
-      { week: 'Wk 7', compliance: 94 }, { week: 'Wk 8', compliance: 93 }, { week: 'Wk 9', compliance: 95 },
-      { week: 'Wk 10', compliance: 92 }, { week: 'Wk 11', compliance: 97 }, { week: 'Wk 12', compliance: 94 },
-    ],
+  const tempComplianceLocations = {
     'downtown': [
       { week: 'Wk 1', compliance: 94 }, { week: 'Wk 2', compliance: 96 }, { week: 'Wk 3', compliance: 95 },
       { week: 'Wk 4', compliance: 97 }, { week: 'Wk 5', compliance: 98 }, { week: 'Wk 6', compliance: 97 },
@@ -187,16 +183,17 @@ export function Reports() {
       { week: 'Wk 10', compliance: 79 }, { week: 'Wk 11', compliance: 84 }, { week: 'Wk 12', compliance: 81 },
     ],
   };
+  // All = average of 3 locations (e.g. Wk1: (94+82+75)/3 = 84)
+  const tempComplianceByLocation: Record<string, { week: string; compliance: number }[]> = {
+    ...tempComplianceLocations,
+    'all': tempComplianceLocations.downtown.map((item, i) => ({
+      week: item.week,
+      compliance: Math.round((item.compliance + tempComplianceLocations.airport[i].compliance + tempComplianceLocations.university[i].compliance) / 3),
+    })),
+  };
   const tempComplianceData = tempComplianceByLocation[selectedLocation] || tempComplianceByLocation['all'];
 
-  const checklistCompletionByLocation: Record<string, { template: string; rate: number; completed: number; missed: number }[]> = {
-    'all': [
-      { template: 'Opening Checklist', rate: 96, completed: 28, missed: 2 },
-      { template: 'Closing Checklist', rate: 89, completed: 26, missed: 4 },
-      { template: 'Daily Cleaning', rate: 92, completed: 27, missed: 3 },
-      { template: 'Equipment Check', rate: 85, completed: 25, missed: 5 },
-      { template: 'Weekly Deep Clean', rate: 75, completed: 3, missed: 1 },
-    ],
+  const checklistCompletionLocations = {
     'downtown': [
       { template: 'Opening Checklist', rate: 100, completed: 10, missed: 0 },
       { template: 'Closing Checklist', rate: 95, completed: 9, missed: 1 },
@@ -218,6 +215,16 @@ export function Reports() {
       { template: 'Equipment Check', rate: 65, completed: 6, missed: 4 },
       { template: 'Weekly Deep Clean', rate: 50, completed: 1, missed: 1 },
     ],
+  };
+  // All = sum completed/missed across locations, rate = completed/(completed+missed)
+  const checklistCompletionByLocation: Record<string, { template: string; rate: number; completed: number; missed: number }[]> = {
+    ...checklistCompletionLocations,
+    'all': checklistCompletionLocations.downtown.map((item, i) => {
+      const completed = item.completed + checklistCompletionLocations.airport[i].completed + checklistCompletionLocations.university[i].completed;
+      const missed = item.missed + checklistCompletionLocations.airport[i].missed + checklistCompletionLocations.university[i].missed;
+      const total = completed + missed;
+      return { template: item.template, completed, missed, rate: total > 0 ? Math.round((completed / total) * 100) : 0 };
+    }),
   };
   const checklistCompletion = checklistCompletionByLocation[selectedLocation] || checklistCompletionByLocation['all'];
 
@@ -480,10 +487,7 @@ export function Reports() {
             </button>
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
-              style={{ backgroundColor: '#1e4d6b' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#163a52'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1e4d6b'}
+              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
             >
               <Download className="h-5 w-5" />
               Export CSV

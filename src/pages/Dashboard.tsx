@@ -8,7 +8,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import { complianceScores, locationScores, getGrade, locations, scoreImpactData, complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo, getTrend, getWeights } from '../data/demoData';
+import { complianceScores, locationScores, getGrade, locations, scoreImpactData, complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo, getTrend, getWeights, needsAttentionItems, vendors as demoVendors } from '../data/demoData';
 import { useRole } from '../contexts/RoleContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { ShareModal } from '../components/ShareModal';
@@ -183,7 +183,7 @@ export function Dashboard() {
 
   return (
     <>
-      <div className="text-white px-6 py-3 flex items-center space-x-2 rounded-lg mb-6" style={{ backgroundColor: '#1e4d6b' }}>
+      <div className="bg-[#1e4d6b] text-white px-6 py-3 flex items-center space-x-2 rounded-lg mb-6">
         <Info className="h-5 w-5" />
         <span className="font-medium">Demo Mode — viewing sample data</span>
       </div>
@@ -200,10 +200,7 @@ export function Dashboard() {
             <div className="mb-6">
               <button
                 onClick={() => { navigate('/dashboard'); }}
-                className="flex items-center space-x-1 mb-3 text-sm font-medium transition-colors"
-                style={{ color: '#1e4d6b' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#163a52'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#1e4d6b'}
+                className="flex items-center space-x-1 mb-3 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors duration-150"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back to All Locations</span>
@@ -227,10 +224,7 @@ export function Dashboard() {
             <h3 className="text-lg font-semibold text-gray-900">Compliance Score</h3>
             <button
               onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors text-sm"
-              style={{ backgroundColor: '#1e4d6b' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#163a52'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1e4d6b'}
+              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm"
             >
               <Share2 className="h-4 w-4" />
               Share Report
@@ -505,10 +499,7 @@ export function Dashboard() {
 
               <button
                 onClick={() => { navigate('/alerts'); }}
-                className="mt-4 w-full text-sm font-medium transition-colors"
-                style={{ color: '#1e4d6b' }}
-                onMouseEnter={(e) => e.currentTarget.style.color = '#163a52'}
-                onMouseLeave={(e) => e.currentTarget.style.color = '#1e4d6b'}
+                className="mt-4 w-full text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors duration-150"
               >
                 View All Activity
               </button>
@@ -542,20 +533,21 @@ export function Dashboard() {
 
           {/* Action Center */}
           {activeTab === 'action' && (() => {
-            const allActionItems = [
-              { priority: 'high' as const, pillar: 'Operational', title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs' },
-              { priority: 'high' as const, pillar: 'Operational', title: 'Opening Checklist Incomplete', desc: 'University Dining — not started today', link: '/checklists' },
-              { priority: 'medium' as const, pillar: 'Operational', title: 'Corrective Action Required', desc: 'Hot Hold Cabinet logged at 127°F — needs follow-up', link: '/temp-logs' },
-              { priority: 'low' as const, pillar: 'Operational', title: 'HACCP Plan Review Due', desc: 'Annual review scheduled for next month', link: '/haccp' },
-              { priority: 'high' as const, pillar: 'Equipment', title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors' },
-              { priority: 'medium' as const, pillar: 'Equipment', title: 'Grease Trap Service Due Soon', desc: 'Grease Masters — due Mar 20', link: '/vendors' },
-              { priority: 'medium' as const, pillar: 'Equipment', title: 'Hood Cleaning Scheduled', desc: 'ABC Fire Protection — Apr 15', link: '/vendors' },
-              { priority: 'low' as const, pillar: 'Equipment', title: 'Fire Extinguisher Inspection', desc: 'All units current — next due Jul 2026', link: '/vendors' },
-              { priority: 'medium' as const, pillar: 'Documentation', title: 'Health Permit Renewal in 14 Days', desc: 'Downtown Kitchen — expires Feb 20', link: '/documents' },
-              { priority: 'medium' as const, pillar: 'Documentation', title: 'Food Handler Certs Expiring', desc: '2 team members need renewal by Mar 7', link: '/team' },
-              { priority: 'medium' as const, pillar: 'Documentation', title: 'Insurance Certificate Update', desc: 'General liability policy renews Mar 1', link: '/documents' },
-              { priority: 'low' as const, pillar: 'Documentation', title: 'Business License Renewal', desc: 'Annual renewal due May 2026', link: '/documents' },
-            ];
+            const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+            const locationFilteredItems = selectedLocation === 'all'
+              ? needsAttentionItems
+              : needsAttentionItems.filter(item => item.locationId === selectedLocationObj?.id);
+            const allActionItems = locationFilteredItems.map(item => ({
+              priority: item.color === 'red' ? 'high' as const : item.color === 'amber' ? 'medium' as const : 'low' as const,
+              pillar: (() => {
+                if (item.url === '/temp-logs' || item.url === '/checklists' || item.url === '/haccp') return 'Operational';
+                if (item.url === '/vendors') return 'Equipment';
+                return 'Documentation';
+              })(),
+              title: item.title,
+              desc: item.detail,
+              link: item.url,
+            }));
             const filteredItems = pillarFilter ? allActionItems.filter(item => item.pillar === pillarFilter) : allActionItems;
             const pillarCounts = { Operational: 0, Equipment: 0, Documentation: 0 };
             allActionItems.forEach(item => { pillarCounts[item.pillar as keyof typeof pillarCounts]++; });
@@ -617,7 +609,17 @@ export function Dashboard() {
           })()}
 
           {/* Vendor Services */}
-          {activeTab === 'vendors' && (
+          {activeTab === 'vendors' && (() => {
+            const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+            const filteredVendors = selectedLocation === 'all'
+              ? demoVendors
+              : demoVendors.filter(v => v.locationId === selectedLocationObj?.id);
+            const locationMap: Record<string, string> = {};
+            locations.forEach(l => { locationMap[l.id] = l.name; });
+            const statusColor = (s: string) => s === 'overdue' ? '#ef4444' : s === 'upcoming' ? '#d4af37' : '#22c55e';
+            const statusLabel = (s: string) => s === 'overdue' ? 'Overdue' : s === 'upcoming' ? 'Due Soon' : 'On Track';
+            const formatDate = (d: string) => { const dt = new Date(d); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
+            return (
             <div>
               <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Vendor Services</h3>
               <div className="overflow-x-auto">
@@ -626,32 +628,29 @@ export function Dashboard() {
                     <tr>
                       <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vendor</th>
                       <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Service</th>
+                      {selectedLocation === 'all' && <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location</th>}
                       <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Service</th>
                       <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Next Due</th>
                       <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { id: 'valley-fire', vendor: 'Valley Fire Systems', service: 'Fire Suppression', last: 'Aug 10', next: 'Feb 10', status: 'Overdue', color: '#ef4444' },
-                      { id: 'pacific-pest', vendor: 'Pacific Pest Control', service: 'Pest Control', last: 'Feb 1', next: 'Mar 1', status: 'Due Soon', color: '#d4af37' },
-                      { id: 'grease-masters', vendor: 'Grease Masters', service: 'Grease Trap', last: 'Sep 20', next: 'Mar 20', status: 'Due Soon', color: '#d4af37' },
-                      { id: 'abc-fire', vendor: 'ABC Fire Protection', service: 'Hood Cleaning', last: 'Jan 15', next: 'Apr 15', status: 'On Track', color: '#22c55e' },
-                      { id: 'cleanair-hvac', vendor: 'CleanAir HVAC', service: 'HVAC Service', last: 'Dec 5', next: 'Jun 5', status: 'On Track', color: '#22c55e' }
-                    ].map((v, i) => (
-                      <tr key={i} onClick={() => { navigate('/vendors?id=' + v.id) }} style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }} className="hover:bg-gray-50 transition-colors">
-                        <td style={{ padding: '12px 10px', fontWeight: '500', color: '#1e293b' }}>{v.vendor}</td>
-                        <td style={{ padding: '12px 10px', color: '#475569' }}>{v.service}</td>
-                        <td style={{ padding: '12px 10px', textAlign: 'center', color: '#475569' }}>{v.last}</td>
-                        <td style={{ padding: '12px 10px', textAlign: 'center', color: '#475569' }}>{v.next}</td>
-                        <td style={{ padding: '12px 10px', textAlign: 'center' }}><span style={{ padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600', color: v.color, border: '1px solid ' + v.color }}>{v.status}</span></td>
+                    {filteredVendors.map((v) => (
+                      <tr key={v.id} onClick={() => { navigate('/vendors') }} style={{ cursor: 'pointer', borderBottom: '1px solid #f1f5f9' }} className="hover:bg-gray-50 transition-colors">
+                        <td style={{ padding: '12px 10px', fontWeight: '500', color: '#1e293b' }}>{v.companyName}</td>
+                        <td style={{ padding: '12px 10px', color: '#475569' }}>{v.serviceType}</td>
+                        {selectedLocation === 'all' && <td style={{ padding: '12px 10px', color: '#475569', fontSize: '13px' }}>{locationMap[v.locationId] || ''}</td>}
+                        <td style={{ padding: '12px 10px', textAlign: 'center', color: '#475569' }}>{formatDate(v.lastService)}</td>
+                        <td style={{ padding: '12px 10px', textAlign: 'center', color: '#475569' }}>{formatDate(v.nextDue)}</td>
+                        <td style={{ padding: '12px 10px', textAlign: 'center' }}><span style={{ padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: '600', color: statusColor(v.status), border: '1px solid ' + statusColor(v.status) }}>{statusLabel(v.status)}</span></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-          )}
+            );
+          })()}
 
           {/* Score History */}
           {activeTab === 'history' && (
@@ -663,6 +662,7 @@ export function Dashboard() {
                   {selectedLocation === 'all' ? (
                     <LineChart data={historicalData.downtown.map((item, i) => ({
                       date: item.date,
+                      Average: Math.round((item.score + historicalData.airport[i].score + historicalData.university[i].score) / 3),
                       Downtown: item.score,
                       Airport: historicalData.airport[i].score,
                       University: historicalData.university[i].score,
@@ -674,9 +674,10 @@ export function Dashboard() {
                       <Legend />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'A', position: 'right', fontSize: 11 }} />
                       <ReferenceLine y={70} stroke="#d4af37" strokeDasharray="3 3" label={{ value: 'B', position: 'right', fontSize: 11 }} />
-                      <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={2} dot={{ r: 3 }} />
-                      <Line type="monotone" dataKey="Airport" stroke="#d4af37" strokeWidth={2} dot={{ r: 3 }} />
-                      <Line type="monotone" dataKey="University" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
+                      <Line type="monotone" dataKey="Average" stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
+                      <Line type="monotone" dataKey="Airport" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
+                      <Line type="monotone" dataKey="University" stroke="#ef4444" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
                     </LineChart>
                   ) : (
                     <LineChart data={historicalData[selectedLocation as keyof typeof historicalData] || historicalData.downtown}>
@@ -695,28 +696,42 @@ export function Dashboard() {
           )}
 
           {/* Key Metrics */}
-          {activeTab === 'metrics' && (
+          {activeTab === 'metrics' && (() => {
+            const metricsPerLocation: Record<string, { hoursSaved: number; moneySaved: number; logsCompleted: number; docsStored: number }> = {
+              downtown: { hoursSaved: 38, moneySaved: 1330, logsCompleted: 144, docsStored: 21 },
+              airport: { hoursSaved: 28, moneySaved: 980, logsCompleted: 102, docsStored: 15 },
+              university: { hoursSaved: 20, moneySaved: 700, logsCompleted: 66, docsStored: 11 },
+            };
+            // All = sum: 38+28+20=86, 1330+980+700=3010, 144+102+66=312, 21+15+11=47
+            const m = selectedLocation === 'all'
+              ? { hoursSaved: 86, moneySaved: 3010, logsCompleted: 312, docsStored: 47 }
+              : metricsPerLocation[selectedLocation] || { hoursSaved: 86, moneySaved: 3010, logsCompleted: 312, docsStored: 47 };
+            return (
             <div>
               <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Key Metrics</h3>
               <TimeSavedCounter
-                hoursSaved={86}
-                moneySaved={3010}
-                logsCompleted={312}
-                docsStored={47}
+                hoursSaved={m.hoursSaved}
+                moneySaved={m.moneySaved}
+                logsCompleted={m.logsCompleted}
+                docsStored={m.docsStored}
               />
             </div>
-          )}
+            );
+          })()}
 
           {/* QR Passport */}
-          {activeTab === 'passport' && (
+          {activeTab === 'passport' && (() => {
+            const allQrLocations = [
+              { id: 'downtown', name: 'Downtown Kitchen', address: '425 Market St, SF', score: locationScores['downtown'].overall, color: getGrade(locationScores['downtown'].overall).hex },
+              { id: 'airport', name: 'Airport Cafe', address: '780 Terminal Dr, SF', score: locationScores['airport'].overall, color: getGrade(locationScores['airport'].overall).hex },
+              { id: 'university', name: 'University Dining', address: '1200 Campus Way, Berkeley', score: locationScores['university'].overall, color: getGrade(locationScores['university'].overall).hex }
+            ];
+            const qrLocations = selectedLocation === 'all' ? allQrLocations : allQrLocations.filter(l => l.id === selectedLocation);
+            return (
             <div>
               <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>QR Compliance Passport</h3>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                {[
-                  { id: 'downtown', name: 'Downtown Kitchen', address: '425 Market St, SF', score: 92, color: '#22c55e' },
-                  { id: 'airport', name: 'Airport Cafe', address: '780 Terminal Dr, SF', score: 74, color: '#d4af37' },
-                  { id: 'university', name: 'University Dining', address: '1200 Campus Way, Berkeley', score: 58, color: '#ef4444' }
-                ].map((loc, i) => (
+                {qrLocations.map((loc, i) => (
                   <div key={i} style={{ flex: '1 1 280px', background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                     <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '4px', color: '#1e293b' }}>{loc.name}</div>
                     <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>{loc.address}</div>
@@ -725,14 +740,15 @@ export function Dashboard() {
                     </div>
                     <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '14px', fontWeight: '700', color: loc.color, border: '2px solid ' + loc.color }}>{loc.score}</div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
-                      <button onClick={() => window.print()} style={{ background: '#1e4d6b', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Print</button>
-                      <button onClick={() => navigate(`/passport/${loc.id}`)} style={{ background: 'white', color: '#1e4d6b', border: '1px solid #1e4d6b', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>View Passport</button>
+                      <button onClick={() => window.print()} className="bg-[#1e4d6b] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#163a52] transition-colors duration-150">Print</button>
+                      <button onClick={() => navigate(`/passport/${loc.id}`)} className="bg-white text-[#1e4d6b] border border-[#1e4d6b] px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors duration-150">View Passport</button>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          )}
+            );
+          })()}
         </div>
           </>
         )}

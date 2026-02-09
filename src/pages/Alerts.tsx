@@ -548,7 +548,7 @@ export function Alerts() {
                   <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
                     <button
                       onClick={() => handleResolveClick(alertItem)}
-                      className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors"
+                      className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors"
                     >
                       Resolve
                     </button>
@@ -606,7 +606,7 @@ export function Alerts() {
                               />
                               <button
                                 onClick={() => handleCustomSnooze(alertItem.id)}
-                                className="w-full mt-2 px-2 py-1 bg-[#1e4d6b] text-white text-xs rounded hover:bg-[#2a6a8f]"
+                                className="w-full mt-2 px-2 py-1 bg-[#1e4d6b] text-white text-xs rounded hover:bg-[#163a52]"
                               >
                                 Set
                               </button>
@@ -729,7 +729,7 @@ export function Alerts() {
               </button>
               <button
                 onClick={handleResolveSubmit}
-                className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors"
+                className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors"
               >
                 Submit Resolution
               </button>

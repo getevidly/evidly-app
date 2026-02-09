@@ -304,7 +304,7 @@ export function Vendors() {
       <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: selectedVendor.companyName }]} />
         <div className="space-y-6">
-          <button onClick={handleBack} className="flex items-center text-[#1e4d6b] hover:text-[#2a6a8f] font-medium">
+          <button onClick={handleBack} className="flex items-center text-[#1e4d6b] hover:text-[#163a52] font-medium">
             <ArrowLeft className="h-5 w-5 mr-2" />
             Back to All Vendors
           </button>
@@ -489,7 +489,7 @@ export function Vendors() {
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button
                     onClick={() => alert('Document request sent to ' + selectedVendor.email)}
-                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm"
+                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
@@ -541,7 +541,7 @@ export function Vendors() {
                       {(doc.status === 'missing' || doc.status === 'expired') && (
                         <button
                           onClick={() => alert('Document request sent to ' + selectedVendor.email)}
-                          className="flex items-center text-[#1e4d6b] hover:text-[#2a6a8f] text-sm px-2"
+                          className="flex items-center text-[#1e4d6b] hover:text-[#163a52] text-sm px-2"
                         >
                           <Send className="h-4 w-4 mr-1" />
                           Request
@@ -686,7 +686,7 @@ export function Vendors() {
                     </div>
                     <button
                       onClick={() => { navigator.clipboard.writeText(`https://evidly-app.vercel.app/vendor/upload/${selectedVendor.id}`); alert('Link copied to clipboard!'); }}
-                      className="flex items-center text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium px-3 py-1"
+                      className="flex items-center text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-3 py-1"
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       Copy Link
@@ -697,7 +697,7 @@ export function Vendors() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => alert('Upload link sent to ' + selectedVendor.email)}
-                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm"
+                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Send Link to Vendor
@@ -818,7 +818,7 @@ export function Vendors() {
           </div>
           <button
             onClick={() => alert('Add Vendor form coming soon.')}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f] shadow-sm self-start"
+            className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm self-start transition-colors duration-150"
           >
             <Plus className="h-5 w-5" />
             <span>Add Vendor</span>
@@ -867,7 +867,7 @@ export function Vendors() {
                 {(statusFilter !== 'all' || serviceFilter !== 'all' || locationFilter !== 'all') && (
                   <button
                     onClick={() => { setStatusFilter('all'); setServiceFilter('all'); setLocationFilter('all'); }}
-                    className="text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium px-2"
+                    className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-2"
                   >
                     Clear Filters
                   </button>
@@ -1004,7 +1004,7 @@ export function Vendors() {
                 <p className="font-medium">No vendors match your filters</p>
                 <button
                   onClick={() => { setStatusFilter('all'); setServiceFilter('all'); setLocationFilter('all'); }}
-                  className="mt-2 text-sm text-[#1e4d6b] hover:text-[#2a6a8f]"
+                  className="mt-2 text-sm text-[#1e4d6b] hover:text-[#163a52]"
                 >
                   Clear all filters
                 </button>

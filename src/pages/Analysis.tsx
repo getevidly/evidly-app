@@ -77,23 +77,32 @@ export function Analysis() {
     },
   ];
 
+  const downtownTrends = {
+    operational: operationalTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
+    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
+    documentation: documentationTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 20) })),
+  };
+  const airportTrends = {
+    operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
+    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
+    documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score + 3) })),
+  };
+  const universityTrends = {
+    operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
+    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
+    documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 15) })),
+  };
+  // All = average of 3 locations
+  const allTrends = {
+    operational: operationalTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.operational[i].score + airportTrends.operational[i].score + universityTrends.operational[i].score) / 3) })),
+    equipment: equipmentTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.equipment[i].score + airportTrends.equipment[i].score + universityTrends.equipment[i].score) / 3) })),
+    documentation: documentationTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.documentation[i].score + airportTrends.documentation[i].score + universityTrends.documentation[i].score) / 3) })),
+  };
   const locationTrends = {
-    'all': { operational: operationalTrend, equipment: equipmentTrend, documentation: documentationTrend },
-    'downtown': {
-      operational: operationalTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
-      equipment: equipmentTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
-      documentation: documentationTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 20) })),
-    },
-    'airport': {
-      operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
-      equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
-      documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score + 3) })),
-    },
-    'university': {
-      operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
-      equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
-      documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 15) })),
-    },
+    'all': allTrends,
+    'downtown': downtownTrends,
+    'airport': airportTrends,
+    'university': universityTrends,
   } as Record<string, { operational: typeof operationalTrend; equipment: typeof equipmentTrend; documentation: typeof documentationTrend }>;
 
   const currentTrends = locationTrends[selectedLocation] || locationTrends['all'];
@@ -315,7 +324,7 @@ export function Analysis() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => navigate(action.link)}
-                        style={{ backgroundColor: '#1e4d6b', color: 'white', padding: '4px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        className="bg-[#1e4d6b] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#163a52] transition-colors duration-150 flex items-center gap-1"
                       >
                         Take Action
                         <ArrowRight className="h-3 w-3" />

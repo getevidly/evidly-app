@@ -414,10 +414,7 @@ export function AIAdvisor() {
               <button
                 type="submit"
                 disabled={!input.trim() || isTyping}
-                className="flex items-center justify-center w-11 h-11 rounded-xl text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseOver={(e) => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = '#163a52'; }}
-                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                className="flex items-center justify-center w-11 h-11 rounded-xl bg-[#1e4d6b] text-white hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Send className="h-5 w-5" />
               </button>

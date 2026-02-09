@@ -1190,7 +1190,7 @@ export function TempLogs() {
 
                 <button
                   onClick={handleOpenBatchLog}
-                  className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Plus className="h-5 w-5" />
                   <span>Batch Log</span>
@@ -1238,7 +1238,7 @@ export function TempLogs() {
 
                   <button
                     onClick={() => handleLogTemp(eq)}
-                    className={`w-full px-4 py-2 text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#2a6a8f]'}`}
+                    className={`w-full px-4 py-2 text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#163a52]'}`}
                   >
                     {isEquipmentOutOfRange(eq) ? '⚠ Log Temp Now' : 'Log Temp'}
                   </button>
@@ -1375,7 +1375,7 @@ export function TempLogs() {
 
                 <button
                   type="submit"
-                  className="w-full px-4 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium"
+                  className="w-full px-4 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium"
                 >
                   Add Item
                 </button>
@@ -1449,7 +1449,7 @@ export function TempLogs() {
               <button
                 onClick={handleFinalizeReceiving}
                 disabled={loading || receivingItems.length === 0}
-                className="w-full px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 shadow-sm"
+                className="w-full px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {loading ? 'Saving...' : 'Save Receiving Log'}
               </button>
@@ -1553,7 +1553,7 @@ export function TempLogs() {
 
                 <button
                   onClick={exportToCSV}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium flex items-center space-x-2"
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium flex items-center space-x-2"
                 >
                   <Download className="h-4 w-4" />
                   <span>Export CSV</span>
@@ -1738,7 +1738,7 @@ export function TempLogs() {
               <h2 className="text-2xl font-bold text-gray-900">Cooldown Tracker</h2>
               <button
                 onClick={() => setShowStartCooldown(true)}
-                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
               >
                 <Play className="h-5 w-5" />
                 <span>Start Cooldown</span>
@@ -1825,9 +1825,7 @@ export function TempLogs() {
                               setShowCooldownCheckModal(true);
                               setCooldownCheckTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
                             }}
-                            className="px-4 py-2 text-white rounded-lg transition-colors font-medium" style={{ backgroundColor: '#1e4d6b' }}
-                            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#163a52')}
-                            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                            className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 font-medium"
                           >
                             Log Check
                           </button>
@@ -2000,7 +1998,7 @@ export function TempLogs() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 shadow-sm"
+                  className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
                 >
                   {loading ? 'Saving...' : 'Save'}
                 </button>
@@ -2099,7 +2097,7 @@ export function TempLogs() {
               <button
                 onClick={handleSubmitBatch}
                 disabled={loading || !selectedUser}
-                className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 shadow-sm"
+                className="px-6 py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {loading ? 'Saving...' : 'Save All'}
               </button>
@@ -2193,7 +2191,7 @@ export function TempLogs() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#2a6a8f] transition-colors"
+                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#163a52] transition-colors"
                 >
                   Start
                 </button>
@@ -2248,7 +2246,7 @@ export function TempLogs() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#2a6a8f] transition-colors"
+                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold hover:bg-[#163a52] transition-colors"
                 >
                   Save Check
                 </button>

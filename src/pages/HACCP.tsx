@@ -30,6 +30,7 @@ interface CriticalControlPoint {
   lastMonitoredBy: string;
   source: 'temp_log' | 'checklist';
   equipmentName?: string;
+  locationId: string; // '1'=Downtown, '2'=Airport, '3'=University
 }
 
 interface CorrectiveActionRecord {
@@ -47,6 +48,7 @@ interface CorrectiveActionRecord {
   createdAt: string;
   resolvedAt: string | null;
   source: string;
+  locationId: string;
 }
 
 // ── Helper ─────────────────────────────────────────────────────────
@@ -90,6 +92,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 45 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Mike Johnson',
         source: 'checklist',
+        locationId: '1',
       },
       {
         id: 'cook-2',
@@ -104,6 +107,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Sarah Chen',
         source: 'checklist',
+        locationId: '2',
       },
     ],
   },
@@ -130,6 +134,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredBy: 'Mike Johnson',
         source: 'temp_log',
         equipmentName: 'Walk-in Cooler',
+        locationId: '1',
       },
       {
         id: 'cold-2',
@@ -147,6 +152,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredBy: 'Mike Johnson',
         source: 'temp_log',
         equipmentName: 'Walk-in Freezer',
+        locationId: '1',
       },
     ],
   },
@@ -173,6 +179,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredBy: 'Sarah Chen',
         source: 'temp_log',
         equipmentName: 'Hot Hold Cabinet',
+        locationId: '2',
       },
     ],
   },
@@ -198,6 +205,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Emma Davis',
         source: 'checklist',
+        locationId: '1',
       },
     ],
   },
@@ -223,6 +231,7 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Mike Johnson',
         source: 'temp_log',
+        locationId: '1',
       },
     ],
   },
@@ -246,10 +255,14 @@ const HACCP_PLANS: HACCPPlan[] = [
         lastMonitoredAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
         lastMonitoredBy: 'Sarah Chen',
         source: 'checklist',
+        locationId: '2',
       },
     ],
   },
 ];
+
+// Location ID mapping: '1'=Downtown, '2'=Airport, '3'=University
+const LOCATION_ID_MAP: Record<string, string> = { 'downtown': '1', 'airport': '2', 'university': '3' };
 
 // Auto-generated corrective actions from out-of-range readings
 const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
@@ -268,6 +281,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     createdAt: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
     resolvedAt: null,
     source: 'Temperature Log — Hot Hold Cabinet',
+    locationId: '2',
   },
   {
     id: 'ca-2',
@@ -284,6 +298,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
     resolvedAt: new Date(now.getTime() - 23 * 60 * 60 * 1000).toISOString(),
     source: 'Temperature Log — Walk-in Cooler',
+    locationId: '1',
   },
   {
     id: 'ca-3',
@@ -300,6 +315,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     resolvedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
     source: 'Cooking Temperature Log',
+    locationId: '1',
   },
   {
     id: 'ca-4',
@@ -316,6 +332,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
     createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     resolvedAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000).toISOString(),
     source: 'Receiving Inspection Checklist',
+    locationId: '1',
   },
 ];
 
@@ -326,13 +343,20 @@ export function HACCP() {
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
 
-  // Aggregate stats
-  const allCCPs = HACCP_PLANS.flatMap((p) => p.ccps);
+  // Aggregate stats — filtered by selected location
+  const locId = selectedLocation !== 'all' ? LOCATION_ID_MAP[selectedLocation] : null;
+  const allCCPs = HACCP_PLANS.flatMap((p) => p.ccps).filter(c => !locId || c.locationId === locId);
   const totalCCPs = allCCPs.length;
   const passingCCPs = allCCPs.filter((c) => c.isWithinLimit).length;
   const failingCCPs = totalCCPs - passingCCPs;
   const overallCompliance = totalCCPs > 0 ? Math.round((passingCCPs / totalCCPs) * 100) : 100;
-  const openActions = CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length;
+  const filteredCorrectiveActions = CORRECTIVE_ACTIONS.filter(a => !locId || a.locationId === locId);
+  const openActions = filteredCorrectiveActions.filter((a) => a.status === 'open' || a.status === 'in_progress').length;
+
+  // Filter plans to only those with CCPs at the selected location
+  const filteredPlans = locId
+    ? HACCP_PLANS.map(p => ({ ...p, ccps: p.ccps.filter(c => c.locationId === locId) })).filter(p => p.ccps.length > 0)
+    : HACCP_PLANS;
 
   const getPlanCompliance = (plan: HACCPPlan) => {
     const total = plan.ccps.length;
@@ -381,7 +405,7 @@ export function HACCP() {
               <Shield className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Active Plans</span>
             </div>
-            <p className="text-3xl font-bold text-[#1e4d6b] text-center">{HACCP_PLANS.length}</p>
+            <p className="text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -418,7 +442,7 @@ export function HACCP() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Plans ({HACCP_PLANS.length})
+            Plans ({filteredPlans.length})
           </button>
           <button
             onClick={() => setActiveTab('monitoring')}
@@ -448,7 +472,7 @@ export function HACCP() {
         {/* ── Plans Tab ─────────────────────────────────────── */}
         {activeTab === 'plans' && !selectedPlan && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {HACCP_PLANS.map((plan) => {
+            {filteredPlans.map((plan) => {
               const compliance = getPlanCompliance(plan);
               const planStatus = getPlanStatus(plan);
               const lastMonitored = plan.ccps.reduce((latest, ccp) => {
@@ -536,7 +560,7 @@ export function HACCP() {
             <div className="flex items-center space-x-2 text-sm mb-4">
               <span
                 onClick={() => setSelectedPlan(null)}
-                className="text-[#1e4d6b] hover:text-[#2a6a8f] cursor-pointer font-medium"
+                className="text-[#1e4d6b] hover:text-[#163a52] cursor-pointer font-medium"
               >
                 HACCP Plans
               </span>
@@ -638,7 +662,7 @@ export function HACCP() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              {HACCP_PLANS.flatMap((plan) =>
+              {filteredPlans.flatMap((plan) =>
                 plan.ccps.map((ccp) => (
                   <div
                     key={ccp.id}
@@ -718,13 +742,13 @@ export function HACCP() {
             </div>
 
             {/* Open Actions First */}
-            {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length > 0 && (
+            {filteredCorrectiveActions.filter((a) => a.status === 'open' || a.status === 'in_progress').length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-semibold text-red-700 uppercase tracking-wide mb-3">
-                  Open Actions ({CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').length})
+                  Open Actions ({filteredCorrectiveActions.filter((a) => a.status === 'open' || a.status === 'in_progress').length})
                 </h3>
                 <div className="space-y-4">
-                  {CORRECTIVE_ACTIONS.filter((a) => a.status === 'open' || a.status === 'in_progress').map((action) => {
+                  {filteredCorrectiveActions.filter((a) => a.status === 'open' || a.status === 'in_progress').map((action) => {
                     const workflowSteps = ['Identified', 'Assigned', 'In Progress', 'Resolved'];
                     const currentStep = action.status === 'open' ? 0 : action.status === 'in_progress' ? 2 : 3;
                     return (
@@ -798,10 +822,10 @@ export function HACCP() {
             {/* Resolved Actions */}
             <div>
               <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">
-                Resolved ({CORRECTIVE_ACTIONS.filter((a) => a.status === 'resolved').length})
+                Resolved ({filteredCorrectiveActions.filter((a) => a.status === 'resolved').length})
               </h3>
               <div className="space-y-4">
-                {CORRECTIVE_ACTIONS.filter((a) => a.status === 'resolved').map((action) => (
+                {filteredCorrectiveActions.filter((a) => a.status === 'resolved').map((action) => (
                   <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-green-500">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-start space-x-3">

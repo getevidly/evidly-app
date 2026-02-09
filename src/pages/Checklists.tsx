@@ -972,7 +972,7 @@ export function Checklists() {
                       {cl.status !== 'complete' && (
                         <button
                           onClick={() => alert(`${cl.name} opened — complete items to update your compliance score.`)}
-                          className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium"
+                          className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
                         >
                           {cl.status === 'in_progress' ? 'Continue' : 'Start'}
                         </button>
@@ -992,7 +992,7 @@ export function Checklists() {
               <h2 className="text-xl font-bold text-gray-900">Checklist Templates</h2>
               <button
                 onClick={() => setShowTemplateModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium shadow-sm"
+                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm"
               >
                 <Plus className="h-5 w-5" />
                 <span>New Template</span>
@@ -1335,7 +1335,7 @@ export function Checklists() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 shadow-sm"
+                  className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
                 >
                   {loading ? 'Creating...' : 'Create Template'}
                 </button>
@@ -1389,7 +1389,7 @@ export function Checklists() {
               <button
                 onClick={handleSubmitCompletion}
                 disabled={loading || currentProgress < 100}
-                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 shadow-sm"
+                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
               >
                 {loading ? 'Submitting...' : 'Submit Checklist'}
               </button>

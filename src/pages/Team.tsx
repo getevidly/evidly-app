@@ -400,7 +400,7 @@ export function Team() {
             )}
             <button
               onClick={() => setShowInviteModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] shadow-sm"
+              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
               <span>Invite Member</span>
@@ -592,7 +592,7 @@ export function Team() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => viewMemberDetails(member)}
-                          className="text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
+                          className="text-[#1e4d6b] hover:text-[#163a52] font-medium"
                         >
                           View Details
                         </button>

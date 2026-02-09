@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" status)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" log --oneline -5)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" add src/pages/Dashboard.tsx src/pages/DemoWizard.tsx)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nFix React hooks violation in Dashboard and add DemoWizard\n\nRemove console.log and inline kitchen/facilities early returns that\noccurred before useState calls, violating Rules of Hooks. Role-based\nredirects now use KitchenDashboard/FacilitiesDashboard components\nafter all hooks have been called. Copy DemoWizard.tsx from .txt source.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" push)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" push --set-upstream origin main)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" log --oneline -3)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" add src/components/Navigation.tsx)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nfix navigation demo button\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" log --oneline -1)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" remote -v)",
+      "Bash(git push:*)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" log --oneline origin/main -3)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" status vercel.json)",
+      "Bash(npx vercel:*)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" add vercel.json)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nfix vercel.json BOM character\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" add src/pages/Dashboard.tsx)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nFix 3 Dashboard issues: stat cards, tab filters, duplicate dropdown\n\n1. Move TimeSavedCounter from Overview tab to Key Metrics tab only\n2. Add location filter dropdown to all 6 non-overview tabs\n3. Remove duplicate \"All Locations\" from TopBar dropdown by not\n   prepending it in locationDropdownOptions \\(TopBar already adds it\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nAdd score history chart and location filter to overview tabs\n\n- Replace Score History placeholder with Recharts LineChart using\n  historicalData \\(shows 3 lines for all locations, 1 line for single\\)\n- Add location filter dropdown to both Overview tab sections\n- Issues 1 \\(stat cards\\) and 4 \\(duplicate All Locations\\) were already\n  fixed in previous commit\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "WebFetch(domain:evidly-app.vercel.app)",
+      "Bash(git -C \"C:\\\\Users\\\\newpa\\\\Downloads\\\\evidly-demo-final\\\\evidly-app-main\" commit -m \"$\\(cat <<''EOF''\nAdd item IDs to navigation links and render real QR codes\n\n- Action items now navigate with specific IDs \\(e.g. /vendors?id=valley-fire\\)\n- Vendor rows navigate with vendor IDs\n- QR Passport tab renders actual QRCodeSVG components encoding\n  https://evidly-app.vercel.app/passport/[locationId] for each location\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx vite build)",
+      "Bash(npm run build:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)",
+      "Bash(git rebase:*)",
+      "Bash(npm ls:*)",
+      "Bash(timeout:*)",
+      "Bash(node:*)"
+    ]
+  }
+}

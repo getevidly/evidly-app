@@ -135,7 +135,7 @@ export function Settings() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
               </div>
-              <button onClick={() => alert('Profile saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Profile saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 Save Changes
               </button>
             </div>
@@ -217,7 +217,7 @@ export function Settings() {
                 </button>
               </div>
 
-              <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 Save Changes
               </button>
             </div>
@@ -376,7 +376,7 @@ export function Settings() {
               <button
                 onClick={saveNotificationSettings}
                 disabled={saving}
-                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? 'Saving...' : 'Save Preferences'}
               </button>
@@ -509,7 +509,7 @@ export function Settings() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
-              <button onClick={() => alert('Password updated.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Password updated.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 Update Password
               </button>
             </div>
@@ -553,7 +553,7 @@ export function Settings() {
                       <div className="text-sm text-gray-500">Expires 12/24</div>
                     </div>
                   </div>
-                  <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium">
+                  <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium">
                     Update
                   </button>
                 </div>
