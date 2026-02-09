@@ -243,7 +243,10 @@ export function Documents() {
         {demoMode && <DemoModeBanner />}
 
         <div className="flex justify-between items-center">
-          <p className="text-gray-600">Store and manage compliance documents</p>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Documentation</h1>
+            <p className="text-sm text-gray-600 mt-1">Store and manage compliance documents</p>
+          </div>
           <div className="flex gap-2">
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button

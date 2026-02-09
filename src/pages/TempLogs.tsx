@@ -1106,6 +1106,11 @@ export function TempLogs() {
       )}
 
       <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Temperature Logs</h1>
+          <p className="text-sm text-gray-600 mt-1">Monitor and record equipment temperatures</p>
+        </div>
+
         {/* Tabs */}
         <div className="flex space-x-2 border-b border-gray-200">
           <button

@@ -179,7 +179,7 @@ export function Analysis() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Predictive Compliance Analysis</h1>
-            <p className="text-gray-600 mt-1">AI-powered insights to prevent compliance issues before they happen</p>
+            <p className="text-sm text-gray-600 mt-1">AI-powered insights to prevent compliance issues before they happen</p>
           </div>
           <select
             value={selectedLocation}

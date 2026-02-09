@@ -358,12 +358,12 @@ export function Alerts() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Alerts' }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
             <h2 className="text-2xl font-bold">Compliance Alerts</h2>
           </div>
-          <p className="text-gray-200">AI-powered predictive alerts and notifications</p>
+          <p className="text-gray-300">AI-powered predictive alerts and notifications</p>
           <div className="flex items-center space-x-6 mt-4">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">

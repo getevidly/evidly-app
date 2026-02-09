@@ -299,18 +299,18 @@ export function AIAdvisor() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'AI Advisor' }]} />
       <div className="flex flex-col" style={{ height: 'calc(100vh - 10rem)' }}>
         {/* Header */}
-        <div className="rounded-lg p-6 text-white mb-4" style={{ background: 'linear-gradient(135deg, #1e4d6b 0%, #2a6a8f 100%)' }}>
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2a6a8f] rounded-xl p-6 text-white mb-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center space-x-3 mb-2">
                 <Brain className="h-8 w-8 text-[#d4af37]" />
                 <h2 className="text-2xl font-bold">AI Compliance Advisor</h2>
               </div>
-              <p style={{ color: 'rgba(255,255,255,0.8)' }}>
+              <p className="text-white/80">
                 AI Advisor analyzes your compliance data in real-time to provide instant, actionable guidance.
               </p>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ backgroundColor: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.3)' }}>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#d4af37]/15 border border-[#d4af37]/30">
               <Sparkles className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm font-semibold text-[#d4af37]">Powered by EvidLY AI</span>
             </div>

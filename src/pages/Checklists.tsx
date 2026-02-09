@@ -873,6 +873,11 @@ export function Checklists() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Checklists' }]} />
       <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Checklists</h1>
+          <p className="text-sm text-gray-600 mt-1">Daily compliance checklists and templates</p>
+        </div>
+
         {/* View Tabs */}
         <div className="flex space-x-2 border-b border-gray-200">
           <button

@@ -81,12 +81,12 @@ export function Leaderboard() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
         {/* Header */}
-        <div style={{ background: 'linear-gradient(135deg, #1e4d6b 0%, #2c5f7f 100%)', borderRadius: '12px', padding: '24px', color: 'white' }}>
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
-            <Trophy className="h-8 w-8" style={{ color: '#d4af37' }} />
+            <Trophy className="h-8 w-8 text-[#d4af37]" />
             <h2 className="text-2xl font-bold">Location Leaderboard</h2>
           </div>
-          <p style={{ color: '#cbd5e1' }}>Track performance across all your locations</p>
+          <p className="text-gray-300">Track performance across all your locations</p>
         </div>
 
         {/* Summary Cards */}

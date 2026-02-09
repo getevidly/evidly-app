@@ -96,7 +96,7 @@ export function Reports() {
   if (userRole !== 'management') {
     return (
       <div className="p-6">
-        <Breadcrumb items={[{ label: 'Reporting', path: '/reports' }]} />
+        <Breadcrumb items={[{ label: 'Reporting' }]} />
         <div className="mt-8 flex flex-col items-center justify-center py-12">
           <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
@@ -448,7 +448,7 @@ export function Reports() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Reporting</h1>
-            <p className="text-gray-600 mt-1">Comprehensive insights and analytics</p>
+            <p className="text-sm text-gray-600 mt-1">Comprehensive insights and analytics</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <select
