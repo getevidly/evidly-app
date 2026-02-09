@@ -16,10 +16,10 @@ export default function QRFeature() {
     <section className="py-[100px] px-6 bg-gradient-to-br from-[var(--color-blue)] to-[var(--color-blue-dark)] text-white">
       <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
         <div>
-          <h2 className="font-['Outfit'] text-[2.5rem] font-bold mb-5">
+          <h2 className="font-['Outfit'] text-[2.75rem] font-bold mb-5">
             Your <span className="text-[var(--color-gold)]">QR Compliance Operations Passport</span>
           </h2>
-          <p className="text-[1.125rem] text-[rgba(255,255,255,0.8)] leading-[1.7] mb-8">
+          <p className="text-[1.2rem] text-[rgba(255,255,255,0.8)] leading-[1.7] mb-8">
             Every location gets a unique QR code. When the health inspector arrives, hand them your phone or let them scan the code on your wall. Instant access to your complete compliance operations status — no scrambling, no searching, no stress.
           </p>
           <ul className="list-none">

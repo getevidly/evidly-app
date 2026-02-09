@@ -35,10 +35,10 @@ export default function DailyOperations() {
             <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">
               How It Works
             </span>
-            <h2 className="font-['Outfit'] text-[2.5rem] font-bold text-[var(--color-blue)] tracking-tight mb-5">
+            <h2 className="font-['Outfit'] text-[2.75rem] font-bold text-[var(--color-blue)] tracking-tight mb-5">
               Your staff does the checks. EvidLY does the notes.
             </h2>
-            <p className="text-[1.125rem] text-[var(--color-text-light)] leading-[1.7] mb-8">
+            <p className="text-[1.2rem] text-[var(--color-text-light)] leading-[1.7] mb-8">
               Replace clipboards and handwritten notes with a simple app your team will actually use — and you can actually trust.
             </p>
             <ul className="list-none">

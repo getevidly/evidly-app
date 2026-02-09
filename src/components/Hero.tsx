@@ -31,13 +31,13 @@ export default function Hero() {
           <span className="text-[var(--color-blue)] block">Compliance</span>
           <span className="text-[var(--color-gold)] block">Simplified</span>
         </h1>
-        <p className="text-[1.125rem] text-[var(--color-blue)] font-semibold mb-3 max-w-[600px] mx-auto">
+        <p className="text-[1.2rem] text-[var(--color-blue)] font-semibold mb-3 max-w-[600px] mx-auto">
           The all-in-one compliance platform for commercial kitchens
         </p>
-        <p className="text-[1rem] text-[var(--color-text-light)] mb-6 max-w-[500px] mx-auto">
-          From the team behind 90+ commercial kitchen accounts
+        <p className="text-[1.05rem] text-[var(--color-text-light)] mb-6 max-w-[500px] mx-auto">
+          From the team behind 90+ commercial kitchen accounts across California
         </p>
-        <p className="text-[1.25rem] text-[var(--color-text-light)] leading-[1.7] max-w-[600px] mx-auto mb-10">
+        <p className="text-[1.3rem] text-[var(--color-text-light)] leading-[1.7] max-w-[600px] mx-auto mb-10">
           Accurate records your team can trust. Eliminate manual errors, pass every inspection with verified data, and catch problems before inspectors do.
         </p>
         <form className="flex gap-3 max-w-[480px] mx-auto mb-6 flex-col sm:flex-row" onSubmit={handleSubmit}>
@@ -79,9 +79,14 @@ export default function Hero() {
               </div>
               <span className="text-sm font-semibold text-gray-800">Pacific Coast Dining</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 hidden sm:inline">All Locations</span>
-              <div className="w-7 h-7 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-xs font-bold">J</div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded bg-[#1e4d6b] flex items-center justify-center">
+                <svg viewBox="0 0 56 65" fill="none" className="w-2.5 h-3">
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
+                </svg>
+              </div>
+              <span className="text-[10px] font-bold text-[#1e4d6b] hidden sm:inline">EvidLY</span>
+              <span className="text-[9px] text-gray-400 hidden sm:inline">Compliance Simplified</span>
             </div>
           </div>
 
@@ -145,19 +150,21 @@ export default function Hero() {
                 </thead>
                 <tbody>
                   {[
-                    { name: 'Downtown Kitchen', overall: 92, op: 95, eq: 91, doc: 89, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
-                    { name: 'Airport Cafe', overall: 74, op: 78, eq: 70, doc: 72, status: 'Needs Attention', statusColor: '#d4af37', statusBg: '#fffbeb' },
-                    { name: 'University Dining', overall: 57, op: 62, eq: 55, doc: 52, status: 'Critical', statusColor: '#dc2626', statusBg: '#fef2f2' },
+                    { name: 'Downtown Kitchen', overall: 95, op: 97, eq: 94, doc: 93, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
+                    { name: 'Airport Cafe', overall: 92, op: 94, eq: 91, doc: 90, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
+                    { name: 'University Dining Hall', overall: 90, op: 92, eq: 89, doc: 88, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
+                    { name: 'Memorial Hospital Cafeteria', overall: 88, op: 90, eq: 87, doc: 86, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
+                    { name: 'Sunrise Senior Living', overall: 91, op: 93, eq: 90, doc: 89, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
                   ].map((loc, i) => {
                     const scoreColor = (s: number) => s >= 80 ? '#22c55e' : s >= 60 ? '#d4af37' : '#dc2626';
                     return (
-                      <tr key={loc.name} className={i < 2 ? 'border-b border-gray-50' : ''}>
-                        <td className="px-4 py-2.5 text-xs font-medium text-gray-800">{loc.name}</td>
-                        <td className="px-3 py-2.5 text-center"><span className="text-xs font-bold" style={{ color: scoreColor(loc.overall) }}>{loc.overall}</span></td>
-                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.op) }}>{loc.op}</span></td>
-                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.eq) }}>{loc.eq}</span></td>
-                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.doc) }}>{loc.doc}</span></td>
-                        <td className="px-3 py-2.5 text-center">
+                      <tr key={loc.name} className={i < 4 ? 'border-b border-gray-50' : ''}>
+                        <td className="px-4 py-2 text-xs font-medium text-gray-800">{loc.name}</td>
+                        <td className="px-3 py-2 text-center"><span className="text-xs font-bold" style={{ color: scoreColor(loc.overall) }}>{loc.overall}</span></td>
+                        <td className="px-3 py-2 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.op) }}>{loc.op}</span></td>
+                        <td className="px-3 py-2 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.eq) }}>{loc.eq}</span></td>
+                        <td className="px-3 py-2 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.doc) }}>{loc.doc}</span></td>
+                        <td className="px-3 py-2 text-center">
                           <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ color: loc.statusColor, backgroundColor: loc.statusBg, border: `1px solid ${loc.statusColor}20` }}>{loc.status}</span>
                         </td>
                       </tr>
@@ -165,9 +172,15 @@ export default function Hero() {
                   })}
                 </tbody>
               </table>
+              <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-center">
+                <span className="text-[10px] text-gray-400">Showing 5 of 1,000 locations</span>
+              </div>
             </div>
           </div>
         </div>
+        <p className="text-center mt-6 text-[0.95rem] font-semibold text-[var(--color-blue)]">
+          Manage 1 to 1,000+ locations from a single dashboard
+        </p>
       </div>
     </section>
     <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />

@@ -94,7 +94,7 @@ export default function AllFeatures() {
           <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1e4d6b] tracking-tight mb-4">
             Everything you need for food safety compliance
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             45+ features built for restaurants, food manufacturers, and food service operations
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function AllFeatures() {
               key={idx}
               className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#d4af37] transition-all hover:shadow-lg"
             >
-              <h3 className="text-xl font-bold text-[#1e4d6b] mb-4">{category.title}</h3>
+              <h3 className="text-[1.3rem] font-bold text-[#1e4d6b] mb-4">{category.title}</h3>
               <ul className="space-y-3">
                 {category.features.map((feature, featureIdx) => (
                   <li key={featureIdx} className="flex items-start gap-3">

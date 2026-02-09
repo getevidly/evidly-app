@@ -16,7 +16,7 @@ export default function FinalCTA() {
         <h2 className="font-['Outfit'] text-[clamp(2rem,5vw,3rem)] font-extrabold tracking-tight mb-5">
           Ready to <span className="text-[var(--color-gold)]">simplify compliance</span>?
         </h2>
-        <p className="text-[1.25rem] text-[rgba(255,255,255,0.8)] mb-10">
+        <p className="text-[1.3rem] text-[rgba(255,255,255,0.8)] mb-10">
           Start your free demo and see why commercial kitchens trust EvidLY.
         </p>
         <form className="flex gap-3 max-w-[480px] mx-auto flex-col sm:flex-row" onSubmit={handleSubmit}>

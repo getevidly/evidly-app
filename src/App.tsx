@@ -38,14 +38,12 @@ const Passport = lazy(() => import('./pages/Passport'));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import Problem from './components/Problem';
 import DailyOperations from './components/DailyOperations';
 import Features from './components/Features';
 import BeforeAfter from './components/BeforeAfter';
 import QRFeature from './components/QRFeature';
 import Pricing from './components/Pricing';
 import AllFeatures from './components/AllFeatures';
-import PlatformStats from './components/PlatformStats';
 import Trust from './components/Trust';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
@@ -58,14 +56,12 @@ function LandingPage() {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
-      <Problem />
       <DailyOperations />
       <Features />
       <BeforeAfter />
       <QRFeature />
       <AllFeatures />
       <Pricing />
-      <PlatformStats />
       <Trust />
       <FinalCTA />
       <Footer />

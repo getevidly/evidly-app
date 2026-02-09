@@ -8,10 +8,10 @@ export default function Trust() {
   return (
     <section className="py-20 px-6 bg-[var(--color-gray-50)]">
       <div className="max-w-[1000px] mx-auto text-center">
-        <h2 className="font-['Outfit'] text-[1.75rem] font-bold text-[var(--color-blue)] mb-4">
+        <h2 className="font-['Outfit'] text-[2rem] font-bold text-[var(--color-blue)] mb-4">
           Built by operators, for operators
         </h2>
-        <p className="text-[1.125rem] text-[var(--color-text-light)] leading-[1.7] mb-12 max-w-[700px] mx-auto">
+        <p className="text-[1.2rem] text-[var(--color-text-light)] leading-[1.7] mb-12 max-w-[700px] mx-auto">
           EvidLY comes from 3+ years running commercial kitchen operations, backed by 20+ years of enterprise IT and cybersecurity expertise. We know compliance because we live it every day — servicing kitchens from Yosemite to Aramark facilities.
         </p>
         <div className="flex justify-center gap-16 flex-wrap">

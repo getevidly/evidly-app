@@ -49,10 +49,10 @@ export default function Features() {
           <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">
             Why Restaurants Switch to EvidLY
           </span>
-          <h2 className="font-['Outfit'] text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
+          <h2 className="font-['Outfit'] text-[clamp(2rem,4vw,2.75rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
             Stop worrying about compliance. Relax at night.
           </h2>
-          <p className="text-[1.125rem] text-[var(--color-text-light)]">
+          <p className="text-[1.2rem] text-[var(--color-text-light)]">
             Everything documented, verified, and inspection-ready — automatically.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function Features() {
               <div className="w-14 h-14 bg-[var(--color-blue)] rounded-[14px] flex items-center justify-center text-[1.5rem] mb-5">
                 {feature.icon}
               </div>
-              <h3 className="font-['Outfit'] text-[1.25rem] font-bold text-[var(--color-blue)] mb-2">
+              <h3 className="font-['Outfit'] text-[1.35rem] font-bold text-[var(--color-blue)] mb-2">
                 {feature.title}
               </h3>
               <p className="text-[var(--color-text-light)] leading-[1.6]">{feature.description}</p>

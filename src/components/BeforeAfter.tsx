@@ -31,10 +31,10 @@ export default function BeforeAfter() {
           <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">
             The Transformation
           </span>
-          <h2 className="font-['Outfit'] text-[clamp(1.75rem,4vw,2.5rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
+          <h2 className="font-['Outfit'] text-[clamp(2rem,4vw,2.75rem)] font-bold text-[var(--color-blue)] tracking-tight mb-3">
             Before EvidLY vs. After EvidLY
           </h2>
-          <p className="text-[1.125rem] text-[var(--color-text-light)]">
+          <p className="text-[1.2rem] text-[var(--color-text-light)]">
             See what changes when you move from handwritten notes and hope to verified digital compliance
           </p>
         </div>
