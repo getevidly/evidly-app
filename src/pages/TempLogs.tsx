@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -74,6 +75,7 @@ interface CooldownCheck {
 
 export function TempLogs() {
   const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -453,11 +455,35 @@ export function TempLogs() {
       return;
     }
 
+    // Demo mode: update local state only
+    if (isDemoMode || !profile?.organization_id) {
+      const now = new Date();
+      setEquipment(prev => prev.map(eq =>
+        eq.id === selectedEquipment.id
+          ? { ...eq, last_check: { temperature_value: tempValue, created_at: now.toISOString(), is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
+          : eq
+      ));
+      setHistory(prev => [{
+        id: `demo-${Date.now()}`,
+        equipment_id: selectedEquipment.id,
+        equipment_name: selectedEquipment.name,
+        equipment_type: selectedEquipment.equipment_type,
+        temperature_value: tempValue,
+        is_within_range: isWithinRange,
+        recorded_by_name: 'Demo User',
+        corrective_action: !isWithinRange ? correctiveAction : null,
+        created_at: now.toISOString(),
+      }, ...prev]);
+      setShowLogModal(false);
+      showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await supabase.from('temp_check_completions').insert({
       organization_id: profile?.organization_id,
-      location_id: selectedEquipment.location_id,
+      location_id: (selectedEquipment as any).location_id,
       equipment_id: selectedEquipment.id,
       temperature_value: tempValue,
       is_within_range: isWithinRange,
@@ -469,7 +495,7 @@ export function TempLogs() {
 
     if (!error) {
       setShowLogModal(false);
-      showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name} ✓`);
+      showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
       fetchEquipment();
       fetchHistory();
     }
@@ -516,16 +542,45 @@ export function TempLogs() {
       return;
     }
 
+    // Demo mode: update local state only
+    if (isDemoMode || !profile?.organization_id) {
+      const now = new Date();
+      const newHistory = validEntries.map((entry, i) => {
+        const tempValue = parseFloat(entry.temperature);
+        const isWithinRange = tempValue >= entry.min_temp && tempValue <= entry.max_temp;
+        return {
+          id: `demo-batch-${Date.now()}-${i}`,
+          equipment_id: entry.equipment_id,
+          equipment_name: entry.equipment_name,
+          equipment_type: equipment.find(e => e.id === entry.equipment_id)?.equipment_type || 'cooler',
+          temperature_value: tempValue,
+          is_within_range: isWithinRange,
+          recorded_by_name: 'Demo User',
+          corrective_action: null,
+          created_at: now.toISOString(),
+        };
+      });
+      setHistory(prev => [...newHistory, ...prev]);
+      setEquipment(prev => prev.map(eq => {
+        const entry = validEntries.find(e => e.equipment_id === eq.id);
+        if (!entry) return eq;
+        const tempValue = parseFloat(entry.temperature);
+        return { ...eq, last_check: { temperature_value: tempValue, created_at: now.toISOString(), is_within_range: tempValue >= eq.min_temp && tempValue <= eq.max_temp, recorded_by_name: 'Demo User' } };
+      }));
+      setShowBatchModal(false);
+      showSuccessToast(`${validEntries.length} temperatures logged successfully`);
+      return;
+    }
+
     setLoading(true);
 
     const insertData = validEntries.map(entry => {
       const tempValue = parseFloat(entry.temperature);
-      const eq = equipment.find(e => e.id === entry.equipment_id);
       const isWithinRange = tempValue >= entry.min_temp && tempValue <= entry.max_temp;
 
       return {
         organization_id: profile?.organization_id,
-        location_id: eq?.location_id,
+        location_id: (equipment.find(e => e.id === entry.equipment_id) as any)?.location_id,
         equipment_id: entry.equipment_id,
         temperature_value: tempValue,
         is_within_range: isWithinRange,
@@ -574,6 +629,24 @@ export function TempLogs() {
 
     if (!vendorName || !receivedBy) {
       alert('Please complete all required fields');
+      return;
+    }
+
+    // Demo mode: skip Supabase, just show result
+    if (isDemoMode || !profile?.organization_id) {
+      const failedCount = receivingItems.filter(i => !i.isPass).length;
+      const summary = failedCount > 0
+        ? `${receivingItems.length} items from ${vendorName} - ${failedCount} item(s) failed`
+        : `${receivingItems.length} items from ${vendorName} - All Pass`;
+      showSuccessToast(summary);
+      setVendorName('');
+      setItemDescription('');
+      setReceivingTemp('');
+      setReceivingNotes('');
+      setReceivingItems([]);
+      setFoodCategory('');
+      setReceivedBy('');
+      setShowVendorOther(false);
       return;
     }
 

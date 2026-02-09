@@ -94,6 +94,10 @@ export function Team() {
   };
 
   const cancelInvitation = async (invitationId: string) => {
+    if (!profile?.organization_id) {
+      setInvitations(prev => prev.filter(i => i.id !== invitationId));
+      return;
+    }
     await supabase
       .from('user_invitations')
       .update({ status: 'expired' })
@@ -103,6 +107,10 @@ export function Team() {
   };
 
   const resendInvitation = async (invitation: Invitation, method?: 'email' | 'sms') => {
+    if (!profile?.organization_id) {
+      alert('Invitation resent. (Demo mode — no actual invite sent.)');
+      return;
+    }
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;

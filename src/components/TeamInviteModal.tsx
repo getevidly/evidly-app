@@ -46,6 +46,18 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent 
 
     setLoading(true);
 
+    // Demo mode: no org ID means we're in demo
+    if (!organizationId) {
+      setLoading(false);
+      alert(`Invitation sent to ${email || phone} as ${role}. (Demo mode — no actual invite sent.)`);
+      setEmail('');
+      setPhone('');
+      setRole('Staff');
+      setInviteMethod('sms');
+      onClose();
+      return;
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {

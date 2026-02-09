@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -284,7 +285,9 @@ const PREBUILT_TEMPLATES = {
 
 export function Checklists() {
   const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
+  const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [templates, setTemplates] = useState<ChecklistTemplate[]>([]);
   const [completions, setCompletions] = useState<ChecklistCompletion[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -366,6 +369,32 @@ export function Checklists() {
   const createPrebuiltTemplate = async (templateKey: keyof typeof PREBUILT_TEMPLATES) => {
     const template = PREBUILT_TEMPLATES[templateKey];
     setLoading(true);
+
+    // Demo mode: use local state only
+    if (isDemoMode || !profile?.organization_id) {
+      const newId = `demo-${Date.now()}`;
+      const newTemplate: ChecklistTemplate = {
+        id: newId,
+        name: template.name,
+        checklist_type: template.type,
+        frequency: template.frequency,
+        is_active: true,
+        items_count: template.items.length,
+      };
+      setTemplates(prev => [newTemplate, ...prev]);
+      const newItems: ChecklistTemplateItem[] = template.items.map((item, idx) => ({
+        id: `${newId}-item-${idx}`,
+        template_id: newId,
+        title: item.title,
+        item_type: item.type,
+        order: idx,
+        is_required: item.required,
+      }));
+      setDemoItemsMap(prev => ({ ...prev, [newId]: newItems }));
+      setLoading(false);
+      alert('Template created!');
+      return;
+    }
 
     try {
       const { data: templateData, error: templateError } = await supabase
@@ -449,6 +478,36 @@ export function Checklists() {
 
     setLoading(true);
 
+    // Demo mode: use local state only
+    if (isDemoMode || !profile?.organization_id) {
+      const newId = `demo-${Date.now()}`;
+      const newTemplate: ChecklistTemplate = {
+        id: newId,
+        name: templateName,
+        checklist_type: templateType,
+        frequency: templateFrequency,
+        is_active: true,
+        items_count: items.length,
+      };
+      setTemplates(prev => [newTemplate, ...prev]);
+      const newItems: ChecklistTemplateItem[] = items.map((item, idx) => ({
+        id: `${newId}-item-${idx}`,
+        template_id: newId,
+        title: item.title,
+        item_type: item.type,
+        order: idx,
+        is_required: item.required,
+      }));
+      setDemoItemsMap(prev => ({ ...prev, [newId]: newItems }));
+      setLoading(false);
+      setShowTemplateModal(false);
+      setTemplateName('');
+      setTemplateType('');
+      setItems([]);
+      alert('Template created!');
+      return;
+    }
+
     try {
       const { data: templateData, error: templateError } = await supabase
         .from('checklist_templates')
@@ -510,6 +569,15 @@ export function Checklists() {
   const handleStartChecklist = async (template: ChecklistTemplate) => {
     setSelectedTemplate(template);
 
+    // Demo mode: use local items map
+    if (isDemoMode || !profile?.organization_id) {
+      const localItems = demoItemsMap[template.id] || [];
+      setTemplateItems(localItems);
+      setItemResponses({});
+      setShowCompleteModal(true);
+      return;
+    }
+
     const { data } = await supabase
       .from('checklist_template_items')
       .select('*')
@@ -545,6 +613,23 @@ export function Checklists() {
       return;
     }
 
+    const passedItems = Object.values(itemResponses).filter(
+      (r) => r.is_pass === null || r.is_pass === true
+    ).length;
+    const scorePercentage = Math.round((passedItems / templateItems.length) * 100);
+
+    // Demo mode: update local state only
+    if (isDemoMode || !profile?.organization_id) {
+      setShowCompleteModal(false);
+      setItemResponses({});
+      if (scorePercentage === 100) {
+        setTimeout(() => alert('Checklist completed with 100% score!'), 100);
+      } else {
+        alert(`Checklist submitted — score: ${scorePercentage}%`);
+      }
+      return;
+    }
+
     setLoading(true);
 
     const { data: locationData } = await supabase
@@ -553,11 +638,6 @@ export function Checklists() {
       .eq('organization_id', profile?.organization_id)
       .limit(1)
       .maybeSingle();
-
-    const passedItems = Object.values(itemResponses).filter(
-      (r) => r.is_pass === null || r.is_pass === true
-    ).length;
-    const scorePercentage = Math.round((passedItems / templateItems.length) * 100);
 
     const { data: completionData, error: completionError } = await supabase
       .from('checklist_template_completions')
@@ -593,12 +673,23 @@ export function Checklists() {
     fetchCompletions();
 
     if (scorePercentage === 100) {
-      setTimeout(() => alert('🎉 Checklist completed with 100% score!'), 100);
+      setTimeout(() => alert('Checklist completed with 100% score!'), 100);
     }
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
     if (!confirm('Are you sure you want to delete this template?')) return;
+
+    // Demo mode: remove from local state
+    if (isDemoMode || !profile?.organization_id) {
+      setTemplates(prev => prev.filter(t => t.id !== templateId));
+      setDemoItemsMap(prev => {
+        const copy = { ...prev };
+        delete copy[templateId];
+        return copy;
+      });
+      return;
+    }
 
     await supabase.from('checklist_templates').delete().eq('id', templateId);
     fetchTemplates();
