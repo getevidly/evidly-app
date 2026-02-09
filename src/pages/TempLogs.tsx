@@ -223,9 +223,9 @@ export function TempLogs() {
         unit: 'F',
         location: 'Airport Cafe',
         last_check: {
-          temperature_value: 39,
+          temperature_value: 43,
           created_at: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
-          is_within_range: true,
+          is_within_range: false,
           recorded_by_name: 'Emma Davis',
         },
       },
@@ -238,9 +238,9 @@ export function TempLogs() {
         unit: 'F',
         location: 'University Dining',
         last_check: {
-          temperature_value: 0,
+          temperature_value: 2,
           created_at: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
-          is_within_range: true,
+          is_within_range: false,
           recorded_by_name: 'Mike Johnson',
         },
       },
@@ -779,7 +779,10 @@ export function TempLogs() {
         const bOutOfRange = isEquipmentOutOfRange(b);
         if (aOutOfRange && !bOutOfRange) return -1;
         if (!aOutOfRange && bOutOfRange) return 1;
-        return a.name.localeCompare(b.name);
+        // Within same group, sort by most recent check (not alphabetical)
+        const aTime = a.last_check ? new Date(a.last_check.created_at).getTime() : 0;
+        const bTime = b.last_check ? new Date(b.last_check.created_at).getTime() : 0;
+        return bTime - aTime;
       } else if (sortBy === 'alphabetical') {
         return a.name.localeCompare(b.name);
       } else if (sortBy === 'mostRecent') {
