@@ -85,13 +85,13 @@ const featureCategories = [
 
 export default function AllFeatures() {
   return (
-    <section id="features" className="py-24 px-6 bg-white">
+    <section id="all-features" className="py-24 px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
             Complete Feature List
           </span>
-          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1b4965] tracking-tight mb-4">
+          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1e4d6b] tracking-tight mb-4">
             Everything you need for food safety compliance
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -105,7 +105,7 @@ export default function AllFeatures() {
               key={idx}
               className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#d4af37] transition-all hover:shadow-lg"
             >
-              <h3 className="text-xl font-bold text-[#1b4965] mb-4">{category.title}</h3>
+              <h3 className="text-xl font-bold text-[#1e4d6b] mb-4">{category.title}</h3>
               <ul className="space-y-3">
                 {category.features.map((feature, featureIdx) => (
                   <li key={featureIdx} className="flex items-start gap-3">

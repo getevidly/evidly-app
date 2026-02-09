@@ -16,12 +16,12 @@ export default function Footer() {
           </span>
         </div>
         <div className="text-[0.875rem] text-[rgba(255,255,255,0.6)]">
-          © 2026 EvidLY. Compliance Simplified. | <a href="mailto:launch@getevidly.com" className="text-[rgba(255,255,255,0.6)] hover:text-white">launch@getevidly.com</a>
+          © 2026 EvidLY. Compliance Simplified. | <a href="mailto:founders@getevidly.com" className="text-[rgba(255,255,255,0.6)] hover:text-white">founders@getevidly.com</a>
         </div>
         <div className="flex gap-6">
           <a href="#" className="text-[0.875rem] text-[rgba(255,255,255,0.6)] no-underline transition-colors hover:text-white">Privacy</a>
           <a href="#" className="text-[0.875rem] text-[rgba(255,255,255,0.6)] no-underline transition-colors hover:text-white">Terms</a>
-          <a href="mailto:launch@getevidly.com" className="text-[0.875rem] text-[rgba(255,255,255,0.6)] no-underline transition-colors hover:text-white">Contact</a>
+          <a href="mailto:founders@getevidly.com" className="text-[0.875rem] text-[rgba(255,255,255,0.6)] no-underline transition-colors hover:text-white">Contact</a>
         </div>
       </div>
     </footer>

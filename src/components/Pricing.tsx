@@ -1,8 +1,10 @@
 import { Check, Mail, Phone, Shield } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const navigate = useNavigate();
 
   const founderTier = {
     name: 'Founder Pricing',
@@ -46,7 +48,7 @@ export default function Pricing() {
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
             Pricing
           </span>
-          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1b4965] tracking-tight">
+          <h2 className="font-['Outfit'] text-4xl md:text-5xl font-bold text-[#1e4d6b] tracking-tight">
             Lock in founder pricing today
           </h2>
         </div>
@@ -55,7 +57,7 @@ export default function Pricing() {
           {/* Founder Pricing Card */}
           <div className="relative">
             <div className="bg-white rounded-2xl p-8 relative border-4 border-[#d4af37] shadow-2xl shadow-[#d4af37]/20 h-full flex flex-col">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1b4965] text-sm font-bold rounded-full uppercase tracking-wider shadow-lg">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-lg">
                 Best Value
               </div>
 
@@ -72,7 +74,7 @@ export default function Pricing() {
                   onClick={() => setBillingCycle('monthly')}
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'monthly'
-                      ? 'bg-white text-[#1b4965] shadow-sm'
+                      ? 'bg-white text-[#1e4d6b] shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -82,7 +84,7 @@ export default function Pricing() {
                   onClick={() => setBillingCycle('annual')}
                   className={`px-4 py-2 rounded-md text-sm font-semibold transition-all ${
                     billingCycle === 'annual'
-                      ? 'bg-white text-[#1b4965] shadow-sm'
+                      ? 'bg-white text-[#1e4d6b] shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -110,17 +112,17 @@ export default function Pricing() {
                       + ${founderTier.additionalLocation}/month per additional location (up to 10)
                     </div>
                   </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm font-semibold text-green-800">
+                  <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }} className="rounded-lg p-3 mb-4">
+                    <p className="text-sm font-semibold" style={{ color: '#166534' }}>
                       Save $1,200/year — 50% off future standard pricing
                     </p>
                   </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <div style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }} className="rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <Shield className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                      <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
                       <div>
-                        <p className="font-semibold text-blue-900">60-Day Money-Back Guarantee</p>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>60-Day Money-Back Guarantee</p>
+                        <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>
                           Try EvidLY risk-free. If you're not satisfied within 60 days, get a full refund — no questions asked.
                         </p>
                       </div>
@@ -147,17 +149,17 @@ export default function Pricing() {
                       + ${founderTier.additionalLocation}/month per additional location (up to 10)
                     </div>
                   </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-                    <p className="text-sm font-semibold text-green-800">
-                      2 months free • Save ${founderTier.annualSavings.toLocaleString()}/year
+                  <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }} className="rounded-lg p-3 mb-4">
+                    <p className="text-sm font-semibold" style={{ color: '#166534' }}>
+                      2 months free &bull; Save ${founderTier.annualSavings.toLocaleString()}/year
                     </p>
                   </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <div style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }} className="rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <Shield className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                      <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
                       <div>
-                        <p className="font-semibold text-blue-900">60-Day Money-Back Guarantee</p>
-                        <p className="text-sm text-blue-700 mt-1">
+                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>60-Day Money-Back Guarantee</p>
+                        <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>
                           Try EvidLY risk-free. If you're not satisfied within 60 days, get a full refund — no questions asked.
                         </p>
                       </div>
@@ -174,7 +176,7 @@ export default function Pricing() {
                       {feature}
                       {idx === 0 && (
                         <a
-                          href="#features"
+                          href="#all-features"
                           className="ml-2 text-sm text-[#1e4d6b] hover:text-[#2a6a8f] underline font-medium"
                         >
                           See all features
@@ -186,7 +188,10 @@ export default function Pricing() {
               </ul>
 
               <div>
-                <button className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#2a6a8f] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
                   Get Started
                 </button>
               </div>
@@ -194,16 +199,16 @@ export default function Pricing() {
           </div>
 
           {/* Enterprise Card */}
-          <div className="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-lg h-full flex flex-col">
+          <div id="contact" className="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-lg h-full flex flex-col">
             <div className="mb-6">
-              <div className="text-xl font-bold text-[#1b4965] mb-1">
+              <div className="text-xl font-bold text-[#1e4d6b] mb-1">
                 {enterpriseTier.name}
               </div>
               <div className="text-base text-gray-600">{enterpriseTier.subtitle}</div>
             </div>
 
             <div className="mb-8">
-              <div className="text-4xl font-extrabold text-[#1b4965] mb-2">Custom</div>
+              <div className="text-4xl font-extrabold text-[#1e4d6b] mb-2">Custom</div>
               <div className="text-gray-600">Tailored to your needs</div>
             </div>
 
@@ -217,9 +222,12 @@ export default function Pricing() {
             </ul>
 
             <div className="space-y-4">
-              <button className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-md hover:shadow-lg">
+              <a
+                href="mailto:founders@getevidly.com"
+                className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-md hover:shadow-lg text-center"
+              >
                 Contact Sales
-              </button>
+              </a>
               <div className="space-y-2">
                 <a
                   href="mailto:founders@getevidly.com"
@@ -243,7 +251,7 @@ export default function Pricing() {
         {/* Trust Statement */}
         <div className="text-center mt-12">
           <p className="text-sm text-gray-500">
-            All plans include a 60-day money-back guarantee • No setup fees • Cancel anytime
+            All plans include a 60-day money-back guarantee &bull; No setup fees &bull; Cancel anytime
           </p>
         </div>
       </div>
