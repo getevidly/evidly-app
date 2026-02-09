@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { Printer, Download, TrendingUp, ShieldX } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -96,7 +96,7 @@ export function Reports() {
   if (userRole !== 'management') {
     return (
       <div className="p-6">
-        <Breadcrumb items={[{ label: 'Reports', path: '/reports' }]} />
+        <Breadcrumb items={[{ label: 'Reporting', path: '/reports' }]} />
         <div className="mt-8 flex flex-col items-center justify-center py-12">
           <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
@@ -108,20 +108,37 @@ export function Reports() {
     );
   }
 
-  const scoreData = [
-    { week: 'Wk 1', score: 68 },
-    { week: 'Wk 2', score: 67 },
-    { week: 'Wk 3', score: 69 },
-    { week: 'Wk 4', score: 68 },
-    { week: 'Wk 5', score: 70 },
-    { week: 'Wk 6', score: 69 },
-    { week: 'Wk 7', score: 71 },
-    { week: 'Wk 8', score: 72 },
-    { week: 'Wk 9', score: 71 },
-    { week: 'Wk 10', score: 73 },
-    { week: 'Wk 11', score: 72 },
-    { week: 'Wk 12', score: 74 },
-  ];
+  const selectedLocName = selectedLocation !== 'all'
+    ? demoLocations.find(l => l.urlId === selectedLocation)?.name || ''
+    : '';
+
+  const scoreDataByLocation: Record<string, { week: string; score: number }[]> = {
+    'all': [
+      { week: 'Wk 1', score: 68 }, { week: 'Wk 2', score: 67 }, { week: 'Wk 3', score: 69 },
+      { week: 'Wk 4', score: 68 }, { week: 'Wk 5', score: 70 }, { week: 'Wk 6', score: 69 },
+      { week: 'Wk 7', score: 71 }, { week: 'Wk 8', score: 72 }, { week: 'Wk 9', score: 71 },
+      { week: 'Wk 10', score: 73 }, { week: 'Wk 11', score: 72 }, { week: 'Wk 12', score: 74 },
+    ],
+    'downtown': [
+      { week: 'Wk 1', score: 82 }, { week: 'Wk 2', score: 83 }, { week: 'Wk 3', score: 84 },
+      { week: 'Wk 4', score: 83 }, { week: 'Wk 5', score: 85 }, { week: 'Wk 6', score: 86 },
+      { week: 'Wk 7', score: 87 }, { week: 'Wk 8', score: 88 }, { week: 'Wk 9', score: 87 },
+      { week: 'Wk 10', score: 89 }, { week: 'Wk 11', score: 88 }, { week: 'Wk 12', score: 90 },
+    ],
+    'airport': [
+      { week: 'Wk 1', score: 65 }, { week: 'Wk 2', score: 64 }, { week: 'Wk 3', score: 66 },
+      { week: 'Wk 4', score: 65 }, { week: 'Wk 5', score: 67 }, { week: 'Wk 6', score: 66 },
+      { week: 'Wk 7', score: 68 }, { week: 'Wk 8', score: 69 }, { week: 'Wk 9', score: 68 },
+      { week: 'Wk 10', score: 70 }, { week: 'Wk 11', score: 69 }, { week: 'Wk 12', score: 71 },
+    ],
+    'university': [
+      { week: 'Wk 1', score: 52 }, { week: 'Wk 2', score: 51 }, { week: 'Wk 3', score: 53 },
+      { week: 'Wk 4', score: 54 }, { week: 'Wk 5', score: 55 }, { week: 'Wk 6', score: 54 },
+      { week: 'Wk 7', score: 56 }, { week: 'Wk 8', score: 57 }, { week: 'Wk 9', score: 56 },
+      { week: 'Wk 10', score: 58 }, { week: 'Wk 11', score: 57 }, { week: 'Wk 12', score: 59 },
+    ],
+  };
+  const scoreData = scoreDataByLocation[selectedLocation] || scoreDataByLocation['all'];
 
   const locationComparison = demoLocations.map(loc => {
     const scores = locationScores[loc.urlId];
@@ -144,61 +161,103 @@ export function Reports() {
     { issue: 'Vendor COI documents expiring', priority: 'LOW', affected: '2 vendors' },
   ];
 
-  const tempComplianceData = [
-    { week: 'Wk 1', compliance: 88 },
-    { week: 'Wk 2', compliance: 90 },
-    { week: 'Wk 3', compliance: 89 },
-    { week: 'Wk 4', compliance: 91 },
-    { week: 'Wk 5', compliance: 93 },
-    { week: 'Wk 6', compliance: 92 },
-    { week: 'Wk 7', compliance: 94 },
-    { week: 'Wk 8', compliance: 93 },
-    { week: 'Wk 9', compliance: 95 },
-    { week: 'Wk 10', compliance: 92 },
-    { week: 'Wk 11', compliance: 97 },
-    { week: 'Wk 12', compliance: 94 },
-  ];
+  const tempComplianceByLocation: Record<string, { week: string; compliance: number }[]> = {
+    'all': [
+      { week: 'Wk 1', compliance: 88 }, { week: 'Wk 2', compliance: 90 }, { week: 'Wk 3', compliance: 89 },
+      { week: 'Wk 4', compliance: 91 }, { week: 'Wk 5', compliance: 93 }, { week: 'Wk 6', compliance: 92 },
+      { week: 'Wk 7', compliance: 94 }, { week: 'Wk 8', compliance: 93 }, { week: 'Wk 9', compliance: 95 },
+      { week: 'Wk 10', compliance: 92 }, { week: 'Wk 11', compliance: 97 }, { week: 'Wk 12', compliance: 94 },
+    ],
+    'downtown': [
+      { week: 'Wk 1', compliance: 94 }, { week: 'Wk 2', compliance: 96 }, { week: 'Wk 3', compliance: 95 },
+      { week: 'Wk 4', compliance: 97 }, { week: 'Wk 5', compliance: 98 }, { week: 'Wk 6', compliance: 97 },
+      { week: 'Wk 7', compliance: 99 }, { week: 'Wk 8', compliance: 98 }, { week: 'Wk 9', compliance: 100 },
+      { week: 'Wk 10', compliance: 97 }, { week: 'Wk 11', compliance: 100 }, { week: 'Wk 12', compliance: 98 },
+    ],
+    'airport': [
+      { week: 'Wk 1', compliance: 82 }, { week: 'Wk 2', compliance: 84 }, { week: 'Wk 3', compliance: 83 },
+      { week: 'Wk 4', compliance: 85 }, { week: 'Wk 5', compliance: 87 }, { week: 'Wk 6', compliance: 86 },
+      { week: 'Wk 7', compliance: 88 }, { week: 'Wk 8', compliance: 87 }, { week: 'Wk 9', compliance: 89 },
+      { week: 'Wk 10', compliance: 86 }, { week: 'Wk 11', compliance: 91 }, { week: 'Wk 12', compliance: 88 },
+    ],
+    'university': [
+      { week: 'Wk 1', compliance: 75 }, { week: 'Wk 2', compliance: 77 }, { week: 'Wk 3', compliance: 76 },
+      { week: 'Wk 4', compliance: 78 }, { week: 'Wk 5', compliance: 80 }, { week: 'Wk 6', compliance: 79 },
+      { week: 'Wk 7', compliance: 81 }, { week: 'Wk 8', compliance: 80 }, { week: 'Wk 9', compliance: 82 },
+      { week: 'Wk 10', compliance: 79 }, { week: 'Wk 11', compliance: 84 }, { week: 'Wk 12', compliance: 81 },
+    ],
+  };
+  const tempComplianceData = tempComplianceByLocation[selectedLocation] || tempComplianceByLocation['all'];
 
-  const checklistCompletion = [
-    { template: 'Opening Checklist', rate: 96, completed: 28, missed: 2 },
-    { template: 'Closing Checklist', rate: 89, completed: 26, missed: 4 },
-    { template: 'Daily Cleaning', rate: 92, completed: 27, missed: 3 },
-    { template: 'Equipment Check', rate: 85, completed: 25, missed: 5 },
-    { template: 'Weekly Deep Clean', rate: 75, completed: 3, missed: 1 },
-  ];
+  const checklistCompletionByLocation: Record<string, { template: string; rate: number; completed: number; missed: number }[]> = {
+    'all': [
+      { template: 'Opening Checklist', rate: 96, completed: 28, missed: 2 },
+      { template: 'Closing Checklist', rate: 89, completed: 26, missed: 4 },
+      { template: 'Daily Cleaning', rate: 92, completed: 27, missed: 3 },
+      { template: 'Equipment Check', rate: 85, completed: 25, missed: 5 },
+      { template: 'Weekly Deep Clean', rate: 75, completed: 3, missed: 1 },
+    ],
+    'downtown': [
+      { template: 'Opening Checklist', rate: 100, completed: 10, missed: 0 },
+      { template: 'Closing Checklist', rate: 95, completed: 9, missed: 1 },
+      { template: 'Daily Cleaning', rate: 100, completed: 10, missed: 0 },
+      { template: 'Equipment Check', rate: 90, completed: 9, missed: 1 },
+      { template: 'Weekly Deep Clean', rate: 100, completed: 1, missed: 0 },
+    ],
+    'airport': [
+      { template: 'Opening Checklist', rate: 90, completed: 9, missed: 1 },
+      { template: 'Closing Checklist', rate: 80, completed: 8, missed: 2 },
+      { template: 'Daily Cleaning', rate: 85, completed: 8, missed: 2 },
+      { template: 'Equipment Check', rate: 80, completed: 8, missed: 2 },
+      { template: 'Weekly Deep Clean', rate: 75, completed: 1, missed: 0 },
+    ],
+    'university': [
+      { template: 'Opening Checklist', rate: 80, completed: 8, missed: 2 },
+      { template: 'Closing Checklist', rate: 70, completed: 7, missed: 3 },
+      { template: 'Daily Cleaning', rate: 75, completed: 7, missed: 3 },
+      { template: 'Equipment Check', rate: 65, completed: 6, missed: 4 },
+      { template: 'Weekly Deep Clean', rate: 50, completed: 1, missed: 1 },
+    ],
+  };
+  const checklistCompletion = checklistCompletionByLocation[selectedLocation] || checklistCompletionByLocation['all'];
 
-  const missedTasks = [
+  const allMissedTasks = [
     { date: '2026-02-04', task: 'Closing Checklist', location: 'Airport Cafe', responsible: 'Unassigned' },
-    { date: '2026-02-03', task: 'Temperature Log - Walk-in Cooler', location: 'Downtown', responsible: 'John Smith' },
-    { date: '2026-02-02', task: 'Equipment Check', location: 'Mall Location', responsible: 'Sarah Johnson' },
+    { date: '2026-02-03', task: 'Temperature Log - Walk-in Cooler', location: 'Downtown Kitchen', responsible: 'John Smith' },
+    { date: '2026-02-02', task: 'Equipment Check', location: 'University Dining', responsible: 'Sarah Johnson' },
     { date: '2026-02-01', task: 'Opening Checklist', location: 'Airport Cafe', responsible: 'Mike Davis' },
   ];
+  const missedTasks = selectedLocName ? allMissedTasks.filter(t => t.location === selectedLocName) : allMissedTasks;
 
-  const correctiveActions = [
-    { action: 'Replace walk-in cooler thermometer', status: 'Open', daysOpen: 2, location: 'Downtown' },
+  const allCorrectiveActions = [
+    { action: 'Replace walk-in cooler thermometer', status: 'Open', daysOpen: 2, location: 'Downtown Kitchen' },
     { action: 'Retrain staff on temp log procedures', status: 'In Progress', daysOpen: 5, location: 'Airport Cafe' },
-    { action: 'Schedule fire suppression inspection', status: 'Resolved', daysOpen: 0, location: 'Mall Location' },
+    { action: 'Schedule fire suppression inspection', status: 'Resolved', daysOpen: 0, location: 'University Dining' },
   ];
+  const correctiveActions = selectedLocName ? allCorrectiveActions.filter(a => a.location === selectedLocName) : allCorrectiveActions;
 
-  const haccpCompliance = [
-    { location: 'Downtown Restaurant', monitoring: 98, records: 100, corrective: 95 },
+  const allHaccpCompliance = [
+    { location: 'Downtown Kitchen', monitoring: 98, records: 100, corrective: 95 },
     { location: 'Airport Cafe', monitoring: 92, records: 95, corrective: 90 },
-    { location: 'Mall Location', monitoring: 88, records: 92, corrective: 85 },
+    { location: 'University Dining', monitoring: 88, records: 92, corrective: 85 },
   ];
+  const haccpCompliance = selectedLocName ? allHaccpCompliance.filter(h => h.location === selectedLocName) : allHaccpCompliance;
 
-  const vendorServices = [
-    { vendor: 'A1 Fire Protection', service: 'Fire Suppression Inspection', date: '2026-01-15', result: 'Pass', location: 'Downtown' },
+  const allVendorServices = [
+    { vendor: 'A1 Fire Protection', service: 'Fire Suppression Inspection', date: '2026-01-15', result: 'Pass', location: 'Downtown Kitchen' },
     { vendor: 'Valley Fire Equipment', service: 'Fire Extinguisher Service', date: '2026-01-20', result: 'Pass', location: 'Airport Cafe' },
-    { vendor: 'CoolTech HVAC', service: 'Hood Cleaning', date: '2026-01-25', result: 'Pass', location: 'Mall Location' },
-    { vendor: 'A1 Fire Protection', service: 'Fire Alarm Inspection', date: '2026-02-01', result: 'Pass', location: 'Downtown' },
+    { vendor: 'CoolTech HVAC', service: 'Hood Cleaning', date: '2026-01-25', result: 'Pass', location: 'University Dining' },
+    { vendor: 'A1 Fire Protection', service: 'Fire Alarm Inspection', date: '2026-02-01', result: 'Pass', location: 'Downtown Kitchen' },
   ];
+  const vendorServices = selectedLocName ? allVendorServices.filter(v => v.location === selectedLocName) : allVendorServices;
 
-  const equipmentCertifications = [
-    { equipment: 'Fire Suppression System', location: 'Downtown', status: 'Current', expires: '2026-07-15' },
+  const allEquipmentCertifications = [
+    { equipment: 'Fire Suppression System', location: 'Downtown Kitchen', status: 'Current', expires: '2026-07-15' },
     { equipment: 'Fire Suppression System', location: 'Airport Cafe', status: 'Expiring Soon', expires: '2026-02-20' },
-    { equipment: 'Hood System', location: 'Mall Location', status: 'Current', expires: '2026-05-10' },
-    { equipment: 'Fire Alarm', location: 'Downtown', status: 'Current', expires: '2026-08-01' },
+    { equipment: 'Hood System', location: 'University Dining', status: 'Current', expires: '2026-05-10' },
+    { equipment: 'Fire Alarm', location: 'Downtown Kitchen', status: 'Current', expires: '2026-08-01' },
   ];
+  const equipmentCertifications = selectedLocName ? allEquipmentCertifications.filter(e => e.location === selectedLocName) : allEquipmentCertifications;
 
   const maintenanceSchedule = [
     { equipment: 'Hood Cleaning', dueDate: '2026-02-15', lastService: '2026-01-15', adherence: 'On Track' },
@@ -214,25 +273,50 @@ export function Reports() {
     { category: 'Grease Trap', amount: '$300', services: 1 },
   ];
 
-  const documentInventory = [
-    { type: 'Insurance COI', total: 15, current: 12, expiring: 2, expired: 1 },
-    { type: 'Vendor Certificates', total: 22, current: 18, expiring: 3, expired: 1 },
-    { type: 'Food Handler Certs', total: 18, current: 14, expiring: 3, expired: 1 },
-    { type: 'Business Licenses', total: 3, current: 3, expiring: 0, expired: 0 },
-  ];
+  const documentInventoryByLocation: Record<string, { type: string; total: number; current: number; expiring: number; expired: number }[]> = {
+    'all': [
+      { type: 'Insurance COI', total: 15, current: 12, expiring: 2, expired: 1 },
+      { type: 'Vendor Certificates', total: 22, current: 18, expiring: 3, expired: 1 },
+      { type: 'Food Handler Certs', total: 18, current: 14, expiring: 3, expired: 1 },
+      { type: 'Business Licenses', total: 3, current: 3, expiring: 0, expired: 0 },
+    ],
+    'downtown': [
+      { type: 'Insurance COI', total: 5, current: 5, expiring: 0, expired: 0 },
+      { type: 'Vendor Certificates', total: 8, current: 7, expiring: 1, expired: 0 },
+      { type: 'Food Handler Certs', total: 7, current: 6, expiring: 1, expired: 0 },
+      { type: 'Business Licenses', total: 1, current: 1, expiring: 0, expired: 0 },
+    ],
+    'airport': [
+      { type: 'Insurance COI', total: 5, current: 4, expiring: 1, expired: 0 },
+      { type: 'Vendor Certificates', total: 7, current: 5, expiring: 1, expired: 1 },
+      { type: 'Food Handler Certs', total: 6, current: 4, expiring: 1, expired: 1 },
+      { type: 'Business Licenses', total: 1, current: 1, expiring: 0, expired: 0 },
+    ],
+    'university': [
+      { type: 'Insurance COI', total: 5, current: 3, expiring: 1, expired: 1 },
+      { type: 'Vendor Certificates', total: 7, current: 6, expiring: 1, expired: 0 },
+      { type: 'Food Handler Certs', total: 5, current: 4, expiring: 1, expired: 0 },
+      { type: 'Business Licenses', total: 1, current: 1, expiring: 0, expired: 0 },
+    ],
+  };
+  const documentInventory = documentInventoryByLocation[selectedLocation] || documentInventoryByLocation['all'];
 
-  const expirationTimeline = [
-    { document: 'Valley Fire - COI', type: 'Insurance', expires: '2026-02-15', daysLeft: 9, location: 'Downtown' },
+  const allExpirationTimeline = [
+    { document: 'Valley Fire - COI', type: 'Insurance', expires: '2026-02-15', daysLeft: 9, location: 'Downtown Kitchen' },
     { document: 'Sarah Johnson - Food Handler', type: 'Certification', expires: '2026-02-20', daysLeft: 14, location: 'Airport Cafe' },
-    { document: 'A1 Fire - Workers Comp', type: 'Insurance', expires: '2026-03-01', daysLeft: 23, location: 'All' },
-    { document: 'Mike Davis - Food Handler', type: 'Certification', expires: '2026-03-10', daysLeft: 32, location: 'Mall Location' },
+    { document: 'A1 Fire - Workers Comp', type: 'Insurance', expires: '2026-03-01', daysLeft: 23, location: 'All Locations' },
+    { document: 'Mike Davis - Food Handler', type: 'Certification', expires: '2026-03-10', daysLeft: 32, location: 'University Dining' },
   ];
+  const expirationTimeline = selectedLocName
+    ? allExpirationTimeline.filter(e => e.location === selectedLocName || e.location === 'All Locations')
+    : allExpirationTimeline;
 
-  const missingDocs = [
+  const allMissingDocs = [
     { document: 'Pest Control COI', location: 'Airport Cafe', category: 'Insurance', daysOverdue: 5 },
-    { document: 'Hood Cleaning Certificate', location: 'Mall Location', category: 'Service', daysOverdue: 2 },
-    { document: 'Fire Alarm Inspection', location: 'Downtown', category: 'Certification', daysOverdue: 0 },
+    { document: 'Hood Cleaning Certificate', location: 'University Dining', category: 'Service', daysOverdue: 2 },
+    { document: 'Fire Alarm Inspection', location: 'Downtown Kitchen', category: 'Certification', daysOverdue: 0 },
   ];
+  const missingDocs = selectedLocName ? allMissingDocs.filter(d => d.location === selectedLocName) : allMissingDocs;
 
   const vendorDocCompliance = [
     { vendor: 'A1 Fire Protection', coi: 'Current', certs: 'Current', insurance: 'Current', status: 'Compliant' },
@@ -241,34 +325,62 @@ export function Reports() {
     { vendor: 'Pest Solutions', coi: 'Missing', certs: 'Current', insurance: 'Missing', status: 'Non-Compliant' },
   ];
 
-  const staffCertifications = [
-    { name: 'John Smith', location: 'Downtown', status: 'Current', expires: '2026-08-15', daysLeft: 190 },
+  const allStaffCertifications = [
+    { name: 'John Smith', location: 'Downtown Kitchen', status: 'Current', expires: '2026-08-15', daysLeft: 190 },
     { name: 'Sarah Johnson', location: 'Airport Cafe', status: 'Expiring Soon', expires: '2026-02-20', daysLeft: 14 },
-    { name: 'Mike Davis', location: 'Mall Location', status: 'Expiring Soon', expires: '2026-03-10', daysLeft: 32 },
-    { name: 'Emily Chen', location: 'Downtown', status: 'Expired', expires: '2026-01-30', daysLeft: -7 },
+    { name: 'Mike Davis', location: 'University Dining', status: 'Expiring Soon', expires: '2026-03-10', daysLeft: 32 },
+    { name: 'Emily Chen', location: 'Downtown Kitchen', status: 'Expired', expires: '2026-01-30', daysLeft: -7 },
   ];
+  const staffCertifications = selectedLocName ? allStaffCertifications.filter(s => s.location === selectedLocName) : allStaffCertifications;
 
-  const taskCompletionByEmployee = [
-    { employee: 'John Smith', completed: 145, missed: 5, rate: 97 },
-    { employee: 'Sarah Johnson', completed: 132, missed: 8, rate: 94 },
-    { employee: 'Mike Davis', completed: 128, missed: 12, rate: 91 },
-    { employee: 'Emily Chen', completed: 115, missed: 15, rate: 88 },
-    { employee: 'Tom Wilson', completed: 98, missed: 22, rate: 82 },
+  const allTaskCompletionByEmployee = [
+    { employee: 'John Smith', completed: 145, missed: 5, rate: 97, location: 'Downtown Kitchen' },
+    { employee: 'Sarah Johnson', completed: 132, missed: 8, rate: 94, location: 'Airport Cafe' },
+    { employee: 'Mike Davis', completed: 128, missed: 12, rate: 91, location: 'University Dining' },
+    { employee: 'Emily Chen', completed: 115, missed: 15, rate: 88, location: 'Downtown Kitchen' },
+    { employee: 'Tom Wilson', completed: 98, missed: 22, rate: 82, location: 'Airport Cafe' },
   ];
+  const taskCompletionByEmployee = selectedLocName
+    ? allTaskCompletionByEmployee.filter(e => e.location === selectedLocName)
+    : allTaskCompletionByEmployee;
 
-  const trainingRecords = [
-    { training: 'Food Handler Certification', completed: 15, pending: 3, rate: 83 },
-    { training: 'Allergen Awareness', completed: 12, pending: 6, rate: 67 },
-    { training: 'Temperature Logging', completed: 18, pending: 0, rate: 100 },
-    { training: 'Cleaning Procedures', completed: 14, pending: 4, rate: 78 },
-  ];
+  const trainingRecordsByLocation: Record<string, { training: string; completed: number; pending: number; rate: number }[]> = {
+    'all': [
+      { training: 'Food Handler Certification', completed: 15, pending: 3, rate: 83 },
+      { training: 'Allergen Awareness', completed: 12, pending: 6, rate: 67 },
+      { training: 'Temperature Logging', completed: 18, pending: 0, rate: 100 },
+      { training: 'Cleaning Procedures', completed: 14, pending: 4, rate: 78 },
+    ],
+    'downtown': [
+      { training: 'Food Handler Certification', completed: 6, pending: 0, rate: 100 },
+      { training: 'Allergen Awareness', completed: 5, pending: 1, rate: 83 },
+      { training: 'Temperature Logging', completed: 6, pending: 0, rate: 100 },
+      { training: 'Cleaning Procedures', completed: 6, pending: 0, rate: 100 },
+    ],
+    'airport': [
+      { training: 'Food Handler Certification', completed: 5, pending: 1, rate: 83 },
+      { training: 'Allergen Awareness', completed: 4, pending: 2, rate: 67 },
+      { training: 'Temperature Logging', completed: 6, pending: 0, rate: 100 },
+      { training: 'Cleaning Procedures', completed: 4, pending: 2, rate: 67 },
+    ],
+    'university': [
+      { training: 'Food Handler Certification', completed: 4, pending: 2, rate: 67 },
+      { training: 'Allergen Awareness', completed: 3, pending: 3, rate: 50 },
+      { training: 'Temperature Logging', completed: 6, pending: 0, rate: 100 },
+      { training: 'Cleaning Procedures', completed: 4, pending: 2, rate: 67 },
+    ],
+  };
+  const trainingRecords = trainingRecordsByLocation[selectedLocation] || trainingRecordsByLocation['all'];
 
-  const loginActivity = [
-    { employee: 'John Smith', lastLogin: '2026-02-06', logins: 28, avgPerWeek: 6.5 },
-    { employee: 'Sarah Johnson', lastLogin: '2026-02-05', logins: 22, avgPerWeek: 5.2 },
-    { employee: 'Mike Davis', lastLogin: '2026-02-04', logins: 18, avgPerWeek: 4.1 },
-    { employee: 'Emily Chen', lastLogin: '2026-01-28', logins: 8, avgPerWeek: 1.8 },
+  const allLoginActivity = [
+    { employee: 'John Smith', lastLogin: '2026-02-06', logins: 28, avgPerWeek: 6.5, location: 'Downtown Kitchen' },
+    { employee: 'Sarah Johnson', lastLogin: '2026-02-05', logins: 22, avgPerWeek: 5.2, location: 'Airport Cafe' },
+    { employee: 'Mike Davis', lastLogin: '2026-02-04', logins: 18, avgPerWeek: 4.1, location: 'University Dining' },
+    { employee: 'Emily Chen', lastLogin: '2026-01-28', logins: 8, avgPerWeek: 1.8, location: 'Downtown Kitchen' },
   ];
+  const loginActivity = selectedLocName
+    ? allLoginActivity.filter(a => a.location === selectedLocName)
+    : allLoginActivity;
 
   const handlePrint = () => {
     window.print();
@@ -331,11 +443,11 @@ export function Reports() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reports' }]} />
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reporting' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Management Reports</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Reporting</h1>
             <p className="text-gray-600 mt-1">Comprehensive insights and analytics</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
@@ -404,26 +516,44 @@ export function Reports() {
         {activeTab === 'executive' && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Overall Compliance Score</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Overall Compliance Score{selectedLocName ? ` — ${selectedLocName}` : ''}
+              </h3>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-5xl font-bold" style={{ color: '#1e4d6b' }}>{complianceScores.overall}%</div>
+                <div className="text-5xl font-bold" style={{ color: '#1e4d6b' }}>
+                  {selectedLocation !== 'all' && locationScores[selectedLocation]
+                    ? locationScores[selectedLocation].overall
+                    : complianceScores.overall}%
+                </div>
                 <div className="flex items-center text-green-600">
                   <TrendingUp className="h-5 w-5 mr-1" />
-                  <span className="font-medium">+8% from last month</span>
+                  <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% from last month</span>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
                   <p className="text-xs mb-1" style={{ color: '#64748b' }}>Operational ({Math.round(getWeights().operational * 100)}%)</p>
-                  <p className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{complianceScores.operational}</p>
+                  <p className="text-xl font-bold" style={{ color: '#1e4d6b' }}>
+                    {selectedLocation !== 'all' && locationScores[selectedLocation]
+                      ? locationScores[selectedLocation].operational
+                      : complianceScores.operational}
+                  </p>
                 </div>
                 <div className="text-center p-3 bg-green-50 rounded-lg">
                   <p className="text-xs text-gray-500 mb-1">Equipment ({Math.round(getWeights().equipment * 100)}%)</p>
-                  <p className="text-xl font-bold text-green-700">{complianceScores.equipment}</p>
+                  <p className="text-xl font-bold text-green-700">
+                    {selectedLocation !== 'all' && locationScores[selectedLocation]
+                      ? locationScores[selectedLocation].equipment
+                      : complianceScores.equipment}
+                  </p>
                 </div>
                 <div className="text-center p-3 rounded-lg" style={{ backgroundColor: '#fdf6e3' }}>
                   <p className="text-xs mb-1" style={{ color: '#78716c' }}>Documentation ({Math.round(getWeights().documentation * 100)}%)</p>
-                  <p className="text-xl font-bold" style={{ color: '#92400e' }}>{complianceScores.documentation}</p>
+                  <p className="text-xl font-bold" style={{ color: '#92400e' }}>
+                    {selectedLocation !== 'all' && locationScores[selectedLocation]
+                      ? locationScores[selectedLocation].documentation
+                      : complianceScores.documentation}
+                  </p>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={250}>

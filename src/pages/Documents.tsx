@@ -120,6 +120,7 @@ export function Documents() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedLocation, setSelectedLocation] = useState<string>('All Locations');
   const [searchQuery, setSearchQuery] = useState('');
+  const [docStatusFilter, setDocStatusFilter] = useState<'all' | 'expired' | 'expiring'>('all');
 
   const filteredDocuments = useMemo(() => {
     let filtered = documents;
@@ -137,8 +138,11 @@ export function Documents() {
         (d.provided_by && d.provided_by.toLowerCase().includes(q))
       );
     }
+    if (docStatusFilter !== 'all') {
+      filtered = filtered.filter(d => getDocStatus(d) === docStatusFilter);
+    }
     return filtered;
-  }, [documents, selectedCategory, selectedLocation, searchQuery]);
+  }, [documents, selectedCategory, selectedLocation, searchQuery, docStatusFilter]);
 
   // Documents filtered by location only (for category counts and summary)
   const locationFilteredDocs = useMemo(() => {
@@ -288,8 +292,39 @@ export function Documents() {
           <div style={{ background: statusCounts.expired > 0 ? '#fef2f2' : '#fffbeb', border: `1px solid ${statusCounts.expired > 0 ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <AlertTriangle style={{ width: '20px', height: '20px', color: statusCounts.expired > 0 ? '#dc2626' : '#d97706', flexShrink: 0 }} />
             <span style={{ fontSize: '14px', color: '#374151' }}>
-              {statusCounts.expired > 0 && <strong>{statusCounts.expired} document{statusCounts.expired > 1 ? 's' : ''} expired. </strong>}
-              {statusCounts.expiring > 0 && <span>{statusCounts.expiring} document{statusCounts.expiring > 1 ? 's' : ''} expiring within 30 days.</span>}
+              {statusCounts.expired > 0 && (
+                <strong
+                  onClick={() => setDocStatusFilter(docStatusFilter === 'expired' ? 'all' : 'expired')}
+                  style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: '3px' }}
+                >
+                  {statusCounts.expired} document{statusCounts.expired > 1 ? 's' : ''} expired.{' '}
+                </strong>
+              )}
+              {statusCounts.expiring > 0 && (
+                <span
+                  onClick={() => setDocStatusFilter(docStatusFilter === 'expiring' ? 'all' : 'expiring')}
+                  style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: '3px' }}
+                >
+                  {statusCounts.expiring} document{statusCounts.expiring > 1 ? 's' : ''} expiring within 30 days.
+                </span>
+              )}
+            </span>
+          </div>
+        )}
+
+        {/* Active status filter indicator */}
+        {docStatusFilter !== 'all' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '13px', color: '#6b7280' }}>Showing:</span>
+            <span
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600,
+                backgroundColor: docStatusFilter === 'expired' ? '#fee2e2' : '#fef9c3',
+                color: docStatusFilter === 'expired' ? '#991b1b' : '#854d0e',
+              }}
+            >
+              {docStatusFilter === 'expired' ? 'Expired' : 'Expiring Soon'} documents
+              <button onClick={() => setDocStatusFilter('all')} style={{ marginLeft: '2px', cursor: 'pointer', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', fontSize: '14px', lineHeight: 1 }}>&times;</button>
             </span>
           </div>
         )}

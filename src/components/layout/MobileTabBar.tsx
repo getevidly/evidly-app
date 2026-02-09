@@ -37,7 +37,7 @@ export function MobileTabBar() {
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
       { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/reports', icon: BarChart3, label: 'Reports' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
     ],
     kitchen: [
       { path: '/dashboard', icon: Home, label: 'Home' },

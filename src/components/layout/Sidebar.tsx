@@ -25,7 +25,7 @@ const navigation = [
   { name: 'HACCP', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['management', 'kitchen'] as UserRole[] },
   { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['management', 'facilities'] as UserRole[] },
   { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['management', 'facilities'] as UserRole[] },
-  { name: 'Reports', href: '/reports', icon: BarChart3, tourId: '', roles: ['management'] as UserRole[] },
+  { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['management'] as UserRole[] },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['management'] as UserRole[] },
   { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['management'] as UserRole[] },
   { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['management', 'kitchen'] as UserRole[] },

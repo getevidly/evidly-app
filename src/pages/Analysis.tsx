@@ -8,6 +8,8 @@ import { scoreImpactData, locations, getWeights } from '../data/demoData';
 export function Analysis() {
   const navigate = useNavigate();
   const [selectedLocation, setSelectedLocation] = useState('all');
+  const [actionLocationFilter, setActionLocationFilter] = useState('all');
+  const [severityFilter, setSeverityFilter] = useState('all');
 
   // Two-scenario projection: No Action (decline) vs Recommended Actions (improve)
   const scoreProjectionData = [
@@ -115,7 +117,7 @@ export function Analysis() {
     return 0;
   };
 
-  const actionsToImproveScore = scoreImpactData
+  const allActionsToImproveScore = scoreImpactData
     .filter(item => item.status !== 'current')
     .map(item => ({
       priority: item.status === 'overdue' || item.status === 'expired' || item.status === 'missing' ? 'HIGH' : item.status === 'due_soon' ? 'MEDIUM' : 'LOW',
@@ -123,6 +125,7 @@ export function Analysis() {
       pillar: item.pillar,
       pointImpact: getRecoverablePoints(item.impact),
       location: locations.find(loc => loc.id === item.locationId)?.name || '',
+      locationId: locations.find(loc => loc.id === item.locationId)?.urlId || '',
       link: item.actionLink || '/dashboard',
       actionLabel: item.action || 'View'
     }))
@@ -132,6 +135,12 @@ export function Analysis() {
       if (prioDiff !== 0) return prioDiff;
       return b.pointImpact - a.pointImpact;
     });
+
+  const actionsToImproveScore = allActionsToImproveScore.filter(a => {
+    if (actionLocationFilter !== 'all' && a.locationId !== actionLocationFilter) return false;
+    if (severityFilter !== 'all' && a.priority !== severityFilter) return false;
+    return true;
+  });
 
   const getRiskStyles = (severity: 'critical' | 'warning' | 'info') => {
     switch (severity) {
@@ -242,8 +251,34 @@ export function Analysis() {
         {/* Actions to Improve Score */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="p-6 pb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Actions to Improve Score</h2>
-            <p className="text-sm text-gray-600">Complete these actions to increase your compliance score — sorted by priority then point impact</p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Actions to Improve Score</h2>
+                <p className="text-sm text-gray-600">Complete these actions to increase your compliance score — sorted by priority then point impact</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <select
+                  value={actionLocationFilter}
+                  onChange={(e) => setActionLocationFilter(e.target.value)}
+                  style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', cursor: 'pointer' }}
+                >
+                  <option value="all">All Locations</option>
+                  {locations.map(loc => (
+                    <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
+                  ))}
+                </select>
+                <select
+                  value={severityFilter}
+                  onChange={(e) => setSeverityFilter(e.target.value)}
+                  style={{ padding: '6px 12px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '13px', backgroundColor: 'white', cursor: 'pointer' }}
+                >
+                  <option value="all">All Severities</option>
+                  <option value="HIGH">High</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="LOW">Low</option>
+                </select>
+              </div>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -258,7 +293,13 @@ export function Analysis() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {actionsToImproveScore.map((action, index) => (
+                {actionsToImproveScore.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
+                      No actions match the selected filters. Try adjusting the location or severity filter.
+                    </td>
+                  </tr>
+                ) : actionsToImproveScore.map((action, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getPriorityBadge(action.priority)}
