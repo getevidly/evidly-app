@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Building2, MapPin, Users, Mail, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { Breadcrumb } from '../components/Breadcrumb';
 
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
@@ -88,6 +89,7 @@ export function AdminClientOnboarding() {
 
   return (
     <>
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Client Onboarding' }]} />
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="mb-6">

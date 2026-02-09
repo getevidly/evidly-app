@@ -28,9 +28,13 @@ export function Dashboard() {
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'all';
   const selectedLocation = locationParam;
+  const tabParam = params.get('tab');
+  const validTabs = ['overview', 'progress', 'action', 'vendors', 'history', 'metrics', 'passport'];
 
   const [expandedPillar, setExpandedPillar] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'action' | 'vendors' | 'history' | 'metrics' | 'passport'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'progress' | 'action' | 'vendors' | 'history' | 'metrics' | 'passport'>(
+    tabParam && validTabs.includes(tabParam) ? tabParam as any : 'overview'
+  );
   const [showShareModal, setShowShareModal] = useState(false);
 
   const currentScores = selectedLocation === 'all' ? complianceScores : locationScores[selectedLocation] || complianceScores;

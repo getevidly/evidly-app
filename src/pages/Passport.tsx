@@ -1,8 +1,9 @@
 import { Shield, CheckCircle2, AlertCircle } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 export default function Passport() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const today = new Date().toLocaleDateString('en-US', {
     month: 'long',
@@ -58,6 +59,14 @@ export default function Passport() {
           </div>
         </div>
       </header>
+
+      <div style={{ padding: '12px 24px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
+        <span onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>Dashboard</span>
+        <span style={{ color: '#94a3b8' }}>›</span>
+        <span onClick={() => navigate('/dashboard?tab=passport')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>QR Passport</span>
+        <span style={{ color: '#94a3b8' }}>›</span>
+        <span style={{ color: '#64748b' }}>{locationData.name}</span>
+      </div>
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
