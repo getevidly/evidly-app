@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface TemperatureEquipment {
   id: string;
@@ -1413,7 +1413,7 @@ export function TempLogs() {
                 <div key={eq.id} className={`bg-white rounded-lg shadow p-6 ${isEquipmentOutOfRange(eq) ? 'border-2 border-red-300' : 'border-2 border-green-300'}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <div className="p-3 bg-blue-100 rounded-lg">
+                      <div className="p-3 rounded-lg" style={{ backgroundColor: '#e8f0f5' }}>
                         {getEquipmentIcon(eq.equipment_type)}
                       </div>
                       <div>
@@ -1496,8 +1496,8 @@ export function TempLogs() {
                   <option value="Other">Other</option>
                 </select>
                 {foodCategory && (
-                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm font-medium text-blue-900">
+                  <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+                    <p className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
                       Receiving standard: {getCategoryStandard(foodCategory)}
                     </p>
                   </div>
@@ -1642,9 +1642,9 @@ export function TempLogs() {
 
               {/* Summary Card */}
               {receivingItems.length > 0 && vendorName && (
-                <div className="p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
-                  <h3 className="font-bold text-lg text-blue-900 mb-2">Summary</h3>
-                  <p className="text-blue-800">
+                <div className="p-4 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
+                  <h3 className="font-bold text-lg mb-2" style={{ color: '#1e4d6b' }}>Summary</h3>
+                  <p style={{ color: '#2a6a8f' }}>
                     {receivingItems.length} items from {vendorName} - {' '}
                     {receivingItems.every(i => i.isPass)
                       ? <span className="font-bold text-green-700">All Pass</span>
@@ -1904,8 +1904,8 @@ export function TempLogs() {
                       <Tooltip />
                       <Legend />
                       {/* Green zone for acceptable range */}
-                      <ReferenceLine y={41} stroke="green" strokeDasharray="3 3" label="Max Safe (41°F)" />
-                      <ReferenceLine y={32} stroke="blue" strokeDasharray="3 3" label="Min Safe (32°F)" />
+                      <ReferenceLine y={41} stroke="#22c55e" strokeDasharray="3 3" label="Max Safe (41°F)" />
+                      <ReferenceLine y={32} stroke="#1e4d6b" strokeDasharray="3 3" label="Min Safe (32°F)" />
 
                       {getChartEquipmentNames().map((name, idx) => (
                         <Line
@@ -1956,7 +1956,7 @@ export function TempLogs() {
                     const currentTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
 
                     return (
-                      <div key={cooldown.id} className="bg-white rounded-lg shadow p-6 border-2 border-blue-300">
+                      <div key={cooldown.id} className="bg-white rounded-lg shadow p-6" style={{ border: '2px solid #1e4d6b' }}>
                         <div className="flex justify-between items-start mb-4">
                           <div>
                             <h4 className="text-xl font-bold text-gray-900">{cooldown.itemName}</h4>
@@ -1987,7 +1987,7 @@ export function TempLogs() {
                           <div className="w-full bg-gray-200 rounded-full h-3">
                             <div
                               className={`h-3 rounded-full transition-all ${
-                                progress.stage === 1 ? 'bg-blue-500' : 'bg-green-500'
+                                progress.stage === 1 ? 'bg-[#1e4d6b]' : 'bg-[#22c55e]'
                               }`}
                               style={{ width: `${progress.progress}%` }}
                             />
@@ -2013,7 +2013,7 @@ export function TempLogs() {
                               <YAxis fontSize={10} />
                               <Line type="monotone" dataKey="temp" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} />
                               <ReferenceLine y={70} stroke="orange" strokeDasharray="3 3" />
-                              <ReferenceLine y={41} stroke="green" strokeDasharray="3 3" />
+                              <ReferenceLine y={41} stroke="#22c55e" strokeDasharray="3 3" />
                             </LineChart>
                           </ResponsiveContainer>
                         </div>
@@ -2025,7 +2025,9 @@ export function TempLogs() {
                               setShowCooldownCheckModal(true);
                               setCooldownCheckTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
                             }}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                            className="px-4 py-2 text-white rounded-lg transition-colors font-medium" style={{ backgroundColor: '#1e4d6b' }}
+                            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#163a52')}
+                            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
                           >
                             Log Check
                           </button>
@@ -2274,7 +2276,7 @@ export function TempLogs() {
                         onClick={() => handleBatchSkip(entry.equipment_id)}
                         className={`ml-4 px-4 py-2 rounded-lg font-medium ${
                           entry.skipped
-                            ? 'bg-blue-600 text-white hover:bg-blue-700'
+                            ? 'bg-[#1e4d6b] text-white hover:bg-[#163a52]'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                       >
