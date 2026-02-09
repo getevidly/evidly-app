@@ -34,23 +34,23 @@ const d = (daysFromNow: number) => new Date(Date.now() + daysFromNow * 24 * 60 *
 
 const SAMPLE_DOCUMENTS: Document[] = [
   // === Licenses ===
-  { id: '1', title: 'Food Service License', category: 'License', expiration_date: d(120), created_at: d(-300), status: 'active', location: 'Downtown Restaurant' },
-  { id: '2', title: 'Food Service License', category: 'License', expiration_date: d(85), created_at: d(-280), status: 'active', location: 'Airport Location' },
-  { id: '3', title: 'Business License', category: 'License', expiration_date: d(200), created_at: d(-160), status: 'active', location: 'Downtown Restaurant' },
-  { id: '4', title: 'Business License', category: 'License', expiration_date: d(22), created_at: d(-150), status: 'active', location: 'Airport Location' },
-  { id: '5', title: 'Business License', category: 'License', expiration_date: d(180), created_at: d(-140), status: 'active', location: 'University Café' },
+  { id: '1', title: 'Food Service License', category: 'License', expiration_date: d(120), created_at: d(-300), status: 'active', location: 'Downtown Kitchen' },
+  { id: '2', title: 'Food Service License', category: 'License', expiration_date: d(85), created_at: d(-280), status: 'active', location: 'Airport Cafe' },
+  { id: '3', title: 'Business License', category: 'License', expiration_date: d(200), created_at: d(-160), status: 'active', location: 'Downtown Kitchen' },
+  { id: '4', title: 'Business License', category: 'License', expiration_date: d(22), created_at: d(-150), status: 'active', location: 'Airport Cafe' },
+  { id: '5', title: 'Business License', category: 'License', expiration_date: d(180), created_at: d(-140), status: 'active', location: 'University Dining' },
 
   // === Permits ===
-  { id: '6', title: 'Health Department Permit', category: 'Permit', expiration_date: d(45), created_at: d(-280), status: 'active', location: 'Downtown Restaurant' },
-  { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Airport Location' },
-  { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Restaurant' },
-  { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'University Café' },
-  { id: '10', title: 'Fire Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Restaurant', provided_by: 'Valley Fire Systems' },
+  { id: '6', title: 'Health Department Permit', category: 'Permit', expiration_date: d(45), created_at: d(-280), status: 'active', location: 'Downtown Kitchen' },
+  { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Airport Cafe' },
+  { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen' },
+  { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'University Dining' },
+  { id: '10', title: 'Fire Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
 
   // === Certificates ===
-  { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Downtown Restaurant' },
-  { id: '12', title: 'ServSafe Manager Certificate - Sarah Chen', category: 'Certificate', expiration_date: d(380), created_at: d(-180), status: 'active', location: 'Airport Location' },
-  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Airport Location', provided_by: 'Valley Fire Systems' },
+  { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Downtown Kitchen' },
+  { id: '12', title: 'ServSafe Manager Certificate - Sarah Chen', category: 'Certificate', expiration_date: d(380), created_at: d(-180), status: 'active', location: 'Airport Cafe' },
+  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' },
 
   // === Insurance ===
   { id: '14', title: 'General Liability Insurance', category: 'Insurance', expiration_date: d(250), created_at: d(-100), status: 'active', location: 'All Locations' },
@@ -59,21 +59,21 @@ const SAMPLE_DOCUMENTS: Document[] = [
   { id: '17', title: "Worker's Compensation Insurance", category: 'Insurance', expiration_date: d(300), created_at: d(-90), status: 'active', location: 'All Locations' },
 
   // === Training ===
-  { id: '18', title: 'Food Handler Certificate - Emma Davis', category: 'Training', expiration_date: d(410), created_at: d(-150), status: 'active', location: 'Downtown Restaurant' },
-  { id: '19', title: 'Food Handler Certificate - James Wilson', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Location' },
-  { id: '20', title: 'Food Handler Certificate - Maria Garcia', category: 'Training', expiration_date: d(-10), created_at: d(-380), status: 'active', location: 'University Café' },
-  { id: '21', title: 'Food Handler Certificate - Tom Nguyen', category: 'Training', expiration_date: d(260), created_at: d(-100), status: 'active', location: 'Downtown Restaurant' },
+  { id: '18', title: 'Food Handler Certificate - Emma Davis', category: 'Training', expiration_date: d(410), created_at: d(-150), status: 'active', location: 'Downtown Kitchen' },
+  { id: '19', title: 'Food Handler Certificate - James Wilson', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Cafe' },
+  { id: '20', title: 'Food Handler Certificate - Maria Garcia', category: 'Training', expiration_date: d(-10), created_at: d(-380), status: 'active', location: 'University Dining' },
+  { id: '21', title: 'Food Handler Certificate - Tom Nguyen', category: 'Training', expiration_date: d(260), created_at: d(-100), status: 'active', location: 'Downtown Kitchen' },
   { id: '22', title: 'Allergen Awareness Training - All Staff', category: 'Training', expiration_date: d(180), created_at: d(-60), status: 'active', location: 'All Locations' },
 
   // === Other (service reports) ===
-  { id: '23', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-45), status: 'active', location: 'Downtown Restaurant', provided_by: 'SparkClean Hoods' },
-  { id: '24', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-40), status: 'active', location: 'Airport Location', provided_by: 'SparkClean Hoods' },
-  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Restaurant', provided_by: 'Valley Fire Systems' },
-  { id: '26', title: 'Grease Trap Service Record', category: 'Other', expiration_date: null, created_at: d(-20), status: 'active', location: 'Downtown Restaurant', provided_by: 'Pacific Grease Services' },
-  { id: '27', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-7), status: 'active', location: 'Downtown Restaurant', provided_by: 'GreenShield Pest Control' },
-  { id: '28', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-5), status: 'active', location: 'Airport Location', provided_by: 'GreenShield Pest Control' },
-  { id: '29', title: 'HVAC Maintenance Record', category: 'Other', expiration_date: null, created_at: d(-25), status: 'active', location: 'Airport Location' },
-  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Airport Location', provided_by: 'Valley Fire Systems' },
+  { id: '23', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-45), status: 'active', location: 'Downtown Kitchen', provided_by: 'SparkClean Hoods' },
+  { id: '24', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-40), status: 'active', location: 'Airport Cafe', provided_by: 'SparkClean Hoods' },
+  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
+  { id: '26', title: 'Grease Trap Service Record', category: 'Other', expiration_date: null, created_at: d(-20), status: 'active', location: 'Downtown Kitchen', provided_by: 'Pacific Grease Services' },
+  { id: '27', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-7), status: 'active', location: 'Downtown Kitchen', provided_by: 'GreenShield Pest Control' },
+  { id: '28', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-5), status: 'active', location: 'Airport Cafe', provided_by: 'GreenShield Pest Control' },
+  { id: '29', title: 'HVAC Maintenance Record', category: 'Other', expiration_date: null, created_at: d(-25), status: 'active', location: 'Airport Cafe' },
+  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' },
 ];
 
 const SHARED_ITEMS: SharedItem[] = [
@@ -82,7 +82,7 @@ const SHARED_ITEMS: SharedItem[] = [
   { id: '3', document: 'Fire Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
-const LOCATIONS = ['All Locations', 'Downtown Restaurant', 'Airport Location', 'University Café'];
+const LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining'];
 
 function getDocStatus(doc: Document): 'current' | 'expiring' | 'expired' {
   if (!doc.expiration_date) return 'current';
@@ -140,17 +140,23 @@ export function Documents() {
     return filtered;
   }, [documents, selectedCategory, selectedLocation, searchQuery]);
 
-  // Summary counts
+  // Documents filtered by location only (for category counts and summary)
+  const locationFilteredDocs = useMemo(() => {
+    if (selectedLocation === 'All Locations') return documents;
+    return documents.filter(d => d.location === selectedLocation || d.location === 'All Locations');
+  }, [documents, selectedLocation]);
+
+  // Summary counts (reflect location filter)
   const statusCounts = useMemo(() => {
     let current = 0, expiring = 0, expired = 0;
-    documents.forEach(doc => {
+    locationFilteredDocs.forEach(doc => {
       const s = getDocStatus(doc);
       if (s === 'current') current++;
       else if (s === 'expiring') expiring++;
       else expired++;
     });
     return { current, expiring, expired };
-  }, [documents]);
+  }, [locationFilteredDocs]);
 
   const handleDownload = (doc: Document) => {
     const blob = new Blob(
@@ -261,7 +267,7 @@ export function Documents() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Documents</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>{documents.length}</div>
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>{locationFilteredDocs.length}</div>
           </div>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Current</div>
@@ -346,10 +352,10 @@ export function Documents() {
                   selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                All ({documents.length})
+                All ({locationFilteredDocs.length})
               </button>
               {categories.map((cat) => {
-                const count = documents.filter(d => d.category === cat).length;
+                const count = locationFilteredDocs.filter(d => d.category === cat).length;
                 return (
                   <button
                     key={cat}
