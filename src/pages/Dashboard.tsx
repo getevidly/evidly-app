@@ -122,6 +122,24 @@ export function Dashboard() {
   const locationDropdownOptions = filteredLocationOptions.map(loc => ({ id: loc.urlId, name: loc.name }));
   const showLocationDropdown = locationDropdownOptions.length > 1;
 
+  // Today's Progress — per-location data (All = sum of locations, guaranteed)
+  const todaysProgress: Record<string, { tempDone: number; tempTotal: number; checkDone: number; checkTotal: number }> = {
+    downtown: { tempDone: 10, tempTotal: 12, checkDone: 2, checkTotal: 3 },
+    airport: { tempDone: 4, tempTotal: 12, checkDone: 1, checkTotal: 3 },
+    university: { tempDone: 0, tempTotal: 12, checkDone: 0, checkTotal: 3 },
+  };
+  const progress = selectedLocation === 'all'
+    ? Object.values(todaysProgress).reduce((acc, d) => ({
+        tempDone: acc.tempDone + d.tempDone,
+        tempTotal: acc.tempTotal + d.tempTotal,
+        checkDone: acc.checkDone + d.checkDone,
+        checkTotal: acc.checkTotal + d.checkTotal,
+      }), { tempDone: 0, tempTotal: 0, checkDone: 0, checkTotal: 0 })
+    : todaysProgress[selectedLocation] || todaysProgress['downtown'];
+  const tempPct = progress.tempTotal > 0 ? Math.round((progress.tempDone / progress.tempTotal) * 100) : 0;
+  const checkPct = progress.checkTotal > 0 ? Math.round((progress.checkDone / progress.checkTotal) * 100) : 0;
+  const pctColor = (p: number) => p >= 80 ? '#22c55e' : p >= 30 ? '#d4af37' : '#ef4444';
+
   useEffect(() => {
     const loadMap = () => {
       const L = (window as any).L;
@@ -506,26 +524,26 @@ export function Dashboard() {
             </div>
           )}
 
-          {/* Today's Progress */}
+          {/* Today's Progress — dynamically computed, All = sum of locations */}
           {activeTab === 'progress' && (
             <div>
               <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Today's Progress</h3>
               <div onClick={() => navigate('/temp-logs')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} className="hover:bg-gray-50 transition-colors">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600', color: '#1e293b' }}>Temperature Checks</span>
-                  <span style={{ fontWeight: '500', color: '#475569' }}>{locationParam === 'downtown' ? '10/12' : locationParam === 'airport' ? '4/12' : locationParam === 'university' ? '0/12' : '14/36'}</span>
+                  <span style={{ fontWeight: '500', color: '#475569' }}>{progress.tempDone}/{progress.tempTotal}</span>
                 </div>
                 <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
-                  <div style={{ height: '10px', borderRadius: '5px', width: locationParam === 'downtown' ? '83%' : locationParam === 'airport' ? '33%' : locationParam === 'university' ? '0%' : '39%', backgroundColor: locationParam === 'downtown' ? '#22c55e' : locationParam === 'airport' ? '#d4af37' : locationParam === 'university' ? '#ef4444' : '#d4af37', transition: 'width 0.5s ease' }}></div>
+                  <div style={{ height: '10px', borderRadius: '5px', width: `${tempPct}%`, backgroundColor: pctColor(tempPct), transition: 'width 0.5s ease' }}></div>
                 </div>
               </div>
               <div onClick={() => navigate('/checklists')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} className="hover:bg-gray-50 transition-colors">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600', color: '#1e293b' }}>Checklists</span>
-                  <span style={{ fontWeight: '500', color: '#475569' }}>{locationParam === 'downtown' ? '2/3' : locationParam === 'airport' ? '1/3' : locationParam === 'university' ? '0/3' : '3/9'}</span>
+                  <span style={{ fontWeight: '500', color: '#475569' }}>{progress.checkDone}/{progress.checkTotal}</span>
                 </div>
                 <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
-                  <div style={{ height: '10px', borderRadius: '5px', width: locationParam === 'downtown' ? '67%' : locationParam === 'airport' ? '33%' : locationParam === 'university' ? '0%' : '33%', backgroundColor: locationParam === 'downtown' ? '#d4af37' : locationParam === 'airport' ? '#d4af37' : locationParam === 'university' ? '#ef4444' : '#ef4444', transition: 'width 0.5s ease' }}></div>
+                  <div style={{ height: '10px', borderRadius: '5px', width: `${checkPct}%`, backgroundColor: pctColor(checkPct), transition: 'width 0.5s ease' }}></div>
                 </div>
               </div>
             </div>
