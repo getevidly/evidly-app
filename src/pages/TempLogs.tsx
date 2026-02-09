@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -1308,7 +1307,7 @@ export function TempLogs() {
   const vendors = ['Sysco', 'US Foods', 'Performance Food Group', 'Restaurant Depot', 'Other'];
 
   return (
-    <Layout title="Temperature Logging">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Temperature Logs' }]} />
 
       {/* Toast Notification */}
@@ -2457,6 +2456,6 @@ export function TempLogs() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }

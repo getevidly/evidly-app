@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Layout } from '../components/layout/Layout';
 import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
   ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download, Shield,
@@ -269,7 +268,7 @@ export function Vendors() {
     const expiringDocs = selectedDocs.filter((d) => d.status === 'expiring' || d.status === 'expired');
 
     return (
-      <Layout title="Vendors">
+      <>
         <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors', href: '/vendors' }, { label: selectedVendor.companyName }]} />
         <div className="space-y-6">
           <button onClick={handleBack} className="flex items-center text-[#1e4d6b] hover:text-[#2a6a8f] font-medium">
@@ -744,7 +743,7 @@ export function Vendors() {
             </div>
           )}
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -753,7 +752,7 @@ export function Vendors() {
   const SERVICE_TYPES = ['Hood Cleaning', 'Fire Suppression', 'Pest Control', 'HVAC Service', 'Grease Trap'];
 
   return (
-    <Layout title="Vendors">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
@@ -1035,6 +1034,6 @@ export function Vendors() {
           </>
         )}
       </div>
-    </Layout>
+    </>
   );
 }

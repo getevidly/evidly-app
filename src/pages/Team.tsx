@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Filter, Award, Activity, FileText } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -200,7 +199,7 @@ export function Team() {
   });
 
   return (
-    <Layout title="Team">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Team' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -503,6 +502,6 @@ export function Team() {
         organizationId={profile?.organization_id || ''}
         onInviteSent={handleInviteSent}
       />
-    </Layout>
+    </>
   );
 }

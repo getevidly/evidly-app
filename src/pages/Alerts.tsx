@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Calendar, Upload, ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -255,7 +254,7 @@ export function Alerts() {
   const activeCount = alerts.filter(a => a.status === 'active').length;
 
   return (
-    <Layout title="Alerts">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Alerts' }]} />
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
@@ -563,6 +562,6 @@ export function Alerts() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }

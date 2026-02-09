@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { User, Building2, Bell, Lock, CreditCard } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -86,7 +85,7 @@ export function Settings() {
   };
 
   return (
-    <Layout title="Settings">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings' }]} />
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-64 flex-shrink-0">
@@ -357,6 +356,6 @@ export function Settings() {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

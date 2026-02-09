@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout } from '../components/layout/Layout';
 import { CheckCircle, Clock, Thermometer, ClipboardCheck, Truck, AlertCircle, ChevronRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -40,7 +39,7 @@ export function KitchenDashboard() {
   const firstName = profile?.full_name?.split(' ')[0] || 'User';
 
   return (
-    <Layout title="My Dashboard">
+    <>
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-white">
           <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
@@ -178,6 +177,6 @@ export function KitchenDashboard() {
           </ul>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

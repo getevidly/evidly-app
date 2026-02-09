@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Building2, MapPin, Users, Mail, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
@@ -88,7 +87,7 @@ export function AdminClientOnboarding() {
   };
 
   return (
-    <Layout title="Admin: Onboard New Client">
+    <>
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="mb-6">
@@ -272,6 +271,6 @@ export function AdminClientOnboarding() {
           </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

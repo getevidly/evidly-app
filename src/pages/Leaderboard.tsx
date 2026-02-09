@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Trophy, Medal, Award, TrendingUp, Flame, Target, Zap, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -78,7 +77,7 @@ export function Leaderboard() {
   const maxPoints = Math.max(...locations.map(l => l.total_points), 1);
 
   return (
-    <Layout title="Leaderboard">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Leaderboard' }]} />
       <div className="space-y-6">
         {/* Header */}
@@ -251,6 +250,6 @@ export function Leaderboard() {
           </ul>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

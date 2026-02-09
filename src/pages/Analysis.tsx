@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout } from '../components/layout/Layout';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
@@ -165,7 +164,7 @@ export function Analysis() {
   };
 
   return (
-    <Layout title="Analysis">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Analysis' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -345,6 +344,6 @@ export function Analysis() {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

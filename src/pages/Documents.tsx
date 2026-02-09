@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -228,7 +227,7 @@ export function Documents() {
   };
 
   return (
-    <Layout title="Documents">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Documents' }]} />
       <div className="space-y-6">
         {demoMode && <DemoModeBanner />}
@@ -590,6 +589,6 @@ export function Documents() {
           documentType="document"
         />
       </div>
-    </Layout>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-﻿import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+﻿import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
@@ -51,6 +51,7 @@ import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { DemoBanner } from './components/DemoBanner';
+import { Layout } from './components/layout/Layout';
 
 function LandingPage() {
   return (
@@ -119,186 +120,88 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function ProtectedLayout() {
+  const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
+
+  if (!isDemoMode) {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </div>
+      );
+    }
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
+  }
+
+  return (
+    <Layout>
+      <Suspense fallback={
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-3 text-sm text-gray-500">Loading...</p>
+          </div>
+        </div>
+      }>
+        <Outlet />
+      </Suspense>
+    </Layout>
+  );
+}
+
 function AppRoutes() {
   return (
     <>
       <DemoBanner />
-      <Suspense fallback={<PageSkeleton />}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/passport/demo" element={<PassportDemo />} />
-        <Route path="/passport/:id" element={<Passport />} />
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <PublicRoute>
-              <Signup />
-            </PublicRoute>
-          }
-        />
-        <Route path="/signup/locations" element={<ProtectedRoute><SignupLocations /></ProtectedRoute>} />
-        <Route path="/invite/:token" element={<InviteAccept />} />
-        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/email-confirmed" element={<EmailConfirmed />} />
-        <Route path="/demo" element={<DemoWizard />} />
-        <Route path="/vendor/login" element={<VendorLogin />} />
-        <Route path="/vendor/register" element={<VendorRegister />} />
-        <Route path="/vendor/upload/:token" element={<VendorSecureUpload />} />
-        <Route
-          path="/vendor/dashboard"
-          element={
-            <ProtectedRoute>
-              <VendorDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/onboarding"
-          element={
-            <ProtectedRoute>
-              <Onboarding />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/temp-logs"
-          element={
-            <ProtectedRoute>
-              <TempLogs />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/checklists"
-          element={
-            <ProtectedRoute>
-              <Checklists />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/documents"
-          element={
-            <ProtectedRoute>
-              <Documents />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/vendors"
-          element={
-            <ProtectedRoute>
-              <Vendors />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/vendors/:vendorId"
-          element={
-            <ProtectedRoute>
-              <VendorDetail />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/haccp"
-          element={
-            <ProtectedRoute>
-              <HACCP />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/alerts"
-          element={
-            <ProtectedRoute>
-              <Alerts />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/ai-advisor"
-          element={
-            <ProtectedRoute>
-              <AIAdvisor />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/leaderboard"
-          element={
-            <ProtectedRoute>
-              <Leaderboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/analysis"
-          element={
-            <ProtectedRoute>
-              <Analysis />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/team"
-          element={
-            <ProtectedRoute>
-              <Team />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/reports"
-          element={
-            <ProtectedRoute>
-              <Reports />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/help"
-          element={
-            <ProtectedRoute>
-              <Help />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/onboard-client"
-          element={
-            <ProtectedRoute>
-              <AdminClientOnboarding />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Public routes */}
+        <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
+        <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
+        <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
+        <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />
+        <Route path="/invite/:token" element={<Suspense fallback={<PageSkeleton />}><InviteAccept /></Suspense>} />
+        <Route path="/forgot-password" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><ForgotPassword /></Suspense></PublicRoute>} />
+        <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
+        <Route path="/email-confirmed" element={<Suspense fallback={<PageSkeleton />}><EmailConfirmed /></Suspense>} />
+        <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoWizard /></Suspense>} />
+        <Route path="/vendor/login" element={<Suspense fallback={<PageSkeleton />}><VendorLogin /></Suspense>} />
+        <Route path="/vendor/register" element={<Suspense fallback={<PageSkeleton />}><VendorRegister /></Suspense>} />
+        <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
+
+        {/* Protected routes without shared layout */}
+        <Route path="/vendor/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ProtectedRoute>} />
+        <Route path="/onboarding" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ProtectedRoute>} />
+
+        {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
+        <Route element={<ProtectedLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/temp-logs" element={<TempLogs />} />
+          <Route path="/checklists" element={<Checklists />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/vendors/:vendorId" element={<VendorDetail />} />
+          <Route path="/haccp" element={<HACCP />} />
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/ai-advisor" element={<AIAdvisor />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
+        </Route>
       </Routes>
-    </Suspense>
     </>
   );
 }

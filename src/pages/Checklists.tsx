@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -716,7 +715,7 @@ export function Checklists() {
   };
 
   return (
-    <Layout title="Checklists">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Checklists' }]} />
       <div className="space-y-6">
         {/* View Tabs */}
@@ -1157,6 +1156,6 @@ export function Checklists() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }

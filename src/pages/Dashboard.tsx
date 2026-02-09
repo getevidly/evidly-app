@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Layout } from '../components/layout/Layout';
 import {
   Activity,
   ArrowLeft,
@@ -178,20 +177,7 @@ export function Dashboard() {
   if (userRole === 'facilities') return <FacilitiesDashboard />;
 
   return (
-    <Layout
-      title="Dashboard"
-      locations={showLocationDropdown ? locationDropdownOptions : []}
-      selectedLocation={selectedLocation === 'all' ? null : selectedLocation}
-      onLocationChange={(locationId) => {
-        const locId = locationId || 'all';
-        if (locId === 'all' || locId === '') {
-          navigate('/dashboard');
-        } else {
-          navigate('/dashboard?location=' + locId);
-        }
-      }}
-      demoMode={true}
-    >
+    <>
       <div className="text-white px-6 py-3 flex items-center space-x-2 rounded-lg mb-6" style={{ backgroundColor: '#1e4d6b' }}>
         <Info className="h-5 w-5" />
         <span className="font-medium">Demo Mode — viewing sample data</span>
@@ -697,6 +683,6 @@ export function Dashboard() {
           documentType="compliance"
         />
       </div>
-    </Layout>
+    </>
   );
 }

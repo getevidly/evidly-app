@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 
@@ -348,7 +347,7 @@ export function HACCP() {
   };
 
   return (
-    <Layout title="HACCP">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
       <div className="space-y-6">
         {/* Header */}
@@ -788,6 +787,6 @@ export function HACCP() {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 }

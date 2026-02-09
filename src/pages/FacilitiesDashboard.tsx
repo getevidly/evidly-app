@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout } from '../components/layout/Layout';
 import { CheckCircle, AlertTriangle, Clock, ChevronRight, FileText, Flame, Wind, Droplets, Trash2, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -182,7 +181,7 @@ export function FacilitiesDashboard() {
   const overdueCount = equipmentSystems.filter(e => e.status === 'overdue').length;
 
   return (
-    <Layout title="Facilities Dashboard">
+    <>
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-white">
           <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
@@ -337,6 +336,6 @@ export function FacilitiesDashboard() {
           </button>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

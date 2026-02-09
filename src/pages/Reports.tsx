@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { Printer, Download, TrendingUp, ShieldX } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -96,18 +95,16 @@ export function Reports() {
 
   if (userRole !== 'management') {
     return (
-      <Layout>
-        <div className="p-6">
-          <Breadcrumb items={[{ label: 'Reports', path: '/reports' }]} />
-          <div className="mt-8 flex flex-col items-center justify-center py-12">
-            <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
-            <p className="text-gray-600 text-center max-w-md">
-              You don't have access to this page. Contact your organization admin.
-            </p>
-          </div>
+      <div className="p-6">
+        <Breadcrumb items={[{ label: 'Reports', path: '/reports' }]} />
+        <div className="mt-8 flex flex-col items-center justify-center py-12">
+          <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
+          <p className="text-gray-600 text-center max-w-md">
+            You don't have access to this page. Contact your organization admin.
+          </p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
@@ -333,7 +330,7 @@ export function Reports() {
   };
 
   return (
-    <Layout title="Reports">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reports' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -1027,6 +1024,6 @@ export function Reports() {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 }

@@ -11,7 +11,7 @@ interface LocationOption {
 
 interface LayoutProps {
   children: ReactNode;
-  title: string;
+  title?: string;
   locations?: LocationOption[];
   selectedLocation?: string | null;
   onLocationChange?: (locationId: string | null) => void;

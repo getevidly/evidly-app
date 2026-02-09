@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import { Layout } from '../components/layout/Layout';
 import { Brain, Send, Sparkles } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 
@@ -215,7 +214,7 @@ export function AIAdvisor() {
   };
 
   return (
-    <Layout title="AI Advisor">
+    <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'AI Advisor' }]} />
       <div className="flex flex-col" style={{ height: 'calc(100vh - 10rem)' }}>
         {/* Header */}
@@ -345,6 +344,6 @@ export function AIAdvisor() {
           </form>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }
