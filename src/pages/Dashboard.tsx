@@ -239,8 +239,7 @@ export function Dashboard() {
             trend={overallTrend}
           />
 
-          {selectedLocation !== 'all' && (
-            <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '24px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '24px', width: '100%' }}>
               {pillarScores.map((pillar, index) => (
                 <AnimatedPillarBar
                   key={pillar.name}
@@ -249,12 +248,11 @@ export function Dashboard() {
                   tooltip={pillar.tooltip}
                   trend={pillar.trend}
                   delay={index * 300}
-                  onClick={() => setExpandedPillar(expandedPillar === pillar.name ? null : pillar.name)}
-                  isExpanded={expandedPillar === pillar.name}
+                  onClick={() => selectedLocation !== 'all' ? setExpandedPillar(expandedPillar === pillar.name ? null : pillar.name) : undefined}
+                  isExpanded={selectedLocation !== 'all' && expandedPillar === pillar.name}
                 />
               ))}
             </div>
-          )}
 
           {expandedPillar && selectedLocation !== 'all' && (() => {
             const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
@@ -329,33 +327,35 @@ export function Dashboard() {
             );
           })()}
 
-          {/* Tab Navigation */}
-          <div style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: '20px', overflowX: 'auto' }}>
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'progress', label: "Today's Progress" },
-              { id: 'action', label: 'Action Center' },
-              { id: 'history', label: 'Score History' },
-              { id: 'vendors', label: 'Vendor Services' },
-              { id: 'metrics', label: 'Key Metrics' },
-              { id: 'passport', label: 'QR Passport' }
-            ].map(tab => (
-              <div key={tab.id} onClick={() => setActiveTab(tab.id as any)} style={{
-                padding: '12px 20px',
-                cursor: 'pointer',
-                borderBottom: activeTab === tab.id ? '2px solid #1e4d6b' : '2px solid transparent',
-                color: activeTab === tab.id ? '#1e4d6b' : '#64748b',
-                fontWeight: activeTab === tab.id ? '600' : '400',
-                fontSize: '14px',
-                whiteSpace: 'nowrap'
-              }}>
-                {tab.label}
-              </div>
-            ))}
-          </div>
+        </div>
+        {/* End of static top section (Compliance Score + Pillars) */}
 
-          {/* Location Filter Dropdown — shown on every tab */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+        {/* Tab Navigation + Location Filter — stays in fixed position */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-6 mt-4">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
+              {[
+                { id: 'overview', label: 'Overview' },
+                { id: 'progress', label: "Today's Progress" },
+                { id: 'action', label: 'Action Center' },
+                { id: 'history', label: 'Score History' },
+                { id: 'vendors', label: 'Vendor Services' },
+                { id: 'metrics', label: 'Key Metrics' },
+                { id: 'passport', label: 'QR Passport' }
+              ].map(tab => (
+                <div key={tab.id} onClick={() => setActiveTab(tab.id as any)} style={{
+                  padding: '12px 20px',
+                  cursor: 'pointer',
+                  borderBottom: activeTab === tab.id ? '2px solid #1e4d6b' : '2px solid transparent',
+                  color: activeTab === tab.id ? '#1e4d6b' : '#64748b',
+                  fontWeight: activeTab === tab.id ? '600' : '400',
+                  fontSize: '14px',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {tab.label}
+                </div>
+              ))}
+            </div>
             <select
               value={selectedLocation}
               onChange={(e) => {
@@ -372,6 +372,8 @@ export function Dashboard() {
                 backgroundColor: 'white',
                 cursor: 'pointer',
                 appearance: 'auto',
+                marginLeft: '16px',
+                flexShrink: 0,
               }}
             >
               <option value="all">All Locations</option>
@@ -380,6 +382,10 @@ export function Dashboard() {
               ))}
             </select>
           </div>
+        </div>
+
+        {/* Tab Content — only this section changes when switching tabs */}
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mt-4" style={{ minHeight: '300px' }}>
 
           {/* Overview — All Locations */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
