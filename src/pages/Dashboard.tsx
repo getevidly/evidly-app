@@ -36,6 +36,7 @@ export function Dashboard() {
     tabParam && validTabs.includes(tabParam) ? tabParam as any : 'overview'
   );
   const [showShareModal, setShowShareModal] = useState(false);
+  const [pillarFilter, setPillarFilter] = useState<string | null>(null);
 
   const currentScores = selectedLocation === 'all' ? complianceScores : locationScores[selectedLocation] || complianceScores;
   const currentScoresThirtyDaysAgo = selectedLocation === 'all' ? complianceScoresThirtyDaysAgo : locationScoresThirtyDaysAgo[selectedLocation] || complianceScoresThirtyDaysAgo;
@@ -252,7 +253,13 @@ export function Dashboard() {
                   tooltip={pillar.tooltip}
                   trend={pillar.trend}
                   delay={index * 300}
-                  onClick={() => selectedLocation !== 'all' ? setExpandedPillar(expandedPillar === pillar.name ? null : pillar.name) : undefined}
+                  onClick={() => {
+                    if (selectedLocation !== 'all') {
+                      setExpandedPillar(expandedPillar === pillar.name ? null : pillar.name);
+                    }
+                    setPillarFilter(pillar.name);
+                    setActiveTab('action');
+                  }}
                   isExpanded={selectedLocation !== 'all' && expandedPillar === pillar.name}
                 />
               ))}
@@ -534,37 +541,80 @@ export function Dashboard() {
           )}
 
           {/* Action Center */}
-          {activeTab === 'action' && (
-            <div>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
-              {[
-                { priority: 'high' as const, title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors?id=vendor-valley-fire' },
-                { priority: 'high' as const, title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs?id=airport-missing' },
-                { priority: 'medium' as const, title: 'Health Permit Renewal in 14 Days', desc: 'Downtown Kitchen — expires Feb 20', link: '/documents?id=health-permit-downtown' },
-                { priority: 'medium' as const, title: 'Food Handler Certs Expiring', desc: '2 team members need renewal by Mar 7', link: '/team?id=food-handler-certs' },
-                { priority: 'medium' as const, title: 'Grease Trap Service Due Soon', desc: 'Grease Masters — due Mar 20', link: '/vendors?id=vendor-grease-masters' },
-                { priority: 'low' as const, title: 'Weekly Compliance Digest Ready', desc: 'View your weekly summary', link: '/reports?id=weekly-digest' }
-              ].map((item, i) => {
-                const priorityStyles = {
-                  high: { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Urgent' },
-                  medium: { dot: '#d4af37', bg: '#fffbeb', border: '#fef3c7', label: 'Soon' },
-                  low: { dot: '#1e4d6b', bg: '#eff6ff', border: '#dbeafe', label: 'Info' },
-                };
-                const ps = priorityStyles[item.priority];
-                return (
-                  <div key={i} onClick={() => { navigate(item.link) }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', borderRadius: '8px' }} className="hover:bg-gray-50 transition-colors">
-                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: ps.dot, flexShrink: 0 }}></div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: '600', fontSize: '14px', color: '#1e293b' }}>{item.title}</div>
-                      <div style={{ fontSize: '13px', color: '#64748b' }}>{item.desc}</div>
+          {activeTab === 'action' && (() => {
+            const allActionItems = [
+              { priority: 'high' as const, pillar: 'Operational', title: '3 Temperature Checks Missed', desc: 'Airport Cafe — missing since 10 AM', link: '/temp-logs' },
+              { priority: 'high' as const, pillar: 'Operational', title: 'Opening Checklist Incomplete', desc: 'University Dining — not started today', link: '/checklists' },
+              { priority: 'medium' as const, pillar: 'Operational', title: 'Corrective Action Required', desc: 'Hot Hold Cabinet logged at 127°F — needs follow-up', link: '/temp-logs' },
+              { priority: 'low' as const, pillar: 'Operational', title: 'HACCP Plan Review Due', desc: 'Annual review scheduled for next month', link: '/haccp' },
+              { priority: 'high' as const, pillar: 'Equipment', title: 'Fire Suppression Report Expired', desc: 'Valley Fire Systems — overdue since Feb 10', link: '/vendors' },
+              { priority: 'medium' as const, pillar: 'Equipment', title: 'Grease Trap Service Due Soon', desc: 'Grease Masters — due Mar 20', link: '/vendors' },
+              { priority: 'medium' as const, pillar: 'Equipment', title: 'Hood Cleaning Scheduled', desc: 'ABC Fire Protection — Apr 15', link: '/vendors' },
+              { priority: 'low' as const, pillar: 'Equipment', title: 'Fire Extinguisher Inspection', desc: 'All units current — next due Jul 2026', link: '/vendors' },
+              { priority: 'medium' as const, pillar: 'Documentation', title: 'Health Permit Renewal in 14 Days', desc: 'Downtown Kitchen — expires Feb 20', link: '/documents' },
+              { priority: 'medium' as const, pillar: 'Documentation', title: 'Food Handler Certs Expiring', desc: '2 team members need renewal by Mar 7', link: '/team' },
+              { priority: 'medium' as const, pillar: 'Documentation', title: 'Insurance Certificate Update', desc: 'General liability policy renews Mar 1', link: '/documents' },
+              { priority: 'low' as const, pillar: 'Documentation', title: 'Business License Renewal', desc: 'Annual renewal due May 2026', link: '/documents' },
+            ];
+            const filteredItems = pillarFilter ? allActionItems.filter(item => item.pillar === pillarFilter) : allActionItems;
+            const pillarCounts = { Operational: 0, Equipment: 0, Documentation: 0 };
+            allActionItems.forEach(item => { pillarCounts[item.pillar as keyof typeof pillarCounts]++; });
+
+            return (
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                  {[
+                    { key: null, label: 'All', count: allActionItems.length },
+                    { key: 'Operational', label: 'Operational', count: pillarCounts.Operational },
+                    { key: 'Equipment', label: 'Equipment', count: pillarCounts.Equipment },
+                    { key: 'Documentation', label: 'Documentation', count: pillarCounts.Documentation },
+                  ].map(chip => (
+                    <button
+                      key={chip.label}
+                      onClick={() => setPillarFilter(chip.key)}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        border: pillarFilter === chip.key ? '2px solid #1e4d6b' : '1px solid #d1d5db',
+                        backgroundColor: pillarFilter === chip.key ? '#1e4d6b' : 'white',
+                        color: pillarFilter === chip.key ? 'white' : '#475569',
+                        transition: 'all 0.15s ease',
+                      }}
+                    >
+                      {chip.label} ({chip.count})
+                    </button>
+                  ))}
+                </div>
+                {filteredItems.map((item, i) => {
+                  const priorityStyles = {
+                    high: { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Urgent' },
+                    medium: { dot: '#d4af37', bg: '#fffbeb', border: '#fef3c7', label: 'Soon' },
+                    low: { dot: '#1e4d6b', bg: '#eff6ff', border: '#dbeafe', label: 'Info' },
+                  };
+                  const ps = priorityStyles[item.priority];
+                  return (
+                    <div key={i} onClick={() => { navigate(item.link) }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', borderRadius: '8px' }} className="hover:bg-gray-50 transition-colors">
+                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: ps.dot, flexShrink: 0 }}></div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: '600', fontSize: '14px', color: '#1e293b' }}>{item.title}</div>
+                        <div style={{ fontSize: '13px', color: '#64748b' }}>{item.desc}</div>
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0', marginRight: '4px' }}>{item.pillar}</span>
+                      <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: ps.bg, color: ps.dot, border: `1px solid ${ps.border}` }}>{ps.label}</span>
+                      <span style={{ color: '#94a3b8', fontSize: '18px' }}>&rsaquo;</span>
                     </div>
-                    <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: ps.bg, color: ps.dot, border: `1px solid ${ps.border}` }}>{ps.label}</span>
-                    <span style={{ color: '#94a3b8', fontSize: '18px' }}>&rsaquo;</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+                {filteredItems.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>No action items for this category.</div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Vendor Services */}
           {activeTab === 'vendors' && (
