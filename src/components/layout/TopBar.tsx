@@ -46,6 +46,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             <div className="text-xl font-semibold text-gray-900">
               {isDemoMode ? 'Pacific Coast Dining' : profile?.organization_name || title}
             </div>
+            <div style={{ fontSize: '12px', color: '#6b7280' }}>Compliance Simplified</div>
           </div>
         </div>
 
