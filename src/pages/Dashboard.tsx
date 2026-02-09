@@ -400,8 +400,8 @@ export function Dashboard() {
               }}
             >
               <option value="all">All Locations</option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.urlId}>{loc.name}</option>
+              {locationDropdownOptions.map((loc) => (
+                <option key={loc.id} value={loc.id}>{loc.name}</option>
               ))}
             </select>
           </div>

@@ -353,7 +353,7 @@ export function Analysis() {
                 </LineChart>
               </ResponsiveContainer>
               <p className={`text-xs mt-2 flex items-center ${opEnd >= opStart ? 'text-green-600' : 'text-red-600'}`}>
-                <TrendingUp className="h-3 w-3 mr-1" />
+                {opEnd >= opStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                 {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
               </p>
             </div>
@@ -370,7 +370,7 @@ export function Analysis() {
                 </LineChart>
               </ResponsiveContainer>
               <p className={`text-xs mt-2 flex items-center ${eqEnd >= eqStart ? 'text-green-600' : 'text-red-600'}`}>
-                <TrendingUp className="h-3 w-3 mr-1" />
+                {eqEnd >= eqStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                 {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
               </p>
             </div>
@@ -387,7 +387,7 @@ export function Analysis() {
                 </LineChart>
               </ResponsiveContainer>
               <p className={`text-xs mt-2 flex items-center ${docEnd >= docStart ? 'text-green-600' : 'text-red-600'}`}>
-                <TrendingUp className="h-3 w-3 mr-1" />
+                {docEnd >= docStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                 {docEnd >= docStart ? '+' : ''}{docEnd - docStart} points over 12 weeks
               </p>
             </div>

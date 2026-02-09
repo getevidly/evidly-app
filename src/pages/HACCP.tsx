@@ -391,9 +391,9 @@ export function HACCP() {
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">All Locations</option>
-              <option value="downtown">Downtown</option>
-              <option value="airport">Airport Terminal</option>
-              <option value="university">University District</option>
+              <option value="downtown">Downtown Kitchen</option>
+              <option value="airport">Airport Cafe</option>
+              <option value="university">University Dining</option>
             </select>
           </div>
         </div>

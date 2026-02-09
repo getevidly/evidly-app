@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -1629,8 +1629,8 @@ export function TempLogs() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {getFilteredHistory().map((log) => (
-                      <>
-                        <tr key={log.id} className="hover:bg-gray-50">
+                      <Fragment key={log.id}>
+                        <tr className="hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {format(new Date(log.created_at), 'MMM d, yyyy h:mm a')}
                           </td>
@@ -1668,7 +1668,7 @@ export function TempLogs() {
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>

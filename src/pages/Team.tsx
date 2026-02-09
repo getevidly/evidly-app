@@ -330,7 +330,7 @@ export function Team() {
               <Users className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Team Members</span>
             </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{members.length}</div>
+            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{filteredMembers.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
@@ -338,7 +338,7 @@ export function Team() {
               <span className="text-sm text-gray-500 font-medium">Certs Current</span>
             </div>
             <div className="text-3xl font-bold text-green-600 text-center">
-              {members.filter(m => m.certifications && m.certifications.every(c => {
+              {filteredMembers.filter(m => m.certifications && m.certifications.every(c => {
                 if (!c.expiration_date) return true;
                 return new Date(c.expiration_date) > new Date();
               })).length}
@@ -350,7 +350,7 @@ export function Team() {
               <span className="text-sm text-gray-500 font-medium">Total Certs</span>
             </div>
             <div className="text-3xl font-bold text-[#d4af37] text-center">
-              {members.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
+              {filteredMembers.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
             </div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
@@ -359,7 +359,7 @@ export function Team() {
               <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
             </div>
             <div className="text-3xl font-bold text-[#1e4d6b] text-center">
-              {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / members.length) : 0}%
+              {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / filteredMembers.length) : 0}%
             </div>
           </div>
         </div>
