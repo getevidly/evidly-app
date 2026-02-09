@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
 
 interface TemperatureEquipment {
   id: string;
@@ -153,7 +154,7 @@ export function TempLogs() {
     const demoEquipment: TemperatureEquipment[] = [
       {
         id: '1',
-        name: 'Walk-in Cooler #1',
+        name: 'Walk-in Cooler',
         equipment_type: 'cooler',
         min_temp: 32,
         max_temp: 41,
@@ -243,294 +244,7 @@ export function TempLogs() {
       },
     ];
 
-    const demoHistory: TempCheckCompletion[] = [
-      {
-        id: '1',
-        equipment_id: '4',
-        equipment_name: 'Hot Hold Cabinet',
-        equipment_type: 'hot_hold',
-        temperature_value: 127,
-        is_within_range: false,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: 'Adjusted temperature setting and monitoring',
-        created_at: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '2',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 38,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '3',
-        equipment_id: '2',
-        equipment_name: 'Walk-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -2,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '4',
-        equipment_id: '3',
-        equipment_name: 'Prep Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 40,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '5',
-        equipment_id: '5',
-        equipment_name: 'Salad Bar',
-        equipment_type: 'cooler',
-        temperature_value: 39,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '6',
-        equipment_id: '6',
-        equipment_name: 'Reach-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: 0,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '7',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 37,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '8',
-        equipment_id: '2',
-        equipment_name: 'Walk-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -5,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 7 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '9',
-        equipment_id: '3',
-        equipment_name: 'Prep Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 39,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 8 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '10',
-        equipment_id: '4',
-        equipment_name: 'Hot Hold Cabinet',
-        equipment_type: 'hot_hold',
-        temperature_value: 145,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 9 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '11',
-        equipment_id: '5',
-        equipment_name: 'Salad Bar',
-        equipment_type: 'cooler',
-        temperature_value: 38,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 10 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '12',
-        equipment_id: '6',
-        equipment_name: 'Reach-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -3,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 11 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '13',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
-        temperature_value: 39,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 12 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '14',
-        equipment_id: '2',
-        equipment_name: 'Walk-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -1,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 13 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '15',
-        equipment_id: '3',
-        equipment_name: 'Prep Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 38,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 14 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '16',
-        equipment_id: '4',
-        equipment_name: 'Hot Hold Cabinet',
-        equipment_type: 'hot_hold',
-        temperature_value: 142,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 15 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '17',
-        equipment_id: '5',
-        equipment_name: 'Salad Bar',
-        equipment_type: 'cooler',
-        temperature_value: 40,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 16 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '18',
-        equipment_id: '6',
-        equipment_name: 'Reach-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -4,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 17 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '19',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
-        temperature_value: 37,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 18 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '20',
-        equipment_id: '3',
-        equipment_name: 'Prep Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 41,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 19 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '21',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
-        temperature_value: 36,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '22',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
-        temperature_value: 38,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '23',
-        equipment_id: '1',
-        equipment_name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
-        temperature_value: 37,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 72 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '24',
-        equipment_id: '2',
-        equipment_name: 'Walk-in Freezer',
-        equipment_type: 'freezer',
-        temperature_value: -3,
-        is_within_range: true,
-        recorded_by_name: 'Mike Johnson',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '25',
-        equipment_id: '3',
-        equipment_name: 'Prep Cooler',
-        equipment_type: 'cooler',
-        temperature_value: 39,
-        is_within_range: true,
-        recorded_by_name: 'Sarah Chen',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        id: '26',
-        equipment_id: '4',
-        equipment_name: 'Hot Hold Cabinet',
-        equipment_type: 'hot_hold',
-        temperature_value: 148,
-        is_within_range: true,
-        recorded_by_name: 'Emma Davis',
-        corrective_action: null,
-        created_at: new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
+    const demoHistory = generateTempDemoHistory(now);
 
     const demoUsers: User[] = [
       { id: '1', full_name: 'Sarah Chen' },
@@ -1111,18 +825,9 @@ export function TempLogs() {
   const getChartData = () => {
     const filtered = getFilteredHistory();
 
-    let selectedEquipmentIds: string[] = [];
+    let selectedEquipmentIds: string[];
     if (historyEquipment === 'all') {
-      // Get top 3 most logged equipment
-      const equipmentCounts = filtered.reduce((acc, log) => {
-        acc[log.equipment_id] = (acc[log.equipment_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-
-      selectedEquipmentIds = Object.entries(equipmentCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 3)
-        .map(([id]) => id);
+      selectedEquipmentIds = equipment.map(eq => eq.id);
     } else {
       selectedEquipmentIds = [historyEquipment];
     }
@@ -1131,29 +836,35 @@ export function TempLogs() {
       .filter(log => selectedEquipmentIds.includes(log.equipment_id))
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
-    return chartLogs.map(log => ({
-      time: format(new Date(log.created_at), 'MMM d, HH:mm'),
-      timestamp: new Date(log.created_at).getTime(),
-      [log.equipment_name]: log.temperature_value,
-      [`${log.equipment_name}_inRange`]: log.is_within_range,
-    }));
+    // Merge readings at the same time slot into single data points
+    // so all equipment lines share the same X-axis points
+    const timeMap = new Map<string, any>();
+
+    for (const log of chartLogs) {
+      const timeLabel = format(new Date(log.created_at), 'MMM d, HH:mm');
+
+      if (!timeMap.has(timeLabel)) {
+        timeMap.set(timeLabel, { time: timeLabel, timestamp: new Date(log.created_at).getTime() });
+      }
+
+      const point = timeMap.get(timeLabel)!;
+      point[log.equipment_name] = log.temperature_value;
+      point[`${log.equipment_name}_inRange`] = log.is_within_range;
+    }
+
+    return Array.from(timeMap.values()).sort((a: any, b: any) => a.timestamp - b.timestamp);
   };
 
   const getChartEquipmentNames = () => {
     const filtered = getFilteredHistory();
 
     if (historyEquipment === 'all') {
-      const equipmentCounts = filtered.reduce((acc, log) => {
-        acc[log.equipment_id] = (acc[log.equipment_id] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
-
-      return Object.entries(equipmentCounts)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 3)
-        .map(([id]) => filtered.find(log => log.equipment_id === id)?.equipment_name || '');
+      const names = new Set<string>();
+      filtered.forEach(log => names.add(log.equipment_name));
+      return Array.from(names);
     } else {
-      return [filtered.find(log => log.equipment_id === historyEquipment)?.equipment_name || ''];
+      const name = filtered.find(log => log.equipment_id === historyEquipment)?.equipment_name || '';
+      return name ? [name] : [];
     }
   };
 
@@ -1731,8 +1442,8 @@ export function TempLogs() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   >
                     <option value="all">All</option>
-                    <option value="pass">Pass</option>
-                    <option value="fail">Fail</option>
+                    <option value="pass">In Range</option>
+                    <option value="fail">Out of Range</option>
                   </select>
                 </div>
 
@@ -1891,42 +1602,51 @@ export function TempLogs() {
             )}
 
             {/* Chart View */}
-            {historyView === 'chart' && (
-              <div className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Temperature Trends</h2>
-                {getChartData().length > 0 ? (
-                  <ResponsiveContainer width="100%" height={400}>
-                    <LineChart data={getChartData()}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="time" />
-                      <YAxis label={{ value: 'Temperature (°F)', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip />
-                      <Legend />
-                      {/* Green zone for acceptable range */}
-                      <ReferenceLine y={41} stroke="#22c55e" strokeDasharray="3 3" label="Max Safe (41°F)" />
-                      <ReferenceLine y={32} stroke="#1e4d6b" strokeDasharray="3 3" label="Min Safe (32°F)" />
+            {historyView === 'chart' && (() => {
+              const chartData = getChartData();
+              const chartNames = getChartEquipmentNames();
+              const selectedEq = historyEquipment !== 'all' ? equipment.find(e => e.id === historyEquipment) : null;
 
-                      {getChartEquipmentNames().map((name, idx) => (
-                        <Line
-                          key={name}
-                          type="monotone"
-                          dataKey={name}
-                          stroke={['#1e4d6b', '#2a6a8f', '#3a8ab8'][idx]}
-                          strokeWidth={2}
-                          dot={<CustomDot />}
-                          activeDot={{ r: 6 }}
-                        />
-                      ))}
-                    </LineChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <div className="text-center py-12">
-                    <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No data available for chart. Try adjusting your filters.</p>
-                  </div>
-                )}
-              </div>
-            )}
+              return (
+                <div className="bg-white shadow rounded-lg p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-6">Temperature Trends</h2>
+                  {chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={400}>
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="time" angle={-45} textAnchor="end" height={60} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
+                        <YAxis label={{ value: 'Temperature (\u00B0F)', angle: -90, position: 'insideLeft' }} />
+                        <Tooltip formatter={(value: number, name: string) => [`${value}\u00B0F`, name]} />
+                        <Legend />
+                        {selectedEq && (
+                          <ReferenceLine y={selectedEq.max_temp} stroke="#22c55e" strokeDasharray="3 3" label={{ value: `Max (${selectedEq.max_temp}\u00B0F)`, position: 'right', fontSize: 11 }} />
+                        )}
+                        {selectedEq && (
+                          <ReferenceLine y={selectedEq.min_temp} stroke="#ef4444" strokeDasharray="3 3" label={{ value: `Min (${selectedEq.min_temp}\u00B0F)`, position: 'right', fontSize: 11 }} />
+                        )}
+                        {chartNames.map((name) => (
+                          <Line
+                            key={name}
+                            type="monotone"
+                            dataKey={name}
+                            stroke={equipmentColors[name] || '#888888'}
+                            strokeWidth={2}
+                            dot={<CustomDot />}
+                            connectNulls
+                            activeDot={{ r: 6 }}
+                          />
+                        ))}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="text-center py-12">
+                      <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">No data available for chart. Try adjusting your filters.</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 
