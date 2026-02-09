@@ -381,14 +381,14 @@ export function HACCP() {
               <Shield className="h-5 w-5 text-[#1e4d6b]" />
               <span className="text-sm text-gray-600">Active Plans</span>
             </div>
-            <p className="text-2xl font-bold text-[#1e4d6b]">{HACCP_PLANS.length}</p>
+            <p className="text-2xl font-bold text-[#1e4d6b] text-center">{HACCP_PLANS.length}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
             <div className="flex items-center space-x-2 mb-1">
               <Activity className="h-5 w-5 text-[#1e4d6b]" />
               <span className="text-sm text-gray-600">Overall Compliance</span>
             </div>
-            <p className={`text-2xl font-bold ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+            <p className={`text-2xl font-bold text-center ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
             </p>
           </div>
@@ -397,14 +397,14 @@ export function HACCP() {
               <CheckCircle className="h-5 w-5 text-green-600" />
               <span className="text-sm text-gray-600">CCPs in Compliance</span>
             </div>
-            <p className="text-2xl font-bold text-green-600">{passingCCPs}/{totalCCPs}</p>
+            <p className="text-2xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
           <div className="bg-white rounded-lg shadow p-4">
             <div className="flex items-center space-x-2 mb-1">
               <AlertTriangle className="h-5 w-5 text-red-600" />
               <span className="text-sm text-gray-600">Open Actions</span>
             </div>
-            <p className={`text-2xl font-bold ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
+            <p className={`text-2xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
         </div>
 
@@ -476,11 +476,11 @@ export function HACCP() {
                   <div className="grid grid-cols-3 gap-3 mb-3">
                     <div>
                       <p className="text-xs text-gray-500">CCPs</p>
-                      <p className="text-lg font-bold text-[#1e4d6b]">{plan.ccps.length}</p>
+                      <p className="text-lg font-bold text-[#1e4d6b] text-center">{plan.ccps.length}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">Compliance</p>
-                      <p className={`text-lg font-bold ${compliance === 100 ? 'text-green-600' : compliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+                      <p className={`text-lg font-bold text-center ${compliance === 100 ? 'text-green-600' : compliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
                         {compliance}%
                       </p>
                     </div>
@@ -552,7 +552,7 @@ export function HACCP() {
                   <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 <div className="text-right">
-                  <p className={`text-3xl font-bold ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
+                  <p className={`text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
                     {getPlanCompliance(selectedPlan)}%
                   </p>
                   <p className="text-xs text-gray-500">Compliance</p>

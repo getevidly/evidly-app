@@ -84,7 +84,7 @@ export function TimeSavedCounter({ hoursSaved, moneySaved, logsCompleted, docsSt
               </div>
             </div>
             <div
-              className="text-3xl font-bold animate-counter-glow"
+              className="text-3xl font-bold animate-counter-glow text-center"
               style={{ color: '#1e293b' }}
             >
               {stat.prefix}{stat.value.toLocaleString()}{stat.suffix}

@@ -447,15 +447,15 @@ export function Vendors() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.reliabilityScore)}`}>
                       <div className="text-xs text-gray-600 mb-1">Reliability Score</div>
-                      <div className={`text-2xl font-bold ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</div>
+                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</div>
                     </div>
                     <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.onTimeRate)}`}>
                       <div className="text-xs text-gray-600 mb-1">On-Time Rate</div>
-                      <div className={`text-2xl font-bold ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</div>
+                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</div>
                     </div>
                     <div className={`p-4 rounded-lg ${getScoreBg(selectedPerf.docComplianceRate)}`}>
                       <div className="text-xs text-gray-600 mb-1">Doc Compliance</div>
-                      <div className={`text-2xl font-bold ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</div>
+                      <div className={`text-2xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</div>
                     </div>
                   </div>
                 </div>
@@ -1007,7 +1007,7 @@ export function Vendors() {
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-6 w-6 text-green-400" />
                   <div>
-                    <div className="text-2xl font-bold">{VENDOR_PERFORMANCE.filter((v) => v.reliabilityScore >= 90).length}/{VENDOR_PERFORMANCE.length}</div>
+                    <div className="text-2xl font-bold text-center">{VENDOR_PERFORMANCE.filter((v) => v.reliabilityScore >= 90).length}/{VENDOR_PERFORMANCE.length}</div>
                     <div className="text-sm text-gray-300">Fully Compliant</div>
                   </div>
                 </div>
@@ -1033,7 +1033,7 @@ export function Vendors() {
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-gray-700">Reliability Score</span>
-                        <span className={`text-2xl font-bold ${getScoreColor(perf.reliabilityScore)}`}>{perf.reliabilityScore}</span>
+                        <span className={`text-2xl font-bold text-center ${getScoreColor(perf.reliabilityScore)}`}>{perf.reliabilityScore}</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
@@ -1046,11 +1046,11 @@ export function Vendors() {
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div className={`p-3 rounded-lg ${getScoreBg(perf.onTimeRate)}`}>
                         <div className="text-xs text-gray-600 mb-1">On-time Service</div>
-                        <div className={`text-xl font-bold ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</div>
+                        <div className={`text-xl font-bold text-center ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</div>
                       </div>
                       <div className={`p-3 rounded-lg ${getScoreBg(perf.docComplianceRate)}`}>
                         <div className="text-xs text-gray-600 mb-1">Doc Compliance</div>
-                        <div className={`text-xl font-bold ${getScoreColor(perf.docComplianceRate)}`}>{perf.docComplianceRate}%</div>
+                        <div className={`text-xl font-bold text-center ${getScoreColor(perf.docComplianceRate)}`}>{perf.docComplianceRate}%</div>
                       </div>
                     </div>
 

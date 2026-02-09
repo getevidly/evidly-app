@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Filter, Award, Activity, FileText } from 'lucide-react';
+import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { TeamInviteModal } from '../components/TeamInviteModal';
@@ -15,6 +15,13 @@ interface TeamMember {
   avatar_url: string | null;
   created_at: string;
   last_active?: string;
+  location?: string;
+  certifications?: DemoCert[];
+  training_completed?: number;
+  training_total?: number;
+  temp_logs_completed?: number;
+  checklists_completed?: number;
+  compliance_score?: number;
 }
 
 interface Invitation {
@@ -31,6 +38,14 @@ interface Invitation {
   token: string;
 }
 
+interface DemoCert {
+  id: string;
+  certification_name: string;
+  issue_date: string | null;
+  expiration_date: string | null;
+  status: string;
+}
+
 interface Certification {
   id: string;
   certification_name: string;
@@ -39,22 +54,116 @@ interface Certification {
   status: string;
 }
 
+const DEMO_MEMBERS: TeamMember[] = [
+  {
+    id: 'd1', full_name: 'Marcus Johnson', email: 'marcus@pacificcoast.com', phone: '(415) 555-0101',
+    role: 'admin', avatar_url: null, created_at: '2024-06-15T08:00:00Z', last_active: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+    location: 'All Locations', training_completed: 12, training_total: 12, temp_logs_completed: 186, checklists_completed: 92, compliance_score: 98,
+    certifications: [
+      { id: 'c1', certification_name: 'ServSafe Manager Certification', issue_date: '2025-03-10', expiration_date: '2027-03-10', status: 'active' },
+      { id: 'c2', certification_name: 'Food Handler Certificate', issue_date: '2025-01-15', expiration_date: '2027-01-15', status: 'active' },
+      { id: 'c3', certification_name: 'HACCP Certification', issue_date: '2024-09-01', expiration_date: '2026-09-01', status: 'active' },
+    ],
+  },
+  {
+    id: 'd2', full_name: 'Sarah Chen', email: 'sarah@pacificcoast.com', phone: '(415) 555-0102',
+    role: 'manager', avatar_url: null, created_at: '2024-08-20T08:00:00Z', last_active: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    location: 'Downtown Kitchen', training_completed: 10, training_total: 10, temp_logs_completed: 142, checklists_completed: 68, compliance_score: 95,
+    certifications: [
+      { id: 'c4', certification_name: 'ServSafe Manager Certification', issue_date: '2024-03-15', expiration_date: '2026-03-15', status: 'active' },
+      { id: 'c5', certification_name: 'Food Handler Certificate', issue_date: '2025-06-01', expiration_date: '2027-06-01', status: 'active' },
+    ],
+  },
+  {
+    id: 'd3', full_name: 'Maria Garcia', email: 'maria@pacificcoast.com', phone: '(415) 555-0103',
+    role: 'manager', avatar_url: null, created_at: '2024-09-10T08:00:00Z', last_active: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+    location: 'Airport Cafe', training_completed: 9, training_total: 10, temp_logs_completed: 128, checklists_completed: 72, compliance_score: 88,
+    certifications: [
+      { id: 'c6', certification_name: 'ServSafe Manager Certification', issue_date: '2025-01-10', expiration_date: '2027-01-10', status: 'active' },
+      { id: 'c7', certification_name: 'Food Handler Certificate', issue_date: '2024-11-20', expiration_date: '2026-11-20', status: 'active' },
+    ],
+  },
+  {
+    id: 'd4', full_name: 'David Park', email: 'david@pacificcoast.com', phone: '(415) 555-0104',
+    role: 'staff', avatar_url: null, created_at: '2024-11-01T08:00:00Z', last_active: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    location: 'University Dining', training_completed: 6, training_total: 8, temp_logs_completed: 64, checklists_completed: 38, compliance_score: 72,
+    certifications: [
+      { id: 'c8', certification_name: 'Food Handler Certificate', issue_date: '2024-04-15', expiration_date: '2026-04-02', status: 'active' },
+    ],
+  },
+  {
+    id: 'd5', full_name: 'Michael Torres', email: 'michael@pacificcoast.com', phone: '(415) 555-0105',
+    role: 'staff', avatar_url: null, created_at: '2024-10-15T08:00:00Z', last_active: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    location: 'Airport Cafe', training_completed: 7, training_total: 8, temp_logs_completed: 96, checklists_completed: 45, compliance_score: 82,
+    certifications: [
+      { id: 'c9', certification_name: 'Food Handler Certificate', issue_date: '2024-02-26', expiration_date: '2026-02-26', status: 'active' },
+    ],
+  },
+  {
+    id: 'd6', full_name: 'Emma Rodriguez', email: 'emma@pacificcoast.com', phone: '(415) 555-0106',
+    role: 'staff', avatar_url: null, created_at: '2025-01-05T08:00:00Z', last_active: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    location: 'Downtown Kitchen', training_completed: 8, training_total: 8, temp_logs_completed: 72, checklists_completed: 52, compliance_score: 94,
+    certifications: [
+      { id: 'c10', certification_name: 'Food Handler Certificate', issue_date: '2025-01-10', expiration_date: '2027-01-10', status: 'active' },
+      { id: 'c11', certification_name: 'Allergen Awareness', issue_date: '2025-01-15', expiration_date: '2027-01-15', status: 'active' },
+    ],
+  },
+  {
+    id: 'd7', full_name: 'Alex Thompson', email: 'alex@pacificcoast.com', phone: '(415) 555-0107',
+    role: 'staff', avatar_url: null, created_at: '2024-12-01T08:00:00Z', last_active: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    location: 'Downtown Kitchen', training_completed: 7, training_total: 8, temp_logs_completed: 88, checklists_completed: 41, compliance_score: 90,
+    certifications: [
+      { id: 'c12', certification_name: 'Food Handler Certificate', issue_date: '2024-12-10', expiration_date: '2026-12-10', status: 'active' },
+    ],
+  },
+  {
+    id: 'd8', full_name: 'Lisa Wang', email: 'lisa@pacificcoast.com', phone: '(415) 555-0108',
+    role: 'staff', avatar_url: null, created_at: '2025-01-20T08:00:00Z', last_active: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    location: 'Airport Cafe', training_completed: 5, training_total: 8, temp_logs_completed: 34, checklists_completed: 22, compliance_score: 76,
+    certifications: [
+      { id: 'c13', certification_name: 'Food Handler Certificate', issue_date: '2025-01-25', expiration_date: '2027-01-25', status: 'active' },
+    ],
+  },
+  {
+    id: 'd9', full_name: 'James Wilson', email: 'james@pacificcoast.com', phone: null,
+    role: 'staff', avatar_url: null, created_at: '2025-02-01T08:00:00Z', last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    location: 'University Dining', training_completed: 3, training_total: 8, temp_logs_completed: 18, checklists_completed: 12, compliance_score: 65,
+    certifications: [
+      { id: 'c14', certification_name: 'Food Handler Certificate', issue_date: '2025-02-05', expiration_date: '2027-02-05', status: 'active' },
+    ],
+  },
+];
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
 export function Team() {
   const { profile } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [memberCertifications, setMemberCertifications] = useState<Certification[]>([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+  const isDemoMode = !profile?.organization_id;
 
   useEffect(() => {
     if (profile?.organization_id) {
       fetchTeam();
       fetchInvitations();
+    } else {
+      setMembers(DEMO_MEMBERS);
     }
   }, [profile]);
 
@@ -80,6 +189,7 @@ export function Team() {
   };
 
   const fetchMemberCertifications = async (userId: string) => {
+    if (isDemoMode) return;
     const { data } = await supabase
       .from('employee_certifications')
       .select('*')
@@ -108,7 +218,7 @@ export function Team() {
 
   const resendInvitation = async (invitation: Invitation, method?: 'email' | 'sms') => {
     if (!profile?.organization_id) {
-      alert('Invitation resent. (Demo mode — no actual invite sent.)');
+      window.alert('Invitation resent. (Demo mode — no actual invite sent.)');
       return;
     }
     try {
@@ -172,7 +282,11 @@ export function Team() {
 
   const viewMemberDetails = async (member: TeamMember) => {
     setSelectedMember(member);
-    await fetchMemberCertifications(member.id);
+    if (isDemoMode) {
+      setMemberCertifications(member.certifications || []);
+    } else {
+      await fetchMemberCertifications(member.id);
+    }
     setShowDetailsModal(true);
   };
 
@@ -190,29 +304,72 @@ export function Team() {
     );
   };
 
-  const getStatusBadge = (member: TeamMember) => {
-    return (
-      <span className="flex items-center gap-2">
-        <span className="h-2 w-2 bg-green-500 rounded-full"></span>
-        <span className="text-sm text-gray-600">Active</span>
-      </span>
-    );
-  };
+  const memberLocations = [...new Set(members.map(m => m.location).filter(Boolean))].sort();
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch = member.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          member.email.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter === 'all' || member.role === roleFilter;
-    return matchesSearch && matchesRole;
+    const matchesLocation = locationFilter === 'all' || member.location === locationFilter;
+    return matchesSearch && matchesRole && matchesLocation;
   });
 
   return (
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Team' }]} />
       <div className="space-y-6">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#eef4f8]">
+              <Users className="h-6 w-6 text-[#1e4d6b]" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 text-center">{members.length}</div>
+              <div className="text-sm text-gray-500">Team Members</div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-green-50">
+              <CheckCircle2 className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 text-center">
+                {members.filter(m => m.certifications && m.certifications.every(c => {
+                  if (!c.expiration_date) return true;
+                  return new Date(c.expiration_date) > new Date();
+                })).length}
+              </div>
+              <div className="text-sm text-gray-500">Certs Current</div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-amber-50">
+              <Award className="h-6 w-6 text-amber-600" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 text-center">
+                {members.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
+              </div>
+              <div className="text-sm text-gray-500">Total Certs</div>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg shadow p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#eef4f8]">
+              <TrendingUp className="h-6 w-6 text-[#1e4d6b]" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 text-center">
+                {members.length > 0 ? Math.round(members.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / members.length) : 0}%
+              </div>
+              <div className="text-sm text-gray-500">Avg Compliance</div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <p className="text-gray-600">Manage team members and permissions</p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -233,6 +390,18 @@ export function Team() {
               <option value="manager">Manager</option>
               <option value="staff">Staff</option>
             </select>
+            {isDemoMode && (
+              <select
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              >
+                <option value="all">All Locations</option>
+                {memberLocations.map(loc => (
+                  <option key={loc} value={loc}>{loc}</option>
+                ))}
+              </select>
+            )}
             <button
               onClick={() => setShowInviteModal(true)}
               className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] shadow-sm"
@@ -326,7 +495,7 @@ export function Team() {
                       className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       title="Revoke invitation"
                     >
-                      <X className="w-5 w-5" />
+                      <X className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
@@ -337,66 +506,107 @@ export function Team() {
 
         {/* Team Members Table */}
         <div className="bg-white shadow rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredMembers.map((member) => (
-                <tr key={member.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium flex-shrink-0">
-                        {member.full_name.charAt(0)}
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{member.full_name}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getRoleBadge(member.role)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {member.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {member.phone || '—'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {getStatusBadge(member)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => viewMemberDetails(member)}
-                      className="text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
-                    >
-                      View Details
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certs</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredMembers.map((member) => {
+                  const certCount = member.certifications?.length || 0;
+                  const expiringSoon = member.certifications?.filter(c => {
+                    if (!c.expiration_date) return false;
+                    const days = Math.floor((new Date(c.expiration_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                    return days >= 0 && days <= 30;
+                  }).length || 0;
+                  const trainingPct = member.training_total ? Math.round((member.training_completed || 0) / member.training_total * 100) : null;
+
+                  return (
+                    <tr key={member.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium flex-shrink-0">
+                            {member.full_name.charAt(0)}
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">{member.full_name}</div>
+                            <div className="text-xs text-gray-500">{member.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getRoleBadge(member.role)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {member.location ? (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5 text-gray-400" />
+                            {member.location}
+                          </span>
+                        ) : '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {certCount > 0 ? (
+                          <div className="flex items-center gap-1">
+                            <span className="text-gray-900 font-medium">{certCount}</span>
+                            {expiringSoon > 0 && (
+                              <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold">
+                                {expiringSoon} expiring
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {trainingPct !== null ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${trainingPct}%`,
+                                  backgroundColor: trainingPct === 100 ? '#16a34a' : trainingPct >= 75 ? '#d4af37' : '#ef4444',
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs text-gray-600">{trainingPct}%</span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {member.last_active ? (
+                          <span className="flex items-center gap-1">
+                            <span className="h-2 w-2 bg-green-500 rounded-full" />
+                            {getTimeAgo(member.last_active)}
+                          </span>
+                        ) : '—'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <button
+                          onClick={() => viewMemberDetails(member)}
+                          className="text-[#1e4d6b] hover:text-[#2a6a8f] font-medium"
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
           {filteredMembers.length === 0 && (
             <div className="text-center py-12">
@@ -418,7 +628,15 @@ export function Team() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900">{selectedMember.full_name}</h3>
-                  <div className="mt-1">{getRoleBadge(selectedMember.role)}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    {getRoleBadge(selectedMember.role)}
+                    {selectedMember.location && (
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {selectedMember.location}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <button
@@ -432,7 +650,7 @@ export function Team() {
             {/* Contact Info */}
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <h4 className="font-semibold text-gray-900 mb-3">Contact Information</h4>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Email:</span> {selectedMember.email}
                 </p>
@@ -442,8 +660,45 @@ export function Team() {
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Joined:</span> {format(new Date(selectedMember.created_at), 'MMM d, yyyy')}
                 </p>
+                {selectedMember.last_active && (
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Last Active:</span> {getTimeAgo(selectedMember.last_active)}
+                  </p>
+                )}
               </div>
             </div>
+
+            {/* Performance Metrics */}
+            {selectedMember.compliance_score !== undefined && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
+                  <TrendingUp className="h-5 w-5 text-[#1e4d6b]" />
+                  Performance Metrics
+                </h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold" style={{ color: selectedMember.compliance_score >= 90 ? '#16a34a' : selectedMember.compliance_score >= 70 ? '#d4af37' : '#ef4444' }}>
+                      {selectedMember.compliance_score}%
+                    </div>
+                    <div className="text-xs text-gray-500">Compliance</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.temp_logs_completed || 0}</div>
+                    <div className="text-xs text-gray-500">Temp Logs</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.checklists_completed || 0}</div>
+                    <div className="text-xs text-gray-500">Checklists</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-[#1e4d6b]">
+                      {selectedMember.training_completed || 0}/{selectedMember.training_total || 0}
+                    </div>
+                    <div className="text-xs text-gray-500">Training</div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Certifications */}
             <div className="mb-6">
@@ -467,11 +722,21 @@ export function Team() {
                         <div className="flex justify-between items-start">
                           <div>
                             <p className="font-medium text-gray-900">{cert.certification_name}</p>
-                            {cert.expiration_date && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                Expires: {format(new Date(cert.expiration_date), 'MMM d, yyyy')}
-                              </p>
-                            )}
+                            <div className="flex gap-4 mt-1">
+                              {cert.issue_date && (
+                                <p className="text-sm text-gray-600">
+                                  Issued: {format(new Date(cert.issue_date), 'MMM d, yyyy')}
+                                </p>
+                              )}
+                              {cert.expiration_date && (
+                                <p className="text-sm text-gray-600">
+                                  Expires: {format(new Date(cert.expiration_date), 'MMM d, yyyy')}
+                                  {daysUntilExpiry !== null && daysUntilExpiry > 0 && (
+                                    <span className="text-gray-400 ml-1">({daysUntilExpiry}d)</span>
+                                  )}
+                                </p>
+                              )}
+                            </div>
                           </div>
                           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                             isExpired ? 'bg-red-100 text-red-800' :
@@ -490,15 +755,36 @@ export function Team() {
               )}
             </div>
 
-            {/* Activity Log Placeholder */}
+            {/* Activity Log */}
             <div>
               <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
                 <Activity className="h-5 w-5 text-gray-600" />
                 Recent Activity
               </h4>
-              <div className="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg">
-                Activity log coming soon
-              </div>
+              {isDemoMode && selectedMember.temp_logs_completed ? (
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                    <span className="text-gray-400 text-xs w-16">Today</span>
+                    <span className="text-gray-700">Completed temperature log — Walk-in Cooler</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                    <span className="text-gray-400 text-xs w-16">Today</span>
+                    <span className="text-gray-700">Completed opening checklist</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                    <span className="text-gray-400 text-xs w-16">Yesterday</span>
+                    <span className="text-gray-700">Uploaded vendor certificate</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 bg-gray-50 rounded">
+                    <span className="text-gray-400 text-xs w-16">2d ago</span>
+                    <span className="text-gray-700">Resolved alert: Equipment maintenance</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg">
+                  Activity log coming soon
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Calendar, Upload, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 interface Alert {
   id: string;
-  alert_type: string;
+  alert_type: 'document_expiring' | 'missed_log' | 'vendor_overdue' | 'staff_certification' | 'checklist_incomplete' | 'haccp_failure' | 'predictive';
   severity: 'high' | 'medium' | 'low';
   title: string;
   description: string;
@@ -19,10 +20,16 @@ interface Alert {
   resolution_notes?: string;
   resolved_by?: string;
   resolved_at?: string;
+  location: string;
+  navigate_to?: string;
 }
 
 export function Alerts() {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
+  const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
   const [alerts, setAlerts] = useState<Alert[]>([
     {
       id: '1',
@@ -35,6 +42,8 @@ export function Alerts() {
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'Maria Garcia',
       days_until_due: 7,
+      location: 'Airport Cafe',
+      navigate_to: '/documents',
     },
     {
       id: '2',
@@ -47,20 +56,37 @@ export function Alerts() {
       created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'John Smith',
       days_until_due: 14,
+      location: 'Downtown Kitchen',
+      navigate_to: '/documents',
     },
     {
       id: '3',
       alert_type: 'missed_log',
-      severity: 'medium',
+      severity: 'high',
       title: 'Temperature logs missing for 2 days',
-      description: 'No temperature logs were recorded on February 3rd and 4th. Complete temperature monitoring is required for health inspections.',
+      description: 'No temperature logs were recorded on February 3rd and 4th for Walk-in Cooler #2. Complete temperature monitoring is required for health inspections.',
       recommended_action: 'Add missing temperature logs or document reason for gap.',
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'Sarah Lee',
+      location: 'Airport Cafe',
+      navigate_to: '/temp-logs',
     },
     {
       id: '4',
+      alert_type: 'haccp_failure',
+      severity: 'high',
+      title: 'HACCP CCP Failure: Walk-in Cooler above 41°F',
+      description: 'Walk-in Cooler #2 recorded 44°F at 2:15 PM — exceeding the critical limit of 41°F. This is a Critical Control Point violation requiring immediate corrective action.',
+      recommended_action: 'Inspect cooler unit, check door seals, verify compressor operation. Move perishable items to backup cooler if temp cannot be corrected within 1 hour.',
+      status: 'active',
+      created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      assigned_to: 'Maria Garcia',
+      location: 'Airport Cafe',
+      navigate_to: '/haccp',
+    },
+    {
+      id: '5',
       alert_type: 'vendor_overdue',
       severity: 'medium',
       title: 'Fire Suppression Inspection Overdue',
@@ -68,9 +94,11 @@ export function Alerts() {
       recommended_action: 'Schedule inspection with SafeGuard Fire Systems immediately.',
       status: 'active',
       created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+      location: 'Downtown Kitchen',
+      navigate_to: '/vendors',
     },
     {
-      id: '5',
+      id: '6',
       alert_type: 'staff_certification',
       severity: 'medium',
       title: 'Food Handler Certificate expiring in 21 days',
@@ -79,19 +107,61 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 21,
+      location: 'Airport Cafe',
+      navigate_to: '/team',
     },
     {
-      id: '6',
+      id: '7',
+      alert_type: 'document_expiring',
+      severity: 'medium',
+      title: 'Certificate of Insurance expires in 10 days',
+      description: 'Valley Fire Systems Certificate of Insurance is expiring. Vendor compliance requires current insurance documentation.',
+      recommended_action: 'Request updated Certificate of Insurance from Valley Fire Systems.',
+      status: 'active',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      days_until_due: 10,
+      location: 'Airport Cafe',
+      navigate_to: '/vendors',
+    },
+    {
+      id: '8',
       alert_type: 'checklist_incomplete',
-      severity: 'low',
+      severity: 'medium',
       title: 'Opening Checklist not completed today',
       description: 'The opening checklist for February 5th has not been completed.',
       recommended_action: 'Complete opening checklist or assign to opening manager.',
       status: 'active',
       created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      location: 'University Dining',
+      navigate_to: '/checklists',
     },
     {
-      id: '7',
+      id: '9',
+      alert_type: 'missed_log',
+      severity: 'medium',
+      title: '3 temperature logs missed this week',
+      description: 'Weekend temperature logs were not recorded for Saturday AM, Sunday AM, and Sunday PM shifts.',
+      recommended_action: 'Assign weekend temp log duties and set up shift reminders.',
+      status: 'active',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      location: 'University Dining',
+      navigate_to: '/temp-logs',
+    },
+    {
+      id: '10',
+      alert_type: 'staff_certification',
+      severity: 'medium',
+      title: 'ServSafe Manager cert expiring in 36 days',
+      description: 'Sarah Chen\'s ServSafe Manager Certification expires on March 15, 2026. At least one certified manager is required per shift.',
+      recommended_action: 'Schedule ServSafe exam retake before expiration.',
+      status: 'active',
+      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      days_until_due: 36,
+      location: 'Downtown Kitchen',
+      navigate_to: '/team',
+    },
+    {
+      id: '11',
       alert_type: 'predictive',
       severity: 'low',
       title: 'Predicted compliance score drop',
@@ -99,9 +169,11 @@ export function Alerts() {
       recommended_action: 'Address pending alerts and complete all scheduled tasks.',
       status: 'active',
       created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      location: 'All Locations',
+      navigate_to: '/dashboard',
     },
     {
-      id: '8',
+      id: '12',
       alert_type: 'document_expiring',
       severity: 'low',
       title: 'Pest Control Service due in 30 days',
@@ -110,6 +182,8 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 30,
+      location: 'Downtown Kitchen',
+      navigate_to: '/vendors',
     },
   ]);
 
@@ -128,6 +202,18 @@ export function Alerts() {
     { id: '3', name: 'David Park', role: 'Staff' },
     { id: '4', name: 'Emma Rodriguez', role: 'Staff' },
     { id: '5', name: 'Alex Thompson', role: 'Staff' },
+  ];
+
+  const alertLocations = [...new Set(alerts.map(a => a.location))].sort();
+  const alertTypes: { value: string; label: string }[] = [
+    { value: 'all', label: 'All Types' },
+    { value: 'document_expiring', label: 'Document Expiring' },
+    { value: 'missed_log', label: 'Missed Temp Logs' },
+    { value: 'vendor_overdue', label: 'Vendor Overdue' },
+    { value: 'staff_certification', label: 'Staff Certification' },
+    { value: 'checklist_incomplete', label: 'Checklist Incomplete' },
+    { value: 'haccp_failure', label: 'HACCP Failure' },
+    { value: 'predictive', label: 'Predictive' },
   ];
 
   const getSeverityIcon = (severity: string) => {
@@ -152,6 +238,14 @@ export function Alerts() {
     }
   };
 
+  const getSeverityLabel = (severity: string) => {
+    switch (severity) {
+      case 'high': return 'Critical';
+      case 'medium': return 'Warning';
+      default: return 'Info';
+    }
+  };
+
   const getAlertIcon = (type: string) => {
     switch (type) {
       case 'document_expiring':
@@ -160,6 +254,10 @@ export function Alerts() {
         return <Thermometer className="h-5 w-5" />;
       case 'staff_certification':
         return <Users className="h-5 w-5" />;
+      case 'vendor_overdue':
+        return <Store className="h-5 w-5" />;
+      case 'haccp_failure':
+        return <ShieldAlert className="h-5 w-5" />;
       default:
         return <Bell className="h-5 w-5" />;
     }
@@ -174,22 +272,22 @@ export function Alerts() {
 
   const handleResolveSubmit = () => {
     if (!resolutionNotes.trim() || !resolutionType) {
-      alert('Please provide resolution type and action taken');
+      window.alert('Please provide resolution type and action taken');
       return;
     }
 
     if (selectedAlert) {
-      setAlerts(alerts.map(alert =>
-        alert.id === selectedAlert.id
+      setAlerts(alerts.map(a =>
+        a.id === selectedAlert.id
           ? {
-              ...alert,
+              ...a,
               status: 'resolved' as const,
               resolution_type: resolutionType,
               resolution_notes: resolutionNotes,
               resolved_by: 'Current User',
               resolved_at: new Date().toISOString(),
             }
-          : alert
+          : a
       ));
       setShowResolveModal(false);
       setSelectedAlert(null);
@@ -200,14 +298,10 @@ export function Alerts() {
     const snoozeDate = new Date();
     snoozeDate.setDate(snoozeDate.getDate() + days);
 
-    setAlerts(alerts.map(alert =>
-      alert.id === alertId
-        ? {
-            ...alert,
-            status: 'snoozed' as const,
-            snoozed_until: snoozeDate.toISOString(),
-          }
-        : alert
+    setAlerts(alerts.map(a =>
+      a.id === alertId
+        ? { ...a, status: 'snoozed' as const, snoozed_until: snoozeDate.toISOString() }
+        : a
     ));
     setOpenSnoozeDropdown(null);
   };
@@ -215,14 +309,10 @@ export function Alerts() {
   const handleCustomSnooze = (alertId: string) => {
     if (!customSnoozeDate) return;
 
-    setAlerts(alerts.map(alert =>
-      alert.id === alertId
-        ? {
-            ...alert,
-            status: 'snoozed' as const,
-            snoozed_until: new Date(customSnoozeDate).toISOString(),
-          }
-        : alert
+    setAlerts(alerts.map(a =>
+      a.id === alertId
+        ? { ...a, status: 'snoozed' as const, snoozed_until: new Date(customSnoozeDate).toISOString() }
+        : a
     ));
     setOpenSnoozeDropdown(null);
     setShowCustomDatePicker(false);
@@ -230,23 +320,34 @@ export function Alerts() {
   };
 
   const handleReassign = (alertId: string, memberName: string) => {
-    setAlerts(alerts.map(alert =>
-      alert.id === alertId ? { ...alert, assigned_to: memberName } : alert
+    setAlerts(alerts.map(a =>
+      a.id === alertId ? { ...a, assigned_to: memberName } : a
     ));
     setOpenReassignDropdown(null);
-    alert(`Reassigned to ${memberName}`);
+    window.alert(`Reassigned to ${memberName}`);
   };
 
   const handleDismiss = (alertId: string) => {
-    setAlerts(alerts.filter(alert => alert.id !== alertId));
+    setAlerts(alerts.filter(a => a.id !== alertId));
   };
 
-  const filteredAlerts = alerts.filter(alert => {
-    if (filter === 'all') return alert.status === 'active';
-    if (filter === 'urgent') return alert.status === 'active' && alert.severity === 'high';
-    if (filter === 'upcoming') return alert.status === 'active' && alert.days_until_due && alert.days_until_due > 7;
-    if (filter === 'resolved') return alert.status === 'resolved';
-    if (filter === 'snoozed') return alert.status === 'snoozed';
+  const filteredAlerts = alerts.filter(a => {
+    // Status filter
+    if (filter === 'all' && a.status !== 'active') return false;
+    if (filter === 'urgent' && !(a.status === 'active' && a.severity === 'high')) return false;
+    if (filter === 'upcoming' && !(a.status === 'active' && a.days_until_due && a.days_until_due > 7)) return false;
+    if (filter === 'resolved' && a.status !== 'resolved') return false;
+    if (filter === 'snoozed' && a.status !== 'snoozed') return false;
+
+    // Severity filter
+    if (severityFilter !== 'all' && a.severity !== severityFilter) return false;
+
+    // Location filter
+    if (locationFilter !== 'all' && a.location !== locationFilter) return false;
+
+    // Type filter
+    if (typeFilter !== 'all' && a.alert_type !== typeFilter) return false;
+
     return true;
   });
 
@@ -265,16 +366,17 @@ export function Alerts() {
           <p className="text-gray-200">AI-powered predictive alerts and notifications</p>
           <div className="flex items-center space-x-6 mt-4">
             <div>
-              <div className="text-3xl font-bold">{activeCount}</div>
+              <div className="text-3xl font-bold text-center">{activeCount}</div>
               <div className="text-sm text-gray-300">Active Alerts</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-red-400">{urgentCount}</div>
-              <div className="text-sm text-gray-300">Urgent</div>
+              <div className="text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
+              <div className="text-sm text-gray-300">Critical</div>
             </div>
           </div>
         </div>
 
+        {/* Status Filter Buttons */}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilter('all')}
@@ -290,7 +392,7 @@ export function Alerts() {
               filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Urgent ({urgentCount})
+            Critical ({urgentCount})
           </button>
           <button
             onClick={() => setFilter('upcoming')}
@@ -318,98 +420,165 @@ export function Alerts() {
           </button>
         </div>
 
+        {/* Advanced Filters */}
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={severityFilter}
+            onChange={(e) => setSeverityFilter(e.target.value as any)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          >
+            <option value="all">All Severities</option>
+            <option value="high">Critical</option>
+            <option value="medium">Warning</option>
+            <option value="low">Info</option>
+          </select>
+          <select
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          >
+            <option value="all">All Locations</option>
+            {alertLocations.map(loc => (
+              <option key={loc} value={loc}>{loc}</option>
+            ))}
+          </select>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+          >
+            {alertTypes.map(t => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
+          {(severityFilter !== 'all' || locationFilter !== 'all' || typeFilter !== 'all') && (
+            <button
+              onClick={() => { setSeverityFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }}
+              className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+
         <div className="space-y-4">
           {filteredAlerts.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-lg shadow">
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
               <p className="text-gray-500">
-                {filter === 'resolved' ? 'No resolved alerts' : 'No alerts to display'}
+                {filter === 'resolved' ? 'No resolved alerts' : 'No alerts match your filters'}
               </p>
             </div>
           ) : (
-            filteredAlerts.map((alert) => (
+            filteredAlerts.map((alertItem) => (
               <div
-                key={alert.id}
-                className={`bg-white rounded-lg shadow p-6 border-l-4 ${getSeverityColor(alert.severity)}`}
+                key={alertItem.id}
+                className={`bg-white rounded-lg shadow p-6 border-l-4 ${getSeverityColor(alertItem.severity)}`}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-3 flex-1">
                     <div className={`p-2 rounded-lg ${
-                      alert.severity === 'high' ? 'bg-red-100' :
-                      alert.severity === 'medium' ? 'bg-yellow-100' : 'bg-blue-100'
+                      alertItem.severity === 'high' ? 'bg-red-100' :
+                      alertItem.severity === 'medium' ? 'bg-yellow-100' : 'bg-blue-100'
                     }`}>
-                      {getAlertIcon(alert.alert_type)}
+                      {getAlertIcon(alertItem.alert_type)}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <div className="flex items-center space-x-3 mb-1">
-                            {getSeverityIcon(alert.severity)}
-                            <h3 className="text-lg font-semibold text-gray-900">{alert.title}</h3>
+                            {getSeverityIcon(alertItem.severity)}
+                            <h3 className="text-lg font-semibold text-gray-900">{alertItem.title}</h3>
                           </div>
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <span>{format(new Date(alert.created_at), 'MMM d, h:mm a')}</span>
-                            {alert.days_until_due && (
+                          <div className="flex items-center flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                            <span>{format(new Date(alertItem.created_at), 'MMM d, h:mm a')}</span>
+                            <span className="flex items-center space-x-1">
+                              <MapPin className="h-3.5 w-3.5" />
+                              <span>{alertItem.location}</span>
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              alertItem.severity === 'high' ? 'bg-red-100 text-red-700' :
+                              alertItem.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-blue-100 text-blue-700'
+                            }`}>
+                              {getSeverityLabel(alertItem.severity)}
+                            </span>
+                            {alertItem.days_until_due && (
                               <span className="flex items-center space-x-1">
                                 <Clock className="h-4 w-4" />
-                                <span>{alert.days_until_due} days remaining</span>
+                                <span>{alertItem.days_until_due} days remaining</span>
                               </span>
                             )}
                           </div>
                         </div>
                         <button
-                          onClick={() => handleDismiss(alert.id)}
+                          onClick={() => handleDismiss(alertItem.id)}
                           className="text-gray-400 hover:text-gray-600 transition-colors"
                         >
                           <X className="h-5 w-5" />
                         </button>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">{alert.description}</p>
+                      <p className="text-sm text-gray-600 mb-3">{alertItem.description}</p>
                       <div className="bg-white rounded-md p-3 border border-gray-200 mb-3">
                         <p className="text-sm font-medium text-gray-700 mb-1">Recommended Action:</p>
-                        <p className="text-sm text-gray-600">{alert.recommended_action}</p>
+                        <p className="text-sm text-gray-600">{alertItem.recommended_action}</p>
                       </div>
-                      {alert.assigned_to && (
+                      {alertItem.assigned_to && (
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
                           <Users className="h-4 w-4" />
-                          <span>Assigned to: <strong className="text-gray-700">{alert.assigned_to}</strong></span>
+                          <span>Assigned to: <strong className="text-gray-700">{alertItem.assigned_to}</strong></span>
                         </div>
                       )}
-                      {alert.status === 'snoozed' && alert.snoozed_until && (
+                      {alertItem.status === 'snoozed' && alertItem.snoozed_until && (
                         <div className="flex items-center space-x-2 text-sm text-purple-600 mt-2">
                           <Clock className="h-4 w-4" />
-                          <span>Snoozed until {format(new Date(alert.snoozed_until), 'MMM d, yyyy')}</span>
+                          <span>Snoozed until {format(new Date(alertItem.snoozed_until), 'MMM d, yyyy')}</span>
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
-                {alert.status !== 'resolved' && (
-                  <div className="flex items-center space-x-2 pt-3 border-t">
+                {alertItem.status !== 'resolved' && (
+                  <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
                     <button
-                      onClick={() => handleResolveClick(alert)}
+                      onClick={() => handleResolveClick(alertItem)}
                       className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors"
                     >
                       Resolve
                     </button>
+                    {alertItem.navigate_to && (
+                      <button
+                        onClick={() => navigate(alertItem.navigate_to!)}
+                        className="px-4 py-2 bg-[#d4af37] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
+                      >
+                        <span>Go to {alertItem.navigate_to === '/documents' ? 'Documents' :
+                          alertItem.navigate_to === '/temp-logs' ? 'Temp Logs' :
+                          alertItem.navigate_to === '/vendors' ? 'Vendors' :
+                          alertItem.navigate_to === '/haccp' ? 'HACCP' :
+                          alertItem.navigate_to === '/checklists' ? 'Checklists' :
+                          alertItem.navigate_to === '/team' ? 'Team' :
+                          'Dashboard'}</span>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     <div className="relative">
                       <button
-                        onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alert.id ? null : alert.id)}
+                        onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
                         className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>Snooze</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
-                      {openSnoozeDropdown === alert.id && (
+                      {openSnoozeDropdown === alertItem.id && (
                         <div className="absolute left-0 bottom-full mb-2 bg-white shadow-lg rounded-lg border border-gray-200 py-2 z-20 min-w-[150px]">
                           <button
-                            onClick={() => handleSnooze(alert.id, 7)}
+                            onClick={() => handleSnooze(alertItem.id, 7)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             Snooze 7 days
                           </button>
                           <button
-                            onClick={() => handleSnooze(alert.id, 30)}
+                            onClick={() => handleSnooze(alertItem.id, 30)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             Snooze 30 days
@@ -430,7 +599,7 @@ export function Alerts() {
                                 min={new Date().toISOString().split('T')[0]}
                               />
                               <button
-                                onClick={() => handleCustomSnooze(alert.id)}
+                                onClick={() => handleCustomSnooze(alertItem.id)}
                                 className="w-full mt-2 px-2 py-1 bg-[#1e4d6b] text-white text-xs rounded hover:bg-[#2a6a8f]"
                               >
                                 Set
@@ -442,18 +611,18 @@ export function Alerts() {
                     </div>
                     <div className="relative">
                       <button
-                        onClick={() => setOpenReassignDropdown(openReassignDropdown === alert.id ? null : alert.id)}
+                        onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
                         className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>Reassign</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
-                      {openReassignDropdown === alert.id && (
+                      {openReassignDropdown === alertItem.id && (
                         <div className="absolute left-0 bottom-full mb-2 bg-white shadow-lg rounded-lg border border-gray-200 py-2 z-20 min-w-[200px]">
                           {teamMembers.map((member) => (
                             <button
                               key={member.id}
-                              onClick={() => handleReassign(alert.id, member.name)}
+                              onClick={() => handleReassign(alertItem.id, member.name)}
                               className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                             >
                               <div className="font-medium">{member.name}</div>

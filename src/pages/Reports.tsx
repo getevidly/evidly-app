@@ -520,7 +520,7 @@ export function Reports() {
                 Overall Compliance Score{selectedLocName ? ` — ${selectedLocName}` : ''}
               </h3>
               <div className="flex items-center gap-4 mb-4">
-                <div className="text-5xl font-bold" style={{ color: '#1e4d6b' }}>
+                <div className="text-5xl font-bold text-center" style={{ color: '#1e4d6b' }}>
                   {selectedLocation !== 'all' && locationScores[selectedLocation]
                     ? locationScores[selectedLocation].overall
                     : complianceScores.overall}%

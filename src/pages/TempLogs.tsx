@@ -1212,7 +1212,7 @@ export function TempLogs() {
 
                   {eq.last_check && (
                     <div className="mb-3">
-                      <div className="text-3xl font-bold text-gray-900">
+                      <div className="text-3xl font-bold text-gray-900 text-center">
                         {eq.last_check.temperature_value}°{eq.unit}
                       </div>
                       <p className="text-xs text-gray-500">
@@ -1759,7 +1759,7 @@ export function TempLogs() {
                             <p className="text-xs text-gray-500">Started by {cooldown.startedBy}</p>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-gray-900">
+                            <div className="text-2xl font-bold text-gray-900 text-center">
                               {formatCooldownTime(cooldown.startTime)}
                             </div>
                             <p className="text-xs text-gray-500">elapsed</p>
@@ -1794,7 +1794,7 @@ export function TempLogs() {
 
                         <div className="mb-4">
                           <p className="text-sm text-gray-600 mb-2">Current Temperature</p>
-                          <div className="text-3xl font-bold text-gray-900">{currentTemp}°F</div>
+                          <div className="text-3xl font-bold text-gray-900 text-center">{currentTemp}°F</div>
                         </div>
 
                         {/* Mini chart */}

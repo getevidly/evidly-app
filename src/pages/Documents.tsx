@@ -271,19 +271,19 @@ export function Documents() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Documents</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b' }}>{locationFilteredDocs.length}</div>
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#1e4d6b', textAlign: 'center' }}>{locationFilteredDocs.length}</div>
           </div>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Current</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#166534' }}>{statusCounts.current}</div>
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#166534', textAlign: 'center' }}>{statusCounts.current}</div>
           </div>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Expiring Soon</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#854d0e' }}>{statusCounts.expiring}</div>
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#854d0e', textAlign: 'center' }}>{statusCounts.expiring}</div>
           </div>
           <div style={{ background: 'white', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>Expired</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, color: '#991b1b' }}>{statusCounts.expired}</div>
+            <div style={{ fontSize: '28px', fontWeight: 700, color: '#991b1b', textAlign: 'center' }}>{statusCounts.expired}</div>
           </div>
         </div>
 
