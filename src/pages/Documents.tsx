@@ -486,12 +486,17 @@ export function Documents() {
                                 </button>
                                 <button
                                   onClick={() => handleDownload(doc)}
-                                  className="text-blue-600 hover:text-blue-800"
+                                  className="hover:opacity-70"
+                                  style={{ color: '#1e4d6b' }}
                                   title="Download"
                                 >
                                   <Download className="h-4 w-4" />
                                 </button>
-                                <button className="text-red-600 hover:text-red-800" title="Delete">
+                                <button
+                                  onClick={() => alert(`"${doc.title}" deleted.`)}
+                                  className="text-red-600 hover:text-red-800"
+                                  title="Delete"
+                                >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                               </div>

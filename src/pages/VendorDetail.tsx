@@ -204,12 +204,15 @@ export default function VendorDetail() {
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button
                     onClick={() => setShowRequestModal(true)}
-                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 min-h-[44px]"
+                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] min-h-[44px]"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
                   </button>
-                  <button className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 min-h-[44px]">
+                  <button
+                    onClick={() => alert('Upload functionality coming soon.')}
+                    className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 min-h-[44px]"
+                  >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
                   </button>
@@ -242,7 +245,11 @@ export default function VendorDetail() {
                       </div>
                     </div>
                     {doc.status === 'on-file' && (
-                      <button className="flex items-center text-blue-600 hover:text-blue-800 mt-2 md:mt-0 min-h-[44px] px-2">
+                      <button
+                        onClick={() => alert('Downloading ' + doc.name + '...')}
+                        className="flex items-center mt-2 md:mt-0 min-h-[44px] px-2 hover:opacity-70"
+                        style={{ color: '#1e4d6b' }}
+                      >
                         <Download className="h-4 w-4 mr-1" />
                         Download
                       </button>
@@ -323,7 +330,7 @@ export default function VendorDetail() {
                   setShowRequestModal(false);
                   alert('Document request sent!');
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 min-h-[44px]"
+                className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] min-h-[44px]"
               >
                 Send Request
               </button>

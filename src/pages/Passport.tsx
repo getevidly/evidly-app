@@ -49,7 +49,7 @@ export default function Passport() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-[#1b4965] text-white py-6 px-6">
+      <header className="bg-[#1e4d6b] text-white py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
           <Shield className="w-10 h-10 text-[#d4af37]" strokeWidth={2} />
           <div>
@@ -61,7 +61,7 @@ export default function Passport() {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h2 className="font-['Outfit'] text-3xl font-bold text-[#1b4965] mb-2">
+          <h2 className="font-['Outfit'] text-3xl font-bold text-[#1e4d6b] mb-2">
             {locationData.name}
           </h2>
           <p className="text-gray-600 text-lg mb-1">{locationData.address}</p>
@@ -94,7 +94,7 @@ export default function Passport() {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-7xl font-bold text-[#1b4965]">{locationData.overall}%</div>
+                <div className="text-7xl font-bold text-[#1e4d6b]">{locationData.overall}%</div>
                 <div className="text-lg text-gray-600 font-medium">Compliant</div>
               </div>
             </div>
@@ -102,14 +102,14 @@ export default function Passport() {
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1b4965] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
             Compliance Breakdown
           </h3>
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Operational</span>
-                <span className="font-bold text-[#1b4965]">{locationData.operational}%</span>
+                <span className="font-bold text-[#1e4d6b]">{locationData.operational}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -122,7 +122,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Equipment</span>
-                <span className="font-bold text-[#1b4965]">{locationData.equipment}%</span>
+                <span className="font-bold text-[#1e4d6b]">{locationData.equipment}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -135,7 +135,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Documentation</span>
-                <span className="font-bold text-[#1b4965]">{locationData.documentation}%</span>
+                <span className="font-bold text-[#1e4d6b]">{locationData.documentation}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -148,7 +148,7 @@ export default function Passport() {
         </div>
 
         <div className="mb-12">
-          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1b4965] mb-6">
+          <h3 className="font-['Outfit'] text-2xl font-bold text-[#1e4d6b] mb-6">
             Recent Compliance Activity
           </h3>
           <div className="space-y-4">
@@ -183,7 +183,7 @@ export default function Passport() {
             href="https://getevidly.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#1b4965] hover:text-[#1e4d6b] font-semibold transition-colors"
+            className="text-[#1e4d6b] hover:text-[#1e4d6b] font-semibold transition-colors"
           >
             Learn more at getevidly.com
           </a>

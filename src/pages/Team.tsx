@@ -172,7 +172,7 @@ export function Team() {
   const getRoleBadge = (role: string) => {
     const badges = {
       admin: { label: 'Owner', color: 'bg-[#d4af37] text-[#1e4d6b]' },
-      manager: { label: 'Manager', color: 'bg-blue-100 text-blue-800' },
+      manager: { label: 'Manager', color: 'bg-[#eef4f8] text-[#1e4d6b]' },
       staff: { label: 'Staff', color: 'bg-gray-100 text-gray-800' },
     };
     const badge = badges[role as keyof typeof badges] || badges.staff;
@@ -290,7 +290,7 @@ export function Team() {
                         {invitation.email_status === 'failed' && invitation.email && (
                           <button
                             onClick={() => resendInvitation(invitation, 'email')}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            className="p-2 text-[#1e4d6b] hover:bg-gray-100 rounded transition-colors"
                             title="Resend email"
                           >
                             <Mail className="w-4 h-4" />
@@ -299,7 +299,7 @@ export function Team() {
                         {invitation.sms_status === 'failed' && invitation.phone && (
                           <button
                             onClick={() => resendInvitation(invitation, 'sms')}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                            className="p-2 text-[#1e4d6b] hover:bg-gray-100 rounded transition-colors"
                             title="Resend SMS"
                           >
                             <Smartphone className="w-4 h-4" />

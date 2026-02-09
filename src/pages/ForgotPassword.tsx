@@ -58,7 +58,7 @@ export function ForgotPassword() {
               </p>
               <button
                 onClick={() => { setSent(false); setEmail(''); }}
-                className="text-sm font-medium text-[#1b4965] hover:text-[#1e4d6b]"
+                className="text-sm font-medium text-[#1e4d6b] hover:text-[#1e4d6b]"
               >
                 Try a different email
               </button>
@@ -107,7 +107,7 @@ export function ForgotPassword() {
           )}
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="flex items-center justify-center text-sm font-medium text-[#1b4965] hover:text-[#1e4d6b]">
+            <Link to="/login" className="flex items-center justify-center text-sm font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
               <ArrowLeft className="h-4 w-4 mr-1" />
               Back to sign in
             </Link>

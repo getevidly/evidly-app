@@ -811,7 +811,10 @@ export function Checklists() {
                     <div className="flex items-center justify-between">
                       <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
                       {cl.status !== 'complete' && (
-                        <button className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium">
+                        <button
+                          onClick={() => alert(`${cl.name} opened — complete items to update your compliance score.`)}
+                          className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#2a6a8f] transition-colors font-medium"
+                        >
                           {cl.status === 'in_progress' ? 'Continue' : 'Start'}
                         </button>
                       )}

@@ -369,7 +369,7 @@ export function VendorRegister() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/vendor/login" className="font-medium text-[#1b4965] hover:text-[#1e4d6b]">
+              <Link to="/vendor/login" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
                 Sign in
               </Link>
             </p>

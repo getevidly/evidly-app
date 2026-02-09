@@ -138,7 +138,7 @@ export function Alerts() {
       case 'medium':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
       default:
-        return <Info className="h-5 w-5 text-blue-500" />;
+        return <Info className="h-5 w-5 text-[#1e4d6b]" />;
     }
   };
 
@@ -296,7 +296,7 @@ export function Alerts() {
           <button
             onClick={() => setFilter('upcoming')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              filter === 'upcoming' ? 'bg-blue-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+              filter === 'upcoming' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
             Upcoming

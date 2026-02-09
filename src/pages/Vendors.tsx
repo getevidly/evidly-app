@@ -282,7 +282,7 @@ export function Vendors() {
             <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100 rounded-lg">
-                  <Building2 className="h-8 w-8 text-blue-600" />
+                  <Building2 className="h-8 w-8 text-[#1e4d6b]" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">{selectedVendor.companyName}</h1>
@@ -446,11 +446,17 @@ export function Vendors() {
                   <p className="text-sm text-gray-600 mt-1">{onFileDocs} of {selectedDocs.length} required documents on file</p>
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
-                  <button className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm">
+                  <button
+                    onClick={() => alert('Document request sent to ' + selectedVendor.email)}
+                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm"
+                  >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
                   </button>
-                  <button className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">
+                  <button
+                    onClick={() => alert('Upload functionality coming soon.')}
+                    className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
+                  >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload
                   </button>
@@ -473,7 +479,7 @@ export function Vendors() {
                           {doc.expirationDate && <span className="text-xs text-gray-500">Exp: {format(new Date(doc.expirationDate), 'MMM d, yyyy')}</span>}
                           {doc.uploadDate && <span className="text-xs text-gray-500">Uploaded: {format(new Date(doc.uploadDate), 'MMM d, yyyy')}</span>}
                           {doc.autoRequestEnabled && isAutoEnabled && (
-                            <span className="text-xs text-blue-600 flex items-center">
+                            <span className="text-xs text-[#1e4d6b] flex items-center">
                               <Bell className="h-3 w-3 mr-0.5" />Auto-request on
                             </span>
                           )}
@@ -482,13 +488,20 @@ export function Vendors() {
                     </div>
                     <div className="flex items-center space-x-2 mt-2 md:mt-0">
                       {doc.status === 'on-file' && (
-                        <button className="flex items-center text-blue-600 hover:text-blue-800 text-sm px-2">
+                        <button
+                          onClick={() => alert('Downloading ' + doc.name + '...')}
+                          className="flex items-center text-sm px-2 hover:opacity-70"
+                          style={{ color: '#1e4d6b' }}
+                        >
                           <Download className="h-4 w-4 mr-1" />
                           Download
                         </button>
                       )}
                       {(doc.status === 'missing' || doc.status === 'expired') && (
-                        <button className="flex items-center text-[#1e4d6b] hover:text-[#2a6a8f] text-sm px-2">
+                        <button
+                          onClick={() => alert('Document request sent to ' + selectedVendor.email)}
+                          className="flex items-center text-[#1e4d6b] hover:text-[#2a6a8f] text-sm px-2"
+                        >
                           <Send className="h-4 w-4 mr-1" />
                           Request
                         </button>
@@ -630,7 +643,10 @@ export function Vendors() {
                         https://evidly-app.vercel.app/vendor/upload/{selectedVendor.id}-{selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-')}-abc123
                       </code>
                     </div>
-                    <button className="flex items-center text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium px-3 py-1">
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(`https://evidly-app.vercel.app/vendor/upload/${selectedVendor.id}`); alert('Link copied to clipboard!'); }}
+                      className="flex items-center text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium px-3 py-1"
+                    >
                       <ExternalLink className="h-4 w-4 mr-1" />
                       Copy Link
                     </button>
@@ -638,11 +654,17 @@ export function Vendors() {
                 </div>
 
                 <div className="flex gap-2">
-                  <button className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm">
+                  <button
+                    onClick={() => alert('Upload link sent to ' + selectedVendor.email)}
+                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] text-sm"
+                  >
                     <Send className="h-4 w-4 mr-2" />
                     Send Link to Vendor
                   </button>
-                  <button className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm">
+                  <button
+                    onClick={() => alert('Upload link regenerated.')}
+                    className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
+                  >
                     <Calendar className="h-4 w-4 mr-2" />
                     Regenerate Link
                   </button>
@@ -753,7 +775,10 @@ export function Vendors() {
               Performance Scorecard
             </button>
           </div>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f] shadow-sm self-start">
+          <button
+            onClick={() => alert('Add Vendor form coming soon.')}
+            className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f] shadow-sm self-start"
+          >
             <Plus className="h-5 w-5" />
             <span>Add Vendor</span>
           </button>
@@ -823,7 +848,7 @@ export function Vendors() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-blue-100 rounded-lg">
-                        <Building2 className="h-5 w-5 text-blue-600" />
+                        <Building2 className="h-5 w-5 text-[#1e4d6b]" />
                       </div>
                       <div>
                         <h3 className="text-base font-semibold text-gray-900">{vendor.companyName}</h3>
@@ -889,22 +914,31 @@ export function Vendors() {
                   {/* Quick Action Buttons */}
                   <div className="flex gap-2 pt-3 border-t border-gray-100">
                     <button
-                      onClick={(e) => { e.stopPropagation(); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] bg-blue-50 rounded hover:bg-blue-100 transition-colors"
+                      onClick={(e) => { e.stopPropagation(); alert('Schedule service for ' + vendor.companyName); }}
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      style={{ backgroundColor: '#eef4f8' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
                     >
                       <Calendar className="h-3 w-3 mr-1" />
                       Schedule
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] bg-blue-50 rounded hover:bg-blue-100 transition-colors"
+                      onClick={(e) => { e.stopPropagation(); alert('COI request sent to ' + vendor.email); }}
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      style={{ backgroundColor: '#eef4f8' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
                     >
                       <Send className="h-3 w-3 mr-1" />
                       Request COI
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleSelectVendor(vendor); setDetailTab('documents'); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] bg-blue-50 rounded hover:bg-blue-100 transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      style={{ backgroundColor: '#eef4f8' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
                     >
                       <FileText className="h-3 w-3 mr-1" />
                       Documents

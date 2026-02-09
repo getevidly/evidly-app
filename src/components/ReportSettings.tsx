@@ -217,7 +217,7 @@ export function ReportSettings() {
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-gray-900">{report.name}</h4>
                     {report.recommended && (
-                      <span className="text-xs bg-[#d4af37] text-[#1b4965] px-2 py-0.5 rounded font-semibold">
+                      <span className="text-xs bg-[#d4af37] text-[#1e4d6b] px-2 py-0.5 rounded font-semibold">
                         Recommended
                       </span>
                     )}

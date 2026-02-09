@@ -129,7 +129,7 @@ export function Settings() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
               </div>
-              <button className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Profile saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Save Changes
               </button>
             </div>
@@ -155,7 +155,7 @@ export function Settings() {
                   <option>Retail Food</option>
                 </select>
               </div>
-              <button className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Save Changes
               </button>
             </div>
@@ -324,7 +324,7 @@ export function Settings() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
-              <button className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => alert('Password updated.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Update Password
               </button>
             </div>
@@ -348,7 +348,7 @@ export function Settings() {
                       <div className="text-sm text-gray-500">Expires 12/24</div>
                     </div>
                   </div>
-                  <button className="text-sm text-[#1e4d6b] hover:text-[#1e4d6b] font-medium">
+                  <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#2a6a8f] font-medium">
                     Update
                   </button>
                 </div>

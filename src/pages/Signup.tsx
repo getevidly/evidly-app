@@ -158,7 +158,7 @@ export function Signup() {
           </p>
           <p className="text-sm text-gray-500">
             Didn't receive it? Check your spam folder or{' '}
-            <button onClick={() => setEmailSent(false)} className="text-[#1b4965] font-medium hover:underline">
+            <button onClick={() => setEmailSent(false)} className="text-[#1e4d6b] font-medium hover:underline">
               try again
             </button>.
           </p>
@@ -431,7 +431,7 @@ export function Signup() {
                     href="https://getevidly.com/terms"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[#1b4965] hover:text-[#1e4d6b]"
+                    className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]"
                   >
                     Terms of Service
                   </a>
@@ -440,7 +440,7 @@ export function Signup() {
                     href="https://getevidly.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[#1b4965] hover:text-[#1e4d6b]"
+                    className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]"
                   >
                     Privacy Policy
                   </a>
@@ -460,7 +460,7 @@ export function Signup() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-[#1b4965] hover:text-[#1e4d6b]">
+              <Link to="/login" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
                 Sign in
               </Link>
             </p>

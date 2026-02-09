@@ -89,18 +89,18 @@ export function SignupLocations() {
           <button
             onClick={() => setSelectedType('single')}
             className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'single' ? 'ring-4 ring-[#1b4965] ring-opacity-50' : ''
+              selectedType === 'single' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'single' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Building className="h-10 w-10 text-[#1b4965]" />
+                <Building className="h-10 w-10 text-[#1e4d6b]" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Single Location</h3>
               <p className="text-gray-600">1 location, 1 address</p>
             </div>
             {selectedType === 'single' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1b4965] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -111,18 +111,18 @@ export function SignupLocations() {
           <button
             onClick={() => setSelectedType('multiple')}
             className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'multiple' ? 'ring-4 ring-[#1b4965] ring-opacity-50' : ''
+              selectedType === 'multiple' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'multiple' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Building2 className="h-10 w-10 text-[#1b4965]" />
+                <Building2 className="h-10 w-10 text-[#1e4d6b]" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Multiple Locations</h3>
               <p className="text-gray-600">2+ locations, multiple addresses</p>
             </div>
             {selectedType === 'multiple' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1b4965] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -133,18 +133,18 @@ export function SignupLocations() {
           <button
             onClick={() => setSelectedType('enterprise')}
             className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
-              selectedType === 'enterprise' ? 'ring-4 ring-[#1b4965] ring-opacity-50' : ''
+              selectedType === 'enterprise' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'enterprise' ? 'opacity-40' : ''}`}
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                <Layers className="h-10 w-10 text-[#1b4965]" />
+                <Layers className="h-10 w-10 text-[#1e4d6b]" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
               <p className="text-gray-600">Large organizations with dedicated support</p>
             </div>
             {selectedType === 'enterprise' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1b4965] rounded-full flex items-center justify-center">
+              <div className="absolute top-4 right-4 w-6 h-6 bg-[#1e4d6b] rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
@@ -165,7 +165,7 @@ export function SignupLocations() {
               >
                 <Minus className="h-6 w-6 text-gray-700" />
               </button>
-              <div className="text-5xl font-bold text-[#1b4965] w-24 text-center">
+              <div className="text-5xl font-bold text-[#1e4d6b] w-24 text-center">
                 {locationCount}
               </div>
               <button
@@ -179,7 +179,7 @@ export function SignupLocations() {
         )}
 
         {selectedType === 'enterprise' && (
-          <div className="bg-gradient-to-r from-[#1b4965] to-[#2c5f7f] rounded-xl p-8 text-white shadow-xl">
+          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-8 text-white shadow-xl">
             <h3 className="text-2xl font-bold mb-4">Enterprise Plan (11+ Locations)</h3>
             <p className="text-lg mb-6">
               For 11+ locations, we offer custom pricing with dedicated onboarding and a success manager.
@@ -200,7 +200,7 @@ export function SignupLocations() {
                 </div>
               </div>
             </div>
-            <button className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1b4965] transition-colors shadow-lg">
+            <button className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-lg">
               Schedule a Demo
             </button>
           </div>
@@ -272,7 +272,7 @@ export function SignupLocations() {
                 onClick={() => setBillingPeriod('monthly')}
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'monthly'
-                    ? 'bg-[#1b4965] text-white'
+                    ? 'bg-[#1e4d6b] text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -282,7 +282,7 @@ export function SignupLocations() {
                 onClick={() => setBillingPeriod('annual')}
                 className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                   billingPeriod === 'annual'
-                    ? 'bg-[#1b4965] text-white'
+                    ? 'bg-[#1e4d6b] text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -333,7 +333,7 @@ export function SignupLocations() {
 
             <button
               onClick={handleContinue}
-              className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1b4965] transition-colors shadow-lg"
+              className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-lg"
             >
               Continue to Checkout
             </button>

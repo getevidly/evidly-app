@@ -75,7 +75,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                       }}
                       className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
                         !selectedLocation
-                          ? 'bg-blue-50 text-blue-700 font-medium'
+                          ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
@@ -90,7 +90,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         }}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
                           selectedLocation === location.id
-                            ? 'bg-blue-50 text-blue-700 font-medium'
+                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
@@ -126,7 +126,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     }}
                     className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
                       userRole === 'management'
-                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -139,7 +139,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     }}
                     className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
                       userRole === 'kitchen'
-                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
@@ -152,7 +152,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     }}
                     className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
                       userRole === 'facilities'
-                        ? 'bg-blue-50 text-blue-700 font-medium'
+                        ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium'
                         : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >

@@ -276,7 +276,7 @@ export function Onboarding() {
                           <span className={`flex-1 ${!item.required ? 'text-gray-500' : 'text-gray-900'}`}>
                             {item.name}
                             {item.custom && (
-                              <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                              <span className="ml-2 text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
                                 Custom
                               </span>
                             )}
@@ -410,7 +410,7 @@ export function Onboarding() {
             <div className="bg-white p-8 rounded-lg border border-gray-300 text-center">
               <QrCode className="h-32 w-32 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">Your QR codes will be generated after setup</p>
-              <button className="px-6 py-2 bg-[#1b4965] text-white rounded-md hover:bg-[#153a4d]">
+              <button onClick={() => alert('QR codes will be generated after setup is complete.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Preview QR Codes
               </button>
             </div>

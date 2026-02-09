@@ -266,7 +266,7 @@ export function Analysis() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">{action.action}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Operational' ? '#dbeafe' : action.pillar === 'Equipment' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Operational' ? '#1e40af' : action.pillar === 'Equipment' ? '#166534' : '#92400e' }}>
+                      <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Operational' ? '#dbeafe' : action.pillar === 'Equipment' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Operational' ? '#1e4d6b' : action.pillar === 'Equipment' ? '#166534' : '#92400e' }}>
                         {action.pillar}
                       </span>
                     </td>

@@ -161,13 +161,13 @@ export function VendorLogin() {
           <div className="mt-6 text-center space-y-3">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/vendor/register" className="font-medium text-[#1b4965] hover:text-[#1e4d6b]">
+              <Link to="/vendor/register" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
                 Register here
               </Link>
             </p>
             <p className="text-sm text-gray-600">
               Are you a restaurant?{' '}
-              <Link to="/login" className="font-medium text-[#1b4965] hover:text-[#1e4d6b]">
+              <Link to="/login" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
                 Sign in here →
               </Link>
             </p>
