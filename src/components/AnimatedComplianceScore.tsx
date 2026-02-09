@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useCountUp } from '../hooks/useCountUp';
 import { useConfetti } from '../hooks/useConfetti';
-import { InspectionReadyBadge } from './InspectionReadyBadge';
 
 interface AnimatedComplianceScoreProps {
   score: number;
@@ -13,7 +12,6 @@ interface AnimatedComplianceScoreProps {
 export function AnimatedComplianceScore({ score, label, color, trend }: AnimatedComplianceScoreProps) {
   const animatedScore = useCountUp(score, 1500);
   const [animationComplete, setAnimationComplete] = useState(false);
-  const [showBadge, setShowBadge] = useState(false);
   const { triggerConfetti } = useConfetti();
   const hasTriggeredRef = useRef(false);
 
@@ -35,11 +33,10 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
     if (animatedScore === score) {
       setAnimationComplete(true);
 
-      // Show badge and trigger confetti for 90+ scores
+      // Trigger confetti for 90+ scores
       if (score >= 90 && !hasTriggeredRef.current) {
         hasTriggeredRef.current = true;
         setTimeout(() => {
-          setShowBadge(true);
           triggerConfetti('compliance-score-90');
         }, 300);
       }
@@ -121,10 +118,6 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
         )}
       </div>
 
-      {/* Inspection Ready Badge */}
-      <div className="mt-3">
-        <InspectionReadyBadge score={score} show={showBadge} />
-      </div>
     </div>
   );
 }

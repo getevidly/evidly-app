@@ -67,69 +67,104 @@ export default function Hero() {
       </div>
 
       {/* Dashboard Preview */}
-      <div className="max-w-[900px] mx-auto mt-16 px-4">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" style={{ transform: 'perspective(1200px) rotateX(2deg)', transformOrigin: 'bottom center' }}>
+      <div className="max-w-[960px] mx-auto mt-16 px-4">
+        <div className="bg-white rounded-2xl shadow-[0_25px_60px_-12px_rgba(0,0,0,0.25)] border border-gray-200/60 overflow-hidden" style={{ transform: 'perspective(1200px) rotateX(2deg)', transformOrigin: 'bottom center' }}>
           {/* Mock TopBar */}
-          <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+          <div className="bg-white border-b border-gray-200 px-5 py-2.5 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded bg-[#1e4d6b] flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
                 <svg viewBox="0 0 56 65" fill="none" className="w-3.5 h-4">
                   <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
                 </svg>
               </div>
-              <span className="text-sm font-semibold text-gray-700">Pacific Coast Dining</span>
+              <span className="text-sm font-semibold text-gray-800">Pacific Coast Dining</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 hidden sm:inline">Downtown Kitchen</span>
+              <span className="text-xs text-gray-400 hidden sm:inline">All Locations</span>
               <div className="w-7 h-7 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-xs font-bold">J</div>
             </div>
           </div>
-          {/* Mock Dashboard Content */}
-          <div className="p-6 bg-[#faf8f3]">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Compliance Score */}
-              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm text-center">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Compliance Score</p>
-                <div className="relative w-24 h-24 mx-auto mb-3">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#16a34a" strokeWidth="8" strokeLinecap="round" strokeDasharray="243 264" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-extrabold text-[#16a34a]">92%</span>
+
+          {/* Mock Dashboard Body */}
+          <div className="px-5 py-4 bg-[#faf9f7]">
+            {/* Section header */}
+            <h3 className="text-sm font-semibold text-gray-800 mb-3">Compliance Overview</h3>
+
+            {/* Compliance Score Card */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 mb-4">
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                {/* Gauge */}
+                <div className="flex flex-col items-center flex-shrink-0">
+                  <div className="relative w-[100px] h-[100px]">
+                    <svg width="100" height="100" viewBox="0 0 100 100" className="-rotate-90">
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" strokeWidth="10" />
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="#22c55e" strokeWidth="10" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 40 * 0.92} ${2 * Math.PI * 40}`} />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-extrabold text-[#22c55e]">92</span>
+                      <span className="text-[9px] text-gray-400">Overall</span>
+                    </div>
                   </div>
+                  <span className="mt-1.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800">
+                    <svg className="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    Inspection Ready
+                  </span>
                 </div>
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold text-white bg-[#16a34a]">Inspection Ready</span>
-              </div>
-              {/* Location Scores */}
-              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Locations</p>
-                <div className="space-y-3">
-                  {[{ name: 'Downtown Kitchen', score: 95, color: '#16a34a' }, { name: 'Airport Cafe', score: 88, color: '#2563eb' }, { name: 'University Dining', score: 76, color: '#d97706' }].map((loc) => (
-                    <div key={loc.name} className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600 truncate mr-2">{loc.name}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 bg-gray-100 rounded-full h-1.5">
-                          <div className="h-1.5 rounded-full" style={{ width: `${loc.score}%`, backgroundColor: loc.color }} />
-                        </div>
-                        <span className="text-xs font-bold" style={{ color: loc.color }}>{loc.score}%</span>
+
+                {/* 3 Pillar Cards */}
+                <div className="flex gap-3 flex-1 w-full">
+                  {[
+                    { name: 'Operational', weight: '45%', score: 95 },
+                    { name: 'Equipment', weight: '30%', score: 91 },
+                    { name: 'Documentation', weight: '25%', score: 89 },
+                  ].map((pillar) => (
+                    <div key={pillar.name} className="flex-1 bg-white border border-gray-100 rounded-lg p-3 text-center" style={{ borderLeft: '3px solid #22c55e' }}>
+                      <div className="text-[10px] font-medium text-gray-500 mb-1">{pillar.name} ({pillar.weight})</div>
+                      <div className="text-xl font-bold text-[#22c55e]">{pillar.score}</div>
+                      <div className="mt-1.5 h-1 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full bg-[#22c55e]" style={{ width: `${pillar.score}%` }} />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-              {/* Activity Feed */}
-              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Recent Activity</p>
-                <div className="space-y-2.5">
-                  {[{ text: 'Walk-in Cooler: 38°F', badge: 'Pass', color: '#16a34a' }, { text: 'Opening Checklist 12/12', badge: 'Done', color: '#2563eb' }, { text: 'Health Permit expires in 14d', badge: 'Alert', color: '#d97706' }].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between text-xs">
-                      <span className="text-gray-600 truncate mr-2">{item.text}</span>
-                      <span className="px-2 py-0.5 rounded-full text-white font-medium flex-shrink-0" style={{ backgroundColor: item.color, fontSize: '10px' }}>{item.badge}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            </div>
+
+            {/* Locations Table */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="px-4 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Location</th>
+                    <th className="px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center">Overall</th>
+                    <th className="px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center hidden sm:table-cell">Operational</th>
+                    <th className="px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center hidden sm:table-cell">Equipment</th>
+                    <th className="px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center hidden sm:table-cell">Documentation</th>
+                    <th className="px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { name: 'Downtown Kitchen', overall: 92, op: 95, eq: 91, doc: 89, status: 'Inspection Ready', statusColor: '#22c55e', statusBg: '#f0fdf4' },
+                    { name: 'Airport Cafe', overall: 74, op: 78, eq: 70, doc: 72, status: 'Needs Attention', statusColor: '#d4af37', statusBg: '#fffbeb' },
+                    { name: 'University Dining', overall: 57, op: 62, eq: 55, doc: 52, status: 'Critical', statusColor: '#dc2626', statusBg: '#fef2f2' },
+                  ].map((loc, i) => {
+                    const scoreColor = (s: number) => s >= 80 ? '#22c55e' : s >= 60 ? '#d4af37' : '#dc2626';
+                    return (
+                      <tr key={loc.name} className={i < 2 ? 'border-b border-gray-50' : ''}>
+                        <td className="px-4 py-2.5 text-xs font-medium text-gray-800">{loc.name}</td>
+                        <td className="px-3 py-2.5 text-center"><span className="text-xs font-bold" style={{ color: scoreColor(loc.overall) }}>{loc.overall}</span></td>
+                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.op) }}>{loc.op}</span></td>
+                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.eq) }}>{loc.eq}</span></td>
+                        <td className="px-3 py-2.5 text-center hidden sm:table-cell"><span className="text-xs font-semibold" style={{ color: scoreColor(loc.doc) }}>{loc.doc}</span></td>
+                        <td className="px-3 py-2.5 text-center">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ color: loc.statusColor, backgroundColor: loc.statusBg, border: `1px solid ${loc.statusColor}20` }}>{loc.status}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
