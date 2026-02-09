@@ -204,12 +204,39 @@ export function Vendors() {
 
   const consolidatedVendors = useMemo(() => buildConsolidatedVendors(), []);
 
+  // Helper: get vendor's effective status for display (location-aware)
+  const getDisplayStatus = (vendor: ConsolidatedVendor): 'current' | 'overdue' | 'upcoming' => {
+    if (locationFilter !== 'all') {
+      const loc = vendor.locations.find((l) => l.locationId === locationFilter);
+      return loc?.status || vendor.overallStatus;
+    }
+    return vendor.overallStatus;
+  };
+
+  // Helper: get locations to display (filtered or all)
+  const getDisplayLocations = (vendor: ConsolidatedVendor): LocationService[] => {
+    if (locationFilter !== 'all') {
+      return vendor.locations.filter((l) => l.locationId === locationFilter);
+    }
+    return vendor.locations;
+  };
+
   // Apply filters
   const filteredVendors = useMemo(() => {
     return consolidatedVendors.filter((v) => {
-      if (statusFilter !== 'all' && v.overallStatus !== statusFilter) return false;
+      // Service type filter
       if (serviceFilter !== 'all' && v.serviceType !== serviceFilter) return false;
+      // Location filter
       if (locationFilter !== 'all' && !v.locations.some((l) => l.locationId === locationFilter)) return false;
+      // Status filter — when a specific location is selected, match that location's status
+      if (statusFilter !== 'all') {
+        if (locationFilter !== 'all') {
+          const loc = v.locations.find((l) => l.locationId === locationFilter);
+          if (!loc || loc.status !== statusFilter) return false;
+        } else {
+          if (v.overallStatus !== statusFilter) return false;
+        }
+      }
       return true;
     });
   }, [consolidatedVendors, statusFilter, serviceFilter, locationFilter]);
@@ -835,13 +862,16 @@ export function Vendors() {
 
             {/* Vendor Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredVendors.map((vendor) => (
+              {filteredVendors.map((vendor) => {
+                const displayStatus = getDisplayStatus(vendor);
+                const displayLocations = getDisplayLocations(vendor);
+                return (
                 <div
                   key={vendor.id}
                   onClick={() => handleSelectVendor(vendor)}
                   className="bg-white rounded-lg shadow p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
                   style={{
-                    borderLeftColor: vendor.overallStatus === 'overdue' ? '#dc2626' : vendor.overallStatus === 'upcoming' ? '#d97706' : '#16a34a',
+                    borderLeftColor: displayStatus === 'overdue' ? '#dc2626' : displayStatus === 'upcoming' ? '#d97706' : '#16a34a',
                   }}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -860,11 +890,11 @@ export function Vendors() {
                   {/* Status + Document Badges */}
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-                      vendor.overallStatus === 'overdue' ? 'bg-red-100 text-red-800' :
-                      vendor.overallStatus === 'upcoming' ? 'bg-amber-100 text-amber-800' :
+                      displayStatus === 'overdue' ? 'bg-red-100 text-red-800' :
+                      displayStatus === 'upcoming' ? 'bg-amber-100 text-amber-800' :
                       'bg-green-100 text-green-800'
                     }`}>
-                      {vendor.overallStatus === 'overdue' ? 'Overdue' : vendor.overallStatus === 'upcoming' ? 'Due Soon' : 'Current'}
+                      {displayStatus === 'overdue' ? 'Overdue' : displayStatus === 'upcoming' ? 'Due Soon' : 'Current'}
                     </span>
                     {vendor.pendingDocuments > 0 ? (
                       <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">
@@ -888,14 +918,19 @@ export function Vendors() {
                     )}
                   </div>
 
-                  {/* Locations */}
+                  {/* Locations — show filtered or all */}
                   <div className="mb-3">
-                    <p className="text-xs text-gray-500 mb-1">Locations:</p>
+                    <p className="text-xs text-gray-500 mb-1">{locationFilter !== 'all' ? 'Location:' : `Locations (${vendor.locations.length}):`}</p>
                     <div className="flex flex-wrap gap-1">
-                      {vendor.locations.map((loc) => (
+                      {displayLocations.map((loc) => (
                         <span key={loc.locationId} className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded">
                           <MapPin className="h-3 w-3 mr-0.5 text-gray-400" />
                           {loc.locationName}
+                          {locationFilter !== 'all' && (
+                            <span className="ml-1 text-gray-400">
+                              · Next: {format(new Date(loc.nextDue), 'MMM d')}
+                            </span>
+                          )}
                         </span>
                       ))}
                     </div>
@@ -944,7 +979,8 @@ export function Vendors() {
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {filteredVendors.length === 0 && (
