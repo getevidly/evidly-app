@@ -71,7 +71,7 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     severity: 'high',
     title: 'Health Permit Expires in 14 Days — Downtown Kitchen',
     description: 'Health department operating permit expires on Feb 23. Renewal application has not been started. Operating without a valid permit may result in closure.',
-    recommended_action: 'Submit renewal application and payment to San Francisco Health Department immediately. Allow 5-7 business days for processing.',
+    recommended_action: 'Submit renewal application and payment to Fresno County Health Department immediately. Allow 5-7 business days for processing.',
     data_points: ['Expires: Feb 23, 2026', 'Renewal not started', 'Processing time: 5-7 business days'],
     location: 'Downtown Kitchen',
     status: 'active',

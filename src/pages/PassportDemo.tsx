@@ -59,7 +59,7 @@ export default function PassportDemo() {
           <h2 className="font-['Outfit'] text-3xl font-bold text-[#1e4d6b] mb-2">
             Pacific Coast Dining — Downtown
           </h2>
-          <p className="text-gray-600 text-lg mb-1">425 Market Street, San Francisco, CA 94105</p>
+          <p className="text-gray-600 text-lg mb-1">1245 Fulton Street, Fresno, CA 93721</p>
           <p className="text-sm text-gray-500">Last updated: {today}</p>
         </div>
 

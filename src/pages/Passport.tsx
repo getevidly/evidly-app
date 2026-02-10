@@ -13,7 +13,7 @@ export default function Passport() {
 
   const locationData = {
     name: 'Pacific Coast Dining — Downtown',
-    address: '425 Market Street, San Francisco, CA 94105',
+    address: '1245 Fulton Street, Fresno, CA 93721',
     overall: 92,
     operational: 95,
     equipment: 89,

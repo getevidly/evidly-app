@@ -31,8 +31,8 @@ export function LocationMap({ locations, onLocationClick, selectedLocation }: Lo
     if (!mapRef.current || !window.L || mapInstanceRef.current) return;
 
     const map = window.L.map(mapRef.current, {
-      center: [37.7749, -122.4194],
-      zoom: 10,
+      center: [37.05, -120.25],
+      zoom: 8,
       zoomControl: true,
       scrollWheelZoom: true,
     });
@@ -108,7 +108,7 @@ export function LocationMap({ locations, onLocationClick, selectedLocation }: Lo
   useEffect(() => {
     if (!mapInstanceRef.current || !selectedLocation || selectedLocation === 'all') {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.setView([37.7749, -122.4194], 10, {
+        mapInstanceRef.current.setView([37.05, -120.25], 8, {
           animate: true,
           duration: 0.5,
         });

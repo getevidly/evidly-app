@@ -54,7 +54,7 @@ export function Alerts() {
       severity: 'high',
       title: 'Health Permit renewal due in 14 days',
       description: 'Your health department operating permit is due for renewal. Failure to renew on time may result in fines or closure.',
-      recommended_action: 'Submit renewal application and payment to San Francisco Health Department.',
+      recommended_action: 'Submit renewal application and payment to Fresno County Health Department.',
       status: 'active',
       created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'John Smith',

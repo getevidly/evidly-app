@@ -145,7 +145,7 @@ export function Dashboard() {
 
       if (L && mapContainer && !mapContainer.classList.contains('leaflet-container')) {
         try {
-          const map = L.map('dashboard-map').setView([37.7749, -122.4194], 10);
+          const map = L.map('dashboard-map').setView([37.05, -120.25], 8);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
           }).addTo(map);
@@ -184,7 +184,7 @@ export function Dashboard() {
     const map = (window as any).dashboardMap;
     if (map) {
       if (selectedLocation === 'all') {
-        map.setView([37.7749, -122.4194], 10);
+        map.setView([37.05, -120.25], 8);
       } else {
         const location = locations.find(loc => loc.urlId === selectedLocation);
         if (location) {
@@ -207,9 +207,9 @@ export function Dashboard() {
       <div className="space-y-6">
         {selectedLocation !== 'all' && (() => {
           const locationMap: Record<string, { name: string; address: string }> = {
-            'downtown': { name: 'Downtown Kitchen', address: '425 Market Street, San Francisco, CA 94105' },
-            'airport': { name: 'Airport Cafe', address: '780 Airport Blvd, San Francisco, CA 94128' },
-            'university': { name: 'University Dining', address: '2199 Addison Street, Berkeley, CA 94704' },
+            'downtown': { name: 'Downtown Kitchen', address: '1245 Fulton Street, Fresno, CA 93721' },
+            'airport': { name: 'Airport Cafe', address: '1636 Macready Drive, Merced, CA 95340' },
+            'university': { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' },
           };
           const locationInfo = locationMap[selectedLocation] || { name: 'Location', address: '' };
           return (
@@ -738,9 +738,9 @@ export function Dashboard() {
           {/* QR Passport */}
           {activeTab === 'passport' && (() => {
             const allQrLocations = [
-              { id: 'downtown', name: 'Downtown Kitchen', address: '425 Market St, SF', score: locationScores['downtown'].overall, color: getGrade(locationScores['downtown'].overall).hex },
-              { id: 'airport', name: 'Airport Cafe', address: '780 Terminal Dr, SF', score: locationScores['airport'].overall, color: getGrade(locationScores['airport'].overall).hex },
-              { id: 'university', name: 'University Dining', address: '1200 Campus Way, Berkeley', score: locationScores['university'].overall, color: getGrade(locationScores['university'].overall).hex }
+              { id: 'downtown', name: 'Downtown Kitchen', address: '1245 Fulton St, Fresno', score: locationScores['downtown'].overall, color: getGrade(locationScores['downtown'].overall).hex },
+              { id: 'airport', name: 'Airport Cafe', address: '1636 Macready Dr, Merced', score: locationScores['airport'].overall, color: getGrade(locationScores['airport'].overall).hex },
+              { id: 'university', name: 'University Dining', address: '1 University Cir, Modesto', score: locationScores['university'].overall, color: getGrade(locationScores['university'].overall).hex }
             ];
             const qrLocations = selectedLocation === 'all' ? allQrLocations : allQrLocations.filter(l => l.id === selectedLocation);
             return (

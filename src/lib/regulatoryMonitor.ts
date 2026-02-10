@@ -70,14 +70,16 @@ export const MONITORED_SOURCES: MonitoredSource[] = [
   { name: 'NFPA 10 (Fire Extinguishers)', abbreviation: 'NFPA 10', type: 'industry', lastChecked: '2026-02-07', url: 'https://www.nfpa.org/codes-and-standards/nfpa-10-standard-development/10' },
   { name: 'Cal/OSHA Workplace Safety', abbreviation: 'Cal/OSHA', type: 'state', lastChecked: '2026-02-06', url: 'https://www.dir.ca.gov/dosh/' },
   { name: 'Fresno County Health Department', abbreviation: 'Fresno Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.fresno.ca.us/departments/public-health' },
-  { name: 'Mariposa County Health Department', abbreviation: 'Mariposa Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.mariposacounty.org/180/Health' },
+  { name: 'Merced County Division of Environmental Health', abbreviation: 'Merced Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.merced.ca.us/departments/community-and-economic-development/environmental-health' },
+  { name: 'Stanislaus County Environmental Resources', abbreviation: 'Stanislaus Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.stancounty.com/er/environmental-health.shtm' },
 ];
 
 // ── Customer Jurisdictions (auto-populated from location addresses) ──
 
 export const CUSTOMER_JURISDICTIONS: Jurisdiction[] = [
   { name: 'Fresno County', state: 'CA', type: 'county' },
-  { name: 'Mariposa County', state: 'CA', type: 'county' },
+  { name: 'Merced County', state: 'CA', type: 'county' },
+  { name: 'Stanislaus County', state: 'CA', type: 'county' },
   { name: 'California', state: 'CA', type: 'state' },
 ];
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
@@ -23,6 +24,7 @@ export function Settings() {
   const { isDemoMode } = useDemo();
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
   const { t, locale, setLocale } = useTranslation();
+  const navigate = useNavigate();
   const canEditHours = userRole === 'executive' || userRole === 'management';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
@@ -49,6 +51,7 @@ export function Settings() {
     security: t('settings.security'),
     billing: t('settings.billing'),
     'regulatory-monitoring': 'Regulatory Monitoring',
+    jurisdiction: 'Jurisdiction Profile',
   };
 
   const allTabs = [
@@ -57,6 +60,7 @@ export function Settings() {
     { id: 'operating-hours', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'jurisdiction', icon: Globe, roles: ['executive', 'management'] as UserRole[] },
     { id: 'integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
     { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
@@ -283,9 +287,9 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
                   {[
-                    { name: 'Downtown Kitchen', address: '123 Main St, San Francisco, CA 94105' },
-                    { name: 'Airport Cafe', address: '450 Terminal Blvd, SFO, CA 94128' },
-                    { name: 'University Dining', address: '800 Campus Dr, San Francisco, CA 94132' },
+                    { name: 'Downtown Kitchen', address: '1245 Fulton Street, Fresno, CA 93721' },
+                    { name: 'Airport Cafe', address: '1636 Macready Drive, Merced, CA 95340' },
+                    { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' },
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -564,7 +568,8 @@ export function Settings() {
                 <div className="space-y-2">
                   {[
                     { name: 'Fresno County, CA', type: 'County' },
-                    { name: 'Mariposa County, CA', type: 'County' },
+                    { name: 'Merced County, CA', type: 'County' },
+                    { name: 'Stanislaus County, CA', type: 'County' },
                     { name: 'California (State)', type: 'State' },
                     { name: 'Federal (FDA, OSHA)', type: 'Federal' },
                   ].map((j) => (
@@ -587,6 +592,51 @@ export function Settings() {
 
               <button onClick={() => alert('Regulatory monitoring preferences saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'jurisdiction' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900">Jurisdiction Profile</h3>
+              <p className="text-sm text-gray-600">View and manage jurisdiction-specific compliance requirements for each location.</p>
+
+              <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Globe className="h-5 w-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-[#1e4d6b]">Hierarchical Jurisdiction Engine</p>
+                    <p className="text-xs text-[#1e4d6b]/80 mt-1">
+                      EvidLY automatically merges compliance requirements from Federal (FDA), State (California CalCode),
+                      County, and City jurisdictions — so each location gets the exact requirements that apply to them.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { name: 'Downtown Kitchen', jurisdiction: 'Fresno County, CA', chain: 'Federal → California → Fresno County' },
+                  { name: 'Airport Cafe', jurisdiction: 'Merced County, CA', chain: 'Federal → California → Merced County' },
+                  { name: 'University Dining', jurisdiction: 'Stanislaus County, CA', chain: 'Federal → California → Stanislaus County → City of Modesto' },
+                ].map((loc) => (
+                  <div key={loc.name} className="border border-gray-200 rounded-lg p-4 bg-white">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-gray-900">{loc.name}</h4>
+                        <p className="text-xs text-gray-500 mt-1">{loc.chain}</p>
+                      </div>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200">{loc.jurisdiction}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => navigate('/jurisdiction')}
+                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+              >
+                View Full Jurisdiction Configuration →
               </button>
             </div>
           )}
