@@ -3,15 +3,22 @@ import { type ReactNode, useState } from 'react';
 import {
   ChevronDown, ChevronUp, MapPin, Shield, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
-  Award, Calendar, Wrench, ClipboardList, Building2, RotateCcw
+  Award, Calendar, Wrench, ClipboardList, Building2, RotateCcw,
+  Scale, DollarSign
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
+import {
+  DEMO_LOCATION_JURISDICTIONS,
+  getJurisdiction,
+  getJurisdictionChain,
+} from '../lib/jurisdictions';
+import type { InspectionSystem, CaliforniaStateLaw } from '../lib/jurisdictions';
 import {
   autoConfigureLocation,
   getDemoComplianceGaps,
   type ComplianceGap,
 } from '../lib/jurisdictionEngine';
+import { CALIFORNIA_STATE_LAWS } from '../lib/californiaLaws';
 
 // ── Helper functions ────────────────────────────────────────────
 
@@ -38,6 +45,83 @@ function getGapActionLabel(category: string): string {
     case 'posting': return 'Upload';
     default: return 'Resolve';
   }
+}
+
+function getInspectionSystemBadge(type: InspectionSystem['type']): { label: string; color: string } {
+  switch (type) {
+    case 'letter_grade': return { label: 'Letter Grade (A/B/C)', color: 'bg-blue-100 text-blue-700 border-blue-200' };
+    case 'color_placard': return { label: 'Color Placard', color: 'bg-green-100 text-green-700 border-green-200' };
+    case 'pass_fail': return { label: 'Pass/Fail', color: 'bg-amber-100 text-amber-700 border-amber-200' };
+    case 'standard': return { label: 'Standard Inspection', color: 'bg-gray-100 text-gray-700 border-gray-200' };
+    default: return { label: type, color: 'bg-gray-100 text-gray-700 border-gray-200' };
+  }
+}
+
+function getLawStatusBadge(status: CaliforniaStateLaw['status']): { label: string; color: string } {
+  switch (status) {
+    case 'effective': return { label: 'Effective', color: 'bg-green-100 text-green-700' };
+    case 'upcoming': return { label: 'Upcoming', color: 'bg-amber-100 text-amber-700' };
+    case 'phased': return { label: 'Phased', color: 'bg-blue-100 text-blue-700' };
+    default: return { label: status, color: 'bg-gray-100 text-gray-700' };
+  }
+}
+
+function getBillBadgeColor(status: CaliforniaStateLaw['status']): string {
+  switch (status) {
+    case 'effective': return 'bg-green-50 text-green-700 border-green-200';
+    case 'upcoming': return 'bg-amber-50 text-amber-700 border-amber-200';
+    case 'phased': return 'bg-blue-50 text-blue-700 border-blue-200';
+    default: return 'bg-gray-50 text-gray-700 border-gray-200';
+  }
+}
+
+function getDaysRemaining(dateStr: string): number {
+  const target = new Date(dateStr);
+  const now = new Date();
+  return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function getUrgencyColor(days: number): string {
+  if (days < 90) return 'border-red-300 bg-red-50';
+  if (days < 180) return 'border-amber-300 bg-amber-50';
+  return 'border-blue-300 bg-blue-50';
+}
+
+function getUrgencyTextColor(days: number): string {
+  if (days < 90) return 'text-red-700';
+  if (days < 180) return 'text-amber-700';
+  return 'text-blue-700';
+}
+
+function getUrgencyBadgeColor(days: number): string {
+  if (days < 90) return 'bg-red-100 text-red-700';
+  if (days < 180) return 'bg-amber-100 text-amber-700';
+  return 'bg-blue-100 text-blue-700';
+}
+
+// ── Expandable Description Component ────────────────────────────
+
+function ExpandableDescription({ text }: { text: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > 150;
+
+  if (!isLong) {
+    return <p className="text-sm text-gray-600">{text}</p>;
+  }
+
+  return (
+    <div>
+      <p className={`text-sm text-gray-600 ${expanded ? '' : 'line-clamp-2'}`}>
+        {text}
+      </p>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] mt-0.5"
+      >
+        {expanded ? 'Show less' : 'Show more'}
+      </button>
+    </div>
+  );
 }
 
 // ── Collapsible Section Component ───────────────────────────────
@@ -85,6 +169,19 @@ export function JurisdictionSettings() {
   }));
   const complianceGaps = getDemoComplianceGaps();
 
+  // Access minimum wage from the California state level
+  const caProfile = getJurisdiction('state-ca');
+  const minimumWage = caProfile?.minimumWage;
+
+  // Upcoming regulatory changes
+  const upcomingLaws = CALIFORNIA_STATE_LAWS
+    .filter(law => {
+      if (law.status === 'upcoming') return true;
+      const daysLeft = getDaysRemaining(law.effectiveDate);
+      return daysLeft > 0;
+    })
+    .sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* Breadcrumb */}
@@ -107,6 +204,11 @@ export function JurisdictionSettings() {
       {locationProfiles.map(({ location, profile }) => {
         const isExpanded = expandedLocation === location.locationName;
         const locationGaps = complianceGaps.find(g => g.locationName === location.locationName);
+
+        // Get inspection system from the county level
+        const chain = getJurisdictionChain(location.jurisdictionChain[location.jurisdictionChain.length - 1]);
+        const countyProfile = chain.find(j => j.level === 'county');
+        const inspectionSystem = countyProfile?.inspectionSystem;
 
         return (
           <div
@@ -361,6 +463,51 @@ export function JurisdictionSettings() {
                   )}
                 </CollapsibleSection>
 
+                {/* 4b. Inspection Grading System */}
+                <CollapsibleSection
+                  icon={<Shield className="w-4 h-4" />}
+                  title="Inspection Grading System"
+                >
+                  {inspectionSystem ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-500">System type:</span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getInspectionSystemBadge(inspectionSystem.type).color}`}>
+                          {getInspectionSystemBadge(inspectionSystem.type).label}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">{inspectionSystem.details}</p>
+                      {inspectionSystem.grades && inspectionSystem.grades.length > 0 && (
+                        <div className="mt-3">
+                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                            Grade Ranges
+                          </h4>
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                <th className="pb-2 pr-4">Grade</th>
+                                <th className="pb-2">Score Range</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {inspectionSystem.grades.map((grade, i) => (
+                                <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                                  <td className="py-2 pr-4 font-medium text-gray-700">{grade.label}</td>
+                                  <td className="py-2 text-gray-600">{grade.range}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      No inspection grading system data available for this jurisdiction level.
+                    </p>
+                  )}
+                </CollapsibleSection>
+
                 {/* 5. Service Frequencies */}
                 <CollapsibleSection
                   icon={<Wrench className="w-4 h-4" />}
@@ -507,6 +654,107 @@ export function JurisdictionSettings() {
                   )}
                 </CollapsibleSection>
 
+                {/* 8. Applicable State Laws */}
+                <CollapsibleSection
+                  icon={<Scale className="w-4 h-4" />}
+                  title="Applicable State Laws"
+                >
+                  <div className="space-y-3">
+                    {CALIFORNIA_STATE_LAWS.map((law) => {
+                      const statusBadge = getLawStatusBadge(law.status);
+                      const billColor = getBillBadgeColor(law.status);
+                      return (
+                        <div
+                          key={law.id}
+                          className="p-3 rounded-lg border border-gray-200 bg-gray-50"
+                        >
+                          <div className="flex items-start gap-2 flex-wrap">
+                            <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded border ${billColor}`}>
+                              {law.billNumber}
+                            </span>
+                            <span className="text-sm font-semibold text-gray-900 flex-1">
+                              {law.name}
+                            </span>
+                            <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${statusBadge.color}`}>
+                              {statusBadge.label}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Effective: {new Date(law.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </p>
+                          <div className="mt-1.5">
+                            <ExpandableDescription text={law.description} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <p className="text-xs text-gray-400 italic mt-2">
+                      Laws filtered based on your business type and size. Contact support to update.
+                    </p>
+                  </div>
+                </CollapsibleSection>
+
+                {/* 9. Minimum Wage Requirements */}
+                <CollapsibleSection
+                  icon={<DollarSign className="w-4 h-4" />}
+                  title="Minimum Wage Requirements"
+                >
+                  {minimumWage ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {/* General Rate */}
+                        <div className="p-3 rounded-lg border border-gray-200 bg-gray-50">
+                          <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">General Rate</p>
+                          <p className="text-2xl font-bold text-gray-900 mt-1">
+                            ${minimumWage.general.toFixed(2)}
+                            <span className="text-sm font-normal text-gray-500">/hr</span>
+                          </p>
+                        </div>
+                        {/* Fast Food Rate */}
+                        {minimumWage.fastFood && (
+                          <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
+                            <p className="text-xs text-amber-700 uppercase tracking-wide font-semibold">Fast Food Rate</p>
+                            <p className="text-2xl font-bold text-amber-900 mt-1">
+                              ${minimumWage.fastFood.toFixed(2)}
+                              <span className="text-sm font-normal text-amber-600">/hr</span>
+                            </p>
+                            <p className="text-xs text-amber-600 mt-0.5">National chains with 60+ locations</p>
+                          </div>
+                        )}
+                        {/* Healthcare Rate */}
+                        {minimumWage.healthcare && (
+                          <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+                            <p className="text-xs text-blue-700 uppercase tracking-wide font-semibold">Healthcare Rate</p>
+                            <p className="text-2xl font-bold text-blue-900 mt-1">
+                              ${minimumWage.healthcare.toFixed(2)}
+                              <span className="text-sm font-normal text-blue-600">/hr</span>
+                            </p>
+                            <p className="text-xs text-blue-600 mt-0.5">Healthcare facility workers</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <span>Source: {minimumWage.source}</span>
+                        <span className="text-gray-300">|</span>
+                        <span>
+                          Effective: {new Date(minimumWage.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="p-3 rounded-lg bg-[#eef4f8] border border-[#b8d4e8]">
+                        <p className="text-xs text-gray-600">
+                          <strong>Note:</strong> Local city minimum wages may be higher than the state rate.
+                          Check your city ordinances for applicable local minimum wage requirements.
+                          Cities like San Francisco, West Hollywood, and Emeryville have rates above $19/hr.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">
+                      Minimum wage data not available for this jurisdiction.
+                    </p>
+                  )}
+                </CollapsibleSection>
+
                 {/* Override Controls */}
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3">
                   <button
@@ -598,6 +846,82 @@ export function JurisdictionSettings() {
           );
         })}
       </div>
+
+      {/* Upcoming Regulatory Changes Timeline */}
+      {upcomingLaws.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Upcoming Regulatory Changes</h2>
+
+          <div className="space-y-3">
+            {upcomingLaws.map((law) => {
+              const daysLeft = getDaysRemaining(law.effectiveDate);
+              const urgencyBorder = getUrgencyColor(daysLeft);
+              const urgencyText = getUrgencyTextColor(daysLeft);
+              const urgencyBadge = getUrgencyBadgeColor(daysLeft);
+
+              return (
+                <div
+                  key={law.id}
+                  className={`bg-white rounded-lg shadow border-l-4 ${urgencyBorder} p-5`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span className={`inline-flex items-center px-2 py-0.5 text-xs font-bold rounded ${urgencyBadge}`}>
+                          {daysLeft > 0 ? `${daysLeft} days remaining` : 'Effective now'}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(law.effectiveDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-xs font-semibold ${urgencyText}`}>
+                          {law.billNumber}
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900">{law.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                        {law.description}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => alert(`Preparing compliance plan for ${law.billNumber}: ${law.name}. (Demo mode)`)}
+                      className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
+                      style={{ backgroundColor: '#1e4d6b' }}
+                      onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                      onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                    >
+                      Prepare Now
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Key Upcoming Dates Summary */}
+          <div className="mt-4 p-4 bg-white rounded-lg shadow border border-gray-100">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Upcoming Dates</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3 rounded-lg border border-amber-200 bg-amber-50">
+                <p className="text-xs font-semibold text-amber-700">Jul 1, 2026</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 660 &amp; SB 68</p>
+                <p className="text-xs text-gray-600 mt-0.5">Date labels + Allergen disclosure</p>
+              </div>
+              <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+                <p className="text-xs font-semibold text-blue-700">Jan 1, 2027</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 418</p>
+                <p className="text-xs text-gray-600 mt-0.5">Banned food additives</p>
+              </div>
+              <div className="p-3 rounded-lg border border-blue-200 bg-blue-50">
+                <p className="text-xs font-semibold text-blue-700">Dec 31, 2027</p>
+                <p className="text-sm font-medium text-gray-900 mt-0.5">AB 2316</p>
+                <p className="text-xs text-gray-600 mt-0.5">School food synthetic dye ban</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Onboarding Note */}
       <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8] mt-6">
