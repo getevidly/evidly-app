@@ -349,6 +349,17 @@ ${top5.map(m => `<tr><td style="padding:6px 0;font-size:13px">${m.icon} ${m.name
 <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
 ${bottom3.map(m => `<tr><td style="padding:6px 0;font-size:13px">${m.icon} ${m.name}</td><td style="text-align:right;font-weight:700;color:#d97706;font-size:13px">${m.adoptionRate}%</td></tr>`).join('')}
 </table>
+<h3 style="font-size:14px;font-weight:700;color:#1b4965;margin-bottom:8px">Industry Breakdown</h3>
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+${INDUSTRIES.map(ind => {
+        const indOrgs = filteredOrgs.filter(o => o.industry === ind);
+        if (indOrgs.length === 0) return '';
+        const indSessions = Math.round(indOrgs.reduce((s, o) => s + o.totalSessions, 0) * timeScale);
+        const indModStats = MODULES.map(mod => ({ name: mod.name, rate: Math.round((indOrgs.filter(o => o.moduleUsage[mod.id].adopted).length / indOrgs.length) * 100) }));
+        const topMod = [...indModStats].sort((a, b) => b.rate - a.rate)[0];
+        return `<tr><td style="padding:6px 0;font-size:13px;border-bottom:1px solid #f3f4f6"><strong>${ind}</strong> — ${indOrgs.length} customers, ${indSessions.toLocaleString()} sessions<br/><span style="font-size:11px;color:#6b7280">Top module: ${topMod.name} (${topMod.rate}%)</span></td></tr>`;
+      }).join('')}
+</table>
 ${decliningOrgs.length > 0 ? `<h3 style="font-size:14px;font-weight:700;color:#dc2626;margin-bottom:8px">Declining Usage — Outreach Needed</h3>
 <div style="margin-bottom:20px">${decliningOrgs.map(o => `<div style="padding:6px 0;font-size:13px;border-bottom:1px solid #f3f4f6">${o.name} <span style="color:#dc2626;font-weight:600">(${o.trend}%)</span></div>`).join('')}</div>` : ''}
 <div style="text-align:center;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af">
