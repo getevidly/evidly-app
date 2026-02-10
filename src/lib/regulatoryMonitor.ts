@@ -72,6 +72,7 @@ export const MONITORED_SOURCES: MonitoredSource[] = [
   { name: 'Fresno County Health Department', abbreviation: 'Fresno Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.fresno.ca.us/departments/public-health' },
   { name: 'Merced County Division of Environmental Health', abbreviation: 'Merced Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.merced.ca.us/departments/community-and-economic-development/environmental-health' },
   { name: 'Stanislaus County Environmental Resources', abbreviation: 'Stanislaus Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.stancounty.com/er/environmental-health.shtm' },
+  { name: 'California Fire Code (CFC) / State Fire Marshal', abbreviation: 'CFC/SFM', type: 'state', lastChecked: '2026-02-07', url: 'https://osfm.fire.ca.gov/what-we-do/fire-engineering-and-investigations/codes-and-standards' },
 ];
 
 // ── Customer Jurisdictions (auto-populated from location addresses) ──
@@ -237,6 +238,39 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
     ],
     fullRegulatoryText: 'NFPA 10 §7.2.1.2.1 (2026 Edition): Records of inspections shall be maintained. Electronic/digital records are an acceptable alternative to physical inspection tags attached to extinguishers, provided records are accessible on-site during inspections. Monthly inspections per §7.2.1 and annual maintenance per §7.3.1 may both utilize electronic record systems.',
     sourceUrl: 'https://www.nfpa.org/codes-and-standards/nfpa-10-standard-development/10',
+  },
+
+  // ── AWARENESS (CFC) ───────────────────────────────
+  {
+    id: 'RA-2026-009',
+    source: 'California',
+    sourceDetail: 'California Fire Code (CFC) Title 24, Part 9 — Office of the State Fire Marshal',
+    impactLevel: 'awareness',
+    status: 'new',
+    title: 'California Fire Code (CFC) Now Tracked in EvidLY Compliance Engine',
+    effectiveDate: '2023-01-01',
+    postedDate: '2026-02-10',
+    summary: 'EvidLY now tracks California Fire Code (CFC) Title 24, Part 9 (2022 edition) requirements alongside food safety regulations. The CFC adopts NFPA 96 by reference with California amendments and is enforced by local fire authorities (AHJs), not the state. Key requirements include UL 300 wet chemical suppression for all Type I hoods, Class K extinguishers, bare metal hood cleaning standard, and annual fire prevention permits from your local AHJ. Fire code items are weighted as CRITICAL in compliance scoring because fire = life safety.',
+    actionItems: [
+      'Verify your fire prevention permit is current with your local fire authority (AHJ) — this is separate from your health department permit',
+      'Confirm UL 300 compliant wet chemical suppression system is installed on all Type I commercial cooking hoods',
+      'Verify Class K fire extinguisher is present and current — check annual inspection tag, 6-year maintenance, and 12-year hydrostatic test dates',
+      'Ensure hood cleaning certificates (bare metal standard) are on file and available for fire inspector review',
+      'Confirm SDS (Safety Data Sheets) binder is accessible to all employees for cleaning chemicals',
+      'Review fire suppression system service reports — semi-annual professional service required',
+      'Verify manual pull station is accessible within 10-20 ft travel distance of egress path',
+    ],
+    affectedAreas: ['Fire Safety', 'Equipment', 'Documentation'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    autoActions: [
+      { text: 'CFC requirements added to jurisdiction compliance engine', completed: true },
+      { text: 'Fire safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },
+      { text: 'Fire equipment service schedules added to equipment lifecycle tracking', completed: true },
+      { text: 'CFC compliance items weighted as CRITICAL in scoring engine', completed: true },
+      { text: 'Review fire prevention permit status for each location', completed: false, actionType: 'link', linkTo: '/documents' },
+    ],
+    fullRegulatoryText: 'California Fire Code (CFC) — Title 24, California Code of Regulations, Part 9 (2022 Edition, effective January 1, 2023). Based on the International Fire Code (IFC) with California amendments.\n\nChapter 6 — Building Services and Systems: Fire suppression system required for all Type I commercial cooking hoods per §609. Automatic shutdown of fuel and electrical supply upon suppression system activation. Manual pull station required within 10 to 20 feet travel distance of kitchen egress path.\n\nChapter 6.07 — Commercial Cooking Equipment: Adopts NFPA 96 (Standard for Ventilation Control and Fire Protection of Commercial Cooking Operations) by reference with California amendments. UL 300 compliant wet chemical suppression systems mandatory for all Type I hood installations. Hood and exhaust duct cleaning must meet bare metal standard per NFPA 96 Table 11.4 schedule: monthly (solid fuel), quarterly (high-volume/24hr/wok/charbroil), semi-annually (standard operations), annually (low-volume/seasonal). All cleaning documentation must be maintained on-site and produced upon request during fire inspection.\n\nChapter 9 — Fire Protection and Life Safety Systems: Fire alarm system installation and maintenance per NFPA 72 (National Fire Alarm and Signaling Code). Portable fire extinguisher requirements per NFPA 10 (Standard for Portable Fire Extinguishers). Class K wet chemical fire extinguisher mandatory in all commercial kitchens. Annual professional inspection (NFPA 10 §7.3.1), 6-year maintenance (§7.3.3), 12-year hydrostatic test (§8.3.1).\n\nChapter 50 — Hazardous Materials: Cleaning chemicals and other hazardous materials must be stored per CFC requirements. Safety Data Sheets (SDS) must be maintained and accessible to all employees per OSHA Hazard Communication Standard (29 CFR 1910.1200).\n\nEnforcement: The CFC is enforced by local fire authorities (Authority Having Jurisdiction — AHJ). California has 58 counties and individual city fire departments comprising approximately 400+ AHJs. The State Fire Marshal (SFM) under Cal Fire has oversight authority. The Cal Fire Office of the State Fire Marshal handles state-owned and state-occupied buildings. Fire prevention permits are required from the local AHJ and are separate from health department permits. Permit fees vary by jurisdiction.',
+    sourceUrl: 'https://osfm.fire.ca.gov/what-we-do/fire-engineering-and-investigations/codes-and-standards',
   },
 
   // ── INFORMATIONAL ──────────────────────────────────

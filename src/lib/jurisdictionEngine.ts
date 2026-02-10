@@ -318,27 +318,31 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
     }
 
     if (location.locationName === 'Airport Cafe') {
-      // Missing 3 documents and 1 cert
+      // Missing 5 documents and 1 cert — includes CFC fire safety gaps
       const gaps: ComplianceGap[] = [
         { category: 'document', item: 'Fire Inspection Certificate', status: 'expiring', detail: 'Fire inspection certificate expires in 14 days', action: 'Schedule fire inspection' },
         { category: 'document', item: 'Hood Cleaning Certificate', status: 'missing', detail: 'No hood cleaning certificate on file — last cleaning was 7 months ago', action: 'Schedule hood cleaning and upload certificate' },
+        { category: 'document', item: 'Fire Prevention Permit', status: 'missing', detail: 'No fire prevention permit on file — required by CFC §105.6 from local fire authority (AHJ), separate from health permit', action: 'Contact local fire authority to obtain fire prevention permit' },
         { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396', action: 'Create IHIPP template from Cal/OSHA guidelines' },
+        { category: 'service', item: 'Fire Suppression System', status: 'overdue', detail: 'Semi-annual fire suppression service is 3 weeks overdue — CFC Ch. 6.07 / NFPA 96 §11.2.2', action: 'Schedule emergency fire suppression service' },
         { category: 'certification', item: 'Food Protection Manager Certification', status: 'missing', detail: '0 of 1 required managers have current certification', action: 'Register manager for ServSafe Manager exam' },
       ];
-      return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 4, gaps };
+      return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 6, gaps };
     }
 
-    // University Dining — missing several items, overdue on hood cleaning
+    // University Dining — missing several items, overdue on hood cleaning, CFC gaps
     const gaps: ComplianceGap[] = [
       { category: 'document', item: 'City of Modesto Business License', status: 'missing', detail: 'City business license not on file (required in addition to county health permit)', action: 'Apply at City of Modesto Business License office' },
-      { category: 'document', item: 'Hood Cleaning Certificate', status: 'overdue', detail: 'Hood cleaning is 2 weeks overdue — last cleaned 7 months ago (semi-annual required)', action: 'Schedule emergency hood cleaning' },
+      { category: 'document', item: 'Hood Cleaning Certificate', status: 'overdue', detail: 'Hood cleaning is 2 weeks overdue — last cleaned 7 months ago (semi-annual required). CFC Ch. 6.07 requires bare metal standard.', action: 'Schedule emergency hood cleaning' },
       { category: 'document', item: 'Pest Control Service Agreement', status: 'expiring', detail: 'Pest control contract expires in 30 days', action: 'Renew pest control service agreement' },
       { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396', action: 'Create IHIPP template from Cal/OSHA guidelines' },
       { category: 'document', item: 'Pest Prevention Training Records', status: 'missing', detail: 'No pest prevention training records on file — required by AB 1147', action: 'Conduct pest prevention training and document' },
+      { category: 'document', item: 'SDS (Safety Data Sheets) Binder', status: 'missing', detail: 'No SDS binder on file — CFC Ch. 50 requires safety data sheets accessible to all employees', action: 'Compile SDS binder for all cleaning chemicals and hazardous materials' },
+      { category: 'service', item: 'Fire Extinguisher 6-Year Maintenance', status: 'overdue', detail: 'Class K extinguisher 6-year maintenance overdue by 2 months — CFC Ch. 9 / NFPA 10 §7.3.3', action: 'Schedule 6-year fire extinguisher maintenance service' },
       { category: 'certification', item: 'Food Handler Certification', status: 'missing', detail: '3 of 12 staff missing current food handler certification', action: 'Notify staff to complete certification' },
       { category: 'posting', item: 'Handwashing Signage', status: 'missing', detail: 'Spanish-language handwashing signs not posted at 2 stations', action: 'Print and post bilingual handwashing signs' },
     ];
-    return { locationName: location.locationName, totalRequired: totalRequired + 1, totalCompliant: totalRequired + 1 - 7, gaps };
+    return { locationName: location.locationName, totalRequired: totalRequired + 1, totalCompliant: totalRequired + 1 - 9, gaps };
   });
 }
 

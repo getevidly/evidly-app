@@ -9,6 +9,41 @@ export const CALIFORNIA_STATE_LAWS: CaliforniaStateLaw[] = [
   // EFFECTIVE NOW
   // ---------------------------------------------------------------------------
   {
+    id: 'cfc-title24-part9',
+    billNumber: 'CFC Title 24, Part 9',
+    name: 'California Fire Code — Commercial Kitchen Requirements',
+    effectiveDate: '2023-01-01',
+    description:
+      'California Fire Code (2022 edition, effective Jan 1, 2023) adopts NFPA 96 by reference with California amendments. Establishes fire suppression, extinguisher, hood cleaning, and fire prevention permit requirements for all commercial kitchens. Enforced by local fire authorities (AHJs), not state.',
+    requirements: [
+      'CFC Ch. 6: Fire suppression system required for ALL Type I commercial cooking hoods',
+      'CFC Ch. 6: Automatic shutdown of fuel/electrical supply upon suppression activation',
+      'CFC Ch. 6: Manual pull station within 10-20 ft travel distance of egress path',
+      'CFC Ch. 6.07: UL 300 compliant wet chemical suppression systems mandatory',
+      'CFC Ch. 6.07: Hood cleaning to bare metal standard per NFPA 96 schedule (monthly/quarterly/semi-annual/annual)',
+      'CFC Ch. 6.07: Cleaning documentation MUST be maintained on-site and available for fire inspector',
+      'CFC Ch. 9: Fire alarm system maintenance per NFPA 72',
+      'CFC Ch. 9: Class K fire extinguisher mandatory in ALL commercial kitchens',
+      'CFC Ch. 9: Annual extinguisher inspection + 6-year maintenance + 12-year hydrostatic test (per NFPA 10)',
+      'CFC Ch. 50: Cleaning chemical storage per hazardous materials requirements',
+      'CFC Ch. 50: SDS (Safety Data Sheets) accessible to all employees',
+      'Fire prevention permit required from local fire authority (AHJ) — separate from health dept permit',
+      'Annual fire inspection by local Authority Having Jurisdiction (AHJ)',
+      'Enforced by local fire authorities — 58 counties + ~400+ AHJs statewide',
+      'State Fire Marshal (SFM) has oversight authority; Cal Fire OSFM handles state-owned/occupied buildings',
+    ],
+    affectedBusinessTypes: [
+      'ALL commercial kitchens',
+      'Restaurants',
+      'Food service establishments',
+      'Institutional kitchens',
+      'Hotels with commercial kitchens',
+    ],
+    penalties: 'Violations may result in immediate closure, fines, or criminal charges for willful non-compliance. Fire code violations are life-safety issues — weighted CRITICAL in compliance scoring.',
+    exemptions: undefined,
+    status: 'effective',
+  },
+  {
     id: 'sb-476',
     billNumber: 'SB 476',
     name: 'Food Handler Training Equity Act',

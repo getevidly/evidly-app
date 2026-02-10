@@ -232,6 +232,10 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'Pest Control Service Agreement', description: 'Active pest control service contract', renewalFrequency: 'Ongoing (monthly service)', source: 'CalCode §114259' },
     { name: 'Indoor Heat Illness Prevention Plan (IHIPP)', description: 'Written plan required for all indoor workplaces including commercial kitchens', renewalFrequency: 'Ongoing — maintain for 12 months min', source: 'Cal/OSHA §3396' },
     { name: 'Pest Prevention Training Records', description: 'Training records for all employees on pest prevention procedures', renewalFrequency: 'Ongoing', source: 'AB 1147 / H&S Code §114266' },
+    // California Fire Code (CFC) — Title 24, Part 9 documents
+    { name: 'Fire Prevention Permit', description: 'Fire prevention permit from local fire authority (AHJ) — separate from health department permit. Permit fees vary by jurisdiction.', renewalFrequency: 'Annual', source: 'CFC §105.6' },
+    { name: 'UL 300 Suppression System Compliance Certificate', description: 'Certificate verifying UL 300 compliant wet chemical fire suppression system installed on all Type I commercial cooking hoods', renewalFrequency: 'Upon installation / modification', source: 'CFC Ch. 6.07 / NFPA 96' },
+    { name: 'SDS (Safety Data Sheets) Binder', description: 'Safety Data Sheets for all cleaning chemicals and hazardous materials — must be accessible to all employees at all times', renewalFrequency: 'Ongoing — update when products change', source: 'CFC Ch. 50 / OSHA 29 CFR 1910.1200' },
   ],
   requiredPostings: [
     { name: 'Health Permit', languages: ['English'], source: 'CalCode §114381' },
@@ -245,7 +249,12 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'Cal/OSHA Indoor Heat Illness Prevention', languages: ['English', 'Spanish'], source: 'Cal/OSHA §3396' },
     { name: 'Workplace Know Your Rights', languages: ['English', 'Spanish'], source: 'SB 294 (annual posting required)' },
   ],
-  serviceFrequencies: [],
+  serviceFrequencies: [
+    // CFC-specific service frequencies (supplement federal NFPA entries)
+    { service: 'Hood Filter Cleaning', frequencyDays: 7, frequencyLabel: 'Weekly (min)', condition: 'Staff cleaning of removable hood filters — more frequent for high-volume', source: 'CFC Ch. 6.07 / NFPA 96 §11.6' },
+    { service: 'Fire Suppression Tamper Check', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual: verify seals intact, nozzles unobstructed, gauge in range', source: 'CFC Ch. 6 / NFPA 96 §11.2.1' },
+    { service: 'Fire Prevention Permit Renewal', frequencyDays: 365, frequencyLabel: 'Annually', source: 'CFC §105.6 — local fire authority (AHJ)' },
+  ],
   minimumWage: {
     general: 16.90,
     fastFood: 20.00,
@@ -266,6 +275,22 @@ const CALIFORNIA: JurisdictionProfile = {
     'SB 1053: Single-use carry-out bags completely eliminated (Jan 1, 2026)',
     'AB 1147: Written pest prevention policy, employee training, and monitoring records required',
     'SB 294: Written notice of workers\' rights to all current employees, annual notices required',
+    // California Fire Code (CFC) — Title 24, Part 9 (2022 edition, effective Jan 1, 2023)
+    'CFC Ch. 6: Fire suppression system required for ALL Type I commercial cooking hoods',
+    'CFC Ch. 6: Automatic shutdown of fuel/electrical supply upon suppression system activation',
+    'CFC Ch. 6: Manual pull station required within 10-20 ft travel distance of egress path',
+    'CFC Ch. 6.07: Adopts NFPA 96 by reference with California amendments',
+    'CFC Ch. 6.07: UL 300 compliant wet chemical suppression systems mandatory for all Type I hoods',
+    'CFC Ch. 6.07: Hood and duct cleaning must meet bare metal standard per NFPA 96 schedule',
+    'CFC Ch. 6.07: Hood cleaning documentation MUST be maintained on-site and available for fire inspector',
+    'CFC Ch. 9: Fire alarm system maintenance per NFPA 72',
+    'CFC Ch. 9: Fire extinguisher requirements per NFPA 10 — Class K mandatory in ALL commercial kitchens',
+    'CFC Ch. 9: Annual extinguisher inspection + 6-year maintenance + 12-year hydrostatic test',
+    'CFC Ch. 50: Cleaning chemical storage must meet hazardous materials requirements (if applicable)',
+    'CFC Ch. 50: SDS (Safety Data Sheets) must be accessible to all employees at all times',
+    'CFC: Fire prevention permit required from local fire authority — separate from health department permit',
+    'CFC: Annual inspection by local Authority Having Jurisdiction (AHJ)',
+    'CFC: Enforced by LOCAL fire authorities (58 counties + ~400+ AHJs in California) — State Fire Marshal (SFM) has oversight',
   ],
 };
 
