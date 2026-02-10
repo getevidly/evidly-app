@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff } from 'lucide-react';
+import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
@@ -256,6 +256,21 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     >
                       Settings
                     </button>
+                    {isDemoMode && userRole === 'executive' && (
+                      <>
+                        <div className="border-t border-gray-200 my-1" />
+                        <button
+                          onClick={() => {
+                            navigate('/admin/usage-analytics');
+                            setShowUserMenu(false);
+                          }}
+                          className="block w-full text-left px-4 py-2 text-sm text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors duration-150 flex items-center gap-2 font-medium"
+                        >
+                          <BarChart3 className="h-4 w-4" />
+                          Usage Analytics
+                        </button>
+                      </>
+                    )}
                     <button
                       onClick={handleSignOut}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
