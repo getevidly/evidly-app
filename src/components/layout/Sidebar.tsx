@@ -16,8 +16,11 @@ import {
   TrendingUp,
   HelpCircle,
   CalendarDays,
+  Lock,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useDemo } from '../../contexts/DemoContext';
 
 type Section = 'operations' | 'insights' | 'system';
 
@@ -83,6 +86,9 @@ export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { userRole } = useRole();
+  const { isEvidlyAdmin } = useAuth();
+  const { isDemoMode } = useDemo();
+  const showAdminSection = isEvidlyAdmin || isDemoMode;
 
   const filteredNavigation = navigation.filter(item => item.roles.includes(userRole));
 
@@ -142,6 +148,30 @@ export function Sidebar() {
                   onClick={() => navigate(item.href)}
                 />
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Admin — EvidLY internal only */}
+        {showAdminSection && (
+          <div className="px-3 pb-4 pt-1 border-t border-white/10">
+            <div className="flex items-center gap-1.5 px-3 pt-2 pb-1">
+              <Lock className="h-3 w-3 text-gray-500" />
+              <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Admin</span>
+            </div>
+            <div
+              onClick={() => navigate('/admin/usage-analytics')}
+              className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+                location.pathname === '/admin/usage-analytics'
+                  ? 'text-[#d4af37] bg-[#163a52]'
+                  : 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
+              }`}
+              style={location.pathname === '/admin/usage-analytics' ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+            >
+              <BarChart3 className={`mr-3 flex-shrink-0 h-4 w-4 ${
+                location.pathname === '/admin/usage-analytics' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
+              }`} />
+              Usage Analytics
             </div>
           </div>
         )}

@@ -20,7 +20,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, locations, selectedLocation, onLocationChange, demoMode = false }: TopBarProps) {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isEvidlyAdmin } = useAuth();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLocationMenu, setShowLocationMenu] = useState(false);
@@ -256,7 +256,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     >
                       Settings
                     </button>
-                    {isDemoMode && userRole === 'executive' && (
+                    {(isEvidlyAdmin || isDemoMode) && (
                       <>
                         <div className="border-t border-gray-200 my-1" />
                         <button

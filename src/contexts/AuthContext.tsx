@@ -19,6 +19,7 @@ interface AuthContextType {
   profile: UserProfile | null;
   session: Session | null;
   loading: boolean;
+  isEvidlyAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, fullName: string, phone: string, orgName: string, industryType?: string, industrySubtype?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -187,9 +188,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const isEvidlyAdmin = Boolean(user?.email?.endsWith('@getevidly.com'));
+
   return (
     <AuthContext.Provider
-      value={{ user, profile, session, loading, signIn, signUp, signOut, refreshProfile }}
+      value={{ user, profile, session, loading, isEvidlyAdmin, signIn, signUp, signOut, refreshProfile }}
     >
       {children}
     </AuthContext.Provider>

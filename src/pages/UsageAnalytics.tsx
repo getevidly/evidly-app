@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { useRole } from '../contexts/RoleContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 
 // ── Types ─────────────────────────────────────────────────────────
@@ -259,10 +259,10 @@ const selectStyle = {
 
 // ── Main Component ────────────────────────────────────────────────
 export function UsageAnalytics() {
-  const { userRole } = useRole();
+  const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 
-  const isAdmin = isDemoMode ? userRole === 'executive' : false;
+  const isAdmin = isEvidlyAdmin || isDemoMode;
 
   const [timePeriod, setTimePeriod] = useState('30d');
   const [industryFilter, setIndustryFilter] = useState('all');
