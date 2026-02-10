@@ -814,7 +814,7 @@ export function AIAdvisor() {
                 <div style={{ textAlign: 'center', marginBottom: '12px' }}>
                   <div style={{
                     width: '60px', height: '60px', borderRadius: '50%', margin: '0 auto',
-                    border: `4px solid ${context.overallScore >= 80 ? '#22c55e' : context.overallScore >= 60 ? '#d4af37' : '#dc2626'}`,
+                    border: `4px solid ${context.overallScore >= 90 ? '#22c55e' : context.overallScore >= 70 ? '#eab308' : '#ef4444'}`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <span style={{ fontSize: '20px', fontWeight: 800, color: '#1e4d6b' }}>{context.overallScore}</span>
@@ -826,7 +826,7 @@ export function AIAdvisor() {
                     <span style={{ fontSize: '11px', color: '#374151', fontWeight: 500 }}>{loc.name}</span>
                     <span style={{
                       fontSize: '11px', fontWeight: 700,
-                      color: loc.score >= 80 ? '#22c55e' : loc.score >= 60 ? '#d4af37' : '#dc2626',
+                      color: loc.score >= 90 ? '#22c55e' : loc.score >= 70 ? '#eab308' : '#ef4444',
                     }}>{loc.score}%</span>
                   </div>
                 ))}

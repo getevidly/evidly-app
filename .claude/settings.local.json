@@ -33,7 +33,9 @@
       "Bash(npm ls:*)",
       "Bash(timeout:*)",
       "Bash(node:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(ls:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

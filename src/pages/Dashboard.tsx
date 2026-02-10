@@ -65,9 +65,9 @@ export function Dashboard() {
   const filteredLocationOptions = locations.filter(loc => accessibleUrlIds.includes(loc.urlId));
 
   const getScoreHexColor = (score: number) => {
-    if (score >= 80) return '#22c55e';
-    if (score >= 60) return '#d4af37';
-    return '#dc2626';
+    if (score >= 90) return '#22c55e';
+    if (score >= 70) return '#eab308';
+    return '#ef4444';
   };
 
   const historicalData = {
@@ -86,32 +86,32 @@ export function Dashboard() {
       { week: 'Week 12', score: 92, date: '2/16' },
     ],
     airport: [
-      { week: 'Week 1', score: 68, date: '12/1' },
-      { week: 'Week 2', score: 69, date: '12/8' },
-      { week: 'Week 3', score: 70, date: '12/15' },
-      { week: 'Week 4', score: 71, date: '12/22' },
-      { week: 'Week 5', score: 70, date: '12/29' },
-      { week: 'Week 6', score: 72, date: '1/5' },
-      { week: 'Week 7', score: 73, date: '1/12' },
-      { week: 'Week 8', score: 71, date: '1/19' },
-      { week: 'Week 9', score: 72, date: '1/26' },
-      { week: 'Week 10', score: 74, date: '2/2' },
-      { week: 'Week 11', score: 73, date: '2/9' },
-      { week: 'Week 12', score: 74, date: '2/16' },
+      { week: 'Week 1', score: 64, date: '12/1' },
+      { week: 'Week 2', score: 65, date: '12/8' },
+      { week: 'Week 3', score: 66, date: '12/15' },
+      { week: 'Week 4', score: 67, date: '12/22' },
+      { week: 'Week 5', score: 66, date: '12/29' },
+      { week: 'Week 6', score: 68, date: '1/5' },
+      { week: 'Week 7', score: 69, date: '1/12' },
+      { week: 'Week 8', score: 68, date: '1/19' },
+      { week: 'Week 9', score: 69, date: '1/26' },
+      { week: 'Week 10', score: 71, date: '2/2' },
+      { week: 'Week 11', score: 70, date: '2/9' },
+      { week: 'Week 12', score: 70, date: '2/16' },
     ],
     university: [
-      { week: 'Week 1', score: 45, date: '12/1' },
-      { week: 'Week 2', score: 48, date: '12/8' },
-      { week: 'Week 3', score: 50, date: '12/15' },
-      { week: 'Week 4', score: 52, date: '12/22' },
-      { week: 'Week 5', score: 51, date: '12/29' },
-      { week: 'Week 6', score: 53, date: '1/5' },
-      { week: 'Week 7', score: 55, date: '1/12' },
-      { week: 'Week 8', score: 54, date: '1/19' },
-      { week: 'Week 9', score: 56, date: '1/26' },
-      { week: 'Week 10', score: 57, date: '2/2' },
-      { week: 'Week 11', score: 56, date: '2/9' },
-      { week: 'Week 12', score: 58, date: '2/16' },
+      { week: 'Week 1', score: 42, date: '12/1' },
+      { week: 'Week 2', score: 44, date: '12/8' },
+      { week: 'Week 3', score: 46, date: '12/15' },
+      { week: 'Week 4', score: 48, date: '12/22' },
+      { week: 'Week 5', score: 47, date: '12/29' },
+      { week: 'Week 6', score: 49, date: '1/5' },
+      { week: 'Week 7', score: 51, date: '1/12' },
+      { week: 'Week 8', score: 50, date: '1/19' },
+      { week: 'Week 9', score: 52, date: '1/26' },
+      { week: 'Week 10', score: 53, date: '2/2' },
+      { week: 'Week 11', score: 53, date: '2/9' },
+      { week: 'Week 12', score: 54, date: '2/16' },
     ],
   };
 
@@ -134,7 +134,7 @@ export function Dashboard() {
     : todaysProgress[selectedLocation] || todaysProgress['downtown'];
   const tempPct = progress.tempTotal > 0 ? Math.round((progress.tempDone / progress.tempTotal) * 100) : 0;
   const checkPct = progress.checkTotal > 0 ? Math.round((progress.checkDone / progress.checkTotal) * 100) : 0;
-  const pctColor = (p: number) => p >= 80 ? '#22c55e' : p >= 30 ? '#d4af37' : '#ef4444';
+  const pctColor = (p: number) => p >= 90 ? '#22c55e' : p >= 70 ? '#eab308' : '#ef4444';
 
   useEffect(() => {
     const loadMap = () => {
@@ -151,7 +151,7 @@ export function Dashboard() {
           (window as any).dashboardMap = map;
 
           locations.forEach((loc) => {
-            const color = loc.score >= 90 ? 'green' : loc.score >= 70 ? 'orange' : 'red';
+            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 70 ? '#eab308' : '#ef4444';
             const icon = L.divIcon({
               className: 'custom-marker',
               html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;"></div>`,
@@ -456,7 +456,7 @@ export function Dashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              grade.color === 'green' ? 'bg-green-100 text-green-800' : grade.color === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
+                              grade.color === 'green' ? 'bg-green-100 text-green-800' : grade.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {grade.label}
                             </span>
@@ -686,8 +686,8 @@ export function Dashboard() {
                       <YAxis domain={[0, 100]} fontSize={12} />
                       <Tooltip />
                       <Legend />
-                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'A', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={70} stroke="#d4af37" strokeDasharray="3 3" label={{ value: 'B', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey="Average" stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
                       <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
                       <Line type="monotone" dataKey="Airport" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
@@ -699,8 +699,8 @@ export function Dashboard() {
                       <XAxis dataKey="date" fontSize={12} />
                       <YAxis domain={[0, 100]} fontSize={12} />
                       <Tooltip />
-                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: 'A', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={70} stroke="#d4af37" strokeDasharray="3 3" label={{ value: 'B', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Compliance Score" />
                     </LineChart>
                   )}

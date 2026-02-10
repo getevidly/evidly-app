@@ -668,7 +668,7 @@ export function AuditReport() {
                         <div className="relative w-24 h-24 flex-shrink-0">
                           <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                             <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                            <circle cx="50" cy="50" r="42" fill="none" stroke={summary.complianceScore >= 80 ? '#16a34a' : summary.complianceScore >= 60 ? '#d97706' : '#dc2626'} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
+                            <circle cx="50" cy="50" r="42" fill="none" stroke={summary.complianceScore >= 90 ? '#22c55e' : summary.complianceScore >= 70 ? '#eab308' : '#ef4444'} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
                           </svg>
                           <div className="absolute inset-0 flex items-center justify-center">
                             <span className="text-2xl font-bold text-gray-900">{summary.complianceScore}</span>
@@ -676,7 +676,7 @@ export function AuditReport() {
                         </div>
                         <div>
                           <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
-                          <p className="text-sm text-gray-600">Weighted: Temperature (45%) + Checklists (30%) + Documents (25%)</p>
+                          <p className="text-sm text-gray-600">Weighted: Operational (45%) + Equipment (30%) + Documentation (25%)</p>
                         </div>
                       </div>
 
@@ -791,7 +791,7 @@ export function AuditReport() {
                               <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }}>{cl.passed}</td>
                               <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }}>{cl.failed}</td>
                               <td style={tdStyle}>
-                                <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#16a34a' : cl.score >= 70 ? '#d97706' : '#dc2626', cl.score >= 90 ? '#f0fdf4' : cl.score >= 70 ? '#fffbeb' : '#fef2f2')}>
+                                <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 70 ? '#eab308' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 70 ? '#fefce8' : '#fef2f2')}>
                                   {cl.score}%
                                 </span>
                               </td>

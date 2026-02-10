@@ -410,12 +410,12 @@ export function HACCP() {
             </div>
             <p className="text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444'}` }}>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 70 ? '#eab308' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Activity className="h-4 w-4" style={{ color: overallCompliance === 100 ? '#16a34a' : overallCompliance >= 80 ? '#d97706' : '#ef4444' }} />
+              <Activity className="h-4 w-4" style={{ color: overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 70 ? '#eab308' : '#ef4444' }} />
               <span className="text-sm text-gray-500 font-medium">Overall Compliance</span>
             </div>
-            <p className={`text-3xl font-bold text-center ${overallCompliance === 100 ? 'text-green-600' : overallCompliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+            <p className={`text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 70 ? 'text-yellow-600' : 'text-red-600'}`}>
               {overallCompliance}%
             </p>
           </div>
@@ -507,7 +507,7 @@ export function HACCP() {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 text-center">Compliance</p>
-                      <p className={`text-lg font-bold text-center ${compliance === 100 ? 'text-green-600' : compliance >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
+                      <p className={`text-lg font-bold text-center ${compliance >= 90 ? 'text-green-600' : compliance >= 70 ? 'text-yellow-600' : 'text-red-600'}`}>
                         {compliance}%
                       </p>
                     </div>

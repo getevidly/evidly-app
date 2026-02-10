@@ -151,17 +151,15 @@ export function DemoTour() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return '#16a34a';
-    if (score >= 80) return '#2563eb';
-    if (score >= 60) return '#d97706';
-    return '#dc2626';
+    if (score >= 90) return '#22c55e';
+    if (score >= 70) return '#eab308';
+    return '#ef4444';
   };
 
   const getScoreLabel = (score: number) => {
     if (score >= 90) return 'Inspection Ready';
-    if (score >= 80) return 'Good Standing';
-    if (score >= 60) return 'Needs Attention';
-    return 'At Risk';
+    if (score >= 70) return 'Needs Attention';
+    return 'Critical';
   };
 
   // Celebration step - centered overlay

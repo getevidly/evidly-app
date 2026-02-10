@@ -20,10 +20,10 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
   const circumference = 2 * Math.PI * radius;
   const progress = (animatedScore / 100) * circumference;
 
-  // Color transitions as score climbs
+  // Color transitions as score climbs — uses scoring engine thresholds
   const getAnimatedColor = (currentScore: number) => {
-    if (currentScore < 60) return '#dc2626';
-    if (currentScore < 80) return '#d4af37';
+    if (currentScore < 70) return '#ef4444';
+    if (currentScore < 90) return '#eab308';
     return '#22c55e';
   };
 
@@ -96,8 +96,8 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
           } ${
             color === 'green'
               ? 'bg-green-100 text-green-800'
-              : color === 'amber'
-              ? 'bg-amber-100 text-amber-800'
+              : color === 'yellow'
+              ? 'bg-yellow-100 text-yellow-800'
               : 'bg-red-100 text-red-800'
           }`}
         >

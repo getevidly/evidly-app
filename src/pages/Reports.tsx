@@ -11,9 +11,7 @@ type TabType = 'executive' | 'operational' | 'equipment' | 'documentation' | 'te
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; text: string; border: string }> = {
     'Inspection Ready': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
-    'Good Standing': { bg: '#eff6ff', text: '#1e4d6b', border: '#bfdbfe' },
     'Needs Attention': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
-    'At Risk': { bg: '#fff7ed', text: '#9a3412', border: '#fed7aa' },
     'Critical': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
     'Current': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
     'Compliant': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
@@ -81,9 +79,9 @@ function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: stri
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return '#22c55e';
-  if (score >= 60) return '#d4af37';
-  return '#dc2626';
+  if (score >= 90) return '#22c55e';
+  if (score >= 70) return '#eab308';
+  return '#ef4444';
 }
 
 export function Reports() {
@@ -114,22 +112,22 @@ export function Reports() {
 
   const scoreDataLocations = {
     'downtown': [
-      { week: 'Wk 1', score: 82 }, { week: 'Wk 2', score: 83 }, { week: 'Wk 3', score: 84 },
-      { week: 'Wk 4', score: 83 }, { week: 'Wk 5', score: 85 }, { week: 'Wk 6', score: 86 },
-      { week: 'Wk 7', score: 87 }, { week: 'Wk 8', score: 88 }, { week: 'Wk 9', score: 87 },
-      { week: 'Wk 10', score: 89 }, { week: 'Wk 11', score: 88 }, { week: 'Wk 12', score: 90 },
+      { week: 'Wk 1', score: 85 }, { week: 'Wk 2', score: 87 }, { week: 'Wk 3', score: 86 },
+      { week: 'Wk 4', score: 88 }, { week: 'Wk 5', score: 89 }, { week: 'Wk 6', score: 90 },
+      { week: 'Wk 7', score: 89 }, { week: 'Wk 8', score: 91 }, { week: 'Wk 9', score: 90 },
+      { week: 'Wk 10', score: 92 }, { week: 'Wk 11', score: 91 }, { week: 'Wk 12', score: 92 },
     ],
     'airport': [
-      { week: 'Wk 1', score: 65 }, { week: 'Wk 2', score: 64 }, { week: 'Wk 3', score: 66 },
-      { week: 'Wk 4', score: 65 }, { week: 'Wk 5', score: 67 }, { week: 'Wk 6', score: 66 },
-      { week: 'Wk 7', score: 68 }, { week: 'Wk 8', score: 69 }, { week: 'Wk 9', score: 68 },
-      { week: 'Wk 10', score: 70 }, { week: 'Wk 11', score: 69 }, { week: 'Wk 12', score: 71 },
+      { week: 'Wk 1', score: 64 }, { week: 'Wk 2', score: 65 }, { week: 'Wk 3', score: 66 },
+      { week: 'Wk 4', score: 67 }, { week: 'Wk 5', score: 66 }, { week: 'Wk 6', score: 68 },
+      { week: 'Wk 7', score: 69 }, { week: 'Wk 8', score: 68 }, { week: 'Wk 9', score: 69 },
+      { week: 'Wk 10', score: 71 }, { week: 'Wk 11', score: 70 }, { week: 'Wk 12', score: 70 },
     ],
     'university': [
-      { week: 'Wk 1', score: 52 }, { week: 'Wk 2', score: 51 }, { week: 'Wk 3', score: 53 },
-      { week: 'Wk 4', score: 54 }, { week: 'Wk 5', score: 55 }, { week: 'Wk 6', score: 54 },
-      { week: 'Wk 7', score: 56 }, { week: 'Wk 8', score: 57 }, { week: 'Wk 9', score: 56 },
-      { week: 'Wk 10', score: 58 }, { week: 'Wk 11', score: 57 }, { week: 'Wk 12', score: 59 },
+      { week: 'Wk 1', score: 42 }, { week: 'Wk 2', score: 44 }, { week: 'Wk 3', score: 46 },
+      { week: 'Wk 4', score: 48 }, { week: 'Wk 5', score: 47 }, { week: 'Wk 6', score: 49 },
+      { week: 'Wk 7', score: 51 }, { week: 'Wk 8', score: 50 }, { week: 'Wk 9', score: 52 },
+      { week: 'Wk 10', score: 53 }, { week: 'Wk 11', score: 53 }, { week: 'Wk 12', score: 54 },
     ],
   };
   // All = average of 3 locations (e.g. Wk1: (82+65+52)/3 = 66)
@@ -151,7 +149,7 @@ export function Reports() {
       equipment: scores?.equipment || 0,
       documentation: scores?.documentation || 0,
       change: '+5%',
-      status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 80 ? 'Good Standing' : scores?.overall >= 70 ? 'Needs Attention' : scores?.overall >= 60 ? 'At Risk' : 'Critical',
+      status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 70 ? 'Needs Attention' : 'Critical',
     };
   });
 
@@ -327,7 +325,7 @@ export function Reports() {
 
   const vendorDocCompliance = [
     { vendor: 'A1 Fire Protection', coi: 'Current', certs: 'Current', insurance: 'Current', status: 'Compliant' },
-    { vendor: 'Valley Fire Equipment', coi: 'Expiring Soon', certs: 'Current', insurance: 'Current', status: 'At Risk' },
+    { vendor: 'Valley Fire Equipment', coi: 'Expiring Soon', certs: 'Current', insurance: 'Current', status: 'Needs Attention' },
     { vendor: 'CoolTech HVAC', coi: 'Expired', certs: 'Current', insurance: 'Current', status: 'Non-Compliant' },
     { vendor: 'Pest Solutions', coi: 'Missing', certs: 'Current', insurance: 'Missing', status: 'Non-Compliant' },
   ];
@@ -674,7 +672,7 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.template}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 80 ? '#d4af37' : '#ef4444'} />
+                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 70 ? '#eab308' : '#ef4444'} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{item.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.missed}</td>
@@ -931,7 +929,7 @@ export function Reports() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#d4af37' }}>{item.expiring || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.expired || '-'}</td>
                           <td className="px-6 py-4 text-sm">
-                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 75 ? '#d4af37' : '#ef4444'} />
+                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 70 ? '#eab308' : '#ef4444'} />
                           </td>
                         </tr>
                       );
@@ -1100,7 +1098,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{emp.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{emp.missed}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={emp.rate} color={emp.rate >= 95 ? '#22c55e' : emp.rate >= 90 ? '#1e4d6b' : emp.rate >= 85 ? '#d4af37' : '#ef4444'} />
+                          <ProgressBar value={emp.rate} color={emp.rate >= 90 ? '#22c55e' : emp.rate >= 70 ? '#eab308' : '#ef4444'} />
                         </td>
                       </tr>
                     ))}
@@ -1130,7 +1128,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{training.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: training.pending > 0 ? '#d4af37' : '#22c55e' }}>{training.pending}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 75 ? '#d4af37' : '#ef4444'} />
+                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 70 ? '#eab308' : '#ef4444'} />
                         </td>
                       </tr>
                     ))}

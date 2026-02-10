@@ -281,19 +281,19 @@ export function Vendors() {
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-amber-600';
+    if (score >= 70) return 'text-yellow-600';
     return 'text-red-600';
   };
 
   const getScoreBg = (score: number) => {
     if (score >= 90) return 'bg-green-100';
-    if (score >= 70) return 'bg-amber-100';
+    if (score >= 70) return 'bg-yellow-100';
     return 'bg-red-100';
   };
 
   const getScoreBorder = (score: number) => {
-    if (score >= 90) return '#16a34a';
-    if (score >= 70) return '#d97706';
+    if (score >= 90) return '#22c55e';
+    if (score >= 70) return '#eab308';
     return '#ef4444';
   };
 
@@ -1077,7 +1077,7 @@ export function Vendors() {
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
-                          className={`h-2 rounded-full ${perf.reliabilityScore >= 90 ? 'bg-green-500' : perf.reliabilityScore >= 70 ? 'bg-amber-500' : 'bg-red-500'}`}
+                          className={`h-2 rounded-full ${perf.reliabilityScore >= 90 ? 'bg-green-500' : perf.reliabilityScore >= 70 ? 'bg-yellow-500' : 'bg-red-500'}`}
                           style={{ width: `${perf.reliabilityScore}%` }}
                         />
                       </div>

@@ -1,40 +1,62 @@
-// Industry-specific pillar weights — Operational is always 45%, Equipment & Documentation vary
-export const INDUSTRY_WEIGHTS: Record<string, { operational: number; equipment: number; documentation: number }> = {
-  RESTAURANT:       { operational: 0.45, equipment: 0.30, documentation: 0.25 },
-  HEALTHCARE:       { operational: 0.45, equipment: 0.25, documentation: 0.30 },
-  SENIOR_LIVING:    { operational: 0.45, equipment: 0.25, documentation: 0.30 },
-  K12_EDUCATION:    { operational: 0.45, equipment: 0.20, documentation: 0.35 },
-  HIGHER_EDUCATION: { operational: 0.45, equipment: 0.30, documentation: 0.25 },
-};
+// Re-export scoring engine as single source of truth
+import {
+  INDUSTRY_WEIGHTS as ENGINE_WEIGHTS,
+  DEFAULT_WEIGHTS,
+  getScoreColor,
+  getScoreStatus,
+  getScoreInfo,
+  getGraduatedPenalty,
+  computeWeightedOverall,
+  type PillarWeights,
+  type IndustryVertical,
+} from '../lib/complianceScoring';
 
-// Default weights (Restaurant) — used for demo and when industry not set
-export const PILLAR_WEIGHTS = INDUSTRY_WEIGHTS.RESTAURANT;
+export { getScoreColor, getScoreStatus, getScoreInfo, getGraduatedPenalty };
+export type { PillarWeights, IndustryVertical };
 
-// Current org industry — in production, this comes from organization.industry_type
-// For demo, defaults to RESTAURANT
-let currentIndustry = 'RESTAURANT';
-export function setIndustry(industry: string) {
+// Re-export for backwards compat — all imports come through here
+export const INDUSTRY_WEIGHTS = ENGINE_WEIGHTS;
+export const PILLAR_WEIGHTS = DEFAULT_WEIGHTS;
+
+let currentIndustry: IndustryVertical = 'RESTAURANT';
+export function setIndustry(industry: IndustryVertical) {
   currentIndustry = industry;
 }
-export function getWeights() {
+export function getWeights(): PillarWeights {
   return INDUSTRY_WEIGHTS[currentIndustry] || PILLAR_WEIGHTS;
 }
 
-export function computeOverall(scores: { operational: number; equipment: number; documentation: number }, weights?: { operational: number; equipment: number; documentation: number }): number {
-  const w = weights || getWeights();
-  return Math.round(scores.operational * w.operational + scores.equipment * w.equipment + scores.documentation * w.documentation);
+export function computeOverall(
+  scores: { operational: number; equipment: number; documentation: number },
+  weights?: PillarWeights,
+): number {
+  return computeWeightedOverall(scores, weights || getWeights());
 }
 
+// Backwards-compatible wrapper — delegates to scoring engine
+export const getGrade = (score: number) => getScoreInfo(score);
+
+// ============================================================
+// Location Scores — reflect graduated urgency penalties
+// ============================================================
+// Downtown: Everything current, fire suppression due in 15 days (−3.75 on Equipment)
+//   Operational 94, Equipment 88, Documentation 91 → Overall 92
+// Airport: Hood cleaning 5 days overdue (−30 Equipment), 1 vendor cert due in 12 days, checklist rate dropped
+//   Operational 72, Equipment 62, Documentation 74 → Overall 70
+// University: Health permit expired (−25 Docs), 2 food handler certs expired (−10 Docs), equipment overdue
+//   Operational 62, Equipment 55, Documentation 42 → Overall 54
+// ============================================================
+
 export const locationScores: Record<string, { overall: number; operational: number; equipment: number; documentation: number }> = {
-  'downtown': { operational: 95, equipment: 91, documentation: 89, get overall() { return computeOverall(this); } },
-  'airport': { operational: 78, equipment: 70, documentation: 72, get overall() { return computeOverall(this); } },
-  'university': { operational: 62, equipment: 55, documentation: 52, get overall() { return computeOverall(this); } },
+  'downtown': { operational: 94, equipment: 88, documentation: 91, overall: 92 },
+  'airport':  { operational: 72, equipment: 62, documentation: 74, overall: 70 },
+  'university': { operational: 62, equipment: 55, documentation: 42, overall: 54 },
 };
 
 export const locationScoresThirtyDaysAgo: Record<string, { overall: number; operational: number; equipment: number; documentation: number }> = {
-  'downtown': { operational: 90, equipment: 88, documentation: 82, get overall() { return computeOverall(this); } },
-  'airport': { operational: 75, equipment: 76, documentation: 72, get overall() { return computeOverall(this); } },
-  'university': { operational: 55, equipment: 58, documentation: 48, get overall() { return computeOverall(this); } },
+  'downtown':   { operational: 90, equipment: 85, documentation: 88, overall: 88 },
+  'airport':    { operational: 75, equipment: 76, documentation: 72, overall: 74 },
+  'university': { operational: 55, equipment: 58, documentation: 48, overall: 53 },
 };
 
 // Company-level scores = average of all location scores
@@ -42,24 +64,16 @@ function computeCompanyScores(locScores: Record<string, { overall: number; opera
   const locs = Object.values(locScores);
   const count = locs.length;
   if (count === 0) return { overall: 0, operational: 0, equipment: 0, documentation: 0 };
-  const avg = {
+  return {
     operational: Math.round(locs.reduce((s, l) => s + l.operational, 0) / count),
     equipment: Math.round(locs.reduce((s, l) => s + l.equipment, 0) / count),
     documentation: Math.round(locs.reduce((s, l) => s + l.documentation, 0) / count),
-    get overall() { return Math.round(locs.reduce((s, l) => s + l.overall, 0) / count); },
+    overall: Math.round(locs.reduce((s, l) => s + l.overall, 0) / count),
   };
-  return avg;
 }
 
 export const complianceScores = computeCompanyScores(locationScores);
 export const complianceScoresThirtyDaysAgo = computeCompanyScores(locationScoresThirtyDaysAgo);
-
-export const getGrade = (score: number) => {
-  if (score >= 90) return { label: 'Inspection Ready', color: 'green', hex: '#22c55e' };
-  if (score >= 80) return { label: 'Good Standing', color: 'green', hex: '#22c55e' };
-  if (score >= 60) return { label: 'Needs Attention', color: 'amber', hex: '#d4af37' };
-  return { label: 'Critical', color: 'red', hex: '#dc2626' };
-};
 
 export const getTrend = (current: number, thirtyDaysAgo: number) => {
   const diff = current - thirtyDaysAgo;
@@ -75,15 +89,14 @@ export interface Location {
   lat: number;
   lng: number;
   score: number;
-  grade: string;
   status: string;
   actionItems: number;
 }
 
 export const locations: Location[] = [
-  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', lat: 37.7749, lng: -122.4194, score: locationScores['downtown'].overall, grade: getGrade(locationScores['downtown'].overall).label, status: getGrade(locationScores['downtown'].overall).label, actionItems: 2 },
-  { id: '2', urlId: 'airport', name: 'Airport Cafe', lat: 37.6213, lng: -122.379, score: locationScores['airport'].overall, grade: getGrade(locationScores['airport'].overall).label, status: getGrade(locationScores['airport'].overall).label, actionItems: 5 },
-  { id: '3', urlId: 'university', name: 'University Dining', lat: 37.8719, lng: -122.2585, score: locationScores['university'].overall, grade: getGrade(locationScores['university'].overall).label, status: getGrade(locationScores['university'].overall).label, actionItems: 12 },
+  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', lat: 37.7749, lng: -122.4194, score: locationScores['downtown'].overall, status: getScoreStatus(locationScores['downtown'].overall), actionItems: 2 },
+  { id: '2', urlId: 'airport', name: 'Airport Cafe', lat: 37.6213, lng: -122.379, score: locationScores['airport'].overall, status: getScoreStatus(locationScores['airport'].overall), actionItems: 5 },
+  { id: '3', urlId: 'university', name: 'University Dining', lat: 37.8719, lng: -122.2585, score: locationScores['university'].overall, status: getScoreStatus(locationScores['university'].overall), actionItems: 12 },
 ];
 
 export interface Vendor {
@@ -136,9 +149,9 @@ export const vendors: Vendor[] = [
     phone: '(555) 345-6789',
     serviceType: 'Fire Suppression',
     lastService: '2025-12-10',
-    nextDue: '2026-06-10',
+    nextDue: '2026-02-24',
     documentsCount: 4,
-    status: 'current',
+    status: 'upcoming',
     locationId: '1',
   },
   {
@@ -167,7 +180,7 @@ export const vendors: Vendor[] = [
     status: 'current',
     locationId: '1',
   },
-  // Airport Cafe - mixed status
+  // Airport Cafe - mixed status (hood cleaning 5 days overdue)
   {
     id: '6',
     companyName: 'ABC Fire Protection',
@@ -175,10 +188,10 @@ export const vendors: Vendor[] = [
     email: 'john@abcfire.com',
     phone: '(555) 123-4567',
     serviceType: 'Hood Cleaning',
-    lastService: '2026-01-15',
-    nextDue: '2026-04-15',
+    lastService: '2025-10-04',
+    nextDue: '2026-02-04',
     documentsCount: 3,
-    status: 'current',
+    status: 'overdue',
     locationId: '2',
   },
   {
@@ -204,7 +217,7 @@ export const vendors: Vendor[] = [
     lastService: '2026-01-20',
     nextDue: '2026-07-20',
     documentsCount: 4,
-    status: 'overdue',
+    status: 'current',
     locationId: '2',
   },
   {
@@ -311,7 +324,7 @@ export interface Notification {
 }
 
 export const notifications: Notification[] = [
-  { id: '1', title: 'Fire Suppression Report Expired', time: '2h ago', link: '/documents', type: 'alert', locationId: '2' },
+  { id: '1', title: 'Hood Cleaning 5 Days Overdue', time: '2h ago', link: '/vendors', type: 'alert', locationId: '2' },
   { id: '2', title: 'Health Permit Renewal Due', time: '5h ago', link: '/documents', type: 'alert', locationId: '1' },
   { id: '3', title: '3 Temperature Checks Missed', time: '1d ago', link: '/temp-logs', type: 'alert', locationId: '3' },
   { id: '4', title: 'Weekly Report Ready', time: '2d ago', link: '/reports', type: 'info', locationId: '1' },
@@ -331,13 +344,13 @@ export interface NeedsAttentionItem {
 export const needsAttentionItems: NeedsAttentionItem[] = [
   // Downtown Kitchen - 2 items
   { id: '1', title: '1 Closing Checklist Submitted Late', detail: 'Downtown Kitchen — Feb 4', color: 'amber', url: '/checklists', roles: ['management', 'kitchen'], locationId: '1' },
-  { id: '2', title: 'Health Permit Renewal in 60 Days', detail: 'Downtown Kitchen — expires Apr 6', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '1' },
+  { id: '2', title: 'Fire Suppression Due in 15 Days', detail: 'Valley Fire — due Feb 24 (−3.75 pts graduated)', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '1' },
   // Airport Cafe - 7 items
   { id: '3', title: '3 Temperature Checks Missed', detail: 'Airport Cafe — missed this week', color: 'red', url: '/temp-logs', roles: ['management', 'kitchen'], locationId: '2' },
   { id: '4', title: 'Opening Checklist Late 2 Days This Week', detail: 'Airport Cafe — Feb 4, Feb 5', color: 'red', url: '/checklists', roles: ['management', 'kitchen'], locationId: '2' },
-  { id: '5', title: 'Fire Suppression Inspection Overdue', detail: 'Valley Fire — due Feb 10', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
+  { id: '5', title: 'Hood Cleaning 5 Days OVERDUE', detail: 'ABC Fire — was due Feb 4 (−30 pts Equipment)', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
   { id: '6', title: 'Grease Trap Service Due Soon', detail: 'Grease Masters — due Mar 20', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
-  { id: '7', title: 'Valley Fire COI Expired', detail: 'Airport Cafe — expired Jan 15', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
+  { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Airport Cafe — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
   { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/team', roles: ['management', 'kitchen'], locationId: '2' },
   { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
   // University Dining - 12 items
@@ -347,9 +360,9 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '13', title: 'Fire Suppression 4 Months Overdue', detail: 'Valley Fire — due Jan 10', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
   { id: '14', title: 'Grease Trap 2 Months Overdue', detail: 'Grease Masters — due Jan 20', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
   { id: '15', title: 'Hood Cleaning Due in 5 Days', detail: 'ABC Fire — due Feb 15', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
+  { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
   { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — action required', color: 'red', url: '/team', roles: ['management', 'kitchen'], locationId: '3' },
+  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/team', roles: ['management', 'kitchen'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
 ];
 
@@ -363,68 +376,69 @@ export interface ScoreImpactItem {
   locationId: string;
 }
 
+// Sub-component weights (of 100-point pillar):
+// Operational: Temp checks 35, Checklists 30, Incidents 20, HACCP 15
+// Equipment: Hood cleaning 30, Fire suppression 25, Fire extinguisher 20, Equip maintenance 15, Equip condition 10
+// Documentation: Vendor certs 25, Health permit 25, Business license 15, Food handler certs 20, Insurance 15
+
 export const scoreImpactData: ScoreImpactItem[] = [
-  // Downtown Kitchen - Operational (95 out of 100)
-  { status: 'current', label: 'Temperature Logs On Schedule', impact: '+35 of 35', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
-  { status: 'current', label: 'Opening Checklists Complete', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
-  { status: 'current', label: 'Closing Checklists Complete', impact: '+15 of 20', action: 'View Late Submission', actionLink: '/checklists', pillar: 'Operational', locationId: '1' },
-  { status: 'current', label: 'HACCP Monitoring Current', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
-  { status: 'current', label: 'Corrective Actions Resolved', impact: '+10 of 10', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
+  // ─── Downtown Kitchen ─── Operational (94/100)
+  { status: 'current', label: 'Temperature Logs On Schedule', impact: '+34 of 35', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
+  { status: 'current', label: 'Checklists Complete', impact: '+28 of 30', action: '1 Late Submission', actionLink: '/checklists', pillar: 'Operational', locationId: '1' },
+  { status: 'current', label: 'Incident Resolution (<2 hrs)', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
+  { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Operational', locationId: '1' },
 
-  // Downtown Kitchen - Equipment (91 out of 100)
-  { status: 'current', label: 'Hood Cleaning Certificate', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
-  { status: 'current', label: 'Fire Suppression Inspection', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
-  { status: 'due_soon', label: 'Fire Extinguisher Inspection (45 days)', impact: '+11 of 20', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Equipment', locationId: '1' },
-  { status: 'current', label: 'Grease Trap Service', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
-  { status: 'current', label: 'HVAC Service', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
+  // ─── Downtown Kitchen ─── Equipment (88/100)
+  { status: 'current', label: 'Hood Cleaning', impact: '+30 of 30', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
+  { status: 'due_soon', label: 'Fire Suppression (due in 15 days, −3.75 graduated)', impact: '+21 of 25', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Equipment', locationId: '1' },
+  { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
+  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
+  { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Equipment', locationId: '1' },
 
-  // Downtown Kitchen - Documentation (89 out of 100)
-  { status: 'current', label: 'Health Permit', impact: '+15 of 20', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Documentation', locationId: '1' },
-  { status: 'current', label: 'Business License', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '1' },
-  { status: 'current', label: 'Vendor COIs (All Current)', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '1' },
-  { status: 'due_soon', label: 'Food Handler Cert (1 staff, 30 days)', impact: '+14 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Documentation', locationId: '1' },
-  { status: 'current', label: 'Insurance Certificate', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '1' },
+  // ─── Downtown Kitchen ─── Documentation (91/100)
+  { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Documentation', locationId: '1' },
+  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Documentation', locationId: '1' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Documentation', locationId: '1' },
+  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Documentation', locationId: '1' },
+  { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Documentation', locationId: '1' },
 
-  // Airport Cafe - Operational (78 out of 100)
-  { status: 'overdue', label: '3 Temperature Checks Missed This Week', impact: '-12', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Operational', locationId: '2' },
-  { status: 'current', label: 'Temperature Logs', impact: '+23 of 35', action: '3 Checks Missed', actionLink: '/temp-logs', pillar: 'Operational', locationId: '2' },
-  { status: 'current', label: 'Opening Checklists', impact: '+14 of 20', action: 'Late 2 Days This Week', actionLink: '/checklists', pillar: 'Operational', locationId: '2' },
-  { status: 'current', label: 'Closing Checklists Complete', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '2' },
+  // ─── Airport Cafe ─── Operational (72/100)
+  { status: 'overdue', label: 'Temperature Logs (3 missed this week)', impact: '+23 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Operational', locationId: '2' },
+  { status: 'current', label: 'Checklists', impact: '+21 of 30', action: 'Late 2 Days This Week', actionLink: '/checklists', pillar: 'Operational', locationId: '2' },
+  { status: 'current', label: 'Incident Resolution (2-12 hrs avg)', impact: '+16 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '2' },
   { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Operational', locationId: '2' },
-  { status: 'current', label: 'Corrective Actions', impact: '+9 of 10', action: null, actionLink: null, pillar: 'Operational', locationId: '2' },
 
-  // Airport Cafe - Equipment (70 out of 100)
-  { status: 'current', label: 'Hood Cleaning Certificate', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
-  { status: 'overdue', label: 'Fire Suppression Inspection OVERDUE', impact: '0 of 20', action: 'Contact Valley Fire', actionLink: '/vendors', pillar: 'Equipment', locationId: '2' },
+  // ─── Airport Cafe ─── Equipment (62/100)
+  { status: 'overdue', label: 'Hood Cleaning 5 DAYS OVERDUE (−30 full penalty)', impact: '0 of 30', action: 'Contact ABC Fire', actionLink: '/vendors', pillar: 'Equipment', locationId: '2' },
+  { status: 'current', label: 'Fire Suppression Inspection', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
   { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
-  { status: 'due_soon', label: 'Grease Trap Service (approaching overdue)', impact: '+10 of 20', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Equipment', locationId: '2' },
-  { status: 'current', label: 'HVAC Service', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
+  { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
+  { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Equipment', locationId: '2' },
 
-  // Airport Cafe - Documentation (72 out of 100)
-  { status: 'current', label: 'Health Permit', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '2' },
-  { status: 'current', label: 'Business License', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '2' },
-  { status: 'expired', label: 'Valley Fire COI EXPIRED', impact: '0 of 20', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Documentation', locationId: '2' },
-  { status: 'due_soon', label: 'Food Handler Cert (1 staff, 14 days)', impact: '+12 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Documentation', locationId: '2' },
-  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 20', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Documentation', locationId: '2' },
+  // ─── Airport Cafe ─── Documentation (74/100)
+  { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Documentation', locationId: '2' },
+  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Documentation', locationId: '2' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Documentation', locationId: '2' },
+  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Documentation', locationId: '2' },
+  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Documentation', locationId: '2' },
 
-  // University Dining - Operational (62 out of 100)
+  // ─── University Dining ─── Operational (62/100)
   { status: 'overdue', label: '8 Temperature Checks Missed This Week', impact: '0 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Operational', locationId: '3' },
-  { status: 'overdue', label: 'Opening Checklists Missed 3 Days', impact: '6 of 20', action: 'Complete Now', actionLink: '/checklists', pillar: 'Operational', locationId: '3' },
-  { status: 'current', label: 'Closing Checklists', impact: '+16 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '3' },
+  { status: 'overdue', label: 'Opening Checklists Missed 3 Days', impact: '+10 of 30', action: 'Complete Now', actionLink: '/checklists', pillar: 'Operational', locationId: '3' },
+  { status: 'current', label: 'Incident Resolution (24-48 hrs avg)', impact: '+8 of 20', action: null, actionLink: null, pillar: 'Operational', locationId: '3' },
   { status: 'overdue', label: 'HACCP Monitoring Not Done This Month', impact: '0 of 15', action: 'Start HACCP Review', actionLink: '/haccp', pillar: 'Operational', locationId: '3' },
-  { status: 'current', label: 'Corrective Actions', impact: '+10 of 10', action: null, actionLink: null, pillar: 'Operational', locationId: '3' },
 
-  // University Dining - Equipment (55 out of 100)
-  { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days', impact: '+10 of 20', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
-  { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE', impact: '0 of 20', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
+  // ─── University Dining ─── Equipment (55/100)
+  { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days (−15 graduated)', impact: '+15 of 30', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
+  { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
   { status: 'current', label: 'Fire Extinguisher', impact: '+15 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '3' },
-  { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE', impact: '0 of 20', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
-  { status: 'current', label: 'HVAC Service', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Equipment', locationId: '3' },
+  { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Equipment', locationId: '3' },
+  { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Equipment', locationId: '3' },
 
-  // University Dining - Documentation (52 out of 100)
-  { status: 'expired', label: 'Health Permit EXPIRED Last Month', impact: '0 of 20', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Documentation', locationId: '3' },
-  { status: 'current', label: 'Business License', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '3' },
-  { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 20', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Documentation', locationId: '3' },
-  { status: 'expired', label: '2 Food Handler Certs EXPIRED', impact: '0 of 20', action: 'Notify Staff', actionLink: '/team', pillar: 'Documentation', locationId: '3' },
-  { status: 'current', label: 'Insurance Certificate', impact: '+12 of 20', action: null, actionLink: null, pillar: 'Documentation', locationId: '3' },
+  // ─── University Dining ─── Documentation (42/100)
+  { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Documentation', locationId: '3' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Documentation', locationId: '3' },
+  { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Documentation', locationId: '3' },
+  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/team', pillar: 'Documentation', locationId: '3' },
+  { status: 'current', label: 'Insurance Certificate', impact: '+8 of 15', action: null, actionLink: null, pillar: 'Documentation', locationId: '3' },
 ];

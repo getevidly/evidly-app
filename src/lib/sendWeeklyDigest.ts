@@ -12,7 +12,7 @@ export interface DigestLocationScore {
   operational: number;
   equipment: number;
   documentation: number;
-  status: 'Inspection Ready' | 'Good Standing' | 'Needs Attention' | 'Critical';
+  status: 'Inspection Ready' | 'Needs Attention' | 'Critical';
 }
 
 export interface DigestTempStats {
@@ -68,9 +68,8 @@ export interface DigestData {
 
 function statusColor(status: string): string {
   if (status === 'Inspection Ready' || status === 'current') return '#22c55e';
-  if (status === 'Good Standing') return '#22c55e';
-  if (status === 'Needs Attention' || status === 'upcoming') return '#d4af37';
-  return '#dc2626';
+  if (status === 'Needs Attention' || status === 'upcoming') return '#eab308';
+  return '#ef4444';
 }
 
 function priorityColor(p: string): string {
@@ -184,7 +183,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
   <tr>
     <td style="padding:20px 24px;text-align:center;width:120px;">
-      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.overallScore >= 80 ? '#22c55e' : data.overallScore >= 60 ? '#d4af37' : '#dc2626'};display:inline-block;line-height:70px;text-align:center;">
+      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.overallScore >= 90 ? '#22c55e' : data.overallScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
         <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.overallScore}</span>
       </div>
     </td>

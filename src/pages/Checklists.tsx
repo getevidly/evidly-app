@@ -1206,7 +1206,7 @@ export function Checklists() {
                           <div className="w-16 bg-gray-200 rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${
-                                entry.score >= 90 ? 'bg-green-500' : entry.score >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                                entry.score >= 90 ? 'bg-green-500' : entry.score >= 70 ? 'bg-yellow-500' : 'bg-red-500' /* thresholds: 90/70 */
                               }`}
                               style={{ width: `${entry.score}%` }}
                             />

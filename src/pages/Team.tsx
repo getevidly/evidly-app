@@ -814,7 +814,7 @@ export function Team() {
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold" style={{ color: selectedMember.compliance_score >= 90 ? '#16a34a' : selectedMember.compliance_score >= 70 ? '#d4af37' : '#ef4444' }}>
+                    <div className="text-2xl font-bold" style={{ color: selectedMember.compliance_score >= 90 ? '#22c55e' : selectedMember.compliance_score >= 70 ? '#eab308' : '#ef4444' }}>
                       {selectedMember.compliance_score}%
                     </div>
                     <div className="text-xs text-gray-500">Compliance</div>

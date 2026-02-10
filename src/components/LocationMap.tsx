@@ -63,7 +63,7 @@ export function LocationMap({ locations, onLocationClick, selectedLocation }: Lo
     locations.forEach((location) => {
       const getMarkerColor = (score: number) => {
         if (score >= 90) return '#22c55e';
-        if (score >= 70) return '#f59e0b';
+        if (score >= 70) return '#eab308';
         return '#ef4444';
       };
 
