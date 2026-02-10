@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDemo } from '../contexts/DemoContext';
 import AuthModal from './AuthModal';
 
 export default function Navigation() {
   const navigate = useNavigate();
+  const { enterDemo } = useDemo();
   const [authModal, setAuthModal] = useState<'login' | 'signup' | null>(null);
 
   const handleTryDemo = () => {
-    navigate('/demo');
+    enterDemo();
+    navigate('/dashboard');
   };
 
   return (

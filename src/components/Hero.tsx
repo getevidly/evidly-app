@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDemo } from '../contexts/DemoContext';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const { enterDemo } = useDemo();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function Hero() {
             </form>
             <div className="mb-4">
               <button
-                onClick={() => navigate('/demo')}
+                onClick={() => { enterDemo(); navigate('/dashboard'); }}
                 className="text-[0.9rem] font-medium text-[var(--color-blue)] hover:text-[var(--color-gold-dark)] transition-colors underline underline-offset-4"
               >
                 Try the interactive demo →

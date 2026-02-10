@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 export interface DemoLead {
   fullName: string;
@@ -82,6 +83,15 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       sessionStorage.removeItem(LEAD_KEY);
     } catch {}
   };
+
+  // TODO: Re-enable auth guards before launch — remove auto-demo for unauthenticated users
+  // Auto-activate demo mode when no user is logged in so /dashboard works without auth
+  const { user, loading } = useAuth();
+  useEffect(() => {
+    if (!loading && !user && !isDemoMode) {
+      enterDemo();
+    }
+  }, [loading, user, isDemoMode]);
 
   const companyName = useMemo(() => demoLead?.companyName || 'Pacific Coast Dining', [demoLead]);
   const userName = useMemo(() => demoLead?.fullName || 'James Wilson', [demoLead]);
