@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
+import { getAvailableCounties } from '../lib/jurisdictionScoring';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole, UserRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -596,7 +597,14 @@ export function Settings() {
             </div>
           )}
 
-          {activeTab === 'jurisdiction' && (
+          {activeTab === 'jurisdiction' && (() => {
+            const availableCounties = getAvailableCounties();
+            const locationJurisdictions = [
+              { name: 'Downtown Kitchen', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' },
+              { name: 'Airport Cafe', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' },
+              { name: 'University Dining', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' },
+            ];
+            return (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">Jurisdiction Profile</h3>
               <p className="text-sm text-gray-600">View and manage jurisdiction-specific compliance requirements for each location.</p>
@@ -614,22 +622,86 @@ export function Settings() {
                 </div>
               </div>
 
+              {/* Auto-detected jurisdictions per location with override */}
               <div className="space-y-3">
-                {[
-                  { name: 'Downtown Kitchen', jurisdiction: 'Fresno County, CA', chain: 'Federal → California → Fresno County' },
-                  { name: 'Airport Cafe', jurisdiction: 'Merced County, CA', chain: 'Federal → California → Merced County' },
-                  { name: 'University Dining', jurisdiction: 'Stanislaus County, CA', chain: 'Federal → California → Stanislaus County → City of Modesto' },
-                ].map((loc) => (
+                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Detected Jurisdictions</h4>
+                {locationJurisdictions.map((loc) => (
                   <div key={loc.name} className="border border-gray-200 rounded-lg p-4 bg-white">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <div>
                         <h4 className="font-semibold text-gray-900">{loc.name}</h4>
                         <p className="text-xs text-gray-500 mt-1">{loc.chain}</p>
                       </div>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200">{loc.jurisdiction}</span>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-50 text-green-700 border border-green-200 flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Auto-detected
+                      </span>
+                    </div>
+                    <div className="mt-3 flex items-center gap-3">
+                      <label className="text-xs font-medium text-gray-500">County:</label>
+                      <select
+                        defaultValue={loc.detectedSlug}
+                        onChange={() => alert(`Jurisdiction override saved for ${loc.name}. Scores will recalculate.`)}
+                        className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                      >
+                        {availableCounties.map(c => (
+                          <option key={c.slug} value={c.slug}>{c.name} ({c.systemType.replace('_', ' ')})</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Dashboard & Reporting Toggles */}
+              <div className="border border-gray-200 rounded-lg p-5 bg-white space-y-4">
+                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Display Preferences</h4>
+
+                <label className="flex items-center justify-between cursor-pointer">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Show jurisdiction score on dashboard</div>
+                    <div className="text-xs text-gray-500">Display the inspector grade next to your EvidLY score</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    defaultChecked={true}
+                    onChange={() => alert('Dashboard display preference saved.')}
+                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                  />
+                </label>
+
+                <div className="border-t border-gray-100"></div>
+
+                <label className="flex items-center justify-between cursor-pointer">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">Include jurisdiction score in reports</div>
+                    <div className="text-xs text-gray-500">Add inspector grade details to generated compliance reports</div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    defaultChecked={true}
+                    onChange={() => alert('Report inclusion preference saved.')}
+                    className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
+                  />
+                </label>
+              </div>
+
+              {/* Manual jurisdiction selection */}
+              <div className="border border-gray-200 rounded-lg p-5 bg-white">
+                <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Manual Jurisdiction Override</h4>
+                <p className="text-xs text-gray-500 mb-3">If auto-detection is incorrect for a location, select the correct county scoring system manually.</p>
+                <select
+                  defaultValue=""
+                  onChange={(e) => {
+                    if (e.target.value) alert(`Manual jurisdiction set to ${e.target.value}. Apply this to specific locations using the dropdowns above.`);
+                  }}
+                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                >
+                  <option value="">Select a county scoring system...</option>
+                  {availableCounties.map(c => (
+                    <option key={c.slug} value={c.slug}>{c.name} — {c.systemType.replace('_', ' ')}</option>
+                  ))}
+                </select>
               </div>
 
               <button
@@ -639,7 +711,8 @@ export function Settings() {
                 View Full Jurisdiction Configuration →
               </button>
             </div>
-          )}
+            );
+          })()}
 
           {activeTab === 'integrations' && (
             <div className="space-y-6">

@@ -53,6 +53,7 @@ const navigation: NavItem[] = [
   { i18nKey: 'nav.incidentLog', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.auditReport', href: '/audit-report', icon: ClipboardCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { i18nKey: 'nav.scoreBreakdown', href: '/scoring-breakdown', icon: ShieldCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
   { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },

@@ -350,24 +350,34 @@ export function Dashboard() {
 
           {/* Dual-Layer Score Display */}
           {selectedLocation !== 'all' && jurisdictionResult ? (
-            <div className="flex items-start justify-center gap-8 flex-wrap">
-              <div className="flex flex-col items-center">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">EvidLY Score</div>
-                <AnimatedComplianceScore
-                  score={complianceScore}
-                  label={scoreInfo.label}
-                  color={scoreInfo.color}
-                  trend={overallTrend}
-                />
+            <>
+              <div className="flex items-start justify-center gap-8 flex-wrap">
+                <div className="flex flex-col items-center">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">EvidLY Score</div>
+                  <AnimatedComplianceScore
+                    score={complianceScore}
+                    label={scoreInfo.label}
+                    color={scoreInfo.color}
+                    trend={overallTrend}
+                  />
+                </div>
+                <div className="hidden sm:flex items-center self-center">
+                  <div className="w-px h-32 bg-gray-200"></div>
+                </div>
+                <div className="flex flex-col items-center pt-6">
+                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Inspector Grade</div>
+                  <JurisdictionScoreDisplay result={jurisdictionResult} />
+                </div>
               </div>
-              <div className="hidden sm:flex items-center self-center">
-                <div className="w-px h-32 bg-gray-200"></div>
+              <div className="text-center mt-4">
+                <span
+                  onClick={() => navigate(`/scoring-breakdown?location=${selectedLocation}`)}
+                  className="text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] cursor-pointer transition-colors"
+                >
+                  View Full Breakdown &rarr;
+                </span>
               </div>
-              <div className="flex flex-col items-center pt-6">
-                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Inspector Grade</div>
-                <JurisdictionScoreDisplay result={jurisdictionResult} />
-              </div>
-            </div>
+            </>
           ) : (
             <AnimatedComplianceScore
               score={complianceScore}
