@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
+import { useTranslation } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -325,6 +326,7 @@ const PREBUILT_TEMPLATES = {
 export function Checklists() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const { t } = useTranslation();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
@@ -349,6 +351,58 @@ export function Checklists() {
   const [items, setItems] = useState<{ title: string; type: string; required: boolean }[]>([]);
   const [newItemTitle, setNewItemTitle] = useState('');
   const [newItemType, setNewItemType] = useState('checkbox');
+
+  // i18n lookup maps for data defined outside the component
+  const templateNameMap: Record<string, string> = {
+    'Opening Checklist': t('checklists.openingChecklist'),
+    'Closing Checklist': t('checklists.closingChecklist'),
+    'Mid-Day Food Safety Check': t('checklists.midDayCheck'),
+    'Cooking Temperature Log': t('checklists.cookingTempLog'),
+    'Cooling Log': t('checklists.coolingLog'),
+    'Receiving Inspection': t('checklists.receivingInspection'),
+    'Hot Holding Monitoring': t('checklists.hotHoldingMonitoring'),
+    'Cold Holding Monitoring': t('checklists.coldHoldingMonitoring'),
+  };
+
+  const checklistItemMap: Record<string, string> = {
+    'Check sanitizer concentration': t('checklists.checkSanitizerConcentration'),
+    'Verify hot water temp': t('checklists.verifyHotWaterTemp'),
+    'Inspect handwash stations': t('checklists.inspectHandwashStations'),
+    'Verify internal temp of each protein type': t('checklists.verifyInternalTemp'),
+    'Record start temp and time': t('checklists.recordStartTempAndTime'),
+    'Check walk-in cooler temperature': t('checklists.checkWalkInCoolerTemp'),
+    'Clean and sanitize prep surfaces': t('checklists.cleanAndSanitize'),
+    'Check hot holding temperatures': t('checklists.checkHotHoldingTemps'),
+    'Verify dish machine sanitizer levels': t('checklists.verifyDishMachineSanitizer'),
+    'Inspect restrooms': t('checklists.inspectRestrooms'),
+    'Empty grease traps': t('checklists.emptyGreaseTraps'),
+    'Log receiving temperatures': t('checklists.logReceivingTemps'),
+    'Complete cooling log': t('checklists.completeCoolingLog'),
+  };
+
+  const categoryMap: Record<string, string> = {
+    'Daily Operations': t('checklists.dailyOperations'),
+    'HACCP Checklists': t('checklists.haccpChecklists'),
+  };
+
+  const roleMap: Record<string, string> = {
+    'Kitchen Staff': t('checklists.kitchenStaff'),
+    'Manager': t('checklists.manager'),
+    'Facilities': t('checklists.facilities'),
+  };
+
+  const frequencyLabelMap: Record<string, string> = {
+    'Daily': t('checklists.daily'),
+    'Weekly': t('checklists.weekly'),
+    'Monthly': t('checklists.monthly'),
+  };
+
+  const itemTypeLabelMap: Record<string, string> = {
+    'Checkbox': t('checklists.checkbox'),
+    'Yes/No': t('checklists.yesNo'),
+    'Temperature': t('checklists.temperature'),
+    'Text Input': t('checklists.textInput'),
+  };
 
   useEffect(() => {
     if (profile?.organization_id) {
@@ -779,7 +833,7 @@ export function Checklists() {
                 }
                 className="h-6 w-6 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
               />
-              <span className="text-lg text-gray-900">{item.title}</span>
+              <span className="text-lg text-gray-900">{checklistItemMap[item.title] || item.title}</span>
               {item.is_required && <span className="text-red-600">*</span>}
             </label>
             <div className="mt-2">
@@ -795,7 +849,7 @@ export function Checklists() {
         return (
           <div>
             <p className="text-lg text-gray-900 mb-3">
-              {item.title}
+              {checklistItemMap[item.title] || item.title}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </p>
             <div className="flex space-x-4">
@@ -808,7 +862,7 @@ export function Checklists() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                Yes
+                {t('common.yes')}
               </button>
               <button
                 type="button"
@@ -819,12 +873,12 @@ export function Checklists() {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                No
+                {t('common.no')}
               </button>
             </div>
             {response?.response_value === 'no' && (
               <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Corrective Action Required</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.correctiveActionRequired')}</label>
                 <textarea
                   value={response.corrective_action}
                   onChange={(e) =>
@@ -851,7 +905,7 @@ export function Checklists() {
         return (
           <div>
             <label className="block text-lg text-gray-900 mb-3">
-              {item.title}
+              {checklistItemMap[item.title] || item.title}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
             <input
@@ -875,7 +929,7 @@ export function Checklists() {
         return (
           <div>
             <label className="block text-lg text-gray-900 mb-3">
-              {item.title}
+              {checklistItemMap[item.title] || item.title}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
             <input
@@ -901,11 +955,11 @@ export function Checklists() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Checklists' }]} />
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: t('checklists.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Checklists</h1>
-          <p className="text-sm text-gray-600 mt-1">Daily compliance checklists and templates</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('checklists.title')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
         </div>
 
         {/* View Tabs */}
@@ -918,7 +972,7 @@ export function Checklists() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Today's Checklists
+            {t('checklists.todaysChecklists')}
           </button>
           <button
             onClick={() => setActiveView('templates')}
@@ -928,7 +982,7 @@ export function Checklists() {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Templates
+            {t('checklists.templates')}
           </button>
           <button
             onClick={() => setActiveView('history')}
@@ -946,7 +1000,7 @@ export function Checklists() {
         {activeView === 'today' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">Today's Checklists</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('checklists.todaysChecklists')}</h2>
               <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
             </div>
 
@@ -954,7 +1008,7 @@ export function Checklists() {
               {todayChecklists.map((cl) => {
                 const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
                 const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
-                const statusLabel = cl.status === 'complete' ? 'Complete' : cl.status === 'in_progress' ? 'In Progress' : 'Not Started';
+                const statusLabel = cl.status === 'complete' ? t('common.completed') : cl.status === 'in_progress' ? t('common.inProgress') : t('common.notStarted');
                 const statusBg = cl.status === 'complete' ? 'bg-green-100 text-green-800' : cl.status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600';
                 const barColor = cl.status === 'complete' ? '#22c55e' : cl.status === 'in_progress' ? '#eab308' : '#d1d5db';
                 const iconBg = cl.status === 'complete' ? 'bg-green-100' : cl.status === 'in_progress' ? 'bg-yellow-100' : 'bg-gray-100';
@@ -968,7 +1022,7 @@ export function Checklists() {
                           {cl.status === 'complete' ? <Check className={`h-6 w-6 ${iconColor}`} /> : <CheckSquare className={`h-6 w-6 ${iconColor}`} />}
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{cl.name}</h3>
+                          <h3 className="text-lg font-semibold text-gray-900">{templateNameMap[cl.name] || cl.name}</h3>
                           <p className="text-sm text-gray-500">{cl.location}</p>
                         </div>
                       </div>
@@ -976,7 +1030,7 @@ export function Checklists() {
 
                     <div className="mb-3">
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">{cl.completed}/{cl.total} items</span>
+                        <span className="text-gray-600">{cl.completed}/{cl.total} {t('common.items')}</span>
                         <span className="font-semibold" style={{ color: barColor }}>{pct}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -1003,16 +1057,16 @@ export function Checklists() {
                         {cl.status === 'complete' && (
                           <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
                             <Camera className="h-3 w-3" />
-                            {cl.completed > 3 ? 3 : 2} photos
+                            {cl.completed > 3 ? 3 : 2} {t('common.photos')}
                           </span>
                         )}
                       </div>
                       {cl.status !== 'complete' && (
                         <button
-                          onClick={() => alert(`${cl.name} opened — complete items to update your compliance score.`)}
+                          onClick={() => alert(`${templateNameMap[cl.name] || cl.name} opened — complete items to update your compliance score.`)}
                           className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
                         >
-                          {cl.status === 'in_progress' ? 'Continue' : 'Start'}
+                          {cl.status === 'in_progress' ? t('common.continue') : t('common.start')}
                         </button>
                       )}
                     </div>
@@ -1027,13 +1081,13 @@ export function Checklists() {
         {activeView === 'templates' && (
           <div className="space-y-8">
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-900">Checklist Templates</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistTemplates')}</h2>
               <button
                 onClick={() => setShowTemplateModal(true)}
                 className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm"
               >
                 <Plus className="h-5 w-5" />
-                <span>New Template</span>
+                <span>{t('checklists.newTemplate')}</span>
               </button>
             </div>
 
@@ -1041,7 +1095,7 @@ export function Checklists() {
               <div key={cat.category}>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
                   <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
-                  <span>{cat.category}</span>
+                  <span>{categoryMap[cat.category] || cat.category}</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {cat.templates.map((tmpl) => {
@@ -1049,11 +1103,11 @@ export function Checklists() {
                     return (
                       <div key={tmpl.key} className="bg-white rounded-lg shadow p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
                         <div className="flex items-start justify-between mb-3">
-                          <h4 className="font-semibold text-gray-900 text-base">{tmpl.name}</h4>
-                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{tmpl.role}</span>
+                          <h4 className="font-semibold text-gray-900 text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{roleMap[tmpl.role] || tmpl.role}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-sm text-gray-500 mb-4">
-                          <span>{tmpl.itemCount} items</span>
+                          <span>{tmpl.itemCount} {t('common.items')}</span>
                           <span>·</span>
                           <div className="flex items-center space-x-1">
                             <Clock className="h-3.5 w-3.5" />
@@ -1064,7 +1118,7 @@ export function Checklists() {
                           {tmpl.items.map((item, idx) => (
                             <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
                               <span className="text-gray-400 flex-shrink-0 mt-0.5">○</span>
-                              <span>{item}</span>
+                              <span>{checklistItemMap[item] || item}</span>
                             </div>
                           ))}
                         </div>
@@ -1074,7 +1128,7 @@ export function Checklists() {
                             disabled={loading}
                             className="w-full px-4 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#1e4d6b] hover:text-white transition-colors font-medium text-sm disabled:opacity-50"
                           >
-                            Use Template
+                            {t('checklists.useTemplate')}
                           </button>
                         )}
                       </div>
@@ -1093,16 +1147,16 @@ export function Checklists() {
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.type')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.items')}</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.status')}</th>
                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {templates.map((template) => (
                         <tr key={template.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{template.name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{templateNameMap[template.name] || template.name}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">{template.checklist_type.replace('_', ' ')}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{template.items_count}</td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -1152,12 +1206,12 @@ export function Checklists() {
             }
             return true;
           });
-          const rangeLabel = historyRange === 'today' ? 'Today' : historyRange === '7days' ? 'Last 7 Days' : historyRange === '14days' ? 'Last 14 Days' : historyRange === '30days' ? 'Last 30 Days' : historyRange === '90days' ? 'Last 90 Days' : 'Custom Range';
+          const rangeLabel = historyRange === 'today' ? 'Today' : historyRange === '7days' ? t('checklists.last7Days') : historyRange === '14days' ? t('checklists.last14Days') : historyRange === '30days' ? t('checklists.last30Days') : historyRange === '90days' ? t('checklists.last90Days') : t('checklists.customRange');
 
           return (
           <div className="space-y-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-xl font-bold text-gray-900">Checklist History — {rangeLabel}</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
               <div className="flex flex-wrap items-end gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
@@ -1167,11 +1221,11 @@ export function Checklists() {
                     className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-sm"
                   >
                     <option value="today">Today</option>
-                    <option value="7days">Last 7 Days</option>
-                    <option value="14days">Last 14 Days</option>
-                    <option value="30days">Last 30 Days</option>
-                    <option value="90days">Last 90 Days</option>
-                    <option value="custom">Custom Range</option>
+                    <option value="7days">{t('checklists.last7Days')}</option>
+                    <option value="14days">{t('checklists.last14Days')}</option>
+                    <option value="30days">{t('checklists.last30Days')}</option>
+                    <option value="90days">{t('checklists.last90Days')}</option>
+                    <option value="custom">{t('checklists.customRange')}</option>
                   </select>
                 </div>
                 {historyRange === 'custom' && (
@@ -1189,17 +1243,17 @@ export function Checklists() {
               </div>
             </div>
 
-            <div className="text-sm text-gray-500">{filteredEntries.length} entries</div>
+            <div className="text-sm text-gray-500">{filteredEntries.length} {t('checklists.entries')}</div>
 
             <div className="bg-white shadow rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Checklist</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed By</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.date')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('checklists.checklist')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.completedBy')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('common.status')}</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('checklists.score')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -1209,7 +1263,7 @@ export function Checklists() {
                       : entry.status === 'incomplete'
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-green-100 text-green-800';
-                    const statusLabel = entry.status === 'missed' ? 'Missed' : entry.status === 'incomplete' ? 'Incomplete' : 'Complete';
+                    const statusLabel = entry.status === 'missed' ? t('checklists.missed') : entry.status === 'incomplete' ? t('checklists.incomplete') : t('common.completed');
                     return (
                     <tr key={entry.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -1217,7 +1271,7 @@ export function Checklists() {
                         <span className="text-gray-400 ml-1 text-xs">{format(new Date(entry.date), 'h:mm a')}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {entry.name}
+                        {templateNameMap[entry.name] || entry.name}
                         {entry.detail && <span className="block text-xs text-gray-500">{entry.detail}</span>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
@@ -1249,7 +1303,7 @@ export function Checklists() {
                   {filteredEntries.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                        No checklist entries found for this date range.
+                        {t('checklists.noEntries')}
                       </td>
                     </tr>
                   )}
@@ -1265,11 +1319,11 @@ export function Checklists() {
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-2xl font-bold mb-6">Create Checklist Template</h3>
+            <h3 className="text-2xl font-bold mb-6">{t('checklists.createTemplate')}</h3>
 
             <form onSubmit={handleCreateTemplate} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Template Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.templateName')}</label>
                 <input
                   type="text"
                   value={templateName}
@@ -1282,7 +1336,7 @@ export function Checklists() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.type')}</label>
                   <select
                     value={templateType}
                     onChange={(e) => setTemplateType(e.target.value)}
@@ -1299,7 +1353,7 @@ export function Checklists() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Frequency</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.frequency')}</label>
                   <select
                     value={templateFrequency}
                     onChange={(e) => setTemplateFrequency(e.target.value)}
@@ -1308,7 +1362,7 @@ export function Checklists() {
                   >
                     {FREQUENCIES.map((freq) => (
                       <option key={freq.value} value={freq.value}>
-                        {freq.label}
+                        {frequencyLabelMap[freq.label] || freq.label}
                       </option>
                     ))}
                   </select>
@@ -1316,7 +1370,7 @@ export function Checklists() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Checklist Items</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('checklists.checklistItems')}</label>
                 <div className="space-y-2 mb-3">
                   {items.map((item, index) => (
                     <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
@@ -1339,7 +1393,7 @@ export function Checklists() {
                     value={newItemTitle}
                     onChange={(e) => setNewItemTitle(e.target.value)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                    placeholder="Item title..."
+                    placeholder={t('checklists.itemTitle')}
                   />
                   <select
                     value={newItemType}
@@ -1348,7 +1402,7 @@ export function Checklists() {
                   >
                     {ITEM_TYPES.map((type) => (
                       <option key={type.value} value={type.value}>
-                        {type.label}
+                        {itemTypeLabelMap[type.label] || type.label}
                       </option>
                     ))}
                   </select>
@@ -1375,7 +1429,7 @@ export function Checklists() {
                   disabled={loading}
                   className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
                 >
-                  {loading ? 'Creating...' : 'Create Template'}
+                  {loading ? t('checklists.creating') : t('checklists.createTemplate')}
                 </button>
               </div>
             </form>
@@ -1388,10 +1442,10 @@ export function Checklists() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">{selectedTemplate.name}</h3>
+              <h3 className="text-2xl font-bold text-gray-900">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
                 <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                  <span>Progress</span>
+                  <span>{t('checklists.progress')}</span>
                   <span className="font-medium">{currentProgress}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
@@ -1429,7 +1483,7 @@ export function Checklists() {
                 disabled={loading || currentProgress < 100}
                 className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#163a52] transition-colors disabled:opacity-50 shadow-sm"
               >
-                {loading ? 'Submitting...' : 'Submit Checklist'}
+                {loading ? t('common.submitting') : t('checklists.submitChecklist')}
               </button>
             </div>
           </div>

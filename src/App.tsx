@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
 import { DemoProvider, useDemo } from './contexts/DemoContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
@@ -220,11 +221,13 @@ function App() {
     <Router>
       <AuthProvider>
         <DemoProvider>
-          <RoleProvider>
-            <OperatingHoursProvider>
-              <AppRoutes />
-            </OperatingHoursProvider>
-          </RoleProvider>
+          <LanguageProvider>
+            <RoleProvider>
+              <OperatingHoursProvider>
+                <AppRoutes />
+              </OperatingHoursProvider>
+            </RoleProvider>
+          </LanguageProvider>
         </DemoProvider>
       </AuthProvider>
     </Router>

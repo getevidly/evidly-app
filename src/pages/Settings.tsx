@@ -7,6 +7,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole, UserRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generateAllTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
+import { useTranslation } from '../contexts/LanguageContext';
+import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
@@ -20,6 +22,7 @@ export function Settings() {
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
+  const { t, locale, setLocale } = useTranslation();
   const canEditHours = userRole === 'executive' || userRole === 'management';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
@@ -36,17 +39,34 @@ export function Settings() {
   });
   const [saving, setSaving] = useState(false);
 
+  // Tab names resolved at render time via i18n
+  const tabI18n: Record<string, string> = {
+    profile: t('settings.profile'),
+    organization: t('settings.organization'),
+    'operating-hours': t('settings.hoursAndShifts'),
+    notifications: t('settings.notifications'),
+    integrations: t('settings.integrations'),
+    security: t('settings.security'),
+    billing: t('settings.billing'),
+  };
+
   const allTabs = [
-    { id: 'profile', name: 'Profile', icon: User, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'organization', name: 'Organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'operating-hours', name: 'Hours & Shifts', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'notifications', name: 'Notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'integrations', name: 'Integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'security', name: 'Security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'billing', name: 'Billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
+    { id: 'profile', icon: User, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'operating-hours', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
   ];
 
   const tabs = allTabs.filter(tab => tab.roles.includes(userRole));
+
+  // Day labels translated
+  const dayLabelsI18n = [
+    t('settings.mon'), t('settings.tue'), t('settings.wed'), t('settings.thu'),
+    t('settings.fri'), t('settings.sat'), t('settings.sun'),
+  ];
 
   useEffect(() => {
     loadNotificationSettings();
@@ -103,13 +123,34 @@ export function Settings() {
     setSaving(false);
   };
 
+  // Alert type labels for notifications section
+  const alertTypes = [
+    { key: 'settings.docExpirationAlerts', desc: 'Alerts when vendor or employee documents are expiring', checked: true },
+    { key: 'settings.tempViolations', desc: 'Alerts when temperature readings exceed safe limits', checked: true },
+    { key: 'settings.haccpCcpFailures', desc: 'Critical alerts for food safety violations', checked: true },
+    { key: 'settings.checklistReminders', desc: 'Reminders for incomplete daily checklists', checked: true },
+    { key: 'settings.complianceScoreChanges', desc: 'Weekly compliance score updates', checked: false },
+  ];
+
+  // Billing features
+  const billingFeatures = [
+    t('settings.unlimitedTeamMembers'),
+    t('settings.upTo10Locations'),
+    t('settings.aiComplianceAdvisor'),
+    t('settings.haccpPlanManagement'),
+    t('settings.vendorComplianceTracking'),
+    t('settings.customReports'),
+    t('settings.emailSmsNotifications'),
+    t('settings.prioritySupport'),
+  ];
+
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Settings' }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('settings.title') }]} />
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-sm text-gray-600 mt-1">Manage your account and preferences</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('settings.title')}</h1>
+          <p className="text-sm text-gray-600 mt-1">{t('settings.subtitle')}</p>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
@@ -126,7 +167,7 @@ export function Settings() {
                 }`}
               >
                 <tab.icon className="h-5 w-5" />
-                <span>{tab.name}</span>
+                <span>{tabI18n[tab.id]}</span>
               </button>
             ))}
           </nav>
@@ -135,9 +176,9 @@ export function Settings() {
         <div className="flex-1 bg-white rounded-lg shadow p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Profile Settings</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.fullName')}</label>
                 <input
                   type="text"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].name : profile?.full_name}
@@ -146,7 +187,7 @@ export function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.email')}</label>
                 <input
                   type="email"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : profile?.email || ''}
@@ -156,7 +197,7 @@ export function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.role')}</label>
                 <input
                   type="text"
                   defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : profile?.role}
@@ -165,19 +206,36 @@ export function Settings() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
               </div>
+
+              {/* Language preference */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.preferredLanguage')}</label>
+                <select
+                  value={locale}
+                  onChange={(e) => setLocale(e.target.value as Locale)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                >
+                  {SUPPORTED_LOCALES.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {LOCALE_META[loc as Locale].flag} {LOCALE_META[loc as Locale].label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <button onClick={() => alert('Profile saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
-                Save Changes
+                {t('settings.saveChanges')}
               </button>
             </div>
           )}
 
           {activeTab === 'organization' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Organization Settings</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.orgSettings')}</h3>
 
               {/* Logo Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company Logo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.companyLogo')}</label>
                 <div className="flex items-center gap-4">
                   <div
                     className="flex items-center justify-center"
@@ -185,7 +243,7 @@ export function Settings() {
                   >
                     <div className="text-center">
                       <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
-                      <span style={{ fontSize: '10px', color: '#9ca3af' }}>Upload</span>
+                      <span style={{ fontSize: '10px', color: '#9ca3af' }}>{t('settings.upload')}</span>
                     </div>
                   </div>
                   <div>
@@ -193,15 +251,15 @@ export function Settings() {
                       onClick={() => alert('Logo upload coming soon. (Demo mode)')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
                     >
-                      Choose File
+                      {t('settings.chooseFile')}
                     </button>
-                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, or SVG. Max 2MB. Recommended 200x200px.</p>
+                    <p className="text-xs text-gray-500 mt-1">{t('settings.logoHint')}</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Organization Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.orgName')}</label>
                 <input
                   type="text"
                   defaultValue="Pacific Coast Dining"
@@ -209,23 +267,23 @@ export function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Industry</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.industry')}</label>
                 <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                  <option>Restaurant</option>
-                  <option>Food Manufacturing</option>
-                  <option>Catering</option>
-                  <option>Retail Food</option>
+                  <option>{t('settings.restaurant')}</option>
+                  <option>{t('settings.foodManufacturing')}</option>
+                  <option>{t('settings.catering')}</option>
+                  <option>{t('settings.retailFood')}</option>
                 </select>
               </div>
 
               {/* Locations */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Locations</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
                   {[
-                    { name: 'Downtown Kitchen', address: '123 Main St, San Francisco, CA 94105', status: 'Active' },
-                    { name: 'Airport Cafe', address: '450 Terminal Blvd, SFO, CA 94128', status: 'Active' },
-                    { name: 'University Dining', address: '800 Campus Dr, San Francisco, CA 94132', status: 'Active' },
+                    { name: 'Downtown Kitchen', address: '123 Main St, San Francisco, CA 94105' },
+                    { name: 'Airport Cafe', address: '450 Terminal Blvd, SFO, CA 94128' },
+                    { name: 'University Dining', address: '800 Campus Dr, San Francisco, CA 94132' },
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -235,7 +293,7 @@ export function Settings() {
                           <div className="text-xs text-gray-500">{loc.address}</div>
                         </div>
                       </div>
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{loc.status}</span>
+                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('settings.active')}</span>
                     </div>
                   ))}
                 </div>
@@ -243,23 +301,25 @@ export function Settings() {
                   onClick={() => alert('Add location coming soon. (Demo mode)')}
                   className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
                 >
-                  + Add Location
+                  {t('settings.addLocation')}
                 </button>
               </div>
 
               <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
-                Save Changes
+                {t('settings.saveChanges')}
               </button>
             </div>
           )}
 
           {activeTab === 'notifications' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Notification Preferences</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.notifPreferences')}</h3>
+
+              {/* TODO: Email/SMS notification templates should respect user language preference (Resend/Twilio) */}
 
               <div className="space-y-6">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">Delivery Methods</h4>
+                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.deliveryMethods')}</h4>
                   <div className="space-y-3">
                     <label className="flex items-start space-x-3">
                       <input
@@ -269,8 +329,8 @@ export function Settings() {
                         className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">Email Notifications</span>
-                        <p className="text-xs text-gray-500">Receive alerts and reminders via email</p>
+                        <span className="text-sm font-medium text-gray-900">{t('settings.emailNotifications')}</span>
+                        <p className="text-xs text-gray-500">{t('settings.emailNotifDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-start space-x-3">
@@ -281,31 +341,25 @@ export function Settings() {
                         className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">SMS Notifications</span>
-                        <p className="text-xs text-gray-500">Receive urgent alerts via text message</p>
+                        <span className="text-sm font-medium text-gray-900">{t('settings.smsNotifications')}</span>
+                        <p className="text-xs text-gray-500">{t('settings.smsNotifDesc')}</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">Alert Types</h4>
+                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.alertTypes')}</h4>
                   <div className="space-y-3">
-                    {[
-                      { label: 'Document Expiration Alerts', desc: 'Alerts when vendor or employee documents are expiring', checked: true },
-                      { label: 'Temperature Violations', desc: 'Alerts when temperature readings exceed safe limits', checked: true },
-                      { label: 'HACCP CCP Failures', desc: 'Critical alerts for food safety violations', checked: true },
-                      { label: 'Checklist Reminders', desc: 'Reminders for incomplete daily checklists', checked: true },
-                      { label: 'Compliance Score Changes', desc: 'Weekly compliance score updates', checked: false },
-                    ].map((item) => (
-                      <label key={item.label} className="flex items-start space-x-3">
+                    {alertTypes.map((item) => (
+                      <label key={item.key} className="flex items-start space-x-3">
                         <input
                           type="checkbox"
                           defaultChecked={item.checked}
                           className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1"
                         />
                         <div>
-                          <span className="text-sm font-medium text-gray-900">{item.label}</span>
+                          <span className="text-sm font-medium text-gray-900">{t(item.key)}</span>
                           <p className="text-xs text-gray-500">{item.desc}</p>
                         </div>
                       </label>
@@ -314,13 +368,13 @@ export function Settings() {
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">Quiet Hours</h4>
+                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.quietHours')}</h4>
                   <p className="text-sm text-gray-600 mb-4">
-                    SMS notifications will not be sent during these hours
+                    {t('settings.quietHoursDesc')}
                   </p>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.startTimeLabel')}</label>
                       <input
                         type="time"
                         value={notificationSettings.quiet_hours_start}
@@ -329,7 +383,7 @@ export function Settings() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.endTimeLabel')}</label>
                       <input
                         type="time"
                         value={notificationSettings.quiet_hours_end}
@@ -341,7 +395,7 @@ export function Settings() {
                 </div>
 
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">Reminder Frequency</h4>
+                  <h4 className="font-semibold text-gray-900 mb-4">{t('settings.reminderFrequency')}</h4>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-3">
                       <input
@@ -353,8 +407,8 @@ export function Settings() {
                         className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">Per Event</span>
-                        <p className="text-xs text-gray-500">Receive notifications immediately as events occur</p>
+                        <span className="text-sm font-medium text-gray-900">{t('settings.perEvent')}</span>
+                        <p className="text-xs text-gray-500">{t('settings.perEventDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-center space-x-3">
@@ -367,8 +421,8 @@ export function Settings() {
                         className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">Daily Digest</span>
-                        <p className="text-xs text-gray-500">Receive a daily summary of all notifications</p>
+                        <span className="text-sm font-medium text-gray-900">{t('settings.dailyDigest')}</span>
+                        <p className="text-xs text-gray-500">{t('settings.dailyDigestDesc')}</p>
                       </div>
                     </label>
                     <label className="flex items-center space-x-3">
@@ -381,24 +435,24 @@ export function Settings() {
                         className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300"
                       />
                       <div>
-                        <span className="text-sm font-medium text-gray-900">Weekly Digest</span>
-                        <p className="text-xs text-gray-500">Receive a weekly summary every Monday</p>
+                        <span className="text-sm font-medium text-gray-900">{t('settings.weeklyDigestSetting')}</span>
+                        <p className="text-xs text-gray-500">{t('settings.weeklyDigestDesc')}</p>
                       </div>
                     </label>
                   </div>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-gray-900 mb-2">Document Expiration Alerts</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">{t('settings.docExpirationAlerts')}</h4>
                   <p className="text-sm text-gray-600">
                     You will automatically receive alerts for expiring documents:
                   </p>
                   <ul className="mt-2 space-y-1 text-sm text-gray-600">
-                    <li>• 30 days before: Email alert</li>
-                    <li>• 14 days before: Email alert (urgent)</li>
-                    <li>• 7 days before: Email + SMS alert</li>
-                    <li>• 1 day before: Email + SMS alert (critical)</li>
-                    <li>• Day of expiration: EXPIRED notification</li>
+                    <li>• {t('settings.days30before')}</li>
+                    <li>• {t('settings.days14before')}</li>
+                    <li>• {t('settings.days7before')}</li>
+                    <li>• {t('settings.days1before')}</li>
+                    <li>• {t('settings.dayOfExpiration')}</li>
                   </ul>
                 </div>
               </div>
@@ -408,7 +462,7 @@ export function Settings() {
                 disabled={saving}
                 className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving ? 'Saving...' : 'Save Preferences'}
+                {saving ? t('common.saving') : t('settings.savePreferences')}
               </button>
 
               <div className="border-t border-gray-200 pt-6 mt-8">
@@ -419,8 +473,8 @@ export function Settings() {
 
           {activeTab === 'integrations' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Integration Settings</h3>
-              <p className="text-gray-600">Connect EvidLY with your existing tools and services.</p>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.integrationSettings')}</h3>
+              <p className="text-gray-600">{t('settings.integrationsDesc')}</p>
 
               <div className="space-y-4">
                 {/* Restaurant365 */}
@@ -439,11 +493,11 @@ export function Settings() {
                       onClick={() => alert('Restaurant365 integration coming soon. Contact support for early access.')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
-                      Connect
+                      {t('settings.connect')}
                     </button>
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Auto-sync vendor data and purchase orders</span>
                   </div>
                 </div>
@@ -464,11 +518,11 @@ export function Settings() {
                       onClick={() => alert('Cintas integration coming soon. Contact support for early access.')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
-                      Connect
+                      {t('settings.connect')}
                     </button>
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Auto-import service records and certificates</span>
                   </div>
                 </div>
@@ -489,11 +543,11 @@ export function Settings() {
                       onClick={() => alert('Ecolab integration coming soon. Contact support for early access.')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
-                      Connect
+                      {t('settings.connect')}
                     </button>
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">Coming Soon</span>
+                    <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
                     <span>Import audit scores and corrective actions</span>
                   </div>
                 </div>
@@ -505,9 +559,9 @@ export function Settings() {
                       <Plug className="h-6 w-6 text-gray-500" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">API Access</h4>
-                      <p className="text-sm text-gray-500">Build custom integrations with the EvidLY API</p>
-                      <p className="text-xs text-gray-400 mt-1">Available on Enterprise plan</p>
+                      <h4 className="font-semibold text-gray-900">{t('settings.apiAccess')}</h4>
+                      <p className="text-sm text-gray-500">{t('settings.apiDesc')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('settings.enterprisePlan')}</p>
                     </div>
                   </div>
                 </div>
@@ -517,17 +571,17 @@ export function Settings() {
 
           {activeTab === 'security' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
-              <p className="text-sm text-gray-600">Update your account password. You must enter your current password to confirm changes.</p>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.securityChangePassword')}</h3>
+              <p className="text-sm text-gray-600">{t('settings.securityDesc')}</p>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.currentPassword')}</label>
                 <div className="relative">
                   <input
                     type={showCurrentPw ? 'text' : 'password'}
                     value={pwForm.current}
                     onChange={(e) => { setPwForm({ ...pwForm, current: e.target.value }); setPwError(''); setPwSuccess(''); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
-                    placeholder="Enter current password"
+                    placeholder={t('topBar.enterCurrentPassword')}
                   />
                   <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -535,14 +589,14 @@ export function Settings() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.newPassword')}</label>
                 <div className="relative">
                   <input
                     type={showNewPw ? 'text' : 'password'}
                     value={pwForm.newPw}
                     onChange={(e) => { setPwForm({ ...pwForm, newPw: e.target.value }); setPwError(''); setPwSuccess(''); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
-                    placeholder="Enter new password (min 8 characters)"
+                    placeholder={t('topBar.enterNewPassword')}
                   />
                   <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -550,13 +604,13 @@ export function Settings() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.confirmNewPassword')}</label>
                 <input
                   type="password"
                   value={pwForm.confirm}
                   onChange={(e) => { setPwForm({ ...pwForm, confirm: e.target.value }); setPwError(''); setPwSuccess(''); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                  placeholder="Re-enter new password"
+                  placeholder={t('topBar.reEnterNewPassword')}
                 />
               </div>
               {pwError && (
@@ -570,33 +624,33 @@ export function Settings() {
                   setPwError('');
                   setPwSuccess('');
                   if (!pwForm.current || !pwForm.newPw || !pwForm.confirm) {
-                    setPwError('All fields are required.');
+                    setPwError(t('topBar.allFieldsRequired'));
                     return;
                   }
                   if (pwForm.newPw.length < 8) {
-                    setPwError('New password must be at least 8 characters.');
+                    setPwError(t('topBar.passwordMinLength'));
                     return;
                   }
                   if (pwForm.newPw !== pwForm.confirm) {
-                    setPwError('New passwords do not match.');
+                    setPwError(t('topBar.passwordsDoNotMatch'));
                     return;
                   }
                   if (isDemoMode) {
-                    setPwSuccess('Password changes are available in live accounts only.');
+                    setPwSuccess(t('topBar.passwordLiveOnly'));
                     return;
                   }
                   supabase.auth.updateUser({ password: pwForm.newPw }).then(({ error }) => {
                     if (error) {
                       setPwError(error.message);
                     } else {
-                      setPwSuccess('Password updated successfully.');
+                      setPwSuccess(t('topBar.passwordUpdated'));
                       setPwForm({ current: '', newPw: '', confirm: '' });
                     }
                   });
                 }}
                 className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
               >
-                Update Password
+                {t('topBar.updatePassword')}
               </button>
             </div>
           )}
@@ -604,18 +658,18 @@ export function Settings() {
           {activeTab === 'operating-hours' && (
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Hours & Shifts</h3>
-                <p className="text-sm text-gray-600 mt-1">Configure operating hours and shift schedules for each location.</p>
+                <h3 className="text-xl font-bold text-gray-900">{t('settings.hoursAndShifts')}</h3>
+                <p className="text-sm text-gray-600 mt-1">{t('settings.hoursShiftsDesc')}</p>
                 {!canEditHours && (
                   <div className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                    View only — contact your manager to update hours and shifts.
+                    {t('settings.viewOnlyHours')}
                   </div>
                 )}
               </div>
 
               {/* Operating Hours */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">Operating Hours</h4>
+                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.operatingHours')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => (
                     <div key={loc.locationName} className="border border-gray-200 rounded-lg p-5">
@@ -638,14 +692,14 @@ export function Settings() {
                               }}
                               className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
                             />
-                            <span className="text-sm font-medium text-gray-700">{day}</span>
+                            <span className="text-sm font-medium text-gray-700">{dayLabelsI18n[idx]}</span>
                           </label>
                         ))}
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Opens</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.opens')}</label>
                           <select
                             value={loc.openTime}
                             disabled={!canEditHours}
@@ -656,7 +710,7 @@ export function Settings() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Closes</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.closes')}</label>
                           <select
                             value={loc.closeTime}
                             disabled={!canEditHours}
@@ -669,7 +723,7 @@ export function Settings() {
                       </div>
 
                       <div className="mt-3 text-xs text-gray-500">
-                        {loc.days.filter(Boolean).length} days/week · {formatTime24to12(loc.openTime)} – {formatTime24to12(loc.closeTime)}
+                        {loc.days.filter(Boolean).length} {t('settings.daysPerWeek')} {formatTime24to12(loc.openTime)} – {formatTime24to12(loc.closeTime)}
                       </div>
                     </div>
                   ))}
@@ -678,7 +732,7 @@ export function Settings() {
 
               {/* Shift Configuration */}
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">Shift Configuration</h4>
+                <h4 className="font-semibold text-gray-900 mb-4">{t('settings.shiftConfiguration')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => {
                     const locShifts = getShiftsForLocation(loc.locationName).filter(s => s.locationName === loc.locationName);
@@ -687,7 +741,7 @@ export function Settings() {
                         <div className="flex items-center gap-2 mb-4">
                           <MapPin className="h-5 w-5 text-[#1e4d6b]" />
                           <span className="font-semibold text-gray-900">{loc.locationName}</span>
-                          <span className="text-xs text-gray-400 ml-auto">{locShifts.length} shift{locShifts.length !== 1 ? 's' : ''}</span>
+                          <span className="text-xs text-gray-400 ml-auto">{locShifts.length} {locShifts.length !== 1 ? t('settings.shifts') : t('settings.shift')}</span>
                         </div>
 
                         <div className="space-y-3">
@@ -706,13 +760,13 @@ export function Settings() {
                                     onClick={() => removeShift(shift.id)}
                                     className="text-red-500 hover:text-red-700 text-xs font-medium ml-auto"
                                   >
-                                    Remove
+                                    {t('common.remove')}
                                   </button>
                                 )}
                               </div>
                               <div className="grid grid-cols-2 gap-3 mb-3">
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-500 mb-1">Start Time</label>
+                                  <label className="block text-xs font-medium text-gray-500 mb-1">{t('settings.startTimeLabel')}</label>
                                   <select
                                     value={shift.startTime}
                                     disabled={!canEditHours}
@@ -723,7 +777,7 @@ export function Settings() {
                                   </select>
                                 </div>
                                 <div>
-                                  <label className="block text-xs font-medium text-gray-500 mb-1">End Time</label>
+                                  <label className="block text-xs font-medium text-gray-500 mb-1">{t('settings.endTimeLabel')}</label>
                                   <select
                                     value={shift.endTime}
                                     disabled={!canEditHours}
@@ -748,7 +802,7 @@ export function Settings() {
                                       }}
                                       className="h-3.5 w-3.5 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
                                     />
-                                    <span className="text-xs text-gray-600">{day}</span>
+                                    <span className="text-xs text-gray-600">{dayLabelsI18n[idx]}</span>
                                   </label>
                                 ))}
                               </div>
@@ -756,10 +810,10 @@ export function Settings() {
                           ))}
                           {canEditHours && (
                             <button
-                              onClick={() => addShift({ name: 'New Shift', locationName: loc.locationName, startTime: '09:00', endTime: '17:00', days: [false, true, true, true, true, true, false] })}
+                              onClick={() => addShift({ name: t('settings.newShift'), locationName: loc.locationName, startTime: '09:00', endTime: '17:00', days: [false, true, true, true, true, true, false] })}
                               className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
                             >
-                              + Add Shift
+                              {t('settings.addShift')}
                             </button>
                           )}
                         </div>
@@ -771,7 +825,7 @@ export function Settings() {
 
               {canEditHours && (
                 <button onClick={() => alert('Hours and shifts saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
-                  Save Changes
+                  {t('settings.saveChanges')}
                 </button>
               )}
             </div>
@@ -779,25 +833,16 @@ export function Settings() {
 
           {activeTab === 'billing' && (
             <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">Billing & Subscription</h3>
+              <h3 className="text-xl font-bold text-gray-900">{t('settings.billingTitle')}</h3>
               <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
-                <h4 className="text-lg font-semibold mb-2">Professional Plan</h4>
-                <div className="text-3xl font-bold mb-1">$99<span className="text-lg font-normal">/month</span></div>
-                <p className="text-gray-200 text-sm">Unlimited users • All features • 3 locations</p>
+                <h4 className="text-lg font-semibold mb-2">{t('settings.professionalPlan')}</h4>
+                <div className="text-3xl font-bold mb-1">$99<span className="text-lg font-normal">{t('settings.perMonth')}</span></div>
+                <p className="text-gray-200 text-sm">{t('settings.planDesc')}</p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Plan Features</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">{t('settings.planFeatures')}</h4>
                 <div className="space-y-2">
-                  {[
-                    'Unlimited team members',
-                    'Up to 10 locations',
-                    'AI Compliance Advisor',
-                    'HACCP plan management',
-                    'Vendor compliance tracking',
-                    'Custom reports & analytics',
-                    'Email & SMS notifications',
-                    'Priority support',
-                  ].map((feature) => (
+                  {billingFeatures.map((feature) => (
                     <div key={feature} className="flex items-center gap-2 text-sm text-gray-700">
                       <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
                       <span>{feature}</span>
@@ -806,17 +851,17 @@ export function Settings() {
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Payment Method</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">{t('settings.paymentMethod')}</h4>
                 <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <CreditCard className="h-6 w-6 text-gray-400" />
                     <div>
                       <div className="font-medium text-gray-900">•••• •••• •••• 4242</div>
-                      <div className="text-sm text-gray-500">Expires 12/24</div>
+                      <div className="text-sm text-gray-500">{t('settings.expires')} 12/24</div>
                     </div>
                   </div>
                   <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium">
-                    Update
+                    {t('common.update')}
                   </button>
                 </div>
               </div>

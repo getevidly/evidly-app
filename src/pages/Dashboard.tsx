@@ -19,11 +19,13 @@ import { LiveActivityFeed } from '../components/LiveActivityFeed';
 import { OnboardingChecklist } from '../components/OnboardingChecklist';
 import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
+import { useTranslation } from '../contexts/LanguageContext';
 
 export function Dashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { userRole } = useRole();
+  const { t } = useTranslation();
 
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'all';
@@ -52,9 +54,9 @@ export function Dashboard() {
 
   const weights = getWeights();
   const pillarScores = [
-    { name: 'Operational', weight: Math.round(weights.operational * 100), score: operationalScore, tooltip: 'Temperature logs, checklists, corrective actions, receiving logs, HACCP tasks', trend: operationalTrend },
-    { name: 'Equipment', weight: Math.round(weights.equipment * 100), score: equipmentScore, tooltip: 'Hood cleaning, fire suppression, fire extinguishers, grease trap, HVAC service', trend: equipmentTrend },
-    { name: 'Documentation', weight: Math.round(weights.documentation * 100), score: documentationScore, tooltip: 'Health permit, business license, vendor certificates, food handler certs, insurance', trend: documentationTrend },
+    { name: t('dashboard.operational'), weight: Math.round(weights.operational * 100), score: operationalScore, tooltip: t('dashboard.operationalTooltip'), trend: operationalTrend },
+    { name: t('dashboard.equipmentSafety'), weight: Math.round(weights.equipment * 100), score: equipmentScore, tooltip: t('dashboard.equipmentTooltip'), trend: equipmentTrend },
+    { name: t('dashboard.documentationCompliance'), weight: Math.round(weights.documentation * 100), score: documentationScore, tooltip: t('dashboard.documentationTooltip'), trend: documentationTrend },
   ].sort((a, b) => b.score - a.score);
 
   const scoreInfo = getGrade(complianceScore);
@@ -199,7 +201,7 @@ export function Dashboard() {
     <>
       <div className="bg-[#1e4d6b] text-white px-6 py-3 flex items-center space-x-2 rounded-lg mb-6">
         <Info className="h-5 w-5" />
-        <span className="font-medium">Demo Mode — viewing sample data</span>
+        <span className="font-medium">{t('dashboard.demoMode')}</span>
       </div>
 
       <div className="space-y-6">
@@ -217,7 +219,7 @@ export function Dashboard() {
                 className="flex items-center space-x-1 mb-3 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors duration-150"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Back to All Locations</span>
+                <span>{t('dashboard.backToAllLocations')}</span>
               </button>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 {locationInfo.name}
@@ -231,17 +233,17 @@ export function Dashboard() {
 
         {['executive', 'management'].includes(userRole) && (
           <>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Compliance Overview</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('dashboard.complianceOverview')}</h2>
 
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Compliance Score</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.complianceScore')}</h3>
             <button
               onClick={() => setShowShareModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm"
             >
               <Share2 className="h-4 w-4" />
-              Share Report
+              {t('dashboard.shareReport')}
             </button>
           </div>
 
@@ -354,13 +356,13 @@ export function Dashboard() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
               {[
-                { id: 'overview', label: 'Overview' },
-                { id: 'progress', label: "Today's Progress" },
-                { id: 'action', label: 'Action Center' },
-                { id: 'history', label: 'Score History' },
-                { id: 'vendors', label: 'Vendor Services' },
-                { id: 'metrics', label: 'Key Metrics' },
-                { id: 'passport', label: 'QR Passport' }
+                { id: 'overview', label: t('dashboard.overview') },
+                { id: 'progress', label: t('dashboard.todaysProgress') },
+                { id: 'action', label: t('dashboard.actionCenter') },
+                { id: 'history', label: t('dashboard.scoreHistory') },
+                { id: 'vendors', label: t('dashboard.vendorServices') },
+                { id: 'metrics', label: t('dashboard.keyMetrics') },
+                { id: 'passport', label: t('dashboard.qrPassport') }
               ].map(tab => (
                 <div key={tab.id} onClick={() => setActiveTab(tab.id as any)} style={{
                   padding: '12px 20px',
@@ -395,7 +397,7 @@ export function Dashboard() {
                 flexShrink: 0,
               }}
             >
-              <option value="all">All Locations</option>
+              <option value="all">{t('common.allLocations')}</option>
               {locationDropdownOptions.map((loc) => (
                 <option key={loc.id} value={loc.id}>{loc.name}</option>
               ))}
@@ -409,21 +411,21 @@ export function Dashboard() {
           {/* Overview — All Locations */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
-              <h3 style={{ fontSize: '20px', fontWeight: '600' }}>Overview</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600' }}>{t('dashboard.overview')}</h3>
               <OnboardingChecklist />
 
-              <h3 className="text-md font-semibold text-gray-900 mb-3">Locations</h3>
+              <h3 className="text-md font-semibold text-gray-900 mb-3">{t('common.location')}</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>Location</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Overall</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Operational</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Equipment</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Documentation</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>Trend</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>Status</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>{t('common.location')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.complianceScore')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.operational')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.equipmentSafety')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.documentationCompliance')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.trend')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>{t('common.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -475,10 +477,10 @@ export function Dashboard() {
           {/* Overview — Specific Location */}
           {activeTab === 'overview' && selectedLocation !== 'all' && (
             <div className="mt-6">
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Overview</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.overview')}</h3>
               <div className="flex items-center space-x-2 mb-4">
                 <Activity className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-                <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.recentActivity')}</h3>
               </div>
 
               <div className="space-y-3">
@@ -515,7 +517,7 @@ export function Dashboard() {
                 onClick={() => { navigate('/alerts'); }}
                 className="mt-4 w-full text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors duration-150"
               >
-                View All Activity
+                {t('dashboard.viewAllActivity')}
               </button>
             </div>
           )}
@@ -523,10 +525,10 @@ export function Dashboard() {
           {/* Today's Progress — dynamically computed, All = sum of locations */}
           {activeTab === 'progress' && (
             <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Today's Progress</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.todaysProgress')}</h3>
               <div onClick={() => navigate('/temp-logs')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} className="hover:bg-gray-50 transition-colors">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontWeight: '600', color: '#1e293b' }}>Temperature Checks</span>
+                  <span style={{ fontWeight: '600', color: '#1e293b' }}>{t('nav.temperatures')}</span>
                   <span style={{ fontWeight: '500', color: '#475569' }}>{progress.tempDone}/{progress.tempTotal}</span>
                 </div>
                 <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
@@ -535,7 +537,7 @@ export function Dashboard() {
               </div>
               <div onClick={() => navigate('/checklists')} style={{ marginBottom: '20px', cursor: 'pointer', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0' }} className="hover:bg-gray-50 transition-colors">
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span style={{ fontWeight: '600', color: '#1e293b' }}>Checklists</span>
+                  <span style={{ fontWeight: '600', color: '#1e293b' }}>{t('nav.checklists')}</span>
                   <span style={{ fontWeight: '500', color: '#475569' }}>{progress.checkDone}/{progress.checkTotal}</span>
                 </div>
                 <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
@@ -568,13 +570,13 @@ export function Dashboard() {
 
             return (
               <div>
-                <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Action Items</h3>
+                <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.actionCenter')}</h3>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                   {[
-                    { key: null, label: 'All', count: allActionItems.length },
-                    { key: 'Operational', label: 'Operational', count: pillarCounts.Operational },
-                    { key: 'Equipment', label: 'Equipment', count: pillarCounts.Equipment },
-                    { key: 'Documentation', label: 'Documentation', count: pillarCounts.Documentation },
+                    { key: null, label: t('common.all'), count: allActionItems.length },
+                    { key: 'Operational', label: t('dashboard.operational'), count: pillarCounts.Operational },
+                    { key: 'Equipment', label: t('dashboard.equipmentSafety'), count: pillarCounts.Equipment },
+                    { key: 'Documentation', label: t('dashboard.documentationCompliance'), count: pillarCounts.Documentation },
                   ].map(chip => (
                     <button
                       key={chip.label}
@@ -597,9 +599,9 @@ export function Dashboard() {
                 </div>
                 {filteredItems.map((item, i) => {
                   const priorityStyles = {
-                    high: { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Urgent' },
-                    medium: { dot: '#d4af37', bg: '#fffbeb', border: '#fef3c7', label: 'Soon' },
-                    low: { dot: '#1e4d6b', bg: '#eff6ff', border: '#dbeafe', label: 'Info' },
+                    high: { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: t('dashboard.urgent') },
+                    medium: { dot: '#d4af37', bg: '#fffbeb', border: '#fef3c7', label: t('dashboard.soon') },
+                    low: { dot: '#1e4d6b', bg: '#eff6ff', border: '#dbeafe', label: t('dashboard.info') },
                   };
                   const ps = priorityStyles[item.priority];
                   return (
@@ -616,7 +618,7 @@ export function Dashboard() {
                   );
                 })}
                 {filteredItems.length === 0 && (
-                  <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>No action items for this category.</div>
+                  <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>{t('dashboard.noActionItems')}</div>
                 )}
               </div>
             );
@@ -631,21 +633,21 @@ export function Dashboard() {
             const locationMap: Record<string, string> = {};
             locations.forEach(l => { locationMap[l.id] = l.name; });
             const statusColor = (s: string) => s === 'overdue' ? '#ef4444' : s === 'upcoming' ? '#d4af37' : '#22c55e';
-            const statusLabel = (s: string) => s === 'overdue' ? 'Overdue' : s === 'upcoming' ? 'Due Soon' : 'On Track';
+            const statusLabel = (s: string) => s === 'overdue' ? t('common.overdue') : s === 'upcoming' ? t('dashboard.dueSoon') : t('dashboard.onTrack');
             const formatDate = (d: string) => { const dt = new Date(d); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
             return (
             <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Vendor Services</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.vendorServices')}</h3>
               <div className="overflow-x-auto">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>
-                      <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vendor</th>
-                      <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Service</th>
-                      {selectedLocation === 'all' && <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Location</th>}
-                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Service</th>
-                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Next Due</th>
-                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+                      <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('dashboard.vendor')}</th>
+                      <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('dashboard.service')}</th>
+                      {selectedLocation === 'all' && <th style={{ textAlign: 'left', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('common.location')}</th>}
+                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('dashboard.lastService')}</th>
+                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('dashboard.nextDue')}</th>
+                      <th style={{ textAlign: 'center', padding: '10px', fontSize: '12px', color: '#64748b', borderBottom: '2px solid #e2e8f0', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t('common.status')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -669,14 +671,14 @@ export function Dashboard() {
           {/* Score History */}
           {activeTab === 'history' && (
             <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Score History</h3>
-              <p style={{ color: '#64748b', marginBottom: '16px', fontSize: '14px' }}>12-week compliance score trend</p>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.scoreHistory')}</h3>
+              <p style={{ color: '#64748b', marginBottom: '16px', fontSize: '14px' }}>{t('dashboard.weekTrend')}</p>
               <div style={{ height: '300px' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   {selectedLocation === 'all' ? (
                     <LineChart data={historicalData.downtown.map((item, i) => ({
                       date: item.date,
-                      Average: Math.round((item.score + historicalData.airport[i].score + historicalData.university[i].score) / 3),
+                      [t('dashboard.average')]: Math.round((item.score + historicalData.airport[i].score + historicalData.university[i].score) / 3),
                       Downtown: item.score,
                       Airport: historicalData.airport[i].score,
                       University: historicalData.university[i].score,
@@ -688,7 +690,7 @@ export function Dashboard() {
                       <Legend />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
                       <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
-                      <Line type="monotone" dataKey="Average" stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
+                      <Line type="monotone" dataKey={t('dashboard.average')} stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
                       <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
                       <Line type="monotone" dataKey="Airport" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
                       <Line type="monotone" dataKey="University" stroke="#ef4444" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
@@ -701,7 +703,7 @@ export function Dashboard() {
                       <Tooltip />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
                       <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
-                      <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name="Compliance Score" />
+                      <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name={t('dashboard.complianceScore')} />
                     </LineChart>
                   )}
                 </ResponsiveContainer>
@@ -722,7 +724,7 @@ export function Dashboard() {
               : metricsPerLocation[selectedLocation] || { hoursSaved: 86, moneySaved: 3010, logsCompleted: 312, docsStored: 47 };
             return (
             <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>Key Metrics</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.keyMetrics')}</h3>
               <TimeSavedCounter
                 hoursSaved={m.hoursSaved}
                 moneySaved={m.moneySaved}
@@ -743,7 +745,7 @@ export function Dashboard() {
             const qrLocations = selectedLocation === 'all' ? allQrLocations : allQrLocations.filter(l => l.id === selectedLocation);
             return (
             <div>
-              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>QR Compliance Passport</h3>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.qrCompliancePassport')}</h3>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                 {qrLocations.map((loc, i) => (
                   <div key={i} style={{ flex: '1 1 280px', background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
@@ -754,8 +756,8 @@ export function Dashboard() {
                     </div>
                     <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '14px', fontWeight: '700', color: loc.color, border: '2px solid ' + loc.color }}>{loc.score}</div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
-                      <button onClick={() => window.print()} className="bg-[#1e4d6b] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#163a52] transition-colors duration-150">Print</button>
-                      <button onClick={() => navigate(`/passport/${loc.id}`)} className="bg-white text-[#1e4d6b] border border-[#1e4d6b] px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors duration-150">View Passport</button>
+                      <button onClick={() => window.print()} className="bg-[#1e4d6b] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#163a52] transition-colors duration-150">{t('common.print')}</button>
+                      <button onClick={() => navigate(`/passport/${loc.id}`)} className="bg-white text-[#1e4d6b] border border-[#1e4d6b] px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors duration-150">{t('dashboard.viewPassport')}</button>
                     </div>
                   </div>
                 ))}
