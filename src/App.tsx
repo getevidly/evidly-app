@@ -33,7 +33,7 @@ const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.S
 const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
 const InviteAccept = lazy(() => import('./pages/InviteAccept').then(m => ({ default: m.InviteAccept })));
 const AdminClientOnboarding = lazy(() => import('./pages/AdminClientOnboarding').then(m => ({ default: m.AdminClientOnboarding })));
-const Help = lazy(() => import('./pages/Help').then(m => ({ default: m.Help })));
+const Help = lazy(() => import('./pages/HelpSupport').then(m => ({ default: m.HelpSupport })));
 const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
 const UsageAnalytics = lazy(() => import('./pages/UsageAnalytics').then(m => ({ default: m.UsageAnalytics })));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));

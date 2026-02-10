@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
@@ -22,6 +22,23 @@ interface LayoutProps {
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
   const { tourActive } = useDemo();
+
+  // Load Zendesk Web Widget (hidden launcher — opened programmatically from Help page)
+  useEffect(() => {
+    if (document.getElementById('ze-snippet')) return;
+    const script = document.createElement('script');
+    script.id = 'ze-snippet';
+    script.src = 'https://static.zdassets.com/ekr/snippet.js?key=REPLACE_WITH_ZENDESK_KEY';
+    script.async = true;
+    script.onload = () => {
+      if (typeof window.zE === 'function') {
+        window.zE('messenger', 'hide');
+        window.zE('messenger:set', 'locale', 'en');
+      }
+    };
+    document.head.appendChild(script);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#faf8f3]">
       <Sidebar />
