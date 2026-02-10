@@ -371,12 +371,17 @@ function isOverdue(incident: Incident): boolean {
   return now - created > 24 * 3600000;
 }
 
-// TODO: Compliance score integration
-// - Resolved within 2 hours: +2 points to operational compliance
-// - Resolved within 24 hours: neutral (0 points)
-// - Unresolved after 24 hours: -3 points per day to operational compliance
-// - Verified by manager: +1 bonus point
-// Update src/data/demoData.ts complianceScores calculation to include incident resolution time
+// TODO: Compliance score integration — wire into src/lib/complianceScoring.ts
+// Incident resolution time feeds into the Operational Safety pillar.
+// Scoring thresholds (per incident):
+//   - Resolved under 2 hours:  100 pts (full credit)
+//   - Resolved 2–12 hours:      80 pts
+//   - Resolved 12–24 hours:     60 pts
+//   - Resolved 24–48 hours:     40 pts
+//   - Resolved over 48 hours:   20 pts
+//   - Unresolved:                 0 pts
+// Average across all incidents → feeds into calculateOperationalScore() as "incidents" sub-component (20% weight).
+// Also factor in: verified by manager = +5 bonus, rejected resolution = −10 penalty.
 
 // ── Component ──────────────────────────────────────────────────────
 
@@ -396,6 +401,8 @@ export function IncidentLog() {
   const [severityFilter, setSeverityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [assigneeFilter, setAssigneeFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<'all' | '24h' | '7d' | '30d'>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'severity' | 'resolution'>('newest');
 
   // Create form
@@ -410,6 +417,7 @@ export function IncidentLog() {
   const [actionText, setActionText] = useState('');
   const [actionChips, setActionChips] = useState<string[]>([]);
   const [actionPhotos, setActionPhotos] = useState<PhotoRecord[]>([]);
+  const [estimatedCompletion, setEstimatedCompletion] = useState<string>('');
 
   // Resolve form
   const [resolutionSummary, setResolutionSummary] = useState('');
@@ -446,6 +454,11 @@ export function IncidentLog() {
     if (severityFilter !== 'all') list = list.filter(i => i.severity === severityFilter);
     if (typeFilter !== 'all') list = list.filter(i => i.type === typeFilter);
     if (locationFilter !== 'all') list = list.filter(i => i.location === locationFilter);
+    if (assigneeFilter !== 'all') list = list.filter(i => i.assignedTo === assigneeFilter);
+    if (dateRange !== 'all') {
+      const cutoff = dateRange === '24h' ? 86400000 : dateRange === '7d' ? 7 * 86400000 : 30 * 86400000;
+      list = list.filter(i => now - new Date(i.createdAt).getTime() < cutoff);
+    }
 
     switch (sortBy) {
       case 'newest': list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); break;
@@ -462,7 +475,7 @@ export function IncidentLog() {
       }); break;
     }
     return list;
-  }, [incidents, statusFilter, severityFilter, typeFilter, locationFilter, sortBy]);
+  }, [incidents, statusFilter, severityFilter, typeFilter, locationFilter, assigneeFilter, dateRange, sortBy]);
 
   // ── Handlers ───────────────────────────────────────────────────
   const handleCreateIncident = () => {
@@ -504,9 +517,10 @@ export function IncidentLog() {
     updated.correctiveAction = actionText;
     updated.actionChips = actionChips;
     updated.updatedAt = new Date().toISOString();
+    const estLabel = estimatedCompletion ? ` (est. completion: ${estimatedCompletion})` : '';
     updated.timeline = [...updated.timeline, {
       id: `t-${Date.now()}`,
-      action: `Corrective action: ${actionText}`,
+      action: `Corrective action: ${actionText}${estLabel}`,
       status: 'in_progress',
       user: 'Current User',
       timestamp: new Date().toISOString(),
@@ -515,7 +529,7 @@ export function IncidentLog() {
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
     setSelectedIncident(updated);
     setShowActionForm(false);
-    setActionText(''); setActionChips([]); setActionPhotos([]);
+    setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion('');
   };
 
   const handleResolve = () => {
@@ -939,6 +953,24 @@ export function IncidentLog() {
                     placeholder="Describe the corrective action taken..."
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Estimated Completion Time</label>
+                  <select
+                    value={estimatedCompletion}
+                    onChange={e => setEstimatedCompletion(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="">Select estimate...</option>
+                    <option value="30 minutes">30 minutes</option>
+                    <option value="1 hour">1 hour</option>
+                    <option value="2 hours">2 hours</option>
+                    <option value="4 hours">4 hours</option>
+                    <option value="Same day">Same day</option>
+                    <option value="Next day">Next day</option>
+                    <option value="2-3 days">2-3 days</option>
+                    <option value="1 week">1 week</option>
+                  </select>
+                </div>
                 <PhotoEvidence
                   photos={actionPhotos}
                   onChange={setActionPhotos}
@@ -946,7 +978,7 @@ export function IncidentLog() {
                 />
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); }}
+                    onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion(''); }}
                     className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
@@ -1215,6 +1247,16 @@ export function IncidentLog() {
             <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
               <option value="all">All Locations</option>
               {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Assignees</option>
+              {TEAM_MEMBERS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <select value={dateRange} onChange={e => setDateRange(e.target.value as any)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Time</option>
+              <option value="24h">Last 24 Hours</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
             </select>
             <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
               <option value="newest">Newest First</option>
