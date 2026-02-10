@@ -10,6 +10,7 @@
 // ============================================================
 
 import { locations, locationScores, vendors, scoreImpactData, needsAttentionItems } from '../data/demoData';
+import { calculateJurisdictionScore, extractCountySlug } from './jurisdictionScoring';
 
 // ── Types ──────────────────────────────────────────────────
 
@@ -102,6 +103,10 @@ export interface ComplianceScoreSection {
   documentation: number;
   countyGrade?: string;
   countyScoreLabel?: string;
+  jurisdictionScore?: number;
+  jurisdictionGrade?: string;
+  jurisdictionSystemType?: string;
+  jurisdictionViolationCount?: number;
   trend30Day: number;
   trend60Day: number;
   trend90Day: number;
@@ -510,17 +515,27 @@ export function generateHealthDeptReport(config: ReportConfig): HealthDeptReport
     fireSafety: generateFireSafety(config.locationId),
     vendorDocs: generateVendorDocs(config.locationId),
     correctiveActions: generateCorrectiveActions(config.locationId),
-    complianceScore: {
-      overall: scores.overall,
-      operational: scores.operational,
-      equipment: scores.equipment,
-      documentation: scores.documentation,
-      countyGrade: template.getGrade(scores.overall),
-      countyScoreLabel: template.gradingSystem,
-      trend30Day: config.locationId === 'downtown' ? 4 : config.locationId === 'airport' ? -4 : 1,
-      trend60Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 3 : 6,
-      trend90Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 6 : 12,
-    },
+    complianceScore: (() => {
+      const countySlug = extractCountySlug(FACILITY_INFO[config.locationId]?.county || 'generic');
+      const locObj = locations.find(l => l.urlId === config.locationId);
+      const locationItems = scoreImpactData.filter(item => item.locationId === locObj?.id);
+      const jResult = calculateJurisdictionScore(locationItems, countySlug);
+      return {
+        overall: scores.overall,
+        operational: scores.operational,
+        equipment: scores.equipment,
+        documentation: scores.documentation,
+        countyGrade: template.getGrade(scores.overall),
+        countyScoreLabel: template.gradingSystem,
+        jurisdictionScore: jResult.numericScore,
+        jurisdictionGrade: jResult.grade.label,
+        jurisdictionSystemType: jResult.systemType,
+        jurisdictionViolationCount: jResult.violations.length,
+        trend30Day: config.locationId === 'downtown' ? 4 : config.locationId === 'airport' ? -4 : 1,
+        trend60Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 3 : 6,
+        trend90Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 6 : 12,
+      };
+    })(),
     missingDocs: generateMissingDocs(config.locationId),
     selfAudit: generateSelfAudit(config.locationId),
     trendData: generateTrendData(config.locationId),

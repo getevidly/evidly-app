@@ -39,18 +39,19 @@ export const getGrade = (score: number) => getScoreInfo(score);
 // ============================================================
 // Location Scores — reflect graduated urgency penalties
 // ============================================================
+// Weights: Operational 50%, Equipment 25%, Documentation 25%
 // Downtown: Everything current, fire suppression due in 15 days (−3.75 on Equipment)
 //   Operational 94, Equipment 88, Documentation 91 → Overall 92
 // Airport: Hood cleaning 5 days overdue (−30 Equipment), 1 vendor cert due in 12 days, checklist rate dropped
 //   Operational 72, Equipment 62, Documentation 74 → Overall 70
 // University: Health permit expired (−25 Docs), 2 food handler certs expired (−10 Docs), equipment overdue
-//   Operational 62, Equipment 55, Documentation 42 → Overall 54
+//   Operational 62, Equipment 55, Documentation 42 → Overall 55
 // ============================================================
 
 export const locationScores: Record<string, { overall: number; operational: number; equipment: number; documentation: number }> = {
   'downtown': { operational: 94, equipment: 88, documentation: 91, overall: 92 },
   'airport':  { operational: 72, equipment: 62, documentation: 74, overall: 70 },
-  'university': { operational: 62, equipment: 55, documentation: 42, overall: 54 },
+  'university': { operational: 62, equipment: 55, documentation: 42, overall: 55 },
 };
 
 export const locationScoresThirtyDaysAgo: Record<string, { overall: number; operational: number; equipment: number; documentation: number }> = {

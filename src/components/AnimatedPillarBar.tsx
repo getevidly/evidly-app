@@ -12,7 +12,7 @@ interface AnimatedPillarBarProps {
 
 export function AnimatedPillarBar({ name, score, tooltip, trend, delay = 0, onClick, isExpanded }: AnimatedPillarBarProps) {
   const animatedScore = useCountUp(score, 1500 + delay);
-  const color = animatedScore >= 90 ? '#22c55e' : animatedScore >= 70 ? '#eab308' : '#ef4444';
+  const color = animatedScore >= 90 ? '#22c55e' : animatedScore >= 75 ? '#3b82f6' : animatedScore >= 60 ? '#f59e0b' : '#ef4444';
 
   return (
     <div

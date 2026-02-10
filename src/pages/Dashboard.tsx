@@ -27,6 +27,9 @@ import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
 import { useTranslation } from '../contexts/LanguageContext';
 import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
+import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
+import { JurisdictionScoreDisplay } from '../components/JurisdictionScoreDisplay';
+import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -77,9 +80,19 @@ export function Dashboard() {
 
   const getScoreHexColor = (score: number) => {
     if (score >= 90) return '#22c55e';
-    if (score >= 70) return '#eab308';
+    if (score >= 75) return '#3b82f6';
+    if (score >= 60) return '#f59e0b';
     return '#ef4444';
   };
+
+  // Jurisdiction score for single-location view
+  const jurisdictionResult = selectedLocation !== 'all' ? (() => {
+    const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+    const jurisdictionMapping = DEMO_LOCATION_JURISDICTIONS.find(j => j.locationName === selectedLocationObj?.name);
+    const countySlug = jurisdictionMapping ? extractCountySlug(jurisdictionMapping.county) : 'generic';
+    const locationItems = scoreImpactData.filter(item => item.locationId === selectedLocationObj?.id);
+    return calculateJurisdictionScore(locationItems, countySlug);
+  })() : null;
 
   const historicalData = {
     downtown: [
@@ -162,7 +175,7 @@ export function Dashboard() {
           (window as any).dashboardMap = map;
 
           locations.forEach((loc) => {
-            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 70 ? '#eab308' : '#ef4444';
+            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#3b82f6' : loc.score >= 60 ? '#f59e0b' : '#ef4444';
             const icon = L.divIcon({
               className: 'custom-marker',
               html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;"></div>`,
@@ -335,12 +348,34 @@ export function Dashboard() {
             </div>
           </div>
 
-          <AnimatedComplianceScore
-            score={complianceScore}
-            label={scoreInfo.label}
-            color={scoreInfo.color}
-            trend={overallTrend}
-          />
+          {/* Dual-Layer Score Display */}
+          {selectedLocation !== 'all' && jurisdictionResult ? (
+            <div className="flex items-start justify-center gap-8 flex-wrap">
+              <div className="flex flex-col items-center">
+                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">EvidLY Score</div>
+                <AnimatedComplianceScore
+                  score={complianceScore}
+                  label={scoreInfo.label}
+                  color={scoreInfo.color}
+                  trend={overallTrend}
+                />
+              </div>
+              <div className="hidden sm:flex items-center self-center">
+                <div className="w-px h-32 bg-gray-200"></div>
+              </div>
+              <div className="flex flex-col items-center pt-6">
+                <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Inspector Grade</div>
+                <JurisdictionScoreDisplay result={jurisdictionResult} />
+              </div>
+            </div>
+          ) : (
+            <AnimatedComplianceScore
+              score={complianceScore}
+              label={scoreInfo.label}
+              color={scoreInfo.color}
+              trend={overallTrend}
+            />
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '24px', width: '100%' }}>
               {pillarScores.map((pillar, index) => (
@@ -546,7 +581,7 @@ export function Dashboard() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              grade.color === 'green' ? 'bg-green-100 text-green-800' : grade.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                              grade.color === 'green' ? 'bg-green-100 text-green-800' : grade.color === 'blue' ? 'bg-blue-100 text-blue-800' : grade.color === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {grade.label}
                             </span>
@@ -777,7 +812,8 @@ export function Dashboard() {
                       <Tooltip />
                       <Legend />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={75} stroke="#3b82f6" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey={t('dashboard.average')} stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
                       <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
                       <Line type="monotone" dataKey="Airport" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
@@ -790,7 +826,8 @@ export function Dashboard() {
                       <YAxis domain={[0, 100]} fontSize={12} />
                       <Tooltip />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={70} stroke="#eab308" strokeDasharray="3 3" label={{ value: '70', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={75} stroke="#3b82f6" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name={t('dashboard.complianceScore')} />
                     </LineChart>
                   )}

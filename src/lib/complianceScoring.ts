@@ -20,7 +20,7 @@ export interface PillarWeights {
 }
 
 export const INDUSTRY_WEIGHTS: Record<IndustryVertical, PillarWeights> = {
-  RESTAURANT:       { operational: 0.45, equipment: 0.30, documentation: 0.25 },
+  RESTAURANT:       { operational: 0.50, equipment: 0.25, documentation: 0.25 },
   HEALTHCARE:       { operational: 0.45, equipment: 0.25, documentation: 0.30 },
   SENIOR_LIVING:    { operational: 0.45, equipment: 0.25, documentation: 0.30 },
   K12_EDUCATION:    { operational: 0.45, equipment: 0.20, documentation: 0.35 },
@@ -29,39 +29,52 @@ export const INDUSTRY_WEIGHTS: Record<IndustryVertical, PillarWeights> = {
 
 export const DEFAULT_WEIGHTS = INDUSTRY_WEIGHTS.RESTAURANT;
 
-// --------------- Color Thresholds ---------------
+// --------------- Color Thresholds (4-Tier) ---------------
 
-/** Returns hex color for a 0-100 score. */
-export function getScoreColor(score: number): '#22c55e' | '#eab308' | '#ef4444' {
-  if (score >= 90) return '#22c55e';   // Green
-  if (score >= 70) return '#eab308';   // Yellow
-  return '#ef4444';                     // Red
+/** Returns hex color for a 0-100 score (4-tier). */
+export function getScoreColor(score: number): '#22c55e' | '#3b82f6' | '#f59e0b' | '#ef4444' {
+  if (score >= 90) return '#22c55e';   // Green — Excellent
+  if (score >= 75) return '#3b82f6';   // Blue — Good
+  if (score >= 60) return '#f59e0b';   // Amber — Needs Attention
+  return '#ef4444';                     // Red — Critical
 }
 
 // --------------- Status Labels (NO letter grades) ---------------
 
-export type ScoreStatus = 'Inspection Ready' | 'Needs Attention' | 'Critical';
+export type ScoreStatus = 'Excellent' | 'Good' | 'Needs Attention' | 'Critical';
 
-/** Returns status label for a 0-100 score. */
+/** Returns status label for a 0-100 score (4-tier). */
 export function getScoreStatus(score: number): ScoreStatus {
-  if (score >= 90) return 'Inspection Ready';
-  if (score >= 70) return 'Needs Attention';
+  if (score >= 90) return 'Excellent';
+  if (score >= 75) return 'Good';
+  if (score >= 60) return 'Needs Attention';
   return 'Critical';
 }
 
-/** Returns Tailwind-compatible color name for badge rendering. */
-export function getScoreBadgeColor(score: number): 'green' | 'yellow' | 'red' {
+/** Returns Tailwind-compatible color name for badge rendering (4-tier). */
+export function getScoreBadgeColor(score: number): 'green' | 'blue' | 'amber' | 'red' {
   if (score >= 90) return 'green';
-  if (score >= 70) return 'yellow';
+  if (score >= 75) return 'blue';
+  if (score >= 60) return 'amber';
   return 'red';
 }
 
-/** Convenience: returns { label, color, hex } like the old getGrade but with new thresholds. */
+/** Returns { label, color, hex } for a score (4-tier). */
 export function getScoreInfo(score: number) {
   return {
     label: getScoreStatus(score),
     color: getScoreBadgeColor(score),
     hex: getScoreColor(score),
+  };
+}
+
+/** Returns full tier info: { label, color, hex, tier } for reuse across components. */
+export function getScoreTier(score: number) {
+  return {
+    label: getScoreStatus(score),
+    color: getScoreBadgeColor(score),
+    hex: getScoreColor(score),
+    tier: score >= 90 ? 4 : score >= 75 ? 3 : score >= 60 ? 2 : 1,
   };
 }
 
