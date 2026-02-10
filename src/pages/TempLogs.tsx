@@ -1764,6 +1764,65 @@ export function TempLogs() {
               </button>
             </div>
 
+            {/* Cooling Standards Reference */}
+            <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="px-6 py-4 bg-[#eef4f8] border-b border-[#b8d4e8]">
+                <h3 className="text-lg font-bold text-[#1e4d6b]">Cooling Standards Reference</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Both standards must be met for California locations</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                {/* FDA Standard */}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded">FDA Food Code</span>
+                    <span className="text-xs text-gray-500">§3-501.14</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">135°F → 70°F within 2 hours</p>
+                        <p className="text-xs text-gray-500">Clock starts at 135°F (not cooked temp)</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="mt-0.5 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">70°F → 41°F within 4 hours</p>
+                        <p className="text-xs text-gray-500">6 hours total from 135°F</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* California Standard */}
+                <div className="p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded">California</span>
+                    <span className="text-xs text-gray-500">CalCode §114002(a) — effective April 1, 2026</span>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <span className="mt-0.5 w-5 h-5 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">Cooked temp → 70°F within 2 hours</p>
+                        <p className="text-xs text-red-600 font-medium">Clock starts at actual cooked temperature (stricter)</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="mt-0.5 w-5 h-5 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">70°F → 41°F within 4 hours</p>
+                        <p className="text-xs text-gray-500">6 hours total from start of cooling</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="px-5 py-3 bg-amber-50 border-t border-amber-200">
+                <p className="text-xs text-amber-800"><strong>Why California is stricter:</strong> FDA starts the 2-hour clock at 135°F. California starts it at the actual cooked temperature (e.g., 165°F for poultry). Your food must travel a greater temperature range in the same 2 hours.</p>
+              </div>
+            </div>
+
             {/* Active Cooldowns */}
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">{t('tempLogs.activeCooldowns')}</h3>
@@ -1793,7 +1852,8 @@ export function TempLogs() {
                         <div className="mb-4">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium text-gray-700">
-                              {progress.stage === 1 ? t('tempLogs.stage1') : t('tempLogs.stage2')} {progress.stage === 1 ? '135°F → 70°F' : '70°F → 41°F'}
+                              {progress.stage === 1 ? t('tempLogs.stage1') : t('tempLogs.stage2')} {progress.stage === 1 ? `${cooldown.startTemp}°F → 70°F` : '70°F → 41°F'}
+                              {progress.stage === 1 && <span className="ml-1 text-xs text-amber-600 font-normal">(CA: from cooked temp)</span>}
                             </span>
                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${
                               status === 'on-track' ? 'bg-green-100 text-green-800' :

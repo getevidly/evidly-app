@@ -9,6 +9,33 @@ export const CALIFORNIA_STATE_LAWS: CaliforniaStateLaw[] = [
   // EFFECTIVE NOW
   // ---------------------------------------------------------------------------
   {
+    id: 'calcode-114002-cooling',
+    billNumber: 'CalCode §114002(a)',
+    name: 'California Cooling Time Reduction',
+    effectiveDate: '2026-04-01',
+    description:
+      'California has shortened the first-stage cooling window for cooked foods. Cooked foods must now reach 70°F within 2 hours from the actual cooked temperature (not 135°F as under the FDA Food Code), then reach 41°F within 4 additional hours (6 hours total). This is stricter than the FDA standard because the 2-hour clock starts at the cooked temperature, which may be well above 135°F.',
+    requirements: [
+      'Stage 1: Cooked food must cool from actual cooked temperature to 70°F within 2 hours (FDA starts clock at 135°F)',
+      'Stage 2: Food must cool from 70°F to 41°F within 4 additional hours (6 hours total from start)',
+      'Cooling logs must reflect the 2-hour first-stage window',
+      'Staff must be trained on the shortened cooling timeline before April 1, 2026',
+      'Review batch sizes — reduce if items regularly take more than 2 hours for Stage 1',
+      'Ice baths, blast chillers, or shallow pans recommended for faster cooling',
+      'Cooldown monitoring alerts must flag items exceeding the 2-hour mark',
+    ],
+    affectedBusinessTypes: [
+      'ALL food service operations that cook and cool food for later service',
+      'Restaurants',
+      'Commercial kitchens',
+      'Catering operations',
+      'Institutional kitchens',
+    ],
+    penalties: 'Critical violation during health inspection. Repeated violations may result in permit suspension.',
+    exemptions: undefined,
+    status: 'upcoming',
+  },
+  {
     id: 'cfc-title24-part9',
     billNumber: 'CFC Title 24, Part 9',
     name: 'California Fire Code — Commercial Kitchen Requirements',

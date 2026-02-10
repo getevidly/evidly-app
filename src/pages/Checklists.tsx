@@ -96,11 +96,12 @@ const TEMPLATE_CATEGORIES = [
       {
         key: 'closing',
         name: 'Closing Checklist',
-        itemCount: 10,
+        itemCount: 11,
         estimatedTime: '20-25 min',
         role: 'Kitchen Staff',
         items: [
           'Final temp check all units',
+          'Verify all active cooldowns on track (CA: 2hr from cooked temp to 70°F, then 4hr to 41°F)',
           'Clean and sanitize all prep surfaces',
           'Empty and clean grease traps',
           'Check floor drains',
@@ -152,15 +153,18 @@ const TEMPLATE_CATEGORIES = [
       {
         key: 'cooling_log',
         name: 'Cooling Log',
-        itemCount: 5,
+        itemCount: 8,
         estimatedTime: '5 min per check',
         role: 'Kitchen Staff',
         items: [
-          'Record start temp and time',
-          'Check temp at 2-hour mark (must reach 70°F)',
-          'Check temp at 6-hour mark (must reach 41°F)',
-          'Document cooling method used',
-          'Corrective action if temps not met',
+          'Record start temp and time — clock starts NOW (CA: from cooked temp, not 135°F)',
+          'FDA Stage 1: 135°F → 70°F within 2 hours',
+          'CA Stage 1 (eff. Apr 1, 2026): Cooked temp → 70°F within 2 hours (stricter — clock starts at actual cooked temp)',
+          'Check temp at 2-hour mark (must be at or below 70°F)',
+          'Stage 2: 70°F → 41°F within 4 additional hours (6 hours total)',
+          'Check temp at 6-hour mark (must be at or below 41°F)',
+          'Document cooling method used (ice bath, blast chiller, shallow pans)',
+          'Corrective action if temps not met — discard food or re-heat to 165°F and re-cool',
         ],
       },
       {
