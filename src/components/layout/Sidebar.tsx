@@ -15,6 +15,7 @@ import {
   BarChart3,
   TrendingUp,
   HelpCircle,
+  CalendarDays,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 
@@ -36,6 +37,7 @@ const navigation: NavItem[] = [
   { name: 'HACCP', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
   { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
   { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
+  { name: 'Calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights' },

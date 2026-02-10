@@ -33,6 +33,7 @@ const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Rep
 const InviteAccept = lazy(() => import('./pages/InviteAccept').then(m => ({ default: m.InviteAccept })));
 const AdminClientOnboarding = lazy(() => import('./pages/AdminClientOnboarding').then(m => ({ default: m.AdminClientOnboarding })));
 const Help = lazy(() => import('./pages/Help').then(m => ({ default: m.Help })));
+const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
 
@@ -194,6 +195,7 @@ function AppRoutes() {
           <Route path="/team" element={<Team />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
         </Route>
