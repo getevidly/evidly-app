@@ -8,6 +8,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 
 interface TemperatureEquipment {
@@ -1671,9 +1672,14 @@ export function TempLogs() {
                                 <span className="text-gray-600">{log.corrective_action}</span>
                               </div>
                               {!log.is_within_range && (
-                                <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
-                                  <Camera className="h-3 w-3" />
-                                  <span>Photo evidence attached</span>
+                                <div className="mt-2">
+                                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+                                    <Camera className="h-3 w-3" />
+                                    <span className="font-medium">Photo evidence attached</span>
+                                  </div>
+                                  {/* TODO: In production, fetch photos from Supabase Storage for this log entry */}
+                                  {/* PhotoGallery will render once photos are loaded from the compliance-photos bucket */}
+                                  <PhotoGallery photos={tempPhotos} title="Temperature Evidence" />
                                 </div>
                               )}
                             </td>

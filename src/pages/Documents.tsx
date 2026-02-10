@@ -10,6 +10,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { ShareModal } from '../components/ShareModal';
 import { useRole } from '../contexts/RoleContext';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 
 interface Document {
@@ -314,7 +315,7 @@ export function Documents() {
           </div>
         </div>
 
-        {/* Photo Capture Panel */}
+        {/* Photo Capture Panel — documentMode auto-enhances for readability */}
         {showPhotoCapture && (
           <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
             <PhotoEvidence
@@ -322,14 +323,21 @@ export function Documents() {
               onChange={setDocPhotos}
               label="Photograph Physical Document"
               maxPhotos={3}
+              documentMode
             />
+            <p className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Auto-enhances contrast and brightness for readability. Position document flat with even lighting.
+            </p>
             {docPhotos.length > 0 && (
-              <button
-                onClick={() => { alert('Document photo saved. It will appear in your documents list after processing.'); setShowPhotoCapture(false); setDocPhotos([]); }}
-                className="mt-3 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
-              >
-                Save Document Photo
-              </button>
+              <div className="mt-3 space-y-3">
+                <button
+                  onClick={() => { alert('Document photo saved. It will appear in your documents list after processing.'); setShowPhotoCapture(false); setDocPhotos([]); }}
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                >
+                  Save Document Photo
+                </button>
+                <PhotoGallery photos={docPhotos} title="Document Photos" />
+              </div>
             )}
           </div>
         )}

@@ -12,6 +12,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { VendorContactActions } from '../components/VendorContactActions';
 import { useRole } from '../contexts/RoleContext';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -519,12 +520,15 @@ export function Vendors() {
                     maxPhotos={5}
                   />
                   {vendorPhotos.length > 0 && (
-                    <button
-                      onClick={() => { alert('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
-                      className="mt-3 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
-                    >
-                      Save Photos
-                    </button>
+                    <div className="mt-3 space-y-3">
+                      <button
+                        onClick={() => { alert('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
+                        className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                      >
+                        Save Photos
+                      </button>
+                      <PhotoGallery photos={vendorPhotos} title="Service Photos" />
+                    </div>
                   )}
                 </div>
               )}

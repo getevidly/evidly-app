@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Download, MapPin, Clock, Camera } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
 import type { PhotoRecord } from './PhotoEvidence';
@@ -15,20 +15,55 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
   const { userRole } = useRole();
   const canDownload = userRole === 'executive';
 
+  // Touch swipe state
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
   if (photos.length === 0) return null;
 
   const selected = selectedIndex !== null ? photos[selectedIndex] : null;
 
-  const goNext = () => {
+  const goNext = useCallback(() => {
     if (selectedIndex !== null && selectedIndex < photos.length - 1) {
       setSelectedIndex(selectedIndex + 1);
     }
-  };
+  }, [selectedIndex, photos.length]);
 
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     if (selectedIndex !== null && selectedIndex > 0) {
       setSelectedIndex(selectedIndex - 1);
     }
+  }, [selectedIndex]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (selectedIndex === null) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') goNext();
+      else if (e.key === 'ArrowLeft') goPrev();
+      else if (e.key === 'Escape') setSelectedIndex(null);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [selectedIndex, goNext, goPrev]);
+
+  // Touch swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    // Only swipe if horizontal movement is dominant and exceeds threshold
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) goNext();  // swipe left → next
+      else goPrev();          // swipe right → prev
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
   };
 
   const handleDownload = (photo: PhotoRecord) => {
@@ -93,6 +128,8 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
             zIndex: 99999,
           }}
           onClick={() => setSelectedIndex(null)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             style={{
@@ -151,7 +188,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
             {/* Info bar */}
             <div style={{
               marginTop: '12px', display: 'flex', alignItems: 'center', gap: '16px',
-              color: 'white', fontSize: '13px', ...F,
+              color: 'white', fontSize: '13px', flexWrap: 'wrap', justifyContent: 'center', ...F,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock className="h-4 w-4" style={{ color: '#d4af37' }} />
@@ -180,6 +217,13 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
                   Download
                 </button>
               )}
+            </div>
+
+            {/* Swipe hint on mobile */}
+            <div style={{
+              marginTop: '8px', fontSize: '11px', color: '#6b7280', textAlign: 'center', ...F,
+            }}>
+              Swipe or use arrow keys to navigate
             </div>
           </div>
         </div>

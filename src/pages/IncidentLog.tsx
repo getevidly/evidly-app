@@ -9,6 +9,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -414,6 +415,7 @@ export function IncidentLog() {
   const [resolutionSummary, setResolutionSummary] = useState('');
   const [rootCause, setRootCause] = useState<RootCause>('unknown');
   const [resolutionPhotos, setResolutionPhotos] = useState<PhotoRecord[]>([]);
+  const [managerPhotoOverride, setManagerPhotoOverride] = useState(false);
 
   // Comment
   const [commentText, setCommentText] = useState('');
@@ -830,30 +832,24 @@ export function IncidentLog() {
 
             {/* Right column — photos & meta */}
             <div className="space-y-6">
-              {/* Before/After photos */}
+              {/* Before / After Photo Evidence — side by side */}
               {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
                 <div className="bg-white rounded-xl shadow-sm p-5">
                   <h3 className="text-lg font-bold text-gray-900 mb-3">Photo Evidence</h3>
-                  {inc.photos.length > 0 && (
-                    <div className="mb-3">
-                      <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">Before (Incident)</span>
-                      <div className="flex gap-2 flex-wrap">
-                        {inc.photos.map(p => (
-                          <img key={p.id} src={p.dataUrl} alt="" className="w-20 h-20 rounded-lg object-cover border-2 border-red-200" />
-                        ))}
+                  <div style={{ display: 'grid', gridTemplateColumns: inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? '1fr 1fr' : '1fr', gap: '16px' }}>
+                    {inc.photos.length > 0 && (
+                      <div style={{ borderRight: inc.resolutionPhotos.length > 0 ? '1px solid #e5e7eb' : 'none', paddingRight: inc.resolutionPhotos.length > 0 ? '12px' : '0' }}>
+                        <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#ef4444' }}>Before (Incident)</span>
+                        <PhotoGallery photos={inc.photos} title="Incident Photos" />
                       </div>
-                    </div>
-                  )}
-                  {inc.resolutionPhotos.length > 0 && (
-                    <div>
-                      <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">After (Resolution)</span>
-                      <div className="flex gap-2 flex-wrap">
-                        {inc.resolutionPhotos.map(p => (
-                          <img key={p.id} src={p.dataUrl} alt="" className="w-20 h-20 rounded-lg object-cover border-2 border-green-200" />
-                        ))}
+                    )}
+                    {inc.resolutionPhotos.length > 0 && (
+                      <div>
+                        <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#22c55e' }}>After (Resolution)</span>
+                        <PhotoGallery photos={inc.resolutionPhotos} title="Resolution Photos" />
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -1001,20 +997,32 @@ export function IncidentLog() {
                 <PhotoEvidence
                   photos={resolutionPhotos}
                   onChange={setResolutionPhotos}
-                  label="After Photo (Strongly Encouraged)"
+                  label="After Photo (Required for Sign-off)"
+                  required
                   highlight
                   highlightText="Show the fix"
                 />
+                {resolutionPhotos.length === 0 && (
+                  <label className="flex items-center gap-2 text-xs text-gray-500 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={managerPhotoOverride}
+                      onChange={(e) => setManagerPhotoOverride(e.target.checked)}
+                      className="h-3.5 w-3.5 rounded border-gray-300 text-[#d4af37] focus:ring-[#d4af37]"
+                    />
+                    Manager override — resolve without photo
+                  </label>
+                )}
                 <div className="flex gap-3">
                   <button
-                    onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); }}
+                    onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); setManagerPhotoOverride(false); }}
                     className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleResolve}
-                    disabled={!resolutionSummary.trim()}
+                    disabled={!resolutionSummary.trim() || (resolutionPhotos.length === 0 && !managerPhotoOverride)}
                     className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-40"
                   >
                     Mark Resolved

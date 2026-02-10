@@ -6,6 +6,8 @@ import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
+import { Camera } from 'lucide-react';
 
 interface ChecklistTemplate {
   id: string;
@@ -780,6 +782,12 @@ export function Checklists() {
               <span className="text-lg text-gray-900">{item.title}</span>
               {item.is_required && <span className="text-red-600">*</span>}
             </label>
+            <div className="mt-2">
+              <PhotoButton
+                photos={itemPhotos[item.id] || []}
+                onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+              />
+            </div>
           </div>
         );
 
@@ -826,16 +834,16 @@ export function Checklists() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   placeholder="Describe the corrective action..."
                 />
-                <div className="mt-2">
-                  <PhotoButton
-                    photos={itemPhotos[item.id] || []}
-                    onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
-                    highlight
-                    highlightText="Photo evidence recommended"
-                  />
-                </div>
               </div>
             )}
+            <div className="mt-2">
+              <PhotoButton
+                photos={itemPhotos[item.id] || []}
+                onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+                highlight={response?.response_value === 'no'}
+                highlightText={response?.response_value === 'no' ? 'Add photo evidence' : undefined}
+              />
+            </div>
           </div>
         );
 
@@ -854,6 +862,12 @@ export function Checklists() {
               className="w-full px-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               placeholder="00.0°F"
             />
+            <div className="mt-2">
+              <PhotoButton
+                photos={itemPhotos[item.id] || []}
+                onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+              />
+            </div>
           </div>
         );
 
@@ -871,6 +885,12 @@ export function Checklists() {
               className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               placeholder="Enter your response..."
             />
+            <div className="mt-2">
+              <PhotoButton
+                photos={itemPhotos[item.id] || []}
+                onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+              />
+            </div>
           </div>
         );
 
@@ -978,7 +998,15 @@ export function Checklists() {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBg}`}>{statusLabel}</span>
+                        {cl.status === 'complete' && (
+                          <span className="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                            <Camera className="h-3 w-3" />
+                            {cl.completed > 3 ? 3 : 2} photos
+                          </span>
+                        )}
+                      </div>
                       {cl.status !== 'complete' && (
                         <button
                           onClick={() => alert(`${cl.name} opened — complete items to update your compliance score.`)}
