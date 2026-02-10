@@ -45,7 +45,7 @@ const navigation: NavItem[] = [
   { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
   { name: 'Weekly Digest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
   { name: 'Teams', href: '/team', icon: Users, tourId: '', roles: ['executive', 'management'], section: 'system' },

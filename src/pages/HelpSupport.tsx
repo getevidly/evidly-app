@@ -187,7 +187,7 @@ export function HelpSupport() {
               <div style={{ fontSize: '12px', color: '#6b7280', ...F }}>Get instant AI-powered answers to your food safety and compliance questions</div>
             </div>
           </div>
-          <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', backgroundColor: '#eef2ff', padding: '4px 12px', borderRadius: '20px', letterSpacing: '0.5px' }}>COMING SOON</span>
+          <a href="/ai-advisor" style={{ fontSize: '13px', fontWeight: 700, color: '#fff', backgroundColor: '#6366f1', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', letterSpacing: '0.3px' }}>Try AI Advisor →</a>
         </div>
       </div>
     </>

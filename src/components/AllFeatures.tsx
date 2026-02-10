@@ -29,12 +29,12 @@ const featureCategories: { title: string; features: Feature[] }[] = [
     ],
   },
   {
-    title: 'Coming Soon',
+    title: 'Intelligence & Insights',
     features: [
-      { name: 'AI Compliance Advisor', description: 'Intelligent recommendations and risk predictions powered by Claude AI', comingSoon: true },
-      { name: 'Weekly Digest', description: 'Automated compliance summaries delivered to management via email', comingSoon: true },
+      { name: 'AI Compliance Advisor', description: 'Intelligent recommendations, mock inspections, and document analysis powered by Claude AI' },
+      { name: 'Weekly Digest', description: 'Automated compliance summaries delivered to management via email' },
+      { name: 'Leaderboard', description: 'Gamified compliance scoring across locations to drive accountability' },
       { name: 'Predictive Alerts', description: 'AI-driven early warnings before compliance issues become violations', comingSoon: true },
-      { name: 'Leaderboard', description: 'Gamified compliance scoring across locations to drive accountability', comingSoon: true },
       { name: 'PSE Insurance Integration', description: 'Connect compliance data to insurance for potential premium savings', comingSoon: true },
     ],
   },

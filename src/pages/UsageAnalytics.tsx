@@ -53,7 +53,7 @@ const MODULES: ModuleInfo[] = [
   { id: 'analysis', name: 'Analysis', icon: '📈', color: '#059669' },
   { id: 'key-metrics', name: 'Key Metrics', icon: '📉', color: '#b45309' },
   { id: 'leaderboard', name: 'Leaderboard', icon: '🏆', color: '#ca8a04' },
-  { id: 'ai-advisor', name: 'AI Advisor', icon: '🤖', color: '#6366f1', comingSoon: true },
+  { id: 'ai-advisor', name: 'AI Advisor', icon: '🤖', color: '#6366f1' },
   { id: 'help', name: 'Help / Support', icon: '❓', color: '#64748b' },
 ];
 
@@ -91,8 +91,8 @@ const MODULE_ADOPTION: Record<string, [number, number]> = {
   'qr-passport': [0.30, 0.50],
   'calendar': [0.35, 0.48],
   'leaderboard': [0.30, 0.46],
-  // Coming Soon
-  'ai-advisor': [0, 0],
+  // AI-powered features (20-40%)
+  'ai-advisor': [0.22, 0.38],
   // Help / Support (40-60%)
   'help': [0.40, 0.60],
 };
