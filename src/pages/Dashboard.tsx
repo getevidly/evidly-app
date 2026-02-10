@@ -256,7 +256,7 @@ export function Dashboard() {
               {pillarScores.map((pillar, index) => (
                 <AnimatedPillarBar
                   key={pillar.name}
-                  name={`${pillar.name} (${pillar.weight}%)`}
+                  name={pillar.name}
                   score={pillar.score}
                   tooltip={pillar.tooltip}
                   trend={pillar.trend}
