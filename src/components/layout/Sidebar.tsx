@@ -21,6 +21,7 @@ import {
   AlertTriangle,
   ClipboardCheck,
   Cog,
+  Megaphone,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -56,6 +57,7 @@ const navigation: NavItem[] = [
   { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
   { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
   { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { i18nKey: 'nav.regulatoryAlerts', href: '/regulatory-alerts', icon: Megaphone, tourId: '', roles: ['executive', 'management'], section: 'insights', badgeCount: 2 },
   { i18nKey: 'nav.alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
   { i18nKey: 'nav.teams', href: '/team', icon: Users, tourId: '', roles: ['executive', 'management'], section: 'system' },
   { i18nKey: 'nav.settings', href: '/settings', icon: Settings, tourId: '', roles: ['executive', 'management'], section: 'system' },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
@@ -48,6 +48,7 @@ export function Settings() {
     integrations: t('settings.integrations'),
     security: t('settings.security'),
     billing: t('settings.billing'),
+    'regulatory-monitoring': 'Regulatory Monitoring',
   };
 
   const allTabs = [
@@ -55,6 +56,7 @@ export function Settings() {
     { id: 'organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
     { id: 'operating-hours', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'management'] as UserRole[] },
     { id: 'integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
     { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
@@ -468,6 +470,124 @@ export function Settings() {
               <div className="border-t border-gray-200 pt-6 mt-8">
                 <ReportSettings />
               </div>
+            </div>
+          )}
+
+          {activeTab === 'regulatory-monitoring' && (
+            <div className="space-y-6">
+              {/* TODO: i18n for regulatory monitoring section */}
+              <h3 className="text-xl font-bold text-gray-900">Regulatory Monitoring</h3>
+              <p className="text-sm text-gray-600">Configure how EvidLY monitors regulatory changes and notifies your team.</p>
+
+              {/* Enable/disable toggle */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-4">Monitoring Status</h4>
+                <label className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-medium text-gray-900">Enable Regulatory Alerts</span>
+                    <p className="text-xs text-gray-500">Automatically monitor regulatory changes for your jurisdictions</p>
+                  </div>
+                  <div className="relative">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#d4af37] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e4d6b]"></div>
+                  </div>
+                </label>
+              </div>
+
+              {/* Notification preferences */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-4">Alert Notifications</h4>
+                <div className="space-y-3">
+                  <label className="flex items-start space-x-3">
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1" />
+                    <div>
+                      <span className="text-sm font-medium text-gray-900">In-App Notifications</span>
+                      <p className="text-xs text-gray-500">Show alerts in the notification bell and Regulatory Alerts page</p>
+                    </div>
+                  </label>
+                  <label className="flex items-start space-x-3">
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded mt-1" />
+                    <div>
+                      <span className="text-sm font-medium text-gray-900">Email Notifications</span>
+                      <p className="text-xs text-gray-500">Send email alerts for "Action Required" changes to selected roles</p>
+                      {/* TODO: Wire to Resend for email delivery */}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Digest option */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-4">Alert Delivery</h4>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-3">
+                    <input type="radio" name="reg-delivery" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300" />
+                    <div>
+                      <span className="text-sm font-medium text-gray-900">Send individual alerts</span>
+                      <p className="text-xs text-gray-500">Receive notifications as soon as changes are detected</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input type="radio" name="reg-delivery" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300" />
+                    <div>
+                      <span className="text-sm font-medium text-gray-900">Weekly regulatory digest every Monday</span>
+                      <p className="text-xs text-gray-500">Receive a consolidated summary of all changes once per week</p>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              {/* Which roles receive alerts */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-4">Email Alert Recipients</h4>
+                <p className="text-xs text-gray-500 mb-3">Select which roles receive email alerts for regulatory changes</p>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-3">
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                    <span className="text-sm text-gray-700">Executive View</span>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                    <span className="text-sm text-gray-700">Management</span>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                    <span className="text-sm text-gray-700">Kitchen Staff</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Monitored jurisdictions */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-4">Monitored Jurisdictions</h4>
+                <p className="text-xs text-gray-500 mb-3">Auto-populated from your location addresses. Add custom jurisdictions if needed.</p>
+                <div className="space-y-2">
+                  {[
+                    { name: 'Fresno County, CA', type: 'County' },
+                    { name: 'Mariposa County, CA', type: 'County' },
+                    { name: 'California (State)', type: 'State' },
+                    { name: 'Federal (FDA, OSHA)', type: 'Federal' },
+                  ].map((j) => (
+                    <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg bg-white">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-[#1e4d6b]" />
+                        <span className="text-sm text-gray-700">{j.name}</span>
+                      </div>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => alert('Custom jurisdiction added. (Demo mode)')}
+                    className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
+                  >
+                    + Add Custom Jurisdiction
+                  </button>
+                </div>
+              </div>
+
+              <button onClick={() => alert('Regulatory monitoring preferences saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                {t('settings.saveChanges')}
+              </button>
             </div>
           )}
 
