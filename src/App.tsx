@@ -46,6 +46,7 @@ const AuditReport = lazy(() => import('./pages/AuditReport').then(m => ({ defaul
 const Equipment = lazy(() => import('./pages/Equipment').then(m => ({ default: m.Equipment })));
 const RegulatoryAlerts = lazy(() => import('./pages/RegulatoryAlerts').then(m => ({ default: m.RegulatoryAlerts })));
 const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').then(m => ({ default: m.JurisdictionSettings })));
+const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
 
@@ -218,6 +219,7 @@ function AppRoutes() {
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
           <Route path="/jurisdiction" element={<JurisdictionSettings />} />
+          <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
         </Route>

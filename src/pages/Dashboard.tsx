@@ -4,6 +4,12 @@ import {
   ArrowLeft,
   Info,
   Share2,
+  ShieldAlert,
+  FileText,
+  QrCode,
+  Bell,
+  Clock,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
@@ -20,6 +26,7 @@ import { OnboardingChecklist } from '../components/OnboardingChecklist';
 import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
 import { useTranslation } from '../contexts/LanguageContext';
+import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -39,6 +46,8 @@ export function Dashboard() {
   );
   const [showShareModal, setShowShareModal] = useState(false);
   const [pillarFilter, setPillarFilter] = useState<string | null>(null);
+  const [inspectorMode, setInspectorMode] = useState(false);
+  const [inspectorVisit, setInspectorVisit] = useState<InspectorVisit | null>(null);
 
   const currentScores = selectedLocation === 'all' ? complianceScores : locationScores[selectedLocation] || complianceScores;
   const currentScoresThirtyDaysAgo = selectedLocation === 'all' ? complianceScoresThirtyDaysAgo : locationScoresThirtyDaysAgo[selectedLocation] || complianceScoresThirtyDaysAgo;
@@ -204,6 +213,63 @@ export function Dashboard() {
         <span className="font-medium">{t('dashboard.demoMode')}</span>
       </div>
 
+      {/* Inspector Mode Panel */}
+      {inspectorMode && inspectorVisit && (
+        <div style={{ backgroundColor: '#fef2f2', border: '2px solid #ef4444', borderRadius: 12, padding: 20, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShieldAlert className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#991b1b' }}>Inspector On-Site Mode Active</div>
+                <div style={{ fontSize: 13, color: '#991b1b' }}>
+                  Started at {new Date(inspectorVisit.startedAt).toLocaleTimeString()} — {inspectorVisit.locationName}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { setInspectorMode(false); setInspectorVisit(null); }}
+              className="flex items-center gap-1 px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+            >
+              <X className="h-4 w-4" />
+              End Visit
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+            <div style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, textAlign: 'center', border: '1px solid #fecaca' }}>
+              <div style={{ fontSize: 36, fontWeight: 800, color: inspectorVisit.gradeColor, lineHeight: 1 }}>{inspectorVisit.score}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: inspectorVisit.gradeColor, marginTop: 4 }}>{inspectorVisit.grade}</div>
+              <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>Real-Time Score</div>
+            </div>
+            <button
+              onClick={() => navigate('/health-dept-report')}
+              style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, textAlign: 'center', border: '1px solid #fecaca', cursor: 'pointer' }}
+              className="hover:bg-red-50 transition-colors"
+            >
+              <FileText className="h-8 w-8 text-[#1e4d6b] mx-auto" />
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginTop: 4 }}>Instant Report</div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>Generated automatically</div>
+            </button>
+            <button
+              onClick={() => window.open(inspectorVisit.qrPassportUrl, '_blank')}
+              style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, textAlign: 'center', border: '1px solid #fecaca', cursor: 'pointer' }}
+              className="hover:bg-red-50 transition-colors"
+            >
+              <QrCode className="h-8 w-8 text-[#1e4d6b] mx-auto" />
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginTop: 4 }}>QR Passport</div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>Show to inspector</div>
+            </button>
+            <div style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, textAlign: 'center', border: '1px solid #fecaca' }}>
+              <Bell className="h-8 w-8 text-green-500 mx-auto" />
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginTop: 4 }}>Owner Notified</div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>Notification sent</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-6">
         {selectedLocation !== 'all' && (() => {
           const locationMap: Record<string, { name: string; address: string }> = {
@@ -238,13 +304,35 @@ export function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.complianceScore')}</h3>
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm"
-            >
-              <Share2 className="h-4 w-4" />
-              {t('dashboard.shareReport')}
-            </button>
+            <div className="flex items-center gap-2 flex-wrap">
+              {selectedLocation !== 'all' && !inspectorMode && (
+                <button
+                  onClick={() => {
+                    const visit = startInspectorVisit(selectedLocation);
+                    setInspectorVisit(visit);
+                    setInspectorMode(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-150 text-sm font-medium"
+                >
+                  <ShieldAlert className="h-4 w-4" />
+                  Inspector On-Site
+                </button>
+              )}
+              <button
+                onClick={() => navigate('/health-dept-report')}
+                className="flex items-center gap-2 px-4 py-2 bg-[#d4af37] text-white rounded-lg hover:bg-[#b8962f] transition-colors duration-150 text-sm font-medium"
+              >
+                <FileText className="h-4 w-4" />
+                Generate Report
+              </button>
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm"
+              >
+                <Share2 className="h-4 w-4" />
+                {t('dashboard.shareReport')}
+              </button>
+            </div>
           </div>
 
           <AnimatedComplianceScore

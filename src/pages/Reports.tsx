@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Printer, Download, TrendingUp, ShieldX, Activity, Thermometer, FileText } from 'lucide-react';
+import { Printer, Download, TrendingUp, ShieldX, Activity, Thermometer, FileText, ClipboardCheck } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRole } from '../contexts/RoleContext';
 
@@ -85,6 +86,7 @@ function getScoreColor(score: number): string {
 }
 
 export function Reports() {
+  const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
   const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
@@ -476,6 +478,13 @@ export function Reports() {
               <option value="this-quarter">This Quarter</option>
               <option value="custom">Custom Range</option>
             </select>
+            <button
+              onClick={() => navigate('/health-dept-report')}
+              className="flex items-center gap-2 px-4 py-2 bg-[#d4af37] text-white rounded-lg hover:bg-[#b8962f] transition-colors duration-150"
+            >
+              <ClipboardCheck className="h-5 w-5" />
+              Health Dept Report
+            </button>
             <button
               onClick={handlePrint}
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
