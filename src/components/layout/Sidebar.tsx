@@ -20,6 +20,7 @@ import {
   MailOpen,
   AlertTriangle,
   ClipboardCheck,
+  Cog,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -35,6 +36,7 @@ interface NavItem {
   roles: UserRole[];
   section: Section;
   badge?: boolean;
+  badgeCount?: number;
 }
 
 const navigation: NavItem[] = [
@@ -43,6 +45,7 @@ const navigation: NavItem[] = [
   { name: 'Checklists', href: '/checklists', icon: CheckSquare, tourId: 'checklists-nav', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
   { name: 'HACCP', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
   { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
+  { name: 'Equipment', href: '/equipment', icon: Cog, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations', badgeCount: 3 },
   { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Incident Log', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
@@ -91,6 +94,11 @@ function NavItemRow({ item, isActive, onClick }: { item: NavItem; isActive: bool
       {item.badge && HIGH_ALERT_COUNT > 0 && (
         <span style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '9999px', minWidth: '18px', textAlign: 'center', lineHeight: '16px' }}>
           {HIGH_ALERT_COUNT}
+        </span>
+      )}
+      {item.badgeCount && item.badgeCount > 0 && (
+        <span style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '9999px', minWidth: '18px', textAlign: 'center', lineHeight: '16px' }}>
+          {item.badgeCount}
         </span>
       )}
     </div>
