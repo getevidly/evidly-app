@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { VendorContactActions } from '../components/VendorContactActions';
 import { useRole } from '../contexts/RoleContext';
+import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -204,6 +205,8 @@ export function Vendors() {
   const [autoRequestStates, setAutoRequestStates] = useState<Record<string, boolean>>({
     '3': true, // Valley Fire auto-request enabled by default
   });
+  const [vendorPhotos, setVendorPhotos] = useState<PhotoRecord[]>([]);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
 
   const consolidatedVendors = useMemo(() => buildConsolidatedVendors(), []);
 
@@ -498,14 +501,33 @@ export function Vendors() {
                     Request Document
                   </button>
                   <button
-                    onClick={() => alert('Upload functionality coming soon.')}
+                    onClick={() => setShowPhotoUpload(!showPhotoUpload)}
                     className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload
+                    Upload / Photo
                   </button>
                 </div>
               </div>
+
+              {showPhotoUpload && (
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <PhotoEvidence
+                    photos={vendorPhotos}
+                    onChange={setVendorPhotos}
+                    label="Service Completion Photos"
+                    maxPhotos={5}
+                  />
+                  {vendorPhotos.length > 0 && (
+                    <button
+                      onClick={() => { alert('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
+                      className="mt-3 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                    >
+                      Save Photos
+                    </button>
+                  )}
+                </div>
+              )}
 
               <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: `${progressPercent}%` }} />

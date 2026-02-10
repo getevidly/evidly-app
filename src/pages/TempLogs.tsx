@@ -7,6 +7,8 @@ import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
+import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { Camera } from 'lucide-react';
 
 interface TemperatureEquipment {
   id: string;
@@ -89,6 +91,7 @@ export function TempLogs() {
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [tempPhotos, setTempPhotos] = useState<PhotoRecord[]>([]);
 
   // Current Readings filters
   const [sortBy, setSortBy] = useState<'outOfRange' | 'alphabetical' | 'mostRecent'>('outOfRange');
@@ -475,6 +478,7 @@ export function TempLogs() {
         created_at: now.toISOString(),
       }, ...prev]);
       setShowLogModal(false);
+      setTempPhotos([]);
       showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
       return;
     }
@@ -495,6 +499,7 @@ export function TempLogs() {
 
     if (!error) {
       setShowLogModal(false);
+      setTempPhotos([]);
       showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
       fetchEquipment();
       fetchHistory();
@@ -1665,6 +1670,12 @@ export function TempLogs() {
                                 <span className="font-medium text-gray-700">Corrective Action: </span>
                                 <span className="text-gray-600">{log.corrective_action}</span>
                               </div>
+                              {!log.is_within_range && (
+                                <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
+                                  <Camera className="h-3 w-3" />
+                                  <span>Photo evidence attached</span>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         )}
@@ -1969,6 +1980,16 @@ export function TempLogs() {
                   />
                 </div>
               )}
+
+              {/* Photo Evidence */}
+              <PhotoEvidence
+                photos={tempPhotos}
+                onChange={setTempPhotos}
+                highlight={!!temperature && !isWithinRange}
+                highlightText={temperature && !isWithinRange ? 'Photo evidence recommended' : undefined}
+                label={temperature && !isWithinRange ? 'Photo Evidence (Recommended)' : 'Photo Evidence'}
+                required={false}
+              />
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Recorded By</label>

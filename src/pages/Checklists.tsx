@@ -5,6 +5,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 
 interface ChecklistTemplate {
   id: string;
@@ -335,6 +336,7 @@ export function Checklists() {
   const [selectedTemplate, setSelectedTemplate] = useState<ChecklistTemplate | null>(null);
   const [templateItems, setTemplateItems] = useState<ChecklistTemplateItem[]>([]);
   const [itemResponses, setItemResponses] = useState<ItemResponse>({});
+  const [itemPhotos, setItemPhotos] = useState<Record<string, PhotoRecord[]>>({});
   const [loading, setLoading] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(0);
 
@@ -824,6 +826,14 @@ export function Checklists() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   placeholder="Describe the corrective action..."
                 />
+                <div className="mt-2">
+                  <PhotoButton
+                    photos={itemPhotos[item.id] || []}
+                    onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+                    highlight
+                    highlightText="Photo evidence recommended"
+                  />
+                </div>
               </div>
             )}
           </div>

@@ -9,6 +9,8 @@ import { DocumentScanAnimation } from '../components/DocumentScanAnimation';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ShareModal } from '../components/ShareModal';
 import { useRole } from '../contexts/RoleContext';
+import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { Camera } from 'lucide-react';
 
 interface Document {
   id: string;
@@ -145,6 +147,8 @@ export function Documents() {
   const [selectedLocation, setSelectedLocation] = useState<string>('All Locations');
   const [searchQuery, setSearchQuery] = useState('');
   const [docStatusFilter, setDocStatusFilter] = useState<'all' | 'expired' | 'expiring'>('all');
+  const [showPhotoCapture, setShowPhotoCapture] = useState(false);
+  const [docPhotos, setDocPhotos] = useState<PhotoRecord[]>([]);
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
@@ -300,8 +304,35 @@ export function Documents() {
               <Plus className="h-5 w-5" />
               <span>Upload Document</span>
             </button>
+            <button
+              onClick={() => setShowPhotoCapture(!showPhotoCapture)}
+              className="flex items-center space-x-2 px-4 py-2 bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-lg hover:bg-gray-50 shadow-sm transition-colors duration-150"
+            >
+              <Camera className="h-5 w-5" />
+              <span>Take Photo</span>
+            </button>
           </div>
         </div>
+
+        {/* Photo Capture Panel */}
+        {showPhotoCapture && (
+          <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+            <PhotoEvidence
+              photos={docPhotos}
+              onChange={setDocPhotos}
+              label="Photograph Physical Document"
+              maxPhotos={3}
+            />
+            {docPhotos.length > 0 && (
+              <button
+                onClick={() => { alert('Document photo saved. It will appear in your documents list after processing.'); setShowPhotoCapture(false); setDocPhotos([]); }}
+                className="mt-3 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+              >
+                Save Document Photo
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
