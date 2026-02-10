@@ -17,6 +17,7 @@ import {
   HelpCircle,
   CalendarDays,
   Lock,
+  MailOpen,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -45,6 +46,7 @@ const navigation: NavItem[] = [
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Weekly Digest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
   { name: 'Teams', href: '/team', icon: Users, tourId: '', roles: ['executive', 'management'], section: 'system' },
   { name: 'Settings', href: '/settings', icon: Settings, tourId: '', roles: ['executive', 'management'], section: 'system' },

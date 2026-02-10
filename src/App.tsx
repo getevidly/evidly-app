@@ -36,6 +36,7 @@ const AdminClientOnboarding = lazy(() => import('./pages/AdminClientOnboarding')
 const Help = lazy(() => import('./pages/HelpSupport').then(m => ({ default: m.HelpSupport })));
 const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
 const UsageAnalytics = lazy(() => import('./pages/UsageAnalytics').then(m => ({ default: m.UsageAnalytics })));
+const WeeklyDigest = lazy(() => import('./pages/WeeklyDigest').then(m => ({ default: m.WeeklyDigest })));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
 
@@ -199,6 +200,7 @@ function AppRoutes() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
         </Route>
