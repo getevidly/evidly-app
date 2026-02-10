@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -41,6 +41,7 @@ export function Settings() {
     reminder_frequency: 'per_event',
   });
   const [saving, setSaving] = useState(false);
+  const [benchmarkOptIn, setBenchmarkOptIn] = useState(true);
 
   // Tab names resolved at render time via i18n
   const tabI18n: Record<string, string> = {
@@ -53,6 +54,7 @@ export function Settings() {
     billing: t('settings.billing'),
     'regulatory-monitoring': 'Regulatory Monitoring',
     jurisdiction: 'Jurisdiction Profile',
+    privacy: 'Privacy',
   };
 
   const allTabs = [
@@ -63,6 +65,7 @@ export function Settings() {
     { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'management'] as UserRole[] },
     { id: 'jurisdiction', icon: Globe, roles: ['executive', 'management'] as UserRole[] },
     { id: 'integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'privacy', icon: Shield, roles: ['executive', 'management'] as UserRole[] },
     { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
   ];
@@ -1071,6 +1074,78 @@ export function Settings() {
                   {t('settings.saveChanges')}
                 </button>
               )}
+            </div>
+          )}
+
+          {activeTab === 'privacy' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900">Privacy & Benchmarking</h3>
+              <p className="text-sm text-gray-600">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
+
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 pr-8">
+                    <h4 className="font-semibold text-gray-900 mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
+                    <p className="text-sm text-gray-500 mb-3">
+                      When enabled, your location scores are included in aggregate industry benchmarks. Your data is fully anonymized — no business names, addresses, or employee information is ever shared.
+                    </p>
+                    <div className="space-y-2 text-xs text-gray-500">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>All data is fully anonymized before aggregation</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Minimum 10 peers required for any benchmark to display</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Organization IDs are hashed — even EvidLY staff cannot reverse-identify</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Compliant with CCPA — you can opt out at any time</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setBenchmarkOptIn(!benchmarkOptIn);
+                      alert(benchmarkOptIn ? 'You have opted out of benchmarking. Your data will no longer appear in aggregated comparisons.' : 'You have opted in to benchmarking. Your anonymized data will contribute to industry benchmarks.');
+                    }}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${benchmarkOptIn ? 'bg-green-500' : 'bg-gray-300'}`}
+                  >
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${benchmarkOptIn ? 'translate-x-6' : 'translate-x-1'}`} />
+                  </button>
+                </div>
+              </div>
+
+              {!benchmarkOptIn && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <Shield className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-amber-800">Benchmarking Opted Out</h4>
+                      <p className="text-xs text-amber-700 mt-1">
+                        Your locations will still see their own scores, but percentile rankings and peer comparisons will not be available.
+                        Your data is excluded from all aggregate calculations and the EvidLY Compliance Index.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Data We Never Share</h4>
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                  <div>• Business names or addresses</div>
+                  <div>• Employee information</div>
+                  <div>• Specific violation details</div>
+                  <div>• Permit or license numbers</div>
+                  <div>• Vendor names or contracts</div>
+                  <div>• Individual inspection reports</div>
+                </div>
+              </div>
             </div>
           )}
 

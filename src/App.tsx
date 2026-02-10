@@ -48,6 +48,8 @@ const RegulatoryAlerts = lazy(() => import('./pages/RegulatoryAlerts').then(m =>
 const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').then(m => ({ default: m.JurisdictionSettings })));
 const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
 const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m => ({ default: m.ScoringBreakdown })));
+const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
+const PublicVerification = lazy(() => import('./pages/PublicVerification'));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
 
@@ -178,6 +180,7 @@ function AppRoutes() {
         <Route path="/" element={<LandingPage />} />
 
         {/* Public routes */}
+        <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
@@ -222,6 +225,7 @@ function AppRoutes() {
           <Route path="/jurisdiction" element={<JurisdictionSettings />} />
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/scoring-breakdown" element={<ScoringBreakdown />} />
+          <Route path="/benchmarks" element={<Benchmarks />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
         </Route>
