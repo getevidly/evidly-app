@@ -32,9 +32,9 @@ export const DEFAULT_WEIGHTS = INDUSTRY_WEIGHTS.RESTAURANT;
 // --------------- Color Thresholds (4-Tier) ---------------
 
 /** Returns hex color for a 0-100 score (4-tier). */
-export function getScoreColor(score: number): '#22c55e' | '#3b82f6' | '#f59e0b' | '#ef4444' {
+export function getScoreColor(score: number): '#22c55e' | '#eab308' | '#f59e0b' | '#ef4444' {
   if (score >= 90) return '#22c55e';   // Green — Excellent
-  if (score >= 75) return '#3b82f6';   // Blue — Good
+  if (score >= 75) return '#eab308';   // Yellow — Good
   if (score >= 60) return '#f59e0b';   // Amber — Needs Attention
   return '#ef4444';                     // Red — Critical
 }
@@ -52,9 +52,9 @@ export function getScoreStatus(score: number): ScoreStatus {
 }
 
 /** Returns Tailwind-compatible color name for badge rendering (4-tier). */
-export function getScoreBadgeColor(score: number): 'green' | 'blue' | 'amber' | 'red' {
+export function getScoreBadgeColor(score: number): 'green' | 'yellow' | 'amber' | 'red' {
   if (score >= 90) return 'green';
-  if (score >= 75) return 'blue';
+  if (score >= 75) return 'yellow';
   if (score >= 60) return 'amber';
   return 'red';
 }

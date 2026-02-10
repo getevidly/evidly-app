@@ -473,7 +473,7 @@ export function ScoringBreakdown() {
               <Tooltip />
               <Legend />
               <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
-              <ReferenceLine y={75} stroke="#3b82f6" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
+              <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
               <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 11 }} />
               <Line type="monotone" dataKey="evidly" stroke="#1e4d6b" strokeWidth={2.5} dot={{ r: 3 }} name="EvidLY Score" />
               <Line type="monotone" dataKey="jurisdiction" stroke="#d4af37" strokeWidth={2} dot={{ r: 3 }} name="Inspector Grade" strokeDasharray="5 3" />

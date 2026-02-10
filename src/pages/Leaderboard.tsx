@@ -96,7 +96,7 @@ export function Leaderboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {(() => {
             const avgScore = locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0;
-            const avgColor = avgScore >= 90 ? '#22c55e' : avgScore >= 70 ? '#eab308' : '#ef4444';
+            const avgColor = avgScore >= 90 ? '#22c55e' : avgScore >= 75 ? '#eab308' : avgScore >= 60 ? '#f59e0b' : '#ef4444';
             return (
               <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${avgColor}` }}>
                 <div className="flex items-center justify-center gap-2 mb-2">
@@ -177,14 +177,15 @@ export function Leaderboard() {
                   label={loc.location_name}
                   value={loc.compliance_score}
                   max={100}
-                  color={loc.compliance_score >= 90 ? '#22c55e' : loc.compliance_score >= 70 ? '#eab308' : '#ef4444'}
+                  color={loc.compliance_score >= 90 ? '#22c55e' : loc.compliance_score >= 75 ? '#eab308' : loc.compliance_score >= 60 ? '#f59e0b' : '#ef4444'}
                   suffix="%"
                 />
               ))}
               <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '11px', color: '#6b7280' }}>
                 <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#22c55e', marginRight: '4px' }} />90+</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#eab308', marginRight: '4px' }} />70-89</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ef4444', marginRight: '4px' }} />&lt;70</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#eab308', marginRight: '4px' }} />75-89</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#f59e0b', marginRight: '4px' }} />60-74</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ef4444', marginRight: '4px' }} />&lt;60</span>
               </div>
             </div>
 

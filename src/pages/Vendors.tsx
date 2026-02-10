@@ -282,19 +282,22 @@ export function Vendors() {
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
+    if (score >= 75) return 'text-yellow-600';
+    if (score >= 60) return 'text-amber-600';
     return 'text-red-600';
   };
 
   const getScoreBg = (score: number) => {
     if (score >= 90) return 'bg-green-100';
-    if (score >= 70) return 'bg-yellow-100';
+    if (score >= 75) return 'bg-yellow-100';
+    if (score >= 60) return 'bg-amber-100';
     return 'bg-red-100';
   };
 
   const getScoreBorder = (score: number) => {
     if (score >= 90) return '#22c55e';
-    if (score >= 70) return '#eab308';
+    if (score >= 75) return '#eab308';
+    if (score >= 60) return '#f59e0b';
     return '#ef4444';
   };
 

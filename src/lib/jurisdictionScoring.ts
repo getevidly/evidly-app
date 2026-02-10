@@ -69,7 +69,7 @@ const LA_COUNTY: CountyScoringProfile = {
   deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
   getGrade: (score) => {
     if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
-    if (score >= 80) return { label: 'B', color: '#3b82f6', passing: true };
+    if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
     return { label: 'C', color: '#ef4444', passing: false };
   },
 };
@@ -82,7 +82,7 @@ const SAN_DIEGO_COUNTY: CountyScoringProfile = {
   deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
   getGrade: (score) => {
     if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
-    if (score >= 80) return { label: 'B', color: '#3b82f6', passing: true };
+    if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
     return { label: 'C', color: '#ef4444', passing: false };
   },
 };
@@ -123,7 +123,7 @@ const SAN_BERNARDINO_COUNTY: CountyScoringProfile = {
   deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
   getGrade: (score) => {
     if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
-    if (score >= 80) return { label: 'B', color: '#3b82f6', passing: true };
+    if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
     return { label: 'C', color: '#ef4444', passing: false };
   },
 };
@@ -137,7 +137,7 @@ const ALAMEDA_COUNTY: CountyScoringProfile = {
   imminentHealthHazardDeduction: 26,
   getGrade: (score) => {
     if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
-    if (score >= 80) return { label: 'B', color: '#3b82f6', passing: true };
+    if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
     return { label: 'C', color: '#ef4444', passing: false };
   },
 };

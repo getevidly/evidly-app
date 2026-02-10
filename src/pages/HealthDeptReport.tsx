@@ -339,7 +339,7 @@ export function HealthDeptReport() {
                   ].map(p => (
                     <div key={p.label} style={{ padding: '8px 4px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
                       <div style={{ fontSize: 11, color: '#6b7280' }}>{p.label}</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: p.score >= 90 ? '#22c55e' : p.score >= 70 ? '#eab308' : '#ef4444' }}>{p.score}</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: p.score >= 90 ? '#22c55e' : p.score >= 75 ? '#eab308' : p.score >= 60 ? '#f59e0b' : '#ef4444' }}>{p.score}</div>
                     </div>
                   ))}
                 </div>
@@ -730,7 +730,7 @@ export function HealthDeptReport() {
                           { label: 'Documentation', value: generatedReport.complianceScore.documentation },
                         ].map(p => (
                           <div key={p.label} style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
-                            <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 70 ? '#eab308' : '#ef4444' }}>
+                            <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 75 ? '#eab308' : p.value >= 60 ? '#f59e0b' : '#ef4444' }}>
                               {p.value}
                             </div>
                             <div style={{ fontSize: 12, color: '#6b7280' }}>{p.label}</div>

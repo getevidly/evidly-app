@@ -81,7 +81,8 @@ function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: stri
 
 function getScoreColor(score: number): string {
   if (score >= 90) return '#22c55e';
-  if (score >= 70) return '#eab308';
+  if (score >= 75) return '#eab308';
+  if (score >= 60) return '#f59e0b';
   return '#ef4444';
 }
 
@@ -681,7 +682,7 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.template}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 70 ? '#eab308' : '#ef4444'} />
+                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 75 ? '#eab308' : item.rate >= 60 ? '#f59e0b' : '#ef4444'} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{item.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.missed}</td>
@@ -938,7 +939,7 @@ export function Reports() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: '#d4af37' }}>{item.expiring || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{item.expired || '-'}</td>
                           <td className="px-6 py-4 text-sm">
-                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 70 ? '#eab308' : '#ef4444'} />
+                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 75 ? '#eab308' : healthPct >= 60 ? '#f59e0b' : '#ef4444'} />
                           </td>
                         </tr>
                       );
@@ -1107,7 +1108,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{emp.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">{emp.missed}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={emp.rate} color={emp.rate >= 90 ? '#22c55e' : emp.rate >= 70 ? '#eab308' : '#ef4444'} />
+                          <ProgressBar value={emp.rate} color={emp.rate >= 90 ? '#22c55e' : emp.rate >= 75 ? '#eab308' : emp.rate >= 60 ? '#f59e0b' : '#ef4444'} />
                         </td>
                       </tr>
                     ))}
@@ -1137,7 +1138,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{training.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: training.pending > 0 ? '#d4af37' : '#22c55e' }}>{training.pending}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 70 ? '#eab308' : '#ef4444'} />
+                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 75 ? '#eab308' : training.rate >= 60 ? '#f59e0b' : '#ef4444'} />
                         </td>
                       </tr>
                     ))}

@@ -80,7 +80,7 @@ export function Dashboard() {
 
   const getScoreHexColor = (score: number) => {
     if (score >= 90) return '#22c55e';
-    if (score >= 75) return '#3b82f6';
+    if (score >= 75) return '#eab308';
     if (score >= 60) return '#f59e0b';
     return '#ef4444';
   };
@@ -158,7 +158,7 @@ export function Dashboard() {
     : todaysProgress[selectedLocation] || todaysProgress['downtown'];
   const tempPct = progress.tempTotal > 0 ? Math.round((progress.tempDone / progress.tempTotal) * 100) : 0;
   const checkPct = progress.checkTotal > 0 ? Math.round((progress.checkDone / progress.checkTotal) * 100) : 0;
-  const pctColor = (p: number) => p >= 90 ? '#22c55e' : p >= 70 ? '#eab308' : '#ef4444';
+  const pctColor = (p: number) => p >= 90 ? '#22c55e' : p >= 75 ? '#eab308' : p >= 60 ? '#f59e0b' : '#ef4444';
 
   useEffect(() => {
     const loadMap = () => {
@@ -175,7 +175,7 @@ export function Dashboard() {
           (window as any).dashboardMap = map;
 
           locations.forEach((loc) => {
-            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#3b82f6' : loc.score >= 60 ? '#f59e0b' : '#ef4444';
+            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#eab308' : loc.score >= 60 ? '#f59e0b' : '#ef4444';
             const icon = L.divIcon({
               className: 'custom-marker',
               html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;"></div>`,
@@ -822,7 +822,7 @@ export function Dashboard() {
                       <Tooltip />
                       <Legend />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={75} stroke="#3b82f6" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
                       <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey={t('dashboard.average')} stroke="#1e4d6b" strokeWidth={3} dot={{ r: 4 }} />
                       <Line type="monotone" dataKey="Downtown" stroke="#22c55e" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="4 2" />
@@ -836,7 +836,7 @@ export function Dashboard() {
                       <YAxis domain={[0, 100]} fontSize={12} />
                       <Tooltip />
                       <ReferenceLine y={90} stroke="#22c55e" strokeDasharray="3 3" label={{ value: '90', position: 'right', fontSize: 11 }} />
-                      <ReferenceLine y={75} stroke="#3b82f6" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
+                      <ReferenceLine y={75} stroke="#eab308" strokeDasharray="3 3" label={{ value: '75', position: 'right', fontSize: 11 }} />
                       <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 11 }} />
                       <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} name={t('dashboard.complianceScore')} />
                     </LineChart>

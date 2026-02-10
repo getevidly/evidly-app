@@ -908,7 +908,7 @@ export function AuditReport() {
                                 <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }}>{cl.passed}</td>
                                 <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }}>{cl.failed}</td>
                                 <td style={tdStyle}>
-                                  <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 70 ? '#eab308' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 70 ? '#fefce8' : '#fef2f2')}>
+                                  <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 75 ? '#eab308' : cl.score >= 60 ? '#f59e0b' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 75 ? '#fefce8' : cl.score >= 60 ? '#fffbeb' : '#fef2f2')}>
                                     {cl.score}%
                                   </span>
                                 </td>

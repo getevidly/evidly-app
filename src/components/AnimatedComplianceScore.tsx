@@ -24,7 +24,7 @@ export function AnimatedComplianceScore({ score, label, color, trend }: Animated
   const getAnimatedColor = (currentScore: number) => {
     if (currentScore < 60) return '#ef4444';   // Red — Critical
     if (currentScore < 75) return '#f59e0b';   // Amber — Needs Attention
-    if (currentScore < 90) return '#3b82f6';   // Blue — Good
+    if (currentScore < 90) return '#eab308';   // Yellow — Good
     return '#22c55e';                           // Green — Excellent
   };
 

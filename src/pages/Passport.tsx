@@ -103,7 +103,7 @@ export default function Passport() {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-7xl font-bold" style={{ color: locationData.overall >= 90 ? '#22c55e' : locationData.overall >= 70 ? '#eab308' : '#ef4444' }}>{locationData.overall}</div>
+                <div className="text-7xl font-bold" style={{ color: locationData.overall >= 90 ? '#22c55e' : locationData.overall >= 75 ? '#eab308' : locationData.overall >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.overall}</div>
                 <div className="text-lg text-gray-600 font-medium">Compliant</div>
               </div>
             </div>
@@ -118,7 +118,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Operational</span>
-                <span className="font-bold" style={{ color: locationData.operational >= 90 ? '#22c55e' : locationData.operational >= 70 ? '#eab308' : '#ef4444' }}>{locationData.operational}</span>
+                <span className="font-bold" style={{ color: locationData.operational >= 90 ? '#22c55e' : locationData.operational >= 75 ? '#eab308' : locationData.operational >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.operational}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -131,7 +131,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Equipment</span>
-                <span className="font-bold" style={{ color: locationData.equipment >= 90 ? '#22c55e' : locationData.equipment >= 70 ? '#eab308' : '#ef4444' }}>{locationData.equipment}</span>
+                <span className="font-bold" style={{ color: locationData.equipment >= 90 ? '#22c55e' : locationData.equipment >= 75 ? '#eab308' : locationData.equipment >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.equipment}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
@@ -144,7 +144,7 @@ export default function Passport() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="font-semibold text-gray-700">Documentation</span>
-                <span className="font-bold" style={{ color: locationData.documentation >= 90 ? '#22c55e' : locationData.documentation >= 70 ? '#eab308' : '#ef4444' }}>{locationData.documentation}</span>
+                <span className="font-bold" style={{ color: locationData.documentation >= 90 ? '#22c55e' : locationData.documentation >= 75 ? '#eab308' : locationData.documentation >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.documentation}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
