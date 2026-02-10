@@ -10,6 +10,7 @@ interface ModuleInfo {
   name: string;
   icon: string;
   color: string;
+  comingSoon?: boolean;
 }
 
 interface ShiftBreakdown {
@@ -41,14 +42,19 @@ interface DemoOrg {
 const MODULES: ModuleInfo[] = [
   { id: 'temp-logs', name: 'Temperature Logs', icon: '🌡️', color: '#dc2626' },
   { id: 'checklists', name: 'Checklists', icon: '☑️', color: '#2563eb' },
-  { id: 'compliance', name: 'Compliance Score', icon: '🛡️', color: '#16a34a' },
-  { id: 'vendors', name: 'Vendor Services', icon: '🚚', color: '#7c3aed' },
-  { id: 'documents', name: 'Documents', icon: '📄', color: '#ea580c' },
   { id: 'corrective', name: 'Corrective Actions', icon: '⚠️', color: '#d97706' },
+  { id: 'documents', name: 'Documents', icon: '📄', color: '#ea580c' },
+  { id: 'vendors', name: 'Vendor Services', icon: '🚚', color: '#7c3aed' },
+  { id: 'compliance', name: 'Compliance Score', icon: '🛡️', color: '#16a34a' },
   { id: 'action-center', name: 'Action Center', icon: '🎯', color: '#0891b2' },
   { id: 'qr-passport', name: 'QR Passport', icon: '📱', color: '#d4af37' },
   { id: 'calendar', name: 'Calendar', icon: '📅', color: '#8b5cf6' },
-  { id: 'reports', name: 'Reports', icon: '📊', color: '#1b4965' },
+  { id: 'reports', name: 'Reporting', icon: '📊', color: '#1b4965' },
+  { id: 'analysis', name: 'Analysis', icon: '📈', color: '#059669' },
+  { id: 'key-metrics', name: 'Key Metrics', icon: '📉', color: '#b45309' },
+  { id: 'leaderboard', name: 'Leaderboard', icon: '🏆', color: '#ca8a04' },
+  { id: 'ai-advisor', name: 'AI Advisor', icon: '🤖', color: '#6366f1', comingSoon: true },
+  { id: 'help', name: 'Help / Support', icon: '❓', color: '#64748b' },
 ];
 
 const INDUSTRIES = ['Restaurant', 'Healthcare', 'Senior Living', 'Education', 'Hospitality'];
@@ -69,16 +75,26 @@ const SIZE_TIERS = [
 ];
 
 const MODULE_ADOPTION: Record<string, [number, number]> = {
+  // Core daily-use (85-95%)
   'temp-logs': [0.88, 0.95],
-  'checklists': [0.85, 0.92],
+  'checklists': [0.85, 0.93],
   'compliance': [0.90, 0.98],
-  'vendors': [0.60, 0.75],
+  // Regular management (60-80%)
+  'corrective': [0.62, 0.78],
   'documents': [0.65, 0.80],
-  'corrective': [0.55, 0.70],
-  'action-center': [0.50, 0.65],
+  'vendors': [0.60, 0.75],
+  'reports': [0.70, 0.82],
+  'analysis': [0.62, 0.76],
+  'key-metrics': [0.64, 0.78],
+  // Newer features (30-50%)
+  'action-center': [0.32, 0.48],
   'qr-passport': [0.30, 0.50],
   'calendar': [0.35, 0.48],
-  'reports': [0.70, 0.85],
+  'leaderboard': [0.30, 0.46],
+  // Coming Soon
+  'ai-advisor': [0, 0],
+  // Help / Support (40-60%)
+  'help': [0.40, 0.60],
 };
 
 // ── Seeded Random ─────────────────────────────────────────────────
@@ -122,6 +138,15 @@ function generateDemoOrgs(): DemoOrg[] {
 
     for (const mod of MODULES) {
       const [minAdopt, maxAdopt] = MODULE_ADOPTION[mod.id];
+
+      // Coming-soon modules are never adopted
+      if (mod.comingSoon) {
+        const trend: number[] = [];
+        for (let w = 0; w < 12; w++) trend.push(0);
+        moduleUsage[mod.id] = { adopted: false, sessions: 0, avgDuration: 0, trend };
+        continue;
+      }
+
       const adoptionThreshold = minAdopt + rng() * (maxAdopt - minAdopt);
       const adopted = rng() < adoptionThreshold;
 
@@ -131,13 +156,24 @@ function generateDemoOrgs(): DemoOrg[] {
       let shiftBreakdown: ShiftBreakdown | undefined;
 
       if (adopted) {
-        const moduleBase = (15 + rng() * 45) * raw.locs;
-
         if (mod.id === 'temp-logs') {
-          sessions = Math.round(moduleBase * (2.5 + rng() * 2.5));
-          avgDuration = Math.round(2 + rng() * 3);
-          const morningPct = 0.35 + rng() * 0.15;
-          const afternoonPct = 0.25 + rng() * 0.15;
+          // 6-8 temp checks/day × 30 days = 360-480 per location/month
+          sessions = Math.round(raw.locs * (360 + rng() * 120));
+          avgDuration = Math.round(2 + rng() * 2);
+          const morningPct = 0.38 + rng() * 0.10;
+          const afternoonPct = 0.28 + rng() * 0.10;
+          const eveningPct = 1 - morningPct - afternoonPct;
+          shiftBreakdown = {
+            morning: Math.round(sessions * morningPct),
+            afternoon: Math.round(sessions * afternoonPct),
+            evening: Math.round(sessions * eveningPct),
+          };
+        } else if (mod.id === 'checklists') {
+          // 2-4 checklists/day × 30 days = 60-120 per location/month
+          sessions = Math.round(raw.locs * (60 + rng() * 60));
+          avgDuration = Math.round(5 + rng() * 8);
+          const morningPct = 0.40 + rng() * 0.10;
+          const afternoonPct = 0.25 + rng() * 0.12;
           const eveningPct = 1 - morningPct - afternoonPct;
           shiftBreakdown = {
             morning: Math.round(sessions * morningPct),
@@ -145,6 +181,7 @@ function generateDemoOrgs(): DemoOrg[] {
             evening: Math.round(sessions * eveningPct),
           };
         } else {
+          const moduleBase = (15 + rng() * 45) * raw.locs;
           sessions = Math.round(moduleBase);
           avgDuration = Math.round(3 + rng() * 12);
         }
@@ -280,10 +317,10 @@ export function UsageAnalytics() {
     });
 
     let shiftData: ShiftBreakdown | null = null;
-    if (mod.id === 'temp-logs') {
+    if (mod.id === 'temp-logs' || mod.id === 'checklists') {
       shiftData = { morning: 0, afternoon: 0, evening: 0 };
       for (const org of filteredOrgs) {
-        const sb = org.moduleUsage['temp-logs'].shiftBreakdown;
+        const sb = org.moduleUsage[mod.id].shiftBreakdown;
         if (sb) {
           shiftData.morning += sb.morning;
           shiftData.afternoon += sb.afternoon;
@@ -319,8 +356,9 @@ export function UsageAnalytics() {
     try {
       const periodLabel = TIME_PERIODS.find(t => t.id === timePeriod)?.label || 'Last 30 Days';
       const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-      const top5 = [...moduleStats].sort((a, b) => b.adoptionRate - a.adoptionRate).slice(0, 5);
-      const bottom3 = [...moduleStats].sort((a, b) => a.adoptionRate - b.adoptionRate).slice(0, 3);
+      const launchedStats = moduleStats.filter(m => !m.comingSoon);
+      const top5 = [...launchedStats].sort((a, b) => b.adoptionRate - a.adoptionRate).slice(0, 5);
+      const bottom3 = [...launchedStats].sort((a, b) => a.adoptionRate - b.adoptionRate).slice(0, 3);
       const decliningOrgs = filteredOrgs.filter(o => o.trend < -5);
 
       const emailHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
@@ -502,17 +540,22 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Module Adoption Rate
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {sortedByAdoption.map(mod => (
-                <div key={mod.id} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '130px', fontSize: '12px', fontWeight: 500, color: '#374151', ...F, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div key={mod.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: mod.comingSoon ? 0.5 : 1 }}>
+                  <div style={{ width: '130px', fontSize: '11px', fontWeight: 500, color: '#374151', ...F, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {mod.icon} {mod.name}
                   </div>
-                  <div style={{ flex: 1, height: '20px', backgroundColor: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ flex: 1, height: '18px', backgroundColor: '#f3f4f6', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
                     <div style={{ width: `${mod.adoptionRate}%`, height: '100%', backgroundColor: mod.color, borderRadius: '4px', transition: 'width 0.3s' }} />
+                    {mod.comingSoon && (
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 700, color: '#6b7280', letterSpacing: '0.5px' }}>
+                        COMING SOON
+                      </div>
+                    )}
                   </div>
-                  <div style={{ width: '40px', fontSize: '12px', fontWeight: 700, color: mod.color, textAlign: 'right', ...F }}>
-                    {mod.adoptionRate}%
+                  <div style={{ width: '40px', fontSize: '11px', fontWeight: 700, color: mod.comingSoon ? '#9ca3af' : mod.color, textAlign: 'right', ...F }}>
+                    {mod.comingSoon ? '—' : `${mod.adoptionRate}%`}
                   </div>
                 </div>
               ))}
@@ -524,17 +567,22 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965', margin: '0 0 16px 0', ...F, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Sessions by Module
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {sortedBySessions.map(mod => (
-                <div key={mod.id} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '130px', fontSize: '12px', fontWeight: 500, color: '#374151', ...F, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div key={mod.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: mod.comingSoon ? 0.5 : 1 }}>
+                  <div style={{ width: '130px', fontSize: '11px', fontWeight: 500, color: '#374151', ...F, flexShrink: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {mod.icon} {mod.name}
                   </div>
-                  <div style={{ flex: 1, height: '20px', backgroundColor: '#f3f4f6', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ flex: 1, height: '18px', backgroundColor: '#f3f4f6', borderRadius: '4px', overflow: 'hidden', position: 'relative' }}>
                     <div style={{ width: `${(mod.totalSessions / maxModuleSessions) * 100}%`, height: '100%', backgroundColor: mod.color, borderRadius: '4px', transition: 'width 0.3s' }} />
+                    {mod.comingSoon && (
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 700, color: '#6b7280', letterSpacing: '0.5px' }}>
+                        COMING SOON
+                      </div>
+                    )}
                   </div>
-                  <div style={{ width: '60px', fontSize: '12px', fontWeight: 700, color: '#374151', textAlign: 'right', ...F }}>
-                    {mod.totalSessions.toLocaleString()}
+                  <div style={{ width: '60px', fontSize: '11px', fontWeight: 700, color: mod.comingSoon ? '#9ca3af' : '#374151', textAlign: 'right', ...F }}>
+                    {mod.comingSoon ? '—' : mod.totalSessions.toLocaleString()}
                   </div>
                 </div>
               ))}
@@ -584,11 +632,39 @@ Generated ${today} · This is an automated report from EvidLY Analytics
     return (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
         {moduleStats.map(mod => {
-          const isTemp = mod.id === 'temp-logs';
+          const hasShifts = mod.id === 'temp-logs' || mod.id === 'checklists';
           let displaySessions = mod.totalSessions;
 
-          if (isTemp && shiftFilter !== 'all' && mod.shiftData) {
+          if (hasShifts && shiftFilter !== 'all' && mod.shiftData) {
             displaySessions = mod.shiftData[shiftFilter as keyof ShiftBreakdown];
+          }
+
+          // Coming Soon card
+          if (mod.comingSoon) {
+            return (
+              <div key={mod.id} style={{ backgroundColor: 'white', border: '2px dashed #e5e7eb', borderRadius: '12px', padding: '20px', ...F, position: 'relative', opacity: 0.7 }}>
+                <div style={{ position: 'absolute', top: '12px', right: '12px', fontSize: '9px', fontWeight: 700, color: '#6366f1', backgroundColor: '#eef2ff', padding: '3px 10px', borderRadius: '20px', letterSpacing: '0.5px' }}>
+                  COMING SOON
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '24px' }}>{mod.icon}</span>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965' }}>{mod.name}</div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 800, color: '#9ca3af' }}>0%</div>
+                    <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Adoption (0/{totalCustomers})</div>
+                  </div>
+                  <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 800, color: '#9ca3af' }}>—</div>
+                    <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>Not Yet Available</div>
+                  </div>
+                </div>
+                <div style={{ fontSize: '12px', color: '#9ca3af', ...F, textAlign: 'center' }}>
+                  Module launching soon — will be available to all customers
+                </div>
+              </div>
+            );
           }
 
           return (
@@ -598,7 +674,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                   <span style={{ fontSize: '24px' }}>{mod.icon}</span>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 700, color: '#1b4965' }}>{mod.name}</div>
-                    {isTemp && (
+                    {hasShifts && (
                       <select
                         value={shiftFilter}
                         onChange={e => setShiftFilter(e.target.value)}
@@ -623,14 +699,14 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 <div style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
                   <div style={{ fontSize: '20px', fontWeight: 800, color: '#1b4965' }}>{displaySessions.toLocaleString()}</div>
                   <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600 }}>
-                    {isTemp && shiftFilter !== 'all' ? `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Sessions` : 'Total Sessions'}
+                    {hasShifts && shiftFilter !== 'all' ? `${shiftFilter.charAt(0).toUpperCase() + shiftFilter.slice(1)} Sessions` : 'Total Sessions'}
                   </div>
                 </div>
               </div>
 
-              {isTemp && mod.shiftData && shiftFilter === 'all' && (
-                <div style={{ marginBottom: '12px', padding: '8px', backgroundColor: '#fef2f2', borderRadius: '6px' }}>
-                  <div style={{ fontSize: '10px', fontWeight: 700, color: '#dc2626', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              {hasShifts && mod.shiftData && shiftFilter === 'all' && (
+                <div style={{ marginBottom: '12px', padding: '8px', backgroundColor: mod.id === 'temp-logs' ? '#fef2f2' : '#eff6ff', borderRadius: '6px' }}>
+                  <div style={{ fontSize: '10px', fontWeight: 700, color: mod.id === 'temp-logs' ? '#dc2626' : '#2563eb', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     Shift Breakdown
                   </div>
                   <div style={{ display: 'flex', gap: '6px' }}>
@@ -677,46 +753,46 @@ Generated ${today} · This is an automated report from EvidLY Analytics
     return (
       <div>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', minWidth: '1100px', ...F }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', minWidth: '1300px', ...F }}>
             <thead>
               <tr style={{ backgroundColor: '#f9fafb' }}>
-                <th style={{ padding: '12px 16px', textAlign: 'left', fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Customer</th>
-                <th style={{ padding: '12px 8px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Size</th>
-                <th style={{ padding: '12px 8px', textAlign: 'right', fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Sessions</th>
+                <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: '10px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Customer</th>
+                <th style={{ padding: '10px 6px', textAlign: 'center', fontSize: '10px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Size</th>
+                <th style={{ padding: '10px 6px', textAlign: 'right', fontSize: '10px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Sessions</th>
                 {MODULES.map(mod => (
-                  <th key={mod.id} style={{ padding: '12px 4px', textAlign: 'center', fontSize: '9px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', borderBottom: '1px solid #e5e7eb', maxWidth: '60px' }} title={mod.name}>
+                  <th key={mod.id} style={{ padding: '10px 2px', textAlign: 'center', fontSize: '9px', fontWeight: 700, color: mod.comingSoon ? '#c7d2fe' : '#6b7280', textTransform: 'uppercase', borderBottom: '1px solid #e5e7eb', maxWidth: '44px' }} title={mod.comingSoon ? `${mod.name} (Coming Soon)` : mod.name}>
                     {mod.icon}
                   </th>
                 ))}
-                <th style={{ padding: '12px 8px', textAlign: 'center', fontSize: '11px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Trend</th>
+                <th style={{ padding: '10px 6px', textAlign: 'center', fontSize: '10px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', borderBottom: '1px solid #e5e7eb' }}>Trend</th>
               </tr>
             </thead>
             <tbody>
               {sortedOrgs.map(org => (
                 <tr key={org.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                  <td style={{ padding: '10px 16px' }}>
-                    <div style={{ fontWeight: 600, fontSize: '13px', color: '#111827' }}>{org.name}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>{org.locationCount} loc · {org.industry}</div>
+                  <td style={{ padding: '8px 12px' }}>
+                    <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827' }}>{org.name}</div>
+                    <div style={{ fontSize: '10px', color: '#6b7280' }}>{org.locationCount} loc · {org.industry}</div>
                   </td>
-                  <td style={{ padding: '10px 8px', textAlign: 'center', fontSize: '12px', fontWeight: 600, color: '#374151' }}>
+                  <td style={{ padding: '8px 6px', textAlign: 'center', fontSize: '11px', fontWeight: 600, color: '#374151' }}>
                     {org.locationCount}
                   </td>
-                  <td style={{ padding: '10px 8px', textAlign: 'right', fontSize: '13px', fontWeight: 700, color: '#1b4965' }}>
+                  <td style={{ padding: '8px 6px', textAlign: 'right', fontSize: '12px', fontWeight: 700, color: '#1b4965' }}>
                     {Math.round(org.totalSessions * timeScale).toLocaleString()}
                   </td>
                   {MODULES.map(mod => {
                     const usage = org.moduleUsage[mod.id];
                     const scaledSessions = Math.round(usage.sessions * timeScale);
-                    const { bg, text } = heatmapColor(usage.sessions);
+                    const { bg, text } = mod.comingSoon ? { bg: '#f3f4f6', text: '#d1d5db' } : heatmapColor(usage.sessions);
                     return (
-                      <td key={mod.id} style={{ padding: '4px', textAlign: 'center' }}>
+                      <td key={mod.id} style={{ padding: '3px 1px', textAlign: 'center' }}>
                         <div style={{
-                          width: '36px', height: '28px', borderRadius: '6px',
+                          width: '30px', height: '24px', borderRadius: '4px',
                           backgroundColor: bg, display: 'inline-flex',
                           alignItems: 'center', justifyContent: 'center',
-                          fontSize: '9px', fontWeight: 700, color: text,
+                          fontSize: '8px', fontWeight: 700, color: text,
                         }}>
-                          {usage.sessions > 0 ? (scaledSessions > 999 ? `${Math.round(scaledSessions / 1000)}k` : scaledSessions) : '—'}
+                          {mod.comingSoon ? '·' : usage.sessions > 0 ? (scaledSessions > 999 ? `${Math.round(scaledSessions / 1000)}k` : scaledSessions) : '—'}
                         </div>
                       </td>
                     );
@@ -743,6 +819,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
             { label: 'Active', bg: '#dbeafe', color: '#1b4965' },
             { label: 'Light', bg: '#fef3c7', color: '#d4af37' },
             { label: 'Not Adopted', bg: '#f3f4f6', color: '#9ca3af' },
+            { label: 'Coming Soon', bg: '#f3f4f6', color: '#d1d5db' },
           ].map(item => (
             <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '16px', height: '16px', borderRadius: '4px', backgroundColor: item.bg, border: '1px solid #e5e7eb' }} />
@@ -774,18 +851,27 @@ Generated ${today} · This is an automated report from EvidLY Analytics
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
                 {MODULES.map(mod => {
+                  if (mod.comingSoon) {
+                    return (
+                      <div key={mod.id} style={{ backgroundColor: '#f9fafb', borderRadius: '8px', padding: '8px', textAlign: 'center', border: '1px dashed #e5e7eb', opacity: 0.6 }}>
+                        <div style={{ fontSize: '14px', marginBottom: '2px' }}>{mod.icon}</div>
+                        <div style={{ fontSize: '8px', fontWeight: 700, color: '#6366f1', letterSpacing: '0.3px' }}>SOON</div>
+                        <div style={{ fontSize: '8px', color: '#9ca3af', fontWeight: 600, ...F }}>{mod.name}</div>
+                      </div>
+                    );
+                  }
                   const adoptedCount = indOrgs.filter(o => o.moduleUsage[mod.id].adopted).length;
                   const rate = Math.round((adoptedCount / indOrgs.length) * 100);
                   const bg = rate >= 80 ? '#dcfce7' : rate >= 60 ? '#dbeafe' : rate >= 40 ? '#fef3c7' : '#fef2f2';
                   const color = rate >= 80 ? '#16a34a' : rate >= 60 ? '#1b4965' : rate >= 40 ? '#d97706' : '#dc2626';
 
                   return (
-                    <div key={mod.id} style={{ backgroundColor: bg, borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
-                      <div style={{ fontSize: '16px', marginBottom: '4px' }}>{mod.icon}</div>
-                      <div style={{ fontSize: '18px', fontWeight: 800, color }}>{rate}%</div>
-                      <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 600, ...F }}>{mod.name}</div>
+                    <div key={mod.id} style={{ backgroundColor: bg, borderRadius: '8px', padding: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '14px', marginBottom: '2px' }}>{mod.icon}</div>
+                      <div style={{ fontSize: '16px', fontWeight: 800, color }}>{rate}%</div>
+                      <div style={{ fontSize: '8px', color: '#6b7280', fontWeight: 600, ...F }}>{mod.name}</div>
                     </div>
                   );
                 })}
