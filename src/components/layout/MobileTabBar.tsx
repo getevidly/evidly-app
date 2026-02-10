@@ -19,6 +19,7 @@ import {
   HelpCircle,
   LogOut,
   AlertCircle,
+  ClipboardCheck,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -67,6 +68,7 @@ export function MobileTabBar() {
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
       { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
@@ -80,6 +82,7 @@ export function MobileTabBar() {
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
       { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },

@@ -19,6 +19,7 @@ import {
   Lock,
   MailOpen,
   AlertTriangle,
+  ClipboardCheck,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -46,6 +47,7 @@ const navigation: NavItem[] = [
   { name: 'Calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Incident Log', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Audit Report', href: '/audit-report', icon: ClipboardCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Predictive Alerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
   { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
