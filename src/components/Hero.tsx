@@ -1,36 +1,29 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LeadCaptureModal } from './LeadCaptureModal';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const [showLeadModal, setShowLeadModal] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     navigate(`/signup${email ? `?email=${encodeURIComponent(email)}` : ''}`);
   };
 
-  const handleTryDemo = () => {
-    setShowLeadModal(true);
-  };
-
   return (
-    <>
-    <section className="pt-[120px] pb-[80px] px-6 relative overflow-hidden bg-gradient-to-b from-white to-[var(--color-gold-bg)]">
+    <section className="relative overflow-hidden bg-gradient-to-b from-white to-[var(--color-gold-bg)]" style={{ paddingTop: '120px', paddingBottom: '80px', paddingLeft: '24px', paddingRight: '24px' }}>
       <div className="absolute top-[-100px] right-[-200px] w-[600px] h-[600px] pointer-events-none">
         <div className="w-full h-full rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.2)_0%,transparent_70%)]" />
       </div>
-      <div className="max-w-[1300px] mx-auto relative">
-        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-12 items-center">
-          {/* Left: Text content */}
-          <div>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '48px' }}>
+          {/* Left: Text content — 45% on desktop, full width on mobile */}
+          <div style={{ flex: '1 1 400px', maxWidth: '540px' }}>
             <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[var(--color-gold)] rounded-full mb-6">
               <span className="w-2 h-2 bg-[var(--color-gold)] rounded-full animate-[pulse_2s_ease-in-out_infinite]" />
               <span className="text-[0.875rem] font-semibold text-[var(--color-blue)]">Launching April 7, 2026</span>
             </div>
-            <h1 className="font-['Outfit'] text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.15] tracking-[-0.02em] mb-5">
+            <h1 className="font-['Outfit'] font-extrabold leading-[1.15] tracking-[-0.02em] mb-5" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)' }}>
               <span className="text-[var(--color-blue)]">One platform for </span>
               <span className="text-[var(--color-gold)]">fire safety, food safety, and vendor compliance</span>
             </h1>
@@ -52,9 +45,9 @@ export default function Hero() {
                 Get Started
               </button>
             </form>
-            <div className="flex items-center gap-4 mb-4">
+            <div className="mb-4">
               <button
-                onClick={handleTryDemo}
+                onClick={() => navigate('/demo')}
                 className="text-[0.9rem] font-medium text-[var(--color-blue)] hover:text-[var(--color-gold-dark)] transition-colors underline underline-offset-4"
               >
                 Try the interactive demo →
@@ -68,8 +61,8 @@ export default function Hero() {
             </p>
           </div>
 
-          {/* Right: Dashboard screenshot */}
-          <div>
+          {/* Right: Dashboard screenshot — 55% on desktop, full width on mobile */}
+          <div style={{ flex: '1 1 500px', minWidth: 0 }}>
             <img
               src="/dashboard-hero.png"
               alt="EvidLY Compliance Dashboard"
@@ -82,7 +75,5 @@ export default function Hero() {
         </div>
       </div>
     </section>
-    <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
-    </>
   );
 }
