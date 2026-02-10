@@ -232,7 +232,7 @@ export function ScoringBreakdown() {
             <div className="text-3xl font-bold" style={{ color: tier.hex }}>{scores.overall}</div>
             <div className={`text-xs font-semibold px-2 py-0.5 rounded-full mt-1 ${
               tier.color === 'green' ? 'bg-green-100 text-green-800' :
-              tier.color === 'blue' ? 'bg-blue-100 text-blue-800' :
+              tier.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
               tier.color === 'amber' ? 'bg-amber-100 text-amber-800' :
               'bg-red-100 text-red-800'
             }`}>{tier.label}</div>
