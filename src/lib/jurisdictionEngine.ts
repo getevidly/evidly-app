@@ -28,6 +28,7 @@ import {
   DEMO_LOCATION_JURISDICTIONS,
 } from './jurisdictions';
 import { CALIFORNIA_STATE_LAWS, CALIFORNIA_CITIES } from './californiaLaws';
+import { detectJurisdiction } from './zipToCounty';
 
 // ── Merged Profile ────────────────────────────────────────────
 
@@ -291,6 +292,183 @@ export function getDaysUntil(effectiveDate: string): number {
  */
 export function getCityOrdinance(cityName: string) {
   return CALIFORNIA_CITIES.find(c => c.cityName === cityName);
+}
+
+// ── Jurisdiction Auto-Detection ───────────────────────────────
+
+/**
+ * Regulation with computed status: active, upcoming with countdown, or phased.
+ */
+export interface RegulationStatus {
+  law: CaliforniaStateLaw;
+  isActive: boolean;
+  isUpcoming: boolean;
+  daysUntilEffective: number;
+  countdownLabel: string;
+}
+
+/**
+ * Per-location jurisdiction configuration with auto-detection results and override support.
+ */
+export interface LocationJurisdictionConfig {
+  locationId: string;
+  locationName: string;
+  address: string;
+  city: string;
+  county: string;
+  state: string;
+  zip: string;
+  detectedState: string | null;
+  detectedCounty: string | null;
+  detectionMethod: 'zip' | 'state' | 'manual';
+  jurisdictionChain: string[];
+  isCaliforniaLocation: boolean;
+  regulations: RegulationStatus[];
+  overrides: Record<string, boolean>; // lawId -> enabled/disabled
+  autoDetectedAt: string; // ISO date
+}
+
+// All 11 key California regulation IDs that the user wants tracked
+const CA_KEY_REGULATION_IDS = [
+  'calcode-114002-cooling',  // CA cooling times
+  'ab-660',                  // Food date labels
+  'sb-68',                   // Allergen disclosure
+  'sb-1383',                 // Organic waste / food recovery
+  'sb-476',                  // Employer-paid food handler training
+  'cal-osha-3396',           // Indoor heat illness prevention
+  'ab-418',                  // Banned food additives
+  'ab-1147',                 // Pest prevention training
+  'cfc-title24-part9',       // California Fire Code
+  'ab-1228',                 // Fast food council (minimum wage $20)
+];
+
+/**
+ * Compute regulation status (active vs upcoming with countdown) for a law.
+ */
+export function getRegulationStatus(law: CaliforniaStateLaw): RegulationStatus {
+  const now = new Date();
+  const effective = new Date(law.effectiveDate);
+  const diffMs = effective.getTime() - now.getTime();
+  const daysUntil = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  let countdownLabel = '';
+  if (daysUntil > 365) {
+    const months = Math.round(daysUntil / 30);
+    countdownLabel = `${months} months`;
+  } else if (daysUntil > 0) {
+    countdownLabel = `${daysUntil} days`;
+  } else {
+    countdownLabel = 'Effective now';
+  }
+
+  return {
+    law,
+    isActive: daysUntil <= 0 || law.status === 'effective',
+    isUpcoming: daysUntil > 0 && (law.status === 'upcoming' || law.status === 'phased'),
+    daysUntilEffective: Math.max(0, daysUntil),
+    countdownLabel,
+  };
+}
+
+/**
+ * Auto-detect jurisdiction from a location address and build jurisdiction config.
+ * Core function: when zip/state = CA, auto-applies ALL California requirements.
+ */
+export function autoDetectJurisdiction(input: {
+  locationId: string;
+  locationName: string;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+}): LocationJurisdictionConfig {
+  const detection = detectJurisdiction({
+    zip: input.zip,
+    state: input.state,
+    city: input.city,
+  });
+
+  // Compute regulation statuses for all CA laws
+  const regulations: RegulationStatus[] = detection.isCalifornnia
+    ? CALIFORNIA_STATE_LAWS.map(getRegulationStatus)
+    : [];
+
+  // Default: all regulations enabled (no overrides)
+  const overrides: Record<string, boolean> = {};
+
+  // Determine county name from detection or from input
+  const countyName = detection.countyName || '';
+
+  return {
+    locationId: input.locationId,
+    locationName: input.locationName,
+    address: input.address,
+    city: input.city,
+    county: countyName,
+    state: input.state,
+    zip: input.zip,
+    detectedState: detection.isCalifornnia ? 'California' : null,
+    detectedCounty: detection.countyName,
+    detectionMethod: detection.detectionMethod === 'none' ? 'manual' : detection.detectionMethod,
+    jurisdictionChain: detection.jurisdictionChain,
+    isCaliforniaLocation: detection.isCalifornnia,
+    regulations,
+    overrides,
+    autoDetectedAt: new Date().toISOString(),
+  };
+}
+
+/**
+ * Get the key California regulations with their current status.
+ * Used for the regulation summary display.
+ */
+export function getKeyCaliforniaRegulations(): RegulationStatus[] {
+  return CALIFORNIA_STATE_LAWS
+    .filter(law => CA_KEY_REGULATION_IDS.includes(law.id))
+    .map(getRegulationStatus)
+    .sort((a, b) => {
+      // Active first, then by effective date
+      if (a.isActive && !b.isActive) return -1;
+      if (!a.isActive && b.isActive) return 1;
+      return new Date(a.law.effectiveDate).getTime() - new Date(b.law.effectiveDate).getTime();
+    });
+}
+
+/**
+ * Get all California regulations with status, sorted by effective date.
+ */
+export function getAllCaliforniaRegulations(): RegulationStatus[] {
+  return CALIFORNIA_STATE_LAWS
+    .map(getRegulationStatus)
+    .sort((a, b) => {
+      if (a.isActive && !b.isActive) return -1;
+      if (!a.isActive && b.isActive) return 1;
+      return new Date(a.law.effectiveDate).getTime() - new Date(b.law.effectiveDate).getTime();
+    });
+}
+
+/**
+ * Build demo location jurisdiction configs for the 3 demo locations.
+ * Pre-configured with auto-detection results.
+ */
+export function getDemoLocationConfigs(): LocationJurisdictionConfig[] {
+  return DEMO_LOCATION_JURISDICTIONS.map((loc, i) => ({
+    locationId: String(i + 1),
+    locationName: loc.locationName,
+    address: loc.address,
+    city: loc.city,
+    county: loc.county,
+    state: loc.state,
+    zip: loc.zip,
+    detectedState: 'California',
+    detectedCounty: loc.county,
+    detectionMethod: 'zip' as const,
+    jurisdictionChain: loc.jurisdictionChain,
+    isCaliforniaLocation: true,
+    regulations: CALIFORNIA_STATE_LAWS.map(getRegulationStatus),
+    overrides: {},
+    autoDetectedAt: new Date().toISOString(),
+  }));
 }
 
 // ── Demo Compliance Gap Analysis ──────────────────────────────
