@@ -1,11 +1,13 @@
 import { useState, useMemo, useRef } from 'react';
 import {
   Download, Mail, Share2, Printer, FileText, Thermometer, CheckSquare,
-  AlertTriangle, Truck, Shield, Clock, MapPin, User, ChevronDown,
-  ChevronRight, Camera, ClipboardList, Wrench, Eye, EyeOff, ShieldCheck,
+  AlertTriangle, Truck, Shield, ChevronDown,
+  ChevronRight, ClipboardList, Wrench, Eye, EyeOff, ShieldCheck,
+  Loader2,
 } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { getScoreColor } from '../lib/complianceScoring';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -293,6 +295,7 @@ export function AuditReport() {
   const [reportType, setReportType] = useState<ReportType>('full');
   const [includePhotos, setIncludePhotos] = useState(true);
   const [generated, setGenerated] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   // Section toggles
   const [sections, setSections] = useState<ReportSection[]>([
@@ -362,24 +365,48 @@ export function AuditReport() {
     const avgScore = totalChecklists > 0
       ? Math.round(reportData.checklists.reduce((s: number, c: any) => s + c.score, 0) / totalChecklists)
       : 0;
+    const checklistsWithFailures = reportData.checklists.filter((c: any) => c.failed > 0).length;
     const openIncidents = reportData.incidents.filter((i: any) => !['Verified', 'Resolved'].includes(i.status)).length;
     const resolvedIncidents = reportData.incidents.filter((i: any) => ['Verified', 'Resolved'].includes(i.status)).length;
+    const incCritical = reportData.incidents.filter((i: any) => i.severity === 'Critical').length;
+    const incMajor = reportData.incidents.filter((i: any) => i.severity === 'Major').length;
+    const incMinor = reportData.incidents.filter((i: any) => i.severity === 'Minor').length;
     const currentDocs = reportData.documents.filter((d: any) => d.status === 'Current').length;
     const expiringDocs = reportData.documents.filter((d: any) => d.status === 'Expiring').length;
     const expiredDocs = reportData.documents.filter((d: any) => d.status === 'Expired').length;
+    const vendorCurrent = reportData.vendors.filter((v: any) => v.certStatus === 'Current').length;
+    const vendorExpiring = reportData.vendors.filter((v: any) => v.certStatus === 'Expiring Soon').length;
+    const vendorExpired = reportData.vendors.filter((v: any) => v.certStatus === 'Expired').length;
+    const eqGood = reportData.equipment.filter((e: any) => e.condition === 'Good').length;
+    const eqFair = reportData.equipment.filter((e: any) => e.condition === 'Fair').length;
+    const eqAttention = reportData.equipment.filter((e: any) => e.condition === 'Needs Attention').length;
     const complianceScore = Math.round(
       (passTemps / Math.max(totalTemps, 1)) * 45 +
       (avgScore / 100) * 30 +
       (currentDocs / Math.max(reportData.documents.length, 1)) * 25
     );
+    // Per-location scores
+    const locationStats = (loc ? [loc] : LOCATIONS).map(locName => {
+      const lt = reportData.tempLogs.filter((t: any) => t.location === locName);
+      const tpr = lt.length > 0 ? Math.round(lt.filter((t: any) => t.pass).length / lt.length * 100) : 100;
+      const lc = reportData.checklists.filter((c: any) => c.location === locName);
+      const cas = lc.length > 0 ? Math.round(lc.reduce((s: number, c: any) => s + c.score, 0) / lc.length) : 100;
+      const ld = reportData.documents.filter((d: any) => d.location === locName);
+      const cdr = ld.length > 0 ? Math.round(ld.filter((d: any) => d.status === 'Current').length / ld.length * 100) : 100;
+      const score = Math.round(tpr * 0.45 + cas * 0.30 + cdr * 0.25);
+      return { name: locName, score };
+    });
     return {
       complianceScore,
       totalTemps, passTemps, tempPassRate: totalTemps > 0 ? Math.round((passTemps / totalTemps) * 100) : 0,
-      totalChecklists, avgScore,
+      totalChecklists, avgScore, checklistsWithFailures,
       openIncidents, resolvedIncidents, totalIncidents: reportData.incidents.length,
+      incCritical, incMajor, incMinor,
       currentDocs, expiringDocs, expiredDocs, totalDocs: reportData.documents.length,
-      totalEquipment: reportData.equipment.length,
+      vendorCurrent, vendorExpiring, vendorExpired, totalVendors: reportData.vendors.length,
+      eqGood, eqFair, eqAttention, totalEquipment: reportData.equipment.length,
       totalAuditEntries: reportData.auditLog.length,
+      locationStats,
     };
   }, [reportData]);
 
@@ -394,30 +421,81 @@ export function AuditReport() {
 
   // ── Handlers ─────────────────────────────────────────────────────
 
-  // TODO: Production PDF — install jsPDF + html2canvas for server-side PDF generation
-  // import jsPDF from 'jspdf';
-  // import html2canvas from 'html2canvas';
-  // const generatePDF = async () => {
-  //   const canvas = await html2canvas(reportRef.current!);
-  //   const pdf = new jsPDF('p', 'mm', 'a4');
-  //   const imgData = canvas.toDataURL('image/png');
-  //   pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
-  //   pdf.save(`EvidLY-Audit-Report-${locationFilter}-${dateRange}d.pdf`);
-  // };
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current) return;
+    setPdfLoading(true);
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDFModule = await import('jspdf');
+      const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
 
-  const handleDownloadPDF = () => {
-    window.print();
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageW = 210;
+      const pageH = 297;
+      const margin = 8;
+      const hdrH = 10;
+      const ftrH = 8;
+      const usableH = pageH - hdrH - ftrH;
+      const imgW = pageW - 2 * margin;
+      const imgH = (canvas.height * imgW) / canvas.width;
+
+      let heightLeft = imgH;
+      let pageIdx = 0;
+
+      while (heightLeft > 0 || pageIdx === 0) {
+        if (pageIdx > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', margin, hdrH - pageIdx * usableH, imgW, imgH);
+        heightLeft -= usableH;
+        pageIdx++;
+      }
+
+      // Brand every page with header, footer, page numbers
+      const total = pdf.getNumberOfPages();
+      for (let i = 1; i <= total; i++) {
+        pdf.setPage(i);
+        // White-out header/footer zones so content doesn't bleed through
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(0, 0, pageW, hdrH, 'F');
+        pdf.rect(0, pageH - ftrH, pageW, ftrH, 'F');
+        // Header bar
+        pdf.setFillColor(30, 77, 107);
+        pdf.rect(0, 0, pageW, hdrH, 'F');
+        pdf.setFontSize(7);
+        pdf.setTextColor(255, 255, 255);
+        pdf.text('EvidLY — Compliance Management Platform', margin, 6.5);
+        pdf.setTextColor(212, 175, 55);
+        pdf.text(reportTitle, pageW - margin, 6.5, { align: 'right' });
+        // Footer
+        pdf.setFontSize(6);
+        pdf.setTextColor(160, 160, 160);
+        pdf.text(generatedAt, margin, pageH - 3);
+        pdf.text(`Page ${i} of ${total}`, pageW - margin, pageH - 3, { align: 'right' });
+      }
+
+      const locLabel = locationFilter === 'all' ? 'AllLocations' : locationFilter.replace(/\s+/g, '');
+      pdf.save(`EvidLY-Audit-Report-DemoRestaurantGroup-${locLabel}-${days}d.pdf`);
+    } catch {
+      alert('PDF generation failed. Please use the Print button as a fallback.');
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   const handleEmail = () => {
     // TODO: Production — POST to Resend API endpoint to email PDF
-    // await fetch('/api/send-report', { method: 'POST', body: JSON.stringify({ to: email, reportHtml }) });
     alert('Report emailed to management@company.com (demo). In production, this sends via Resend API.');
   };
 
   const handleShareLink = () => {
     // TODO: Production — generate signed URL via Supabase Storage
-    // const { data } = await supabase.storage.from('reports').createSignedUrl(path, 86400);
     alert('Secure share link generated (expires in 24 hours). Link copied to clipboard. (demo)');
   };
 
@@ -585,8 +663,9 @@ export function AuditReport() {
                 ← Back to Configuration
               </button>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={handleDownloadPDF} className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium">
-                  <Download className="h-4 w-4" /> Download PDF
+                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
+                  {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
                 <button onClick={handleEmail} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                   <Mail className="h-4 w-4" /> Email Report
@@ -668,7 +747,7 @@ export function AuditReport() {
                         <div className="relative w-24 h-24 flex-shrink-0">
                           <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
                             <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="8" />
-                            <circle cx="50" cy="50" r="42" fill="none" stroke={summary.complianceScore >= 90 ? '#22c55e' : summary.complianceScore >= 70 ? '#eab308' : '#ef4444'} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
+                            <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(summary.complianceScore)} strokeWidth="8" strokeDasharray={`${summary.complianceScore * 2.64} 264`} strokeLinecap="round" />
                           </svg>
                           <div className="absolute inset-0 flex items-center justify-center">
                             <span className="text-2xl font-bold text-gray-900">{summary.complianceScore}</span>
@@ -677,6 +756,9 @@ export function AuditReport() {
                         <div>
                           <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
                           <p className="text-sm text-gray-600">Weighted: Operational (45%) + Equipment (30%) + Documentation (25%)</p>
+                          <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
+                            {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
+                          </p>
                         </div>
                       </div>
 
@@ -707,6 +789,34 @@ export function AuditReport() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Location Score Breakdown */}
+                      {summary.locationStats.length > 1 && (
+                        <div className="mt-6">
+                          <h4 className="text-sm font-semibold text-gray-700 mb-3">Location Scores</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {summary.locationStats.map((ls: any) => (
+                              <div key={ls.name} className="p-3 rounded-lg border border-gray-200 flex items-center gap-3">
+                                <div className="relative w-14 h-14 flex-shrink-0">
+                                  <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                                    <circle cx="50" cy="50" r="42" fill="none" stroke="#e5e7eb" strokeWidth="10" />
+                                    <circle cx="50" cy="50" r="42" fill="none" stroke={getScoreColor(ls.score)} strokeWidth="10" strokeDasharray={`${ls.score * 2.64} 264`} strokeLinecap="round" />
+                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-sm font-bold text-gray-900">{ls.score}</span>
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">{ls.name}</div>
+                                  <div className="text-xs font-semibold" style={{ color: getScoreColor(ls.score) }}>
+                                    {ls.score >= 90 ? 'Inspection Ready' : ls.score >= 70 ? 'Needs Attention' : 'Critical'}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -723,10 +833,11 @@ export function AuditReport() {
                   </button>
                   {expandedSections.temp_logs && (
                     <div className="mt-4">
-                      <div className="flex gap-4 mb-4 text-sm">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
                         <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.passTemps} Pass</span>
                         <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.totalTemps - summary.passTemps} Fail</span>
                         <span className="px-2 py-1 bg-gray-50 text-gray-700 rounded font-medium">{summary.tempPassRate}% pass rate</span>
+                        {includePhotos && <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">Photo evidence attached for failures</span>}
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full">
@@ -774,35 +885,42 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.checklists.length} records</span>
                   </button>
                   {expandedSections.checklists && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>Date</th><th style={thStyle}>Checklist</th><th style={thStyle}>Completed By</th>
-                          <th style={thStyle}>Items</th><th style={thStyle}>Passed</th><th style={thStyle}>Failed</th>
-                          <th style={thStyle}>Score</th><th style={thStyle}>Location</th><th style={thStyle}>Corrective Actions</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.checklists.map((cl: any) => (
-                            <tr key={cl.id}>
-                              <td style={tdStyle}>{cl.date}</td>
-                              <td style={{ ...tdStyle, fontWeight: 500 }}>{cl.name}</td>
-                              <td style={tdStyle}>{cl.completedBy}</td>
-                              <td style={tdStyle}>{cl.totalItems}</td>
-                              <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }}>{cl.passed}</td>
-                              <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }}>{cl.failed}</td>
-                              <td style={tdStyle}>
-                                <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 70 ? '#eab308' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 70 ? '#fefce8' : '#fef2f2')}>
-                                  {cl.score}%
-                                </span>
-                              </td>
-                              <td style={tdStyle}>{cl.location}</td>
-                              <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }}>
-                                {cl.correctiveActions.length > 0 ? cl.correctiveActions.join('; ') : '—'}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">{summary.totalChecklists} Completed</span>
+                        <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.avgScore}% Avg Score</span>
+                        <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.checklistsWithFailures} with Failures</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>Date</th><th style={thStyle}>Checklist</th><th style={thStyle}>Completed By</th>
+                            <th style={thStyle}>Items</th><th style={thStyle}>Passed</th><th style={thStyle}>Failed</th>
+                            <th style={thStyle}>Score</th><th style={thStyle}>Location</th><th style={thStyle}>Corrective Actions</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.checklists.map((cl: any) => (
+                              <tr key={cl.id}>
+                                <td style={tdStyle}>{cl.date}</td>
+                                <td style={{ ...tdStyle, fontWeight: 500 }}>{cl.name}</td>
+                                <td style={tdStyle}>{cl.completedBy}</td>
+                                <td style={tdStyle}>{cl.totalItems}</td>
+                                <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }}>{cl.passed}</td>
+                                <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }}>{cl.failed}</td>
+                                <td style={tdStyle}>
+                                  <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 70 ? '#eab308' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 70 ? '#fefce8' : '#fef2f2')}>
+                                    {cl.score}%
+                                  </span>
+                                </td>
+                                <td style={tdStyle}>{cl.location}</td>
+                                <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }}>
+                                  {cl.correctiveActions.length > 0 ? cl.correctiveActions.join('; ') : '—'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -818,33 +936,42 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.incidents.length} records</span>
                   </button>
                   {expandedSections.incidents && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>ID</th><th style={thStyle}>Type</th><th style={thStyle}>Severity</th>
-                          <th style={thStyle}>Title</th><th style={thStyle}>Status</th><th style={thStyle}>Location</th>
-                          <th style={thStyle}>Assigned To</th><th style={thStyle}>Reported</th><th style={thStyle}>Resolved</th>
-                          <th style={thStyle}>Resolution Time</th><th style={thStyle}>Root Cause</th><th style={thStyle}>Verified By</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.incidents.map((inc: any) => (
-                            <tr key={inc.id}>
-                              <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{inc.id}</td>
-                              <td style={tdStyle}>{inc.type}</td>
-                              <td style={tdStyle}><span style={badge(inc.severity, sevColor(inc.severity), sevBg(inc.severity))}>{inc.severity}</span></td>
-                              <td style={{ ...tdStyle, maxWidth: '200px', whiteSpace: 'normal' }}>{inc.title}</td>
-                              <td style={tdStyle}><span style={badge(inc.status, statusColor(inc.status), statusBg(inc.status))}>{inc.status}</span></td>
-                              <td style={tdStyle}>{inc.location}</td>
-                              <td style={tdStyle}>{inc.assignedTo}</td>
-                              <td style={tdStyle}>{inc.createdAt}</td>
-                              <td style={tdStyle}>{inc.resolvedAt}</td>
-                              <td style={tdStyle}>{inc.resolutionTime}</td>
-                              <td style={tdStyle}>{inc.rootCause}</td>
-                              <td style={tdStyle}>{inc.verifiedBy}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.resolvedIncidents} Resolved</span>
+                        <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded font-medium">{summary.openIncidents} Open</span>
+                        <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.incCritical} Critical</span>
+                        <span className="px-2 py-1 bg-orange-50 text-orange-700 rounded font-medium">{summary.incMajor} Major</span>
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">{summary.incMinor} Minor</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>ID</th><th style={thStyle}>Type</th><th style={thStyle}>Severity</th>
+                            <th style={thStyle}>Title</th><th style={thStyle}>Status</th><th style={thStyle}>Location</th>
+                            <th style={thStyle}>Assigned To</th><th style={thStyle}>Reported</th><th style={thStyle}>Resolved</th>
+                            <th style={thStyle}>Resolution Time</th><th style={thStyle}>Root Cause</th><th style={thStyle}>Verified By</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.incidents.map((inc: any) => (
+                              <tr key={inc.id}>
+                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{inc.id}</td>
+                                <td style={tdStyle}>{inc.type}</td>
+                                <td style={tdStyle}><span style={badge(inc.severity, sevColor(inc.severity), sevBg(inc.severity))}>{inc.severity}</span></td>
+                                <td style={{ ...tdStyle, maxWidth: '200px', whiteSpace: 'normal' }}>{inc.title}</td>
+                                <td style={tdStyle}><span style={badge(inc.status, statusColor(inc.status), statusBg(inc.status))}>{inc.status}</span></td>
+                                <td style={tdStyle}>{inc.location}</td>
+                                <td style={tdStyle}>{inc.assignedTo}</td>
+                                <td style={tdStyle}>{inc.createdAt}</td>
+                                <td style={tdStyle}>{inc.resolvedAt}</td>
+                                <td style={tdStyle}>{inc.resolutionTime}</td>
+                                <td style={tdStyle}>{inc.rootCause}</td>
+                                <td style={tdStyle}>{inc.verifiedBy}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -860,28 +987,36 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.vendors.length} records</span>
                   </button>
                   {expandedSections.vendors && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>Vendor</th><th style={thStyle}>Service Type</th><th style={thStyle}>Location</th>
-                          <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th>
-                          <th style={thStyle}>Certificate</th><th style={thStyle}>Cert Expiry</th><th style={thStyle}>Cert Status</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.vendors.map((v: any) => (
-                            <tr key={v.id}>
-                              <td style={{ ...tdStyle, fontWeight: 500 }}>{v.vendor}</td>
-                              <td style={tdStyle}>{v.serviceType}</td>
-                              <td style={tdStyle}>{v.location}</td>
-                              <td style={tdStyle}>{v.lastService}</td>
-                              <td style={tdStyle}>{v.nextDue}</td>
-                              <td style={tdStyle}>{v.certName}</td>
-                              <td style={tdStyle}>{v.certExpiry}</td>
-                              <td style={tdStyle}><span style={badge(v.certStatus, statusColor(v.certStatus), statusBg(v.certStatus))}>{v.certStatus}</span></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.vendorCurrent} Current</span>
+                        <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded font-medium">{summary.vendorExpiring} Expiring Soon</span>
+                        <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.vendorExpired} Expired</span>
+                        {includePhotos && <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">Service photos attached</span>}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>Vendor</th><th style={thStyle}>Service Type</th><th style={thStyle}>Location</th>
+                            <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th>
+                            <th style={thStyle}>Certificate</th><th style={thStyle}>Cert Expiry</th><th style={thStyle}>Cert Status</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.vendors.map((v: any) => (
+                              <tr key={v.id}>
+                                <td style={{ ...tdStyle, fontWeight: 500 }}>{v.vendor}</td>
+                                <td style={tdStyle}>{v.serviceType}</td>
+                                <td style={tdStyle}>{v.location}</td>
+                                <td style={tdStyle}>{v.lastService}</td>
+                                <td style={tdStyle}>{v.nextDue}</td>
+                                <td style={tdStyle}>{v.certName}</td>
+                                <td style={tdStyle}>{v.certExpiry}</td>
+                                <td style={tdStyle}><span style={badge(v.certStatus, statusColor(v.certStatus), statusBg(v.certStatus))}>{v.certStatus}</span></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -897,26 +1032,33 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.documents.length} records</span>
                   </button>
                   {expandedSections.documents && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>Document</th><th style={thStyle}>Category</th><th style={thStyle}>Location</th>
-                          <th style={thStyle}>Uploaded</th><th style={thStyle}>Expiration</th><th style={thStyle}>Status</th><th style={thStyle}>Uploaded By</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.documents.map((doc: any) => (
-                            <tr key={doc.id}>
-                              <td style={{ ...tdStyle, fontWeight: 500 }}>{doc.name}</td>
-                              <td style={tdStyle}>{doc.category}</td>
-                              <td style={tdStyle}>{doc.location}</td>
-                              <td style={tdStyle}>{doc.uploadDate}</td>
-                              <td style={tdStyle}>{doc.expirationDate}</td>
-                              <td style={tdStyle}><span style={badge(doc.status, statusColor(doc.status), statusBg(doc.status))}>{doc.status}</span></td>
-                              <td style={tdStyle}>{doc.uploadedBy}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.currentDocs} Current</span>
+                        <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded font-medium">{summary.expiringDocs} Expiring</span>
+                        <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.expiredDocs} Expired</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>Document</th><th style={thStyle}>Category</th><th style={thStyle}>Location</th>
+                            <th style={thStyle}>Uploaded</th><th style={thStyle}>Expiration</th><th style={thStyle}>Status</th><th style={thStyle}>Uploaded By</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.documents.map((doc: any) => (
+                              <tr key={doc.id}>
+                                <td style={{ ...tdStyle, fontWeight: 500 }}>{doc.name}</td>
+                                <td style={tdStyle}>{doc.category}</td>
+                                <td style={tdStyle}>{doc.location}</td>
+                                <td style={tdStyle}>{doc.uploadDate}</td>
+                                <td style={tdStyle}>{doc.expirationDate}</td>
+                                <td style={tdStyle}><span style={badge(doc.status, statusColor(doc.status), statusBg(doc.status))}>{doc.status}</span></td>
+                                <td style={tdStyle}>{doc.uploadedBy}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -932,25 +1074,32 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.equipment.length} items</span>
                   </button>
                   {expandedSections.equipment && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle}>Location</th>
-                          <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th><th style={thStyle}>Condition</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.equipment.map((eq: any) => (
-                            <tr key={eq.id}>
-                              <td style={{ ...tdStyle, fontWeight: 500 }}>{eq.name}</td>
-                              <td style={tdStyle}>{eq.type}</td>
-                              <td style={tdStyle}>{eq.location}</td>
-                              <td style={tdStyle}>{eq.lastService}</td>
-                              <td style={tdStyle}>{eq.nextDue}</td>
-                              <td style={tdStyle}><span style={badge(eq.condition, statusColor(eq.condition), statusBg(eq.condition))}>{eq.condition}</span></td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{summary.eqGood} Good</span>
+                        <span className="px-2 py-1 bg-amber-50 text-amber-700 rounded font-medium">{summary.eqFair} Fair</span>
+                        <span className="px-2 py-1 bg-red-50 text-red-700 rounded font-medium">{summary.eqAttention} Needs Attention</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle}>Location</th>
+                            <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th><th style={thStyle}>Condition</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.equipment.map((eq: any) => (
+                              <tr key={eq.id}>
+                                <td style={{ ...tdStyle, fontWeight: 500 }}>{eq.name}</td>
+                                <td style={tdStyle}>{eq.type}</td>
+                                <td style={tdStyle}>{eq.location}</td>
+                                <td style={tdStyle}>{eq.lastService}</td>
+                                <td style={tdStyle}>{eq.nextDue}</td>
+                                <td style={tdStyle}><span style={badge(eq.condition, statusColor(eq.condition), statusBg(eq.condition))}>{eq.condition}</span></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -966,27 +1115,33 @@ export function AuditReport() {
                     <span className="text-sm text-gray-400">{reportData.auditLog.length} entries</span>
                   </button>
                   {expandedSections.audit_log && (
-                    <div className="mt-4 overflow-x-auto">
-                      <table className="w-full">
-                        <thead><tr>
-                          <th style={thStyle}>Timestamp</th><th style={thStyle}>User</th><th style={thStyle}>Action</th>
-                          <th style={thStyle}>Device</th><th style={thStyle}>IP Address</th>
-                        </tr></thead>
-                        <tbody>
-                          {reportData.auditLog.slice(0, 100).map((entry: any) => (
-                            <tr key={entry.id}>
-                              <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{entry.timestamp}</td>
-                              <td style={tdStyle}>{entry.user}</td>
-                              <td style={{ ...tdStyle, maxWidth: '300px', whiteSpace: 'normal' }}>{entry.action}</td>
-                              <td style={{ ...tdStyle, fontSize: '12px' }}>{entry.device}</td>
-                              <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{entry.ip}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      {reportData.auditLog.length > 100 && (
-                        <p className="text-xs text-gray-400 mt-2 text-center">Showing first 100 of {reportData.auditLog.length} entries</p>
-                      )}
+                    <div className="mt-4">
+                      <div className="flex gap-4 mb-4 text-sm flex-wrap">
+                        <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded font-medium">{summary.totalAuditEntries} Total Actions</span>
+                        <span className="px-2 py-1 bg-gray-50 text-gray-700 rounded font-medium">{USERS.length} Active Users</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full">
+                          <thead><tr>
+                            <th style={thStyle}>Timestamp</th><th style={thStyle}>User</th><th style={thStyle}>Action</th>
+                            <th style={thStyle}>Device</th><th style={thStyle}>IP Address</th>
+                          </tr></thead>
+                          <tbody>
+                            {reportData.auditLog.slice(0, 100).map((entry: any) => (
+                              <tr key={entry.id}>
+                                <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{entry.timestamp}</td>
+                                <td style={tdStyle}>{entry.user}</td>
+                                <td style={{ ...tdStyle, maxWidth: '300px', whiteSpace: 'normal' }}>{entry.action}</td>
+                                <td style={{ ...tdStyle, fontSize: '12px' }}>{entry.device}</td>
+                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{entry.ip}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                        {reportData.auditLog.length > 100 && (
+                          <p className="text-xs text-gray-400 mt-2 text-center">Showing first 100 of {reportData.auditLog.length} entries</p>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

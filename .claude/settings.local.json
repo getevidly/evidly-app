@@ -35,7 +35,8 @@
       "Bash(node:*)",
       "Bash(git reset:*)",
       "Bash(ls:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm install:*)"
     ]
   }
 }
