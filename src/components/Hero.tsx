@@ -18,26 +18,26 @@ export default function Hero() {
 
   return (
     <>
-    <section className="pt-[140px] pb-[100px] px-6 relative overflow-hidden bg-gradient-to-b from-white to-[var(--color-gold-bg)]">
+    <section className="pt-[120px] pb-[80px] px-6 relative overflow-hidden bg-gradient-to-b from-white to-[var(--color-gold-bg)]">
       <div className="absolute top-[-100px] right-[-200px] w-[600px] h-[600px] pointer-events-none">
         <div className="w-full h-full rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.2)_0%,transparent_70%)]" />
       </div>
-      <div className="max-w-[1200px] mx-auto relative">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="max-w-[1300px] mx-auto relative">
+        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-12 items-center">
           {/* Left: Text content */}
           <div>
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[var(--color-gold)] rounded-full mb-8">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[var(--color-gold)] rounded-full mb-6">
               <span className="w-2 h-2 bg-[var(--color-gold)] rounded-full animate-[pulse_2s_ease-in-out_infinite]" />
               <span className="text-[0.875rem] font-semibold text-[var(--color-blue)]">Launching April 7, 2026</span>
             </div>
-            <h1 className="font-['Outfit'] text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold leading-[1.1] tracking-[-0.03em] mb-5">
+            <h1 className="font-['Outfit'] text-[clamp(2rem,4vw,3rem)] font-extrabold leading-[1.15] tracking-[-0.02em] mb-5">
               <span className="text-[var(--color-blue)]">One platform for </span>
               <span className="text-[var(--color-gold)]">fire safety, food safety, and vendor compliance</span>
             </h1>
-            <p className="text-[1.15rem] text-[var(--color-text-light)] leading-[1.7] mb-8 max-w-[520px]">
+            <p className="text-[1.1rem] text-[var(--color-text-light)] leading-[1.7] mb-7">
               Accurate records your team can trust. Eliminate manual errors, pass every inspection with verified data, and catch problems before inspectors do.
             </p>
-            <form className="flex gap-3 max-w-[420px] mb-5 flex-col sm:flex-row" onSubmit={handleSubmit}>
+            <form className="flex gap-3 mb-5 flex-col sm:flex-row" onSubmit={handleSubmit}>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -69,11 +69,11 @@ export default function Hero() {
           </div>
 
           {/* Right: Dashboard screenshot */}
-          <div className="relative">
+          <div>
             <img
               src="/dashboard-hero.png"
               alt="EvidLY Compliance Dashboard"
-              className="w-full rounded-xl shadow-[0_20px_60px_-10px_rgba(0,0,0,0.25)] border border-gray-200/60"
+              style={{ width: '100%', display: 'block', borderRadius: '12px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.1)' }}
             />
             <p className="text-center mt-4 text-[0.85rem] font-semibold text-[var(--color-blue)]">
               Manage 1 to 1,000+ locations from a single dashboard
