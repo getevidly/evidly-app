@@ -4,6 +4,7 @@ import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
 import { GuidedTour } from '../GuidedTour';
 import { DemoTour } from '../DemoTour';
+import { AIChatPanel } from '../AIChatPanel';
 import { useDemo } from '../../contexts/DemoContext';
 
 interface LocationOption {
@@ -56,6 +57,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       </div>
       <MobileTabBar />
       {tourActive ? <DemoTour /> : <GuidedTour />}
+      <AIChatPanel />
     </div>
   );
 }

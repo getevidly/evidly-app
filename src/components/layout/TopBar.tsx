@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Bell, Globe } from 'lucide-react';
+import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
+import { NotificationCenter } from '../NotificationCenter';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -113,20 +114,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
           </div>
 
           <div className="ml-4 flex items-center md:ml-6 space-x-4">
-            {/* Predictive Alerts bell */}
-            <button
-              onClick={() => navigate('/analysis')}
-              className="relative p-2 rounded-md hover:bg-gray-100 transition-colors duration-150"
-              title={t('nav.predictiveAlerts')}
-            >
-              <Bell className="h-5 w-5 text-gray-500" />
-              <span
-                className="absolute -top-0.5 -right-0.5 flex items-center justify-center"
-                style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, width: '18px', height: '18px', borderRadius: '9999px', lineHeight: '18px' }}
-              >
-                4
-              </span>
-            </button>
+            {/* Notification Center */}
+            <NotificationCenter />
 
             {locations && locations.length > 0 && (
               <div className="relative">

@@ -10,6 +10,9 @@ import {
   Bell,
   Clock,
   X,
+  Brain,
+  AlertTriangle,
+  ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
@@ -902,6 +905,61 @@ export function Dashboard() {
           })()}
         </div>
           </>
+        )}
+
+        {/* AI Insights Widget */}
+        {['executive', 'management'].includes(userRole) && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fdf8e8' }}>
+                  <Brain className="h-5 w-5" style={{ color: '#d4af37' }} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">AI Insights</h3>
+                  <p className="text-xs text-gray-500">Predictive alerts from compliance analysis</p>
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/analysis')}
+                className="text-sm font-medium flex items-center gap-1 hover:underline"
+                style={{ color: '#1e4d6b' }}
+              >
+                See All Insights <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {[
+                { severity: 'high' as const, title: 'Hood Cleaning Overdue — Airport Cafe', desc: '95 days since last cleaning. 90-day cycle exceeded.', link: '/vendors' },
+                { severity: 'high' as const, title: 'Walk-in Cooler Temp Trending Up — University Dining', desc: '3 readings above 38°F this week. Upward trend over 7 days.', link: '/temp-logs' },
+                { severity: 'medium' as const, title: 'Checklist Completion Dropped 12% — University Dining', desc: 'Weekly completion rate fell from 89% to 78%.', link: '/checklists' },
+              ].map((alert, i) => {
+                const sevStyles = alert.severity === 'high'
+                  ? { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Critical' }
+                  : { dot: '#d97706', bg: '#fffbeb', border: '#fde68a', label: 'Warning' };
+                return (
+                  <div
+                    key={i}
+                    onClick={() => navigate(alert.link)}
+                    className="flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    style={{ border: `1px solid ${sevStyles.border}`, backgroundColor: sevStyles.bg }}
+                  >
+                    <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: sevStyles.dot }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-gray-900 truncate">{alert.title}</span>
+                        <span style={{ fontSize: '10px', fontWeight: 600, padding: '1px 6px', borderRadius: '6px', backgroundColor: sevStyles.bg, color: sevStyles.dot, border: `1px solid ${sevStyles.border}`, flexShrink: 0 }}>
+                          {sevStyles.label}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600">{alert.desc}</p>
+                    </div>
+                    <ArrowRight className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         <ShareModal

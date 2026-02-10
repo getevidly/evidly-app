@@ -3,7 +3,7 @@ import {
   Plus, AlertTriangle, Clock, CheckCircle2, XCircle, User, MapPin,
   ChevronDown, ChevronRight, ArrowLeft, Filter, Download, MessageSquare,
   Thermometer, ClipboardList, Bug, Wrench, ShieldAlert, Users as UsersIcon,
-  AlertCircle, FileText, Camera,
+  AlertCircle, FileText, Camera, Sparkles,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -459,6 +459,7 @@ export function IncidentLog() {
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
+  const [aiDraftApplied, setAiDraftApplied] = useState(false);
 
   // Action form
   const [actionText, setActionText] = useState('');
@@ -524,6 +525,58 @@ export function IncidentLog() {
     return list;
   }, [incidents, statusFilter, severityFilter, typeFilter, locationFilter, assigneeFilter, dateRange, sortBy]);
 
+  // ── AI Draft auto-fill ──────────────────────────────────────────
+  const AI_DRAFT_DATA: Record<IncidentType, { title: string; description: string; severity: Severity }> = {
+    temperature_violation: {
+      title: 'Walk-in cooler temperature above safe threshold',
+      description: 'During routine monitoring, the walk-in cooler was recorded at 44°F, exceeding the 41°F FDA safe holding threshold. Perishable items including dairy, prepped vegetables, and raw proteins may be affected. Door seal appears worn and compressor is cycling frequently.',
+      severity: 'critical',
+    },
+    checklist_failure: {
+      title: 'Closing checklist incomplete — sanitization steps skipped',
+      description: 'Closing crew did not complete sanitization of food-contact surfaces and floor drain cleaning. Checklist shows 4 of 9 items marked incomplete. Closing shift was short-staffed with only 2 team members instead of the usual 3.',
+      severity: 'major',
+    },
+    health_citation: {
+      title: 'Health inspector citation — improper food labeling',
+      description: 'During routine health inspection, inspector noted multiple containers in walk-in cooler without date labels or product identification. Citation issued for non-compliance with food labeling requirements. Affects prep station items and pre-portioned ingredients.',
+      severity: 'critical',
+    },
+    equipment_failure: {
+      title: 'Commercial dishwasher not reaching sanitizing temperature',
+      description: 'High-temperature commercial dishwasher failing to reach 180°F minimum final rinse temperature. Current readings show 155-160°F. Heating element may need replacement. Switched to chemical sanitizing (3-sink method) as interim solution.',
+      severity: 'major',
+    },
+    pest_sighting: {
+      title: 'Cockroach sighting near dry storage area',
+      description: 'Staff member observed a cockroach near the dry storage shelving unit adjacent to the back door. Area inspected and no additional activity found, but proximity to food storage warrants immediate pest control response. Back door weather stripping appears damaged.',
+      severity: 'critical',
+    },
+    customer_complaint: {
+      title: 'Customer reported undercooked chicken in entrée',
+      description: 'Customer at table 8 returned a grilled chicken entrée reporting pink/raw interior. Kitchen confirmed the item did not reach 165°F internal temperature. Replacement meal prepared and comped. Need to review grill station procedures and calibrate thermometers.',
+      severity: 'major',
+    },
+    staff_safety: {
+      title: 'Staff slip incident near dish pit — no wet floor signs',
+      description: 'Line cook slipped on wet floor near the dish pit area during lunch rush. No wet floor signage was posted. Employee reports minor knee discomfort but declined medical attention. Floor drainage appears adequate but high-traffic splashing from dishwashing created hazard.',
+      severity: 'minor',
+    },
+    other: {
+      title: 'Power outage affected cold storage for 45 minutes',
+      description: 'Unexpected power outage lasted approximately 45 minutes. Walk-in cooler and freezer temperatures rose by 3-4°F during the outage. All units returned to safe range within 30 minutes of power restoration. Need to assess food safety for items at threshold temperatures.',
+      severity: 'major',
+    },
+  };
+
+  const handleAiDraft = () => {
+    const draft = AI_DRAFT_DATA[newType];
+    setNewTitle(draft.title);
+    setNewDescription(draft.description);
+    setNewSeverity(draft.severity);
+    setAiDraftApplied(true);
+  };
+
   // ── Handlers ───────────────────────────────────────────────────
   const handleCreateIncident = () => {
     if (!newTitle.trim() || !newDescription.trim()) {
@@ -553,7 +606,7 @@ export function IncidentLog() {
     // TODO: Send notification to assigned manager (Resend email / Twilio SMS)
     setIncidents(prev => [newIncident, ...prev]);
     setShowCreateForm(false);
-    setNewTitle(''); setNewDescription(''); setNewPhotos([]);
+    setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false);
     setSelectedIncident(newIncident);
   };
 
@@ -1119,7 +1172,23 @@ export function IncidentLog() {
   const CreateModal = showCreateForm ? (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.reportNewIncident')}</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-900">{t('incidents.reportNewIncident')}</h3>
+          <button
+            onClick={handleAiDraft}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            style={{ backgroundColor: '#fdf8e8', color: '#b8962f', border: '1px solid #d4af37' }}
+          >
+            <Sparkles className="h-4 w-4" />
+            AI Draft
+          </button>
+        </div>
+        {aiDraftApplied && (
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg mb-4 text-sm" style={{ backgroundColor: '#fdf8e8', border: '1px solid #fde68a', color: '#92400e' }}>
+            <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color: '#d4af37' }} />
+            <span>AI-generated draft — review and edit before saving</span>
+          </div>
+        )}
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.incidentType')}</label>
@@ -1195,7 +1264,7 @@ export function IncidentLog() {
           />
           <div className="flex gap-3">
             <button
-              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); }}
+              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); }}
               className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               {t('common.cancel')}
