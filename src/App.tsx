@@ -37,6 +37,7 @@ const Help = lazy(() => import('./pages/HelpSupport').then(m => ({ default: m.He
 const Calendar = lazy(() => import('./pages/Calendar').then(m => ({ default: m.Calendar })));
 const UsageAnalytics = lazy(() => import('./pages/UsageAnalytics').then(m => ({ default: m.UsageAnalytics })));
 const WeeklyDigest = lazy(() => import('./pages/WeeklyDigest').then(m => ({ default: m.WeeklyDigest })));
+const IncidentLog = lazy(() => import('./pages/IncidentLog').then(m => ({ default: m.IncidentLog })));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
 
@@ -192,6 +193,7 @@ function AppRoutes() {
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
           <Route path="/haccp" element={<HACCP />} />
           <Route path="/alerts" element={<Alerts />} />
+          <Route path="/incidents" element={<IncidentLog />} />
           <Route path="/ai-advisor" element={<AIAdvisor />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/analysis" element={<Analysis />} />

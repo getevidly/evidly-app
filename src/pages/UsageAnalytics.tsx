@@ -42,7 +42,7 @@ interface DemoOrg {
 const MODULES: ModuleInfo[] = [
   { id: 'temp-logs', name: 'Temperature Logs', icon: '🌡️', color: '#dc2626' },
   { id: 'checklists', name: 'Checklists', icon: '☑️', color: '#2563eb' },
-  { id: 'corrective', name: 'Corrective Actions', icon: '⚠️', color: '#d97706' },
+  { id: 'corrective', name: 'Incident Log', icon: '⚠️', color: '#d97706' },
   { id: 'documents', name: 'Documents', icon: '📄', color: '#ea580c' },
   { id: 'vendors', name: 'Vendor Services', icon: '🚚', color: '#7c3aed' },
   { id: 'compliance', name: 'Compliance Score', icon: '🛡️', color: '#16a34a' },

@@ -23,7 +23,7 @@ const featureCategories: { title: string; features: Feature[] }[] = [
     features: [
       { name: 'Role-Based Views', description: 'Management, Kitchen Staff, and Facilities dashboards tailored to each role' },
       { name: 'Action Center', description: 'Prioritized task management with overdue, due today, and upcoming items' },
-      { name: 'Corrective Actions', description: 'Log, assign, and track corrective actions with photo documentation' },
+      { name: 'Incident Log', description: 'Full lifecycle incident tracking from report to verified resolution with chain-of-custody, photo evidence, and compliance score integration' },
       { name: 'QR Passport', description: 'Equipment-level QR codes linking to service history, compliance docs, and quick actions' },
       { name: 'Share Reports', description: 'One-click compliance reports for inspectors, management, and insurance' },
     ],

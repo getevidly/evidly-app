@@ -18,6 +18,7 @@ import {
   CalendarDays,
   Lock,
   MailOpen,
+  AlertTriangle,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -43,6 +44,7 @@ const navigation: NavItem[] = [
   { name: 'Vendor Services', href: '/vendors', icon: Truck, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
   { name: 'Documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
+  { name: 'Incident Log', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Predictive Alerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },

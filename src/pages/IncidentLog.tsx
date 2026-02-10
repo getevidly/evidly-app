@@ -1,0 +1,1285 @@
+import { useState, useMemo } from 'react';
+import {
+  Plus, AlertTriangle, Clock, CheckCircle2, XCircle, User, MapPin,
+  ChevronDown, ChevronRight, ArrowLeft, Filter, Download, MessageSquare,
+  Thermometer, ClipboardList, Bug, Wrench, ShieldAlert, Users as UsersIcon,
+  AlertCircle, FileText, Camera,
+} from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import { Breadcrumb } from '../components/Breadcrumb';
+import { useRole } from '../contexts/RoleContext';
+import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+
+// ── Types ──────────────────────────────────────────────────────────
+
+type IncidentType =
+  | 'temperature_violation'
+  | 'checklist_failure'
+  | 'health_citation'
+  | 'equipment_failure'
+  | 'pest_sighting'
+  | 'customer_complaint'
+  | 'staff_safety'
+  | 'other';
+
+type Severity = 'critical' | 'major' | 'minor';
+
+type IncidentStatus = 'reported' | 'assigned' | 'in_progress' | 'resolved' | 'verified';
+
+type RootCause = 'equipment' | 'training' | 'process' | 'vendor' | 'external' | 'unknown';
+
+interface TimelineEntry {
+  id: string;
+  action: string;
+  status: IncidentStatus;
+  user: string;
+  timestamp: string;
+  notes?: string;
+  photos?: PhotoRecord[];
+}
+
+interface Comment {
+  id: string;
+  user: string;
+  text: string;
+  timestamp: string;
+}
+
+interface Incident {
+  id: string;
+  type: IncidentType;
+  severity: Severity;
+  title: string;
+  description: string;
+  location: string;
+  status: IncidentStatus;
+  assignedTo: string;
+  reportedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  resolvedAt?: string;
+  verifiedAt?: string;
+  verifiedBy?: string;
+  correctiveAction?: string;
+  actionChips?: string[];
+  resolutionSummary?: string;
+  rootCause?: RootCause;
+  sourceType?: 'temp_log' | 'checklist';
+  sourceId?: string;
+  sourceLabel?: string;
+  photos: PhotoRecord[];
+  resolutionPhotos: PhotoRecord[];
+  timeline: TimelineEntry[];
+  comments: Comment[];
+}
+
+// ── Constants ──────────────────────────────────────────────────────
+
+const INCIDENT_TYPES: { value: IncidentType; label: string; icon: typeof AlertTriangle }[] = [
+  { value: 'temperature_violation', label: 'Temperature Violation', icon: Thermometer },
+  { value: 'checklist_failure', label: 'Checklist Failure', icon: ClipboardList },
+  { value: 'health_citation', label: 'Health Inspection Citation', icon: ShieldAlert },
+  { value: 'equipment_failure', label: 'Equipment Failure', icon: Wrench },
+  { value: 'pest_sighting', label: 'Pest Sighting', icon: Bug },
+  { value: 'customer_complaint', label: 'Customer Complaint', icon: MessageSquare },
+  { value: 'staff_safety', label: 'Staff Safety', icon: UsersIcon },
+  { value: 'other', label: 'Other', icon: AlertCircle },
+];
+
+const SEVERITIES: { value: Severity; label: string; color: string; bg: string }[] = [
+  { value: 'critical', label: 'Critical', color: '#dc2626', bg: '#fef2f2' },
+  { value: 'major', label: 'Major', color: '#d97706', bg: '#fffbeb' },
+  { value: 'minor', label: 'Minor', color: '#2563eb', bg: '#eff6ff' },
+];
+
+const STATUS_CONFIG: Record<IncidentStatus, { label: string; color: string; bg: string }> = {
+  reported: { label: 'Reported', color: '#dc2626', bg: '#fef2f2' },
+  assigned: { label: 'Assigned', color: '#d97706', bg: '#fffbeb' },
+  in_progress: { label: 'In Progress', color: '#2563eb', bg: '#eff6ff' },
+  resolved: { label: 'Resolved', color: '#16a34a', bg: '#f0fdf4' },
+  verified: { label: 'Verified', color: '#059669', bg: '#ecfdf5' },
+};
+
+const ACTION_CHIPS = [
+  'Adjusted equipment', 'Discarded product', 'Re-cleaned area',
+  'Called vendor', 'Retrained staff', 'Replaced item', 'Other',
+];
+
+const ROOT_CAUSES: { value: RootCause; label: string }[] = [
+  { value: 'equipment', label: 'Equipment' },
+  { value: 'training', label: 'Training' },
+  { value: 'process', label: 'Process' },
+  { value: 'vendor', label: 'Vendor' },
+  { value: 'external', label: 'External' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+
+const TEAM_MEMBERS = [
+  'Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres',
+];
+
+const now = Date.now();
+const h = (hours: number) => new Date(now - hours * 3600000).toISOString();
+const d = (days: number) => new Date(now - days * 86400000).toISOString();
+
+// ── Demo Data ──────────────────────────────────────────────────────
+
+const DEMO_INCIDENTS: Incident[] = [
+  {
+    id: 'INC-001',
+    type: 'temperature_violation',
+    severity: 'critical',
+    title: 'Walk-in Cooler temperature at 47°F',
+    description: 'Walk-in cooler #1 recorded at 47°F during routine check, exceeding the 41°F maximum. All perishable items at risk.',
+    location: 'Downtown Kitchen',
+    status: 'in_progress',
+    assignedTo: 'Maria Garcia',
+    reportedBy: 'John Smith',
+    createdAt: h(3),
+    updatedAt: h(1),
+    sourceType: 'temp_log',
+    sourceId: 'TL-4521',
+    sourceLabel: 'Temp Log #4521 — Walk-in Cooler',
+    photos: [],
+    resolutionPhotos: [],
+    correctiveAction: 'Called refrigeration repair tech. Moved high-risk items to backup cooler.',
+    actionChips: ['Called vendor', 'Adjusted equipment'],
+    timeline: [
+      { id: 't1', action: 'Incident reported from temperature log', status: 'reported', user: 'John Smith', timestamp: h(3) },
+      { id: 't2', action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: h(3) },
+      { id: 't3', action: 'Taking corrective action — vendor called, items relocated', status: 'in_progress', user: 'Maria Garcia', timestamp: h(1) },
+    ],
+    comments: [
+      { id: 'c1', user: 'Maria Garcia', text: 'Repair tech ETA 45 minutes. All TCS items moved to backup unit.', timestamp: h(2) },
+      { id: 'c2', user: 'Sarah Chen', text: 'Good response time. Make sure to document all discarded items.', timestamp: h(1.5) },
+    ],
+  },
+  {
+    id: 'INC-002',
+    type: 'checklist_failure',
+    severity: 'major',
+    title: 'Closing checklist — floor drains not cleaned',
+    description: 'Closing checklist item "Check floor drains" marked as No. Drains visibly clogged with debris.',
+    location: 'Airport Cafe',
+    status: 'resolved',
+    assignedTo: 'Emily Rogers',
+    reportedBy: 'David Kim',
+    createdAt: d(1),
+    updatedAt: h(18),
+    resolvedAt: h(18),
+    sourceType: 'checklist',
+    sourceId: 'CL-892',
+    sourceLabel: 'Closing Checklist #892',
+    photos: [],
+    resolutionPhotos: [],
+    resolutionSummary: 'Drains fully cleaned and sanitized. Added drain cleaning to mid-day checklist to prevent recurrence.',
+    rootCause: 'process',
+    correctiveAction: 'Re-cleaned all floor drains. Sanitized surrounding area.',
+    actionChips: ['Re-cleaned area'],
+    timeline: [
+      { id: 't1', action: 'Incident reported from checklist failure', status: 'reported', user: 'David Kim', timestamp: d(1) },
+      { id: 't2', action: 'Assigned to Emily Rogers', status: 'assigned', user: 'System', timestamp: d(1) },
+      { id: 't3', action: 'Cleaning in progress', status: 'in_progress', user: 'Emily Rogers', timestamp: h(22) },
+      { id: 't4', action: 'Drains cleaned and sanitized', status: 'resolved', user: 'Emily Rogers', timestamp: h(18) },
+    ],
+    comments: [
+      { id: 'c1', user: 'Emily Rogers', text: 'Drains are clear now. Suggesting we add this to the mid-day check too.', timestamp: h(18) },
+    ],
+  },
+  {
+    id: 'INC-003',
+    type: 'health_citation',
+    severity: 'critical',
+    title: 'Health inspector citation — improper food storage',
+    description: 'Inspector noted raw chicken stored above ready-to-eat items in prep cooler. Citation #HD-2026-0041 issued.',
+    location: 'Downtown Kitchen',
+    status: 'verified',
+    assignedTo: 'Maria Garcia',
+    reportedBy: 'Sarah Chen',
+    createdAt: d(5),
+    updatedAt: d(3),
+    resolvedAt: d(4),
+    verifiedAt: d(3),
+    verifiedBy: 'Sarah Chen',
+    photos: [],
+    resolutionPhotos: [],
+    resolutionSummary: 'All coolers reorganized per FIFO and cross-contamination guidelines. Staff retrained on proper storage protocol.',
+    rootCause: 'training',
+    correctiveAction: 'Reorganized all cooler shelving. Conducted refresher training for all kitchen staff.',
+    actionChips: ['Retrained staff', 'Adjusted equipment'],
+    timeline: [
+      { id: 't1', action: 'Citation reported by management', status: 'reported', user: 'Sarah Chen', timestamp: d(5) },
+      { id: 't2', action: 'Assigned to Maria Garcia', status: 'assigned', user: 'Sarah Chen', timestamp: d(5) },
+      { id: 't3', action: 'Corrective action started — reorganizing coolers', status: 'in_progress', user: 'Maria Garcia', timestamp: d(5) },
+      { id: 't4', action: 'Coolers reorganized, staff retrained', status: 'resolved', user: 'Maria Garcia', timestamp: d(4) },
+      { id: 't5', action: 'Resolution verified — inspected all coolers personally', status: 'verified', user: 'Sarah Chen', timestamp: d(3) },
+    ],
+    comments: [
+      { id: 'c1', user: 'Maria Garcia', text: 'All shelving labeled. Conducted 30-min training session with morning crew.', timestamp: d(4) },
+      { id: 'c2', user: 'Sarah Chen', text: 'Verified all coolers. Great work. Re-inspection scheduled for next week.', timestamp: d(3) },
+    ],
+  },
+  {
+    id: 'INC-004',
+    type: 'equipment_failure',
+    severity: 'major',
+    title: 'Hot holding unit not reaching 135°F',
+    description: 'Hot holding unit #2 stuck at 128°F. Cannot maintain safe hot holding temperature for buffet line.',
+    location: 'University Dining',
+    status: 'assigned',
+    assignedTo: 'Michael Torres',
+    reportedBy: 'Emily Rogers',
+    createdAt: h(5),
+    updatedAt: h(4),
+    photos: [],
+    resolutionPhotos: [],
+    timeline: [
+      { id: 't1', action: 'Equipment failure reported', status: 'reported', user: 'Emily Rogers', timestamp: h(5) },
+      { id: 't2', action: 'Assigned to Michael Torres', status: 'assigned', user: 'System', timestamp: h(4) },
+    ],
+    comments: [],
+  },
+  {
+    id: 'INC-005',
+    type: 'pest_sighting',
+    severity: 'critical',
+    title: 'Rodent droppings found in dry storage',
+    description: 'Staff found rodent droppings near flour storage in dry goods area. Immediate pest control needed.',
+    location: 'Airport Cafe',
+    status: 'in_progress',
+    assignedTo: 'David Kim',
+    reportedBy: 'Maria Garcia',
+    createdAt: h(8),
+    updatedAt: h(6),
+    photos: [],
+    resolutionPhotos: [],
+    correctiveAction: 'Called pest control. Discarded all open dry goods within 3 feet of droppings. Deep cleaning in progress.',
+    actionChips: ['Called vendor', 'Discarded product', 'Re-cleaned area'],
+    timeline: [
+      { id: 't1', action: 'Pest sighting reported', status: 'reported', user: 'Maria Garcia', timestamp: h(8) },
+      { id: 't2', action: 'Assigned to David Kim', status: 'assigned', user: 'System', timestamp: h(8) },
+      { id: 't3', action: 'Pest control called, cleanup started', status: 'in_progress', user: 'David Kim', timestamp: h(6) },
+    ],
+    comments: [
+      { id: 'c1', user: 'David Kim', text: 'Pest control arriving at 2pm. All affected product quarantined and logged.', timestamp: h(7) },
+    ],
+  },
+  {
+    id: 'INC-006',
+    type: 'customer_complaint',
+    severity: 'minor',
+    title: 'Customer reported lukewarm soup',
+    description: 'Customer at table 12 complained soup was not hot enough. Server confirmed soup ladle left out, not returned to warmer.',
+    location: 'Downtown Kitchen',
+    status: 'resolved',
+    assignedTo: 'John Smith',
+    reportedBy: 'Emily Rogers',
+    createdAt: d(2),
+    updatedAt: d(2),
+    resolvedAt: d(2),
+    resolutionSummary: 'Re-heated soup to 165°F, served replacement. Reminded staff on ladle protocol.',
+    rootCause: 'training',
+    correctiveAction: 'Re-heated soup, replaced customer order. Briefed staff on hot-hold ladle return SOP.',
+    actionChips: ['Retrained staff'],
+    photos: [],
+    resolutionPhotos: [],
+    timeline: [
+      { id: 't1', action: 'Customer complaint reported', status: 'reported', user: 'Emily Rogers', timestamp: d(2) },
+      { id: 't2', action: 'Assigned to John Smith', status: 'assigned', user: 'System', timestamp: d(2) },
+      { id: 't3', action: 'Handling complaint', status: 'in_progress', user: 'John Smith', timestamp: d(2) },
+      { id: 't4', action: 'Customer served replacement, staff briefed', status: 'resolved', user: 'John Smith', timestamp: d(2) },
+    ],
+    comments: [],
+  },
+  {
+    id: 'INC-007',
+    type: 'staff_safety',
+    severity: 'minor',
+    title: 'Wet floor near dishwash station — no sign posted',
+    description: 'Wet floor observed near dishwash area without caution signage. Near-miss slip reported by prep cook.',
+    location: 'University Dining',
+    status: 'verified',
+    assignedTo: 'Michael Torres',
+    reportedBy: 'David Kim',
+    createdAt: d(3),
+    updatedAt: d(2),
+    resolvedAt: d(3),
+    verifiedAt: d(2),
+    verifiedBy: 'Sarah Chen',
+    resolutionSummary: 'Wet floor signs placed. Added "check wet floor signs" to opening and mid-day checklists.',
+    rootCause: 'process',
+    photos: [],
+    resolutionPhotos: [],
+    correctiveAction: 'Placed signs immediately. Updated checklist templates.',
+    actionChips: ['Other'],
+    timeline: [
+      { id: 't1', action: 'Safety concern reported', status: 'reported', user: 'David Kim', timestamp: d(3) },
+      { id: 't2', action: 'Assigned to Michael Torres', status: 'assigned', user: 'System', timestamp: d(3) },
+      { id: 't3', action: 'Signs placed and checklists updated', status: 'in_progress', user: 'Michael Torres', timestamp: d(3) },
+      { id: 't4', action: 'Resolution complete', status: 'resolved', user: 'Michael Torres', timestamp: d(3) },
+      { id: 't5', action: 'Verified — signs in place, checklist updated', status: 'verified', user: 'Sarah Chen', timestamp: d(2) },
+    ],
+    comments: [],
+  },
+  {
+    id: 'INC-008',
+    type: 'temperature_violation',
+    severity: 'major',
+    title: 'Prep cooler temp at 44°F during morning check',
+    description: 'Prep cooler read 44°F during opening check. Door seal appears worn. Items still safe but at threshold.',
+    location: 'Airport Cafe',
+    status: 'reported',
+    assignedTo: 'Emily Rogers',
+    reportedBy: 'John Smith',
+    createdAt: h(1),
+    updatedAt: h(1),
+    sourceType: 'temp_log',
+    sourceId: 'TL-4530',
+    sourceLabel: 'Temp Log #4530 — Prep Cooler',
+    photos: [],
+    resolutionPhotos: [],
+    timeline: [
+      { id: 't1', action: 'Incident auto-created from out-of-range temperature reading', status: 'reported', user: 'System', timestamp: h(1) },
+    ],
+    comments: [],
+  },
+];
+
+// ── Helpers ────────────────────────────────────────────────────────
+
+function getResolutionTime(incident: Incident): string | null {
+  if (!incident.resolvedAt) return null;
+  const created = new Date(incident.createdAt).getTime();
+  const resolved = new Date(incident.resolvedAt).getTime();
+  const diffMs = resolved - created;
+  const hours = Math.floor(diffMs / 3600000);
+  const mins = Math.floor((diffMs % 3600000) / 60000);
+  if (hours >= 24) {
+    const days = Math.floor(hours / 24);
+    const remainHours = hours % 24;
+    return `${days}d ${remainHours}h ${mins}m`;
+  }
+  return `${hours}h ${mins}m`;
+}
+
+function isOverdue(incident: Incident): boolean {
+  if (incident.status === 'resolved' || incident.status === 'verified') return false;
+  const created = new Date(incident.createdAt).getTime();
+  return now - created > 24 * 3600000;
+}
+
+// TODO: Compliance score integration
+// - Resolved within 2 hours: +2 points to operational compliance
+// - Resolved within 24 hours: neutral (0 points)
+// - Unresolved after 24 hours: -3 points per day to operational compliance
+// - Verified by manager: +1 bonus point
+// Update src/data/demoData.ts complianceScores calculation to include incident resolution time
+
+// ── Component ──────────────────────────────────────────────────────
+
+export function IncidentLog() {
+  const { userRole } = useRole();
+  const canVerify = userRole === 'executive' || userRole === 'management';
+
+  // State
+  const [incidents, setIncidents] = useState<Incident[]>(DEMO_INCIDENTS);
+  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showActionForm, setShowActionForm] = useState(false);
+  const [showResolveForm, setShowResolveForm] = useState(false);
+
+  // Filters
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [severityFilter, setSeverityFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'severity' | 'resolution'>('newest');
+
+  // Create form
+  const [newType, setNewType] = useState<IncidentType>('temperature_violation');
+  const [newSeverity, setNewSeverity] = useState<Severity>('major');
+  const [newLocation, setNewLocation] = useState(LOCATIONS[0]);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
+
+  // Action form
+  const [actionText, setActionText] = useState('');
+  const [actionChips, setActionChips] = useState<string[]>([]);
+  const [actionPhotos, setActionPhotos] = useState<PhotoRecord[]>([]);
+
+  // Resolve form
+  const [resolutionSummary, setResolutionSummary] = useState('');
+  const [rootCause, setRootCause] = useState<RootCause>('unknown');
+  const [resolutionPhotos, setResolutionPhotos] = useState<PhotoRecord[]>([]);
+
+  // Comment
+  const [commentText, setCommentText] = useState('');
+
+  // ── KPI calculations ───────────────────────────────────────────
+  const openIncidents = incidents.filter(i => !['resolved', 'verified'].includes(i.status)).length;
+  const resolvedThisWeek = incidents.filter(i => {
+    if (!i.resolvedAt) return false;
+    return now - new Date(i.resolvedAt).getTime() < 7 * 86400000;
+  }).length;
+  const overdueCount = incidents.filter(i => isOverdue(i)).length;
+
+  const avgResolutionMs = useMemo(() => {
+    const resolved = incidents.filter(i => i.resolvedAt);
+    if (resolved.length === 0) return 0;
+    const total = resolved.reduce((sum, i) => {
+      return sum + (new Date(i.resolvedAt!).getTime() - new Date(i.createdAt).getTime());
+    }, 0);
+    return total / resolved.length;
+  }, [incidents]);
+
+  const avgResolutionHours = Math.round(avgResolutionMs / 3600000);
+
+  // ── Filtered & sorted incidents ────────────────────────────────
+  const filteredIncidents = useMemo(() => {
+    let list = [...incidents];
+    if (statusFilter !== 'all') list = list.filter(i => i.status === statusFilter);
+    if (severityFilter !== 'all') list = list.filter(i => i.severity === severityFilter);
+    if (typeFilter !== 'all') list = list.filter(i => i.type === typeFilter);
+    if (locationFilter !== 'all') list = list.filter(i => i.location === locationFilter);
+
+    switch (sortBy) {
+      case 'newest': list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); break;
+      case 'oldest': list.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()); break;
+      case 'severity': {
+        const order: Record<Severity, number> = { critical: 0, major: 1, minor: 2 };
+        list.sort((a, b) => order[a.severity] - order[b.severity]);
+        break;
+      }
+      case 'resolution': list.sort((a, b) => {
+        const aTime = a.resolvedAt ? new Date(a.resolvedAt).getTime() - new Date(a.createdAt).getTime() : Infinity;
+        const bTime = b.resolvedAt ? new Date(b.resolvedAt).getTime() - new Date(b.createdAt).getTime() : Infinity;
+        return aTime - bTime;
+      }); break;
+    }
+    return list;
+  }, [incidents, statusFilter, severityFilter, typeFilter, locationFilter, sortBy]);
+
+  // ── Handlers ───────────────────────────────────────────────────
+  const handleCreateIncident = () => {
+    if (!newTitle.trim() || !newDescription.trim()) {
+      alert('Title and description are required.');
+      return;
+    }
+    const newIncident: Incident = {
+      id: `INC-${String(incidents.length + 1).padStart(3, '0')}`,
+      type: newType,
+      severity: newSeverity,
+      title: newTitle,
+      description: newDescription,
+      location: newLocation,
+      status: 'assigned',
+      assignedTo: TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)],
+      reportedBy: 'Current User',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      photos: newPhotos,
+      resolutionPhotos: [],
+      timeline: [
+        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: 'Current User', timestamp: new Date().toISOString() },
+        { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: new Date().toISOString() },
+      ],
+      comments: [],
+    };
+    // TODO: Send notification to assigned manager (Resend email / Twilio SMS)
+    setIncidents(prev => [newIncident, ...prev]);
+    setShowCreateForm(false);
+    setNewTitle(''); setNewDescription(''); setNewPhotos([]);
+    setSelectedIncident(newIncident);
+  };
+
+  const handleTakeAction = () => {
+    if (!selectedIncident || !actionText.trim()) return;
+    const updated = { ...selectedIncident };
+    updated.status = 'in_progress';
+    updated.correctiveAction = actionText;
+    updated.actionChips = actionChips;
+    updated.updatedAt = new Date().toISOString();
+    updated.timeline = [...updated.timeline, {
+      id: `t-${Date.now()}`,
+      action: `Corrective action: ${actionText}`,
+      status: 'in_progress',
+      user: 'Current User',
+      timestamp: new Date().toISOString(),
+      photos: actionPhotos.length > 0 ? actionPhotos : undefined,
+    }];
+    setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+    setSelectedIncident(updated);
+    setShowActionForm(false);
+    setActionText(''); setActionChips([]); setActionPhotos([]);
+  };
+
+  const handleResolve = () => {
+    if (!selectedIncident || !resolutionSummary.trim()) return;
+    const updated = { ...selectedIncident };
+    updated.status = 'resolved';
+    updated.resolvedAt = new Date().toISOString();
+    updated.updatedAt = new Date().toISOString();
+    updated.resolutionSummary = resolutionSummary;
+    updated.rootCause = rootCause;
+    updated.resolutionPhotos = resolutionPhotos;
+    updated.timeline = [...updated.timeline, {
+      id: `t-${Date.now()}`,
+      action: `Resolved: ${resolutionSummary}`,
+      status: 'resolved',
+      user: 'Current User',
+      timestamp: new Date().toISOString(),
+      photos: resolutionPhotos.length > 0 ? resolutionPhotos : undefined,
+    }];
+    setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+    setSelectedIncident(updated);
+    setShowResolveForm(false);
+    setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]);
+  };
+
+  const handleVerify = (approved: boolean) => {
+    if (!selectedIncident) return;
+    const updated = { ...selectedIncident };
+    if (approved) {
+      updated.status = 'verified';
+      updated.verifiedAt = new Date().toISOString();
+      updated.verifiedBy = 'Current User';
+      updated.updatedAt = new Date().toISOString();
+      updated.timeline = [...updated.timeline, {
+        id: `t-${Date.now()}`,
+        action: 'Resolution verified and approved',
+        status: 'verified',
+        user: 'Current User',
+        timestamp: new Date().toISOString(),
+      }];
+    } else {
+      updated.status = 'in_progress';
+      updated.resolvedAt = undefined;
+      updated.updatedAt = new Date().toISOString();
+      updated.timeline = [...updated.timeline, {
+        id: `t-${Date.now()}`,
+        action: 'Resolution rejected — sent back for additional action',
+        status: 'in_progress',
+        user: 'Current User',
+        timestamp: new Date().toISOString(),
+      }];
+    }
+    setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+    setSelectedIncident(updated);
+  };
+
+  const handleAddComment = () => {
+    if (!selectedIncident || !commentText.trim()) return;
+    const updated = { ...selectedIncident };
+    updated.comments = [...updated.comments, {
+      id: `c-${Date.now()}`,
+      user: 'Current User',
+      text: commentText,
+      timestamp: new Date().toISOString(),
+    }];
+    setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+    setSelectedIncident(updated);
+    setCommentText('');
+  };
+
+  // ── Severity badge ─────────────────────────────────────────────
+  const SeverityBadge = ({ severity }: { severity: Severity }) => {
+    const config = SEVERITIES.find(s => s.value === severity)!;
+    return (
+      <span style={{
+        fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px',
+        color: config.color, backgroundColor: config.bg, textTransform: 'uppercase',
+      }}>
+        {config.label}
+      </span>
+    );
+  };
+
+  const StatusBadge = ({ status }: { status: IncidentStatus }) => {
+    const config = STATUS_CONFIG[status];
+    return (
+      <span style={{
+        fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '6px',
+        color: config.color, backgroundColor: config.bg,
+      }}>
+        {config.label}
+      </span>
+    );
+  };
+
+  // ── Detail View ────────────────────────────────────────────────
+  if (selectedIncident) {
+    const inc = selectedIncident;
+    const resTime = getResolutionTime(inc);
+    const overdue = isOverdue(inc);
+
+    return (
+      <>
+        <Breadcrumb items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Incident Log', href: '/incidents' },
+          { label: inc.id },
+        ]} />
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <button
+              onClick={() => setSelectedIncident(null)}
+              className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline mb-3"
+            >
+              <ArrowLeft className="h-4 w-4" /> Back to Incident Log
+            </button>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <h1 className="text-2xl font-bold text-gray-900">{inc.id}</h1>
+                  <SeverityBadge severity={inc.severity} />
+                  <StatusBadge status={inc.status} />
+                  {overdue && (
+                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', color: '#dc2626', backgroundColor: '#fef2f2' }}>
+                      OVERDUE
+                    </span>
+                  )}
+                </div>
+                <h2 className="text-lg text-gray-700">{inc.title}</h2>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {(inc.status === 'assigned' || inc.status === 'reported') && (
+                  <button
+                    onClick={() => setShowActionForm(true)}
+                    className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                  >
+                    Take Action
+                  </button>
+                )}
+                {inc.status === 'in_progress' && (
+                  <button
+                    onClick={() => setShowResolveForm(true)}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                  >
+                    Resolve
+                  </button>
+                )}
+                {inc.status === 'resolved' && canVerify && (
+                  <>
+                    <button
+                      onClick={() => handleVerify(true)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                    >
+                      <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4" /> Verify</span>
+                    </button>
+                    <button
+                      onClick={() => handleVerify(false)}
+                      className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
+                    >
+                      <span className="flex items-center gap-1"><XCircle className="h-4 w-4" /> Reject</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left column — details & timeline */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Info card */}
+              <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500 block">Type</span>
+                    <span className="font-medium text-gray-900">{INCIDENT_TYPES.find(t => t.value === inc.type)?.label}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block">Location</span>
+                    <span className="font-medium text-gray-900 flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{inc.location}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block">Assigned To</span>
+                    <span className="font-medium text-gray-900 flex items-center gap-1"><User className="h-3.5 w-3.5" />{inc.assignedTo}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block">Reported</span>
+                    <span className="font-medium text-gray-900">{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-gray-500 text-sm block mb-1">Description</span>
+                  <p className="text-gray-800">{inc.description}</p>
+                </div>
+                {inc.sourceLabel && (
+                  <div className="flex items-center gap-2 text-sm bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <span className="text-blue-800">Linked: {inc.sourceLabel}</span>
+                  </div>
+                )}
+                {inc.correctiveAction && (
+                  <div>
+                    <span className="text-gray-500 text-sm block mb-1">Corrective Action</span>
+                    <p className="text-gray-800">{inc.correctiveAction}</p>
+                    {inc.actionChips && inc.actionChips.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {inc.actionChips.map(chip => (
+                          <span key={chip} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '6px', backgroundColor: '#f3f4f6', color: '#374151', fontWeight: 500 }}>
+                            {chip}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {inc.resolutionSummary && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <span className="text-green-800 text-sm font-semibold block mb-1">Resolution</span>
+                    <p className="text-green-900 text-sm">{inc.resolutionSummary}</p>
+                    {inc.rootCause && (
+                      <p className="text-green-700 text-xs mt-1">Root Cause: <span className="font-medium capitalize">{inc.rootCause}</span></p>
+                    )}
+                  </div>
+                )}
+                {resTime && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Clock className="h-4 w-4 text-[#d4af37]" />
+                    Resolved in <span className="font-semibold text-gray-900">{resTime}</span>
+                  </div>
+                )}
+                {inc.verifiedBy && (
+                  <div className="flex items-center gap-2 text-sm bg-green-50 border border-green-200 rounded-lg p-3">
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <span className="text-green-800">
+                      Verified by <span className="font-semibold">{inc.verifiedBy}</span> on {format(new Date(inc.verifiedAt!), 'MMM d, yyyy h:mm a')}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Timeline */}
+              <div className="bg-white rounded-xl shadow-sm p-5">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Timeline</h3>
+                <div className="relative pl-6">
+                  <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
+                  {inc.timeline.map((entry, idx) => {
+                    const statusConf = STATUS_CONFIG[entry.status];
+                    return (
+                      <div key={entry.id} className="relative mb-6 last:mb-0">
+                        <div
+                          className="absolute -left-6 top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center"
+                          style={{ borderColor: statusConf.color, backgroundColor: idx === inc.timeline.length - 1 ? statusConf.color : 'white' }}
+                        >
+                          {idx === inc.timeline.length - 1 && (
+                            <div className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </div>
+                        <div className="ml-2">
+                          <p className="text-sm font-medium text-gray-900">{entry.action}</p>
+                          <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                            <span className="flex items-center gap-1"><User className="h-3 w-3" />{entry.user}</span>
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{format(new Date(entry.timestamp), 'MMM d, h:mm a')}</span>
+                          </div>
+                          {entry.photos && entry.photos.length > 0 && (
+                            <div className="mt-2 flex gap-2">
+                              {entry.photos.map(p => (
+                                <img key={p.id} src={p.dataUrl} alt="" className="w-12 h-12 rounded object-cover border" />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Comments */}
+              <div className="bg-white rounded-xl shadow-sm p-5">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Comments</h3>
+                {inc.comments.length === 0 && (
+                  <p className="text-sm text-gray-400">No comments yet.</p>
+                )}
+                <div className="space-y-3 mb-4">
+                  {inc.comments.map(c => (
+                    <div key={c.id} className="border border-gray-100 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+                        <span className="font-semibold text-gray-700">{c.user}</span>
+                        <span>{formatDistanceToNow(new Date(c.timestamp), { addSuffix: true })}</span>
+                      </div>
+                      <p className="text-sm text-gray-800">{c.text}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    value={commentText}
+                    onChange={e => setCommentText(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleAddComment()}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    placeholder="Add a comment..."
+                  />
+                  <button
+                    onClick={handleAddComment}
+                    disabled={!commentText.trim()}
+                    className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-40"
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Right column — photos & meta */}
+            <div className="space-y-6">
+              {/* Before/After photos */}
+              {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
+                <div className="bg-white rounded-xl shadow-sm p-5">
+                  <h3 className="text-lg font-bold text-gray-900 mb-3">Photo Evidence</h3>
+                  {inc.photos.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">Before (Incident)</span>
+                      <div className="flex gap-2 flex-wrap">
+                        {inc.photos.map(p => (
+                          <img key={p.id} src={p.dataUrl} alt="" className="w-20 h-20 rounded-lg object-cover border-2 border-red-200" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {inc.resolutionPhotos.length > 0 && (
+                    <div>
+                      <span className="text-xs font-semibold text-gray-500 uppercase mb-2 block">After (Resolution)</span>
+                      <div className="flex gap-2 flex-wrap">
+                        {inc.resolutionPhotos.map(p => (
+                          <img key={p.id} src={p.dataUrl} alt="" className="w-20 h-20 rounded-lg object-cover border-2 border-green-200" />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Quick Stats */}
+              <div className="bg-white rounded-xl shadow-sm p-5">
+                <h3 className="font-semibold text-gray-900 mb-3">Details</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Incident ID</span>
+                    <span className="font-mono font-medium text-gray-900">{inc.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Reported By</span>
+                    <span className="font-medium text-gray-900">{inc.reportedBy}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Created</span>
+                    <span className="font-medium text-gray-900">{format(new Date(inc.createdAt), 'MMM d, h:mm a')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Last Updated</span>
+                    <span className="font-medium text-gray-900">{format(new Date(inc.updatedAt), 'MMM d, h:mm a')}</span>
+                  </div>
+                  {inc.rootCause && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Root Cause</span>
+                      <span className="font-medium text-gray-900 capitalize">{inc.rootCause}</span>
+                    </div>
+                  )}
+                  {resTime && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Resolution Time</span>
+                      <span className="font-semibold text-[#1e4d6b]">{resTime}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Export */}
+              <button
+                onClick={() => alert('PDF export generated for incident ' + inc.id)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Download className="h-4 w-4" />
+                Export to PDF
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Take Action Modal */}
+        {showActionForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Take Corrective Action</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Quick Actions</label>
+                  <div className="flex flex-wrap gap-2">
+                    {ACTION_CHIPS.map(chip => (
+                      <button
+                        key={chip}
+                        type="button"
+                        onClick={() => setActionChips(prev =>
+                          prev.includes(chip) ? prev.filter(c => c !== chip) : [...prev, chip]
+                        )}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                          actionChips.includes(chip)
+                            ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
+                            : 'bg-white text-gray-700 border-gray-300 hover:border-[#1e4d6b]'
+                        }`}
+                      >
+                        {chip}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    What action was taken? <span className="text-red-600">*</span>
+                  </label>
+                  <textarea
+                    value={actionText}
+                    onChange={e => setActionText(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    placeholder="Describe the corrective action taken..."
+                  />
+                </div>
+                <PhotoEvidence
+                  photos={actionPhotos}
+                  onChange={setActionPhotos}
+                  label="Photo Proof of Action"
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); }}
+                    className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleTakeAction}
+                    disabled={!actionText.trim()}
+                    className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+                  >
+                    Submit Action
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Resolve Modal */}
+        {showResolveForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Resolve Incident</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Resolution Summary <span className="text-red-600">*</span>
+                  </label>
+                  <textarea
+                    value={resolutionSummary}
+                    onChange={e => setResolutionSummary(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                    placeholder="Summarize how the incident was resolved..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Root Cause</label>
+                  <select
+                    value={rootCause}
+                    onChange={e => setRootCause(e.target.value as RootCause)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    {ROOT_CAUSES.map(rc => (
+                      <option key={rc.value} value={rc.value}>{rc.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <PhotoEvidence
+                  photos={resolutionPhotos}
+                  onChange={setResolutionPhotos}
+                  label="After Photo (Strongly Encouraged)"
+                  highlight
+                  highlightText="Show the fix"
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); }}
+                    className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleResolve}
+                    disabled={!resolutionSummary.trim()}
+                    className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-40"
+                  >
+                    Mark Resolved
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ── Create Incident Modal ──────────────────────────────────────
+  const CreateModal = showCreateForm ? (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Report New Incident</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Incident Type</label>
+            <select
+              value={newType}
+              onChange={e => setNewType(e.target.value as IncidentType)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            >
+              {INCIDENT_TYPES.map(t => (
+                <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Severity</label>
+            <div className="flex gap-2">
+              {SEVERITIES.map(s => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setNewSeverity(s.value)}
+                  className="flex-1 py-2 rounded-lg text-sm font-medium border-2 transition-all"
+                  style={{
+                    borderColor: newSeverity === s.value ? s.color : '#e5e7eb',
+                    backgroundColor: newSeverity === s.value ? s.bg : 'white',
+                    color: newSeverity === s.value ? s.color : '#6b7280',
+                  }}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <select
+              value={newLocation}
+              onChange={e => setNewLocation(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            >
+              {LOCATIONS.map(l => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Title <span className="text-red-600">*</span>
+            </label>
+            <input
+              value={newTitle}
+              onChange={e => setNewTitle(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              placeholder="Brief incident title..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description <span className="text-red-600">*</span>
+            </label>
+            <textarea
+              value={newDescription}
+              onChange={e => setNewDescription(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              placeholder="What happened? Include relevant details..."
+            />
+          </div>
+          <PhotoEvidence
+            photos={newPhotos}
+            onChange={setNewPhotos}
+            label="Photo Evidence of Incident"
+          />
+          <div className="flex gap-3">
+            <button
+              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); }}
+              className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateIncident}
+              disabled={!newTitle.trim() || !newDescription.trim()}
+              className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+            >
+              Report Incident
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
+  // ── List View ──────────────────────────────────────────────────
+  return (
+    <>
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Incident Log' }]} />
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Incident Log</h1>
+            <p className="text-sm text-gray-600 mt-1">Track incidents from report through verified resolution</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => alert('PDF export of all incidents generated.')}
+              className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              <Download className="h-4 w-4" />
+              Export
+            </button>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium shadow-sm"
+            >
+              <Plus className="h-4 w-4" />
+              Report Incident
+            </button>
+          </div>
+        </div>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #dc2626' }}>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <AlertTriangle className="h-4 w-4 text-red-600" />
+              <span className="text-sm text-gray-500 font-medium">Open Incidents</span>
+            </div>
+            <div className="text-3xl font-bold text-red-600 text-center">{openIncidents}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Clock className="h-4 w-4 text-[#d4af37]" />
+              <span className="text-sm text-gray-500 font-medium">Avg Resolution</span>
+            </div>
+            <div className="text-3xl font-bold text-[#d4af37] text-center">{avgResolutionHours}h</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-gray-500 font-medium">Resolved This Week</span>
+            </div>
+            <div className="text-3xl font-bold text-green-600 text-center">{resolvedThisWeek}</div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overdueCount > 0 ? '#dc2626' : '#6b7280'}` }}>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <XCircle className={`h-4 w-4 ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`} />
+              <span className="text-sm text-gray-500 font-medium">Overdue (&gt;24h)</span>
+            </div>
+            <div className={`text-3xl font-bold text-center ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>{overdueCount}</div>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="flex flex-wrap gap-3 items-center">
+            <Filter className="h-4 w-4 text-gray-400" />
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Status</option>
+              {Object.entries(STATUS_CONFIG).map(([key, val]) => (
+                <option key={key} value={key}>{val.label}</option>
+              ))}
+            </select>
+            <select value={severityFilter} onChange={e => setSeverityFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Severity</option>
+              {SEVERITIES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Types</option>
+              {INCIDENT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+            <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="all">All Locations</option>
+              {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="severity">By Severity</option>
+              <option value="resolution">By Resolution Time</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Incident Cards */}
+        <div className="space-y-3">
+          {filteredIncidents.map(inc => {
+            const typeInfo = INCIDENT_TYPES.find(t => t.value === inc.type);
+            const TypeIcon = typeInfo?.icon || AlertCircle;
+            const overdue = isOverdue(inc);
+            const resTime = getResolutionTime(inc);
+            return (
+              <div
+                key={inc.id}
+                onClick={() => setSelectedIncident(inc)}
+                className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow cursor-pointer"
+                style={overdue ? { borderLeft: '4px solid #dc2626' } : { borderLeft: '4px solid transparent' }}
+              >
+                <div className="flex flex-col md:flex-row md:items-center gap-3">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: SEVERITIES.find(s => s.value === inc.severity)?.bg }}>
+                      <TypeIcon className="h-5 w-5" style={{ color: SEVERITIES.find(s => s.value === inc.severity)?.color }} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-mono text-gray-400">{inc.id}</span>
+                        <SeverityBadge severity={inc.severity} />
+                        <StatusBadge status={inc.status} />
+                        {overdue && (
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#dc2626', backgroundColor: '#fef2f2' }}>
+                            OVERDUE
+                          </span>
+                        )}
+                        {inc.photos.length > 0 && (
+                          <span className="flex items-center gap-0.5 text-gray-400">
+                            <Camera className="h-3 w-3" />
+                            <span style={{ fontSize: '10px' }}>{inc.photos.length}</span>
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-gray-900 mt-1 truncate">{inc.title}</h3>
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                        <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{inc.location}</span>
+                        <span className="flex items-center gap-1"><User className="h-3 w-3" />{inc.assignedTo}</span>
+                        <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {resTime && (
+                      <span className="text-xs text-gray-500 whitespace-nowrap">Resolved in {resTime}</span>
+                    )}
+                    <ChevronRight className="h-5 w-5 text-gray-300" />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {filteredIncidents.length === 0 && (
+            <div className="text-center py-16">
+              <AlertTriangle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">No incidents match your filters.</p>
+            </div>
+          )}
+        </div>
+      </div>
+      {CreateModal}
+    </>
+  );
+}

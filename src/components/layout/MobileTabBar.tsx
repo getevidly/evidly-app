@@ -18,6 +18,7 @@ import {
   TrendingUp,
   HelpCircle,
   LogOut,
+  AlertCircle,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -65,6 +66,7 @@ export function MobileTabBar() {
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
@@ -77,6 +79,7 @@ export function MobileTabBar() {
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
@@ -86,10 +89,12 @@ export function MobileTabBar() {
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     kitchen: [
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/documents', icon: FileText, label: 'Docs' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     facilities: [
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
   };
