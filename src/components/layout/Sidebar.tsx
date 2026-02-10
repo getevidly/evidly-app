@@ -32,6 +32,7 @@ interface NavItem {
   tourId: string;
   roles: UserRole[];
   section: Section;
+  badge?: boolean;
 }
 
 const navigation: NavItem[] = [
@@ -44,7 +45,7 @@ const navigation: NavItem[] = [
   { name: 'Calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { name: 'Reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { name: 'Analysis', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { name: 'Predictive Alerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
   { name: 'AI Advisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
   { name: 'Weekly Digest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { name: 'Alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
@@ -60,6 +61,9 @@ const sectionLabels: Record<Section, string> = {
 };
 
 const mainSections: Section[] = ['operations', 'insights'];
+
+// Demo: count of active high-severity predictive alerts for badge
+const HIGH_ALERT_COUNT = 4;
 
 function NavItemRow({ item, isActive, onClick }: { item: NavItem; isActive: boolean; onClick: () => void }) {
   return (
@@ -79,7 +83,12 @@ function NavItemRow({ item, isActive, onClick }: { item: NavItem; isActive: bool
           isActive ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
         }`}
       />
-      {item.name}
+      <span className="flex-1">{item.name}</span>
+      {item.badge && HIGH_ALERT_COUNT > 0 && (
+        <span style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '9999px', minWidth: '18px', textAlign: 'center', lineHeight: '16px' }}>
+          {HIGH_ALERT_COUNT}
+        </span>
+      )}
     </div>
   );
 }

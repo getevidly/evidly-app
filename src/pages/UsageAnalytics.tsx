@@ -50,7 +50,7 @@ const MODULES: ModuleInfo[] = [
   { id: 'qr-passport', name: 'QR Passport', icon: '📱', color: '#d4af37' },
   { id: 'calendar', name: 'Calendar', icon: '📅', color: '#8b5cf6' },
   { id: 'reports', name: 'Reporting', icon: '📊', color: '#1b4965' },
-  { id: 'analysis', name: 'Analysis', icon: '📈', color: '#059669' },
+  { id: 'analysis', name: 'Predictive Alerts', icon: '📈', color: '#059669' },
   { id: 'key-metrics', name: 'Key Metrics', icon: '📉', color: '#b45309' },
   { id: 'leaderboard', name: 'Leaderboard', icon: '🏆', color: '#ca8a04' },
   { id: 'ai-advisor', name: 'AI Advisor', icon: '🤖', color: '#6366f1' },
