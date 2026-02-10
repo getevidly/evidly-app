@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Clock, MapPin, Filter, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle } from 'lucide-react';
+import { Breadcrumb } from '../components/Breadcrumb';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -15,12 +16,14 @@ const eventTypes: EventType[] = [
   { id: 'checklist', label: 'Checklist', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
   { id: 'vendor', label: 'Vendor Service', color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   { id: 'inspection', label: 'Inspection', color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
-  { id: 'training', label: 'Training', color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
-  { id: 'maintenance', label: 'Maintenance', color: '#4f46e5', bg: '#eef2ff', border: '#c7d2fe' },
+  { id: 'corrective', label: 'Corrective Action', color: '#e11d48', bg: '#fff1f2', border: '#fecdd3' },
   { id: 'certification', label: 'Certification', color: '#d4af37', bg: '#fefce8', border: '#fde68a' },
+  { id: 'meeting', label: 'Meeting', color: '#0891b2', bg: '#ecfeff', border: '#a5f3fc' },
 ];
 
 const typeMap = Object.fromEntries(eventTypes.map(t => [t.id, t]));
+
+const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
 
 // ── Demo Events ──────────────────────────────────────────────
 interface CalendarEvent {
@@ -33,61 +36,107 @@ interface CalendarEvent {
   location: string;
   description?: string;
   allDay?: boolean;
+  overdue?: boolean;
 }
 
 function generateDemoEvents(): CalendarEvent[] {
   const now = new Date();
   const y = now.getFullYear();
   const m = now.getMonth();
+  const todayDate = now.getDate();
 
   const d = (day: number) => {
     const date = new Date(y, m, day);
     return date.toISOString().split('T')[0];
   };
 
-  const today = now.getDate();
+  const events: CalendarEvent[] = [];
+  let nextId = 1;
 
-  return [
-    // Today
-    { id: '1', title: 'Morning Temperature Check', type: 'temp-check', date: d(today), time: '6:00 AM', endTime: '6:30 AM', location: 'Downtown', description: 'Walk-in coolers, freezers, hot hold stations' },
-    { id: '2', title: 'Opening Checklist', type: 'checklist', date: d(today), time: '6:30 AM', endTime: '7:00 AM', location: 'Downtown', description: 'Kitchen prep and sanitization verification' },
-    { id: '3', title: 'Midday Temp Check', type: 'temp-check', date: d(today), time: '12:00 PM', endTime: '12:30 PM', location: 'Downtown' },
-    { id: '4', title: 'Evening Checklist', type: 'checklist', date: d(today), time: '9:00 PM', endTime: '9:30 PM', location: 'Downtown', description: 'Closing procedures and final sanitization' },
-    // Yesterday
-    { id: '5', title: 'Health Department Inspection', type: 'inspection', date: d(today - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Airport', description: 'Annual routine health inspection' },
-    { id: '6', title: 'Morning Temperature Check', type: 'temp-check', date: d(today - 1), time: '6:00 AM', endTime: '6:30 AM', location: 'Airport' },
-    // Tomorrow
-    { id: '7', title: 'Hood Cleaning Service', type: 'vendor', date: d(today + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Downtown', description: 'Quarterly hood and duct cleaning by ProClean Services' },
-    { id: '8', title: 'Morning Temperature Check', type: 'temp-check', date: d(today + 1), time: '6:00 AM', endTime: '6:30 AM', location: 'University' },
-    { id: '9', title: 'Opening Checklist', type: 'checklist', date: d(today + 1), time: '6:30 AM', endTime: '7:00 AM', location: 'University' },
-    // +2 days
-    { id: '10', title: 'Food Safety Training', type: 'training', date: d(today + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Downtown', description: 'New hire food handler certification training' },
-    { id: '11', title: 'Grease Trap Service', type: 'vendor', date: d(today + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Airport', description: 'Monthly grease trap pumping by GreenWaste' },
-    // +3 days
-    { id: '12', title: 'Fire Suppression Inspection', type: 'inspection', date: d(today + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Downtown', description: 'Semi-annual fire suppression system inspection' },
-    { id: '13', title: 'HACCP Plan Review', type: 'checklist', date: d(today + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'University' },
-    // +5 days
-    { id: '14', title: 'ServSafe Certification Renewal', type: 'certification', date: d(today + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Downtown', description: 'Manager certification renewal exam' },
-    { id: '15', title: 'Pest Control Service', type: 'vendor', date: d(today + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport' },
-    // +7 days
-    { id: '16', title: 'Equipment Maintenance', type: 'maintenance', date: d(today + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'University', description: 'Quarterly refrigeration system maintenance' },
-    { id: '17', title: 'Allergen Training', type: 'training', date: d(today + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Downtown' },
-    // -3 days
-    { id: '18', title: 'Fire Extinguisher Service', type: 'vendor', date: d(today - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Downtown', description: 'Annual fire extinguisher inspection and tagging' },
-    { id: '19', title: 'Morning Temperature Check', type: 'temp-check', date: d(today - 3), time: '6:00 AM', endTime: '6:30 AM', location: 'Downtown' },
-    // -5 days
-    { id: '20', title: 'HVAC Filter Replacement', type: 'maintenance', date: d(today - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport', description: 'Quarterly HVAC filter replacement' },
-    { id: '21', title: 'Food Handler Training', type: 'training', date: d(today - 5), time: '10:00 AM', endTime: '12:00 PM', location: 'University' },
-    // -7 days
-    { id: '22', title: 'Plumbing Inspection', type: 'maintenance', date: d(today - 7), time: '8:00 AM', endTime: '9:00 AM', location: 'Downtown' },
-    // +10 days
-    { id: '23', title: 'Health Permit Renewal', type: 'certification', date: d(today + 10), time: '9:00 AM', location: 'Airport', allDay: true },
-    { id: '24', title: 'Deep Cleaning Service', type: 'vendor', date: d(today + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'University' },
-    // +14 days
-    { id: '25', title: 'Quarterly Compliance Review', type: 'inspection', date: d(today + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Downtown', description: 'Internal compliance audit across all pillars' },
-    // -10 days
-    { id: '26', title: 'Walk-in Cooler Repair', type: 'maintenance', date: d(today - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Airport' },
+  // ── Recurring daily events (Mon-Sat) for the visible month window ──
+  const recurring = [
+    { title: 'Morning Temp Check', type: 'temp-check', time: '6:00 AM', endTime: '6:15 AM' },
+    { title: 'Freezer Temp Check', type: 'temp-check', time: '6:15 AM', endTime: '6:30 AM' },
+    { title: 'Opening Checklist', type: 'checklist', time: '6:30 AM', endTime: '7:00 AM' },
+    { title: 'Hot Hold Temp Check', type: 'temp-check', time: '11:00 AM', endTime: '11:15 AM' },
+    { title: 'Lunch Temp Check', type: 'temp-check', time: '11:30 AM', endTime: '11:45 AM' },
+    { title: 'Closing Checklist', type: 'checklist', time: '10:00 PM', endTime: '10:30 PM' },
   ];
+
+  // Generate for the visible range: from 7 days before start of month to 7 days after end
+  const firstOfMonth = new Date(y, m, 1);
+  const lastOfMonth = new Date(y, m + 1, 0);
+  const rangeStart = new Date(firstOfMonth);
+  rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay()); // back to Sunday
+  const rangeEnd = new Date(lastOfMonth);
+  rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay())); // forward to Saturday
+
+  // Cycle locations for recurring events
+  const locationCycle = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+
+  for (let dt = new Date(rangeStart); dt <= rangeEnd; dt.setDate(dt.getDate() + 1)) {
+    const dayOfWeek = dt.getDay();
+    if (dayOfWeek === 0) continue; // Skip Sunday
+
+    const dateStr = dt.toISOString().split('T')[0];
+    const locIdx = dt.getDate() % 3;
+
+    for (const r of recurring) {
+      events.push({
+        id: String(nextId++),
+        title: r.title,
+        type: r.type,
+        date: dateStr,
+        time: r.time,
+        endTime: r.endTime,
+        location: locationCycle[locIdx],
+      });
+    }
+  }
+
+  // ── One-off events ──
+  const oneOffs: Omit<CalendarEvent, 'id'>[] = [
+    // Today
+    { title: 'Staff Safety Meeting', type: 'meeting', date: d(todayDate), time: '2:00 PM', endTime: '3:00 PM', location: 'Downtown Kitchen', description: 'Monthly food safety briefing with all kitchen staff' },
+    // Yesterday
+    { title: 'Health Department Inspection', type: 'inspection', date: d(todayDate - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Annual routine health inspection' },
+    // Tomorrow
+    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Downtown Kitchen', description: 'Quarterly hood and duct cleaning by ProClean Services' },
+    // +2 days
+    { title: 'Team Compliance Meeting', type: 'meeting', date: d(todayDate + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Downtown Kitchen', description: 'Weekly compliance review and corrective action follow-up' },
+    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Airport Cafe', description: 'Monthly grease trap pumping by GreenWaste' },
+    // +3 days
+    { title: 'Fire Suppression Inspection', type: 'inspection', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Downtown Kitchen', description: 'Semi-annual fire suppression system inspection' },
+    { title: 'HACCP Plan Review', type: 'checklist', date: d(todayDate + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'University Dining' },
+    // +5 days
+    { title: 'ServSafe Certification Renewal', type: 'certification', date: d(todayDate + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Downtown Kitchen', description: 'Manager certification renewal exam' },
+    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe' },
+    // +7 days
+    { title: 'Refrigeration Maintenance', type: 'vendor', date: d(todayDate + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'University Dining', description: 'Quarterly refrigeration system maintenance' },
+    { title: 'Manager Safety Meeting', type: 'meeting', date: d(todayDate + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Downtown Kitchen' },
+    // -3 days
+    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Downtown Kitchen', description: 'Annual fire extinguisher inspection and tagging' },
+    // -5 days — overdue corrective action
+    { title: 'Fix Walk-in Door Seal', type: 'corrective', date: d(todayDate - 5), time: '9:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Walk-in cooler door gasket is torn — replace seal to maintain temperature integrity', overdue: true },
+    { title: 'HVAC Filter Replacement', type: 'vendor', date: d(todayDate - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe', description: 'Quarterly HVAC filter replacement' },
+    // -7 days
+    { title: 'Plumbing Inspection', type: 'vendor', date: d(todayDate - 7), time: '8:00 AM', endTime: '9:00 AM', location: 'Downtown Kitchen' },
+    // +10 days
+    { title: 'Health Permit Renewal', type: 'certification', date: d(todayDate + 10), time: '9:00 AM', location: 'Airport Cafe', allDay: true },
+    { title: 'Deep Cleaning Service', type: 'vendor', date: d(todayDate + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'University Dining' },
+    // +14 days
+    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Downtown Kitchen', description: 'Internal compliance audit across all pillars' },
+    // -2 days — another overdue corrective
+    { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'University Dining', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true },
+    // -10 days
+    { title: 'Walk-in Cooler Repair', type: 'vendor', date: d(todayDate - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Airport Cafe' },
+  ];
+
+  for (const e of oneOffs) {
+    events.push({ ...e, id: String(nextId++) });
+  }
+
+  return events;
 }
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -126,7 +175,10 @@ function getWeekDays(date: Date) {
 }
 
 function formatDateKey(d: Date) {
-  return d.toISOString().split('T')[0];
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 const HOURS = Array.from({ length: 18 }, (_, i) => i + 5); // 5 AM to 10 PM
@@ -144,15 +196,17 @@ export function Calendar() {
   const [currentDate, setCurrentDate] = useState(today);
   const [view, setView] = useState<ViewMode>('month');
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
-  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set(eventTypes.map(t => t.id)));
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [locationFilter, setLocationFilter] = useState('all');
 
   const events = useMemo(() => generateDemoEvents(), []);
 
   const filteredEvents = useMemo(() =>
-    events.filter(e => activeFilters.has(e.type)),
-    [events, activeFilters]
+    events.filter(e =>
+      (typeFilter === 'all' || e.type === typeFilter) &&
+      (locationFilter === 'all' || e.location === locationFilter)
+    ),
+    [events, typeFilter, locationFilter]
   );
 
   const eventsByDate = useMemo(() => {
@@ -161,7 +215,6 @@ export function Calendar() {
       if (!map[e.date]) map[e.date] = [];
       map[e.date].push(e);
     }
-    // Sort each day's events by time
     for (const key of Object.keys(map)) {
       map[key].sort((a, b) => a.time.localeCompare(b.time));
     }
@@ -169,7 +222,7 @@ export function Calendar() {
   }, [filteredEvents]);
 
   // Navigation
-  const navigate = (dir: number) => {
+  const navCalendar = (dir: number) => {
     const d = new Date(currentDate);
     if (view === 'month') d.setMonth(d.getMonth() + dir);
     else if (view === 'week') d.setDate(d.getDate() + dir * 7);
@@ -177,18 +230,7 @@ export function Calendar() {
     setCurrentDate(d);
   };
 
-  const goToday = () => {
-    setCurrentDate(new Date());
-  };
-
-  const toggleFilter = (id: string) => {
-    setActiveFilters(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  const goToday = () => setCurrentDate(new Date());
 
   // Header title
   const headerTitle = () => {
@@ -205,14 +247,30 @@ export function Calendar() {
     return `${DAYS[currentDate.getDay()]}, ${MONTHS[currentDate.getMonth()]} ${currentDate.getDate()}, ${currentDate.getFullYear()}`;
   };
 
+  // Today's events for sidebar card
+  const todayKey = formatDateKey(today);
+  const todayEvents = useMemo(() => filteredEvents.filter(e => e.date === todayKey), [filteredEvents, todayKey]);
+  const todayByType = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const e of todayEvents) {
+      counts[e.type] = (counts[e.type] || 0) + 1;
+    }
+    return counts;
+  }, [todayEvents]);
+
+  // Overdue events
+  const overdueEvents = useMemo(() =>
+    events.filter(e => e.overdue),
+    [events]
+  );
+
   // Upcoming events for sidebar
   const upcomingEvents = useMemo(() => {
-    const todayKey = formatDateKey(today);
     return filteredEvents
-      .filter(e => e.date >= todayKey)
+      .filter(e => e.date >= todayKey && !e.overdue)
       .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
-      .slice(0, 8);
-  }, [filteredEvents, today]);
+      .slice(0, 6);
+  }, [filteredEvents, todayKey]);
 
   // ── Render Event Chip (month view) ──
   const renderEventChip = (event: CalendarEvent) => {
@@ -223,24 +281,24 @@ export function Calendar() {
         key={event.id}
         onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
         style={{
-          padding: '2px 6px',
-          borderRadius: '4px',
-          fontSize: '11px',
+          padding: '1px 5px',
+          borderRadius: '3px',
+          fontSize: '10px',
           fontWeight: 600,
           color: t.color,
           backgroundColor: t.bg,
-          borderLeft: `3px solid ${t.color}`,
+          borderLeft: `2px solid ${t.color}`,
           cursor: 'pointer',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          lineHeight: '1.4',
+          lineHeight: '1.5',
           marginBottom: '1px',
           fontFamily: "'DM Sans', sans-serif",
         }}
-        title={event.title}
+        title={`${event.time} ${event.title}`}
       >
-        {event.time.replace(':00', '').replace(' ', '')} {event.title}
+        {event.title}
       </div>
     );
   };
@@ -250,72 +308,74 @@ export function Calendar() {
     const days = getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
 
     return (
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-        {DAYS.map(day => (
-          <div key={day} style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, fontSize: '12px', color: '#6b7280', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-            {day}
-          </div>
-        ))}
-        {days.map((day, idx) => {
-          const isToday = day && isSameDay(day, today);
-          const isCurrentMonth = day !== null;
-          const dateKey = day ? formatDateKey(day) : '';
-          const dayEvents = dateKey ? (eventsByDate[dateKey] || []) : [];
-
-          return (
-            <div
-              key={idx}
-              onClick={() => {
-                if (day) {
-                  setSelectedDay(day);
-                  setCurrentDate(day);
-                  setView('day');
-                }
-              }}
-              style={{
-                minHeight: '110px',
-                padding: '6px',
-                borderRight: (idx + 1) % 7 !== 0 ? '1px solid #e5e7eb' : 'none',
-                borderBottom: idx < days.length - 7 ? '1px solid #e5e7eb' : 'none',
-                backgroundColor: isToday ? '#fffbeb' : !isCurrentMonth ? '#f9fafb' : 'white',
-                cursor: day ? 'pointer' : 'default',
-                transition: 'background-color 0.15s',
-              }}
-              onMouseEnter={(e) => { if (day && !isToday) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
-              onMouseLeave={(e) => { if (day && !isToday) e.currentTarget.style.backgroundColor = 'white'; }}
-            >
-              {day && (
-                <>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '4px' }}>
-                    <span style={{
-                      width: '28px',
-                      height: '28px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      borderRadius: '50%',
-                      fontSize: '13px',
-                      fontWeight: isToday ? 700 : 500,
-                      fontFamily: "'DM Sans', sans-serif",
-                      color: isToday ? 'white' : '#374151',
-                      backgroundColor: isToday ? '#1e4d6b' : 'transparent',
-                    }}>
-                      {day.getDate()}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-                    {dayEvents.slice(0, 3).map(renderEventChip)}
-                    {dayEvents.length > 3 && (
-                      <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, padding: '2px 6px', fontFamily: "'DM Sans', sans-serif" }}>
-                        +{dayEvents.length - 3} more
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
+      <div style={{ overflowX: 'auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(120px, 1fr))', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
+          {DAYS.map(day => (
+            <div key={day} style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, fontSize: '12px', color: '#6b7280', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+              {day}
             </div>
-          );
-        })}
+          ))}
+          {days.map((day, idx) => {
+            const isToday = day && isSameDay(day, today);
+            const isCurrentMonth = day !== null;
+            const dateKey = day ? formatDateKey(day) : '';
+            const dayEvents = dateKey ? (eventsByDate[dateKey] || []) : [];
+
+            return (
+              <div
+                key={idx}
+                onClick={() => {
+                  if (day) {
+                    setCurrentDate(day);
+                    setView('day');
+                  }
+                }}
+                style={{
+                  minHeight: '100px',
+                  padding: '4px',
+                  borderRight: (idx + 1) % 7 !== 0 ? '1px solid #e5e7eb' : 'none',
+                  borderBottom: idx < days.length - 7 ? '1px solid #e5e7eb' : 'none',
+                  backgroundColor: isToday ? '#fffbeb' : !isCurrentMonth ? '#f9fafb' : 'white',
+                  cursor: day ? 'pointer' : 'default',
+                  transition: 'background-color 0.15s',
+                  overflow: 'hidden',
+                }}
+                onMouseEnter={(e) => { if (day && !isToday) e.currentTarget.style.backgroundColor = '#f9fafb'; }}
+                onMouseLeave={(e) => { if (day && !isToday) e.currentTarget.style.backgroundColor = 'white'; }}
+              >
+                {day && (
+                  <>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2px' }}>
+                      <span style={{
+                        width: '24px',
+                        height: '24px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        fontSize: '12px',
+                        fontWeight: isToday ? 700 : 500,
+                        fontFamily: "'DM Sans', sans-serif",
+                        color: isToday ? 'white' : '#374151',
+                        backgroundColor: isToday ? '#1e4d6b' : 'transparent',
+                      }}>
+                        {day.getDate()}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0px' }}>
+                      {dayEvents.slice(0, 3).map(renderEventChip)}
+                      {dayEvents.length > 3 && (
+                        <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600, padding: '1px 5px', fontFamily: "'DM Sans', sans-serif" }}>
+                          +{dayEvents.length - 3} more
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -325,109 +385,117 @@ export function Calendar() {
     const weekDays = getWeekDays(currentDate);
 
     return (
-      <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
-        {/* Header row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-          <div style={{ padding: '10px 4px' }} />
-          {weekDays.map((day, idx) => {
-            const isToday = isSameDay(day, today);
-            return (
-              <div
-                key={idx}
-                onClick={() => { setCurrentDate(day); setView('day'); }}
-                style={{
-                  padding: '10px 8px',
-                  textAlign: 'center',
-                  borderLeft: '1px solid #e5e7eb',
-                  cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}
-              >
-                <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  {DAYS[day.getDay()]}
-                </div>
-                <div style={{
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: isToday ? '#1e4d6b' : '#111827',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: isToday ? '#fffbeb' : 'transparent',
-                  border: isToday ? '2px solid #d4af37' : 'none',
-                  marginTop: '2px',
-                }}>
-                  {day.getDate()}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Time grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', maxHeight: '600px', overflowY: 'auto' }}>
-          {HOURS.map(hour => (
-            <div key={hour} style={{ display: 'contents' }}>
-              <div style={{ padding: '4px 8px', textAlign: 'right', fontSize: '11px', color: '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", height: '60px', borderBottom: '1px solid #f3f4f6' }}>
-                {hourLabel(hour)}
-              </div>
-              {weekDays.map((day, dayIdx) => {
-                const dateKey = formatDateKey(day);
-                const hourEvents = (eventsByDate[dateKey] || []).filter(e => {
-                  const h = parseInt(e.time);
-                  const isPM = e.time.includes('PM');
-                  let eventHour = h;
-                  if (isPM && h !== 12) eventHour += 12;
-                  if (!isPM && h === 12) eventHour = 0;
-                  return eventHour === hour;
-                });
-
-                return (
-                  <div
-                    key={dayIdx}
-                    style={{
-                      borderLeft: '1px solid #e5e7eb',
-                      borderBottom: '1px solid #f3f4f6',
-                      height: '60px',
-                      padding: '2px',
-                      position: 'relative',
-                    }}
-                  >
-                    {hourEvents.map(event => {
-                      const t = typeMap[event.type];
-                      return (
-                        <div
-                          key={event.id}
-                          onClick={() => setSelectedEvent(event)}
-                          style={{
-                            padding: '2px 4px',
-                            borderRadius: '4px',
-                            fontSize: '10px',
-                            fontWeight: 600,
-                            color: t?.color || '#333',
-                            backgroundColor: t?.bg || '#f3f4f6',
-                            borderLeft: `3px solid ${t?.color || '#999'}`,
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontFamily: "'DM Sans', sans-serif",
-                            marginBottom: '1px',
-                          }}
-                          title={event.title}
-                        >
-                          {event.title}
-                        </div>
-                      );
-                    })}
+      <div style={{ overflowX: 'auto' }}>
+        <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
+          {/* Header row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ padding: '10px 4px' }} />
+            {weekDays.map((day, idx) => {
+              const isToday = isSameDay(day, today);
+              return (
+                <div
+                  key={idx}
+                  onClick={() => { setCurrentDate(day); setView('day'); }}
+                  style={{
+                    padding: '10px 8px',
+                    textAlign: 'center',
+                    borderLeft: '1px solid #e5e7eb',
+                    cursor: 'pointer',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {DAYS[day.getDay()]}
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                  <div style={{
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    color: isToday ? '#1e4d6b' : '#111827',
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: isToday ? '#fffbeb' : 'transparent',
+                    border: isToday ? '2px solid #d4af37' : 'none',
+                    marginTop: '2px',
+                  }}>
+                    {day.getDate()}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Time grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', maxHeight: '600px', overflowY: 'auto' }}>
+            {HOURS.map(hour => (
+              <div key={hour} style={{ display: 'contents' }}>
+                <div style={{ padding: '4px 8px', textAlign: 'right', fontSize: '11px', color: '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", height: '60px', borderBottom: '1px solid #f3f4f6' }}>
+                  {hourLabel(hour)}
+                </div>
+                {weekDays.map((day, dayIdx) => {
+                  const dateKey = formatDateKey(day);
+                  const hourEvents = (eventsByDate[dateKey] || []).filter(e => {
+                    const h = parseInt(e.time);
+                    const isPM = e.time.includes('PM');
+                    let eventHour = h;
+                    if (isPM && h !== 12) eventHour += 12;
+                    if (!isPM && h === 12) eventHour = 0;
+                    return eventHour === hour;
+                  });
+
+                  return (
+                    <div
+                      key={dayIdx}
+                      style={{
+                        borderLeft: '1px solid #e5e7eb',
+                        borderBottom: '1px solid #f3f4f6',
+                        height: '60px',
+                        padding: '2px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {hourEvents.slice(0, 2).map(event => {
+                        const t = typeMap[event.type];
+                        return (
+                          <div
+                            key={event.id}
+                            onClick={() => setSelectedEvent(event)}
+                            style={{
+                              padding: '2px 4px',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              fontWeight: 600,
+                              color: t?.color || '#333',
+                              backgroundColor: t?.bg || '#f3f4f6',
+                              borderLeft: `2px solid ${t?.color || '#999'}`,
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              fontFamily: "'DM Sans', sans-serif",
+                              marginBottom: '1px',
+                            }}
+                            title={event.title}
+                          >
+                            {event.title}
+                          </div>
+                        );
+                      })}
+                      {hourEvents.length > 2 && (
+                        <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 600, padding: '0 4px', fontFamily: "'DM Sans', sans-serif" }}>
+                          +{hourEvents.length - 2}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -544,7 +612,6 @@ export function Calendar() {
             fontFamily: "'DM Sans', sans-serif",
           }}
         >
-          {/* Header bar */}
           <div style={{ height: '6px', backgroundColor: t?.color || '#6b7280' }} />
           <div style={{ padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -563,6 +630,23 @@ export function Calendar() {
                 }}>
                   {t?.label || selectedEvent.type}
                 </span>
+                {selectedEvent.overdue && (
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '3px 10px',
+                    borderRadius: '20px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#dc2626',
+                    backgroundColor: '#fef2f2',
+                    marginBottom: '8px',
+                    marginLeft: '6px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                    OVERDUE
+                  </span>
+                )}
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0' }}>
                   {selectedEvent.title}
                 </h3>
@@ -597,33 +681,21 @@ export function Calendar() {
               <button
                 onClick={() => { alert('Edit event — available in full version'); }}
                 style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: '2px solid #e5e7eb',
-                  backgroundColor: 'white',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
+                  flex: 1, padding: '10px', borderRadius: '8px',
+                  border: '2px solid #e5e7eb', backgroundColor: 'white',
+                  fontWeight: 600, fontSize: '13px', color: '#374151',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}
               >
                 Edit
               </button>
               <button
-                onClick={() => { setSelectedEvent(null); }}
+                onClick={() => setSelectedEvent(null)}
                 style={{
-                  flex: 1,
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: '#1e4d6b',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: 'white',
-                  cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
+                  flex: 1, padding: '10px', borderRadius: '8px',
+                  border: 'none', backgroundColor: '#1e4d6b',
+                  fontWeight: 600, fontSize: '13px', color: 'white',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}
               >
                 Close
@@ -635,330 +707,319 @@ export function Calendar() {
     );
   };
 
-  // ── Filter Panel ──
-  const renderFilterPanel = () => {
-    if (!showFilters) return null;
-    return (
-      <div style={{
-        position: 'absolute',
-        top: '48px',
-        right: '0',
-        zIndex: 30,
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
-        border: '1px solid #e5e7eb',
-        padding: '16px',
-        width: '240px',
-        fontFamily: "'DM Sans', sans-serif",
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <span style={{ fontWeight: 700, fontSize: '13px', color: '#111827' }}>Filter Events</span>
-          <button
-            onClick={() => {
-              if (activeFilters.size === eventTypes.length) setActiveFilters(new Set());
-              else setActiveFilters(new Set(eventTypes.map(t => t.id)));
-            }}
-            style={{ background: 'none', border: 'none', fontSize: '12px', color: '#1e4d6b', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
-          >
-            {activeFilters.size === eventTypes.length ? 'Clear All' : 'Select All'}
-          </button>
-        </div>
-        {eventTypes.map(type => (
-          <label
-            key={type.id}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              padding: '8px 6px',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontSize: '13px',
-              color: '#374151',
-              fontWeight: 500,
-              transition: 'background-color 0.1s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f9fafb'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-          >
-            <input
-              type="checkbox"
-              checked={activeFilters.has(type.id)}
-              onChange={() => toggleFilter(type.id)}
-              style={{ accentColor: type.color, width: '16px', height: '16px' }}
-            />
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: type.color, flexShrink: 0 }} />
-            {type.label}
-          </label>
-        ))}
-      </div>
-    );
+  // ── Select Dropdown Style ──
+  const selectStyle: React.CSSProperties = {
+    padding: '8px 32px 8px 12px',
+    borderRadius: '8px',
+    border: '1px solid #e5e7eb',
+    backgroundColor: 'white',
+    fontWeight: 600,
+    fontSize: '13px',
+    color: '#374151',
+    cursor: 'pointer',
+    fontFamily: "'DM Sans', sans-serif",
+    appearance: 'none' as const,
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 10px center',
+    minWidth: '150px',
   };
 
   // ── Main Render ──
   return (
-    <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>Calendar</h1>
-        <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Schedule and track compliance events, inspections, and vendor services</p>
-      </div>
+    <>
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Calendar' }]} />
 
-      {/* Toolbar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        {/* Left: Nav arrows + title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => navigate(-1)}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '36px', height: '36px', borderRadius: '8px',
-              border: '1px solid #e5e7eb', backgroundColor: 'white',
-              cursor: 'pointer', transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; }}
-          >
-            <ChevronLeft size={18} color="#374151" />
-          </button>
-          <button
-            onClick={() => navigate(1)}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '36px', height: '36px', borderRadius: '8px',
-              border: '1px solid #e5e7eb', backgroundColor: 'white',
-              cursor: 'pointer', transition: 'background-color 0.15s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; }}
-          >
-            <ChevronRight size={18} color="#374151" />
-          </button>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0, fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
-            {headerTitle()}
-          </h2>
+      <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }}>
+        {/* Page Header */}
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>Calendar</h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Schedule and track compliance events, inspections, and vendor services</p>
         </div>
 
-        {/* Right: Today button + View toggle + Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Today button — separate */}
-          <button
-            onClick={goToday}
-            style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: '2px solid #d4af37',
-              backgroundColor: '#fffbeb',
-              fontWeight: 700,
-              fontSize: '13px',
-              color: '#92400e',
-              cursor: 'pointer',
-              fontFamily: "'DM Sans', sans-serif",
-              transition: 'all 0.15s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fef3c7'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
-          >
-            Today
-          </button>
-
-          {/* View toggle group */}
-          <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-            {(['month', 'week', 'day'] as ViewMode[]).map(v => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  fontFamily: "'DM Sans', sans-serif",
-                  border: 'none',
-                  cursor: 'pointer',
-                  backgroundColor: view === v ? '#1e4d6b' : 'white',
-                  color: view === v ? 'white' : '#4b5563',
-                  borderRight: v !== 'day' ? '1px solid #e5e7eb' : 'none',
-                  transition: 'all 0.15s',
-                }}
-              >
-                {v.charAt(0).toUpperCase() + v.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* Filter button */}
-          <div style={{ position: 'relative' }}>
+        {/* Toolbar */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          {/* Left: Nav arrows + title */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => navCalendar(-1)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                padding: '8px 14px',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                backgroundColor: showFilters ? '#f3f4f6' : 'white',
-                fontWeight: 600,
-                fontSize: '13px',
-                color: '#374151',
-                cursor: 'pointer',
-                fontFamily: "'DM Sans', sans-serif",
-                transition: 'background-color 0.15s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '8px',
+                border: '1px solid #e5e7eb', backgroundColor: 'white',
+                cursor: 'pointer', transition: 'background-color 0.15s',
               }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; }}
             >
-              <Filter size={14} />
-              Filter
-              {activeFilters.size < eventTypes.length && (
-                <span style={{
-                  width: '18px', height: '18px', borderRadius: '50%',
-                  backgroundColor: '#1e4d6b', color: 'white',
-                  fontSize: '10px', fontWeight: 700,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {activeFilters.size}
-                </span>
-              )}
+              <ChevronLeft size={18} color="#374151" />
             </button>
-            {renderFilterPanel()}
+            <button
+              onClick={() => navCalendar(1)}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: '36px', height: '36px', borderRadius: '8px',
+                border: '1px solid #e5e7eb', backgroundColor: 'white',
+                cursor: 'pointer', transition: 'background-color 0.15s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f3f4f6'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; }}
+            >
+              <ChevronRight size={18} color="#374151" />
+            </button>
+            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0, fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
+              {headerTitle()}
+            </h2>
           </div>
-        </div>
-      </div>
 
-      {/* Content area: Calendar + Sidebar */}
-      <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-        {/* Calendar */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {view === 'month' && renderMonthView()}
-          {view === 'week' && renderWeekView()}
-          {view === 'day' && renderDayView()}
-        </div>
+          {/* Right: Today + View toggle + Filters */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* Today button */}
+            <button
+              onClick={goToday}
+              style={{
+                padding: '8px 16px', borderRadius: '8px',
+                border: '2px solid #d4af37', backgroundColor: '#fffbeb',
+                fontWeight: 700, fontSize: '13px', color: '#92400e',
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fef3c7'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
+            >
+              Today
+            </button>
 
-        {/* Sidebar */}
-        <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {/* Legend */}
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '12px',
-            padding: '16px',
-          }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Event Types
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {eventTypes.map(type => (
-                <div
-                  key={type.id}
+            {/* View toggle */}
+            <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+              {(['month', 'week', 'day'] as ViewMode[]).map(v => (
+                <button
+                  key={v}
+                  onClick={() => setView(v)}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    color: activeFilters.has(type.id) ? '#374151' : '#9ca3af',
-                    fontFamily: "'DM Sans', sans-serif",
-                    cursor: 'pointer',
-                    transition: 'color 0.15s',
+                    padding: '8px 16px', fontSize: '13px', fontWeight: 600,
+                    fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
+                    backgroundColor: view === v ? '#1e4d6b' : 'white',
+                    color: view === v ? 'white' : '#4b5563',
+                    borderRight: v !== 'day' ? '1px solid #e5e7eb' : 'none',
+                    transition: 'all 0.15s',
                   }}
-                  onClick={() => toggleFilter(type.id)}
                 >
-                  <span style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '3px',
-                    backgroundColor: activeFilters.has(type.id) ? type.color : '#d1d5db',
-                    flexShrink: 0,
-                    transition: 'background-color 0.15s',
-                  }} />
-                  {type.label}
-                </div>
+                  {v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
               ))}
             </div>
+
+            {/* Type filter select */}
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              style={selectStyle}
+            >
+              <option value="all">All Types</option>
+              {eventTypes.map(t => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
+            </select>
+
+            {/* Location filter select */}
+            <select
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+              style={selectStyle}
+            >
+              <option value="all">All Locations</option>
+              {LOCATIONS.map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Content area: Calendar + Sidebar */}
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+          {/* Calendar */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {view === 'month' && renderMonthView()}
+            {view === 'week' && renderWeekView()}
+            {view === 'day' && renderDayView()}
           </div>
 
-          {/* Upcoming Events */}
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '12px',
-            padding: '16px',
-          }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Upcoming
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {upcomingEvents.length === 0 && (
-                <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>No upcoming events</p>
-              )}
-              {upcomingEvents.map(event => {
-                const t = typeMap[event.type];
-                const eventDate = new Date(event.date + 'T12:00:00');
-                const isEventToday = isSameDay(eventDate, today);
-
-                return (
+          {/* Sidebar */}
+          <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* Legend */}
+            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Event Types
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {eventTypes.map(type => (
                   <div
-                    key={event.id}
-                    onClick={() => setSelectedEvent(event)}
+                    key={type.id}
                     style={{
-                      padding: '10px',
-                      borderRadius: '8px',
-                      backgroundColor: t?.bg || '#f3f4f6',
-                      borderLeft: `3px solid ${t?.color || '#999'}`,
-                      cursor: 'pointer',
-                      fontFamily: "'DM Sans', sans-serif",
-                      transition: 'box-shadow 0.15s',
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                      fontSize: '12px', fontWeight: 500,
+                      color: (typeFilter === 'all' || typeFilter === type.id) ? '#374151' : '#9ca3af',
+                      fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', transition: 'color 0.15s',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
+                    onClick={() => setTypeFilter(typeFilter === type.id ? 'all' : type.id)}
                   >
-                    <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
-                    <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                      {isEventToday ? 'Today' : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
-                    </div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{event.location}</div>
+                    <span style={{
+                      width: '10px', height: '10px', borderRadius: '3px',
+                      backgroundColor: (typeFilter === 'all' || typeFilter === type.id) ? type.color : '#d1d5db',
+                      flexShrink: 0, transition: 'background-color 0.15s',
+                    }} />
+                    {type.label}
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Stats */}
-          <div style={{
-            backgroundColor: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '12px',
-            padding: '16px',
-          }}>
-            <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              This Month
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-              {[
-                { label: 'Total Events', value: filteredEvents.filter(e => { const d = new Date(e.date + 'T12:00:00'); return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear(); }).length, color: '#1e4d6b' },
-                { label: 'Inspections', value: filteredEvents.filter(e => { const d = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && d.getMonth() === today.getMonth(); }).length, color: '#ea580c' },
-                { label: 'Vendor Visits', value: filteredEvents.filter(e => { const d = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && d.getMonth() === today.getMonth(); }).length, color: '#7c3aed' },
-                { label: 'Training', value: filteredEvents.filter(e => { const d = new Date(e.date + 'T12:00:00'); return e.type === 'training' && d.getMonth() === today.getMonth(); }).length, color: '#0891b2' },
-              ].map(stat => (
-                <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
-                  <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>
-                  <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{stat.label}</div>
+            {/* Overdue Items */}
+            {overdueEvents.length > 0 && (
+              <div style={{
+                backgroundColor: '#fff1f2',
+                border: '1px solid #fecdd3',
+                borderRadius: '12px',
+                padding: '16px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <AlertTriangle size={16} color="#dc2626" />
+                  <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#dc2626', margin: 0, fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Overdue ({overdueEvents.length})
+                  </h3>
                 </div>
-              ))}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {overdueEvents.map(event => {
+                    const eventDate = new Date(event.date + 'T12:00:00');
+                    const daysOverdue = Math.floor((today.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24));
+                    return (
+                      <div
+                        key={event.id}
+                        onClick={() => setSelectedEvent(event)}
+                        style={{
+                          padding: '10px',
+                          borderRadius: '8px',
+                          backgroundColor: 'white',
+                          borderLeft: '3px solid #dc2626',
+                          cursor: 'pointer',
+                          fontFamily: "'DM Sans', sans-serif",
+                          transition: 'box-shadow 0.15s',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
+                      >
+                        <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
+                        <div style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>
+                          {daysOverdue} day{daysOverdue !== 1 ? 's' : ''} overdue
+                        </div>
+                        <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '1px' }}>{event.location}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Today Card */}
+            <div style={{
+              backgroundColor: '#1b4965',
+              borderRadius: '12px',
+              padding: '16px',
+              color: 'white',
+            }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Today
+              </h3>
+              <div style={{ fontSize: '32px', fontWeight: 800, fontFamily: "'DM Sans', sans-serif", marginBottom: '4px' }}>
+                {todayEvents.length}
+              </div>
+              <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
+                scheduled items
+              </div>
+              {Object.keys(todayByType).length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px' }}>
+                  {Object.entries(todayByType).map(([typeId, count]) => {
+                    const t = typeMap[typeId];
+                    return (
+                      <div key={typeId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', fontFamily: "'DM Sans', sans-serif" }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: t?.color || '#999' }} />
+                          <span style={{ color: 'rgba(255,255,255,0.85)' }}>{t?.label || typeId}</span>
+                        </div>
+                        <span style={{ fontWeight: 700 }}>{count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Upcoming Events */}
+            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Upcoming
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {upcomingEvents.length === 0 && (
+                  <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>No upcoming events</p>
+                )}
+                {upcomingEvents.map(event => {
+                  const t = typeMap[event.type];
+                  const eventDate = new Date(event.date + 'T12:00:00');
+                  const isEventToday = isSameDay(eventDate, today);
+
+                  return (
+                    <div
+                      key={event.id}
+                      onClick={() => setSelectedEvent(event)}
+                      style={{
+                        padding: '10px', borderRadius: '8px',
+                        backgroundColor: t?.bg || '#f3f4f6',
+                        borderLeft: `3px solid ${t?.color || '#999'}`,
+                        cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                        transition: 'box-shadow 0.15s',
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'none'; }}
+                    >
+                      <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
+                      <div style={{ fontSize: '11px', color: '#6b7280' }}>
+                        {isEventToday ? 'Today' : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{event.location}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                This Month
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                {[
+                  { label: 'Total Events', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1e4d6b' },
+                  { label: 'Inspections', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#ea580c' },
+                  { label: 'Vendor Visits', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
+                  { label: 'Meetings', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'meeting' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#0891b2' },
+                ].map(stat => (
+                  <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
+                    <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>
+                    <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{stat.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Event detail modal */}
+        {renderEventModal()}
       </div>
-
-      {/* Close filter dropdown when clicking outside */}
-      {showFilters && (
-        <div
-          onClick={() => setShowFilters(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 20 }}
-        />
-      )}
-
-      {/* Event detail modal */}
-      {renderEventModal()}
-    </div>
+    </>
   );
 }
 
