@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_LABELS } from '../contexts/OperatingHoursContext';
+import type { LocationHours } from '../contexts/OperatingHoursContext';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -39,7 +41,7 @@ interface CalendarEvent {
   overdue?: boolean;
 }
 
-function generateDemoEvents(): CalendarEvent[] {
+function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[] {
   const now = new Date();
   const y = now.getFullYear();
   const m = now.getMonth();
@@ -76,10 +78,13 @@ function generateDemoEvents(): CalendarEvent[] {
 
   for (let dt = new Date(rangeStart); dt <= rangeEnd; dt.setDate(dt.getDate() + 1)) {
     const dayOfWeek = dt.getDay();
-    if (dayOfWeek === 0) continue; // Skip Sunday
-
     const dateStr = dt.toISOString().split('T')[0];
     const locIdx = dt.getDate() % 3;
+    const locName = locationCycle[locIdx];
+
+    // Check if location is open on this day using operating hours
+    const locHours = locationHoursData.find(h => h.locationName === locName);
+    if (!locHours || !locHours.days[dayOfWeek]) continue;
 
     for (const r of recurring) {
       events.push({
@@ -89,7 +94,7 @@ function generateDemoEvents(): CalendarEvent[] {
         date: dateStr,
         time: r.time,
         endTime: r.endTime,
-        location: locationCycle[locIdx],
+        location: locName,
       });
     }
   }
@@ -198,8 +203,9 @@ export function Calendar() {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
+  const { locationHours: opHours, getHoursForLocation, getShiftsForLocation } = useOperatingHours();
 
-  const events = useMemo(() => generateDemoEvents(), []);
+  const events = useMemo(() => generateDemoEvents(opHours), [opHours]);
 
   const filteredEvents = useMemo(() =>
     events.filter(e =>
@@ -506,6 +512,17 @@ export function Calendar() {
     const dateKey = formatDateKey(currentDate);
     const dayEvents = eventsByDate[dateKey] || [];
 
+    // Operating hours for graying out
+    const selectedLocHours = locationFilter !== 'all' ? getHoursForLocation(locationFilter) : null;
+    const openHour = selectedLocHours ? time24ToHour(selectedLocHours.openTime) : null;
+    const closeHour = selectedLocHours ? time24ToHour(selectedLocHours.closeTime) : null;
+
+    // Shifts for boundary dividers
+    const dayOfWeek = currentDate.getDay();
+    const activeShifts = locationFilter !== 'all'
+      ? getShiftsForLocation(locationFilter).filter(s => s.days[dayOfWeek])
+      : [];
+
     return (
       <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
         {/* Header */}
@@ -520,7 +537,25 @@ export function Calendar() {
 
         {/* Time slots */}
         <div style={{ maxHeight: '600px', overflowY: 'auto' }}>
-          {HOURS.map(hour => {
+          {HOURS.flatMap(hour => {
+            const elements: React.ReactNode[] = [];
+
+            // Shift boundary divider
+            const shiftStart = activeShifts.find(s => parseInt(s.startTime.split(':')[0]) === hour);
+            if (shiftStart) {
+              elements.push(
+                <div key={`shift-${hour}`} style={{ display: 'flex', alignItems: 'center', padding: '6px 12px 6px 80px', gap: '10px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 700, color: '#d4af37', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    {shiftStart.name} Shift
+                  </div>
+                  <div style={{ flex: 1, borderBottom: '2px dashed #d4af37' }} />
+                </div>
+              );
+            }
+
+            // Check if hour is outside operating hours
+            const isOutside = openHour !== null && closeHour !== null && (hour < openHour || hour >= closeHour);
+
             const hourEvents = dayEvents.filter(e => {
               const h = parseInt(e.time);
               const isPM = e.time.includes('PM');
@@ -530,12 +565,12 @@ export function Calendar() {
               return eventHour === hour;
             });
 
-            return (
-              <div key={hour} style={{ display: 'flex', borderBottom: '1px solid #f3f4f6', minHeight: '64px' }}>
-                <div style={{ width: '80px', padding: '8px 12px', textAlign: 'right', fontSize: '12px', color: '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+            elements.push(
+              <div key={hour} style={{ display: 'flex', borderBottom: '1px solid #f3f4f6', minHeight: '64px', backgroundColor: isOutside ? '#f3f4f6' : 'transparent' }}>
+                <div style={{ width: '80px', padding: '8px 12px', textAlign: 'right', fontSize: '12px', color: isOutside ? '#c9cdd2' : '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
                   {hourLabel(hour)}
                 </div>
-                <div style={{ flex: 1, padding: '4px 8px', borderLeft: '1px solid #e5e7eb' }}>
+                <div style={{ flex: 1, padding: '4px 8px', borderLeft: '1px solid #e5e7eb', opacity: isOutside ? 0.5 : 1 }}>
                   {hourEvents.map(event => {
                     const t = typeMap[event.type];
                     return (
@@ -571,9 +606,16 @@ export function Calendar() {
                       </div>
                     );
                   })}
+                  {isOutside && hourEvents.length === 0 && (
+                    <div style={{ fontSize: '11px', color: '#c9cdd2', fontStyle: 'italic', padding: '4px 0', fontFamily: "'DM Sans', sans-serif" }}>
+                      Closed
+                    </div>
+                  )}
                 </div>
               </div>
             );
+
+            return elements;
           })}
         </div>
       </div>
@@ -835,6 +877,24 @@ export function Calendar() {
             </select>
           </div>
         </div>
+
+        {/* Location hours info when specific location is filtered */}
+        {locationFilter !== 'all' && (() => {
+          const locH = getHoursForLocation(locationFilter);
+          if (!locH) return null;
+          const openDays = _DAY_LABELS.filter((_, i) => locH.days[i]).join(', ');
+          return (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px',
+              padding: '8px 14px', borderRadius: '8px', backgroundColor: '#eef4f8',
+              border: '1px solid #b8d4e8', fontSize: '13px', color: '#1e4d6b',
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+            }}>
+              <Clock size={14} />
+              <span><strong>{locationFilter}</strong>: {openDays} · {formatTime24to12(locH.openTime)} – {formatTime24to12(locH.closeTime)}</span>
+            </div>
+          );
+        })()}
 
         {/* Content area: Calendar + Sidebar */}
         <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>

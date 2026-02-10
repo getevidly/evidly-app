@@ -2,6 +2,7 @@
 import { lazy, Suspense } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
+import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
 import { DemoProvider, useDemo } from './contexts/DemoContext';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
@@ -210,7 +211,9 @@ function App() {
       <AuthProvider>
         <DemoProvider>
           <RoleProvider>
-            <AppRoutes />
+            <OperatingHoursProvider>
+              <AppRoutes />
+            </OperatingHoursProvider>
           </RoleProvider>
         </DemoProvider>
       </AuthProvider>

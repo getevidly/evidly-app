@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole, UserRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
+import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generateAllTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
@@ -18,6 +19,8 @@ export function Settings() {
   const { profile } = useAuth();
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
+  const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
+  const canEditHours = userRole === 'executive' || userRole === 'management';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
   const [pwError, setPwError] = useState('');
@@ -36,6 +39,7 @@ export function Settings() {
   const allTabs = [
     { id: 'profile', name: 'Profile', icon: User, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'organization', name: 'Organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
+    { id: 'operating-hours', name: 'Hours & Shifts', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'notifications', name: 'Notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'integrations', name: 'Integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
     { id: 'security', name: 'Security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
@@ -594,6 +598,182 @@ export function Settings() {
               >
                 Update Password
               </button>
+            </div>
+          )}
+
+          {activeTab === 'operating-hours' && (
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Hours & Shifts</h3>
+                <p className="text-sm text-gray-600 mt-1">Configure operating hours and shift schedules for each location.</p>
+                {!canEditHours && (
+                  <div className="mt-2 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    View only — contact your manager to update hours and shifts.
+                  </div>
+                )}
+              </div>
+
+              {/* Operating Hours */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-4">Operating Hours</h4>
+                <div className="space-y-4">
+                  {locationHours.map((loc) => (
+                    <div key={loc.locationName} className="border border-gray-200 rounded-lg p-5">
+                      <div className="flex items-center gap-2 mb-4">
+                        <MapPin className="h-5 w-5 text-[#1e4d6b]" />
+                        <span className="font-semibold text-gray-900">{loc.locationName}</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3 mb-4">
+                        {DAY_LABELS.map((day, idx) => (
+                          <label key={day} className={`flex items-center gap-1.5 ${canEditHours ? 'cursor-pointer' : 'cursor-default'}`}>
+                            <input
+                              type="checkbox"
+                              checked={loc.days[idx]}
+                              disabled={!canEditHours}
+                              onChange={() => {
+                                const newDays = [...loc.days];
+                                newDays[idx] = !newDays[idx];
+                                updateLocationHours(loc.locationName, { days: newDays });
+                              }}
+                              className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                            />
+                            <span className="text-sm font-medium text-gray-700">{day}</span>
+                          </label>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Opens</label>
+                          <select
+                            value={loc.openTime}
+                            disabled={!canEditHours}
+                            onChange={(e) => updateLocationHours(loc.locationName, { openTime: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                          >
+                            {generateOpeningTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Closes</label>
+                          <select
+                            value={loc.closeTime}
+                            disabled={!canEditHours}
+                            onChange={(e) => updateLocationHours(loc.locationName, { closeTime: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-gray-50 disabled:text-gray-500"
+                          >
+                            {generateClosingTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 text-xs text-gray-500">
+                        {loc.days.filter(Boolean).length} days/week · {formatTime24to12(loc.openTime)} – {formatTime24to12(loc.closeTime)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shift Configuration */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-4">Shift Configuration</h4>
+                <div className="space-y-4">
+                  {locationHours.map((loc) => {
+                    const locShifts = getShiftsForLocation(loc.locationName).filter(s => s.locationName === loc.locationName);
+                    return (
+                      <div key={loc.locationName} className="border border-gray-200 rounded-lg p-5">
+                        <div className="flex items-center gap-2 mb-4">
+                          <MapPin className="h-5 w-5 text-[#1e4d6b]" />
+                          <span className="font-semibold text-gray-900">{loc.locationName}</span>
+                          <span className="text-xs text-gray-400 ml-auto">{locShifts.length} shift{locShifts.length !== 1 ? 's' : ''}</span>
+                        </div>
+
+                        <div className="space-y-3">
+                          {locShifts.map((shift) => (
+                            <div key={shift.id} className="bg-gray-50 rounded-lg p-4">
+                              <div className="flex items-center gap-3 mb-3">
+                                <input
+                                  type="text"
+                                  value={shift.name}
+                                  disabled={!canEditHours}
+                                  onChange={(e) => updateShift(shift.id, { name: e.target.value })}
+                                  className="px-3 py-1.5 border border-gray-300 rounded-md text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:border-transparent disabled:text-gray-700 w-40"
+                                />
+                                {canEditHours && (
+                                  <button
+                                    onClick={() => removeShift(shift.id)}
+                                    className="text-red-500 hover:text-red-700 text-xs font-medium ml-auto"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                              <div className="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-500 mb-1">Start Time</label>
+                                  <select
+                                    value={shift.startTime}
+                                    disabled={!canEditHours}
+                                    onChange={(e) => updateShift(shift.id, { startTime: e.target.value })}
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:text-gray-500"
+                                  >
+                                    {generateAllTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                                  </select>
+                                </div>
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-500 mb-1">End Time</label>
+                                  <select
+                                    value={shift.endTime}
+                                    disabled={!canEditHours}
+                                    onChange={(e) => updateShift(shift.id, { endTime: e.target.value })}
+                                    className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] disabled:bg-white disabled:text-gray-500"
+                                  >
+                                    {generateAllTimes().map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {DAY_LABELS.map((day, idx) => (
+                                  <label key={day} className={`flex items-center gap-1 ${canEditHours ? 'cursor-pointer' : 'cursor-default'}`}>
+                                    <input
+                                      type="checkbox"
+                                      checked={shift.days[idx]}
+                                      disabled={!canEditHours}
+                                      onChange={() => {
+                                        const newDays = [...shift.days];
+                                        newDays[idx] = !newDays[idx];
+                                        updateShift(shift.id, { days: newDays });
+                                      }}
+                                      className="h-3.5 w-3.5 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
+                                    />
+                                    <span className="text-xs text-gray-600">{day}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                          {canEditHours && (
+                            <button
+                              onClick={() => addShift({ name: 'New Shift', locationName: loc.locationName, startTime: '09:00', endTime: '17:00', days: [false, true, true, true, true, true, false] })}
+                              className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
+                            >
+                              + Add Shift
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {canEditHours && (
+                <button onClick={() => alert('Hours and shifts saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                  Save Changes
+                </button>
+              )}
             </div>
           )}
 
