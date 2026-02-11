@@ -127,6 +127,35 @@ function TrendSparkline({ data, width = 280, height = 80 }: { data: EnterpriseTr
   );
 }
 
+// Find worst location recursively
+function findWorstLocation(node: EnterpriseHierarchyNode): EnterpriseHierarchyNode | null {
+  if (node.level === 'location') return node;
+  if (!node.children || node.children.length === 0) return null;
+  let worst: EnterpriseHierarchyNode | null = null;
+  for (const child of node.children) {
+    const w = findWorstLocation(child);
+    if (w && (!worst || w.complianceScore < worst.complianceScore)) worst = w;
+  }
+  return worst;
+}
+
+// Count critical items for a division
+function countCriticalItems(node: EnterpriseHierarchyNode): number {
+  if (!node.children) return 0;
+  let count = 0;
+  for (const child of node.children) {
+    if (child.complianceScore < 75) count++;
+    if (child.children) count += countCriticalItems(child);
+  }
+  return count;
+}
+
+// Regulatory overlay markers for trend chart
+const REGULATORY_MARKERS = [
+  { month: 'Jul 25', label: 'AB 660 (CA)', color: '#d4af37' },
+  { month: 'Nov 25', label: 'FDA Update', color: '#6b21a8' },
+];
+
 // ── Corporate View (Overview Tab) ─────────────────────────────
 function OverviewTab() {
   const totalLocations = enterpriseTenants.reduce((s, t) => s + t.stats.totalLocations, 0);
@@ -137,9 +166,17 @@ function OverviewTab() {
   const criticalAlerts = enterpriseAlerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
   const latestTrend = enterpriseTrendData[enterpriseTrendData.length - 1];
   const prevTrend = enterpriseTrendData[enterpriseTrendData.length - 2];
+  const threeMonthAgo = enterpriseTrendData[enterpriseTrendData.length - 4];
   const trendDelta = +(latestTrend.overall - prevTrend.overall).toFixed(1);
+  const trend3mDelta = +(latestTrend.overall - threeMonthAgo.overall).toFixed(1);
   // Division scorecard from hierarchy
   const divisions = enterpriseHierarchy.children || [];
+  // Location risk breakdown
+  const locationsCompliant = Math.round(totalLocations * 0.82); // score 80+
+  const locationsAtRisk = Math.round(totalLocations * 0.14); // score 60-79
+  const locationsCritical = totalLocations - locationsCompliant - locationsAtRisk; // <60
+  // Data points counter
+  const dataPointsThisMonth = 1_284_720;
 
   return (
     <div className="space-y-6">
@@ -148,17 +185,17 @@ function OverviewTab() {
         <div className="flex items-center gap-2 mb-4">
           <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
           <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
-          <span className="text-[10px] text-gray-400 ml-auto">Last updated: {formatTime(enterpriseTenants[0].stats.lastSyncAt)}</span>
+          <span className="text-[10px] text-gray-400 ml-auto">Powered by {dataPointsThisMonth.toLocaleString()} compliance data points this month</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
             { label: 'Overall Score', value: avgScore + '%', icon: ShieldCheck, highlight: true },
-            { label: 'Trend', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
-            { label: 'Tenants', value: String(enterpriseTenants.length), icon: Building2 },
-            { label: 'Locations', value: totalLocations.toLocaleString(), icon: MapPin },
-            { label: 'Users', value: totalUsers.toLocaleString(), icon: Users },
-            { label: 'ARR', value: formatCurrency(totalARR), icon: TrendingUp },
-            { label: 'SSO Active', value: `${ssoEnabled}/${enterpriseTenants.length}`, icon: KeyRound },
+            { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
+            { label: 'vs 3Mo Ago', value: (trend3mDelta >= 0 ? '+' : '') + trend3mDelta + '%', icon: trend3mDelta >= 0 ? TrendingUp : TrendingDown },
+            { label: 'Locations', value: `${totalLocations.toLocaleString()} total`, icon: MapPin },
+            { label: 'Compliant', value: `${locationsCompliant.toLocaleString()} (80+)`, icon: CheckCircle, highlight: true },
+            { label: 'At Risk', value: `${locationsAtRisk} (60-79)`, icon: AlertTriangle },
+            { label: 'Critical', value: `${locationsCritical} (<60)`, icon: AlertTriangle, alert: locationsCritical > 0 },
             { label: 'Alerts', value: String(criticalAlerts), icon: AlertTriangle, alert: criticalAlerts > 0 },
           ].map(s => (
             <div key={s.label} className={`rounded-xl border p-3 ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-gray-50'}`}>
@@ -190,10 +227,11 @@ function OverviewTab() {
               </thead>
               <tbody>
                 {divisions.map(div => {
-                  const worstChild = div.children ? [...div.children].sort((a, b) => a.complianceScore - b.complianceScore)[0] : null;
+                  const worst = findWorstLocation(div);
+                  const critItems = countCriticalItems(div);
                   const trend = nodeTrend(div.id);
                   return (
-                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => alert(`Drill down to ${div.name} — coming soon`)}>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS.division }} />
@@ -205,9 +243,11 @@ function OverviewTab() {
                         <span className="font-bold" style={{ color: scoreColor(div.complianceScore) }}>{div.complianceScore}%</span>
                       </td>
                       <td className="px-3 py-2.5 text-center"><TrendBadge value={trend} /></td>
-                      <td className="px-3 py-2.5 text-gray-500">{worstChild ? `${worstChild.name} (${worstChild.complianceScore}%)` : '—'}</td>
+                      <td className="px-3 py-2.5 text-gray-500">{worst && worst.complianceScore < 80 ? `${worst.name} (${worst.complianceScore})` : '—'}</td>
                       <td className="px-3 py-2.5 text-center">
-                        {div.complianceScore < 88 ? (
+                        {critItems > 0 ? (
+                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">{critItems} critical</span>
+                        ) : div.complianceScore < 89 ? (
                           <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">Review</span>
                         ) : (
                           <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-green-50 text-green-700 border border-green-200">On Track</span>
@@ -269,9 +309,23 @@ function OverviewTab() {
         {/* 12-Month Trend */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
-          <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score</p>
+          <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
           <div className="flex items-end gap-6">
-            <TrendSparkline data={enterpriseTrendData} width={320} height={100} />
+            <div className="relative">
+              <TrendSparkline data={enterpriseTrendData} width={320} height={100} />
+              {/* Regulatory overlay markers */}
+              {REGULATORY_MARKERS.map(marker => {
+                const idx = enterpriseTrendData.findIndex(d => d.month === marker.month);
+                if (idx < 0) return null;
+                const x = (idx / (enterpriseTrendData.length - 1)) * 320;
+                return (
+                  <div key={marker.label} className="absolute" style={{ left: x - 1, top: 0, height: 100 }}>
+                    <div className="w-0.5 h-full opacity-40" style={{ backgroundColor: marker.color }} />
+                    <span className="absolute text-[8px] font-medium whitespace-nowrap" style={{ top: -14, left: -10, color: marker.color }}>{marker.label}</span>
+                  </div>
+                );
+              })}
+            </div>
             <div className="space-y-2 flex-shrink-0">
               {[
                 { label: 'Current', value: latestTrend.overall, color: '#1e4d6b' },

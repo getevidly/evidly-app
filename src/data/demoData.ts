@@ -1214,7 +1214,7 @@ export const enterpriseTenants: EnterpriseTenant[] = [
       { key: 'location', label: 'Account' },
     ],
     contract: { tier: 'enterprise_plus', startDate: '2026-07-01', endDate: '2029-06-30', annualValue: 2400000, locationCount: 1847, maxLocations: 3000, dedicatedCSM: 'Arthur Haggerty' },
-    stats: { activeUsers: 4126, totalLocations: 1847, avgComplianceScore: 88.4, lastSyncAt: '2026-02-10T06:00:00Z' },
+    stats: { activeUsers: 4126, totalLocations: 1847, avgComplianceScore: 90.0, lastSyncAt: '2026-02-10T06:00:00Z' },
   },
   {
     id: 'ent-compass',
@@ -1302,53 +1302,113 @@ export const enterpriseTenants: EnterpriseTenant[] = [
 
 export const enterpriseHierarchy: EnterpriseHierarchyNode = {
   id: 'h-corp', tenantId: 'ent-aramark', parentId: null, level: 'corporate', name: 'Aramark Corporation', code: 'ARMK',
-  complianceScore: 88, locationCount: 1847, operational: 90, equipment: 86, documentation: 87,
+  complianceScore: 90, locationCount: 1847, operational: 92, equipment: 88, documentation: 89,
   children: [
     {
       id: 'h-higher-ed', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Higher Education', code: 'ARMK-HE',
-      complianceScore: 91, locationCount: 612, operational: 93, equipment: 89, documentation: 90,
+      complianceScore: 91, locationCount: 847, operational: 93, equipment: 89, documentation: 90,
       children: [
-        { id: 'h-he-west', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'ARMK-HE-W', complianceScore: 89, locationCount: 184, operational: 91, equipment: 87, documentation: 88 },
-        { id: 'h-he-central', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'ARMK-HE-C', complianceScore: 92, locationCount: 215, operational: 94, equipment: 90, documentation: 91 },
-        { id: 'h-he-east', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'ARMK-HE-E', complianceScore: 93, locationCount: 213, operational: 95, equipment: 91, documentation: 92 },
+        {
+          id: 'h-he-west', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'ARMK-HE-W',
+          complianceScore: 90, locationCount: 254, operational: 92, equipment: 88, documentation: 89,
+          children: [
+            { id: 'h-he-w-pac', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'Pacific Northwest', code: 'ARMK-HE-W-PNW', complianceScore: 91, locationCount: 86, operational: 93, equipment: 89, documentation: 90 },
+            { id: 'h-he-w-cal', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'California', code: 'ARMK-HE-W-CA', complianceScore: 89, locationCount: 102, operational: 91, equipment: 87, documentation: 88 },
+            { id: 'h-he-w-sw', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'Southwest', code: 'ARMK-HE-W-SW', complianceScore: 90, locationCount: 66, operational: 92, equipment: 88, documentation: 89 },
+          ],
+        },
+        {
+          id: 'h-he-central', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'ARMK-HE-C',
+          complianceScore: 92, locationCount: 298, operational: 94, equipment: 90, documentation: 91,
+        },
+        {
+          id: 'h-he-east', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'ARMK-HE-E',
+          complianceScore: 91, locationCount: 295, operational: 93, equipment: 89, documentation: 90,
+          children: [
+            { id: 'h-he-e-ne', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'New England', code: 'ARMK-HE-E-NE', complianceScore: 93, locationCount: 98, operational: 95, equipment: 91, documentation: 92 },
+            { id: 'h-he-e-ma', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'Mid-Atlantic', code: 'ARMK-HE-E-MA', complianceScore: 90, locationCount: 112, operational: 92, equipment: 88, documentation: 89,
+              children: [
+                { id: 'h-he-e-ma-temple', tenantId: 'ent-aramark', parentId: 'h-he-e-ma', level: 'location', name: 'Temple University', code: 'ARMK-TU-001', complianceScore: 68, locationCount: 1, operational: 72, equipment: 64, documentation: 66 },
+              ],
+            },
+            { id: 'h-he-e-se', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'Southeast', code: 'ARMK-HE-E-SE', complianceScore: 91, locationCount: 85, operational: 93, equipment: 89, documentation: 90 },
+          ],
+        },
       ],
     },
     {
       id: 'h-healthcare', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Healthcare', code: 'ARMK-HC',
-      complianceScore: 86, locationCount: 489, operational: 88, equipment: 84, documentation: 85,
+      complianceScore: 95, locationCount: 312, operational: 96, equipment: 93, documentation: 94,
       children: [
-        { id: 'h-hc-west', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'ARMK-HC-W', complianceScore: 85, locationCount: 147, operational: 87, equipment: 83, documentation: 84 },
-        { id: 'h-hc-central', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'ARMK-HC-C', complianceScore: 87, locationCount: 168, operational: 89, equipment: 85, documentation: 86 },
-        { id: 'h-hc-east', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'ARMK-HC-E', complianceScore: 86, locationCount: 174, operational: 88, equipment: 84, documentation: 85 },
+        { id: 'h-hc-west', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'ARMK-HC-W', complianceScore: 94, locationCount: 94, operational: 95, equipment: 92, documentation: 93 },
+        { id: 'h-hc-central', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'ARMK-HC-C', complianceScore: 95, locationCount: 112, operational: 97, equipment: 93, documentation: 94 },
+        { id: 'h-hc-east', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'ARMK-HC-E', complianceScore: 95, locationCount: 106, operational: 96, equipment: 94, documentation: 95 },
       ],
     },
     {
-      id: 'h-sports', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Sports & Leisure', code: 'ARMK-SL',
-      complianceScore: 87, locationCount: 746, operational: 89, equipment: 85, documentation: 86,
+      id: 'h-destinations', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Destinations', code: 'ARMK-DEST',
+      complianceScore: 88, locationCount: 89, operational: 90, equipment: 86, documentation: 87,
       children: [
         {
-          id: 'h-sl-west', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'ARMK-SL-W',
-          complianceScore: 86, locationCount: 224, operational: 88, equipment: 84, documentation: 85,
+          id: 'h-dest-parks', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'National Parks', code: 'ARMK-DEST-NP',
+          complianceScore: 89, locationCount: 32, operational: 91, equipment: 87, documentation: 88,
           children: [
             {
-              id: 'h-sl-w-yosemite', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'Yosemite District', code: 'ARMK-SL-W-YOS',
+              id: 'h-dest-np-yosemite', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Yosemite District', code: 'ARMK-DEST-YOS',
               complianceScore: 89, locationCount: 7, operational: 91, equipment: 87, documentation: 88,
               children: [
-                { id: 'h-yos-lodge', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Yosemite Valley Lodge', code: 'YOS-001', complianceScore: 92, locationCount: 1, operational: 94, equipment: 90, documentation: 91 },
-                { id: 'h-yos-ahwahnee', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'The Ahwahnee Dining Room', code: 'YOS-002', complianceScore: 94, locationCount: 1, operational: 96, equipment: 92, documentation: 93 },
-                { id: 'h-yos-curry', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Half Dome Village Pavilion', code: 'YOS-003', complianceScore: 87, locationCount: 1, operational: 89, equipment: 85, documentation: 86 },
-                { id: 'h-yos-tuolumne', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Tuolumne Meadows Grill', code: 'YOS-004', complianceScore: 83, locationCount: 1, operational: 85, equipment: 81, documentation: 82 },
-                { id: 'h-yos-glacier', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, operational: 88, equipment: 84, documentation: 85 },
-                { id: 'h-yos-village', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, operational: 92, equipment: 88, documentation: 89 },
-                { id: 'h-yos-white-wolf', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, operational: 90, equipment: 86, documentation: 87 },
+                { id: 'h-yos-lodge', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Yosemite Valley Lodge', code: 'YOS-001', complianceScore: 92, locationCount: 1, operational: 94, equipment: 90, documentation: 91 },
+                { id: 'h-yos-ahwahnee', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'The Ahwahnee Dining Room', code: 'YOS-002', complianceScore: 94, locationCount: 1, operational: 96, equipment: 92, documentation: 93 },
+                { id: 'h-yos-curry', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Half Dome Village Pavilion', code: 'YOS-003', complianceScore: 87, locationCount: 1, operational: 89, equipment: 85, documentation: 86 },
+                { id: 'h-yos-tuolumne', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Tuolumne Meadows Grill', code: 'YOS-004', complianceScore: 83, locationCount: 1, operational: 85, equipment: 81, documentation: 82 },
+                { id: 'h-yos-glacier', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, operational: 88, equipment: 84, documentation: 85 },
+                { id: 'h-yos-village', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, operational: 92, equipment: 88, documentation: 89 },
+                { id: 'h-yos-white-wolf', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, operational: 90, equipment: 86, documentation: 87 },
               ],
             },
-            { id: 'h-sl-w-bay', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'Bay Area District', code: 'ARMK-SL-W-BAY', complianceScore: 85, locationCount: 42, operational: 87, equipment: 83, documentation: 84 },
-            { id: 'h-sl-w-socal', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'SoCal District', code: 'ARMK-SL-W-SC', complianceScore: 84, locationCount: 68, operational: 86, equipment: 82, documentation: 83 },
+            { id: 'h-dest-np-glacier', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Glacier National Park', code: 'ARMK-DEST-GNP', complianceScore: 88, locationCount: 8, operational: 90, equipment: 86, documentation: 87 },
+            { id: 'h-dest-np-grandcanyon', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Grand Canyon District', code: 'ARMK-DEST-GC', complianceScore: 91, locationCount: 6, operational: 93, equipment: 89, documentation: 90 },
+            { id: 'h-dest-np-other', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Other National Parks', code: 'ARMK-DEST-ONP', complianceScore: 90, locationCount: 11, operational: 92, equipment: 88, documentation: 89 },
           ],
         },
-        { id: 'h-sl-central', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'ARMK-SL-C', complianceScore: 88, locationCount: 267, operational: 90, equipment: 86, documentation: 87 },
-        { id: 'h-sl-east', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'ARMK-SL-E', complianceScore: 87, locationCount: 255, operational: 89, equipment: 85, documentation: 86 },
+        {
+          id: 'h-dest-ski', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'Ski Resorts', code: 'ARMK-DEST-SKI',
+          complianceScore: 87, locationCount: 28, operational: 89, equipment: 85, documentation: 86,
+          children: [
+            { id: 'h-dest-ski-badger', tenantId: 'ent-aramark', parentId: 'h-dest-ski', level: 'location', name: 'Badger Pass Ski Area', code: 'ARMK-DEST-BP', complianceScore: 74, locationCount: 1, operational: 78, equipment: 70, documentation: 72 },
+            { id: 'h-dest-ski-mammoth', tenantId: 'ent-aramark', parentId: 'h-dest-ski', level: 'location', name: 'Mammoth Mountain Lodge', code: 'ARMK-DEST-MM', complianceScore: 88, locationCount: 1, operational: 90, equipment: 86, documentation: 87 },
+          ],
+        },
+        {
+          id: 'h-dest-conv', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'Convention Centers', code: 'ARMK-DEST-CC',
+          complianceScore: 89, locationCount: 29, operational: 91, equipment: 87, documentation: 88,
+        },
+      ],
+    },
+    {
+      id: 'h-corrections', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Corrections', code: 'ARMK-CR',
+      complianceScore: 86, locationCount: 156, operational: 88, equipment: 84, documentation: 85,
+      children: [
+        { id: 'h-cr-federal', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'Federal Facilities', code: 'ARMK-CR-FED', complianceScore: 87, locationCount: 42, operational: 89, equipment: 85, documentation: 86 },
+        { id: 'h-cr-state', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'State Facilities', code: 'ARMK-CR-ST', complianceScore: 85, locationCount: 78, operational: 87, equipment: 83, documentation: 84 },
+        { id: 'h-cr-county', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'County Facilities', code: 'ARMK-CR-CTY', complianceScore: 86, locationCount: 36, operational: 88, equipment: 84, documentation: 85 },
+      ],
+    },
+    {
+      id: 'h-sports', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Sports & Entertainment', code: 'ARMK-SE',
+      complianceScore: 88, locationCount: 443, operational: 90, equipment: 86, documentation: 87,
+      children: [
+        {
+          id: 'h-se-west', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'ARMK-SE-W',
+          complianceScore: 87, locationCount: 133, operational: 89, equipment: 85, documentation: 86,
+          children: [
+            { id: 'h-se-w-bay', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'Bay Area District', code: 'ARMK-SE-W-BAY', complianceScore: 86, locationCount: 42, operational: 88, equipment: 84, documentation: 85 },
+            { id: 'h-se-w-socal', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'SoCal District', code: 'ARMK-SE-W-SC', complianceScore: 85, locationCount: 48, operational: 87, equipment: 83, documentation: 84 },
+            { id: 'h-se-w-pnw', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'Pacific Northwest', code: 'ARMK-SE-W-PNW', complianceScore: 89, locationCount: 43, operational: 91, equipment: 87, documentation: 88 },
+          ],
+        },
+        { id: 'h-se-central', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'ARMK-SE-C', complianceScore: 88, locationCount: 155, operational: 90, equipment: 86, documentation: 87 },
+        { id: 'h-se-east', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'ARMK-SE-E', complianceScore: 88, locationCount: 155, operational: 90, equipment: 86, documentation: 87 },
       ],
     },
   ],
@@ -1535,7 +1595,7 @@ export const enterpriseTrendData: EnterpriseTrendPoint[] = [
   { month: 'Nov 25', overall: 86.8, operational: 88.2, equipment: 84.8, documentation: 86.9 },
   { month: 'Dec 25', overall: 85.9, operational: 87.5, equipment: 84.0, documentation: 85.8 },
   { month: 'Jan 26', overall: 87.1, operational: 88.8, equipment: 85.2, documentation: 86.8 },
-  { month: 'Feb 26', overall: 88.4, operational: 90.0, equipment: 86.0, documentation: 87.0 },
+  { month: 'Feb 26', overall: 90.0, operational: 92.0, equipment: 88.0, documentation: 89.0 },
 ];
 
 export interface EnterpriseBulkOp {
