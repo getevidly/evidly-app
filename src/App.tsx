@@ -63,6 +63,7 @@ const Passport = lazy(() => import('./pages/Passport'));
 const OrgHierarchy = lazy(() => import('./pages/OrgHierarchy').then(m => ({ default: m.OrgHierarchy })));
 const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').then(m => ({ default: m.EnterpriseDashboard })));
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
+const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -212,6 +213,7 @@ function AppRoutes() {
         {/* Protected routes without shared layout */}
         <Route path="/vendor/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ProtectedRoute>} />
         <Route path="/enterprise/admin" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ProtectedRoute>} />
+        <Route path="/enterprise/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ProtectedRoute>} />
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}

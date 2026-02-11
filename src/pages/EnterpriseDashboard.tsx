@@ -158,6 +158,7 @@ const REGULATORY_MARKERS = [
 
 // ── Corporate View (Overview Tab) ─────────────────────────────
 function OverviewTab() {
+  const navigate = useNavigate();
   const totalLocations = enterpriseTenants.reduce((s, t) => s + t.stats.totalLocations, 0);
   const totalUsers = enterpriseTenants.reduce((s, t) => s + t.stats.activeUsers, 0);
   const avgScore = +(enterpriseTenants.reduce((s, t) => s + t.stats.avgComplianceScore, 0) / enterpriseTenants.length).toFixed(1);
@@ -185,7 +186,16 @@ function OverviewTab() {
         <div className="flex items-center gap-2 mb-4">
           <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
           <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
-          <span className="text-[10px] text-gray-400 ml-auto">Powered by {dataPointsThisMonth.toLocaleString()} compliance data points this month</span>
+          <button
+            onClick={() => navigate('/enterprise/dashboard')}
+            className="ml-auto flex items-center gap-1.5 px-3 py-1 text-[11px] font-medium rounded-md cursor-pointer transition-colors"
+            style={{ backgroundColor: '#1e4d6b', color: 'white' }}
+            onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          >
+            <Eye className="h-3 w-3" />
+            View Executive Dashboard
+          </button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
           {[

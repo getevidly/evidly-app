@@ -25,6 +25,7 @@ import {
   Shield,
   ShoppingBag,
   Network,
+  Building2,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -210,6 +211,20 @@ export function Sidebar() {
                 location.pathname === '/admin/usage-analytics' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
               }`} />
               {t('nav.usageAnalytics')}
+            </div>
+            <div
+              onClick={() => navigate('/enterprise/dashboard')}
+              className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+                location.pathname === '/enterprise/dashboard'
+                  ? 'text-[#d4af37] bg-[#163a52]'
+                  : 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
+              }`}
+              style={location.pathname === '/enterprise/dashboard' ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+            >
+              <Building2 className={`mr-3 flex-shrink-0 h-4 w-4 ${
+                location.pathname === '/enterprise/dashboard' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
+              }`} />
+              Enterprise Dashboard
             </div>
           </div>
         )}
