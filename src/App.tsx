@@ -60,6 +60,7 @@ const MarketplaceLanding = lazy(() => import('./pages/MarketplaceLanding').then(
 const PublicVerification = lazy(() => import('./pages/PublicVerification'));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
+const OrgHierarchy = lazy(() => import('./pages/OrgHierarchy').then(m => ({ default: m.OrgHierarchy })));
 const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').then(m => ({ default: m.EnterpriseDashboard })));
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
 
@@ -242,6 +243,7 @@ function AppRoutes() {
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/scoring-breakdown" element={<ScoringBreakdown />} />
           <Route path="/benchmarks" element={<Benchmarks />} />
+          <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
           <Route path="/improve-score" element={<ImproveScore />} />
