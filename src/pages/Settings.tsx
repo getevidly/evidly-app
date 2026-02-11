@@ -723,6 +723,48 @@ export function Settings() {
               <p className="text-gray-600">{t('settings.integrationsDesc')}</p>
 
               <div className="space-y-4">
+                {/* Insurance Risk Score Sharing */}
+                <div className="border-2 rounded-lg p-5" style={{ borderColor: '#1e4d6b' }}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Insurance Risk Score Sharing</h4>
+                        <p className="text-sm text-gray-500">Share your EvidLY risk score with insurance carriers via secure API</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => alert('Insurance data sharing is currently disabled. Enable it from the Insurance Settings page.')}
+                        className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors"
+                      >
+                        <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8' }}>
+                    <p className="text-xs text-gray-600">
+                      When enabled, authorized insurance carriers can access your risk score via API. No employee PII is ever shared.
+                      Only aggregated compliance scores, anonymized incident counts, and service compliance dates are included.
+                    </p>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="px-2 py-0.5 rounded-full" style={{ backgroundColor: '#fdf8e8', color: '#d4af37' }}>Coming Soon</span>
+                      <span>Carrier partnerships launching soon</span>
+                    </div>
+                    <button
+                      onClick={() => navigate('/insurance-settings')}
+                      className="text-sm font-medium transition-colors hover:underline"
+                      style={{ color: '#1e4d6b' }}
+                    >
+                      Manage Insurance Connections →
+                    </button>
+                  </div>
+                </div>
+
                 {/* Restaurant365 */}
                 <div className="border border-gray-200 rounded-lg p-5">
                   <div className="flex items-center justify-between">
