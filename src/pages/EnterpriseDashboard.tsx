@@ -12,22 +12,30 @@ import {
 import {
   enterpriseTenants, enterpriseHierarchy, enterpriseUsers,
   enterpriseReportTemplates, enterpriseAuditLog,
+  enterpriseAlerts, enterpriseIntegrations,
+  enterpriseOnboardingAramark, enterpriseOnboardingSodexo,
+  enterpriseTrendData, enterpriseBulkOps, enterprisePricingTiers,
   type EnterpriseTenant, type EnterpriseHierarchyNode,
   type EnterpriseUser, type EnterpriseReportTemplate,
-  type EnterpriseAuditEntry,
+  type EnterpriseAuditEntry, type EnterpriseAlert,
+  type EnterpriseIntegration, type EnterpriseOnboardingPhase,
+  type EnterpriseTrendPoint, type EnterpriseBulkOp,
 } from '../data/demoData';
 
 // ── Types ──────────────────────────────────────────────────────
-type Tab = 'overview' | 'tenants' | 'hierarchy' | 'sso' | 'users' | 'branding' | 'reports';
+type Tab = 'overview' | 'tenants' | 'hierarchy' | 'sso' | 'users' | 'branding' | 'reports' | 'integrations' | 'bulk_ops' | 'onboarding';
 
 const TABS: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: 'overview',  label: 'Overview',           icon: LayoutDashboard },
-  { id: 'tenants',   label: 'Tenant Management',  icon: Building2 },
-  { id: 'hierarchy', label: 'Hierarchy & Rollups', icon: Network },
-  { id: 'sso',       label: 'SSO Configuration',  icon: KeyRound },
-  { id: 'users',     label: 'User Directory',      icon: Users },
-  { id: 'branding',  label: 'Branding & Theming',  icon: Palette },
-  { id: 'reports',   label: 'Reports & Templates', icon: FileText },
+  { id: 'overview',      label: 'Corporate View',      icon: LayoutDashboard },
+  { id: 'tenants',       label: 'Tenants',              icon: Building2 },
+  { id: 'hierarchy',     label: 'Hierarchy',            icon: Network },
+  { id: 'sso',           label: 'SSO',                  icon: KeyRound },
+  { id: 'users',         label: 'Users',                icon: Users },
+  { id: 'branding',      label: 'Branding',             icon: Palette },
+  { id: 'reports',       label: 'Reports',              icon: FileText },
+  { id: 'integrations',  label: 'Integrations',         icon: Zap },
+  { id: 'bulk_ops',      label: 'Bulk Ops',             icon: Layers },
+  { id: 'onboarding',    label: 'Onboarding',           icon: Award },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────
@@ -87,94 +95,255 @@ function ScoreCircle({ score, size = 48 }: { score: number; size?: number }) {
   );
 }
 
-// ── Overview Tab ────────────────────────────────────────────────
+// ── SVG Sparkline for trend data ───────────────────────────────
+function TrendSparkline({ data, width = 280, height = 80 }: { data: EnterpriseTrendPoint[]; width?: number; height?: number }) {
+  if (data.length < 2) return null;
+  const scores = data.map(d => d.overall);
+  const min = Math.min(...scores) - 2;
+  const max = Math.max(...scores) + 2;
+  const range = max - min || 1;
+  const points = data.map((d, i) => {
+    const x = (i / (data.length - 1)) * width;
+    const y = height - ((d.overall - min) / range) * height;
+    return `${x},${y}`;
+  }).join(' ');
+  const areaPoints = `0,${height} ${points} ${width},${height}`;
+  return (
+    <svg width={width} height={height} className="overflow-visible">
+      <defs>
+        <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#1e4d6b" stopOpacity="0.15" />
+          <stop offset="100%" stopColor="#1e4d6b" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={areaPoints} fill="url(#trendGrad)" />
+      <polyline points={points} fill="none" stroke="#1e4d6b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      {data.map((d, i) => {
+        const x = (i / (data.length - 1)) * width;
+        const y = height - ((d.overall - min) / range) * height;
+        return <circle key={i} cx={x} cy={y} r={i === data.length - 1 ? 4 : 2} fill={i === data.length - 1 ? '#1e4d6b' : '#1e4d6b80'} />;
+      })}
+    </svg>
+  );
+}
+
+// ── Corporate View (Overview Tab) ─────────────────────────────
 function OverviewTab() {
   const totalLocations = enterpriseTenants.reduce((s, t) => s + t.stats.totalLocations, 0);
   const totalUsers = enterpriseTenants.reduce((s, t) => s + t.stats.activeUsers, 0);
   const avgScore = +(enterpriseTenants.reduce((s, t) => s + t.stats.avgComplianceScore, 0) / enterpriseTenants.length).toFixed(1);
   const totalARR = enterpriseTenants.reduce((s, t) => s + t.contract.annualValue, 0);
   const ssoEnabled = enterpriseTenants.filter(t => t.ssoConfig.enabled).length;
-
-  const stats = [
-    { label: 'Active Tenants', value: enterpriseTenants.length, icon: Building2 },
-    { label: 'Total Locations', value: totalLocations.toLocaleString(), icon: MapPin },
-    { label: 'Active Users', value: totalUsers.toLocaleString(), icon: Users },
-    { label: 'Avg Compliance', value: avgScore + '%', icon: ShieldCheck },
-    { label: 'Annual Revenue', value: formatCurrency(totalARR), icon: TrendingUp },
-    { label: 'SSO Active', value: `${ssoEnabled}/${enterpriseTenants.length}`, icon: KeyRound },
-  ];
+  const criticalAlerts = enterpriseAlerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
+  const latestTrend = enterpriseTrendData[enterpriseTrendData.length - 1];
+  const prevTrend = enterpriseTrendData[enterpriseTrendData.length - 2];
+  const trendDelta = +(latestTrend.overall - prevTrend.overall).toFixed(1);
+  // Division scorecard from hierarchy
+  const divisions = enterpriseHierarchy.children || [];
 
   return (
     <div className="space-y-6">
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {stats.map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                <s.icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+      {/* Executive Summary Panel */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
+          <span className="text-[10px] text-gray-400 ml-auto">Last updated: {formatTime(enterpriseTenants[0].stats.lastSyncAt)}</span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          {[
+            { label: 'Overall Score', value: avgScore + '%', icon: ShieldCheck, highlight: true },
+            { label: 'Trend', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
+            { label: 'Tenants', value: String(enterpriseTenants.length), icon: Building2 },
+            { label: 'Locations', value: totalLocations.toLocaleString(), icon: MapPin },
+            { label: 'Users', value: totalUsers.toLocaleString(), icon: Users },
+            { label: 'ARR', value: formatCurrency(totalARR), icon: TrendingUp },
+            { label: 'SSO Active', value: `${ssoEnabled}/${enterpriseTenants.length}`, icon: KeyRound },
+            { label: 'Alerts', value: String(criticalAlerts), icon: AlertTriangle, alert: criticalAlerts > 0 },
+          ].map(s => (
+            <div key={s.label} className={`rounded-xl border p-3 ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-gray-50'}`}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1e4d6b' }} />
+                <span className="text-[10px] text-gray-500">{s.label}</span>
               </div>
+              <p className={`text-lg font-bold ${(s as any).alert ? 'text-red-600' : 'text-gray-900'}`}>{s.value}</p>
             </div>
-            <p className="text-xl font-bold text-gray-900">{s.value}</p>
-            <p className="text-xs text-gray-500">{s.label}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Tenant Status + Recent Audit */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Tenant Status Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Hierarchy Scorecard Table */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Organization Scorecard — Aramark</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left px-3 py-2 font-medium text-gray-600">Business Unit</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600">Locations</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600">Avg Score</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600">Trend</th>
+                  <th className="text-left px-3 py-2 font-medium text-gray-600">Worst Location</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {divisions.map(div => {
+                  const worstChild = div.children ? [...div.children].sort((a, b) => a.complianceScore - b.complianceScore)[0] : null;
+                  const trend = nodeTrend(div.id);
+                  return (
+                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="px-3 py-2.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS.division }} />
+                          <span className="font-medium text-gray-900">{div.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-3 py-2.5 text-center text-gray-600">{div.locationCount.toLocaleString()}</td>
+                      <td className="px-3 py-2.5 text-center">
+                        <span className="font-bold" style={{ color: scoreColor(div.complianceScore) }}>{div.complianceScore}%</span>
+                      </td>
+                      <td className="px-3 py-2.5 text-center"><TrendBadge value={trend} /></td>
+                      <td className="px-3 py-2.5 text-gray-500">{worstChild ? `${worstChild.name} (${worstChild.complianceScore}%)` : '—'}</td>
+                      <td className="px-3 py-2.5 text-center">
+                        {div.complianceScore < 88 ? (
+                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">Review</span>
+                        ) : (
+                          <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-green-50 text-green-700 border border-green-200">On Track</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+                <tr className="bg-gray-50 font-semibold">
+                  <td className="px-3 py-2.5 text-gray-900">Corporate Total</td>
+                  <td className="px-3 py-2.5 text-center text-gray-700">{enterpriseHierarchy.locationCount.toLocaleString()}</td>
+                  <td className="px-3 py-2.5 text-center">
+                    <span className="font-bold" style={{ color: scoreColor(enterpriseHierarchy.complianceScore) }}>{enterpriseHierarchy.complianceScore}%</span>
+                  </td>
+                  <td className="px-3 py-2.5 text-center"><TrendBadge value={nodeTrend(enterpriseHierarchy.id)} /></td>
+                  <td className="px-3 py-2.5 text-gray-500">—</td>
+                  <td className="px-3 py-2.5" />
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Critical Alerts */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Tenant Status</h3>
-          <div className="space-y-3">
-            {enterpriseTenants.map(t => (
-              <div key={t.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
-                  {t.logoPlaceholder}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{t.displayName}</p>
-                    {statusBadge(t.status)}
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-gray-900">Critical Alerts</h3>
+            <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
+              {enterpriseAlerts.filter(a => !a.acknowledged).length} active
+            </span>
+          </div>
+          <div className="space-y-2 max-h-[340px] overflow-y-auto">
+            {enterpriseAlerts.filter(a => !a.acknowledged).map(a => (
+              <div key={a.id} className={`p-3 rounded-lg border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${a.severity === 'critical' ? 'text-red-500' : a.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className={`text-[10px] font-semibold ${a.severity === 'critical' ? 'text-red-700' : a.severity === 'warning' ? 'text-amber-700' : 'text-blue-700'}`}>
+                        {a.severity.toUpperCase()}
+                      </span>
+                      <span className="text-[10px] text-gray-400">· {a.category}</span>
+                    </div>
+                    <p className="text-xs text-gray-700">{a.message}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">{a.nodeName} ({a.nodeCode}) · {formatTime(a.detectedAt)}</p>
                   </div>
-                  <p className="text-xs text-gray-500">{t.stats.totalLocations.toLocaleString()} locations · {t.stats.activeUsers.toLocaleString()} users · {t.stats.avgComplianceScore}% avg</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{formatCurrency(t.contract.annualValue)}</p>
-                  <p className="text-[10px] text-gray-400">ARR</p>
+                  <button onClick={() => alert('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
+                    Ack
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Recent Audit Log */}
+      {/* Trend Analytics + Tenant Status */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 12-Month Trend */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Recent Audit Log</h3>
-          <div className="space-y-2">
-            {enterpriseAuditLog.slice(0, 5).map(e => (
-              <div key={e.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: e.action.includes('provision') || e.action.includes('created') ? '#22c55e' : e.action.includes('deactivated') ? '#ef4444' : '#1e4d6b' }} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-gray-900">{e.action.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
-                  <p className="text-[11px] text-gray-500 truncate">{e.userName} — {e.details}</p>
-                  <p className="text-[10px] text-gray-400">{e.tenantName} · {formatTime(e.timestamp)}</p>
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
+          <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score</p>
+          <div className="flex items-end gap-6">
+            <TrendSparkline data={enterpriseTrendData} width={320} height={100} />
+            <div className="space-y-2 flex-shrink-0">
+              {[
+                { label: 'Current', value: latestTrend.overall, color: '#1e4d6b' },
+                { label: 'Operational', value: latestTrend.operational, color: '#22c55e' },
+                { label: 'Equipment', value: latestTrend.equipment, color: '#d4af37' },
+                { label: 'Documentation', value: latestTrend.documentation, color: '#6b21a8' },
+              ].map(m => (
+                <div key={m.label} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
+                  <span className="text-[10px] text-gray-500 w-20">{m.label}</span>
+                  <span className="text-xs font-bold text-gray-900">{m.value}%</span>
                 </div>
-              </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
+            {enterpriseTrendData.filter((_, i) => i % 3 === 0 || i === enterpriseTrendData.length - 1).map(d => (
+              <span key={d.month} className="text-[9px] text-gray-400">{d.month}</span>
             ))}
+          </div>
+        </div>
+
+        {/* Tenant Status + Audit */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Tenant Status</h3>
+            <div className="space-y-2">
+              {enterpriseTenants.map(t => (
+                <div key={t.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+                    {t.logoPlaceholder}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-900">{t.displayName}</span>
+                      {statusBadge(t.status)}
+                    </div>
+                    <p className="text-[10px] text-gray-500">{t.stats.totalLocations.toLocaleString()} loc · {t.stats.avgComplianceScore}%</p>
+                  </div>
+                  <span className="text-xs font-bold" style={{ color: '#1e4d6b' }}>{formatCurrency(t.contract.annualValue)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">Recent Activity</h3>
+            <div className="space-y-1.5">
+              {enterpriseAuditLog.slice(0, 4).map(e => (
+                <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50">
+                  <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: e.action.includes('provision') || e.action.includes('created') ? '#22c55e' : e.action.includes('deactivated') ? '#ef4444' : '#1e4d6b' }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] text-gray-700 truncate">{e.action.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</p>
+                    <p className="text-[10px] text-gray-400">{e.tenantName} · {formatTime(e.timestamp)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h3 className="text-sm font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
           {[
             { label: 'Provision Tenant', icon: Building2 },
             { label: 'Run SCIM Sync', icon: RefreshCw },
             { label: 'Generate Reports', icon: FileText },
-            { label: 'View All Logs', icon: Clock },
+            { label: 'Bulk Import', icon: Upload },
+            { label: 'Export Audit Log', icon: Download },
+            { label: 'View All Alerts', icon: AlertTriangle },
           ].map(a => (
             <button key={a.label} onClick={() => alert(`${a.label} — coming soon`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">
               <a.icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
@@ -1155,6 +1324,8 @@ function BrandingTab() {
 // ── Reports & Templates Tab ────────────────────────────────────
 function ReportsTab() {
   const [selectedTemplate, setSelectedTemplate] = useState<EnterpriseReportTemplate | null>(null);
+  const [showBuilder, setShowBuilder] = useState(false);
+  const [builderSections, setBuilderSections] = useState<string[]>(['Compliance Overview', 'Score Trends']);
 
   const typeColors: Record<string, string> = {
     executive_summary: 'bg-purple-50 text-purple-700 border-purple-200',
@@ -1163,14 +1334,102 @@ function ReportsTab() {
     audit_package: 'bg-amber-50 text-amber-700 border-amber-200',
   };
 
+  const availableSections = [
+    'Compliance Overview', 'Score Trends', 'Risk Categories', 'Action Items',
+    'Vendor Status', 'Temperature Analysis', 'Inspection Results', 'Corrective Actions',
+    'Equipment Status', 'Certification Tracking', 'Financial Impact', 'Recommendations',
+    'Regional Comparison', 'Employee Training', 'Regulatory Summary',
+  ];
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold text-gray-900">Report Templates ({enterpriseReportTemplates.length})</h3>
-        <button onClick={() => alert('Create template — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
-          + New Template
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+            {showBuilder ? 'Close Builder' : 'Custom Report Builder'}
+          </button>
+          <button onClick={() => alert('Create template — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+            + New Template
+          </button>
+        </div>
       </div>
+
+      {/* Custom Report Builder */}
+      {showBuilder && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Custom Report Builder</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs font-medium text-gray-600 mb-2">Available Sections (click to add)</p>
+              <div className="flex flex-wrap gap-1.5">
+                {availableSections.filter(s => !builderSections.includes(s)).map(s => (
+                  <button key={s} onClick={() => setBuilderSections([...builderSections, s])} className="px-2.5 py-1 text-[11px] rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer">
+                    + {s}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="block text-[11px] font-medium text-gray-600 mb-1">Report Name</label>
+                  <input type="text" placeholder="Q1 2026 Custom Report" className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-1">Tenant</label>
+                    <select className="w-full px-3 py-1.5 text-xs border border-gray-200 rounded-lg">
+                      {enterpriseTenants.map(t => <option key={t.id}>{t.displayName}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-1">Export Format</label>
+                    <select className="w-full px-3 py-1.5 text-xs border border-gray-200 rounded-lg">
+                      <option>PDF</option><option>Excel</option><option>CSV</option><option>PowerPoint</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-1">Schedule</label>
+                    <select className="w-full px-3 py-1.5 text-xs border border-gray-200 rounded-lg">
+                      <option>One-time</option><option>Weekly</option><option>Monthly</option><option>Quarterly</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-gray-600 mb-1">Email Distribution</label>
+                    <input type="text" placeholder="team@company.com" className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-600 mb-2">Report Sections (drag to reorder)</p>
+              <div className="space-y-1.5 min-h-[120px] p-3 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50">
+                {builderSections.map((s, i) => (
+                  <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-white border border-gray-200">
+                    <span className="w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50">{i + 1}</span>
+                    <span className="text-xs text-gray-700 flex-1">{s}</span>
+                    <button onClick={() => setBuilderSections(builderSections.filter((_, j) => j !== i))} className="text-gray-300 hover:text-red-400 cursor-pointer">
+                      <XCircle className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+                {builderSections.length === 0 && (
+                  <p className="text-[11px] text-gray-400 text-center py-4">Click sections on the left to add them</p>
+                )}
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => alert('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+                  Generate Report
+                </button>
+                <button onClick={() => alert('Template saved!')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                  Save as Template
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Template List */}
@@ -1277,6 +1536,375 @@ function ReportsTab() {
   );
 }
 
+// ── Integrations Tab ──────────────────────────────────────────
+function IntegrationsTab() {
+  const [tenantFilter, setTenantFilter] = useState<string>('all');
+
+  const filtered = tenantFilter === 'all'
+    ? enterpriseIntegrations
+    : enterpriseIntegrations.filter(i => i.tenantId === tenantFilter);
+
+  const typeLabels: Record<string, string> = {
+    temperature_monitoring: 'Temperature Monitoring',
+    erp: 'ERP System',
+    bi_tool: 'BI / Analytics',
+    communication: 'Communication',
+    existing_platform: 'Existing Platform',
+  };
+
+  const statusStyles: Record<string, { bg: string; text: string; dot: string }> = {
+    active: { bg: 'bg-green-50', text: 'text-green-700', dot: '#22c55e' },
+    pending: { bg: 'bg-amber-50', text: 'text-amber-700', dot: '#f59e0b' },
+    error: { bg: 'bg-red-50', text: 'text-red-700', dot: '#ef4444' },
+    disabled: { bg: 'bg-gray-100', text: 'text-gray-500', dot: '#9ca3af' },
+  };
+
+  // Group by type
+  const grouped = filtered.reduce((acc, i) => {
+    const key = i.type;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(i);
+    return acc;
+  }, {} as Record<string, EnterpriseIntegration[]>);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-gray-600">Tenant:</span>
+          <select value={tenantFilter} onChange={e => setTenantFilter(e.target.value)} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer">
+            <option value="all">All Tenants</option>
+            {enterpriseTenants.map(t => <option key={t.id} value={t.id}>{t.displayName.split(' ')[0]}</option>)}
+          </select>
+        </div>
+        <button onClick={() => alert('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          + Add Integration
+        </button>
+      </div>
+
+      {/* Integration summary */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: 'Active', count: filtered.filter(i => i.status === 'active').length, color: '#22c55e' },
+          { label: 'Pending', count: filtered.filter(i => i.status === 'pending').length, color: '#f59e0b' },
+          { label: 'Error', count: filtered.filter(i => i.status === 'error').length, color: '#ef4444' },
+          { label: 'Data Points', count: filtered.reduce((s, i) => s + i.dataPoints, 0).toLocaleString(), color: '#1e4d6b' },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-3">
+            <p className="text-lg font-bold" style={{ color: s.color }}>{s.count}</p>
+            <p className="text-[10px] text-gray-500">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Integration cards grouped by type */}
+      {Object.entries(grouped).map(([type, integrations]) => (
+        <div key={type}>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{typeLabels[type] || type}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {integrations.map(intg => {
+              const st = statusStyles[intg.status] || statusStyles.disabled;
+              return (
+                <div key={intg.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#1e4d6b' }}>
+                      {intg.providerLogo}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-900">{intg.providerName}</span>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full ${st.bg} ${st.text}`}>
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: st.dot }} />
+                          {intg.status.charAt(0).toUpperCase() + intg.status.slice(1)}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mt-0.5">{intg.tenantName} · {intg.syncFrequency}</p>
+                      <p className="text-xs text-gray-600 mt-1">{intg.description}</p>
+                      <div className="flex items-center gap-4 mt-2">
+                        {intg.lastSync && (
+                          <span className="text-[10px] text-gray-400">Last sync: {formatTime(intg.lastSync)}</span>
+                        )}
+                        {intg.dataPoints > 0 && (
+                          <span className="text-[10px] text-gray-400">{intg.dataPoints.toLocaleString()} data points</span>
+                        )}
+                      </div>
+                    </div>
+                    <button onClick={() => alert(`Configure ${intg.providerName} — coming soon`)} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer flex-shrink-0">
+                      <Settings className="h-3.5 w-3.5 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Bulk Operations Tab ────────────────────────────────────────
+function BulkOpsTab() {
+  const typeLabels: Record<string, string> = {
+    location_import: 'Location Import',
+    template_deploy: 'Template Deploy',
+    vendor_assign: 'Vendor Assignment',
+    user_provision: 'User Provisioning',
+    compliance_action: 'Compliance Action',
+  };
+
+  const statusStyles: Record<string, string> = {
+    completed: 'bg-green-50 text-green-700 border-green-200',
+    running: 'bg-blue-50 text-blue-700 border-blue-200',
+    failed: 'bg-red-50 text-red-700 border-red-200',
+    pending: 'bg-gray-100 text-gray-500 border-gray-200',
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-900">Bulk Operations ({enterpriseBulkOps.length})</h3>
+        <div className="flex items-center gap-2">
+          {[
+            { label: 'Import Locations', icon: Upload },
+            { label: 'Deploy Templates', icon: FileText },
+            { label: 'Assign Vendors', icon: Users },
+            { label: 'Provision Users', icon: UserPlus },
+          ].map(a => (
+            <button key={a.label} onClick={() => alert(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+              <a.icon className="h-3.5 w-3.5" />
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Summary stats */}
+      <div className="grid grid-cols-4 gap-3">
+        {[
+          { label: 'Completed', count: enterpriseBulkOps.filter(o => o.status === 'completed').length, color: '#22c55e' },
+          { label: 'Running', count: enterpriseBulkOps.filter(o => o.status === 'running').length, color: '#3b82f6' },
+          { label: 'Pending', count: enterpriseBulkOps.filter(o => o.status === 'pending').length, color: '#9ca3af' },
+          { label: 'Total Items', count: enterpriseBulkOps.reduce((s, o) => s + o.totalItems, 0).toLocaleString(), color: '#1e4d6b' },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-3">
+            <p className="text-lg font-bold" style={{ color: s.color }}>{s.count}</p>
+            <p className="text-[10px] text-gray-500">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Operations list */}
+      <div className="space-y-3">
+        {enterpriseBulkOps.map(op => {
+          const pct = op.totalItems > 0 ? Math.round((op.processedItems / op.totalItems) * 100) : 0;
+          return (
+            <div key={op.id} className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-semibold text-gray-900">{op.description}</span>
+                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusStyles[op.status]}`}>
+                      {op.status.charAt(0).toUpperCase() + op.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 text-[10px] text-gray-400 mb-2">
+                    <span>{typeLabels[op.type]}</span>
+                    <span>{op.tenantName}</span>
+                    <span>By {op.initiatedBy}</span>
+                    {op.startedAt && <span>{formatTime(op.startedAt)}</span>}
+                  </div>
+                  {/* Progress bar */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full transition-all"
+                        style={{
+                          width: `${pct}%`,
+                          backgroundColor: op.status === 'failed' ? '#ef4444' : op.status === 'completed' ? '#22c55e' : '#3b82f6',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs font-medium text-gray-600 w-12 text-right">{pct}%</span>
+                  </div>
+                  <div className="flex items-center gap-4 mt-1.5">
+                    <span className="text-[10px] text-gray-500">{op.processedItems.toLocaleString()} / {op.totalItems.toLocaleString()} processed</span>
+                    {op.failedItems > 0 && (
+                      <span className="text-[10px] text-red-500">{op.failedItems} failed</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {op.status === 'running' && (
+                    <button onClick={() => alert('Operation paused')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
+                      Pause
+                    </button>
+                  )}
+                  {op.status === 'pending' && (
+                    <button onClick={() => alert('Operation started')} className="px-2.5 py-1 rounded-lg text-white text-[10px] font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+                      Start
+                    </button>
+                  )}
+                  <button onClick={() => alert('Operation details')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
+                    Details
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Onboarding Tab ─────────────────────────────────────────────
+function OnboardingTab() {
+  const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
+  const phases = selectedTenant === 'ent-aramark' ? enterpriseOnboardingAramark
+    : selectedTenant === 'ent-sodexo' ? enterpriseOnboardingSodexo
+    : enterpriseOnboardingAramark; // Compass uses Aramark-like completed phases
+
+  const phaseStatusColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
+    completed: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', dot: '#22c55e' },
+    in_progress: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', dot: '#3b82f6' },
+    upcoming: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-500', dot: '#9ca3af' },
+  };
+
+  const overallProgress = Math.round(phases.reduce((s, p) => s + p.progress, 0) / phases.length);
+
+  return (
+    <div className="space-y-4">
+      {/* Tenant selector */}
+      <div className="flex items-center gap-3">
+        <span className="text-xs font-medium text-gray-600">Tenant:</span>
+        <div className="flex items-center gap-2">
+          {enterpriseTenants.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setSelectedTenant(t.id)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+            >
+              <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
+                {t.logoPlaceholder}
+              </div>
+              {t.displayName.split(' ')[0]}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Overall progress */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">Enterprise Onboarding — 60-90 Day Implementation</h3>
+            <p className="text-[10px] text-gray-400 mt-0.5">{enterpriseTenants.find(t => t.id === selectedTenant)?.displayName}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{overallProgress}%</p>
+            <p className="text-[10px] text-gray-400">Overall Progress</p>
+          </div>
+        </div>
+        {/* Phase timeline */}
+        <div className="flex items-center gap-0 mb-6">
+          {phases.map((p, i) => {
+            const st = phaseStatusColors[p.status];
+            return (
+              <div key={p.id} className="flex-1 flex items-center">
+                <div className={`flex-1 h-2 rounded-full ${i === 0 ? 'rounded-l-full' : ''} ${i === phases.length - 1 ? 'rounded-r-full' : ''}`} style={{ backgroundColor: '#e5e7eb' }}>
+                  <div
+                    className="h-2 rounded-full transition-all"
+                    style={{
+                      width: `${p.progress}%`,
+                      backgroundColor: st.dot,
+                    }}
+                  />
+                </div>
+                {i < phases.length - 1 && <div className="w-1" />}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Phase cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {phases.map(p => {
+          const st = phaseStatusColors[p.status];
+          const doneTasks = p.tasks.filter(t => t.done).length;
+          return (
+            <div key={p.id} className={`bg-white rounded-xl border ${st.border} p-5`}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: st.dot }}>
+                  {p.phase}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-sm font-bold text-gray-900">{p.name}</h4>
+                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${st.bg} ${st.text}`}>
+                      {p.status === 'in_progress' ? 'In Progress' : p.status === 'completed' ? 'Completed' : 'Upcoming'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-gray-400">{p.duration}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold" style={{ color: st.dot }}>{p.progress}%</p>
+                  <p className="text-[10px] text-gray-400">{doneTasks}/{p.tasks.length} tasks</p>
+                </div>
+              </div>
+              {/* Task list */}
+              <div className="space-y-1.5">
+                {p.tasks.map((task, i) => (
+                  <div key={i} className="flex items-center gap-2 p-1.5 rounded-lg">
+                    {task.done ? (
+                      <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0" />
+                    ) : p.status === 'upcoming' ? (
+                      <div className="w-3.5 h-3.5 rounded-full border border-gray-300 flex-shrink-0" />
+                    ) : (
+                      <div className="w-3.5 h-3.5 rounded-full border-2 border-blue-400 flex-shrink-0" />
+                    )}
+                    <span className={`text-xs ${task.done ? 'text-gray-500 line-through' : 'text-gray-700'}`}>{task.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Pricing tiers */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-4">Enterprise Pricing Tiers</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {enterprisePricingTiers.map(tier => (
+            <div key={tier.name} className={`rounded-xl border p-5 ${tier.highlighted ? 'border-2 shadow-lg' : 'border-gray-200'}`} style={tier.highlighted ? { borderColor: '#1e4d6b' } : {}}>
+              {tier.highlighted && (
+                <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-semibold rounded-full text-white mb-3" style={{ backgroundColor: '#1e4d6b' }}>
+                  Most Popular
+                </span>
+              )}
+              <h4 className="text-lg font-bold text-gray-900">{tier.name}</h4>
+              <p className="text-2xl font-bold mt-1" style={{ color: '#1e4d6b' }}>{tier.priceLabel}</p>
+              <div className="mt-4 space-y-2">
+                {tier.features.map((f, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-xs text-gray-600">{f}</span>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => alert(`Contact sales for ${tier.name} tier`)} className="w-full mt-4 px-4 py-2 rounded-lg text-xs font-medium cursor-pointer" style={tier.highlighted ? { backgroundColor: '#1e4d6b', color: 'white' } : { border: '1px solid #e5e7eb', color: '#374151' }}>
+                {tier.highlighted ? 'Contact Sales' : 'Learn More'}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ─────────────────────────────────────────────
 export function EnterpriseDashboard() {
   const navigate = useNavigate();
@@ -1341,6 +1969,9 @@ export function EnterpriseDashboard() {
         {activeTab === 'users' && <UserDirectoryTab />}
         {activeTab === 'branding' && <BrandingTab />}
         {activeTab === 'reports' && <ReportsTab />}
+        {activeTab === 'integrations' && <IntegrationsTab />}
+        {activeTab === 'bulk_ops' && <BulkOpsTab />}
+        {activeTab === 'onboarding' && <OnboardingTab />}
       </div>
     </div>
   );

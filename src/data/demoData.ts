@@ -1377,6 +1377,8 @@ export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
   { id: 'ert-2', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
   { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Audit Package', templateType: 'audit_package', sections: ['Audit Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
   { id: 'ert-4', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Location Detail Report', templateType: 'location_detail', sections: ['Site Overview', 'Temperature Logs', 'Checklist Completion', 'Equipment Status', 'Vendor Documents'], brandWatermark: false, exportFormats: ['PDF', 'CSV'], isDefault: true },
+  { id: 'ert-5', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
+  { id: 'ert-6', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Vendor Performance Review', templateType: 'regional_rollup', sections: ['Vendor Scorecard', 'Service Completion Rates', 'Response Time Analysis', 'Certification Status', 'Cost Analysis', 'Recommendations'], brandWatermark: true, exportFormats: ['PDF', 'Excel', 'CSV'], isDefault: false },
 ];
 
 export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
@@ -1390,6 +1392,216 @@ export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
   { id: 'eal-8', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'sso_test_passed', resourceType: 'SSO Configuration', resourceName: 'OIDC Provider', details: 'Azure AD OIDC test connection passed — 12ms response', timestamp: '2026-02-07T10:15:00Z', ipAddress: '10.56.2.88' },
   { id: 'eal-9', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
   { id: 'eal-10', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'David Nguyen', action: 'template_created', resourceType: 'Report Template', resourceName: 'Location Detail Report', details: 'Created default location detail template for Sodexo pilot', timestamp: '2026-02-08T13:20:00Z', ipAddress: '67.183.45.12' },
+];
+
+// ============================================================
+// Enterprise Expanded Data — Alerts, Integrations, Onboarding,
+// Trend History, Pricing, Bulk Operations
+// ============================================================
+
+export interface EnterpriseAlert {
+  id: string;
+  tenantId: string;
+  severity: 'critical' | 'warning' | 'info';
+  category: string;
+  nodeName: string;
+  nodeCode: string;
+  message: string;
+  score: number | null;
+  detectedAt: string;
+  acknowledged: boolean;
+}
+
+export const enterpriseAlerts: EnterpriseAlert[] = [
+  { id: 'ea-1', tenantId: 'ent-aramark', severity: 'critical', category: 'Fire Suppression', nodeName: 'Tuolumne Meadows Grill', nodeCode: 'YOS-004', message: 'Fire suppression system certification expired 12 days ago — immediate action required', score: 83, detectedAt: '2026-02-09T06:00:00Z', acknowledged: false },
+  { id: 'ea-2', tenantId: 'ent-aramark', severity: 'critical', category: 'Compliance Score', nodeName: 'SoCal District', nodeCode: 'ARMK-SL-W-SC', message: 'District compliance score dropped below 85% threshold — 3 locations need attention', score: 84, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-3', tenantId: 'ent-aramark', severity: 'warning', category: 'Vendor Documentation', nodeName: 'Bay Area District', nodeCode: 'ARMK-SL-W-BAY', message: '4 vendor certifications expiring within 30 days — renewal required', score: 85, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-4', tenantId: 'ent-aramark', severity: 'warning', category: 'Temperature Monitoring', nodeName: 'Half Dome Village Pavilion', nodeCode: 'YOS-003', message: '3 consecutive temperature excursions in walk-in cooler — equipment service recommended', score: 87, detectedAt: '2026-02-09T14:30:00Z', acknowledged: true },
+  { id: 'ea-5', tenantId: 'ent-compass', severity: 'critical', category: 'Regulatory Gap', nodeName: 'West Coast Area', nodeCode: 'CG-WCA', message: '2 locations missing required health department permits — regulatory risk', score: null, detectedAt: '2026-02-09T09:00:00Z', acknowledged: false },
+  { id: 'ea-6', tenantId: 'ent-aramark', severity: 'warning', category: 'Checklist Completion', nodeName: 'Healthcare Division', nodeCode: 'ARMK-HC', message: 'Opening checklist completion rate dropped to 89% across division — target is 95%', score: 86, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-7', tenantId: 'ent-sodexo', severity: 'info', category: 'Onboarding', nodeName: 'Sodexo Safe Kitchen', nodeCode: 'SOD', message: 'Pilot phase data migration 82% complete — 511 of 623 locations imported', score: null, detectedAt: '2026-02-10T08:00:00Z', acknowledged: true },
+  { id: 'ea-8', tenantId: 'ent-aramark', severity: 'warning', category: 'Employee Training', nodeName: 'Eastern Region (Higher Ed)', nodeCode: 'ARMK-HE-E', message: '14 food handler certifications expiring this month — schedule renewals', score: 93, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+];
+
+export interface EnterpriseIntegration {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  type: 'temperature_monitoring' | 'erp' | 'bi_tool' | 'communication' | 'existing_platform';
+  providerName: string;
+  providerLogo: string;
+  status: 'active' | 'pending' | 'error' | 'disabled';
+  lastSync: string;
+  syncFrequency: string;
+  dataPoints: number;
+  description: string;
+}
+
+export const enterpriseIntegrations: EnterpriseIntegration[] = [
+  { id: 'ei-1', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'temperature_monitoring', providerName: 'ComplianceMate', providerLogo: 'CM', status: 'active', lastSync: '2026-02-10T09:45:00Z', syncFrequency: 'Every 15 min', dataPoints: 284620, description: 'Real-time temperature monitoring across 1,200+ sensors' },
+  { id: 'ei-2', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'erp', providerName: 'SAP S/4HANA', providerLogo: 'SAP', status: 'active', lastSync: '2026-02-10T06:00:00Z', syncFrequency: 'Daily', dataPoints: 45200, description: 'Location master data, vendor POs, cost center mapping' },
+  { id: 'ei-3', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'bi_tool', providerName: 'Power BI', providerLogo: 'PBI', status: 'active', lastSync: '2026-02-10T07:00:00Z', syncFrequency: 'Hourly', dataPoints: 128400, description: 'Executive dashboards and compliance trend analytics' },
+  { id: 'ei-4', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'active', lastSync: '2026-02-10T09:50:00Z', syncFrequency: 'Real-time', dataPoints: 3240, description: 'Alert notifications, inspection results, action item assignments' },
+  { id: 'ei-5', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'existing_platform', providerName: 'Aramark SAFE', providerLogo: 'AS', status: 'active', lastSync: '2026-02-09T22:00:00Z', syncFrequency: 'Every 6 hours', dataPoints: 89100, description: 'Historical compliance data migration and ongoing sync' },
+  { id: 'ei-6', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'temperature_monitoring', providerName: 'Testo Saveris', providerLogo: 'TS', status: 'active', lastSync: '2026-02-10T09:30:00Z', syncFrequency: 'Every 15 min', dataPoints: 198400, description: 'Wireless temperature and humidity monitoring for 800+ units' },
+  { id: 'ei-7', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'erp', providerName: 'Oracle Cloud', providerLogo: 'OC', status: 'active', lastSync: '2026-02-10T05:30:00Z', syncFrequency: 'Daily', dataPoints: 32100, description: 'Vendor management, procurement, and financial integration' },
+  { id: 'ei-8', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'bi_tool', providerName: 'Tableau', providerLogo: 'TB', status: 'pending', lastSync: '', syncFrequency: 'Hourly', dataPoints: 0, description: 'Tableau Cloud connector — in configuration' },
+  { id: 'ei-9', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'communication', providerName: 'Slack', providerLogo: 'SL', status: 'active', lastSync: '2026-02-10T09:48:00Z', syncFrequency: 'Real-time', dataPoints: 1890, description: '#compliance-alerts and #inspection-results channels' },
+  { id: 'ei-10', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'existing_platform', providerName: 'Hospitality IQ', providerLogo: 'HQ', status: 'error', lastSync: '2026-02-08T14:00:00Z', syncFrequency: 'Daily', dataPoints: 42300, description: 'API rate limit exceeded — contact Compass IT for quota increase' },
+  { id: 'ei-11', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'temperature_monitoring', providerName: 'Cooper-Atkins', providerLogo: 'CA', status: 'pending', lastSync: '', syncFrequency: 'Every 15 min', dataPoints: 0, description: 'Pending configuration — pilot phase setup' },
+  { id: 'ei-12', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'disabled', lastSync: '', syncFrequency: 'Real-time', dataPoints: 0, description: 'Awaiting IT approval for Teams integration' },
+];
+
+export interface EnterpriseOnboardingPhase {
+  id: string;
+  phase: number;
+  name: string;
+  duration: string;
+  status: 'completed' | 'in_progress' | 'upcoming';
+  progress: number;
+  tasks: { label: string; done: boolean }[];
+}
+
+export const enterpriseOnboardingAramark: EnterpriseOnboardingPhase[] = [
+  { id: 'eo-1', phase: 1, name: 'Configuration', duration: 'Weeks 1-2', status: 'completed', progress: 100, tasks: [
+    { label: 'Tenant provisioning & branding setup', done: true },
+    { label: 'SSO/SAML integration with Okta', done: true },
+    { label: 'Hierarchy structure defined (5 levels)', done: true },
+    { label: 'SCIM user provisioning configured', done: true },
+    { label: 'API keys generated & rate limits set', done: true },
+  ]},
+  { id: 'eo-2', phase: 2, name: 'Data Migration', duration: 'Weeks 3-5', status: 'completed', progress: 100, tasks: [
+    { label: 'Historical compliance data imported (24 months)', done: true },
+    { label: 'Location master data synced from SAP', done: true },
+    { label: 'Vendor records migrated (342 vendors)', done: true },
+    { label: 'Temperature sensor mapping completed', done: true },
+    { label: 'Employee training records imported', done: true },
+  ]},
+  { id: 'eo-3', phase: 3, name: 'Pilot', duration: 'Weeks 6-10', status: 'completed', progress: 100, tasks: [
+    { label: 'Yosemite District (7 locations) live', done: true },
+    { label: 'User acceptance testing completed', done: true },
+    { label: 'Report templates customized & approved', done: true },
+    { label: 'Integration validation with SAFE platform', done: true },
+    { label: 'Training materials distributed', done: true },
+  ]},
+  { id: 'eo-4', phase: 4, name: 'Full Rollout', duration: 'Weeks 11-16', status: 'in_progress', progress: 72, tasks: [
+    { label: 'Western Region deployed (224 locations)', done: true },
+    { label: 'Central Region deployed (267 locations)', done: true },
+    { label: 'Eastern Region deployment', done: false },
+    { label: 'Higher Education division rollout', done: false },
+    { label: 'Healthcare division rollout', done: false },
+  ]},
+];
+
+export const enterpriseOnboardingSodexo: EnterpriseOnboardingPhase[] = [
+  { id: 'eo-s1', phase: 1, name: 'Configuration', duration: 'Weeks 1-2', status: 'completed', progress: 100, tasks: [
+    { label: 'Tenant provisioning & branding setup', done: true },
+    { label: 'Hierarchy structure defined (5 levels)', done: true },
+    { label: 'API keys generated', done: true },
+  ]},
+  { id: 'eo-s2', phase: 2, name: 'Data Migration', duration: 'Weeks 3-5', status: 'in_progress', progress: 82, tasks: [
+    { label: 'Location master data import (511/623)', done: false },
+    { label: 'Historical compliance data', done: false },
+    { label: 'Vendor records migration', done: false },
+  ]},
+  { id: 'eo-s3', phase: 3, name: 'Pilot', duration: 'Weeks 6-10', status: 'upcoming', progress: 0, tasks: [
+    { label: 'California District pilot (48 locations)', done: false },
+    { label: 'User acceptance testing', done: false },
+    { label: 'Report template customization', done: false },
+  ]},
+  { id: 'eo-s4', phase: 4, name: 'Full Rollout', duration: 'Weeks 11-16', status: 'upcoming', progress: 0, tasks: [
+    { label: 'Regional deployment', done: false },
+    { label: 'Full organization rollout', done: false },
+  ]},
+];
+
+export interface EnterpriseTrendPoint {
+  month: string;
+  overall: number;
+  operational: number;
+  equipment: number;
+  documentation: number;
+}
+
+export const enterpriseTrendData: EnterpriseTrendPoint[] = [
+  { month: 'Mar 25', overall: 82.1, operational: 84.0, equipment: 80.2, documentation: 81.5 },
+  { month: 'Apr 25', overall: 83.4, operational: 85.1, equipment: 81.0, documentation: 83.2 },
+  { month: 'May 25', overall: 83.8, operational: 85.6, equipment: 81.5, documentation: 83.8 },
+  { month: 'Jun 25', overall: 84.5, operational: 86.2, equipment: 82.1, documentation: 84.4 },
+  { month: 'Jul 25', overall: 83.9, operational: 85.8, equipment: 81.8, documentation: 83.5 },
+  { month: 'Aug 25', overall: 84.8, operational: 86.5, equipment: 82.6, documentation: 84.8 },
+  { month: 'Sep 25', overall: 85.6, operational: 87.2, equipment: 83.4, documentation: 85.6 },
+  { month: 'Oct 25', overall: 86.2, operational: 87.8, equipment: 84.1, documentation: 86.1 },
+  { month: 'Nov 25', overall: 86.8, operational: 88.2, equipment: 84.8, documentation: 86.9 },
+  { month: 'Dec 25', overall: 85.9, operational: 87.5, equipment: 84.0, documentation: 85.8 },
+  { month: 'Jan 26', overall: 87.1, operational: 88.8, equipment: 85.2, documentation: 86.8 },
+  { month: 'Feb 26', overall: 88.4, operational: 90.0, equipment: 86.0, documentation: 87.0 },
+];
+
+export interface EnterpriseBulkOp {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  type: 'location_import' | 'template_deploy' | 'vendor_assign' | 'user_provision' | 'compliance_action';
+  status: 'completed' | 'running' | 'failed' | 'pending';
+  totalItems: number;
+  processedItems: number;
+  failedItems: number;
+  initiatedBy: string;
+  startedAt: string;
+  description: string;
+}
+
+export const enterpriseBulkOps: EnterpriseBulkOp[] = [
+  { id: 'ebo-1', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'location_import', status: 'completed', totalItems: 267, processedItems: 267, failedItems: 0, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-08T10:00:00Z', description: 'Central Region location bulk import from SAP' },
+  { id: 'ebo-2', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'template_deploy', status: 'completed', totalItems: 1847, processedItems: 1847, failedItems: 3, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-07T14:00:00Z', description: 'Deploy updated daily checklist template to all locations' },
+  { id: 'ebo-3', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
+  { id: 'ebo-4', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'user_provision', status: 'completed', totalItems: 89, processedItems: 89, failedItems: 0, initiatedBy: 'Emma Williams', startedAt: '2026-02-09T11:00:00Z', description: 'SCIM bulk provision — new Chartwells employees' },
+  { id: 'ebo-5', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'location_import', status: 'running', totalItems: 623, processedItems: 511, failedItems: 4, initiatedBy: 'Pierre Dubois', startedAt: '2026-02-10T07:00:00Z', description: 'Pilot location data import — all Sodexo sites' },
+  { id: 'ebo-6', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Maria Santos', startedAt: '', description: 'Schedule fire suppression inspections — Yosemite District' },
+];
+
+export interface EnterprisePricingTier {
+  name: string;
+  price: number;
+  priceLabel: string;
+  features: string[];
+  highlighted: boolean;
+}
+
+export const enterprisePricingTiers: EnterprisePricingTier[] = [
+  { name: 'Standard', price: 25, priceLabel: '$25/location/mo', highlighted: false, features: [
+    'Core compliance dashboard',
+    'Temperature monitoring integration',
+    'Standard report templates',
+    'Email support (24hr SLA)',
+    'Up to 3 hierarchy levels',
+    'Basic API access (1K req/day)',
+  ]},
+  { name: 'Premium', price: 35, priceLabel: '$35/location/mo', highlighted: true, features: [
+    'Everything in Standard, plus:',
+    'SSO (SAML/OIDC) integration',
+    'SCIM user provisioning',
+    'Custom hierarchy (up to 5 levels)',
+    'White-label branding',
+    'Multi-region rollup dashboards',
+    'Advanced analytics & trends',
+    'Dedicated CSM',
+    'Full API access (10K req/day)',
+  ]},
+  { name: 'Platinum', price: 50, priceLabel: '$50/location/mo', highlighted: false, features: [
+    'Everything in Premium, plus:',
+    'Custom domain & full white-label',
+    'ERP integration (SAP/Oracle)',
+    'BI tool connectors (Power BI/Tableau)',
+    'Custom report builder',
+    'HIPAA compliance mode',
+    'Data residency controls',
+    'SOC 2 audit support',
+    '24/7 emergency support',
+    'Quarterly business reviews',
+    'Unlimited API access',
+  ]},
 ];
 
 /** Find marketplace vendors whose categories match overdue/upcoming services */
