@@ -1053,6 +1053,345 @@ export const vendorMessages: VendorMessage[] = [
   { id: 'vm-6', conversationId: 'conv-2', senderType: 'system', senderName: 'EvidLY', message: 'Service appointment confirmed for Feb 14, 2026 at 10:00 PM. Both parties will receive a reminder 24 hours before.', timestamp: '2026-02-08T16:31:00', read: true },
 ];
 
+// ============================================================
+// Enterprise White-Label Demo Data
+// ============================================================
+
+export type EnterpriseTenantStatus = 'active' | 'onboarding' | 'pilot' | 'suspended';
+export type SSOProviderType = 'saml' | 'oidc' | 'none';
+export type HierarchyLevel = 'corporate' | 'division' | 'region' | 'district' | 'location';
+
+export interface EnterpriseTenant {
+  id: string;
+  slug: string;
+  displayName: string;
+  logoPlaceholder: string;
+  poweredByText: string;
+  showPoweredBy: boolean;
+  status: EnterpriseTenantStatus;
+  branding: {
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+    sidebarBg: string;
+    sidebarText: string;
+    logoText: string;
+  };
+  domain: string;
+  ssoConfig: {
+    providerType: SSOProviderType;
+    providerName: string;
+    metadataUrl: string;
+    entityId: string;
+    acsUrl: string;
+    attributeMapping: Record<string, string>;
+    enabled: boolean;
+    lastTestAt: string | null;
+    testStatus: 'passed' | 'failed' | 'untested';
+  };
+  scimEnabled: boolean;
+  scimEndpoint: string;
+  features: {
+    customReports: boolean;
+    apiAccess: boolean;
+    whiteLabel: boolean;
+    advancedAnalytics: boolean;
+    scimProvisioning: boolean;
+    multiRegionRollup: boolean;
+    customHierarchy: boolean;
+    dedicatedCSM: boolean;
+  };
+  hierarchy: { key: HierarchyLevel; label: string }[];
+  contract: {
+    tier: 'enterprise' | 'enterprise_plus';
+    startDate: string;
+    endDate: string;
+    annualValue: number;
+    locationCount: number;
+    maxLocations: number;
+    dedicatedCSM: string;
+  };
+  stats: {
+    activeUsers: number;
+    totalLocations: number;
+    avgComplianceScore: number;
+    lastSyncAt: string;
+  };
+}
+
+export interface EnterpriseHierarchyNode {
+  id: string;
+  tenantId: string;
+  parentId: string | null;
+  level: HierarchyLevel;
+  name: string;
+  code: string;
+  complianceScore: number;
+  locationCount: number;
+  operational: number;
+  equipment: number;
+  documentation: number;
+  children?: EnterpriseHierarchyNode[];
+}
+
+export interface EnterpriseUser {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  name: string;
+  email: string;
+  role: string;
+  location: string;
+  ssoStatus: 'active' | 'pending' | 'disabled';
+  lastLogin: string;
+  scimManaged: boolean;
+  externalId: string;
+  groups: string[];
+}
+
+export interface EnterpriseReportTemplate {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  name: string;
+  templateType: 'executive_summary' | 'regional_rollup' | 'location_detail' | 'audit_package';
+  sections: string[];
+  brandWatermark: boolean;
+  exportFormats: string[];
+  isDefault: boolean;
+}
+
+export interface EnterpriseAuditEntry {
+  id: string;
+  tenantId: string;
+  tenantName: string;
+  userName: string;
+  action: string;
+  resourceType: string;
+  resourceName: string;
+  details: string;
+  timestamp: string;
+  ipAddress: string;
+}
+
+export const enterpriseTenants: EnterpriseTenant[] = [
+  {
+    id: 'ent-aramark',
+    slug: 'aramark',
+    displayName: 'Aramark Compliance Hub',
+    logoPlaceholder: 'AR',
+    poweredByText: 'Powered by EvidLY',
+    showPoweredBy: true,
+    status: 'active',
+    branding: {
+      primaryColor: '#C8102E',
+      secondaryColor: '#002855',
+      accentColor: '#F0AB00',
+      sidebarBg: '#002855',
+      sidebarText: '#FFFFFF',
+      logoText: 'Aramark Compliance Hub',
+    },
+    domain: 'compliance.aramark.com',
+    ssoConfig: {
+      providerType: 'saml',
+      providerName: 'Okta',
+      metadataUrl: 'https://aramark.okta.com/app/exk1234567890/sso/saml/metadata',
+      entityId: 'compliance.aramark.com',
+      acsUrl: 'https://compliance.aramark.com/auth/saml/callback',
+      attributeMapping: { email: 'user.email', firstName: 'user.firstName', lastName: 'user.lastName', groups: 'user.groups', employeeId: 'user.employeeNumber' },
+      enabled: true,
+      lastTestAt: '2026-02-08T14:30:00Z',
+      testStatus: 'passed',
+    },
+    scimEnabled: true,
+    scimEndpoint: 'https://api.evidly.com/scim/v2/aramark',
+    features: { customReports: true, apiAccess: true, whiteLabel: true, advancedAnalytics: true, scimProvisioning: true, multiRegionRollup: true, customHierarchy: true, dedicatedCSM: true },
+    hierarchy: [
+      { key: 'corporate', label: 'Corporate' },
+      { key: 'division', label: 'Business Unit' },
+      { key: 'region', label: 'Region' },
+      { key: 'district', label: 'District' },
+      { key: 'location', label: 'Account' },
+    ],
+    contract: { tier: 'enterprise_plus', startDate: '2026-07-01', endDate: '2029-06-30', annualValue: 2400000, locationCount: 1847, maxLocations: 3000, dedicatedCSM: 'Arthur Haggerty' },
+    stats: { activeUsers: 4126, totalLocations: 1847, avgComplianceScore: 88.4, lastSyncAt: '2026-02-10T06:00:00Z' },
+  },
+  {
+    id: 'ent-compass',
+    slug: 'compass',
+    displayName: 'Compass Compliance',
+    logoPlaceholder: 'CG',
+    poweredByText: 'Powered by EvidLY',
+    showPoweredBy: true,
+    status: 'active',
+    branding: {
+      primaryColor: '#003DA5',
+      secondaryColor: '#1B365D',
+      accentColor: '#FFB81C',
+      sidebarBg: '#1B365D',
+      sidebarText: '#FFFFFF',
+      logoText: 'Compass Compliance',
+    },
+    domain: 'compliance.compass-group.com',
+    ssoConfig: {
+      providerType: 'oidc',
+      providerName: 'Azure AD',
+      metadataUrl: 'https://login.microsoftonline.com/compass-group.com/.well-known/openid-configuration',
+      entityId: 'compliance.compass-group.com',
+      acsUrl: 'https://compliance.compass-group.com/auth/oidc/callback',
+      attributeMapping: { email: 'preferred_username', firstName: 'given_name', lastName: 'family_name', groups: 'groups', employeeId: 'employee_id' },
+      enabled: true,
+      lastTestAt: '2026-02-07T10:15:00Z',
+      testStatus: 'passed',
+    },
+    scimEnabled: true,
+    scimEndpoint: 'https://api.evidly.com/scim/v2/compass',
+    features: { customReports: true, apiAccess: true, whiteLabel: true, advancedAnalytics: true, scimProvisioning: true, multiRegionRollup: true, customHierarchy: true, dedicatedCSM: true },
+    hierarchy: [
+      { key: 'corporate', label: 'Global HQ' },
+      { key: 'division', label: 'Sector' },
+      { key: 'region', label: 'Country' },
+      { key: 'district', label: 'Area' },
+      { key: 'location', label: 'Unit' },
+    ],
+    contract: { tier: 'enterprise_plus', startDate: '2026-09-01', endDate: '2029-08-31', annualValue: 1800000, locationCount: 1234, maxLocations: 2500, dedicatedCSM: 'Sarah Mitchell' },
+    stats: { activeUsers: 2891, totalLocations: 1234, avgComplianceScore: 86.1, lastSyncAt: '2026-02-10T05:30:00Z' },
+  },
+  {
+    id: 'ent-sodexo',
+    slug: 'sodexo',
+    displayName: 'Sodexo Safe Kitchen',
+    logoPlaceholder: 'SO',
+    poweredByText: 'Powered by EvidLY',
+    showPoweredBy: false,
+    status: 'pilot',
+    branding: {
+      primaryColor: '#ED1C24',
+      secondaryColor: '#231F20',
+      accentColor: '#00A0DF',
+      sidebarBg: '#231F20',
+      sidebarText: '#FFFFFF',
+      logoText: 'Sodexo Safe Kitchen',
+    },
+    domain: 'safekitchen.sodexo.com',
+    ssoConfig: {
+      providerType: 'none',
+      providerName: '',
+      metadataUrl: '',
+      entityId: 'safekitchen.sodexo.com',
+      acsUrl: 'https://safekitchen.sodexo.com/auth/saml/callback',
+      attributeMapping: {},
+      enabled: false,
+      lastTestAt: null,
+      testStatus: 'untested',
+    },
+    scimEnabled: false,
+    scimEndpoint: 'https://api.evidly.com/scim/v2/sodexo',
+    features: { customReports: true, apiAccess: false, whiteLabel: true, advancedAnalytics: false, scimProvisioning: false, multiRegionRollup: true, customHierarchy: true, dedicatedCSM: true },
+    hierarchy: [
+      { key: 'corporate', label: 'Headquarters' },
+      { key: 'division', label: 'Division' },
+      { key: 'region', label: 'Region' },
+      { key: 'district', label: 'District' },
+      { key: 'location', label: 'Site' },
+    ],
+    contract: { tier: 'enterprise', startDate: '2026-10-01', endDate: '2027-09-30', annualValue: 950000, locationCount: 623, maxLocations: 1500, dedicatedCSM: 'David Nguyen' },
+    stats: { activeUsers: 1224, totalLocations: 623, avgComplianceScore: 84.7, lastSyncAt: '2026-02-09T22:00:00Z' },
+  },
+];
+
+export const enterpriseHierarchy: EnterpriseHierarchyNode = {
+  id: 'h-corp', tenantId: 'ent-aramark', parentId: null, level: 'corporate', name: 'Aramark Corporation', code: 'ARMK',
+  complianceScore: 88, locationCount: 1847, operational: 90, equipment: 86, documentation: 87,
+  children: [
+    {
+      id: 'h-higher-ed', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Higher Education', code: 'ARMK-HE',
+      complianceScore: 91, locationCount: 612, operational: 93, equipment: 89, documentation: 90,
+      children: [
+        { id: 'h-he-west', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'ARMK-HE-W', complianceScore: 89, locationCount: 184, operational: 91, equipment: 87, documentation: 88 },
+        { id: 'h-he-central', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'ARMK-HE-C', complianceScore: 92, locationCount: 215, operational: 94, equipment: 90, documentation: 91 },
+        { id: 'h-he-east', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'ARMK-HE-E', complianceScore: 93, locationCount: 213, operational: 95, equipment: 91, documentation: 92 },
+      ],
+    },
+    {
+      id: 'h-healthcare', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Healthcare', code: 'ARMK-HC',
+      complianceScore: 86, locationCount: 489, operational: 88, equipment: 84, documentation: 85,
+      children: [
+        { id: 'h-hc-west', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'ARMK-HC-W', complianceScore: 85, locationCount: 147, operational: 87, equipment: 83, documentation: 84 },
+        { id: 'h-hc-central', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'ARMK-HC-C', complianceScore: 87, locationCount: 168, operational: 89, equipment: 85, documentation: 86 },
+        { id: 'h-hc-east', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'ARMK-HC-E', complianceScore: 86, locationCount: 174, operational: 88, equipment: 84, documentation: 85 },
+      ],
+    },
+    {
+      id: 'h-sports', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Sports & Leisure', code: 'ARMK-SL',
+      complianceScore: 87, locationCount: 746, operational: 89, equipment: 85, documentation: 86,
+      children: [
+        {
+          id: 'h-sl-west', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'ARMK-SL-W',
+          complianceScore: 86, locationCount: 224, operational: 88, equipment: 84, documentation: 85,
+          children: [
+            {
+              id: 'h-sl-w-yosemite', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'Yosemite District', code: 'ARMK-SL-W-YOS',
+              complianceScore: 89, locationCount: 7, operational: 91, equipment: 87, documentation: 88,
+              children: [
+                { id: 'h-yos-lodge', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Yosemite Valley Lodge', code: 'YOS-001', complianceScore: 92, locationCount: 1, operational: 94, equipment: 90, documentation: 91 },
+                { id: 'h-yos-ahwahnee', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'The Ahwahnee Dining Room', code: 'YOS-002', complianceScore: 94, locationCount: 1, operational: 96, equipment: 92, documentation: 93 },
+                { id: 'h-yos-curry', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Half Dome Village Pavilion', code: 'YOS-003', complianceScore: 87, locationCount: 1, operational: 89, equipment: 85, documentation: 86 },
+                { id: 'h-yos-tuolumne', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Tuolumne Meadows Grill', code: 'YOS-004', complianceScore: 83, locationCount: 1, operational: 85, equipment: 81, documentation: 82 },
+                { id: 'h-yos-glacier', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, operational: 88, equipment: 84, documentation: 85 },
+                { id: 'h-yos-village', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, operational: 92, equipment: 88, documentation: 89 },
+                { id: 'h-yos-white-wolf', tenantId: 'ent-aramark', parentId: 'h-sl-w-yosemite', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, operational: 90, equipment: 86, documentation: 87 },
+              ],
+            },
+            { id: 'h-sl-w-bay', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'Bay Area District', code: 'ARMK-SL-W-BAY', complianceScore: 85, locationCount: 42, operational: 87, equipment: 83, documentation: 84 },
+            { id: 'h-sl-w-socal', tenantId: 'ent-aramark', parentId: 'h-sl-west', level: 'district', name: 'SoCal District', code: 'ARMK-SL-W-SC', complianceScore: 84, locationCount: 68, operational: 86, equipment: 82, documentation: 83 },
+          ],
+        },
+        { id: 'h-sl-central', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'ARMK-SL-C', complianceScore: 88, locationCount: 267, operational: 90, equipment: 86, documentation: 87 },
+        { id: 'h-sl-east', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'ARMK-SL-E', complianceScore: 87, locationCount: 255, operational: 89, equipment: 85, documentation: 86 },
+      ],
+    },
+  ],
+};
+
+export const enterpriseUsers: EnterpriseUser[] = [
+  { id: 'eu-1', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Jennifer Martinez', email: 'j.martinez@aramark.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
+  { id: 'eu-2', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Robert Chen', email: 'r.chen@aramark.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
+  { id: 'eu-3', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Maria Santos', email: 'm.santos@aramark.com', role: 'District Supervisor', location: 'Yosemite District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
+  { id: 'eu-4', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'David Kim', email: 'd.kim@aramark.com', role: 'Site Manager', location: 'Yosemite Valley Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
+  { id: 'eu-5', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Sarah Thompson', email: 's.thompson@aramark.com', role: 'Site Manager', location: 'The Ahwahnee', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
+  { id: 'eu-6', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Kevin Patel', email: 'k.patel@aramark.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
+  { id: 'eu-7', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Emma Williams', email: 'e.williams@compass-group.com', role: 'Corporate Admin', location: 'Global HQ', ssoStatus: 'active', lastLogin: '2026-02-10T09:00:00Z', scimManaged: true, externalId: 'CG-10001', groups: ['Platform_Admins', 'Global_Leadership'] },
+  { id: 'eu-8', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'James O\'Brien', email: 'j.obrien@compass-group.com', role: 'Regional Manager', location: 'North America', ssoStatus: 'active', lastLogin: '2026-02-09T18:20:00Z', scimManaged: true, externalId: 'CG-20034', groups: ['Regional_Managers'] },
+  { id: 'eu-9', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Lisa Nakamura', email: 'l.nakamura@compass-group.com', role: 'Area Manager', location: 'West Coast Area', ssoStatus: 'active', lastLogin: '2026-02-10T07:45:00Z', scimManaged: true, externalId: 'CG-30112', groups: ['Area_Managers', 'Chartwells'] },
+  { id: 'eu-10', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Michael Torres', email: 'm.torres@compass-group.com', role: 'Unit Manager', location: 'Stanford Dining', ssoStatus: 'active', lastLogin: '2026-02-09T14:30:00Z', scimManaged: false, externalId: 'CG-40256', groups: ['Unit_Managers'] },
+  { id: 'eu-11', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Rachel Singh', email: 'r.singh@compass-group.com', role: 'Quality Inspector', location: 'North America', ssoStatus: 'disabled', lastLogin: '2026-01-15T11:00:00Z', scimManaged: true, externalId: 'CG-50008', groups: ['Quality_Team'] },
+  { id: 'eu-12', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Pierre Dubois', email: 'p.dubois@sodexo.com', role: 'Platform Admin', location: 'Headquarters', ssoStatus: 'pending', lastLogin: '', scimManaged: false, externalId: '', groups: [] },
+  { id: 'eu-13', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Angela Rivera', email: 'a.rivera@sodexo.com', role: 'Regional Director', location: 'North America Division', ssoStatus: 'pending', lastLogin: '', scimManaged: false, externalId: '', groups: [] },
+  { id: 'eu-14', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Mark Johnson', email: 'm.johnson@sodexo.com', role: 'District Manager', location: 'California District', ssoStatus: 'pending', lastLogin: '', scimManaged: false, externalId: '', groups: [] },
+  { id: 'eu-15', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Yuki Tanaka', email: 'y.tanaka@sodexo.com', role: 'Site Coordinator', location: 'Kaiser SF Medical', ssoStatus: 'pending', lastLogin: '', scimManaged: false, externalId: '', groups: [] },
+];
+
+export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
+  { id: 'ert-1', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
+  { id: 'ert-2', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
+  { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Audit Package', templateType: 'audit_package', sections: ['Audit Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
+  { id: 'ert-4', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Location Detail Report', templateType: 'location_detail', sections: ['Site Overview', 'Temperature Logs', 'Checklist Completion', 'Equipment Status', 'Vendor Documents'], brandWatermark: false, exportFormats: ['PDF', 'CSV'], isDefault: true },
+];
+
+export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
+  { id: 'eal-1', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-2', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
+  { id: 'eal-3', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'report_generated', resourceType: 'Report', resourceName: 'Q1 2026 Quarterly Audit Package', details: 'Generated for North America region — 1,234 locations', timestamp: '2026-02-09T17:30:00Z', ipAddress: '10.56.2.88' },
+  { id: 'eal-4', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
+  { id: 'eal-5', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'System (SCIM)', action: 'user_deactivated', resourceType: 'User', resourceName: 'Rachel Singh', details: 'Deactivated via SCIM — employee offboarded in Azure AD', timestamp: '2026-02-08T09:00:00Z', ipAddress: '52.14.87.203' },
+  { id: 'eal-6', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'Arthur Haggerty', action: 'tenant_created', resourceType: 'Tenant', resourceName: 'Sodexo Safe Kitchen', details: 'Pilot tenant provisioned — 623 locations, 1-year contract', timestamp: '2026-02-07T11:00:00Z', ipAddress: '67.183.45.12' },
+  { id: 'eal-7', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Jennifer Martinez', action: 'branding_updated', resourceType: 'Branding', resourceName: 'Aramark Compliance Hub', details: 'Updated sidebar background color from #1D1D1B to #002855', timestamp: '2026-02-06T16:45:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-8', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'sso_test_passed', resourceType: 'SSO Configuration', resourceName: 'OIDC Provider', details: 'Azure AD OIDC test connection passed — 12ms response', timestamp: '2026-02-07T10:15:00Z', ipAddress: '10.56.2.88' },
+  { id: 'eal-9', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
+  { id: 'eal-10', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'David Nguyen', action: 'template_created', resourceType: 'Report Template', resourceName: 'Location Detail Report', details: 'Created default location detail template for Sodexo pilot', timestamp: '2026-02-08T13:20:00Z', ipAddress: '67.183.45.12' },
+];
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {

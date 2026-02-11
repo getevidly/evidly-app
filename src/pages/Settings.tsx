@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield, Layers, KeyRound, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -55,6 +55,7 @@ export function Settings() {
     'regulatory-monitoring': 'Regulatory Monitoring',
     jurisdiction: 'Jurisdiction Profile',
     privacy: 'Privacy',
+    enterprise: 'Enterprise',
   };
 
   const allTabs = [
@@ -68,6 +69,7 @@ export function Settings() {
     { id: 'privacy', icon: Shield, roles: ['executive', 'management'] as UserRole[] },
     { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
+    { id: 'enterprise', icon: Layers, roles: ['executive'] as UserRole[] },
   ];
 
   const tabs = allTabs.filter(tab => tab.roles.includes(userRole));
@@ -1223,6 +1225,109 @@ export function Settings() {
                   <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium">
                     {t('common.update')}
                   </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'enterprise' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900">Enterprise Administration</h3>
+              <p className="text-sm text-gray-600">Manage enterprise tenants, SSO configuration, and white-label branding.</p>
+
+              {/* SSO Quick Status */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <KeyRound className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">SSO Quick Status</h4>
+                    <p className="text-xs text-gray-500">Enterprise single sign-on configuration</p>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                      <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> 2 of 3 Active
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-3">
+                  {[
+                    { name: 'Aramark', provider: 'SAML via Okta', status: 'passed', color: '#C8102E' },
+                    { name: 'Compass Group', provider: 'OIDC via Azure AD', status: 'passed', color: '#003DA5' },
+                    { name: 'Sodexo', provider: 'Not configured', status: 'pending', color: '#ED1C24' },
+                  ].map(item => (
+                    <div key={item.name} className="flex items-center gap-3 p-2 rounded-lg bg-gray-50">
+                      <div className="w-6 h-6 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: item.color }}>
+                        {item.name[0]}
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 flex-1">{item.name}</span>
+                      <span className="text-xs text-gray-500">{item.provider}</span>
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${item.status === 'passed' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}`}>
+                        {item.status === 'passed' ? 'Active' : 'Pending'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                  Configure SSO <ExternalLink className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* Tenant Branding Preview */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <Layers className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Tenant Branding</h4>
+                    <p className="text-xs text-gray-500">White-label configuration for enterprise clients</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3 mb-3">
+                  {[
+                    { name: 'Aramark Compliance Hub', colors: ['#C8102E', '#002855', '#F0AB00'] },
+                    { name: 'Compass Compliance', colors: ['#003DA5', '#1B365D', '#FFB81C'] },
+                    { name: 'Sodexo Safe Kitchen', colors: ['#ED1C24', '#231F20', '#00A0DF'] },
+                  ].map(t => (
+                    <div key={t.name} className="p-3 rounded-lg bg-gray-50 text-center">
+                      <div className="flex items-center justify-center gap-1 mb-2">
+                        {t.colors.map((c, i) => (
+                          <div key={i} className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: c }} />
+                        ))}
+                      </div>
+                      <p className="text-[11px] font-medium text-gray-700">{t.name}</p>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => navigate('/enterprise/admin')} className="text-sm font-medium flex items-center gap-1 cursor-pointer" style={{ color: '#1e4d6b' }}>
+                  Manage Branding <ExternalLink className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* Enterprise Admin Portal Link */}
+              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
+                <h4 className="text-lg font-semibold mb-2">Enterprise Admin Portal</h4>
+                <p className="text-gray-200 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
+                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-lg bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
+                  Open Enterprise Admin
+                </button>
+              </div>
+
+              {/* SCIM Status */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-900">SCIM 2.0 Provisioning</h4>
+                    <p className="text-xs text-gray-500">Automated user lifecycle management</p>
+                  </div>
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                    2 Active
+                  </span>
                 </div>
               </div>
             </div>
