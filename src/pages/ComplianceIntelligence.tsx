@@ -6,6 +6,7 @@ import {
   Flame, UtensilsCrossed, FileText, BarChart3, Users, Target, Zap,
   Clock, Activity, Eye, Shield, CalendarDays, DollarSign, FileBarChart,
   Radar, Brain, AlertCircle, ClipboardCheck, Info, Send, Plus, CheckCircle,
+  Database, Server, CreditCard, Layers, Star,
 } from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -35,6 +36,10 @@ import {
   reportTemplates, reportSections, distributionList,
   // Anomaly tab
   anomalyAlerts, antiGamingFlags, anomalySummary,
+  // Platform tab
+  enterpriseAggregation, regionAggregations, dataFreshness,
+  databaseTables, edgeFunctions, pricingTiers, enterpriseBundles, cSuitePitch,
+  type AggregationStats,
 } from '../data/intelligenceData';
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -74,7 +79,7 @@ function ScoreCircle({ score, size = 56 }: { score: number; size?: number }) {
   );
 }
 
-type Tab = 'command' | 'compare' | 'trends' | 'risk' | 'staffing' | 'financial' | 'reports' | 'anomalies';
+type Tab = 'command' | 'compare' | 'trends' | 'risk' | 'staffing' | 'financial' | 'reports' | 'anomalies' | 'platform';
 
 const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
   { id: 'command', label: 'Command Center', icon: BarChart3 },
@@ -85,6 +90,7 @@ const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
   { id: 'financial', label: 'Financial', icon: DollarSign },
   { id: 'reports', label: 'Reports', icon: FileBarChart },
   { id: 'anomalies', label: 'Anomalies', icon: Radar },
+  { id: 'platform', label: 'Platform', icon: Layers },
 ];
 
 // ── Main Page ────────────────────────────────────────────────────
@@ -142,6 +148,7 @@ export function ComplianceIntelligence() {
         {activeTab === 'financial' && <FinancialTab />}
         {activeTab === 'reports' && <ReportsTab />}
         {activeTab === 'anomalies' && <AnomalyTab />}
+        {activeTab === 'platform' && <PlatformTab />}
       </div>
 
       {/* Powered By */}
@@ -1493,6 +1500,321 @@ function AnomalyTab() {
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-100">
           <p className="text-[10px] text-amber-700 italic">Recommend on-site data quality audit for flagged locations.</p>
           <button onClick={() => alert('Schedule on-site audit — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50">Schedule Audit</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 9 — PLATFORM (Aggregation, Freshness, Schema, Pricing)
+// ══════════════════════════════════════════════════════════════════
+
+function StatRow({ label, stats }: { label: string; stats: AggregationStats }) {
+  return (
+    <tr className="border-b border-gray-50">
+      <td className="py-2 text-xs font-semibold text-gray-900 pr-4">{label}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.mean}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.median}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.stdDev}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.min}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.max}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.p25}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.p50}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.p75}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.p90}</td>
+      <td className="py-2 text-xs text-gray-600 text-center">{stats.p95}</td>
+    </tr>
+  );
+}
+
+function PlatformTab() {
+  const [expandedTable, setExpandedTable] = useState<string | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string>('enterprise');
+
+  const activeAgg = selectedRegion === 'enterprise'
+    ? enterpriseAggregation
+    : regionAggregations.find(r => r.entityName === selectedRegion) || enterpriseAggregation;
+
+  return (
+    <div className="space-y-6">
+      {/* C-Suite Pitch Banner */}
+      <div className="rounded-xl p-6" style={{ background: 'linear-gradient(135deg, #002855 0%, #1e4d6b 100%)' }}>
+        <div className="max-w-3xl">
+          <h2 className="text-xl font-bold text-white mb-1">{cSuitePitch.headline}</h2>
+          <p className="text-white/70 text-sm mb-4">{cSuitePitch.subheadline}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {cSuitePitch.valueProps.map((prop, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <CheckCircle className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" />
+                <span className="text-white/90 text-xs">{prop}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[#d4af37] text-xs font-semibold mt-4 italic">{cSuitePitch.closingLine}</p>
+        </div>
+      </div>
+
+      {/* Section A: Aggregation Statistics */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <h3 className="text-sm font-bold text-gray-900">Statistical Aggregation Engine</h3>
+          </div>
+          <select
+            value={selectedRegion}
+            onChange={e => setSelectedRegion(e.target.value)}
+            className="text-xs border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+          >
+            <option value="enterprise">Enterprise (All {enterpriseAggregation.overall.count} locations)</option>
+            {regionAggregations.map(r => (
+              <option key={r.entityName} value={r.entityName}>{r.entityName} ({r.overall.count} locations)</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2 pr-4">Metric</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Mean</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Median</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Std Dev</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Min</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Max</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">P25</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">P50</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">P75</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">P90</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">P95</th>
+              </tr>
+            </thead>
+            <tbody>
+              <StatRow label="Overall Compliance" stats={activeAgg.overall} />
+              <StatRow label="Food Safety" stats={activeAgg.foodSafety} />
+              <StatRow label="Workplace Safety" stats={activeAgg.workplace} />
+              <StatRow label="Regulatory" stats={activeAgg.regulatory} />
+            </tbody>
+          </table>
+        </div>
+
+        {/* Period-over-Period Changes */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-gray-100">
+          {Object.entries(activeAgg.periodChanges).map(([key, change]) => (
+            <div key={key} className="text-center p-3 rounded-lg bg-gray-50">
+              <p className="text-[10px] text-gray-500 mb-1">{change.label}</p>
+              <div className="flex items-center justify-center gap-1">
+                {change.direction === 'up' ? (
+                  <ArrowUp className="h-4 w-4 text-green-600" />
+                ) : change.direction === 'down' ? (
+                  <ArrowDown className="h-4 w-4 text-red-500" />
+                ) : (
+                  <Minus className="h-4 w-4 text-gray-400" />
+                )}
+                <span className={`text-lg font-bold ${
+                  change.direction === 'up' ? 'text-green-600' : change.direction === 'down' ? 'text-red-500' : 'text-gray-500'
+                }`}>{change.direction === 'up' ? '+' : ''}{change.value}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Section B: Data Freshness */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h3 className="text-sm font-bold text-gray-900">Data Freshness</h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {dataFreshness.map(d => (
+            <div key={d.metric} className="p-3 rounded-lg border border-gray-100">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-gray-900">{d.metric}</span>
+                <span className={`w-2 h-2 rounded-full ${
+                  d.status === 'live' ? 'bg-green-500' : d.status === 'recent' ? 'bg-yellow-400' : 'bg-red-500'
+                }`} />
+              </div>
+              <p className="text-[10px] text-gray-500">{d.interval}</p>
+              <p className="text-[10px] text-gray-400 mt-1">Last: {d.lastUpdated}</p>
+              <p className="text-[10px] text-gray-400">Next: {d.nextUpdate}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Section C: Database Schema */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Database className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h3 className="text-sm font-bold text-gray-900">Database Schema — {databaseTables.length} Tables</h3>
+        </div>
+        <div className="space-y-2">
+          {databaseTables.map(table => (
+            <div key={table.name} className="border border-gray-100 rounded-lg overflow-hidden">
+              <button
+                onClick={() => setExpandedTable(expandedTable === table.name ? null : table.name)}
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <code className="text-xs font-mono font-bold text-[#1e4d6b]">{table.name}</code>
+                  <span className="text-[10px] text-gray-400">{table.rowEstimate}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-gray-400">{table.columns.length} columns</span>
+                  <ChevronRight className={`h-4 w-4 text-gray-400 transition-transform ${expandedTable === table.name ? 'rotate-90' : ''}`} />
+                </div>
+              </button>
+              {expandedTable === table.name && (
+                <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+                  <p className="text-[11px] text-gray-600 mb-2">{table.description}</p>
+                  <p className="text-[10px] text-gray-400 mb-3">Refresh: {table.refreshSchedule}</p>
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Column</th>
+                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Type</th>
+                        <th className="text-left text-[9px] uppercase text-gray-500 font-semibold pb-1">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {table.columns.map(col => (
+                        <tr key={col.name} className="border-b border-gray-50">
+                          <td className="py-1.5 text-[11px] font-mono text-gray-800">{col.name}</td>
+                          <td className="py-1.5 text-[11px] font-mono text-purple-600">{col.type}</td>
+                          <td className="py-1.5 text-[11px] text-gray-500">{col.description}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {table.indexes.length > 0 && (
+                    <div className="mt-2 pt-2 border-t border-gray-200">
+                      <span className="text-[9px] uppercase text-gray-500 font-semibold">Indexes: </span>
+                      <span className="text-[10px] font-mono text-gray-600">{table.indexes.join(' · ')}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Section D: Edge Functions */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Server className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h3 className="text-sm font-bold text-gray-900">Edge Functions — {edgeFunctions.length} Functions</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Function</th>
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Schedule</th>
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Avg Runtime</th>
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Last Run</th>
+                <th className="text-center text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Status</th>
+                <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-2">Dependencies</th>
+              </tr>
+            </thead>
+            <tbody>
+              {edgeFunctions.map(fn => (
+                <tr key={fn.name} className="border-b border-gray-50">
+                  <td className="py-2.5">
+                    <code className="text-xs font-mono font-semibold text-[#1e4d6b]">{fn.name}</code>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{fn.description}</p>
+                  </td>
+                  <td className="py-2.5 text-xs text-gray-600">{fn.schedule}</td>
+                  <td className="py-2.5 text-xs text-gray-600">{fn.avgRuntime}</td>
+                  <td className="py-2.5 text-[11px] text-gray-500">{fn.lastRun}</td>
+                  <td className="py-2.5 text-center">
+                    <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                      fn.status === 'healthy' ? 'bg-green-100 text-green-700' :
+                      fn.status === 'warning' ? 'bg-amber-100 text-amber-700' :
+                      'bg-red-100 text-red-700'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        fn.status === 'healthy' ? 'bg-green-500' :
+                        fn.status === 'warning' ? 'bg-amber-500' :
+                        'bg-red-500'
+                      }`} />
+                      {fn.status}
+                    </span>
+                  </td>
+                  <td className="py-2.5 text-[10px] font-mono text-gray-400">{fn.dependencies.join(', ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Section E: Pricing Tiers */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <CreditCard className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h3 className="text-sm font-bold text-gray-900">Intelligence Platform Pricing</h3>
+        </div>
+        <p className="text-[11px] text-gray-400 mb-5">Add-on to EvidLY core platform. Volume discounts available for 500+ locations.</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {pricingTiers.map(tier => (
+            <div
+              key={tier.id}
+              className={`rounded-xl p-5 border-2 ${
+                tier.highlighted
+                  ? 'border-[#d4af37] shadow-lg relative'
+                  : 'border-gray-200'
+              }`}
+            >
+              {tier.highlighted && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-1 px-3 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ backgroundColor: '#d4af37' }}>
+                  <Star className="h-3 w-3" /> MOST POPULAR
+                </div>
+              )}
+              <h4 className="text-base font-bold text-gray-900">{tier.name}</h4>
+              <p className="text-[11px] text-gray-500 mb-3">{tier.description}</p>
+              <p className="text-3xl font-bold mb-1" style={{ color: '#1e4d6b' }}>{tier.priceLabel}</p>
+              <p className="text-[10px] text-gray-400 mb-4">{tier.locationLimit}</p>
+              <ul className="space-y-2">
+                {tier.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
+                    <span className="text-[11px] text-gray-700">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => alert(`Contact sales for ${tier.name} tier`)}
+                className={`w-full mt-5 py-2.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
+                  tier.highlighted
+                    ? 'text-white hover:opacity-90'
+                    : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+                style={tier.highlighted ? { backgroundColor: '#1e4d6b' } : undefined}
+              >
+                {tier.highlighted ? 'Get Started' : 'Contact Sales'}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Enterprise Bundles */}
+        <div className="mt-5 pt-4 border-t border-gray-100">
+          <h4 className="text-xs font-semibold text-gray-900 mb-3">Enterprise Bundles</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {enterpriseBundles.map((bundle, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-gray-50">
+                <div>
+                  <p className="text-xs font-semibold text-gray-800">{bundle.name}</p>
+                  <p className="text-[10px] text-gray-500">{bundle.description}</p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-bold text-white" style={{ backgroundColor: '#d4af37' }}>Save {bundle.saving}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

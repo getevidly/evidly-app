@@ -830,3 +830,443 @@ export const anomalySummary = {
   behavioral: { total: anomalyAlerts.filter(a => a.type === 'behavioral').length, critical: anomalyAlerts.filter(a => a.type === 'behavioral' && a.severity === 'critical').length },
   volume: { total: anomalyAlerts.filter(a => a.type === 'volume').length, critical: anomalyAlerts.filter(a => a.type === 'volume' && a.severity === 'critical').length },
 };
+
+// ══════════════════════════════════════════════════════════════════
+// DATA AGGREGATION ENGINE
+// ══════════════════════════════════════════════════════════════════
+
+export interface AggregationStats {
+  count: number;
+  mean: number;
+  median: number;
+  stdDev: number;
+  min: number;
+  max: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p90: number;
+  p95: number;
+}
+
+export interface PeriodChange {
+  value: number;
+  direction: 'up' | 'down' | 'flat';
+  label: string;
+}
+
+export interface AggregationLevel {
+  level: string;
+  entityName: string;
+  overall: AggregationStats;
+  foodSafety: AggregationStats;
+  workplace: AggregationStats;
+  regulatory: AggregationStats;
+  periodChanges: {
+    wow: PeriodChange;
+    mom: PeriodChange;
+    qoq: PeriodChange;
+    yoy: PeriodChange;
+  };
+}
+
+function computeStats(values: number[]): AggregationStats {
+  const sorted = [...values].sort((a, b) => a - b);
+  const n = sorted.length;
+  const mean = sorted.reduce((s, v) => s + v, 0) / n;
+  const variance = sorted.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
+  const pct = (p: number) => sorted[Math.min(Math.floor(p * n), n - 1)];
+  return {
+    count: n,
+    mean: Math.round(mean * 10) / 10,
+    median: pct(0.5),
+    stdDev: Math.round(Math.sqrt(variance) * 10) / 10,
+    min: sorted[0],
+    max: sorted[n - 1],
+    p25: pct(0.25),
+    p50: pct(0.5),
+    p75: pct(0.75),
+    p90: pct(0.9),
+    p95: pct(0.95),
+  };
+}
+
+// Compute real aggregation stats from the 487-location leaderboard
+const allOverall = locationLeaderboard.map(l => l.overall);
+const allFood = locationLeaderboard.map(l => l.foodSafety);
+const allWorkplace = locationLeaderboard.map(l => l.workplace);
+const allRegulatory = locationLeaderboard.map(l => l.regulatory);
+
+export const enterpriseAggregation: AggregationLevel = {
+  level: 'enterprise',
+  entityName: 'Aramark — All Locations',
+  overall: computeStats(allOverall),
+  foodSafety: computeStats(allFood),
+  workplace: computeStats(allWorkplace),
+  regulatory: computeStats(allRegulatory),
+  periodChanges: {
+    wow: { value: 0.3, direction: 'up', label: 'Week-over-Week' },
+    mom: { value: 1.2, direction: 'up', label: 'Month-over-Month' },
+    qoq: { value: 2.8, direction: 'up', label: 'Quarter-over-Quarter' },
+    yoy: { value: 4.1, direction: 'up', label: 'Year-over-Year' },
+  },
+};
+
+// Region-level aggregations
+const regionNames = [...new Set(locationLeaderboard.map(l => l.region))];
+export const regionAggregations: AggregationLevel[] = regionNames.map(region => {
+  const locs = locationLeaderboard.filter(l => l.region === region);
+  return {
+    level: 'region',
+    entityName: region,
+    overall: computeStats(locs.map(l => l.overall)),
+    foodSafety: computeStats(locs.map(l => l.foodSafety)),
+    workplace: computeStats(locs.map(l => l.workplace)),
+    regulatory: computeStats(locs.map(l => l.regulatory)),
+    periodChanges: {
+      wow: { value: +(seededRandom() * 1.5 - 0.3).toFixed(1), direction: seededRandom() > 0.3 ? 'up' : 'down', label: 'Week-over-Week' },
+      mom: { value: +(seededRandom() * 3).toFixed(1), direction: seededRandom() > 0.25 ? 'up' : 'down', label: 'Month-over-Month' },
+      qoq: { value: +(seededRandom() * 5).toFixed(1), direction: seededRandom() > 0.2 ? 'up' : 'down', label: 'Quarter-over-Quarter' },
+      yoy: { value: +(seededRandom() * 7).toFixed(1), direction: 'up', label: 'Year-over-Year' },
+    },
+  };
+});
+
+// ══════════════════════════════════════════════════════════════════
+// DATA FRESHNESS
+// ══════════════════════════════════════════════════════════════════
+
+export interface DataFreshnessIndicator {
+  metric: string;
+  interval: string;
+  lastUpdated: string;
+  nextUpdate: string;
+  status: 'live' | 'recent' | 'stale';
+}
+
+export const dataFreshness: DataFreshnessIndicator[] = [
+  { metric: 'Dashboard Scores', interval: 'Every 15 min', lastUpdated: 'Feb 10, 2026 08:45 AM', nextUpdate: 'Feb 10, 2026 09:00 AM', status: 'live' },
+  { metric: 'Aggregation Statistics', interval: 'Daily (5 AM) + hourly incremental', lastUpdated: 'Feb 10, 2026 08:00 AM', nextUpdate: 'Feb 10, 2026 09:00 AM', status: 'live' },
+  { metric: 'Risk Predictions', interval: 'Weekly (Monday)', lastUpdated: 'Feb 9, 2026', nextUpdate: 'Feb 16, 2026', status: 'recent' },
+  { metric: 'Predictive Models', interval: 'Weekly retrain', lastUpdated: 'Feb 9, 2026', nextUpdate: 'Feb 16, 2026', status: 'recent' },
+  { metric: 'Anomaly Detection', interval: 'Hourly scan', lastUpdated: 'Feb 10, 2026 08:00 AM', nextUpdate: 'Feb 10, 2026 09:00 AM', status: 'live' },
+  { metric: 'Financial Projections', interval: 'Monthly (1st)', lastUpdated: 'Feb 1, 2026', nextUpdate: 'Mar 1, 2026', status: 'recent' },
+  { metric: 'Staffing Correlations', interval: 'Daily', lastUpdated: 'Feb 10, 2026 05:00 AM', nextUpdate: 'Feb 11, 2026 05:00 AM', status: 'live' },
+  { metric: 'Executive Reports', interval: 'On schedule', lastUpdated: 'Feb 7, 2026', nextUpdate: 'Feb 14, 2026', status: 'recent' },
+];
+
+// ══════════════════════════════════════════════════════════════════
+// DATABASE SCHEMA REFERENCE (9 Tables)
+// ══════════════════════════════════════════════════════════════════
+
+export interface DbTableSchema {
+  name: string;
+  description: string;
+  rowEstimate: string;
+  columns: { name: string; type: string; description: string }[];
+  indexes: string[];
+  refreshSchedule: string;
+}
+
+export const databaseTables: DbTableSchema[] = [
+  {
+    name: 'intelligence_aggregates',
+    description: 'Pre-computed statistical aggregates at every hierarchy level',
+    rowEstimate: '~2,400 rows (487 locations × 4 levels + time-series)',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'entity_type', type: 'enum', description: 'location | district | region | enterprise' },
+      { name: 'entity_id', type: 'uuid', description: 'FK to locations/districts/regions' },
+      { name: 'metric_type', type: 'enum', description: 'overall | food_safety | workplace | regulatory' },
+      { name: 'period', type: 'date', description: 'Aggregation period date' },
+      { name: 'count', type: 'int', description: 'Number of data points' },
+      { name: 'mean', type: 'numeric(5,2)', description: 'Arithmetic mean' },
+      { name: 'median', type: 'numeric(5,2)', description: 'Median (p50)' },
+      { name: 'std_dev', type: 'numeric(5,2)', description: 'Standard deviation' },
+      { name: 'min_val', type: 'numeric(5,2)', description: 'Minimum value' },
+      { name: 'max_val', type: 'numeric(5,2)', description: 'Maximum value' },
+      { name: 'p25', type: 'numeric(5,2)', description: '25th percentile' },
+      { name: 'p75', type: 'numeric(5,2)', description: '75th percentile' },
+      { name: 'p90', type: 'numeric(5,2)', description: '90th percentile' },
+      { name: 'p95', type: 'numeric(5,2)', description: '95th percentile' },
+      { name: 'wow_change', type: 'numeric(5,2)', description: 'Week-over-week change' },
+      { name: 'mom_change', type: 'numeric(5,2)', description: 'Month-over-month change' },
+      { name: 'qoq_change', type: 'numeric(5,2)', description: 'Quarter-over-quarter change' },
+      { name: 'yoy_change', type: 'numeric(5,2)', description: 'Year-over-year change' },
+      { name: 'computed_at', type: 'timestamptz', description: 'When this aggregate was computed' },
+    ],
+    indexes: ['entity_type, entity_id, period', 'metric_type, period', 'computed_at'],
+    refreshSchedule: 'Daily full recalc at 5 AM UTC + hourly incremental',
+  },
+  {
+    name: 'intelligence_insights',
+    description: 'AI-generated insights and recommendations',
+    rowEstimate: '~5,000 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'entity_type', type: 'enum', description: 'Scope of insight' },
+      { name: 'entity_id', type: 'uuid', description: 'Related entity' },
+      { name: 'insight_type', type: 'enum', description: 'trend | anomaly | recommendation | alert' },
+      { name: 'severity', type: 'enum', description: 'info | warning | critical' },
+      { name: 'title', type: 'text', description: 'Short insight title' },
+      { name: 'body', type: 'text', description: 'Full insight description' },
+      { name: 'action_items', type: 'jsonb', description: 'Suggested actions array' },
+      { name: 'expires_at', type: 'timestamptz', description: 'When insight becomes stale' },
+      { name: 'created_at', type: 'timestamptz', description: 'Generation timestamp' },
+    ],
+    indexes: ['entity_type, entity_id', 'insight_type, severity', 'expires_at'],
+    refreshSchedule: 'Generated on each aggregation cycle',
+  },
+  {
+    name: 'intelligence_risk_predictions',
+    description: 'ML-based risk scores and failure probability predictions',
+    rowEstimate: '~2,000 rows (487 locations × 4 risk types)',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'location_id', type: 'uuid', description: 'FK to locations' },
+      { name: 'risk_type', type: 'enum', description: 'health_dept_failure | incident | equipment_failure | staffing' },
+      { name: 'probability', type: 'numeric(5,4)', description: 'Risk probability (0-1)' },
+      { name: 'confidence', type: 'numeric(5,4)', description: 'Model confidence (0-1)' },
+      { name: 'contributing_factors', type: 'jsonb', description: 'Feature importance breakdown' },
+      { name: 'prediction_window', type: 'interval', description: 'Time horizon for prediction' },
+      { name: 'model_version', type: 'text', description: 'Model version identifier' },
+      { name: 'computed_at', type: 'timestamptz', description: 'Prediction timestamp' },
+    ],
+    indexes: ['location_id, risk_type', 'probability DESC', 'computed_at'],
+    refreshSchedule: 'Weekly full retrain, daily inference',
+  },
+  {
+    name: 'intelligence_anomalies',
+    description: 'Detected anomalies across all data streams',
+    rowEstimate: '~500 rows (rolling 90-day window)',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'anomaly_type', type: 'enum', description: 'score | behavioral | volume' },
+      { name: 'entity_id', type: 'uuid', description: 'Affected entity' },
+      { name: 'severity', type: 'enum', description: 'info | warning | critical' },
+      { name: 'confidence', type: 'numeric(5,4)', description: 'Detection confidence' },
+      { name: 'description', type: 'text', description: 'Human-readable description' },
+      { name: 'context', type: 'jsonb', description: 'Statistical context and baselines' },
+      { name: 'suggested_action', type: 'text', description: 'Recommended response' },
+      { name: 'status', type: 'enum', description: 'new | investigating | resolved | dismissed' },
+      { name: 'resolved_by', type: 'uuid', description: 'User who resolved' },
+      { name: 'detected_at', type: 'timestamptz', description: 'Detection timestamp' },
+    ],
+    indexes: ['anomaly_type, severity', 'entity_id', 'status', 'detected_at'],
+    refreshSchedule: 'Hourly scan',
+  },
+  {
+    name: 'intelligence_staffing_correlations',
+    description: 'Computed staffing-to-compliance correlations by period',
+    rowEstimate: '~6,000 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'location_id', type: 'uuid', description: 'FK to locations' },
+      { name: 'period', type: 'date', description: 'Correlation period' },
+      { name: 'turnover_rate', type: 'numeric(5,2)', description: 'Staff turnover rate (%)' },
+      { name: 'training_completion', type: 'numeric(5,2)', description: 'Training completion (%)' },
+      { name: 'staffing_ratio', type: 'numeric(5,2)', description: 'Actual vs required staffing' },
+      { name: 'cfpm_count', type: 'int', description: 'Number of certified food protection managers' },
+      { name: 'manager_tenure_months', type: 'int', description: 'Current manager tenure' },
+      { name: 'compliance_score', type: 'numeric(5,2)', description: 'Overall compliance score' },
+      { name: 'correlation_coefficient', type: 'numeric(5,4)', description: 'Pearson correlation r' },
+      { name: 'computed_at', type: 'timestamptz', description: 'Computation timestamp' },
+    ],
+    indexes: ['location_id, period', 'turnover_rate', 'computed_at'],
+    refreshSchedule: 'Daily',
+  },
+  {
+    name: 'intelligence_financial_impact',
+    description: 'Financial risk projections and actual incident costs',
+    rowEstimate: '~1,200 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'entity_type', type: 'enum', description: 'location | district | region | enterprise' },
+      { name: 'entity_id', type: 'uuid', description: 'Related entity' },
+      { name: 'category', type: 'enum', description: 'penalties | insurance | incidents | revenue | roi' },
+      { name: 'period', type: 'date', description: 'Projection period' },
+      { name: 'low_estimate', type: 'numeric(12,2)', description: 'Low-end estimate ($)' },
+      { name: 'high_estimate', type: 'numeric(12,2)', description: 'High-end estimate ($)' },
+      { name: 'actual', type: 'numeric(12,2)', description: 'Actual cost (if realized)' },
+      { name: 'computed_at', type: 'timestamptz', description: 'Computation timestamp' },
+    ],
+    indexes: ['entity_type, entity_id', 'category, period', 'computed_at'],
+    refreshSchedule: 'Monthly full, weekly incremental',
+  },
+  {
+    name: 'intelligence_executive_reports',
+    description: 'Generated executive report metadata and storage',
+    rowEstimate: '~200 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'template_id', type: 'text', description: 'Report template identifier' },
+      { name: 'title', type: 'text', description: 'Report title' },
+      { name: 'report_type', type: 'enum', description: 'monthly | quarterly | ad_hoc' },
+      { name: 'scope_entity_type', type: 'enum', description: 'Scope level' },
+      { name: 'scope_entity_id', type: 'uuid', description: 'Scope entity' },
+      { name: 'generated_by', type: 'uuid', description: 'Requesting user' },
+      { name: 'storage_path', type: 'text', description: 'S3/storage path for PDF' },
+      { name: 'page_count', type: 'int', description: 'Number of pages' },
+      { name: 'sections', type: 'jsonb', description: 'Included sections' },
+      { name: 'status', type: 'enum', description: 'generating | ready | failed' },
+      { name: 'generated_at', type: 'timestamptz', description: 'Generation timestamp' },
+    ],
+    indexes: ['template_id', 'report_type, generated_at', 'generated_by'],
+    refreshSchedule: 'On demand + scheduled (per template)',
+  },
+  {
+    name: 'intelligence_report_views',
+    description: 'Audit trail for report access and distribution',
+    rowEstimate: '~1,500 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'report_id', type: 'uuid', description: 'FK to executive_reports' },
+      { name: 'viewed_by', type: 'uuid', description: 'User who viewed' },
+      { name: 'delivery_method', type: 'enum', description: 'web | email | api' },
+      { name: 'viewed_at', type: 'timestamptz', description: 'View timestamp' },
+    ],
+    indexes: ['report_id', 'viewed_by', 'viewed_at'],
+    refreshSchedule: 'Real-time insert',
+  },
+  {
+    name: 'intelligence_baselines',
+    description: 'Rolling baselines for anomaly detection thresholds',
+    rowEstimate: '~4,000 rows',
+    columns: [
+      { name: 'id', type: 'uuid', description: 'Primary key' },
+      { name: 'entity_id', type: 'uuid', description: 'Monitored entity' },
+      { name: 'metric', type: 'text', description: 'Metric being baselined' },
+      { name: 'baseline_mean', type: 'numeric(8,2)', description: '90-day rolling mean' },
+      { name: 'baseline_std_dev', type: 'numeric(8,2)', description: '90-day rolling std dev' },
+      { name: 'upper_threshold', type: 'numeric(8,2)', description: 'Mean + 2σ (warning)' },
+      { name: 'critical_threshold', type: 'numeric(8,2)', description: 'Mean + 3σ (critical)' },
+      { name: 'data_points', type: 'int', description: 'Number of observations in window' },
+      { name: 'computed_at', type: 'timestamptz', description: 'Last recomputation' },
+    ],
+    indexes: ['entity_id, metric', 'computed_at'],
+    refreshSchedule: 'Daily at 5 AM UTC',
+  },
+];
+
+// ══════════════════════════════════════════════════════════════════
+// EDGE FUNCTIONS (9 Functions)
+// ══════════════════════════════════════════════════════════════════
+
+export interface EdgeFunction {
+  name: string;
+  description: string;
+  schedule: string;
+  avgRuntime: string;
+  lastRun: string;
+  status: 'healthy' | 'warning' | 'error';
+  dependencies: string[];
+}
+
+export const edgeFunctions: EdgeFunction[] = [
+  { name: 'compute-aggregates', description: 'Full statistical aggregation across all hierarchy levels', schedule: 'Daily 5:00 AM UTC', avgRuntime: '~4 min', lastRun: 'Feb 10, 2026 05:00 AM', status: 'healthy', dependencies: ['intelligence_aggregates'] },
+  { name: 'incremental-aggregates', description: 'Hourly incremental update for changed locations only', schedule: 'Hourly (xx:00)', avgRuntime: '~45 sec', lastRun: 'Feb 10, 2026 08:00 AM', status: 'healthy', dependencies: ['intelligence_aggregates'] },
+  { name: 'generate-insights', description: 'AI-powered insight generation from latest aggregates', schedule: 'After compute-aggregates', avgRuntime: '~2 min', lastRun: 'Feb 10, 2026 05:04 AM', status: 'healthy', dependencies: ['intelligence_insights', 'intelligence_aggregates'] },
+  { name: 'risk-prediction', description: 'ML model inference for risk scoring all locations', schedule: 'Daily 6:00 AM UTC', avgRuntime: '~8 min', lastRun: 'Feb 10, 2026 06:00 AM', status: 'healthy', dependencies: ['intelligence_risk_predictions'] },
+  { name: 'risk-model-retrain', description: 'Weekly ML model retraining with latest 90-day data window', schedule: 'Monday 3:00 AM UTC', avgRuntime: '~25 min', lastRun: 'Feb 9, 2026 03:00 AM', status: 'healthy', dependencies: ['intelligence_risk_predictions'] },
+  { name: 'anomaly-scan', description: 'Hourly scan for statistical anomalies across all data streams', schedule: 'Hourly (xx:15)', avgRuntime: '~90 sec', lastRun: 'Feb 10, 2026 08:15 AM', status: 'healthy', dependencies: ['intelligence_anomalies', 'intelligence_baselines'] },
+  { name: 'staffing-correlations', description: 'Daily staffing-to-compliance correlation computation', schedule: 'Daily 5:30 AM UTC', avgRuntime: '~3 min', lastRun: 'Feb 10, 2026 05:30 AM', status: 'healthy', dependencies: ['intelligence_staffing_correlations'] },
+  { name: 'financial-projections', description: 'Monthly financial impact recalculation with actuals reconciliation', schedule: '1st of month 4:00 AM UTC', avgRuntime: '~6 min', lastRun: 'Feb 1, 2026 04:00 AM', status: 'healthy', dependencies: ['intelligence_financial_impact'] },
+  { name: 'report-scheduler', description: 'Scheduled report generation and distribution', schedule: 'Per template schedule', avgRuntime: '~2 min per report', lastRun: 'Feb 7, 2026 06:00 AM', status: 'healthy', dependencies: ['intelligence_executive_reports', 'intelligence_report_views'] },
+];
+
+// ══════════════════════════════════════════════════════════════════
+// PRICING TIERS
+// ══════════════════════════════════════════════════════════════════
+
+export interface PricingTier {
+  id: string;
+  name: string;
+  price: number;
+  priceLabel: string;
+  description: string;
+  locationLimit: string;
+  features: string[];
+  highlighted: boolean;
+}
+
+export const pricingTiers: PricingTier[] = [
+  {
+    id: 'standard',
+    name: 'Standard',
+    price: 500,
+    priceLabel: '$500/mo',
+    description: 'Core intelligence for growing organizations',
+    locationLimit: 'Up to 50 locations',
+    features: [
+      'Command Center dashboard',
+      'Location comparison (up to 10)',
+      'Trend analysis (90-day window)',
+      'Basic risk scoring',
+      'Monthly executive summary',
+      'Email alerts for critical anomalies',
+      'Standard data refresh (daily)',
+    ],
+    highlighted: false,
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: 1000,
+    priceLabel: '$1,000/mo',
+    description: 'Advanced analytics for enterprise operators',
+    locationLimit: 'Up to 250 locations',
+    features: [
+      'Everything in Standard',
+      'Staffing correlation analysis',
+      'Financial impact projections',
+      'Anomaly detection engine',
+      'Custom report builder',
+      'Quarterly board reports',
+      'API access for BI integration',
+      '15-minute data refresh',
+      'Dedicated success manager',
+    ],
+    highlighted: true,
+  },
+  {
+    id: 'platinum',
+    name: 'Platinum',
+    price: 2000,
+    priceLabel: '$2,000/mo',
+    description: 'Full intelligence suite for enterprise leaders',
+    locationLimit: 'Unlimited locations',
+    features: [
+      'Everything in Premium',
+      'Predictive ML models (weekly retrain)',
+      'Anti-gaming detection',
+      'Insurance carrier integration',
+      'White-label executive reports',
+      'Real-time anomaly alerts (SMS + Slack)',
+      'Custom ML model training',
+      'SLA: 99.9% uptime guarantee',
+      'Dedicated analytics engineer',
+      'On-site quarterly business review',
+    ],
+    highlighted: false,
+  },
+];
+
+// Bundled enterprise tiers
+export const enterpriseBundles = [
+  { name: 'Compliance Intelligence + EvidLY Pro', saving: '15%', description: 'Bundle Intelligence dashboard with full EvidLY platform' },
+  { name: 'Full Enterprise Suite', saving: '25%', description: 'Intelligence + EvidLY Pro + Insurance Risk + Vendor Marketplace' },
+];
+
+// C-Suite pitch
+export const cSuitePitch = {
+  headline: 'Turn Compliance Data into Competitive Advantage',
+  subheadline: 'The only platform that transforms food safety operations into executive-grade business intelligence — across every location, every day.',
+  valueProps: [
+    'Predict health department failures 30 days before they happen',
+    'Quantify the financial impact of every compliance decision',
+    'Detect data gaming and anomalies before they become incidents',
+    'Generate board-ready reports in one click',
+    'Benchmark against 2,000+ peer locations nationwide',
+  ],
+  closingLine: 'Your competitors are still using spreadsheets. Your board wants predictive intelligence.',
+};
