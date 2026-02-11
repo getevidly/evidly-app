@@ -42,11 +42,11 @@ const DEMO_LESSONS: Record<string, { title: string; content: string }[]> = {
 
 // Demo quiz questions
 const DEMO_QUESTIONS = [
-  { id: 'q1', text: 'What is the minimum water temperature for handwashing?', options: ['80°F (27°C)', '100°F (38°C)', '120°F (49°C)', '140°F (60°C)'], correct: 1 },
-  { id: 'q2', text: 'How long should you scrub your hands with soap?', options: ['5 seconds', '10 seconds', '20 seconds', '30 seconds'], correct: 2 },
-  { id: 'q3', text: 'When should you change gloves?', options: ['Every hour', 'When switching from raw to ready-to-eat food', 'Only when they tear', 'At the end of your shift'], correct: 1 },
-  { id: 'q4', text: 'Gloves are a substitute for handwashing.', options: ['True', 'False'], correct: 1 },
-  { id: 'q5', text: 'After using the restroom, you should:', options: ['Put on gloves immediately', 'Wash hands then put on gloves', 'Use hand sanitizer only', 'Wash hands only if visibly dirty'], correct: 1 },
+  { id: 'q1', text: 'What is the minimum water temperature for handwashing?', options: ['80°F (27°C)', '100°F (38°C)', '120°F (49°C)', '140°F (60°C)'], correct: 1, explanation: 'Water must be at least 100°F (38°C) for effective handwashing. Warm water helps dissolve fats and oils, making soap more effective at removing germs.' },
+  { id: 'q2', text: 'How long should you scrub your hands with soap?', options: ['5 seconds', '10 seconds', '20 seconds', '30 seconds'], correct: 2, explanation: 'The CDC recommends scrubbing for at least 20 seconds. A helpful tip: sing "Happy Birthday" twice to time yourself.' },
+  { id: 'q3', text: 'When should you change gloves?', options: ['Every hour', 'When switching from raw to ready-to-eat food', 'Only when they tear', 'At the end of your shift'], correct: 1, explanation: 'Gloves must be changed when switching between raw and ready-to-eat foods to prevent cross-contamination. Also change every 4 hours during continuous use.' },
+  { id: 'q4', text: 'Gloves are a substitute for handwashing.', options: ['True', 'False'], correct: 1, explanation: 'False! Gloves are NOT a substitute for handwashing. Always wash hands before putting on gloves and after removing them.' },
+  { id: 'q5', text: 'After using the restroom, you should:', options: ['Put on gloves immediately', 'Wash hands then put on gloves', 'Use hand sanitizer only', 'Wash hands only if visibly dirty'], correct: 1, explanation: 'Always wash hands thoroughly first, then put on fresh gloves. Hand sanitizer alone is not sufficient after restroom use.' },
 ];
 
 // ── Lesson Viewer ────────────────────────────────────────────────────────────
@@ -82,15 +82,20 @@ function LessonViewer({ module, lessonIdx, onNext, onBack }: {
           </p>
         ))}
       </div>
-      {/* Navigation */}
-      <div style={{ padding: '16px 24px', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between' }}>
+      {/* Navigation — 48px min tap targets for mobile */}
+      <div style={{ padding: '16px 24px', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', gap: 12 }}>
         <button onClick={onBack}
-          style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
           Back
         </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#9ca3af' }}>
+          {Array.from({ length: module.lessonCount }, (_, i) => (
+            <div key={i} style={{ width: 8, height: 8, borderRadius: 4, background: i === lessonIdx ? '#1e4d6b' : i < lessonIdx ? '#b8d4e8' : '#e5e7eb' }} />
+          ))}
+        </div>
         <button onClick={onNext}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
-          {lessonIdx >= module.lessonCount - 1 ? 'Take Module Quiz' : 'Next Lesson'} <ChevronRight size={14} />
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+          {lessonIdx >= module.lessonCount - 1 ? 'Take Quiz' : 'Next'} <ChevronRight size={14} />
         </button>
       </div>
     </div>
@@ -106,26 +111,29 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
   const [currentQ, setCurrentQ] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [answers, setAnswers] = useState<(number | null)[]>(new Array(DEMO_QUESTIONS.length).fill(null));
-  const [submitted, setSubmitted] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [checked, setChecked] = useState(false);  // immediate feedback flag
+  const [reviewMode, setReviewMode] = useState(false);  // review missed questions
 
   const questions = DEMO_QUESTIONS.slice(0, Math.min(questionCount, DEMO_QUESTIONS.length));
   const q = questions[currentQ];
 
-  const handleNext = () => {
+  const handleCheck = () => {
     if (selected === null) return;
     const newAnswers = [...answers];
     newAnswers[currentQ] = selected;
     setAnswers(newAnswers);
-    setSelected(null);
+    setChecked(true);
+  };
 
+  const handleNext = () => {
+    setSelected(null);
+    setChecked(false);
     if (currentQ < questions.length - 1) {
       setCurrentQ(currentQ + 1);
     } else {
-      // Calculate score
-      const correct = newAnswers.reduce((c, a, i) => c + (a === questions[i]?.correct ? 1 : 0), 0);
+      const correct = answers.reduce((c, a, i) => c + (a === questions[i]?.correct ? 1 : 0), 0);
       const score = Math.round((correct / questions.length) * 100);
-      setSubmitted(true);
       setShowResults(true);
       onComplete(score, score >= passingScore);
     }
@@ -135,6 +143,42 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
     const correct = answers.reduce((c, a, i) => c + (a === questions[i]?.correct ? 1 : 0), 0);
     const score = Math.round((correct / questions.length) * 100);
     const passed = score >= passingScore;
+    const missed = questions.filter((qq, i) => answers[i] !== qq.correct);
+
+    if (reviewMode && missed.length > 0) {
+      return (
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: '#dc2626', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AlertTriangle size={20} /> Review Missed Questions ({missed.length})
+          </h3>
+          {missed.map((qq, i) => {
+            const origIdx = questions.indexOf(qq);
+            return (
+              <div key={qq.id} style={{ marginBottom: 20, padding: 16, borderRadius: 10, border: '1px solid #fca5a5', background: '#fef2f2' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#111827', marginBottom: 10 }}>Q{origIdx + 1}: {qq.text}</div>
+                {qq.options.map((opt, oi) => (
+                  <div key={oi} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', marginBottom: 4, borderRadius: 8,
+                    background: oi === qq.correct ? '#dcfce7' : oi === answers[origIdx] ? '#fee2e2' : '#fff',
+                    border: oi === qq.correct ? '1px solid #86efac' : oi === answers[origIdx] ? '1px solid #fca5a5' : '1px solid #e5e7eb',
+                  }}>
+                    {oi === qq.correct ? <CheckCircle2 size={16} color="#15803d" /> : oi === answers[origIdx] ? <XCircle size={16} color="#dc2626" /> : <Circle size={16} color="#d1d5db" />}
+                    <span style={{ fontSize: 14, color: '#374151' }}>{opt}</span>
+                  </div>
+                ))}
+                <div style={{ marginTop: 10, padding: '10px 12px', borderRadius: 8, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1e4d6b', marginBottom: 2 }}>Explanation</div>
+                  <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{qq.explanation}</div>
+                </div>
+              </div>
+            );
+          })}
+          <button onClick={() => setReviewMode(false)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+            <ArrowLeft size={14} /> Back to Results
+          </button>
+        </div>
+      );
+    }
 
     return (
       <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 32, textAlign: 'center' }}>
@@ -148,7 +192,22 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
           You scored <strong>{score}%</strong> ({correct}/{questions.length} correct). {passed ? 'Great job!' : `You need ${passingScore}% to pass.`}
         </p>
         <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 20 }}>{moduleTitle}</div>
-        {/* Question Review */}
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          {missed.length > 0 && (
+            <button onClick={() => setReviewMode(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: '1px solid #dc2626', background: '#fff', color: '#dc2626', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+              <RotateCcw size={16} /> Review {missed.length} Missed
+            </button>
+          )}
+          {!passed && (
+            <button onClick={() => { setCurrentQ(0); setAnswers(new Array(DEMO_QUESTIONS.length).fill(null)); setSelected(null); setShowResults(false); setChecked(false); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
+              <RotateCcw size={16} /> Retake Quiz
+            </button>
+          )}
+        </div>
+        {/* Question Summary */}
         <div style={{ textAlign: 'left', marginTop: 24, borderTop: '1px solid #e5e7eb', paddingTop: 24 }}>
           {questions.map((qq, i) => (
             <div key={qq.id} style={{ marginBottom: 16, padding: 12, borderRadius: 8, background: answers[i] === qq.correct ? '#f0fdf4' : '#fef2f2' }}>
@@ -163,10 +222,13 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
     );
   }
 
+  const isCorrect = checked && selected === q.correct;
+  const isWrong = checked && selected !== q.correct;
+
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
       {/* Quiz Header */}
-      <div style={{ background: '#f9fafb', padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: '#f9fafb', padding: '16px 24px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
         <div>
           <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 2 }}>{moduleTitle} — Quiz</div>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>Question {currentQ + 1} of {questions.length}</div>
@@ -174,7 +236,7 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
         {/* Progress dots */}
         <div style={{ display: 'flex', gap: 4 }}>
           {questions.map((_, i) => (
-            <div key={i} style={{ width: 8, height: 8, borderRadius: 4, background: i < currentQ ? '#1e4d6b' : i === currentQ ? '#d4af37' : '#e5e7eb' }} />
+            <div key={i} style={{ width: 10, height: 10, borderRadius: 5, background: i < currentQ ? '#1e4d6b' : i === currentQ ? '#d4af37' : '#e5e7eb' }} />
           ))}
         </div>
       </div>
@@ -182,34 +244,65 @@ function QuizEngine({ moduleTitle, questionCount, passingScore, onComplete }: {
       <div style={{ padding: 24 }}>
         <h3 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 20px' }}>{q.text}</h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {q.options.map((opt, i) => (
-            <button key={i} onClick={() => setSelected(i)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10,
-                border: selected === i ? '2px solid #1e4d6b' : '1px solid #d1d5db',
-                background: selected === i ? '#eef4f8' : '#fff', cursor: 'pointer', textAlign: 'left',
-                fontSize: 15, color: '#374151', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
-              }}>
-              <div style={{
-                width: 22, height: 22, borderRadius: 11, border: selected === i ? '6px solid #1e4d6b' : '2px solid #d1d5db',
-                flexShrink: 0, transition: 'all 0.15s',
-              }} />
-              {opt}
-            </button>
-          ))}
+          {q.options.map((opt, i) => {
+            const optCorrect = checked && i === q.correct;
+            const optWrong = checked && i === selected && i !== q.correct;
+            return (
+              <button key={i} onClick={() => !checked && setSelected(i)} disabled={checked}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderRadius: 10, minHeight: 48,
+                  border: optCorrect ? '2px solid #15803d' : optWrong ? '2px solid #dc2626' : selected === i ? '2px solid #1e4d6b' : '1px solid #d1d5db',
+                  background: optCorrect ? '#dcfce7' : optWrong ? '#fee2e2' : selected === i ? '#eef4f8' : '#fff',
+                  cursor: checked ? 'default' : 'pointer', textAlign: 'left',
+                  fontSize: 15, color: '#374151', fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
+                }}>
+                <div style={{
+                  width: 22, height: 22, borderRadius: 11, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: optCorrect ? 'none' : optWrong ? 'none' : selected === i ? '6px solid #1e4d6b' : '2px solid #d1d5db',
+                  background: optCorrect ? '#15803d' : optWrong ? '#dc2626' : 'transparent',
+                }}>
+                  {optCorrect && <CheckCircle2 size={18} color="#fff" />}
+                  {optWrong && <XCircle size={18} color="#fff" />}
+                </div>
+                {opt}
+              </button>
+            );
+          })}
         </div>
+        {/* Immediate Feedback */}
+        {checked && (
+          <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 10, background: isCorrect ? '#f0fdf4' : '#fef2f2', border: `1px solid ${isCorrect ? '#86efac' : '#fca5a5'}` }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              {isCorrect ? <CheckCircle2 size={18} color="#15803d" /> : <XCircle size={18} color="#dc2626" />}
+              <span style={{ fontSize: 14, fontWeight: 700, color: isCorrect ? '#15803d' : '#dc2626' }}>
+                {isCorrect ? 'Correct!' : `Incorrect — The answer is: ${q.options[q.correct]}`}
+              </span>
+            </div>
+            <div style={{ fontSize: 13, color: '#374151', lineHeight: 1.5 }}>{q.explanation}</div>
+          </div>
+        )}
       </div>
       {/* Footer */}
-      <div style={{ padding: '16px 24px', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ padding: '16px 24px', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
         <span style={{ fontSize: 13, color: '#9ca3af' }}>Passing score: {passingScore}%</span>
-        <button onClick={handleNext} disabled={selected === null}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6, padding: '8px 20px', borderRadius: 8, border: 'none',
-            background: selected !== null ? '#1e4d6b' : '#d1d5db', color: '#fff', fontSize: 13, fontWeight: 600,
-            cursor: selected !== null ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif",
-          }}>
-          {currentQ < questions.length - 1 ? 'Next' : 'Submit Quiz'} <ChevronRight size={14} />
-        </button>
+        {!checked ? (
+          <button onClick={handleCheck} disabled={selected === null}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', minHeight: 48,
+              background: selected !== null ? '#1e4d6b' : '#d1d5db', color: '#fff', fontSize: 14, fontWeight: 600,
+              cursor: selected !== null ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif",
+            }}>
+            Check Answer
+          </button>
+        ) : (
+          <button onClick={handleNext}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', minHeight: 48,
+              background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+            }}>
+            {currentQ < questions.length - 1 ? 'Next Question' : 'See Results'} <ChevronRight size={14} />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -328,6 +421,12 @@ function CertificateView({ cert, course }: { cert: TrainingCertificate; course: 
 
 // ── Main TrainingCourse Component ────────────────────────────────────────────
 
+const RESPONSIVE_STYLES = `
+  @media (max-width: 768px) {
+    .training-course-grid { grid-template-columns: 1fr !important; }
+  }
+`;
+
 export function TrainingCourse() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -386,13 +485,15 @@ export function TrainingCourse() {
   if (view === 'overview') {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <style>{RESPONSIVE_STYLES}</style>
         {/* Header */}
         <button onClick={() => navigate('/training')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
           <ArrowLeft size={16} /> Back to Training
         </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: 24 }}
+          className="training-course-grid">
           {/* Left: Course Info */}
           <div>
             {/* Course Header Card */}

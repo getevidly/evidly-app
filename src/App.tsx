@@ -75,6 +75,8 @@ const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ 
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
 const TrainingHub = lazy(() => import('./pages/TrainingHub').then(m => ({ default: m.TrainingHub })));
 const TrainingCourse = lazy(() => import('./pages/TrainingCourse').then(m => ({ default: m.TrainingCourse })));
+const CourseBuilder = lazy(() => import('./pages/CourseBuilder').then(m => ({ default: m.CourseBuilder })));
+const CertificateViewer = lazy(() => import('./pages/CertificateViewer').then(m => ({ default: m.CertificateViewer })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -274,6 +276,8 @@ function AppRoutes() {
           <Route path="/developers" element={<DeveloperPortal />} />
           <Route path="/training" element={<TrainingHub />} />
           <Route path="/training/course/:id" element={<TrainingCourse />} />
+          <Route path="/training/courses/builder" element={<CourseBuilder />} />
+          <Route path="/training/certificates" element={<CertificateViewer />} />
         </Route>
       </Routes>
     </>
