@@ -2103,33 +2103,43 @@ export const integrationPlatforms: IntegrationPlatform[] = [
 
 export interface ConnectedIntegration {
   id: string;
-  platformSlug: string;
-  platformName: string;
-  status: 'connected' | 'error' | 'syncing' | 'paused';
-  connectedAt: string;
+  platform: string;
+  platformDisplayName: string;
+  status: 'connected' | 'disconnected' | 'error' | 'pending';
+  authType: 'oauth2' | 'api_key' | 'certificate';
+  platformAccountId: string | null;
+  platformAccountName: string | null;
+  scopes: string[];
+  syncConfig: { entities: string[]; direction: string; frequencyMin: number };
   lastSyncAt: string;
   lastSyncStatus: 'success' | 'partial' | 'failed';
+  lastError: string | null;
+  errorCount: number;
+  nextSyncAt: string;
+  connectedBy: string;
+  connectedAt: string;
+  disconnectedAt: string | null;
+  // Derived display fields (from sync logs)
   employeesSynced: number;
   locationsSynced: number;
   vendorsSynced: number;
   documentsSynced: number;
-  nextSyncAt: string;
-  lastError: string | null;
 }
 
 export const connectedIntegrations: ConnectedIntegration[] = [
-  { id: 'ci-1', platformSlug: 'restaurant365', platformName: 'Restaurant365', status: 'connected', connectedAt: '2025-11-15T10:00:00Z', lastSyncAt: '2026-02-10T14:00:00Z', lastSyncStatus: 'success', employeesSynced: 47, locationsSynced: 3, vendorsSynced: 12, documentsSynced: 0, nextSyncAt: '2026-02-10T20:00:00Z', lastError: null },
-  { id: 'ci-2', platformSlug: 'quickbooks', platformName: 'QuickBooks Online', status: 'connected', connectedAt: '2025-12-01T09:00:00Z', lastSyncAt: '2026-02-10T13:30:00Z', lastSyncStatus: 'success', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 18, documentsSynced: 24, nextSyncAt: '2026-02-10T19:30:00Z', lastError: null },
-  { id: 'ci-3', platformSlug: 'toast', platformName: 'Toast', status: 'connected', connectedAt: '2026-01-10T14:00:00Z', lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-10T20:55:00Z', lastError: null },
-  { id: 'ci-4', platformSlug: 'adp', platformName: 'ADP Workforce Now', status: 'connected', connectedAt: '2026-01-20T11:00:00Z', lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-11T03:00:00Z', lastError: '2 employees missing location assignment in ADP' },
-  { id: 'ci-5', platformSlug: 'google', platformName: 'Google Workspace', status: 'connected', connectedAt: '2025-10-05T08:00:00Z', lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38, nextSyncAt: '2026-02-10T15:58:00Z', lastError: null },
-  { id: 'ci-6', platformSlug: 'toast', platformName: 'Toast', status: 'error', connectedAt: '2026-02-01T16:00:00Z', lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-10T16:00:00Z', lastError: 'OAuth token refresh failed — re-authorize required' },
+  { id: 'ci-1', platform: 'restaurant365', platformDisplayName: 'Restaurant365', status: 'connected', authType: 'oauth2', platformAccountId: 'r365-acct-8291', platformAccountName: 'EvidLY Demo Org', scopes: ['employees:read', 'locations:read', 'invoices:write'], syncConfig: { entities: ['employees', 'locations', 'vendors'], direction: 'bidirectional', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:00:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-11-15T10:00:00Z', disconnectedAt: null, employeesSynced: 47, locationsSynced: 3, vendorsSynced: 12, documentsSynced: 0 },
+  { id: 'ci-2', platform: 'quickbooks', platformDisplayName: 'QuickBooks Online', status: 'connected', authType: 'oauth2', platformAccountId: 'qbo-realm-4829371', platformAccountName: 'EvidLY Foods Inc', scopes: ['com.intuit.quickbooks.accounting'], syncConfig: { entities: ['vendors', 'invoices', 'documents'], direction: 'bidirectional', frequencyMin: 360 }, lastSyncAt: '2026-02-10T13:30:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T19:30:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-12-01T09:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 18, documentsSynced: 24 },
+  { id: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', status: 'connected', authType: 'oauth2', platformAccountId: 'toast-guid-a1b2c3', platformAccountName: 'EvidLY Demo', scopes: ['employees:read', 'locations:read', 'webhooks'], syncConfig: { entities: ['employees', 'locations'], direction: 'inbound', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:55:00Z', connectedBy: 'James Wilson', connectedAt: '2026-01-10T14:00:00Z', disconnectedAt: null, employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
+  { id: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', status: 'connected', authType: 'certificate', platformAccountId: 'adp-org-7812', platformAccountName: 'EvidLY Foods', scopes: ['workers:read', 'events:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', lastError: '2 employees missing location assignment in ADP', errorCount: 1, nextSyncAt: '2026-02-11T03:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2026-01-20T11:00:00Z', disconnectedAt: null, employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
+  { id: 'ci-5', platform: 'google', platformDisplayName: 'Google Workspace', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: 'evidly-demo@evidly.com', scopes: ['drive.file', 'calendar.events', 'gmail.send'], syncConfig: { entities: ['documents'], direction: 'outbound', frequencyMin: 60 }, lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T15:58:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-10-05T08:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38 },
+  { id: 'ci-6', platform: 'toast', platformDisplayName: 'Toast', status: 'error', authType: 'oauth2', platformAccountId: 'toast-guid-d4e5f6', platformAccountName: 'Airport Location', scopes: ['employees:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', lastError: 'OAuth token refresh failed — re-authorize required', errorCount: 3, nextSyncAt: '2026-02-10T16:00:00Z', connectedBy: 'Sarah Lee', connectedAt: '2026-02-01T16:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
 ];
 
 export interface IntegrationSyncLog {
   id: string;
-  platformName: string;
-  platformSlug: string;
+  integrationId: string;
+  platform: string;
+  platformDisplayName: string;
   syncType: 'pull' | 'push' | 'webhook';
   entityType: string;
   direction: 'inbound' | 'outbound';
@@ -2137,23 +2147,23 @@ export interface IntegrationSyncLog {
   recordsCreated: number;
   recordsUpdated: number;
   recordsFailed: number;
-  status: 'completed' | 'partial' | 'failed';
+  errors: { message: string; recordId?: string }[] | null;
   startedAt: string;
-  durationMs: number;
-  errorMessage: string | null;
+  completedAt: string | null;
+  status: 'running' | 'completed' | 'partial' | 'failed';
 }
 
 export const integrationSyncLogs: IntegrationSyncLog[] = [
-  { id: 'sl-01', platformName: 'Toast', platformSlug: 'toast', syncType: 'pull', entityType: 'Employees', direction: 'inbound', recordsProcessed: 52, recordsCreated: 2, recordsUpdated: 3, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:55:00Z', durationMs: 2340, errorMessage: null },
-  { id: 'sl-02', platformName: 'QuickBooks Online', platformSlug: 'quickbooks', syncType: 'push', entityType: 'Vendor Invoices', direction: 'outbound', recordsProcessed: 4, recordsCreated: 4, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T13:30:00Z', durationMs: 1850, errorMessage: null },
-  { id: 'sl-03', platformName: 'Restaurant365', platformSlug: 'restaurant365', syncType: 'pull', entityType: 'Locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 1, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:00:00Z', durationMs: 890, errorMessage: null },
-  { id: 'sl-04', platformName: 'ADP Workforce Now', platformSlug: 'adp', syncType: 'pull', entityType: 'Workers', direction: 'inbound', recordsProcessed: 47, recordsCreated: 1, recordsUpdated: 2, recordsFailed: 2, status: 'partial', startedAt: '2026-02-10T03:00:00Z', durationMs: 4520, errorMessage: '2 workers missing location_id in ADP' },
-  { id: 'sl-05', platformName: 'Google Workspace', platformSlug: 'google', syncType: 'push', entityType: 'Documents', direction: 'outbound', recordsProcessed: 3, recordsCreated: 3, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:58:00Z', durationMs: 3100, errorMessage: null },
-  { id: 'sl-06', platformName: 'Toast', platformSlug: 'toast', syncType: 'webhook', entityType: 'Employee Event', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T11:22:00Z', durationMs: 210, errorMessage: null },
-  { id: 'sl-07', platformName: 'QuickBooks Online', platformSlug: 'quickbooks', syncType: 'pull', entityType: 'Vendors', direction: 'inbound', recordsProcessed: 18, recordsCreated: 0, recordsUpdated: 2, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T07:30:00Z', durationMs: 1620, errorMessage: null },
-  { id: 'sl-08', platformName: 'Restaurant365', platformSlug: 'restaurant365', syncType: 'push', entityType: 'Vendor Invoices', direction: 'outbound', recordsProcessed: 6, recordsCreated: 6, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:05:00Z', durationMs: 2780, errorMessage: null },
-  { id: 'sl-09', platformName: 'Toast', platformSlug: 'toast', syncType: 'pull', entityType: 'Locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T03:05:00Z', durationMs: 650, errorMessage: null },
-  { id: 'sl-10', platformName: 'ADP Workforce Now', platformSlug: 'adp', syncType: 'webhook', entityType: 'New Hire Event', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T09:15:00Z', durationMs: 340, errorMessage: null },
+  { id: 'sl-01', integrationId: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', syncType: 'pull', entityType: 'employees', direction: 'inbound', recordsProcessed: 52, recordsCreated: 2, recordsUpdated: 3, recordsFailed: 0, errors: null, startedAt: '2026-02-10T14:55:00Z', completedAt: '2026-02-10T14:55:02Z', status: 'completed' },
+  { id: 'sl-02', integrationId: 'ci-2', platform: 'quickbooks', platformDisplayName: 'QuickBooks Online', syncType: 'push', entityType: 'invoices', direction: 'outbound', recordsProcessed: 4, recordsCreated: 4, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T13:30:00Z', completedAt: '2026-02-10T13:30:02Z', status: 'completed' },
+  { id: 'sl-03', integrationId: 'ci-1', platform: 'restaurant365', platformDisplayName: 'Restaurant365', syncType: 'pull', entityType: 'locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 1, recordsFailed: 0, errors: null, startedAt: '2026-02-10T14:00:00Z', completedAt: '2026-02-10T14:00:01Z', status: 'completed' },
+  { id: 'sl-04', integrationId: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', syncType: 'pull', entityType: 'employees', direction: 'inbound', recordsProcessed: 47, recordsCreated: 1, recordsUpdated: 2, recordsFailed: 2, errors: [{ message: 'Missing location_id', recordId: 'adp-w-4821' }, { message: 'Missing location_id', recordId: 'adp-w-4899' }], startedAt: '2026-02-10T03:00:00Z', completedAt: '2026-02-10T03:00:05Z', status: 'partial' },
+  { id: 'sl-05', integrationId: 'ci-5', platform: 'google', platformDisplayName: 'Google Workspace', syncType: 'push', entityType: 'documents', direction: 'outbound', recordsProcessed: 3, recordsCreated: 3, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T14:58:00Z', completedAt: '2026-02-10T14:58:03Z', status: 'completed' },
+  { id: 'sl-06', integrationId: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', syncType: 'webhook', entityType: 'employees', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T11:22:00Z', completedAt: '2026-02-10T11:22:00Z', status: 'completed' },
+  { id: 'sl-07', integrationId: 'ci-2', platform: 'quickbooks', platformDisplayName: 'QuickBooks Online', syncType: 'pull', entityType: 'vendors', direction: 'inbound', recordsProcessed: 18, recordsCreated: 0, recordsUpdated: 2, recordsFailed: 0, errors: null, startedAt: '2026-02-10T07:30:00Z', completedAt: '2026-02-10T07:30:02Z', status: 'completed' },
+  { id: 'sl-08', integrationId: 'ci-1', platform: 'restaurant365', platformDisplayName: 'Restaurant365', syncType: 'push', entityType: 'invoices', direction: 'outbound', recordsProcessed: 6, recordsCreated: 6, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T14:05:00Z', completedAt: '2026-02-10T14:05:03Z', status: 'completed' },
+  { id: 'sl-09', integrationId: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', syncType: 'pull', entityType: 'locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T03:05:00Z', completedAt: '2026-02-10T03:05:01Z', status: 'completed' },
+  { id: 'sl-10', integrationId: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', syncType: 'webhook', entityType: 'employees', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, errors: null, startedAt: '2026-02-10T09:15:00Z', completedAt: '2026-02-10T09:15:00Z', status: 'completed' },
 ];
 
 export interface ApiWebhookSubscription {

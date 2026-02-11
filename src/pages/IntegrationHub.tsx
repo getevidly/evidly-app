@@ -232,7 +232,7 @@ function ConnectedTab() {
 }
 
 function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
-  const platform = integrationPlatforms.find(p => p.slug === connection.platformSlug);
+  const platform = integrationPlatforms.find(p => p.slug === connection.platform || p.name === connection.platformDisplayName);
   const statusBadge = SYNC_STATUS_BADGE[connection.status];
   const timeSince = getTimeSince(connection.lastSyncAt);
 
@@ -241,10 +241,10 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[10px]" style={{ backgroundColor: platform?.color || '#6b7280' }}>
-            {connection.platformName.charAt(0)}
+            {connection.platformDisplayName.charAt(0)}
           </div>
           <div>
-            <div className="font-medium text-gray-900">{connection.platformName}</div>
+            <div className="font-medium text-gray-900">{connection.platformDisplayName}</div>
             <div className="text-[10px] text-gray-400">Connected {new Date(connection.connectedAt).toLocaleDateString()}</div>
           </div>
         </div>
@@ -268,13 +268,13 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
       <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.documentsSynced || '—'}</td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-1">
-          <button onClick={() => alert(`Demo: Syncing ${connection.platformName}...`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
+          <button onClick={() => alert(`Demo: Syncing ${connection.platformDisplayName}...`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => alert(`Demo: ${connection.status === 'paused' ? 'Resuming' : 'Pausing'} ${connection.platformName}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title={connection.status === 'paused' ? 'Resume' : 'Pause'}>
+          <button onClick={() => alert(`Demo: ${connection.status === 'paused' ? 'Resuming' : 'Pausing'} ${connection.platformDisplayName}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title={connection.status === 'paused' ? 'Resume' : 'Pause'}>
             {connection.status === 'paused' ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
           </button>
-          <button onClick={() => alert(`Demo: Would disconnect ${connection.platformName}. This action requires confirmation.`)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500" title="Disconnect">
+          <button onClick={() => alert(`Demo: Would disconnect ${connection.platformDisplayName}. This action requires confirmation.`)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500" title="Disconnect">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -459,8 +459,8 @@ function ApiManagementTab() {
 function ActivityTab() {
   const [filterPlatform, setFilterPlatform] = useState('all');
 
-  const platforms = [...new Set(integrationSyncLogs.map(l => l.platformName))];
-  const filtered = filterPlatform === 'all' ? integrationSyncLogs : integrationSyncLogs.filter(l => l.platformName === filterPlatform);
+  const platforms = [...new Set(integrationSyncLogs.map(l => l.platformDisplayName))];
+  const filtered = filterPlatform === 'all' ? integrationSyncLogs : integrationSyncLogs.filter(l => l.platformDisplayName === filterPlatform);
   const sorted = [...filtered].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
 
   return (
@@ -501,7 +501,7 @@ function ActivityTab() {
 }
 
 function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
-  const platform = integrationPlatforms.find(p => p.slug === log.platformSlug);
+  const platform = integrationPlatforms.find(p => p.slug === log.platform);
   return (
     <tr className="border-t border-gray-50 hover:bg-gray-50/50">
       <td className="px-4 py-3">
@@ -511,9 +511,9 @@ function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded flex items-center justify-center text-white font-bold text-[8px]" style={{ backgroundColor: platform?.color || '#6b7280' }}>
-            {log.platformName.charAt(0)}
+            {log.platformDisplayName.charAt(0)}
           </div>
-          <span className="text-xs font-medium text-gray-900">{log.platformName}</span>
+          <span className="text-xs font-medium text-gray-900">{log.platformDisplayName}</span>
         </div>
       </td>
       <td className="px-4 py-3">
@@ -531,12 +531,12 @@ function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
           {log.recordsFailed > 0 && <span className="text-red-500 ml-1">✕{log.recordsFailed}</span>}
         </div>
       </td>
-      <td className="px-4 py-3 text-center text-xs text-gray-500">{log.durationMs < 1000 ? `${log.durationMs}ms` : `${(log.durationMs / 1000).toFixed(1)}s`}</td>
+      <td className="px-4 py-3 text-center text-xs text-gray-500">{log.completedAt ? `${((new Date(log.completedAt).getTime() - new Date(log.startedAt).getTime()) / 1000).toFixed(1)}s` : '—'}</td>
       <td className="px-4 py-3">
         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${log.status === 'completed' ? 'bg-green-50 text-green-700' : log.status === 'partial' ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-600'}`}>
           {log.status}
         </span>
-        {log.errorMessage && <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate">{log.errorMessage}</div>}
+        {log.errors && log.errors.length > 0 && <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate">{log.errors[0].message}{log.errors.length > 1 ? ` (+${log.errors.length - 1} more)` : ''}</div>}
       </td>
     </tr>
   );
@@ -550,7 +550,7 @@ function HealthTab() {
   const totalSyncs = integrationSyncLogs.length;
   const successSyncs = integrationSyncLogs.filter(l => l.status === 'completed').length;
   const successRate = totalSyncs > 0 ? ((successSyncs / totalSyncs) * 100).toFixed(1) : '0';
-  const avgDuration = totalSyncs > 0 ? Math.round(integrationSyncLogs.reduce((s, l) => s + l.durationMs, 0) / totalSyncs) : 0;
+  const avgDuration = totalSyncs > 0 ? Math.round(integrationSyncLogs.reduce((s, l) => s + (l.completedAt ? new Date(l.completedAt).getTime() - new Date(l.startedAt).getTime() : 0), 0) / totalSyncs) : 0;
 
   return (
     <div className="space-y-6">
@@ -578,18 +578,18 @@ function HealthTab() {
         <h3 className="font-semibold text-gray-900 mb-4">Integration Health Status</h3>
         <div className="space-y-3">
           {connectedIntegrations.map(ci => {
-            const platform = integrationPlatforms.find(p => p.slug === ci.platformSlug);
-            const logs = integrationSyncLogs.filter(l => l.platformSlug === ci.platformSlug);
+            const platform = integrationPlatforms.find(p => p.slug === ci.platform || p.name === ci.platformDisplayName);
+            const logs = integrationSyncLogs.filter(l => l.platform === ci.platform);
             const lastLog = logs.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())[0];
 
             return (
               <div key={ci.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs" style={{ backgroundColor: platform?.color || '#6b7280' }}>
-                    {ci.platformName.charAt(0)}
+                    {ci.platformDisplayName.charAt(0)}
                   </div>
                   <div>
-                    <div className="text-sm font-medium text-gray-900">{ci.platformName}</div>
+                    <div className="text-sm font-medium text-gray-900">{ci.platformDisplayName}</div>
                     <div className="text-[10px] text-gray-400">
                       {ci.employeesSynced > 0 && `${ci.employeesSynced} employees`}
                       {ci.vendorsSynced > 0 && `${ci.employeesSynced > 0 ? ' · ' : ''}${ci.vendorsSynced} vendors`}
@@ -603,7 +603,7 @@ function HealthTab() {
                   <div className="flex items-center gap-2">
                     <HealthDot status={ci.status === 'connected' ? 'green' : ci.status === 'error' ? 'red' : 'yellow'} label="Connection" />
                     <HealthDot status={ci.lastSyncStatus === 'success' ? 'green' : ci.lastSyncStatus === 'partial' ? 'yellow' : 'red'} label="Last Sync" />
-                    <HealthDot status={lastLog && lastLog.durationMs < 5000 ? 'green' : 'yellow'} label="Latency" />
+                    <HealthDot status={lastLog?.completedAt && (new Date(lastLog.completedAt).getTime() - new Date(lastLog.startedAt).getTime()) < 5000 ? 'green' : 'yellow'} label="Latency" />
                   </div>
 
                   <div className="text-[10px] text-gray-400 w-20 text-right">{getTimeSince(ci.lastSyncAt)}</div>

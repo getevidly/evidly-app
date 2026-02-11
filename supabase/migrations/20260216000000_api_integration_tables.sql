@@ -101,92 +101,96 @@ CREATE TABLE IF NOT EXISTS api_sandbox_keys (
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
--- ── Integrations (outbound connections) ───────────────────────
+-- ── Connected Integrations (per organization) ─────────────────
 
 CREATE TABLE IF NOT EXISTS integrations (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  platform_slug   text NOT NULL,
-  platform_name   text NOT NULL,
-  status          text NOT NULL DEFAULT 'connected' CHECK (status IN ('connected','disconnected','error','syncing','paused')),
-  auth_data       jsonb NOT NULL DEFAULT '{}',
-  config          jsonb NOT NULL DEFAULT '{}',
-  connected_at    timestamptz NOT NULL DEFAULT now(),
-  last_sync_at    timestamptz,
-  last_sync_status text CHECK (last_sync_status IN ('success','partial','failed')),
-  next_sync_at    timestamptz,
-  error_message   text,
-  created_at      timestamptz NOT NULL DEFAULT now()
+  id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  organization_id       uuid REFERENCES organizations(id) ON DELETE CASCADE,
+  platform              text NOT NULL,
+  platform_display_name text NOT NULL,
+  status                text DEFAULT 'connected' CHECK (status IN ('connected','disconnected','error','pending')),
+  auth_type             text NOT NULL CHECK (auth_type IN ('oauth2','api_key','certificate')),
+  credentials_encrypted jsonb NOT NULL DEFAULT '{}',
+  platform_account_id   text,
+  platform_account_name text,
+  scopes                text[],
+  sync_config           jsonb DEFAULT '{}',
+  last_sync_at          timestamptz,
+  last_sync_status      text CHECK (last_sync_status IN ('success','partial','failed')),
+  last_error            text,
+  error_count           integer DEFAULT 0,
+  next_sync_at          timestamptz,
+  connected_by          uuid,
+  connected_at          timestamptz DEFAULT now(),
+  disconnected_at       timestamptz
 );
 
-CREATE INDEX idx_integrations_org ON integrations (organization_id, platform_slug);
+CREATE INDEX idx_integrations_org ON integrations (organization_id, platform);
 
--- ── Integration Sync Log ──────────────────────────────────────
+-- ── Sync Operations Log ───────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS integration_sync_log (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  integration_id  uuid NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
-  sync_type       text NOT NULL CHECK (sync_type IN ('pull','push','webhook')),
-  entity_type     text NOT NULL,
-  direction       text NOT NULL CHECK (direction IN ('inbound','outbound')),
-  records_processed int NOT NULL DEFAULT 0,
-  records_created int NOT NULL DEFAULT 0,
-  records_updated int NOT NULL DEFAULT 0,
-  records_failed  int NOT NULL DEFAULT 0,
-  status          text NOT NULL DEFAULT 'completed' CHECK (status IN ('completed','partial','failed','running')),
-  error_message   text,
-  started_at      timestamptz NOT NULL DEFAULT now(),
-  completed_at    timestamptz,
-  duration_ms     int
+  id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  integration_id    uuid REFERENCES integrations(id) ON DELETE CASCADE,
+  sync_type         text NOT NULL CHECK (sync_type IN ('pull','push','webhook')),
+  entity_type       text NOT NULL,
+  direction         text NOT NULL CHECK (direction IN ('inbound','outbound')),
+  records_processed integer DEFAULT 0,
+  records_created   integer DEFAULT 0,
+  records_updated   integer DEFAULT 0,
+  records_failed    integer DEFAULT 0,
+  errors            jsonb,
+  started_at        timestamptz DEFAULT now(),
+  completed_at      timestamptz,
+  status            text DEFAULT 'running' CHECK (status IN ('running','completed','partial','failed'))
 );
 
 CREATE INDEX idx_sync_log_integration ON integration_sync_log (integration_id, started_at DESC);
 
--- ── Integration Entity Map (ID mapping between systems) ───────
+-- ── Entity Mapping (links EvidLY records to partner platform records) ──
 
 CREATE TABLE IF NOT EXISTS integration_entity_map (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  integration_id  uuid NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
-  entity_type     text NOT NULL,
-  evidly_id       uuid NOT NULL,
-  external_id     text NOT NULL,
-  external_data   jsonb DEFAULT '{}',
-  last_synced_at  timestamptz NOT NULL DEFAULT now(),
-  created_at      timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (integration_id, entity_type, evidly_id)
+  id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  integration_id        uuid REFERENCES integrations(id) ON DELETE CASCADE,
+  evidly_entity_type    text NOT NULL,
+  evidly_entity_id      uuid NOT NULL,
+  platform_entity_type  text NOT NULL,
+  platform_entity_id    text NOT NULL,
+  last_synced_at        timestamptz,
+  sync_direction        text DEFAULT 'bidirectional' CHECK (sync_direction IN ('inbound','outbound','bidirectional')),
+  created_at            timestamptz DEFAULT now(),
+  UNIQUE(integration_id, evidly_entity_type, evidly_entity_id)
 );
 
--- ── Integration Webhook Config ────────────────────────────────
+-- ── Integration Webhook Receivers (partner webhooks → EvidLY) ─
 
 CREATE TABLE IF NOT EXISTS integration_webhook_config (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  integration_id  uuid NOT NULL REFERENCES integrations(id) ON DELETE CASCADE,
-  endpoint_path   text NOT NULL UNIQUE,
-  hmac_secret     text NOT NULL,
-  event_mapping   jsonb NOT NULL DEFAULT '{}',
-  active          boolean NOT NULL DEFAULT true,
-  last_received_at timestamptz,
-  created_at      timestamptz NOT NULL DEFAULT now()
+  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  integration_id      uuid REFERENCES integrations(id) ON DELETE CASCADE,
+  webhook_path        text UNIQUE NOT NULL,
+  verification_secret text,
+  events_subscribed   text[],
+  status              text DEFAULT 'active' CHECK (status IN ('active','paused','disabled')),
+  last_received_at    timestamptz,
+  created_at          timestamptz DEFAULT now()
 );
 
--- ── API Marketplace Listings ──────────────────────────────────
+-- ── Marketplace Listings (developer portal) ───────────────────
 
 CREATE TABLE IF NOT EXISTS api_marketplace_listings (
-  id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  application_id  uuid NOT NULL REFERENCES api_applications(id) ON DELETE CASCADE,
-  name            text NOT NULL,
-  slug            text NOT NULL UNIQUE,
-  description     text NOT NULL,
-  category        text NOT NULL,
-  icon_url        text,
-  screenshots     text[] DEFAULT '{}',
-  pricing_model   text NOT NULL DEFAULT 'free' CHECK (pricing_model IN ('free','freemium','paid','enterprise')),
-  status          text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','review','published','suspended')),
-  install_count   int NOT NULL DEFAULT 0,
-  rating          numeric(2,1) DEFAULT 0,
-  review_count    int NOT NULL DEFAULT 0,
-  created_at      timestamptz NOT NULL DEFAULT now(),
-  published_at    timestamptz
+  id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  platform            text UNIQUE NOT NULL,
+  display_name        text NOT NULL,
+  description         text,
+  category            text NOT NULL CHECK (category IN ('accounting','pos','payroll','distribution','productivity','inventory')),
+  logo_url            text,
+  features            jsonb,
+  setup_instructions  text,
+  pricing_note        text,
+  status              text DEFAULT 'available' CHECK (status IN ('available','coming_soon','beta')),
+  popularity_rank     integer,
+  install_count       integer DEFAULT 0,
+  created_at          timestamptz DEFAULT now()
 );
 
 -- ── Row-Level Security ────────────────────────────────────────
@@ -214,5 +218,4 @@ CREATE POLICY "integrations_org" ON integrations FOR ALL USING (organization_id 
 CREATE POLICY "sync_log_org" ON integration_sync_log FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
 CREATE POLICY "entity_map_org" ON integration_entity_map FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
 CREATE POLICY "webhook_config_org" ON integration_webhook_config FOR ALL USING (integration_id IN (SELECT id FROM integrations WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
-CREATE POLICY "marketplace_public" ON api_marketplace_listings FOR SELECT USING (status = 'published');
-CREATE POLICY "marketplace_owner" ON api_marketplace_listings FOR ALL USING (application_id IN (SELECT id FROM api_applications WHERE organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid())));
+CREATE POLICY "marketplace_public" ON api_marketplace_listings FOR SELECT USING (true);
