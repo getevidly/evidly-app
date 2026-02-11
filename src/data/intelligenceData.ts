@@ -554,3 +554,279 @@ export function riskBorder(level: string) {
   if (level === 'high') return '#fdba74';
   return '#fca5a5';
 }
+
+// ══════════════════════════════════════════════════════════════════
+// STAFFING CORRELATION ANALYSIS DATA
+// ══════════════════════════════════════════════════════════════════
+
+export interface StaffingRiskIndicator {
+  locationName: string;
+  region: string;
+  district: string;
+  riskType: 'high-turnover' | 'cfpm-departure' | 'new-hires-untrained' | 'manager-vacancy';
+  description: string;
+  severity: 'critical' | 'high' | 'moderate';
+  detectedDate: string;
+}
+
+export const staffingCorrelationInsight = 'Each 10% increase in turnover correlates with a 4.2-point decrease in compliance score across your organization.';
+export const trainingInsight = 'Locations with 95%+ training completion score 18 points higher on average.';
+export const staffingChecklistInsight = 'Locations operating below 80% staffing complete 34% fewer daily checklists.';
+export const managerTenureInsight = 'Locations where the manager has been in role 12+ months score 11 points higher than locations with managers <6 months in role.';
+export const cfpmInsight = 'Locations with 2+ CFPMs average 91.4 food safety vs 79.2 for single-CFPM locations.';
+
+// CFPM comparison — simulate box plot data
+export const cfpmComparison = {
+  singleCfpm: { count: 143, avgFoodScore: 79.2, median: 78.5, q1: 72.1, q3: 85.8 },
+  multiCfpm: { count: 344, avgFoodScore: 91.4, median: 92.0, q1: 87.3, q3: 95.6 },
+};
+
+// Scatter data helper — 100 sampled points for performance
+export function getScatterData(xKey: keyof LocationRow, yKey: keyof LocationRow): { x: number; y: number; name: string }[] {
+  const step = Math.max(1, Math.floor(locationLeaderboard.length / 100));
+  return locationLeaderboard.filter((_, i) => i % step === 0).map(l => ({
+    x: l[xKey] as number,
+    y: l[yKey] as number,
+    name: l.name,
+  }));
+}
+
+export const staffingRiskIndicators: StaffingRiskIndicator[] = [
+  { locationName: 'Mall Food Court #12', region: 'Midwest', district: 'OH/IN', riskType: 'high-turnover', description: '58% turnover in last 90 days + score declining 6.3 pts/month', severity: 'critical', detectedDate: 'Feb 4, 2026' },
+  { locationName: 'Tampa General', region: 'Southeast', district: 'FL', riskType: 'cfpm-departure', description: 'Only CFPM departed Jan 15 — no replacement in pipeline', severity: 'critical', detectedDate: 'Jan 16, 2026' },
+  { locationName: 'Highway Rest Stop #7', region: 'Southwest', district: 'TX/OK', riskType: 'manager-vacancy', description: 'No assigned location manager since Jan 3', severity: 'critical', detectedDate: 'Jan 4, 2026' },
+  { locationName: 'Detroit Medical Center', region: 'Midwest', district: 'OH/IN', riskType: 'cfpm-departure', description: 'CFPM on extended leave since Dec 12 — interim from nearby location', severity: 'high', detectedDate: 'Dec 13, 2025' },
+  { locationName: 'Location #247', region: 'Southeast', district: 'FL', riskType: 'new-hires-untrained', description: '8 new hires in last 30 days, only 2 have completed food handler training', severity: 'high', detectedDate: 'Jan 28, 2026' },
+  { locationName: 'Location #389', region: 'West', district: 'Pacific NW', riskType: 'high-turnover', description: '45% turnover with score dropping from 82 to 74 in 60 days', severity: 'high', detectedDate: 'Feb 1, 2026' },
+  { locationName: 'Location #112', region: 'Northeast', district: 'New England', riskType: 'new-hires-untrained', description: '5 new hires awaiting onboarding — current training completion at 68%', severity: 'moderate', detectedDate: 'Feb 6, 2026' },
+  { locationName: 'Location #455', region: 'Southwest', district: 'TX/OK', riskType: 'manager-vacancy', description: 'Previous manager transferred — acting manager covering 2 sites', severity: 'moderate', detectedDate: 'Jan 20, 2026' },
+];
+
+// ══════════════════════════════════════════════════════════════════
+// FINANCIAL IMPACT ANALYSIS DATA
+// ══════════════════════════════════════════════════════════════════
+
+export interface FinancialCategory {
+  id: string;
+  category: string;
+  icon: string;
+  lowEstimate: number;
+  highEstimate: number;
+  description: string;
+  details: string[];
+  color: 'red' | 'amber' | 'green';
+}
+
+export interface ROISummary {
+  annualInvestment: number;
+  riskReductionLow: number;
+  riskReductionHigh: number;
+  insuranceSavings: number;
+  revenueProtected: number;
+  roiLow: number;
+  roiHigh: number;
+}
+
+export interface HistoricalIncident {
+  type: string;
+  location: string;
+  date: string;
+  cost: number;
+  resolution: string;
+}
+
+export const financialCategories: FinancialCategory[] = [
+  {
+    id: 'fin-1',
+    category: 'Health Department Penalties',
+    icon: 'gavel',
+    lowEstimate: 18400,
+    highEstimate: 47200,
+    description: 'Current compliance gaps across 12 locations could result in estimated fines if inspected today.',
+    details: [
+      'Average fine per critical violation: $250–$1,000 depending on jurisdiction',
+      '12 locations currently have at least one critical gap',
+      'Repeat violations carry 2x-5x multipliers in most jurisdictions',
+      'Source: county health department penalty schedules in jurisdiction engine',
+    ],
+    color: 'red',
+  },
+  {
+    id: 'fin-2',
+    category: 'Insurance Premium Impact',
+    icon: 'shield',
+    lowEstimate: 180000,
+    highEstimate: 420000,
+    description: 'Improving 23 high-risk locations to target risk scores could reduce annual insurance premiums.',
+    details: [
+      'Aggregate portfolio Insurance Risk Score: 81.5 (improved from 73.2)',
+      '23 locations still above target risk threshold',
+      'Industry average premium reduction for A-rated portfolios: 15-25%',
+      'Disclaimer: estimates based on industry averages; actual impact determined by your carrier',
+    ],
+    color: 'amber',
+  },
+  {
+    id: 'fin-3',
+    category: 'Incident Cost Projection',
+    icon: 'alert',
+    lowEstimate: 340000,
+    highEstimate: 890000,
+    description: 'At current incident velocity, projected annual incident-related costs based on industry benchmarks.',
+    details: [
+      'Foodborne illness outbreak: $75,000–$500,000 (CDC estimates)',
+      'Kitchen fire: $30,000–$150,000 (NFPA data)',
+      'Workers comp claim: $20,000–$40,000 (BLS data)',
+      'Slip-and-fall lawsuit: $15,000–$50,000 (industry benchmark)',
+    ],
+    color: 'red',
+  },
+  {
+    id: 'fin-4',
+    category: 'Revenue Protection',
+    icon: 'revenue',
+    lowEstimate: 85000,
+    highEstimate: 210000,
+    description: 'Without intervention at 5 at-risk locations, projected closure risk this year.',
+    details: [
+      '3 temporary closures last year resulted in ~$127,000 in lost revenue',
+      'Average daily revenue per location: $8,500–$23,000',
+      '5 locations currently at risk of health department closure order',
+      'Average closure duration: 2-5 business days',
+    ],
+    color: 'amber',
+  },
+  {
+    id: 'fin-5',
+    category: 'Compliance Investment ROI',
+    icon: 'trending-up',
+    lowEstimate: 540000,
+    highEstimate: 1300000,
+    description: 'Total estimated risk reduction from EvidLY deployment across your portfolio.',
+    details: [
+      'EvidLY investment: $210,000/year (487 locations)',
+      'Estimated risk reduction: $540,000–$1.3M/year',
+      'ROI: 2.6x–6.2x',
+      'Average health department inspection score improved B+ → A- since deployment',
+    ],
+    color: 'green',
+  },
+];
+
+export const roiSummary: ROISummary = {
+  annualInvestment: 210000,
+  riskReductionLow: 540000,
+  riskReductionHigh: 1300000,
+  insuranceSavings: 340000,
+  revenueProtected: 127000,
+  roiLow: 2.6,
+  roiHigh: 6.2,
+};
+
+export const historicalIncidents: HistoricalIncident[] = [
+  { type: 'Temporary Closure', location: 'Location #312 (FL)', date: 'Mar 2025', cost: 47000, resolution: 'Re-inspection passed after 3 days, staff retrained' },
+  { type: 'Foodborne Illness Complaint', location: 'Location #187 (TX)', date: 'Jun 2025', cost: 52000, resolution: 'Investigation cleared after 2 weeks, cooling logs upgraded' },
+  { type: 'Kitchen Fire', location: 'Location #441 (CA)', date: 'Oct 2025', cost: 28000, resolution: 'Suppression system activated, 1 day closure, equipment replaced' },
+];
+
+export const industryBenchmarks = {
+  foodborneOutbreak: { low: 75000, high: 500000, source: 'CDC' },
+  kitchenFire: { low: 30000, high: 150000, source: 'NFPA' },
+  workersComp: { low: 20000, high: 40000, source: 'BLS' },
+  slipAndFall: { low: 15000, high: 50000, source: 'Industry' },
+};
+
+// ══════════════════════════════════════════════════════════════════
+// EXECUTIVE REPORT GENERATOR DATA
+// ══════════════════════════════════════════════════════════════════
+
+export interface ReportTemplate {
+  id: string;
+  title: string;
+  type: 'monthly' | 'quarterly' | 'ad-hoc';
+  lastGenerated: string;
+  pages: number;
+  sections: string[];
+  status: 'ready' | 'generating' | 'scheduled';
+}
+
+export interface DistributionRecipient {
+  name: string;
+  role: string;
+  email: string;
+  deliveryMethod: 'email' | 'teams' | 'sharepoint';
+}
+
+export const reportTemplates: ReportTemplate[] = [
+  { id: 'rpt-1', title: 'Monthly Executive Summary', type: 'monthly', lastGenerated: 'Jan 31, 2026', pages: 4, sections: ['Dashboard Snapshot', 'Regional Performance', 'Risk & Exposure', 'Recommendations'], status: 'ready' },
+  { id: 'rpt-2', title: 'Monthly Operations Digest', type: 'monthly', lastGenerated: 'Jan 31, 2026', pages: 6, sections: ['KPI Summary', 'Checklist Completion', 'Temperature Compliance', 'Vendor Performance', 'Incidents', 'Action Items'], status: 'ready' },
+  { id: 'rpt-3', title: 'Quarterly Board Report', type: 'quarterly', lastGenerated: 'Dec 31, 2025', pages: 8, sections: ['Executive Summary', 'Operational Performance', 'Risk & Compliance', 'Financial Impact', 'Strategic Recommendations'], status: 'ready' },
+  { id: 'rpt-4', title: 'Quarterly Insurance Summary', type: 'quarterly', lastGenerated: 'Dec 31, 2025', pages: 5, sections: ['Portfolio Risk Score', 'Risk Reduction Progress', 'Premium Impact Estimate', 'High-Risk Locations', 'Recommendations'], status: 'scheduled' },
+  { id: 'rpt-5', title: 'Custom Regional Analysis', type: 'ad-hoc', lastGenerated: 'Feb 3, 2026', pages: 3, sections: ['Regional Scorecard', 'Location Comparison', 'Action Plan'], status: 'ready' },
+  { id: 'rpt-6', title: 'Staffing Impact Report', type: 'ad-hoc', lastGenerated: 'Jan 22, 2026', pages: 4, sections: ['Staffing Correlation Summary', 'High-Risk Staffing', 'Training Gaps', 'Recommendations'], status: 'ready' },
+];
+
+export const reportSections = [
+  'Executive Summary', 'Organization Scorecard', 'Regional Performance', 'Location Leaderboard',
+  'Risk & Exposure', 'Financial Impact', 'Staffing Correlation', 'Trend Analysis',
+  'Regulatory Landscape', 'Vendor Performance', 'Training Compliance', 'Recommendations',
+];
+
+export const distributionList: DistributionRecipient[] = [
+  { name: 'Jennifer Martinez', role: 'VP Operations', email: 'j.martinez@aramark.com', deliveryMethod: 'email' },
+  { name: 'Michael Chen', role: 'CFO', email: 'm.chen@aramark.com', deliveryMethod: 'email' },
+  { name: 'Sarah Williams', role: 'VP Risk Management', email: 's.williams@aramark.com', deliveryMethod: 'teams' },
+  { name: 'David Thompson', role: 'CHRO', email: 'd.thompson@aramark.com', deliveryMethod: 'sharepoint' },
+  { name: 'Lisa Rodriguez', role: 'Regional Director — West', email: 'l.rodriguez@aramark.com', deliveryMethod: 'email' },
+];
+
+// ══════════════════════════════════════════════════════════════════
+// ANOMALY DETECTION ENGINE DATA
+// ══════════════════════════════════════════════════════════════════
+
+export interface AnomalyAlert {
+  id: string;
+  type: 'score' | 'behavioral' | 'volume';
+  confidence: 'low' | 'medium' | 'high';
+  severity: 'info' | 'warning' | 'critical';
+  location: string;
+  description: string;
+  detectedAt: string;
+  context: string;
+  suggestedAction: string;
+  status: 'new' | 'investigating' | 'resolved' | 'dismissed';
+}
+
+export interface AntiGamingFlag {
+  id: string;
+  location: string;
+  pattern: string;
+  description: string;
+  confidence: 'medium' | 'high';
+  detectedAt: string;
+}
+
+export const anomalyAlerts: AnomalyAlert[] = [
+  { id: 'anom-1', type: 'score', confidence: 'high', severity: 'critical', location: 'Mall Food Court #12', description: 'Score dropped 8.1 points in a single week — 3x the maximum normal weekly variance.', detectedAt: 'Feb 8, 2026', context: 'Normal weekly variance for this location: ±2.1 pts. Current: -8.1 pts.', suggestedAction: 'Immediate site visit by district manager to investigate root cause.', status: 'new' },
+  { id: 'anom-2', type: 'behavioral', confidence: 'high', severity: 'critical', location: 'Tampa General', description: 'Daily checklist completion stopped entirely 5 days ago after consistent 95%+ completion for 8 months.', detectedAt: 'Feb 6, 2026', context: 'Pattern suggests manager departure or system access issue rather than gradual decline.', suggestedAction: 'Contact site to verify manager status and system access. Check for personnel changes.', status: 'investigating' },
+  { id: 'anom-3', type: 'score', confidence: 'high', severity: 'warning', location: 'Location #178', description: 'Score is 2.4 standard deviations below its West region peer group average.', detectedAt: 'Feb 7, 2026', context: 'West region average: 91.3, this location: 72.8. Percentile rank: 2nd among 134 West locations.', suggestedAction: 'Schedule compliance improvement plan review with regional director.', status: 'new' },
+  { id: 'anom-4', type: 'behavioral', confidence: 'medium', severity: 'warning', location: 'Location #302', description: 'Temperature logs show identical readings (38.0°F) entered at exactly 2:00 PM daily for 14 consecutive days.', detectedAt: 'Feb 5, 2026', context: 'Probability of identical readings 14 days in a row: <0.001%. Suggests manual entry pattern.', suggestedAction: 'Verify temperature monitoring equipment is functioning. Review with site manager.', status: 'new' },
+  { id: 'anom-5', type: 'volume', confidence: 'high', severity: 'warning', location: 'Southeast Region (all)', description: 'Daily data entry volume dropped 34% across 89 SE locations over 3 days.', detectedAt: 'Feb 4, 2026', context: 'No system outage detected. Possible regional training issue or process change.', suggestedAction: 'Contact Southeast regional team to verify system adoption. Check for IT issues.', status: 'investigating' },
+  { id: 'anom-6', type: 'behavioral', confidence: 'medium', severity: 'warning', location: 'Location #421', description: 'Corrective actions marked "complete" in average 8 minutes — physically impossible for 3 of 5 action types.', detectedAt: 'Feb 3, 2026', context: 'Equipment repair, deep cleaning, and vendor scheduling typically require >1 hour. All marked complete in <10 min.', suggestedAction: 'Audit corrective action completion quality. May need photo evidence requirement.', status: 'new' },
+  { id: 'anom-7', type: 'volume', confidence: 'medium', severity: 'info', location: 'Location #156', description: 'Spike in incident reports — 7 incidents in 3 days vs normal rate of 2/month.', detectedAt: 'Feb 2, 2026', context: 'Could indicate systemic issue emerging, or new manager being more diligent in reporting.', suggestedAction: 'Review incident types. If equipment-related, schedule maintenance assessment.', status: 'new' },
+  { id: 'anom-8', type: 'score', confidence: 'low', severity: 'info', location: 'Location #234', description: 'Northeast region average suddenly diverged from 6-month historical trendline by 3.1 points.', detectedAt: 'Feb 1, 2026', context: 'Trendline predicted 90.2, actual 87.1. Within 2σ but worth monitoring.', suggestedAction: 'Monitor for next 2 weeks. If divergence persists, investigate contributing locations.', status: 'dismissed' },
+  { id: 'anom-9', type: 'behavioral', confidence: 'high', severity: 'info', location: 'Location #88', description: 'Vendor documentation uploaded in batch at 11:47 PM — 47 documents in 3 minutes.', detectedAt: 'Jan 30, 2026', context: 'Normal pattern: 2-3 documents per week during business hours. Bulk upload suggests backlog.', suggestedAction: 'Verify document authenticity and dates. May indicate catching up on deferred uploads.', status: 'resolved' },
+  { id: 'anom-10', type: 'volume', confidence: 'low', severity: 'info', location: 'API Integration', description: 'Unusual API call pattern from HRIS integration — 3x normal volume at 3 AM.', detectedAt: 'Jan 29, 2026', context: 'Likely triggered by HRIS system update or batch sync job. No errors detected.', suggestedAction: 'Monitor integration logs. Contact IT if pattern repeats.', status: 'resolved' },
+];
+
+export const antiGamingFlags: AntiGamingFlag[] = [
+  { id: 'ag-1', location: 'Location #302', pattern: 'Identical temperature readings', description: 'Temperature readings entered in bulk — identical 38.0°F logged at exactly 2:00 PM for 14 consecutive days. Patterns suggest retrospective manual entry rather than real-time measurement.', confidence: 'high', detectedAt: 'Feb 5, 2026' },
+  { id: 'ag-2', location: 'Location #421', pattern: 'Uniform checklist responses', description: 'All checklist items marked "pass" without variation for 6 consecutive weeks (252 items). Statistical probability of zero deviations: <0.01%.', confidence: 'high', detectedAt: 'Feb 3, 2026' },
+  { id: 'ag-3', location: 'Location #189', pattern: 'Pre-audit score spike', description: 'Compliance score spiked 12 points in the 5 days before scheduled health department inspection, then dropped 9 points in the following week. Pattern observed in 2 of last 3 inspection cycles.', confidence: 'medium', detectedAt: 'Jan 25, 2026' },
+];
+
+export const anomalySummary = {
+  score: { total: anomalyAlerts.filter(a => a.type === 'score').length, critical: anomalyAlerts.filter(a => a.type === 'score' && a.severity === 'critical').length },
+  behavioral: { total: anomalyAlerts.filter(a => a.type === 'behavioral').length, critical: anomalyAlerts.filter(a => a.type === 'behavioral' && a.severity === 'critical').length },
+  volume: { total: anomalyAlerts.filter(a => a.type === 'volume').length, critical: anomalyAlerts.filter(a => a.type === 'volume' && a.severity === 'critical').length },
+};

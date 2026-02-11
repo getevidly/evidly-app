@@ -4,11 +4,13 @@ import {
   ShieldCheck, AlertTriangle, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
   Minus, Search, Download, ChevronRight, ExternalLink, Share2,
   Flame, UtensilsCrossed, FileText, BarChart3, Users, Target, Zap,
-  Clock, Activity, Eye, Shield, CalendarDays,
+  Clock, Activity, Eye, Shield, CalendarDays, DollarSign, FileBarChart,
+  Radar, Brain, AlertCircle, ClipboardCheck, Info, Send, Plus, CheckCircle,
 } from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, ReferenceLine,
+  ScatterChart, Scatter, ZAxis,
 } from 'recharts';
 import {
   aramarkTenant, TOTAL_LOCATIONS, TOTAL_ENROLLED, ORG_SCORE,
@@ -24,6 +26,15 @@ import {
   singleCFPMLocations, equipmentReplacementDue, predictedInspectionFailures, foodborneRiskLocations,
   scoreColor, riskColor, riskBg, riskBorder,
   type LocationRow,
+  // Staffing tab
+  staffingCorrelationInsight, trainingInsight, cfpmInsight, staffingChecklistInsight,
+  managerTenureInsight, cfpmComparison, getScatterData, staffingRiskIndicators,
+  // Financial tab
+  financialCategories, roiSummary, historicalIncidents,
+  // Reports tab
+  reportTemplates, reportSections, distributionList,
+  // Anomaly tab
+  anomalyAlerts, antiGamingFlags, anomalySummary,
 } from '../data/intelligenceData';
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -63,13 +74,17 @@ function ScoreCircle({ score, size = 56 }: { score: number; size?: number }) {
   );
 }
 
-type Tab = 'command' | 'compare' | 'trends' | 'risk';
+type Tab = 'command' | 'compare' | 'trends' | 'risk' | 'staffing' | 'financial' | 'reports' | 'anomalies';
 
 const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
   { id: 'command', label: 'Command Center', icon: BarChart3 },
   { id: 'compare', label: 'Compare', icon: Users },
   { id: 'trends', label: 'Trends', icon: TrendingUp },
-  { id: 'risk', label: 'Risk Intelligence', icon: Shield },
+  { id: 'risk', label: 'Risk', icon: Shield },
+  { id: 'staffing', label: 'Staffing', icon: Brain },
+  { id: 'financial', label: 'Financial', icon: DollarSign },
+  { id: 'reports', label: 'Reports', icon: FileBarChart },
+  { id: 'anomalies', label: 'Anomalies', icon: Radar },
 ];
 
 // ── Main Page ────────────────────────────────────────────────────
@@ -123,6 +138,10 @@ export function ComplianceIntelligence() {
         {activeTab === 'compare' && <CompareTab />}
         {activeTab === 'trends' && <TrendsTab />}
         {activeTab === 'risk' && <RiskTab />}
+        {activeTab === 'staffing' && <StaffingTab />}
+        {activeTab === 'financial' && <FinancialTab />}
+        {activeTab === 'reports' && <ReportsTab />}
+        {activeTab === 'anomalies' && <AnomalyTab />}
       </div>
 
       {/* Powered By */}
@@ -818,6 +837,662 @@ function RiskTab() {
               )}
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 5 — STAFFING CORRELATION ANALYSIS
+// ══════════════════════════════════════════════════════════════════
+
+function InsightCallout({ text }: { text: string }) {
+  return (
+    <div className="mt-2 p-2.5 rounded-lg border border-[#d4af37]/30 bg-[#fefce8]">
+      <p className="text-[11px] text-amber-800"><Zap className="h-3 w-3 inline mr-1 text-[#d4af37]" />{text}</p>
+    </div>
+  );
+}
+
+const CustomScatterTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const d = payload[0]?.payload;
+  return (
+    <div className="bg-white p-2 rounded-lg shadow-lg border border-gray-200 text-[11px]">
+      <p className="font-semibold text-gray-900">{d?.name}</p>
+      <p className="text-gray-500">X: {d?.x} · Y: {d?.y}</p>
+    </div>
+  );
+};
+
+function StaffingTab() {
+  const turnoverData = useMemo(() => getScatterData('turnover', 'overall'), []);
+  const trainingData = useMemo(() => getScatterData('trainingPct', 'overall'), []);
+  const checklistData = useMemo(() => getScatterData('headcount', 'checklistPct'), []);
+  const tenureData = useMemo(() => getScatterData('monthsOnPlatform', 'overall'), []);
+
+  const riskCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    staffingRiskIndicators.forEach(r => { counts[r.riskType] = (counts[r.riskType] || 0) + 1; });
+    return counts;
+  }, []);
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Brain className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-base font-bold text-gray-900">Staffing Correlation Analysis</h2>
+        </div>
+        <p className="text-[11px] text-gray-500">Connects HR data to compliance outcomes — insight no other platform provides because nobody else has both datasets in one system.</p>
+      </div>
+
+      {/* Chart Grid — 2x2 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Chart 1 — Turnover vs Compliance */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">Turnover Rate vs Compliance Score</h3>
+          <p className="text-[10px] text-gray-400 mb-3">Each dot = one location · Expected: negative correlation</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="x" type="number" name="Turnover %" tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Turnover %', position: 'bottom', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <YAxis dataKey="y" type="number" name="Score" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Score', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <ZAxis range={[20, 20]} />
+              <Tooltip content={<CustomScatterTooltip />} />
+              <Scatter data={turnoverData} fill="#1e4d6b" fillOpacity={0.5} />
+              <ReferenceLine stroke="#ef4444" strokeDasharray="6 3" strokeWidth={1.5} segment={[{ x: 10, y: 95 }, { x: 60, y: 74 }]} />
+            </ScatterChart>
+          </ResponsiveContainer>
+          <InsightCallout text={staffingCorrelationInsight} />
+        </div>
+
+        {/* Chart 2 — Training vs Compliance */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">Training Completion vs Compliance Score</h3>
+          <p className="text-[10px] text-gray-400 mb-3">Food handler certs + EvidLY training · Strong positive correlation</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="x" type="number" name="Training %" domain={[50, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Training %', position: 'bottom', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <YAxis dataKey="y" type="number" name="Score" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Score', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <ZAxis range={[20, 20]} />
+              <Tooltip content={<CustomScatterTooltip />} />
+              <Scatter data={trainingData} fill="#22c55e" fillOpacity={0.5} />
+              <ReferenceLine stroke="#22c55e" strokeDasharray="6 3" strokeWidth={1.5} segment={[{ x: 55, y: 62 }, { x: 100, y: 96 }]} />
+            </ScatterChart>
+          </ResponsiveContainer>
+          <InsightCallout text={trainingInsight} />
+        </div>
+
+        {/* Chart 3 — CFPM Coverage (BarChart simulating box plot) */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">CFPM Coverage vs Food Safety Score</h3>
+          <p className="text-[10px] text-gray-400 mb-3">Single CFPM vs 2+ CFPMs · Median + interquartile range</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={[
+              { group: 'Single CFPM', avg: cfpmComparison.singleCfpm.avgFoodScore, q1: cfpmComparison.singleCfpm.q1, q3: cfpmComparison.singleCfpm.q3 },
+              { group: '2+ CFPMs', avg: cfpmComparison.multiCfpm.avgFoodScore, q1: cfpmComparison.multiCfpm.q1, q3: cfpmComparison.multiCfpm.q3 },
+            ]} margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="group" tick={{ fontSize: 10, fill: '#9ca3af' }} />
+              <YAxis domain={[60, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+              <Bar dataKey="avg" name="Avg Food Safety" fill="#1e4d6b" radius={[4, 4, 0, 0]} barSize={60} />
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="flex items-center justify-center gap-8 mt-2 text-[10px] text-gray-500">
+            <span>Single CFPM: <strong className="text-red-600">{cfpmComparison.singleCfpm.count} locations</strong> · Avg {cfpmComparison.singleCfpm.avgFoodScore}%</span>
+            <span>2+ CFPMs: <strong className="text-green-600">{cfpmComparison.multiCfpm.count} locations</strong> · Avg {cfpmComparison.multiCfpm.avgFoodScore}%</span>
+          </div>
+          <InsightCallout text={cfpmInsight} />
+        </div>
+
+        {/* Chart 4 — Staffing Level vs Checklist Completion */}
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-900 mb-1">Staffing Level vs Checklist Completion</h3>
+          <p className="text-[10px] text-gray-400 mb-3">Headcount as staffing proxy · Do understaffed locations complete fewer checklists?</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="x" type="number" name="Headcount" tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Headcount', position: 'bottom', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <YAxis dataKey="y" type="number" name="Checklist %" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Checklist %', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
+              <ZAxis range={[20, 20]} />
+              <Tooltip content={<CustomScatterTooltip />} />
+              <Scatter data={checklistData} fill="#d4af37" fillOpacity={0.5} />
+            </ScatterChart>
+          </ResponsiveContainer>
+          <InsightCallout text={staffingChecklistInsight} />
+        </div>
+      </div>
+
+      {/* Chart 5 — Manager Tenure vs Score (full width) */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-1">Manager Tenure vs Location Score</h3>
+        <p className="text-[10px] text-gray-400 mb-3">Months on platform as tenure proxy · Longer tenure correlates with higher scores</p>
+        <ResponsiveContainer width="100%" height={260}>
+          <ScatterChart margin={{ top: 5, right: 10, bottom: 5, left: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+            <XAxis dataKey="x" type="number" name="Months" tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Months on Platform', position: 'bottom', style: { fontSize: 10, fill: '#9ca3af' } }} />
+            <YAxis dataKey="y" type="number" name="Score" domain={[40, 100]} tick={{ fontSize: 10, fill: '#9ca3af' }} label={{ value: 'Score', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#9ca3af' } }} />
+            <ZAxis range={[20, 20]} />
+            <Tooltip content={<CustomScatterTooltip />} />
+            <Scatter data={tenureData} fill="#6b21a8" fillOpacity={0.5} />
+            <ReferenceLine stroke="#6b21a8" strokeDasharray="6 3" strokeWidth={1.5} segment={[{ x: 0, y: 76 }, { x: 24, y: 94 }]} />
+          </ScatterChart>
+        </ResponsiveContainer>
+        <InsightCallout text={managerTenureInsight} />
+      </div>
+
+      {/* Staffing Risk Indicators */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-1">Staffing Risk Indicators</h3>
+        <p className="text-[10px] text-gray-400 mb-4">Locations where staffing patterns predict compliance decline</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {[
+            { type: 'high-turnover' as const, label: 'High Turnover', icon: TrendingDown, color: '#ef4444' },
+            { type: 'cfpm-departure' as const, label: 'CFPM Departure', icon: Users, color: '#f59e0b' },
+            { type: 'new-hires-untrained' as const, label: 'Untrained New Hires', icon: AlertCircle, color: '#d4af37' },
+            { type: 'manager-vacancy' as const, label: 'Manager Vacancy', icon: AlertTriangle, color: '#ef4444' },
+          ].map(rt => (
+            <div key={rt.type} className="rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <rt.icon className="h-4 w-4" style={{ color: rt.color }} />
+                <span className="text-[11px] font-semibold text-gray-700">{rt.label}</span>
+              </div>
+              <p className="text-2xl font-bold" style={{ color: rt.color }}>{riskCounts[rt.type] || 0}</p>
+              <p className="text-[10px] text-gray-500">locations flagged</p>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-2">
+          {staffingRiskIndicators.map((ind, i) => (
+            <div key={i} className={`flex items-center gap-3 p-3 rounded-lg border ${
+              ind.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
+              ind.severity === 'high' ? 'border-amber-200 bg-amber-50/50' :
+              'border-gray-200 bg-gray-50/50'
+            }`}>
+              <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full flex-shrink-0 ${
+                ind.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                ind.severity === 'high' ? 'bg-amber-100 text-amber-700' :
+                'bg-gray-100 text-gray-600'
+              }`}>{ind.severity.toUpperCase()}</span>
+              <div className="flex-1 min-w-0">
+                <span className="text-xs font-medium text-gray-900">{ind.locationName}</span>
+                <span className="text-[10px] text-gray-400 ml-2">{ind.region} · {ind.district}</span>
+                <p className="text-[11px] text-gray-600 mt-0.5">{ind.description}</p>
+              </div>
+              <span className="text-[10px] text-gray-400 flex-shrink-0">{ind.detectedDate}</span>
+              <button onClick={() => alert(`Investigate ${ind.locationName} — coming soon`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 flex-shrink-0">Investigate</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 6 — FINANCIAL IMPACT ANALYSIS
+// ══════════════════════════════════════════════════════════════════
+
+function formatDollars(n: number) {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString()}`;
+}
+
+function FinancialTab() {
+  const categoryIcons: Record<string, typeof Flame> = {
+    gavel: AlertTriangle,
+    shield: Shield,
+    alert: Activity,
+    revenue: DollarSign,
+    'trending-up': TrendingUp,
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <DollarSign className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-base font-bold text-gray-900">Financial Impact Analysis</h2>
+        </div>
+        <p className="text-[11px] text-gray-500">Translates compliance data into dollar figures for the CFO. All estimates based on industry benchmarks and your organization's data.</p>
+      </div>
+
+      {/* Cost Categories */}
+      <div className="space-y-4">
+        {financialCategories.map(cat => {
+          const Icon = categoryIcons[cat.icon] || AlertTriangle;
+          const borderColor = cat.color === 'red' ? 'border-red-200' : cat.color === 'amber' ? 'border-amber-200' : 'border-green-200';
+          const bgColor = cat.color === 'red' ? 'bg-red-50/50' : cat.color === 'amber' ? 'bg-amber-50/50' : 'bg-green-50/50';
+          const textColor = cat.color === 'red' ? 'text-red-700' : cat.color === 'amber' ? 'text-amber-700' : 'text-green-700';
+          return (
+            <div key={cat.id} className={`bg-white rounded-xl border ${borderColor} p-5`}>
+              <div className="flex items-start gap-4">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${bgColor}`}>
+                  <Icon className={`h-5 w-5 ${textColor}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h3 className="text-sm font-semibold text-gray-900">{cat.category}</h3>
+                    <div className="text-right">
+                      <p className={`text-xl font-bold ${textColor}`}>
+                        {formatDollars(cat.lowEstimate)} – {formatDollars(cat.highEstimate)}
+                      </p>
+                      <p className="text-[10px] text-gray-400">{cat.color === 'green' ? 'estimated risk reduction' : 'estimated exposure'}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-600 mt-2">{cat.description}</p>
+                  <ul className="mt-2 space-y-1">
+                    {cat.details.map((d, i) => (
+                      <li key={i} className="text-[10px] text-gray-500 flex items-start gap-1.5">
+                        <span className="text-gray-300 mt-0.5">•</span>
+                        <span>{d}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Executive ROI Summary */}
+      <div className="bg-white rounded-xl border-2 border-[#d4af37]/30 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <TrendingUp className="h-5 w-5" style={{ color: '#d4af37' }} />
+          <h3 className="text-base font-bold text-gray-900">Executive ROI Summary</h3>
+          <span className="text-[10px] text-gray-400 ml-auto">Board-ready view</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left — Investment */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Annual Compliance Investment</h4>
+            <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <p className="text-2xl font-bold text-gray-900">{formatDollars(roiSummary.annualInvestment)}<span className="text-sm font-normal text-gray-400">/year</span></p>
+              <p className="text-[10px] text-gray-500 mt-1">EvidLY platform subscription (487 locations)</p>
+            </div>
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+              <p className="text-xs font-semibold text-red-700 mb-1">Without EvidLY — Estimated Annual Exposure</p>
+              <p className="text-xl font-bold text-red-600">{formatDollars(roiSummary.riskReductionLow)} – {formatDollars(roiSummary.riskReductionHigh)}</p>
+              <p className="text-[10px] text-red-500 mt-1">penalties + incidents + closures + premium impact</p>
+            </div>
+          </div>
+          {/* Right — Returns */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Realized & Projected Savings</h4>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
+                <span className="text-[11px] text-green-700">Insurance Premium Savings</span>
+                <span className="text-sm font-bold text-green-700">{formatDollars(roiSummary.insuranceSavings)}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
+                <span className="text-[11px] text-green-700">Revenue Protected (closures avoided)</span>
+                <span className="text-sm font-bold text-green-700">{formatDollars(roiSummary.revenueProtected)}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
+                <span className="text-[11px] text-green-700">Risk Reduction Value</span>
+                <span className="text-sm font-bold text-green-700">{formatDollars(roiSummary.riskReductionLow)} – {formatDollars(roiSummary.riskReductionHigh)}</span>
+              </div>
+            </div>
+            <div className="p-4 rounded-lg border-2 border-[#d4af37] bg-[#fefce8] text-center">
+              <p className="text-xs text-gray-600 mb-1">Net ROI</p>
+              <p className="text-3xl font-bold" style={{ color: '#d4af37' }}>{roiSummary.roiLow}x – {roiSummary.roiHigh}x</p>
+              <p className="text-[10px] text-gray-500 mt-1">return on compliance investment</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+          <p className="text-[10px] text-gray-400 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
+          <button onClick={() => alert('Generate Board Report — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate Board Report</button>
+        </div>
+      </div>
+
+      {/* Historical Incidents */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-4">Historical Incidents — Last 12 Months</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[11px]">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Type</th>
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Location</th>
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Date</th>
+                <th className="text-right py-2 pr-3 font-medium text-gray-500">Cost</th>
+                <th className="text-left py-2 font-medium text-gray-500">Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              {historicalIncidents.map((inc, i) => (
+                <tr key={i} className="border-b border-gray-100">
+                  <td className="py-2 pr-3 font-medium text-gray-800">{inc.type}</td>
+                  <td className="py-2 pr-3 text-gray-600">{inc.location}</td>
+                  <td className="py-2 pr-3 text-gray-500">{inc.date}</td>
+                  <td className="py-2 pr-3 text-right font-semibold text-red-600">${inc.cost.toLocaleString()}</td>
+                  <td className="py-2 text-gray-500">{inc.resolution}</td>
+                </tr>
+              ))}
+              <tr className="border-t-2 border-gray-300">
+                <td colSpan={3} className="py-2 font-semibold text-gray-900">Total Incident Cost (12 months)</td>
+                <td className="py-2 pr-3 text-right font-bold text-red-700">${historicalIncidents.reduce((s, i) => s + i.cost, 0).toLocaleString()}</td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 7 — EXECUTIVE REPORT GENERATOR
+// ══════════════════════════════════════════════════════════════════
+
+function ReportsTab() {
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(['Executive Summary', 'Organization Scorecard', 'Risk & Exposure']);
+  const [dateRange, setDateRange] = useState('last-30');
+  const [scope, setScope] = useState('organization');
+
+  function toggleMetric(m: string) {
+    setSelectedMetrics(prev => prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]);
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <FileBarChart className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-base font-bold text-gray-900">Executive Report Generator</h2>
+        </div>
+        <p className="text-[11px] text-gray-500">Automated C-suite-ready reports with enterprise branding. PDF, PowerPoint, and interactive web formats.</p>
+      </div>
+
+      {/* Report Templates */}
+      <div>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Report Templates</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {reportTemplates.map(rpt => (
+            <div key={rpt.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-gray-900">{rpt.title}</h4>
+                <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full ${
+                  rpt.type === 'monthly' ? 'bg-blue-100 text-blue-700' :
+                  rpt.type === 'quarterly' ? 'bg-purple-100 text-purple-700' :
+                  'bg-gray-100 text-gray-600'
+                }`}>{rpt.type.charAt(0).toUpperCase() + rpt.type.slice(1)}</span>
+              </div>
+              <p className="text-[10px] text-gray-400 mb-2">{rpt.pages} pages · Last generated: {rpt.lastGenerated}</p>
+              <div className="flex flex-wrap gap-1 mb-3">
+                {rpt.sections.map(s => (
+                  <span key={s} className="px-1.5 py-0.5 text-[9px] rounded bg-gray-100 text-gray-500">{s}</span>
+                ))}
+              </div>
+              <div className="flex items-center gap-1.5">
+                {rpt.status === 'scheduled' ? (
+                  <span className="text-[10px] text-amber-600 flex items-center gap-1"><Clock className="h-3 w-3" /> Scheduled</span>
+                ) : (
+                  <span className="text-[10px] text-green-600 flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Ready</span>
+                )}
+                <div className="flex-1" />
+                <button onClick={() => alert(`Generating ${rpt.title}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate</button>
+                <button onClick={() => alert(`Schedule ${rpt.title}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Ad-Hoc Report Builder */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-900 mb-4">Ad-Hoc Report Builder</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          {/* Metrics */}
+          <div>
+            <label className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide block mb-2">Select Metrics</label>
+            <div className="space-y-1 max-h-48 overflow-y-auto">
+              {reportSections.map(s => (
+                <label key={s} className="flex items-center gap-2 text-[11px] text-gray-700 cursor-pointer">
+                  <input type="checkbox" checked={selectedMetrics.includes(s)} onChange={() => toggleMetric(s)} className="rounded border-gray-300" />
+                  {s}
+                </label>
+              ))}
+            </div>
+          </div>
+          {/* Date Range + Scope */}
+          <div className="space-y-3">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide block mb-2">Date Range</label>
+              <select value={dateRange} onChange={e => setDateRange(e.target.value)} className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2">
+                <option value="last-30">Last 30 Days</option>
+                <option value="last-90">Last 90 Days</option>
+                <option value="ytd">Year to Date</option>
+                <option value="last-year">Last 12 Months</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide block mb-2">Scope</label>
+              <select value={scope} onChange={e => setScope(e.target.value)} className="w-full text-xs border border-gray-200 rounded-lg px-3 py-2">
+                <option value="organization">Entire Organization</option>
+                <option value="west">West Region</option>
+                <option value="midwest">Midwest Region</option>
+                <option value="northeast">Northeast Region</option>
+                <option value="southeast">Southeast Region</option>
+                <option value="southwest">Southwest Region</option>
+              </select>
+            </div>
+          </div>
+          {/* Export Options */}
+          <div>
+            <label className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide block mb-2">Export Format</label>
+            <div className="space-y-2">
+              {[
+                { label: 'PDF Report', desc: 'Print-ready with branding' },
+                { label: 'PowerPoint', desc: 'Editable slide deck' },
+                { label: 'Interactive Web Link', desc: 'Shareable dashboard link' },
+              ].map(fmt => (
+                <button key={fmt.label} onClick={() => alert(`Building ${fmt.label} report...`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-left">
+                  <Download className="h-4 w-4 text-gray-400" />
+                  <div>
+                    <p className="text-[11px] font-medium text-gray-800">{fmt.label}</p>
+                    <p className="text-[10px] text-gray-400">{fmt.desc}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          <p className="text-[10px] text-gray-400">{selectedMetrics.length} sections selected</p>
+          <button onClick={() => alert('Building custom report...')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Build Report</button>
+        </div>
+      </div>
+
+      {/* Distribution List */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-900">Distribution List</h3>
+          <button onClick={() => alert('Add recipient — coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">
+            <Plus className="h-3 w-3" /> Add Recipient
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[11px]">
+            <thead>
+              <tr className="border-b border-gray-200">
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Name</th>
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Role</th>
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Email</th>
+                <th className="text-left py-2 pr-3 font-medium text-gray-500">Delivery</th>
+                <th className="text-center py-2 font-medium text-gray-500">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {distributionList.map((rec, i) => (
+                <tr key={i} className="border-b border-gray-100">
+                  <td className="py-2 pr-3 font-medium text-gray-800">{rec.name}</td>
+                  <td className="py-2 pr-3 text-gray-600">{rec.role}</td>
+                  <td className="py-2 pr-3 text-gray-500">{rec.email}</td>
+                  <td className="py-2 pr-3">
+                    <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
+                      rec.deliveryMethod === 'email' ? 'bg-blue-100 text-blue-700' :
+                      rec.deliveryMethod === 'teams' ? 'bg-purple-100 text-purple-700' :
+                      'bg-green-100 text-green-700'
+                    }`}>{rec.deliveryMethod.charAt(0).toUpperCase() + rec.deliveryMethod.slice(1)}</span>
+                  </td>
+                  <td className="py-2 text-center">
+                    <button onClick={() => alert(`Send report to ${rec.name} — coming soon`)} className="text-[10px] text-[#1e4d6b] hover:underline cursor-pointer"><Send className="h-3 w-3 inline" /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <button onClick={() => alert('Send to all recipients — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Send Now</button>
+          <button onClick={() => alert('Schedule distribution — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TAB 8 — ANOMALY DETECTION ENGINE
+// ══════════════════════════════════════════════════════════════════
+
+function AnomalyTab() {
+  const severityOrder = { critical: 0, warning: 1, info: 2 };
+  const confidenceOrder = { high: 0, medium: 1, low: 2 };
+  const sortedAlerts = useMemo(() =>
+    [...anomalyAlerts].sort((a, b) =>
+      severityOrder[a.severity] - severityOrder[b.severity] || confidenceOrder[a.confidence] - confidenceOrder[b.confidence]
+    ), []);
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Radar className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <h2 className="text-base font-bold text-gray-900">Anomaly Detection Engine</h2>
+        </div>
+        <p className="text-[11px] text-gray-500">Real-time statistical anomaly detection surfaces unusual patterns automatically. Detection runs hourly against rolling 30-day baseline.</p>
+      </div>
+
+      {/* Anomaly Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[
+          { type: 'Score Anomalies', data: anomalySummary.score, icon: TrendingDown, color: '#ef4444', desc: 'Unusual score drops or divergence from peer group' },
+          { type: 'Behavioral Anomalies', data: anomalySummary.behavioral, icon: Eye, color: '#f59e0b', desc: 'Unusual data entry patterns or workflow changes' },
+          { type: 'Volume Anomalies', data: anomalySummary.volume, icon: Activity, color: '#6b21a8', desc: 'Unexpected spikes or drops in data volume' },
+        ].map(cat => (
+          <div key={cat.type} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <cat.icon className="h-4 w-4" style={{ color: cat.color }} />
+              <h3 className="text-xs font-semibold text-gray-900">{cat.type}</h3>
+            </div>
+            <div className="flex items-center gap-4">
+              <p className="text-3xl font-bold" style={{ color: cat.color }}>{cat.data.total}</p>
+              {cat.data.critical > 0 && (
+                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-red-100 text-red-700">{cat.data.critical} critical</span>
+              )}
+            </div>
+            <p className="text-[10px] text-gray-500 mt-1">{cat.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Active Anomaly Alerts */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-sm font-semibold text-gray-900">Active Anomaly Alerts</h3>
+          <span className="text-[10px] text-gray-400">{sortedAlerts.length} anomalies detected</span>
+        </div>
+        <div className="space-y-3 max-h-[600px] overflow-y-auto">
+          {sortedAlerts.map(a => (
+            <div key={a.id} className={`p-4 rounded-lg border ${
+              a.severity === 'critical' ? 'border-red-200 bg-red-50/50' :
+              a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' :
+              'border-gray-200 bg-gray-50/50'
+            }`}>
+              <div className="flex items-start gap-3">
+                <div className="flex flex-col gap-1 flex-shrink-0">
+                  <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full text-center ${
+                    a.severity === 'critical' ? 'bg-red-100 text-red-700' :
+                    a.severity === 'warning' ? 'bg-amber-100 text-amber-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>{a.severity.toUpperCase()}</span>
+                  <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full text-center ${
+                    a.type === 'score' ? 'bg-red-50 text-red-600' :
+                    a.type === 'behavioral' ? 'bg-amber-50 text-amber-600' :
+                    'bg-purple-50 text-purple-600'
+                  }`}>{a.type}</span>
+                  <span className={`px-2 py-0.5 text-[9px] rounded-full text-center ${
+                    a.confidence === 'high' ? 'bg-green-50 text-green-700' :
+                    a.confidence === 'medium' ? 'bg-yellow-50 text-yellow-700' :
+                    'bg-gray-50 text-gray-500'
+                  }`}>{a.confidence} conf.</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-semibold text-gray-900">{a.location}</span>
+                    <span className={`px-1.5 py-0.5 text-[9px] font-medium rounded ${
+                      a.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                      a.status === 'investigating' ? 'bg-amber-100 text-amber-700' :
+                      a.status === 'resolved' ? 'bg-green-100 text-green-700' :
+                      'bg-gray-100 text-gray-500'
+                    }`}>{a.status}</span>
+                    <span className="text-[10px] text-gray-400 ml-auto">{a.detectedAt}</span>
+                  </div>
+                  <p className="text-[11px] text-gray-700 mt-1">{a.description}</p>
+                  <p className="text-[10px] text-gray-500 mt-1"><strong>Context:</strong> {a.context}</p>
+                  <p className="text-[10px] text-gray-500 mt-1"><strong>Suggested:</strong> {a.suggestedAction}</p>
+                  <div className="flex gap-2 mt-2">
+                    <button onClick={() => alert(`Investigating ${a.location}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Investigate</button>
+                    <button onClick={() => alert(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Update Status</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Anti-Gaming Detection */}
+      <div className="bg-white rounded-xl border border-amber-200 p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <Info className="h-4 w-4 text-amber-500" />
+          <h3 className="text-sm font-semibold text-gray-900">Data Quality Review</h3>
+        </div>
+        <p className="text-[10px] text-gray-400 mb-4">These flags indicate data patterns that may warrant review — not accusations of misconduct. Enterprise analytics must be trustworthy.</p>
+        <div className="space-y-3">
+          {antiGamingFlags.map(flag => (
+            <div key={flag.id} className="p-4 rounded-lg border border-amber-100 bg-amber-50/50">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-xs font-semibold text-gray-900">{flag.location}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 text-[9px] font-semibold rounded-full ${
+                    flag.confidence === 'high' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                  }`}>{flag.confidence} confidence</span>
+                  <span className="text-[10px] text-gray-400">{flag.detectedAt}</span>
+                </div>
+              </div>
+              <p className="text-[11px] font-medium text-amber-800 mb-1">{flag.pattern}</p>
+              <p className="text-[11px] text-gray-600">{flag.description}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-100">
+          <p className="text-[10px] text-amber-700 italic">Recommend on-site data quality audit for flagged locations.</p>
+          <button onClick={() => alert('Schedule on-site audit — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50">Schedule Audit</button>
         </div>
       </div>
     </div>
