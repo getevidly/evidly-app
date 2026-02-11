@@ -21,6 +21,7 @@ import {
   AlertCircle,
   ClipboardCheck,
   Target,
+  ShoppingBag,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -67,6 +68,7 @@ export function MobileTabBar() {
     executive: [
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
       { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
@@ -82,6 +84,7 @@ export function MobileTabBar() {
     management: [
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
       { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
       { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
@@ -100,6 +103,7 @@ export function MobileTabBar() {
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     facilities: [
+      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
       { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],

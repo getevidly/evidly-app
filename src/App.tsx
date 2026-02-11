@@ -54,6 +54,8 @@ const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ de
 const ImproveScore = lazy(() => import('./pages/ImproveScore').then(m => ({ default: m.ImproveScore })));
 const InsuranceSettings = lazy(() => import('./pages/InsuranceSettings').then(m => ({ default: m.InsuranceSettings })));
 const CarrierPartnership = lazy(() => import('./pages/CarrierPartnership').then(m => ({ default: m.CarrierPartnership })));
+const VendorMarketplace = lazy(() => import('./pages/VendorMarketplace').then(m => ({ default: m.VendorMarketplace })));
+const VendorProfile = lazy(() => import('./pages/VendorProfile').then(m => ({ default: m.VendorProfile })));
 const PublicVerification = lazy(() => import('./pages/PublicVerification'));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
@@ -213,6 +215,8 @@ function AppRoutes() {
           <Route path="/documents" element={<Documents />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
+          <Route path="/marketplace" element={<VendorMarketplace />} />
+          <Route path="/marketplace/:vendorSlug" element={<VendorProfile />} />
           <Route path="/haccp" element={<HACCP />} />
           <Route path="/alerts" element={<Alerts />} />
           <Route path="/incidents" element={<IncidentLog />} />

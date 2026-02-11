@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, Users, FileText, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, Users, FileText, AlertCircle, CheckCircle, Shield, Eye, MessageSquare, Star, Award } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { format } from 'date-fns';
@@ -144,6 +144,68 @@ export function VendorDashboard() {
                 <p className="text-sm text-gray-600">Documents on File</p>
                 <p className="text-3xl font-bold text-gray-900">{stats.documents_on_file}</p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Marketplace Performance */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {[
+            { label: 'Profile Views', value: '127', icon: Eye, color: 'bg-purple-100', iconColor: 'text-purple-600', trend: '+12% this month' },
+            { label: 'Quote Requests', value: '8', icon: MessageSquare, color: 'bg-blue-100', iconColor: 'text-blue-600', trend: '3 new this week' },
+            { label: 'Avg Rating', value: '4.7', icon: Star, color: 'bg-yellow-100', iconColor: 'text-yellow-600', trend: 'Based on 23 reviews' },
+            { label: 'Current Tier', value: 'Certified', icon: Shield, color: 'bg-green-100', iconColor: 'text-green-600', trend: '82% to Preferred' },
+          ].map((item) => (
+            <div key={item.label} className="bg-white rounded-lg shadow p-6">
+              <div className="flex items-center">
+                <div className={`p-3 ${item.color} rounded-lg`}>
+                  <item.icon className={`h-8 w-8 ${item.iconColor}`} />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">{item.label}</p>
+                  <p className="text-3xl font-bold text-gray-900">{item.value}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{item.trend}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* EvidLY Certification Progress */}
+        <div className="bg-white rounded-lg shadow mb-8">
+          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <div className="flex items-center">
+              <Award className="h-5 w-5 text-[#d4af37] mr-2" />
+              <h2 className="text-lg font-semibold text-gray-900">Your EvidLY Certification</h2>
+            </div>
+            <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-semibold rounded-full flex items-center gap-1.5">
+              <Shield className="h-4 w-4" />
+              Certified
+            </span>
+          </div>
+          <div className="p-6">
+            <p className="text-sm text-gray-600 mb-4">Meet all Preferred tier requirements to unlock premium marketplace placement and priority lead routing.</p>
+            <div className="space-y-4">
+              {[
+                { label: 'Avg Response Time', current: '< 4 hrs', target: '< 2 hrs for Preferred', pct: 65 },
+                { label: 'On-Time Service Rate', current: '94%', target: '97% for Preferred', pct: 94 },
+                { label: 'Average Rating', current: '4.7 / 5.0', target: '4.8 for Preferred', pct: 94 },
+                { label: 'Document Upload Rate', current: '91%', target: '95% for Preferred', pct: 91 },
+                { label: 'Review Count', current: '23', target: '30 for Preferred', pct: 77 },
+              ].map((req) => (
+                <div key={req.label}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium text-gray-700">{req.label}</span>
+                    <span className="text-sm text-gray-500">{req.current} <span className="text-gray-400">/ {req.target}</span></span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full transition-all"
+                      style={{ width: `${Math.min(req.pct, 100)}%`, backgroundColor: req.pct >= 95 ? '#22c55e' : req.pct >= 80 ? '#d4af37' : '#f59e0b' }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
