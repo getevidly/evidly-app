@@ -1921,6 +1921,144 @@ export const iotMaintenanceLog: IoTMaintenanceEntry[] = [
   { id: 'im-14', sensorId: 'iot-s16', type: 'calibration', description: 'Cold chain verification calibration at 33°F reference — passed', performedBy: 'DeltaTrak Calibration Lab', date: '2025-10-01' },
 ];
 
+// ── IoT Defrost Schedules ────────────────────────────────────────────────────
+
+export interface IoTDefrostSchedule {
+  sensorId: string;
+  sensorName: string;
+  frequency: string;
+  durationMin: number;
+  expectedRecoveryMin: number;
+  lastDefrostAt: string;
+  nextDefrostAt: string;
+  autoDetect: boolean;
+}
+
+export const iotDefrostSchedules: IoTDefrostSchedule[] = [
+  { sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', frequency: 'Every 6 hours', durationMin: 25, expectedRecoveryMin: 15, lastDefrostAt: '2026-02-10T12:00:00Z', nextDefrostAt: '2026-02-10T18:00:00Z', autoDetect: false },
+  { sensorId: 'iot-s02', sensorName: 'Walk-in Freezer', frequency: 'Every 8 hours', durationMin: 30, expectedRecoveryMin: 20, lastDefrostAt: '2026-02-10T08:00:00Z', nextDefrostAt: '2026-02-10T16:00:00Z', autoDetect: true },
+  { sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', frequency: 'Every 6 hours', durationMin: 25, expectedRecoveryMin: 15, lastDefrostAt: '2026-02-10T06:00:00Z', nextDefrostAt: '2026-02-10T12:00:00Z', autoDetect: false },
+  { sensorId: 'iot-s12', sensorName: 'Main Walk-in', frequency: 'Every 8 hours', durationMin: 20, expectedRecoveryMin: 12, lastDefrostAt: '2026-02-10T10:00:00Z', nextDefrostAt: '2026-02-10T18:00:00Z', autoDetect: true },
+];
+
+// ── IoT Door Open Events ─────────────────────────────────────────────────────
+
+export interface IoTDoorEvent {
+  id: string;
+  sensorId: string;
+  sensorName: string;
+  locationName: string;
+  openedAt: string;
+  closedAt: string | null;
+  durationSec: number;
+  correlatedTempRise: number | null;
+}
+
+export const iotDoorEvents: IoTDoorEvent[] = [
+  { id: 'door-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:02:00Z', closedAt: '2026-02-10T11:03:12Z', durationSec: 72, correlatedTempRise: 0.8 },
+  { id: 'door-02', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:15:00Z', closedAt: '2026-02-10T11:15:45Z', durationSec: 45, correlatedTempRise: 0.3 },
+  { id: 'door-03', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:28:00Z', closedAt: '2026-02-10T11:30:30Z', durationSec: 150, correlatedTempRise: 1.5 },
+  { id: 'door-04', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:45:00Z', closedAt: '2026-02-10T11:46:08Z', durationSec: 68, correlatedTempRise: 0.6 },
+  { id: 'door-05', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T12:10:00Z', closedAt: '2026-02-10T12:12:20Z', durationSec: 140, correlatedTempRise: 1.2 },
+  { id: 'door-06', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', openedAt: '2026-02-10T14:30:00Z', closedAt: '2026-02-10T14:38:15Z', durationSec: 495, correlatedTempRise: 5.8 },
+  { id: 'door-07', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'University Campus', openedAt: '2026-02-10T12:00:00Z', closedAt: '2026-02-10T12:01:30Z', durationSec: 90, correlatedTempRise: 0.7 },
+  { id: 'door-08', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'University Campus', openedAt: '2026-02-10T12:22:00Z', closedAt: '2026-02-10T12:22:50Z', durationSec: 50, correlatedTempRise: 0.4 },
+];
+
+// ── IoT Cooling Curves ───────────────────────────────────────────────────────
+
+export interface IoTCoolingLog {
+  id: string;
+  sensorId: string;
+  sensorName: string;
+  locationName: string;
+  foodItem: string;
+  startTemp: number;
+  targetTemp: number;
+  startTime: string;
+  readings: { time: string; temp: number }[];
+  meetsStandard: boolean;
+  standard: string;
+  totalMin: number;
+}
+
+export const iotCoolingLogs: IoTCoolingLog[] = [
+  {
+    id: 'cool-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen',
+    foodItem: 'Chicken Stock (5 gal)', startTemp: 165, targetTemp: 41, startTime: '2026-02-10T09:00:00Z',
+    readings: [
+      { time: '2026-02-10T09:00:00Z', temp: 165 }, { time: '2026-02-10T09:30:00Z', temp: 142 },
+      { time: '2026-02-10T10:00:00Z', temp: 118 }, { time: '2026-02-10T10:30:00Z', temp: 95 },
+      { time: '2026-02-10T11:00:00Z', temp: 70 }, { time: '2026-02-10T11:30:00Z', temp: 58 },
+      { time: '2026-02-10T12:00:00Z', temp: 48 }, { time: '2026-02-10T12:30:00Z', temp: 43 },
+      { time: '2026-02-10T13:00:00Z', temp: 40 }, { time: '2026-02-10T13:30:00Z', temp: 38 },
+    ],
+    meetsStandard: true, standard: 'FDA: 135→70°F in 2hr, 70→41°F in 4hr', totalMin: 270,
+  },
+  {
+    id: 'cool-02', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal',
+    foodItem: 'Rice Pilaf (hotel pan)', startTemp: 180, targetTemp: 41, startTime: '2026-02-10T08:00:00Z',
+    readings: [
+      { time: '2026-02-10T08:00:00Z', temp: 180 }, { time: '2026-02-10T08:30:00Z', temp: 155 },
+      { time: '2026-02-10T09:00:00Z', temp: 130 }, { time: '2026-02-10T09:30:00Z', temp: 108 },
+      { time: '2026-02-10T10:00:00Z', temp: 88 }, { time: '2026-02-10T10:30:00Z', temp: 76 },
+      { time: '2026-02-10T11:00:00Z', temp: 72 }, { time: '2026-02-10T11:30:00Z', temp: 68 },
+      { time: '2026-02-10T12:00:00Z', temp: 62 }, { time: '2026-02-10T13:00:00Z', temp: 55 },
+    ],
+    meetsStandard: false, standard: 'FDA: 135→70°F in 2hr, 70→41°F in 4hr', totalMin: 300,
+  },
+];
+
+// ── IoT Compliance Impact Metrics ────────────────────────────────────────────
+
+export interface IoTComplianceImpact {
+  locationName: string;
+  totalReadings: number;
+  inRangeReadings: number;
+  tempComplianceRate: number;
+  dataCompletenessScore: number;
+  sensorCount: number;
+  manualLogReduction: number;
+  avgResponseTimeMin: number;
+  insuranceNote: string;
+}
+
+export const iotComplianceImpact: IoTComplianceImpact[] = [
+  { locationName: 'Downtown Kitchen', totalReadings: 8640, inRangeReadings: 8510, tempComplianceRate: 98.5, dataCompletenessScore: 99, sensorCount: 6, manualLogReduction: 94, avgResponseTimeMin: 1.8, insuranceNote: 'Automated 24/7 monitoring with 6 sensors reporting every 1-5 minutes' },
+  { locationName: 'Airport Terminal', totalReadings: 7200, inRangeReadings: 6840, tempComplianceRate: 95.0, dataCompletenessScore: 97, sensorCount: 5, manualLogReduction: 88, avgResponseTimeMin: 2.5, insuranceNote: 'Automated monitoring with 5 sensors; 1 violation event recorded' },
+  { locationName: 'University Campus', totalReadings: 4320, inRangeReadings: 4190, tempComplianceRate: 97.0, dataCompletenessScore: 85, sensorCount: 5, manualLogReduction: 78, avgResponseTimeMin: 3.2, insuranceNote: 'Automated monitoring with 5 sensors; 1 offline sensor affecting coverage' },
+];
+
+// ── IoT Sparkline Data (4-hour mini charts per sensor) ───────────────────────
+
+export interface IoTSparklinePoint { time: string; temp: number }
+
+function generateSparkline(baseTemp: number, variance: number, points: number): IoTSparklinePoint[] {
+  const now = Date.now();
+  return Array.from({ length: points }, (_, i) => ({
+    time: new Date(now - (points - 1 - i) * 15 * 60000).toISOString(),
+    temp: +(baseTemp + Math.sin(i * 0.4) * variance + (Math.random() - 0.5) * variance * 0.3).toFixed(1),
+  }));
+}
+
+export const iotSparklines: Record<string, IoTSparklinePoint[]> = {
+  'iot-s01': generateSparkline(36.2, 0.8, 16),
+  'iot-s02': generateSparkline(-2.1, 0.5, 16),
+  'iot-s03': generateSparkline(68.4, 1.2, 16),
+  'iot-s04': generateSparkline(148.5, 2.0, 16),
+  'iot-s05': generateSparkline(72.1, 0.6, 16),
+  'iot-s06': generateSparkline(58.3, 1.5, 16),
+  'iot-s07': generateSparkline(44.0, 3.5, 16),
+  'iot-s08': generateSparkline(38.7, 0.7, 16),
+  'iot-s09': generateSparkline(40.2, 0.5, 16),
+  'iot-s10': generateSparkline(74.8, 1.0, 16),
+  'iot-s11': generateSparkline(34.0, 0.4, 16),
+  'iot-s12': generateSparkline(35.8, 0.6, 16),
+  'iot-s14': generateSparkline(37.4, 0.5, 16),
+  'iot-s15': generateSparkline(165.2, 3.0, 16),
+  'iot-s16': generateSparkline(33.9, 0.5, 16),
+};
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {

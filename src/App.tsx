@@ -67,6 +67,10 @@ const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').the
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
 const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
 const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
+const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
+const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
+const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
+const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -258,6 +262,10 @@ function AppRoutes() {
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
+          <Route path="/iot-platform" element={<IoTSensorPlatform />} />
+          <Route path="/sensors" element={<SensorHub />} />
+          <Route path="/sensors/add" element={<SensorSetupWizard />} />
+          <Route path="/sensors/:id" element={<SensorDetail />} />
         </Route>
       </Routes>
     </>

@@ -30,6 +30,7 @@ import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
 import { BenchmarkWidget } from '../components/BenchmarkWidget';
 import { InsuranceReadinessWidget } from '../components/InsuranceReadinessWidget';
+import { SensorMonitorWidget } from '../components/SensorMonitorWidget';
 import { useTranslation } from '../contexts/LanguageContext';
 import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
@@ -975,6 +976,13 @@ export function Dashboard() {
         {['executive', 'management'].includes(userRole) && (
           <div className="mt-4">
             <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+          </div>
+        )}
+
+        {/* Live Sensor Monitor Widget */}
+        {['executive', 'management', 'kitchen'].includes(userRole) && (
+          <div className="mt-4">
+            <SensorMonitorWidget locationFilter={selectedLocation === 'all' ? 'all' : selectedLocation} />
           </div>
         )}
 
