@@ -1,0 +1,724 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  ShoppingBag, Link2, Key, Activity, HeartPulse,
+  Search, ExternalLink, CheckCircle2, AlertTriangle,
+  RefreshCw, Pause, Play, Trash2, Copy, Eye, EyeOff,
+  ArrowUpRight, ArrowDownLeft, Clock, Filter,
+  Zap, Shield, ChevronRight, Plus, XCircle,
+  Globe, Code2, Webhook, BarChart3,
+} from 'lucide-react';
+import {
+  integrationPlatforms,
+  connectedIntegrations,
+  integrationSyncLogs,
+  apiWebhookSubscriptions,
+  apiUsageStats,
+  type IntegrationPlatform,
+  type ConnectedIntegration,
+  type IntegrationSyncLog,
+} from '../data/demoData';
+
+type Tab = 'marketplace' | 'connected' | 'api' | 'activity' | 'health';
+
+const TABS: { id: Tab; label: string; icon: typeof ShoppingBag }[] = [
+  { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag },
+  { id: 'connected', label: 'Connected', icon: Link2 },
+  { id: 'api', label: 'API Management', icon: Key },
+  { id: 'activity', label: 'Sync Activity', icon: Activity },
+  { id: 'health', label: 'Health', icon: HeartPulse },
+];
+
+const CATEGORY_ORDER = ['accounting', 'pos', 'payroll', 'distribution', 'productivity', 'inventory'] as const;
+
+const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+  available: { bg: '#e0f2fe', text: '#0369a1', label: 'Available' },
+  connected: { bg: '#dcfce7', text: '#15803d', label: 'Connected' },
+  coming_soon: { bg: '#fef3c7', text: '#92400e', label: 'Coming Soon' },
+  beta: { bg: '#ede9fe', text: '#6d28d9', label: 'Beta' },
+};
+
+const SYNC_STATUS_BADGE: Record<string, { bg: string; text: string }> = {
+  connected: { bg: '#dcfce7', text: '#15803d' },
+  error: { bg: '#fee2e2', text: '#dc2626' },
+  syncing: { bg: '#e0f2fe', text: '#0369a1' },
+  paused: { bg: '#f3f4f6', text: '#6b7280' },
+};
+
+// ── Marketplace Tab ──────────────────────────────────────────────────────────
+
+function MarketplaceTab() {
+  const [search, setSearch] = useState('');
+  const [catFilter, setCatFilter] = useState<string>('all');
+
+  const categories = CATEGORY_ORDER.map(key => {
+    const first = integrationPlatforms.find(p => p.category === key);
+    return { key, label: first?.categoryLabel || key };
+  });
+
+  const filtered = integrationPlatforms.filter(p => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase());
+    const matchCat = catFilter === 'all' || p.category === catFilter;
+    return matchSearch && matchCat;
+  });
+
+  const grouped = CATEGORY_ORDER.reduce<Record<string, IntegrationPlatform[]>>((acc, cat) => {
+    const items = filtered.filter(p => p.category === cat);
+    if (items.length > 0) acc[cat] = items;
+    return acc;
+  }, {});
+
+  return (
+    <div>
+      {/* Search & Filter */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search integrations..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-gray-400" />
+          <select
+            value={catFilter}
+            onChange={e => setCatFilter(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+          >
+            <option value="all">All Categories</option>
+            {categories.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* Stats bar */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        {[
+          { label: 'Total Integrations', value: integrationPlatforms.length },
+          { label: 'Connected', value: integrationPlatforms.filter(p => p.status === 'connected').length },
+          { label: 'Available', value: integrationPlatforms.filter(p => p.status === 'available').length },
+          { label: 'Coming Soon', value: integrationPlatforms.filter(p => p.status === 'coming_soon').length },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-4 text-center">
+            <div className="text-2xl font-bold text-[#1e4d6b]">{s.value}</div>
+            <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Grouped cards */}
+      {Object.entries(grouped).map(([cat, platforms]) => {
+        const catLabel = categories.find(c => c.key === cat)?.label || cat;
+        return (
+          <div key={cat} className="mb-8">
+            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-3">{catLabel}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {platforms.map(p => (
+                <IntegrationCard key={p.id} platform={p} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+
+      {Object.keys(grouped).length === 0 && (
+        <div className="text-center py-12 text-gray-400">No integrations match your search.</div>
+      )}
+    </div>
+  );
+}
+
+function IntegrationCard({ platform }: { platform: IntegrationPlatform }) {
+  const badge = STATUS_BADGE[platform.status];
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: platform.color }}>
+            {platform.name.charAt(0)}
+          </div>
+          <div>
+            <div className="font-semibold text-gray-900 text-sm">{platform.name}</div>
+            <div className="text-xs text-gray-500">{platform.authType === 'oauth2' ? 'OAuth 2.0' : platform.authType === 'api_key' ? 'API Key' : platform.authType === 'certificate' ? 'Certificate' : 'EDI'}</div>
+          </div>
+        </div>
+        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: badge.bg, color: badge.text }}>{badge.label}</span>
+      </div>
+      <p className="text-xs text-gray-600 mb-3 line-clamp-2">{platform.description}</p>
+      <div className="flex flex-wrap gap-1 mb-3">
+        {platform.features.slice(0, 3).map(f => (
+          <span key={f} className="text-[10px] bg-gray-50 text-gray-600 px-2 py-0.5 rounded">{f}</span>
+        ))}
+        {platform.features.length > 3 && (
+          <span className="text-[10px] text-gray-400">+{platform.features.length - 3} more</span>
+        )}
+      </div>
+      <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+        <span className="text-[10px] text-gray-400">{platform.marketSize}</span>
+        <button
+          onClick={() => {
+            if (platform.status === 'connected') {
+              alert('Integration already connected. Go to Connected tab to manage.');
+            } else if (platform.status === 'coming_soon') {
+              alert('This integration is coming soon! We\'ll notify you when it\'s available.');
+            } else {
+              alert(`Demo: Would start OAuth 2.0 authorization flow for ${platform.name}`);
+            }
+          }}
+          className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          style={{
+            backgroundColor: platform.status === 'connected' ? '#dcfce7' : platform.status === 'coming_soon' ? '#f3f4f6' : '#1e4d6b',
+            color: platform.status === 'connected' ? '#15803d' : platform.status === 'coming_soon' ? '#9ca3af' : 'white',
+          }}
+        >
+          {platform.status === 'connected' ? <><CheckCircle2 className="h-3 w-3" /> Connected</> :
+           platform.status === 'coming_soon' ? 'Coming Soon' :
+           <><Plus className="h-3 w-3" /> Connect</>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Connected Integrations Tab ───────────────────────────────────────────────
+
+function ConnectedTab() {
+  return (
+    <div>
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        {[
+          { label: 'Active Connections', value: connectedIntegrations.filter(c => c.status === 'connected').length, color: '#15803d' },
+          { label: 'Employees Synced', value: connectedIntegrations.reduce((s, c) => s + c.employeesSynced, 0), color: '#1e4d6b' },
+          { label: 'Vendors Synced', value: connectedIntegrations.reduce((s, c) => s + c.vendorsSynced, 0), color: '#d4af37' },
+          { label: 'Errors', value: connectedIntegrations.filter(c => c.status === 'error').length, color: '#dc2626' },
+        ].map(s => (
+          <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</div>
+            <div className="text-xs text-gray-500 mt-1">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Connections table */}
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 text-gray-600 text-xs uppercase">
+                <th className="text-left px-4 py-3 font-semibold">Platform</th>
+                <th className="text-left px-4 py-3 font-semibold">Status</th>
+                <th className="text-left px-4 py-3 font-semibold">Last Sync</th>
+                <th className="text-center px-4 py-3 font-semibold">Employees</th>
+                <th className="text-center px-4 py-3 font-semibold">Vendors</th>
+                <th className="text-center px-4 py-3 font-semibold">Docs</th>
+                <th className="text-right px-4 py-3 font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {connectedIntegrations.map(ci => (
+                <ConnectedRow key={ci.id} connection={ci} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
+  const platform = integrationPlatforms.find(p => p.slug === connection.platformSlug);
+  const statusBadge = SYNC_STATUS_BADGE[connection.status];
+  const timeSince = getTimeSince(connection.lastSyncAt);
+
+  return (
+    <tr className="border-t border-gray-50 hover:bg-gray-50/50">
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white font-bold text-[10px]" style={{ backgroundColor: platform?.color || '#6b7280' }}>
+            {connection.platformName.charAt(0)}
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">{connection.platformName}</div>
+            <div className="text-[10px] text-gray-400">Connected {new Date(connection.connectedAt).toLocaleDateString()}</div>
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize" style={{ backgroundColor: statusBadge.bg, color: statusBadge.text }}>
+          {connection.status}
+        </span>
+        {connection.lastError && (
+          <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate">{connection.lastError}</div>
+        )}
+      </td>
+      <td className="px-4 py-3">
+        <div className="text-xs text-gray-700">{timeSince}</div>
+        <div className="text-[10px] text-gray-400">
+          {connection.lastSyncStatus === 'success' ? '✓ Success' : connection.lastSyncStatus === 'partial' ? '⚠ Partial' : '✕ Failed'}
+        </div>
+      </td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.employeesSynced || '—'}</td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.vendorsSynced || '—'}</td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.documentsSynced || '—'}</td>
+      <td className="px-4 py-3">
+        <div className="flex items-center justify-end gap-1">
+          <button onClick={() => alert(`Demo: Syncing ${connection.platformName}...`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
+            <RefreshCw className="h-3.5 w-3.5" />
+          </button>
+          <button onClick={() => alert(`Demo: ${connection.status === 'paused' ? 'Resuming' : 'Pausing'} ${connection.platformName}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title={connection.status === 'paused' ? 'Resume' : 'Pause'}>
+            {connection.status === 'paused' ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+          </button>
+          <button onClick={() => alert(`Demo: Would disconnect ${connection.platformName}. This action requires confirmation.`)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500" title="Disconnect">
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+// ── API Management Tab ───────────────────────────────────────────────────────
+
+function ApiManagementTab() {
+  const navigate = useNavigate();
+  const [showKey, setShowKey] = useState(false);
+  const demoApiKey = 'evd_live_sk_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
+  const demoSandboxKey = 'evd_sandbox_sk_x9y8w7v6u5t4s3r2q1p0o9n8m7l6k5j4';
+
+  return (
+    <div className="space-y-6">
+      {/* API Keys */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">API Keys</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys</p>
+          </div>
+          <button onClick={() => alert('Demo: Would generate a new API key')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+            <Plus className="h-3.5 w-3.5" /> New Key
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {/* Live key */}
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <div>
+                <div className="text-xs font-medium text-gray-900">Production Key</div>
+                <div className="font-mono text-[11px] text-gray-500 mt-0.5">
+                  {showKey ? demoApiKey : 'evd_live_sk_••••••••••••••••••••••••••••'}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setShowKey(!showKey)} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+                {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              </button>
+              <button onClick={() => { navigator.clipboard.writeText(demoApiKey); alert('API key copied to clipboard'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Sandbox key */}
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-yellow-500" />
+              <div>
+                <div className="text-xs font-medium text-gray-900">Sandbox Key</div>
+                <div className="font-mono text-[11px] text-gray-500 mt-0.5">
+                  evd_sandbox_sk_••••••••••••••••••••••••••••
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
+              <button onClick={() => { navigator.clipboard.writeText(demoSandboxKey); alert('Sandbox key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Usage Stats */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <h3 className="font-semibold text-gray-900 mb-4">API Usage ({apiUsageStats.period})</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-xl font-bold text-[#1e4d6b]">{apiUsageStats.requestCount.toLocaleString()}</div>
+            <div className="text-[10px] text-gray-500">API Requests</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-[#d4af37]">{apiUsageStats.webhookDeliveries.toLocaleString()}</div>
+            <div className="text-[10px] text-gray-500">Webhook Deliveries</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-green-600">{apiUsageStats.errorRate}%</div>
+            <div className="text-[10px] text-gray-500">Error Rate</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-bold text-gray-700">{apiUsageStats.avgResponseMs}ms</div>
+            <div className="text-[10px] text-gray-500">Avg Response</div>
+          </div>
+        </div>
+
+        {/* Top endpoints */}
+        <h4 className="text-xs font-semibold text-gray-600 mb-2">Top Endpoints</h4>
+        <div className="space-y-2">
+          {apiUsageStats.topEndpoints.map(ep => {
+            const pct = (ep.count / apiUsageStats.topEndpoints[0].count) * 100;
+            return (
+              <div key={ep.endpoint} className="flex items-center gap-3">
+                <code className="text-[10px] text-gray-600 font-mono flex-1 truncate">{ep.endpoint}</code>
+                <div className="w-32 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#1e4d6b] rounded-full" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="text-[10px] text-gray-500 w-12 text-right">{ep.count.toLocaleString()}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Webhook Subscriptions */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">Webhook Subscriptions</h3>
+            <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery</p>
+          </div>
+          <button onClick={() => alert('Demo: Would open webhook subscription form')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+            <Plus className="h-3.5 w-3.5" /> Add Webhook
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {apiWebhookSubscriptions.map(wh => (
+            <div key={wh.id} className="p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-gray-900">{wh.appName}</span>
+                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${wh.status === 'active' ? 'bg-green-50 text-green-700' : wh.status === 'paused' ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-600'}`}>
+                      {wh.status}
+                    </span>
+                  </div>
+                  <code className="text-[10px] text-gray-400 font-mono block mt-1">{wh.url}</code>
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {wh.events.map(e => (
+                      <span key={e} className="text-[9px] bg-white border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded font-mono">{e}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => alert(`Demo: ${wh.status === 'paused' ? 'Resuming' : 'Pausing'} webhook`)} className="p-1 rounded hover:bg-gray-200 text-gray-400">
+                    {wh.status === 'paused' ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+                  </button>
+                  <button onClick={() => alert('Demo: Would send test webhook event')} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Test">
+                    <Zap className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                {wh.lastDeliveryAt && <span>Last delivery: {getTimeSince(wh.lastDeliveryAt)}</span>}
+                {wh.failureCount > 0 && <span className="text-red-500">{wh.failureCount} failures</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Developer Portal Link */}
+      <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2a6a8f] rounded-xl p-6 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-lg">Developer Portal</h3>
+            <p className="text-white/70 text-sm mt-1">Full API documentation, SDKs, sandbox environment, and integration guides.</p>
+          </div>
+          <button
+            onClick={() => navigate('/developers')}
+            className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            <Code2 className="h-4 w-4" /> Open Portal <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Sync Activity Log Tab ────────────────────────────────────────────────────
+
+function ActivityTab() {
+  const [filterPlatform, setFilterPlatform] = useState('all');
+
+  const platforms = [...new Set(integrationSyncLogs.map(l => l.platformName))];
+  const filtered = filterPlatform === 'all' ? integrationSyncLogs : integrationSyncLogs.filter(l => l.platformName === filterPlatform);
+  const sorted = [...filtered].sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-4">
+        <Filter className="h-4 w-4 text-gray-400" />
+        <select value={filterPlatform} onChange={e => setFilterPlatform(e.target.value)} className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20">
+          <option value="all">All Platforms</option>
+          {platforms.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
+        <span className="text-xs text-gray-400">{sorted.length} events</span>
+      </div>
+
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-50 text-gray-600 text-xs uppercase">
+                <th className="text-left px-4 py-3 font-semibold">Time</th>
+                <th className="text-left px-4 py-3 font-semibold">Platform</th>
+                <th className="text-left px-4 py-3 font-semibold">Type</th>
+                <th className="text-left px-4 py-3 font-semibold">Entity</th>
+                <th className="text-center px-4 py-3 font-semibold">Records</th>
+                <th className="text-center px-4 py-3 font-semibold">Duration</th>
+                <th className="text-left px-4 py-3 font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map(log => (
+                <SyncLogRow key={log.id} log={log} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
+  const platform = integrationPlatforms.find(p => p.slug === log.platformSlug);
+  return (
+    <tr className="border-t border-gray-50 hover:bg-gray-50/50">
+      <td className="px-4 py-3">
+        <div className="text-xs text-gray-700">{new Date(log.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+        <div className="text-[10px] text-gray-400">{new Date(log.startedAt).toLocaleDateString()}</div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded flex items-center justify-center text-white font-bold text-[8px]" style={{ backgroundColor: platform?.color || '#6b7280' }}>
+            {log.platformName.charAt(0)}
+          </div>
+          <span className="text-xs font-medium text-gray-900">{log.platformName}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3">
+        <div className="flex items-center gap-1">
+          {log.direction === 'inbound' ? <ArrowDownLeft className="h-3 w-3 text-blue-500" /> : <ArrowUpRight className="h-3 w-3 text-green-500" />}
+          <span className="text-xs text-gray-600 capitalize">{log.syncType}</span>
+        </div>
+      </td>
+      <td className="px-4 py-3 text-xs text-gray-700">{log.entityType}</td>
+      <td className="px-4 py-3 text-center">
+        <div className="text-xs text-gray-700">{log.recordsProcessed}</div>
+        <div className="text-[10px] text-gray-400">
+          {log.recordsCreated > 0 && <span className="text-green-600">+{log.recordsCreated}</span>}
+          {log.recordsUpdated > 0 && <span className="text-blue-600 ml-1">~{log.recordsUpdated}</span>}
+          {log.recordsFailed > 0 && <span className="text-red-500 ml-1">✕{log.recordsFailed}</span>}
+        </div>
+      </td>
+      <td className="px-4 py-3 text-center text-xs text-gray-500">{log.durationMs < 1000 ? `${log.durationMs}ms` : `${(log.durationMs / 1000).toFixed(1)}s`}</td>
+      <td className="px-4 py-3">
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${log.status === 'completed' ? 'bg-green-50 text-green-700' : log.status === 'partial' ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-600'}`}>
+          {log.status}
+        </span>
+        {log.errorMessage && <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate">{log.errorMessage}</div>}
+      </td>
+    </tr>
+  );
+}
+
+// ── Health Dashboard Tab ─────────────────────────────────────────────────────
+
+function HealthTab() {
+  const activeConnections = connectedIntegrations.filter(c => c.status === 'connected').length;
+  const errorConnections = connectedIntegrations.filter(c => c.status === 'error').length;
+  const totalSyncs = integrationSyncLogs.length;
+  const successSyncs = integrationSyncLogs.filter(l => l.status === 'completed').length;
+  const successRate = totalSyncs > 0 ? ((successSyncs / totalSyncs) * 100).toFixed(1) : '0';
+  const avgDuration = totalSyncs > 0 ? Math.round(integrationSyncLogs.reduce((s, l) => s + l.durationMs, 0) / totalSyncs) : 0;
+
+  return (
+    <div className="space-y-6">
+      {/* Overview cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        {[
+          { label: 'Active', value: activeConnections, color: '#15803d', icon: CheckCircle2 },
+          { label: 'Errors', value: errorConnections, color: '#dc2626', icon: XCircle },
+          { label: 'Sync Success', value: `${successRate}%`, color: '#1e4d6b', icon: Activity },
+          { label: 'Avg Duration', value: `${avgDuration}ms`, color: '#d4af37', icon: Clock },
+          { label: 'API Uptime', value: '99.9%', color: '#15803d', icon: Globe },
+        ].map(card => (
+          <div key={card.label} className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <card.icon className="h-4 w-4" style={{ color: card.color }} />
+              <span className="text-xs text-gray-500">{card.label}</span>
+            </div>
+            <div className="text-xl font-bold" style={{ color: card.color }}>{card.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Per-integration health */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <h3 className="font-semibold text-gray-900 mb-4">Integration Health Status</h3>
+        <div className="space-y-3">
+          {connectedIntegrations.map(ci => {
+            const platform = integrationPlatforms.find(p => p.slug === ci.platformSlug);
+            const logs = integrationSyncLogs.filter(l => l.platformSlug === ci.platformSlug);
+            const lastLog = logs.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())[0];
+
+            return (
+              <div key={ci.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs" style={{ backgroundColor: platform?.color || '#6b7280' }}>
+                    {ci.platformName.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">{ci.platformName}</div>
+                    <div className="text-[10px] text-gray-400">
+                      {ci.employeesSynced > 0 && `${ci.employeesSynced} employees`}
+                      {ci.vendorsSynced > 0 && `${ci.employeesSynced > 0 ? ' · ' : ''}${ci.vendorsSynced} vendors`}
+                      {ci.documentsSynced > 0 && `${(ci.employeesSynced > 0 || ci.vendorsSynced > 0) ? ' · ' : ''}${ci.documentsSynced} docs`}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {/* Health indicators */}
+                  <div className="flex items-center gap-2">
+                    <HealthDot status={ci.status === 'connected' ? 'green' : ci.status === 'error' ? 'red' : 'yellow'} label="Connection" />
+                    <HealthDot status={ci.lastSyncStatus === 'success' ? 'green' : ci.lastSyncStatus === 'partial' ? 'yellow' : 'red'} label="Last Sync" />
+                    <HealthDot status={lastLog && lastLog.durationMs < 5000 ? 'green' : 'yellow'} label="Latency" />
+                  </div>
+
+                  <div className="text-[10px] text-gray-400 w-20 text-right">{getTimeSince(ci.lastSyncAt)}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* API Health */}
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <h3 className="font-semibold text-gray-900 mb-4">API Performance</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <div className="text-xs text-gray-500 mb-2">Request Volume (30d)</div>
+            <div className="h-20 flex items-end gap-1">
+              {Array.from({ length: 30 }, (_, i) => {
+                const h = 20 + Math.sin(i * 0.3) * 30 + Math.random() * 30;
+                return <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, backgroundColor: '#1e4d6b', opacity: 0.3 + (i / 30) * 0.7 }} />;
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-2">Response Times (30d)</div>
+            <div className="h-20 flex items-end gap-1">
+              {Array.from({ length: 30 }, (_, i) => {
+                const h = 10 + Math.random() * 40;
+                return <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, backgroundColor: h > 35 ? '#d4af37' : '#15803d' }} />;
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="text-xs text-gray-500 mb-2">Error Rate (30d)</div>
+            <div className="h-20 flex items-end gap-1">
+              {Array.from({ length: 30 }, (_, i) => {
+                const h = 2 + Math.random() * 8;
+                return <div key={i} className="flex-1 rounded-t" style={{ height: `${h}%`, backgroundColor: h > 7 ? '#dc2626' : '#e5e7eb' }} />;
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HealthDot({ status, label }: { status: 'green' | 'yellow' | 'red'; label: string }) {
+  const colors = { green: '#15803d', yellow: '#d4af37', red: '#dc2626' };
+  return (
+    <div className="flex items-center gap-1" title={label}>
+      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[status] }} />
+    </div>
+  );
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function getTimeSince(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+// ── Main Component ───────────────────────────────────────────────────────────
+
+export function IntegrationHub() {
+  const [activeTab, setActiveTab] = useState<Tab>('marketplace');
+
+  return (
+    <div className="max-w-7xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="p-2 bg-[#1e4d6b] rounded-lg">
+            <Globe className="h-5 w-5 text-[#d4af37]" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">API & Integration Hub</h1>
+            <p className="text-sm text-gray-500">Connect EvidLY with your restaurant tech stack</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab bar */}
+      <div className="flex items-center gap-1 bg-white rounded-xl border border-gray-100 p-1.5 mb-6 overflow-x-auto">
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === tab.id
+                ? 'bg-[#1e4d6b] text-white'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <tab.icon className="h-4 w-4" />
+            {tab.label}
+            {tab.id === 'connected' && connectedIntegrations.filter(c => c.status === 'error').length > 0 && (
+              <span className="bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">{connectedIntegrations.filter(c => c.status === 'error').length}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {activeTab === 'marketplace' && <MarketplaceTab />}
+      {activeTab === 'connected' && <ConnectedTab />}
+      {activeTab === 'api' && <ApiManagementTab />}
+      {activeTab === 'activity' && <ActivityTab />}
+      {activeTab === 'health' && <HealthTab />}
+    </div>
+  );
+}

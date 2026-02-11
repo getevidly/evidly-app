@@ -71,6 +71,8 @@ const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m
 const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
+const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
+const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -266,6 +268,8 @@ function AppRoutes() {
           <Route path="/sensors" element={<SensorHub />} />
           <Route path="/sensors/add" element={<SensorSetupWizard />} />
           <Route path="/sensors/:id" element={<SensorDetail />} />
+          <Route path="/integrations" element={<IntegrationHub />} />
+          <Route path="/developers" element={<DeveloperPortal />} />
         </Route>
       </Routes>
     </>

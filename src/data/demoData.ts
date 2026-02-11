@@ -2059,6 +2059,145 @@ export const iotSparklines: Record<string, IoTSparklinePoint[]> = {
   'iot-s16': generateSparkline(33.9, 0.5, 16),
 };
 
+// ── API & Integration Hub Data ───────────────────────────────────────────────
+
+export interface IntegrationPlatform {
+  id: string;
+  slug: string;
+  name: string;
+  category: 'accounting' | 'pos' | 'payroll' | 'distribution' | 'productivity' | 'inventory';
+  categoryLabel: string;
+  color: string;
+  description: string;
+  authType: 'oauth2' | 'api_key' | 'certificate' | 'edi';
+  features: string[];
+  status: 'available' | 'connected' | 'coming_soon' | 'beta';
+  pricingNote: string;
+  marketSize: string;
+  docsUrl: string;
+}
+
+export const integrationPlatforms: IntegrationPlatform[] = [
+  // Accounting
+  { id: 'int-r365', slug: 'restaurant365', name: 'Restaurant365', category: 'accounting', categoryLabel: 'Accounting & Operations', color: '#1e40af', description: 'All-in-one accounting, inventory, scheduling, and reporting for restaurants. Push compliance vendor invoices, pull employee and location data.', authType: 'oauth2', features: ['Push vendor invoices', 'Pull employee list', 'Pull location data', 'Sync expense categories'], status: 'connected', pricingNote: 'R365 Partner Ecosystem', marketSize: '52,000+ restaurants', docsUrl: 'https://restaurant365.com/api' },
+  { id: 'int-qbo', slug: 'quickbooks', name: 'QuickBooks Online', category: 'accounting', categoryLabel: 'Accounting & Operations', color: '#2ca01c', description: 'Auto-categorize compliance expenses, sync vendor invoices. Dominant small restaurant accounting platform.', authType: 'oauth2', features: ['Push vendor invoices', 'Sync expense categories', 'Pull vendor list', 'Pull employee list'], status: 'connected', pricingNote: 'Free QuickBooks developer account', marketSize: '7M+ small businesses', docsUrl: 'https://developer.intuit.com/' },
+  { id: 'int-xero', slug: 'xero', name: 'Xero', category: 'accounting', categoryLabel: 'Accounting & Operations', color: '#13b5ea', description: 'Cloud accounting for international restaurants. Strong in UK/Australia/NZ markets. Compliance expense tracking and vendor sync.', authType: 'oauth2', features: ['Push invoices', 'Sync contacts', 'Pull employee list', 'Manual journals'], status: 'available', pricingNote: 'Xero developer program', marketSize: '4.2M+ subscribers globally', docsUrl: 'https://developer.xero.com/' },
+  // POS
+  { id: 'int-toast', slug: 'toast', name: 'Toast', category: 'pos', categoryLabel: 'Point of Sale', color: '#ff6600', description: 'Restaurant-specific POS leader. Pull employee data for cert tracking, sync locations, receive real-time webhook events.', authType: 'oauth2', features: ['Pull employee list', 'Pull location data', 'Webhook events', 'Cert tracking sync'], status: 'connected', pricingNote: 'Toast Technology Partner', marketSize: '120,000+ locations', docsUrl: 'https://doc.toasttab.com/' },
+  { id: 'int-square', slug: 'square', name: 'Square', category: 'pos', categoryLabel: 'Point of Sale', color: '#006aff', description: 'POS for small/independent restaurants. Team member sync, location management, and labor data integration.', authType: 'oauth2', features: ['Pull team members', 'Pull locations', 'Labor/shift data', 'Webhook events'], status: 'available', pricingNote: 'Square App Marketplace', marketSize: 'Millions of sellers', docsUrl: 'https://developer.squareup.com/' },
+  { id: 'int-clover', slug: 'clover', name: 'Clover', category: 'pos', categoryLabel: 'Point of Sale', color: '#43b02a', description: 'Merchant POS platform. Employee sync and order data integration for compliance correlation.', authType: 'oauth2', features: ['Pull employees', 'Pull orders', 'Merchant info', 'Inventory data'], status: 'coming_soon', pricingNote: 'Clover App Market', marketSize: '6M+ devices globally', docsUrl: 'https://docs.clover.com/' },
+  { id: 'int-lightspeed', slug: 'lightspeed', name: 'Lightspeed Restaurant', category: 'pos', categoryLabel: 'Point of Sale', color: '#e4002b', description: 'Cloud POS for multi-location restaurants. Employee, sales, and location data sync.', authType: 'oauth2', features: ['Pull locations', 'Pull employees', 'Sales data', 'Inventory sync'], status: 'coming_soon', pricingNote: 'Lightspeed developer portal', marketSize: 'Global restaurant presence', docsUrl: 'https://developers.lightspeedhq.com/' },
+  // Payroll & HR
+  { id: 'int-adp', slug: 'adp', name: 'ADP Workforce Now', category: 'payroll', categoryLabel: 'Payroll & HR', color: '#d0271d', description: 'Enterprise HR/payroll leader. Auto-sync employee rosters, track certifications, detect new hires and terminations for compliance.', authType: 'certificate', features: ['Workers v2 API sync', 'New hire detection', 'Termination tracking', 'CFPM coverage'], status: 'connected', pricingNote: 'ADP Marketplace partner', marketSize: '920,000+ clients', docsUrl: 'https://developers.adp.com/' },
+  { id: 'int-gusto', slug: 'gusto', name: 'Gusto', category: 'payroll', categoryLabel: 'Payroll & HR', color: '#0a8080', description: 'Small business payroll. Pull employee lists, track hire dates for food handler cert deadlines, sync locations.', authType: 'oauth2', features: ['Pull employee list', 'Hire date tracking', 'Location sync', 'Cert deadline flags'], status: 'available', pricingNote: 'Gusto developer platform', marketSize: '300,000+ businesses', docsUrl: 'https://docs.gusto.com/' },
+  // Distribution
+  { id: 'int-sysco', slug: 'sysco', name: 'Sysco', category: 'distribution', categoryLabel: 'Food Distribution', color: '#003b7c', description: 'Largest food distributor in North America. Delivery-triggered receiving temperature checks and order correlation.', authType: 'edi', features: ['Delivery notifications', 'Receiving check triggers', 'Order data', 'Invoice matching'], status: 'coming_soon', pricingNote: 'Enterprise partnership', marketSize: '$78.8B revenue', docsUrl: 'https://apic-devportal.sysco.com/' },
+  { id: 'int-usfoods', slug: 'usfoods', name: 'US Foods', category: 'distribution', categoryLabel: 'Food Distribution', color: '#e31837', description: 'Second-largest US food distributor. Same delivery-triggered compliance workflow as Sysco.', authType: 'edi', features: ['Delivery notifications', 'Receiving checks', 'Order data'], status: 'coming_soon', pricingNote: 'Enterprise partnership', marketSize: 'National distributor', docsUrl: '' },
+  // Productivity
+  { id: 'int-google', slug: 'google', name: 'Google Workspace', category: 'productivity', categoryLabel: 'Productivity', color: '#4285f4', description: 'Save compliance reports to Google Drive, sync vendor schedules to Calendar, send notifications via Gmail.', authType: 'oauth2', features: ['Drive document storage', 'Calendar sync', 'Gmail notifications', 'Sheets export'], status: 'connected', pricingNote: 'Google Cloud Console', marketSize: '3B+ users', docsUrl: 'https://developers.google.com/' },
+  { id: 'int-microsoft', slug: 'microsoft365', name: 'Microsoft 365', category: 'productivity', categoryLabel: 'Productivity', color: '#0078d4', description: 'Push alerts to Teams channels, store reports in SharePoint/OneDrive, sync calendar events.', authType: 'oauth2', features: ['Teams notifications', 'OneDrive storage', 'Outlook calendar', 'SharePoint reports'], status: 'available', pricingNote: 'Microsoft Entra ID', marketSize: '400M+ paid seats', docsUrl: 'https://learn.microsoft.com/graph/' },
+  // Inventory
+  { id: 'int-marketman', slug: 'marketman', name: 'MarketMan', category: 'inventory', categoryLabel: 'Inventory', color: '#ff9900', description: 'Inventory management platform. Correlate food inventory with safety data for shelf-life and receiving compliance.', authType: 'api_key', features: ['Inventory data', 'Shelf life tracking', 'Receiving log', 'Supplier data'], status: 'coming_soon', pricingNote: 'MarketMan API', marketSize: 'Cloud inventory leader', docsUrl: '' },
+  { id: 'int-bluecart', slug: 'bluecart', name: 'BlueCart', category: 'inventory', categoryLabel: 'Inventory', color: '#2563eb', description: 'Restaurant ordering platform. Order data for receiving checks and supplier compliance verification.', authType: 'api_key', features: ['Order data', 'Receiving checks', 'Supplier compliance'], status: 'coming_soon', pricingNote: 'BlueCart API tiers', marketSize: 'Restaurant ordering', docsUrl: '' },
+];
+
+export interface ConnectedIntegration {
+  id: string;
+  platformSlug: string;
+  platformName: string;
+  status: 'connected' | 'error' | 'syncing' | 'paused';
+  connectedAt: string;
+  lastSyncAt: string;
+  lastSyncStatus: 'success' | 'partial' | 'failed';
+  employeesSynced: number;
+  locationsSynced: number;
+  vendorsSynced: number;
+  documentsSynced: number;
+  nextSyncAt: string;
+  lastError: string | null;
+}
+
+export const connectedIntegrations: ConnectedIntegration[] = [
+  { id: 'ci-1', platformSlug: 'restaurant365', platformName: 'Restaurant365', status: 'connected', connectedAt: '2025-11-15T10:00:00Z', lastSyncAt: '2026-02-10T14:00:00Z', lastSyncStatus: 'success', employeesSynced: 47, locationsSynced: 3, vendorsSynced: 12, documentsSynced: 0, nextSyncAt: '2026-02-10T20:00:00Z', lastError: null },
+  { id: 'ci-2', platformSlug: 'quickbooks', platformName: 'QuickBooks Online', status: 'connected', connectedAt: '2025-12-01T09:00:00Z', lastSyncAt: '2026-02-10T13:30:00Z', lastSyncStatus: 'success', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 18, documentsSynced: 24, nextSyncAt: '2026-02-10T19:30:00Z', lastError: null },
+  { id: 'ci-3', platformSlug: 'toast', platformName: 'Toast', status: 'connected', connectedAt: '2026-01-10T14:00:00Z', lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-10T20:55:00Z', lastError: null },
+  { id: 'ci-4', platformSlug: 'adp', platformName: 'ADP Workforce Now', status: 'connected', connectedAt: '2026-01-20T11:00:00Z', lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-11T03:00:00Z', lastError: '2 employees missing location assignment in ADP' },
+  { id: 'ci-5', platformSlug: 'google', platformName: 'Google Workspace', status: 'connected', connectedAt: '2025-10-05T08:00:00Z', lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38, nextSyncAt: '2026-02-10T15:58:00Z', lastError: null },
+  { id: 'ci-6', platformSlug: 'toast', platformName: 'Toast', status: 'error', connectedAt: '2026-02-01T16:00:00Z', lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0, nextSyncAt: '2026-02-10T16:00:00Z', lastError: 'OAuth token refresh failed — re-authorize required' },
+];
+
+export interface IntegrationSyncLog {
+  id: string;
+  platformName: string;
+  platformSlug: string;
+  syncType: 'pull' | 'push' | 'webhook';
+  entityType: string;
+  direction: 'inbound' | 'outbound';
+  recordsProcessed: number;
+  recordsCreated: number;
+  recordsUpdated: number;
+  recordsFailed: number;
+  status: 'completed' | 'partial' | 'failed';
+  startedAt: string;
+  durationMs: number;
+  errorMessage: string | null;
+}
+
+export const integrationSyncLogs: IntegrationSyncLog[] = [
+  { id: 'sl-01', platformName: 'Toast', platformSlug: 'toast', syncType: 'pull', entityType: 'Employees', direction: 'inbound', recordsProcessed: 52, recordsCreated: 2, recordsUpdated: 3, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:55:00Z', durationMs: 2340, errorMessage: null },
+  { id: 'sl-02', platformName: 'QuickBooks Online', platformSlug: 'quickbooks', syncType: 'push', entityType: 'Vendor Invoices', direction: 'outbound', recordsProcessed: 4, recordsCreated: 4, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T13:30:00Z', durationMs: 1850, errorMessage: null },
+  { id: 'sl-03', platformName: 'Restaurant365', platformSlug: 'restaurant365', syncType: 'pull', entityType: 'Locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 1, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:00:00Z', durationMs: 890, errorMessage: null },
+  { id: 'sl-04', platformName: 'ADP Workforce Now', platformSlug: 'adp', syncType: 'pull', entityType: 'Workers', direction: 'inbound', recordsProcessed: 47, recordsCreated: 1, recordsUpdated: 2, recordsFailed: 2, status: 'partial', startedAt: '2026-02-10T03:00:00Z', durationMs: 4520, errorMessage: '2 workers missing location_id in ADP' },
+  { id: 'sl-05', platformName: 'Google Workspace', platformSlug: 'google', syncType: 'push', entityType: 'Documents', direction: 'outbound', recordsProcessed: 3, recordsCreated: 3, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:58:00Z', durationMs: 3100, errorMessage: null },
+  { id: 'sl-06', platformName: 'Toast', platformSlug: 'toast', syncType: 'webhook', entityType: 'Employee Event', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T11:22:00Z', durationMs: 210, errorMessage: null },
+  { id: 'sl-07', platformName: 'QuickBooks Online', platformSlug: 'quickbooks', syncType: 'pull', entityType: 'Vendors', direction: 'inbound', recordsProcessed: 18, recordsCreated: 0, recordsUpdated: 2, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T07:30:00Z', durationMs: 1620, errorMessage: null },
+  { id: 'sl-08', platformName: 'Restaurant365', platformSlug: 'restaurant365', syncType: 'push', entityType: 'Vendor Invoices', direction: 'outbound', recordsProcessed: 6, recordsCreated: 6, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T14:05:00Z', durationMs: 2780, errorMessage: null },
+  { id: 'sl-09', platformName: 'Toast', platformSlug: 'toast', syncType: 'pull', entityType: 'Locations', direction: 'inbound', recordsProcessed: 3, recordsCreated: 0, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T03:05:00Z', durationMs: 650, errorMessage: null },
+  { id: 'sl-10', platformName: 'ADP Workforce Now', platformSlug: 'adp', syncType: 'webhook', entityType: 'New Hire Event', direction: 'inbound', recordsProcessed: 1, recordsCreated: 1, recordsUpdated: 0, recordsFailed: 0, status: 'completed', startedAt: '2026-02-10T09:15:00Z', durationMs: 340, errorMessage: null },
+];
+
+export interface ApiWebhookSubscription {
+  id: string;
+  appName: string;
+  url: string;
+  events: string[];
+  status: 'active' | 'paused' | 'failed';
+  lastDeliveryAt: string | null;
+  failureCount: number;
+  createdAt: string;
+}
+
+export const apiWebhookSubscriptions: ApiWebhookSubscription[] = [
+  { id: 'wh-01', appName: 'Restaurant365 Connector', url: 'https://hooks.restaurant365.com/evidly/compliance', events: ['compliance.score_changed', 'document.uploaded', 'vendor.service_completed'], status: 'active', lastDeliveryAt: '2026-02-10T14:32:00Z', failureCount: 0, createdAt: '2025-11-15T10:00:00Z' },
+  { id: 'wh-02', appName: 'Aramark Compliance Hub', url: 'https://api.aramark.com/webhooks/evidly', events: ['compliance.score_changed', 'compliance.threshold_breach', 'temperature.violation', 'incident.created'], status: 'active', lastDeliveryAt: '2026-02-10T14:57:00Z', failureCount: 0, createdAt: '2026-01-05T09:00:00Z' },
+  { id: 'wh-03', appName: 'Insurance Risk Monitor', url: 'https://insurance-partner.com/webhooks/evidly', events: ['compliance.score_changed', 'inspection.score_predicted'], status: 'active', lastDeliveryAt: '2026-02-10T12:00:00Z', failureCount: 1, createdAt: '2026-02-01T14:00:00Z' },
+  { id: 'wh-04', appName: 'Custom Dashboard', url: 'https://internal.customer.com/api/evidly-hook', events: ['checklist.completed', 'checklist.missed', 'temperature.sustained_violation'], status: 'paused', lastDeliveryAt: '2026-02-08T16:00:00Z', failureCount: 5, createdAt: '2025-12-20T11:00:00Z' },
+];
+
+export interface ApiUsageStats {
+  period: string;
+  requestCount: number;
+  webhookDeliveries: number;
+  errorRate: number;
+  avgResponseMs: number;
+  topEndpoints: { endpoint: string; count: number }[];
+}
+
+export const apiUsageStats: ApiUsageStats = {
+  period: 'Last 30 days',
+  requestCount: 12847,
+  webhookDeliveries: 1432,
+  errorRate: 0.3,
+  avgResponseMs: 145,
+  topEndpoints: [
+    { endpoint: 'GET /v1/locations/{id}/compliance', count: 4210 },
+    { endpoint: 'GET /v1/locations/{id}/temperatures', count: 2890 },
+    { endpoint: 'GET /v1/locations/{id}/scores', count: 1950 },
+    { endpoint: 'POST /v1/locations/{id}/temperatures', count: 1420 },
+    { endpoint: 'GET /v1/locations/{id}/documents', count: 890 },
+  ],
+};
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {
