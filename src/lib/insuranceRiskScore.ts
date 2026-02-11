@@ -47,6 +47,10 @@ export interface InsuranceActionItem {
   priority: 'critical' | 'high' | 'medium' | 'low';
   action: string;
   actionLink: string;
+  quickAction?: string;     // label for one-click button (e.g. "Send Reminder")
+  quickActionType?: 'remind_vendor' | 'schedule_inspection' | 'upload_document' | 'complete_checklist' | 'renew_permit';
+  reference?: string;       // NFPA/FDA reference
+  currentScore?: number;    // factor's current score (0-100)
 }
 
 export interface InsuranceRiskResult {
@@ -332,6 +336,41 @@ export function calculateOperationalRiskScore(locationId: string): InsuranceRisk
   return { key: 'operational', name: 'Operational Risk', weight: 0.10, score, factors };
 }
 
+// --------------- Quick Action Mapping ---------------
+
+function getQuickAction(catKey: string, factorName: string): {
+  quickAction?: string;
+  quickActionType?: InsuranceActionItem['quickActionType'];
+  actionLink: string;
+} {
+  const name = factorName.toLowerCase();
+  if (name.includes('hood cleaning')) return { quickAction: 'Send Reminder to Vendor', quickActionType: 'remind_vendor', actionLink: '/vendors' };
+  if (name.includes('fire suppression')) return { quickAction: 'Schedule Inspection', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (name.includes('fire extinguisher')) return { quickAction: 'Schedule Inspection', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (name.includes('shutoff')) return { quickAction: 'Schedule Test', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (name.includes('pull station')) return { quickAction: 'Schedule Test', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (name.includes('fire alarm')) return { quickAction: 'Schedule Inspection', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (name.includes('temperature')) return { quickAction: 'Log Temperature Now', quickActionType: 'complete_checklist', actionLink: '/temp-logs' };
+  if (name.includes('checklist')) return { quickAction: 'Complete Checklist', quickActionType: 'complete_checklist', actionLink: '/checklists' };
+  if (name.includes('haccp')) return { quickAction: 'Start HACCP Review', quickActionType: 'complete_checklist', actionLink: '/haccp' };
+  if (name.includes('food handler')) return { quickAction: 'Notify Staff', quickActionType: 'remind_vendor', actionLink: '/team' };
+  if (name.includes('vendor cert')) return { quickAction: 'Request Updated COI', quickActionType: 'remind_vendor', actionLink: '/vendors' };
+  if (name.includes('insurance cert')) return { quickAction: 'Upload Certificate', quickActionType: 'upload_document', actionLink: '/documents' };
+  if (name.includes('health') && name.includes('permit')) return { quickAction: 'Renew Permit', quickActionType: 'renew_permit', actionLink: '/documents' };
+  if (name.includes('business license')) return { quickAction: 'Renew License', quickActionType: 'renew_permit', actionLink: '/documents' };
+  if (name.includes('training')) return { quickAction: 'Schedule Training', quickActionType: 'schedule_inspection', actionLink: '/team' };
+  if (name.includes('documentation')) return { quickAction: 'Upload Documents', quickActionType: 'upload_document', actionLink: '/documents' };
+  if (name.includes('vendor service')) return { quickAction: 'Send Reminder to Vendor', quickActionType: 'remind_vendor', actionLink: '/vendors' };
+  if (name.includes('equipment')) return { quickAction: 'Schedule Maintenance', quickActionType: 'schedule_inspection', actionLink: '/equipment' };
+  if (name.includes('corrective')) return { quickAction: 'Review Open Items', quickActionType: 'complete_checklist', actionLink: '/incidents' };
+
+  // Default by category
+  if (catKey === 'fire') return { quickAction: 'Schedule Service', quickActionType: 'schedule_inspection', actionLink: '/vendors' };
+  if (catKey === 'foodSafety') return { actionLink: '/temp-logs' };
+  if (catKey === 'documentation') return { quickAction: 'Upload Document', quickActionType: 'upload_document', actionLink: '/documents' };
+  return { actionLink: '/checklists' };
+}
+
 // --------------- Orchestrator ---------------
 
 export function calculateInsuranceRiskScore(locationId: string): InsuranceRiskResult {
@@ -359,6 +398,8 @@ export function calculateInsuranceRiskScore(locationId: string): InsuranceRiskRe
         const currentContribution = Math.round(factor.score * factor.weight * cat.weight);
         const potentialGain = Math.round(maxContribution - currentContribution);
         if (potentialGain > 0) {
+          // Determine quick action based on factor and category
+          const { quickAction, quickActionType, actionLink } = getQuickAction(cat.key, factor.name);
           actionItems.push({
             title: factor.name,
             category: cat.name,
@@ -366,9 +407,11 @@ export function calculateInsuranceRiskScore(locationId: string): InsuranceRiskRe
             potentialGain,
             priority: factor.score < 30 ? 'critical' : factor.score < 60 ? 'high' : factor.score < 80 ? 'medium' : 'low',
             action: factor.detail,
-            actionLink: cat.key === 'fire' ? '/vendors' :
-              cat.key === 'foodSafety' ? '/temp-logs' :
-              cat.key === 'documentation' ? '/documents' : '/checklists',
+            actionLink,
+            quickAction,
+            quickActionType,
+            reference: factor.reference,
+            currentScore: factor.score,
           });
         }
       }

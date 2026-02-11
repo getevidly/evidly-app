@@ -51,6 +51,7 @@ const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m =>
 const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
 const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ default: m.InsuranceRisk })));
+const ImproveScore = lazy(() => import('./pages/ImproveScore').then(m => ({ default: m.ImproveScore })));
 const PublicVerification = lazy(() => import('./pages/PublicVerification'));
 const PassportDemo = lazy(() => import('./pages/PassportDemo'));
 const Passport = lazy(() => import('./pages/Passport'));
@@ -230,6 +231,7 @@ function AppRoutes() {
           <Route path="/benchmarks" element={<Benchmarks />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
+          <Route path="/improve-score" element={<ImproveScore />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
         </Route>

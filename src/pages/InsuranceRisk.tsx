@@ -19,13 +19,14 @@ import {
   Lock,
   ShieldAlert,
   ShieldCheck,
+  TrendingUp,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { getAiTier, isFeatureAvailable } from '../lib/aiTier';
-import { locations, locationScores } from '../data/demoData';
+import { locations, locationScores, vendors, needsAttentionItems } from '../data/demoData';
 import {
   calculateInsuranceRiskScore,
   calculateOrgInsuranceRiskScore,
@@ -84,6 +85,320 @@ function PriorityBadge({ priority }: { priority: InsuranceActionItem['priority']
   );
 }
 
+// --------------- PDF Generator ---------------
+
+async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationLabel: string) {
+  const jsPDFModule = await import('jspdf');
+  const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
+
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const W = 210;
+  const H = 297;
+  const M = 14; // margin
+  const contentW = W - 2 * M;
+  const tierInfo = getInsuranceRiskTier(result.overall);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Colors
+  const BLUE = [30, 77, 107] as const;
+  const GOLD = [212, 175, 55] as const;
+  const GRAY = [107, 114, 128] as const;
+  const LGRAY = [156, 163, 175] as const;
+  const BLACK = [17, 24, 39] as const;
+  const WHITE = [255, 255, 255] as const;
+
+  function tierColor(score: number): readonly [number, number, number] {
+    if (score >= 90) return [34, 197, 94];
+    if (score >= 75) return [234, 179, 8];
+    if (score >= 60) return [245, 158, 11];
+    return [239, 68, 68];
+  }
+
+  // --- Header/Footer helpers ---
+  function drawHeader(pageNum: number, totalPages: number) {
+    pdf.setFillColor(...BLUE);
+    pdf.rect(0, 0, W, 14, 'F');
+    pdf.setFontSize(7);
+    pdf.setTextColor(...WHITE);
+    pdf.text('EvidLY — Verified Kitchen Risk Profile', M, 9);
+    pdf.setTextColor(...GOLD);
+    pdf.text(`Page ${pageNum} of ${totalPages}`, W - M, 9, { align: 'right' });
+  }
+
+  function drawFooter() {
+    pdf.setFontSize(5.5);
+    pdf.setTextColor(...LGRAY);
+    pdf.text(
+      'This report documents compliance activities tracked through the EvidLY platform. Premium decisions are made solely by insurance carriers based on their underwriting criteria.',
+      M, H - 8, { maxWidth: contentW }
+    );
+    pdf.text(`Generated ${dateStr}`, M, H - 4);
+    pdf.text('EvidLY Compliance Management Platform', W - M, H - 4, { align: 'right' });
+  }
+
+  let y = 20; // start after header
+
+  function checkPage(needed: number) {
+    if (y + needed > H - 16) {
+      pdf.addPage();
+      y = 20;
+    }
+  }
+
+  function sectionTitle(title: string) {
+    checkPage(12);
+    pdf.setFontSize(11);
+    pdf.setTextColor(...BLUE);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(title, M, y);
+    y += 2;
+    pdf.setDrawColor(...GOLD);
+    pdf.setLineWidth(0.5);
+    pdf.line(M, y, M + contentW, y);
+    y += 6;
+  }
+
+  function bodyText(text: string, opts?: { bold?: boolean; size?: number; color?: readonly [number, number, number]; indent?: number }) {
+    const size = opts?.size || 8;
+    const color = opts?.color || BLACK;
+    checkPage(size * 0.6);
+    pdf.setFontSize(size);
+    pdf.setTextColor(...color);
+    pdf.setFont('helvetica', opts?.bold ? 'bold' : 'normal');
+    const x = M + (opts?.indent || 0);
+    const lines = pdf.splitTextToSize(text, contentW - (opts?.indent || 0));
+    pdf.text(lines, x, y);
+    y += lines.length * (size * 0.45) + 1.5;
+  }
+
+  // ============================================
+  // PAGE 1: Title + Overall Score + Categories
+  // ============================================
+
+  // Title block
+  pdf.setFillColor(...BLUE);
+  pdf.rect(0, 0, W, 50, 'F');
+  pdf.setFontSize(18);
+  pdf.setTextColor(...WHITE);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('EvidLY Verified Kitchen Risk Profile', M, 28);
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(...GOLD);
+  pdf.text(`${locationLabel}  •  Demo Restaurant Group  •  ${dateStr}`, M, 38);
+  pdf.text('Confidential — Prepared for Insurance Carrier Review', M, 44);
+
+  y = 58;
+
+  // Overall score box
+  const scoreBoxW = 50;
+  const scoreBoxH = 40;
+  const tc = tierColor(result.overall);
+  pdf.setFillColor(tc[0], tc[1], tc[2]);
+  pdf.roundedRect(M, y, scoreBoxW, scoreBoxH, 3, 3, 'F');
+  pdf.setFontSize(28);
+  pdf.setTextColor(...WHITE);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(String(result.overall), M + scoreBoxW / 2, y + 20, { align: 'center' });
+  pdf.setFontSize(8);
+  pdf.text('of 100', M + scoreBoxW / 2, y + 28, { align: 'center' });
+  pdf.setFontSize(7);
+  pdf.text(result.tier, M + scoreBoxW / 2, y + 35, { align: 'center' });
+
+  // Category summary beside score
+  const catX = M + scoreBoxW + 10;
+  let catY = y + 2;
+  pdf.setFontSize(10);
+  pdf.setTextColor(...BLACK);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Risk Category Breakdown', catX, catY);
+  catY += 6;
+
+  for (const cat of result.categories) {
+    const ctc = tierColor(cat.score);
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(...BLACK);
+    pdf.text(`${cat.name} (${Math.round(cat.weight * 100)}%)`, catX, catY);
+    // Score bar
+    const barX = catX + 70;
+    const barW = 50;
+    pdf.setFillColor(230, 230, 230);
+    pdf.roundedRect(barX, catY - 3, barW, 4, 1, 1, 'F');
+    pdf.setFillColor(ctc[0], ctc[1], ctc[2]);
+    pdf.roundedRect(barX, catY - 3, barW * cat.score / 100, 4, 1, 1, 'F');
+    // Score number
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(ctc[0], ctc[1], ctc[2]);
+    pdf.text(String(cat.score), barX + barW + 4, catY);
+    catY += 8;
+  }
+
+  y += scoreBoxH + 8;
+  bodyText(`${result.factorsEvaluated} individual factors evaluated across 4 categories. Higher scores indicate lower risk.`, { size: 7, color: GRAY });
+  y += 2;
+
+  // ============================================
+  // FIRE SAFETY COMPLIANCE SUMMARY
+  // ============================================
+  sectionTitle('Fire Safety Compliance Summary');
+
+  const fireCat = result.categories.find(c => c.key === 'fire');
+  if (fireCat) {
+    bodyText(`Category Score: ${fireCat.score}/100 — Weight: 40% of total score`, { bold: true, size: 8 });
+    y += 1;
+
+    // Vendor service dates
+    const locId = locationLabel.toLowerCase().replace(/\s+kitchen$/i, '');
+    const locObj = locations.find(l => l.name.toLowerCase().includes(locId)) || locations[0];
+    const vendorLocId = locObj?.id || '1';
+    const fireVendors = vendors.filter(v => v.locationId === vendorLocId && ['Hood Cleaning', 'Fire Suppression', 'Grease Trap'].includes(v.serviceType));
+    if (fireVendors.length > 0) {
+      bodyText('Service History:', { bold: true, size: 7.5 });
+      for (const v of fireVendors) {
+        const statusLabel = v.status === 'overdue' ? 'OVERDUE' : v.status === 'upcoming' ? 'UPCOMING' : 'CURRENT';
+        bodyText(`• ${v.serviceType} (${v.company}) — Last: ${v.lastService} | Next: ${v.nextDue} | Status: ${statusLabel}`, { size: 7, indent: 3 });
+      }
+      y += 1;
+    }
+
+    // Factor table
+    bodyText('Factor Details:', { bold: true, size: 7.5 });
+    for (const f of fireCat.factors) {
+      const statusEmoji = f.status === 'pass' ? '✓' : f.status === 'warning' ? '⚠' : '✗';
+      bodyText(`${statusEmoji} ${f.name} — Score: ${f.score}/100 (${f.reference})`, { size: 7, indent: 3 });
+      bodyText(`  ${f.detail}`, { size: 6.5, color: GRAY, indent: 6 });
+    }
+  }
+
+  // ============================================
+  // FOOD SAFETY COMPLIANCE METRICS
+  // ============================================
+  sectionTitle('Food Safety Compliance Metrics');
+
+  const foodCat = result.categories.find(c => c.key === 'foodSafety');
+  if (foodCat) {
+    bodyText(`Category Score: ${foodCat.score}/100 — Weight: 30% of total score`, { bold: true, size: 8 });
+    y += 1;
+    bodyText('Factor Details:', { bold: true, size: 7.5 });
+    for (const f of foodCat.factors) {
+      const statusEmoji = f.status === 'pass' ? '✓' : f.status === 'warning' ? '⚠' : '✗';
+      bodyText(`${statusEmoji} ${f.name} — Score: ${f.score}/100 (${f.reference})`, { size: 7, indent: 3 });
+      bodyText(`  ${f.detail}`, { size: 6.5, color: GRAY, indent: 6 });
+    }
+  }
+
+  // ============================================
+  // DOCUMENTATION COMPLETENESS
+  // ============================================
+  sectionTitle('Documentation Completeness');
+
+  const docCat = result.categories.find(c => c.key === 'documentation');
+  if (docCat) {
+    bodyText(`Category Score: ${docCat.score}/100 — Weight: 20% of total score`, { bold: true, size: 8 });
+    y += 1;
+    bodyText('Factor Details:', { bold: true, size: 7.5 });
+    for (const f of docCat.factors) {
+      const statusEmoji = f.status === 'pass' ? '✓' : f.status === 'warning' ? '⚠' : '✗';
+      bodyText(`${statusEmoji} ${f.name} — Score: ${f.score}/100 (${f.reference})`, { size: 7, indent: 3 });
+      bodyText(`  ${f.detail}`, { size: 6.5, color: GRAY, indent: 6 });
+    }
+  }
+
+  // ============================================
+  // OPERATIONAL RISK
+  // ============================================
+  sectionTitle('Operational Risk Assessment');
+
+  const opCat = result.categories.find(c => c.key === 'operational');
+  if (opCat) {
+    bodyText(`Category Score: ${opCat.score}/100 — Weight: 10% of total score`, { bold: true, size: 8 });
+    y += 1;
+    bodyText('Factor Details:', { bold: true, size: 7.5 });
+    for (const f of opCat.factors) {
+      const statusEmoji = f.status === 'pass' ? '✓' : f.status === 'warning' ? '⚠' : '✗';
+      bodyText(`${statusEmoji} ${f.name} — Score: ${f.score}/100 (${f.reference})`, { size: 7, indent: 3 });
+      bodyText(`  ${f.detail}`, { size: 6.5, color: GRAY, indent: 6 });
+    }
+  }
+
+  // ============================================
+  // 12-MONTH INCIDENT HISTORY
+  // ============================================
+  sectionTitle('12-Month Incident History');
+
+  const locObj2 = locations.find(l => l.name.toLowerCase().includes(locationLabel.toLowerCase().replace(/\s+kitchen$/i, ''))) || locations[0];
+  const vendorLocId2 = locObj2?.id || '1';
+  const locIncidents = needsAttentionItems.filter(i => i.locationId === vendorLocId2);
+  const redCount = locIncidents.filter(i => i.color === 'red').length;
+  const amberCount = locIncidents.filter(i => i.color === 'amber').length;
+  const blueCount = locIncidents.filter(i => i.color === 'blue').length;
+
+  bodyText(`Total flagged items: ${locIncidents.length} (Critical: ${redCount} | Warning: ${amberCount} | Informational: ${blueCount})`, { size: 8 });
+  y += 1;
+  if (locIncidents.length > 0) {
+    for (const inc of locIncidents.slice(0, 8)) {
+      const sevLabel = inc.color === 'red' ? 'CRITICAL' : inc.color === 'amber' ? 'WARNING' : 'INFO';
+      bodyText(`[${sevLabel}] ${inc.label} — ${inc.sublabel}`, { size: 7, indent: 3 });
+    }
+    if (locIncidents.length > 8) {
+      bodyText(`... and ${locIncidents.length - 8} additional items`, { size: 6.5, color: GRAY, indent: 3 });
+    }
+  } else {
+    bodyText('No critical incidents recorded in the past 12 months.', { size: 7, color: GRAY });
+  }
+
+  // ============================================
+  // PROTECTIVE SAFEGUARD COMPLIANCE
+  // ============================================
+  sectionTitle('Protective Safeguard Compliance Verification');
+
+  bodyText('Protective Safeguard Endorsements (PSEs) are standard in commercial kitchen policies. If declared safety systems are not maintained, carriers can deny claims. This section verifies compliance status.', { size: 7, color: GRAY });
+  y += 2;
+
+  const pseItems = [
+    { label: 'ANSUL/UL 300 Wet Chemical System', ref: 'NFPA 17A', factor: fireCat?.factors.find(f => f.name.includes('Fire suppression')) },
+    { label: 'Hood & Duct Cleaning Schedule', ref: 'NFPA 96', factor: fireCat?.factors.find(f => f.name.includes('Hood cleaning')) },
+    { label: 'Fire Extinguisher Inspection', ref: 'NFPA 10', factor: fireCat?.factors.find(f => f.name.includes('Fire extinguisher')) },
+    { label: 'Fire Alarm System', ref: 'NFPA 72', factor: fireCat?.factors.find(f => f.name.includes('Fire alarm')) },
+    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96 §10.1', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
+  ];
+
+  for (const pse of pseItems) {
+    const score = pse.factor?.score || 0;
+    const status = score >= 90 ? 'COMPLIANT' : score >= 60 ? 'NEEDS ATTENTION' : 'NON-COMPLIANT';
+    bodyText(`${status === 'COMPLIANT' ? '✓' : status === 'NEEDS ATTENTION' ? '⚠' : '✗'} ${pse.label} (${pse.ref}) — ${status} (${score}/100)`, { size: 7, indent: 3 });
+  }
+
+  // ============================================
+  // ACTION ITEMS
+  // ============================================
+  if (result.actionItems.length > 0) {
+    sectionTitle('Priority Action Items');
+    bodyText('Items ranked by potential impact on overall risk score:', { size: 7, color: GRAY });
+    y += 1;
+    for (const item of result.actionItems.slice(0, 6)) {
+      bodyText(`• [${item.priority.toUpperCase()}] ${item.title} — +${item.potentialGain} pts potential gain`, { size: 7, indent: 3 });
+      bodyText(`  ${item.action}`, { size: 6.5, color: GRAY, indent: 6 });
+    }
+  }
+
+  // ============================================
+  // Apply headers/footers to all pages
+  // ============================================
+  const total = pdf.getNumberOfPages();
+  for (let i = 1; i <= total; i++) {
+    pdf.setPage(i);
+    if (i > 1) drawHeader(i, total);
+    drawFooter();
+  }
+
+  // Save
+  const locSlug = locationLabel.replace(/\s+/g, '-');
+  pdf.save(`EvidLY-Risk-Profile-${locSlug}-${now.toISOString().split('T')[0]}.pdf`);
+}
+
 export function InsuranceRisk() {
   const navigate = useNavigate();
   const { userRole } = useRole();
@@ -95,6 +410,7 @@ export function InsuranceRisk() {
 
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   // Calculate scores
   const riskResult: InsuranceRiskResult = locationParam === 'all'
@@ -423,6 +739,13 @@ export function InsuranceRisk() {
               <h3 className="text-lg font-semibold text-gray-900">Actions to Improve Your Score</h3>
               <p className="text-xs text-gray-500">Ranked by potential impact on your insurance risk score</p>
             </div>
+            <button
+              onClick={() => navigate(`/improve-score?location=${locationParam}`)}
+              className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors"
+              style={{ color: '#1e4d6b', border: '1px solid #b8d4e8' }}
+            >
+              <TrendingUp className="h-4 w-4" /> View Full Improvement Plan <ArrowRight className="h-3.5 w-3.5" />
+            </button>
           </div>
           <div className="space-y-3">
             {riskResult.actionItems.slice(0, 8).map((item, idx) => (
@@ -513,17 +836,32 @@ export function InsuranceRisk() {
             </div>
           </div>
           <button
-            onClick={() => {
+            onClick={async () => {
               if (!isFeatureAvailable(aiTier, 'predictiveAlerts')) {
                 setShowUpgradeModal(true);
-              } else {
-                alert('Carrier risk report PDF download — available in production');
+                return;
+              }
+              setPdfLoading(true);
+              try {
+                const locLabel = locationParam === 'all'
+                  ? 'All Locations'
+                  : locations.find(l => l.urlId === locationParam)?.name || locationParam;
+                await generateInsuranceReportPDF(riskResult, locLabel);
+              } catch {
+                alert('PDF generation failed. Please try again.');
+              } finally {
+                setPdfLoading(false);
               }
             }}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
+            disabled={pdfLoading}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 disabled:opacity-50"
             style={{ backgroundColor: '#1e4d6b' }}
           >
-            <Download className="h-4 w-4" /> Download PDF
+            {pdfLoading ? (
+              <><div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" /> Generating...</>
+            ) : (
+              <><Download className="h-4 w-4" /> Download PDF</>
+            )}
           </button>
         </div>
       </div>
