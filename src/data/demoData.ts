@@ -2208,6 +2208,191 @@ export const apiUsageStats: ApiUsageStats = {
   ],
 };
 
+// ── Training & Certification LMS Data ────────────────────────────────────────
+
+export type TrainingCategory = 'food_safety_handler' | 'food_safety_manager' | 'fire_safety' | 'compliance_ops' | 'custom';
+
+export interface TrainingCourse {
+  id: string;
+  organizationId: string | null;
+  title: string;
+  description: string;
+  category: TrainingCategory;
+  categoryLabel: string;
+  language: string;
+  estimatedDurationMin: number;
+  passingScorePercent: number;
+  maxAttempts: number;
+  cooldownHours: number;
+  isSystemCourse: boolean;
+  isActive: boolean;
+  thumbnailColor: string;
+  moduleCount: number;
+  enrolledCount: number;
+  completedCount: number;
+  createdAt: string;
+}
+
+export const trainingCourses: TrainingCourse[] = [
+  { id: 'tc-01', organizationId: null, title: 'California Food Handler Card', description: 'Complete food handler training to satisfy CA SB 476 requirements. Covers personal hygiene, time & temperature, cross-contamination, cleaning & sanitizing, food storage, foodborne illness, receiving, and allergen awareness.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'en', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 38, completedCount: 29, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-02', organizationId: null, title: 'ServSafe Manager Exam Prep', description: 'Comprehensive CFPM preparation covering HACCP, active managerial control, FDA Food Code, temperature management, and crisis response. Prepares employees to pass the ServSafe Manager certification exam.', category: 'food_safety_manager', categoryLabel: 'Food Safety – Manager', language: 'en', estimatedDurationMin: 480, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#1e4d6b', moduleCount: 9, enrolledCount: 8, completedCount: 3, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-03', organizationId: null, title: 'Kitchen Fire Safety & Equipment', description: 'Fire extinguisher types, PASS technique, commercial hood systems, NFPA 96 compliance, fire suppression activation, grease fire response, and emergency evacuation.', category: 'fire_safety', categoryLabel: 'Fire Safety', language: 'en', estimatedDurationMin: 95, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#dc2626', moduleCount: 7, enrolledCount: 42, completedCount: 35, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-04', organizationId: null, title: 'EvidLY Compliance Operations', description: 'Learn how to use EvidLY effectively: daily checklists, temperature logging, corrective actions, vendor verification, compliance scoring, and QR Passport.', category: 'compliance_ops', categoryLabel: 'Compliance Ops', language: 'en', estimatedDurationMin: 55, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 0, isSystemCourse: true, isActive: true, thumbnailColor: '#d4af37', moduleCount: 6, enrolledCount: 52, completedCount: 48, createdAt: '2025-08-01T00:00:00Z' },
+  { id: 'tc-05', organizationId: null, title: 'Tarjeta de Manipulador de Alimentos de California', description: 'Entrenamiento completo de manipulación de alimentos para cumplir con los requisitos de CA SB 476. En español.', category: 'food_safety_handler', categoryLabel: 'Food Safety – Handler', language: 'es', estimatedDurationMin: 150, passingScorePercent: 70, maxAttempts: 0, cooldownHours: 24, isSystemCourse: true, isActive: true, thumbnailColor: '#15803d', moduleCount: 8, enrolledCount: 12, completedCount: 8, createdAt: '2025-09-15T00:00:00Z' },
+  { id: 'tc-06', organizationId: 'org-demo', title: 'New Hire Orientation — EvidLY Demo', description: 'Custom onboarding training for new employees. Covers company policies, kitchen layout, emergency contacts, and first-day procedures.', category: 'custom', categoryLabel: 'Custom', language: 'en', estimatedDurationMin: 30, passingScorePercent: 80, maxAttempts: 3, cooldownHours: 0, isSystemCourse: false, isActive: true, thumbnailColor: '#7c3aed', moduleCount: 3, enrolledCount: 14, completedCount: 12, createdAt: '2025-11-01T00:00:00Z' },
+];
+
+export interface TrainingModule {
+  id: string;
+  courseId: string;
+  title: string;
+  description: string;
+  sortOrder: number;
+  estimatedDurationMin: number;
+  lessonCount: number;
+  questionCount: number;
+}
+
+export const trainingModules: TrainingModule[] = [
+  // Food Handler modules (tc-01)
+  { id: 'tm-01', courseId: 'tc-01', title: 'Personal Hygiene & Handwashing', description: 'Proper handwashing technique, when to wash, personal hygiene standards, illness reporting policies', sortOrder: 1, estimatedDurationMin: 15, lessonCount: 4, questionCount: 20 },
+  { id: 'tm-02', courseId: 'tc-01', title: 'Time & Temperature Control', description: 'Danger zone, safe holding temps, cooking temperatures for proteins, cooling and reheating requirements', sortOrder: 2, estimatedDurationMin: 20, lessonCount: 5, questionCount: 25 },
+  { id: 'tm-03', courseId: 'tc-01', title: 'Cross-Contamination Prevention', description: 'Separate cutting boards, proper storage order, color-coded utensils, preventing allergen cross-contact', sortOrder: 3, estimatedDurationMin: 15, lessonCount: 4, questionCount: 20 },
+  { id: 'tm-04', courseId: 'tc-01', title: 'Cleaning & Sanitizing', description: 'Three-compartment sink, sanitizer concentrations, food-contact vs non-food-contact surfaces, chemical storage', sortOrder: 4, estimatedDurationMin: 15, lessonCount: 4, questionCount: 20 },
+  { id: 'tm-05', courseId: 'tc-01', title: 'Food Storage & Labeling', description: 'FIFO, date labeling, proper storage temperatures, storage order in walk-in coolers', sortOrder: 5, estimatedDurationMin: 15, lessonCount: 3, questionCount: 15 },
+  { id: 'tm-06', courseId: 'tc-01', title: 'Foodborne Illness Prevention', description: 'Big 6 pathogens, high-risk populations, symptoms requiring exclusion, outbreak response', sortOrder: 6, estimatedDurationMin: 20, lessonCount: 5, questionCount: 25 },
+  { id: 'tm-07', courseId: 'tc-01', title: 'Receiving & Inspecting Deliveries', description: 'Temperature checks on receipt, checking for damage, rejecting unsafe deliveries, documentation', sortOrder: 7, estimatedDurationMin: 10, lessonCount: 3, questionCount: 15 },
+  { id: 'tm-08', courseId: 'tc-01', title: 'Allergen Awareness', description: 'Big 9 allergens, cross-contact prevention, communication with customers, allergen-free prep', sortOrder: 8, estimatedDurationMin: 15, lessonCount: 4, questionCount: 20 },
+  // Fire Safety modules (tc-03)
+  { id: 'tm-09', courseId: 'tc-03', title: 'Fire Extinguisher Types & PASS Technique', description: 'Class A/B/C/K extinguishers, PASS technique, when to fight vs. evacuate', sortOrder: 1, estimatedDurationMin: 15, lessonCount: 4, questionCount: 15 },
+  { id: 'tm-10', courseId: 'tc-03', title: 'Commercial Hood System Basics', description: 'How hood systems work, filters, cleaning requirements, inspection schedules', sortOrder: 2, estimatedDurationMin: 15, lessonCount: 3, questionCount: 12 },
+  { id: 'tm-11', courseId: 'tc-03', title: 'NFPA 96 Compliance for Kitchen Staff', description: 'Key requirements every kitchen worker should know about hood and duct cleaning standards', sortOrder: 3, estimatedDurationMin: 15, lessonCount: 3, questionCount: 12 },
+  { id: 'tm-12', courseId: 'tc-03', title: 'Fire Suppression System Activation', description: 'Ansul/wet chemical systems, manual pull stations, what happens during activation', sortOrder: 4, estimatedDurationMin: 10, lessonCount: 3, questionCount: 10 },
+  { id: 'tm-13', courseId: 'tc-03', title: 'Grease Fire Response', description: 'Never use water on grease fires, proper response procedure, prevention techniques', sortOrder: 5, estimatedDurationMin: 10, lessonCount: 3, questionCount: 10 },
+  { id: 'tm-14', courseId: 'tc-03', title: 'Kitchen Equipment Safety', description: 'Slicer safety, fryer operation, mixer guards, burn prevention, PPE requirements', sortOrder: 6, estimatedDurationMin: 20, lessonCount: 4, questionCount: 15 },
+  { id: 'tm-15', courseId: 'tc-03', title: 'Emergency Evacuation Procedures', description: 'Exit routes, assembly points, headcount procedures, when to call 911', sortOrder: 7, estimatedDurationMin: 10, lessonCount: 3, questionCount: 10 },
+];
+
+export interface TrainingEnrollment {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  courseId: string;
+  courseTitle: string;
+  locationId: string;
+  locationName: string;
+  enrolledBy: string;
+  enrollmentReason: 'new_hire' | 'expiring_cert' | 'failed_checklist' | 'regulatory_change' | 'manual' | 'manager_assigned';
+  status: 'not_started' | 'in_progress' | 'completed' | 'expired' | 'failed';
+  enrolledAt: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  expiresAt: string | null;
+  progressPercent: number;
+  currentModuleId: string | null;
+  currentLessonId: string | null;
+  scorePercent: number | null;
+}
+
+export const trainingEnrollments: TrainingEnrollment[] = [
+  // Food Handler — Downtown
+  { id: 'te-01', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-02T09:00:00Z', completedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 88 },
+  { id: 'te-02', employeeId: 'emp-02', employeeName: 'James Wilson', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-03T10:00:00Z', completedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 82 },
+  { id: 'te-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', courseId: 'tc-05', courseTitle: 'Tarjeta de Manipulador de Alimentos de California', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-20T00:00:00Z', startedAt: '2026-01-22T08:00:00Z', completedAt: null, expiresAt: '2026-02-20T00:00:00Z', progressPercent: 62, currentModuleId: 'tm-05', currentLessonId: null, scorePercent: null },
+  { id: 'te-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'not_started', enrolledAt: '2026-02-05T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-03-07T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
+  // CFPM Prep — Downtown manager
+  { id: 'te-05', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-02', courseTitle: 'ServSafe Manager Exam Prep', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'manager', enrollmentReason: 'manager_assigned', status: 'in_progress', enrolledAt: '2026-01-05T00:00:00Z', startedAt: '2026-01-08T09:00:00Z', completedAt: null, expiresAt: null, progressPercent: 45, currentModuleId: 'tm-cfpm-05', currentLessonId: null, scorePercent: null },
+  // Fire Safety — Airport
+  { id: 'te-06', employeeId: 'emp-05', employeeName: 'Sarah Lee', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'completed', enrolledAt: '2025-12-01T00:00:00Z', startedAt: '2025-12-03T10:00:00Z', completedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 92 },
+  { id: 'te-07', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-02-01T00:00:00Z', startedAt: '2026-02-03T08:00:00Z', completedAt: null, expiresAt: '2026-03-03T00:00:00Z', progressPercent: 38, currentModuleId: 'tm-11', currentLessonId: null, scorePercent: null },
+  // Compliance Ops — University
+  { id: 'te-08', employeeId: 'emp-07', employeeName: 'Alex Johnson', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'University Campus', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-15T00:00:00Z', startedAt: '2025-10-15T14:00:00Z', completedAt: '2025-10-16T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 95 },
+  // New hires needing training
+  { id: 'te-09', employeeId: 'emp-08', employeeName: 'Priya Patel', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-university', locationName: 'University Campus', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-28T00:00:00Z', startedAt: '2026-01-30T09:00:00Z', completedAt: null, expiresAt: '2026-02-28T00:00:00Z', progressPercent: 78, currentModuleId: 'tm-07', currentLessonId: null, scorePercent: null },
+  { id: 'te-10', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'not_started', enrolledAt: '2026-02-08T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-04-15T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
+  // Custom training
+  { id: 'te-11', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'manager', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2026-02-05T00:00:00Z', startedAt: '2026-02-05T09:00:00Z', completedAt: '2026-02-05T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 90 },
+  { id: 'te-12', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-01T00:00:00Z', startedAt: '2025-10-02T09:00:00Z', completedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 76 },
+];
+
+export interface TrainingCertificate {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  enrollmentId: string;
+  courseId: string;
+  courseTitle: string;
+  locationId: string;
+  locationName: string;
+  certificateType: 'food_handler' | 'food_manager_prep' | 'fire_safety' | 'custom';
+  certificateNumber: string;
+  issuedAt: string;
+  expiresAt: string | null;
+  scorePercent: number;
+}
+
+export const trainingCertificates: TrainingCertificate[] = [
+  { id: 'tcert-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00142', issuedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', scorePercent: 88 },
+  { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'James Wilson', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
+  { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Fire Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', certificateType: 'fire_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
+  { id: 'tcert-04', employeeId: 'emp-07', employeeName: 'Alex Johnson', enrollmentId: 'te-08', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'University Campus', certificateType: 'custom', certificateNumber: 'EVD-CO-2025-00201', issuedAt: '2025-10-16T10:00:00Z', expiresAt: null, scorePercent: 95 },
+  { id: 'tcert-05', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-11', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'custom', certificateNumber: 'EVD-CU-2026-00015', issuedAt: '2026-02-05T10:00:00Z', expiresAt: null, scorePercent: 90 },
+  { id: 'tcert-06', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00285', issuedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', scorePercent: 76 },
+];
+
+export interface TrainingSB476Entry {
+  id: string;
+  employeeId: string;
+  employeeName: string;
+  enrollmentId: string;
+  locationId: string;
+  locationName: string;
+  trainingCostCents: number;
+  compensableHours: number;
+  hourlyRateCents: number;
+  totalCompensationCents: number;
+  trainingDuringWorkHours: boolean;
+  employeeRelievedOfDuties: boolean;
+  completedWithin30Days: boolean;
+  hireDate: string;
+  trainingCompletedDate: string | null;
+}
+
+export const trainingSB476Log: TrainingSB476Entry[] = [
+  { id: 'sb-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.5, hourlyRateCents: 2200, totalCompensationCents: 5500, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-15', trainingCompletedDate: '2025-09-05' },
+  { id: 'sb-02', employeeId: 'emp-02', employeeName: 'James Wilson', enrollmentId: 'te-02', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.8, hourlyRateCents: 1800, totalCompensationCents: 5040, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-20', trainingCompletedDate: '2025-09-06' },
+  { id: 'sb-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', enrollmentId: 'te-03', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1900, totalCompensationCents: 0, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: false, hireDate: '2026-01-10', trainingCompletedDate: null },
+  { id: 'sb-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-04', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1700, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-02-03', trainingCompletedDate: null },
+  { id: 'sb-05', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', locationId: 'loc-airport', locationName: 'Airport Terminal', trainingCostCents: 1500, compensableHours: 2.6, hourlyRateCents: 2000, totalCompensationCents: 5200, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-09-15', trainingCompletedDate: '2025-10-05' },
+  { id: 'sb-06', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', enrollmentId: 'te-10', locationId: 'loc-airport', locationName: 'Airport Terminal', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1800, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-01-15', trainingCompletedDate: null },
+];
+
+export interface TrainingQuizAttempt {
+  id: string;
+  enrollmentId: string;
+  employeeName: string;
+  moduleId: string | null;
+  moduleTitle: string | null;
+  courseId: string | null;
+  attemptNumber: number;
+  scorePercent: number;
+  passed: boolean;
+  questionsTotal: number;
+  questionsCorrect: number;
+  timeSpentSeconds: number;
+  completedAt: string;
+}
+
+export const trainingQuizAttempts: TrainingQuizAttempt[] = [
+  { id: 'tqa-01', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: 'tm-01', moduleTitle: 'Personal Hygiene & Handwashing', courseId: null, attemptNumber: 1, scorePercent: 90, passed: true, questionsTotal: 10, questionsCorrect: 9, timeSpentSeconds: 420, completedAt: '2025-09-02T10:15:00Z' },
+  { id: 'tqa-02', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 1, scorePercent: 80, passed: true, questionsTotal: 10, questionsCorrect: 8, timeSpentSeconds: 540, completedAt: '2025-09-03T09:30:00Z' },
+  { id: 'tqa-03', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: null, moduleTitle: null, courseId: 'tc-01', attemptNumber: 1, scorePercent: 88, passed: true, questionsTotal: 40, questionsCorrect: 35, timeSpentSeconds: 2100, completedAt: '2025-09-05T14:30:00Z' },
+  { id: 'tqa-04', enrollmentId: 'te-02', employeeName: 'James Wilson', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 1, scorePercent: 60, passed: false, questionsTotal: 10, questionsCorrect: 6, timeSpentSeconds: 380, completedAt: '2025-09-04T10:00:00Z' },
+  { id: 'tqa-05', enrollmentId: 'te-02', employeeName: 'James Wilson', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 2, scorePercent: 80, passed: true, questionsTotal: 10, questionsCorrect: 8, timeSpentSeconds: 450, completedAt: '2025-09-04T14:00:00Z' },
+  { id: 'tqa-06', enrollmentId: 'te-06', employeeName: 'Sarah Lee', moduleId: null, moduleTitle: null, courseId: 'tc-03', attemptNumber: 1, scorePercent: 92, passed: true, questionsTotal: 30, questionsCorrect: 28, timeSpentSeconds: 1800, completedAt: '2025-12-05T15:00:00Z' },
+  { id: 'tqa-07', enrollmentId: 'te-09', employeeName: 'Priya Patel', moduleId: 'tm-06', moduleTitle: 'Foodborne Illness Prevention', courseId: null, attemptNumber: 1, scorePercent: 70, passed: true, questionsTotal: 10, questionsCorrect: 7, timeSpentSeconds: 510, completedAt: '2026-02-07T11:00:00Z' },
+];
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {

@@ -73,6 +73,8 @@ const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ defa
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
+const TrainingHub = lazy(() => import('./pages/TrainingHub').then(m => ({ default: m.TrainingHub })));
+const TrainingCourse = lazy(() => import('./pages/TrainingCourse').then(m => ({ default: m.TrainingCourse })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -270,6 +272,8 @@ function AppRoutes() {
           <Route path="/sensors/:id" element={<SensorDetail />} />
           <Route path="/integrations" element={<IntegrationHub />} />
           <Route path="/developers" element={<DeveloperPortal />} />
+          <Route path="/training" element={<TrainingHub />} />
+          <Route path="/training/course/:id" element={<TrainingCourse />} />
         </Route>
       </Routes>
     </>

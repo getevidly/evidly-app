@@ -29,6 +29,7 @@ import {
   Brain,
   Radio,
   Plug,
+  GraduationCap,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -58,6 +59,7 @@ const navigation: NavItem[] = [
   { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations', badgeCount: 3 },
   { i18nKey: 'nav.iotSensors', href: '/iot-platform', icon: Radio, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.integrations', href: '/integrations', icon: Plug, tourId: '', roles: ['executive', 'management'], section: 'operations' },
+  { i18nKey: 'nav.training', href: '/training', icon: GraduationCap, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
   { i18nKey: 'nav.documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.incidentLog', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
