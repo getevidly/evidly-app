@@ -735,10 +735,10 @@ export function Benchmarks() {
             <div className="flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-gray-50">
               <div className="text-sm">
                 <span className="font-semibold text-gray-900">Full Q4 2025 Report</span>
-                <span className="text-gray-500 ml-2 text-xs">Published Jan 15, 2026 — 24 pages</span>
+                <span className="text-gray-500 ml-2 text-xs">Published Jan 15, 2026 — 10 sections, all 14 counties</span>
               </div>
-              <button onClick={() => alert('PDF download coming soon — public report will be available at evidly.com/index')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
-                <Download className="h-3.5 w-3.5" /> Download PDF
+              <button onClick={() => navigate('/compliance-index')} className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+                <ArrowRight className="h-3.5 w-3.5" /> View Full Report
               </button>
             </div>
           </div>
