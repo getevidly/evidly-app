@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield, Layers, KeyRound, ExternalLink } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -11,6 +11,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generateAllTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
+import { useOffline } from '../contexts/OfflineContext';
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
@@ -42,6 +43,9 @@ export function Settings() {
   });
   const [saving, setSaving] = useState(false);
   const [benchmarkOptIn, setBenchmarkOptIn] = useState(true);
+  const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
+  const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
+  const [clearConfirm, setClearConfirm] = useState(false);
 
   // Tab names resolved at render time via i18n
   const tabI18n: Record<string, string> = {
@@ -56,6 +60,7 @@ export function Settings() {
     jurisdiction: 'Jurisdiction Profile',
     privacy: 'Privacy',
     enterprise: 'Enterprise',
+    sync: 'Sync & Offline',
   };
 
   const allTabs = [
@@ -70,6 +75,7 @@ export function Settings() {
     { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
     { id: 'enterprise', icon: Layers, roles: ['executive'] as UserRole[] },
+    { id: 'sync', icon: RefreshCw, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
   ];
 
   const tabs = allTabs.filter(tab => tab.roles.includes(userRole));
@@ -83,6 +89,14 @@ export function Settings() {
   useEffect(() => {
     loadNotificationSettings();
   }, [profile]);
+
+  useEffect(() => {
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(est => {
+        setStorageEstimate({ usage: est.usage || 0, quota: est.quota || 0 });
+      });
+    }
+  }, []);
 
   const loadNotificationSettings = async () => {
     if (!profile?.id) return;
@@ -1328,6 +1342,189 @@ export function Settings() {
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                     2 Active
                   </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'sync' && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-bold text-gray-900">Sync & Offline</h3>
+              <p className="text-sm text-gray-600">Manage offline data, sync status, and device registration for this browser.</p>
+
+              {/* Connection Status */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: isOnline ? '#dcfce7' : '#fee2e2' }}>
+                    {isOnline ? <Wifi className="h-5 w-5 text-green-600" /> : <WifiOff className="h-5 w-5 text-red-600" />}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Connection Status</h4>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={`inline-block w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
+                      <span className={`text-sm font-medium ${isOnline ? 'text-green-700' : 'text-red-700'}`}>
+                        {isOnline ? 'Online' : 'Offline'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                      syncStatus === 'idle' ? 'bg-green-50 text-green-700 border border-green-200' :
+                      syncStatus === 'syncing' ? 'bg-amber-50 text-amber-700 border border-amber-200' :
+                      syncStatus === 'error' ? 'bg-red-50 text-red-700 border border-red-200' :
+                      'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}>
+                      {syncStatus === 'idle' ? 'Synced' : syncStatus === 'syncing' ? 'Syncing...' : syncStatus === 'error' ? 'Sync Error' : 'Offline'}
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 mb-1">Last Sync</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {lastSyncTime ? lastSyncTime.toLocaleString() : 'Never'}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 mb-1">Pending Changes</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {pendingCount} {pendingCount === 1 ? 'action' : 'actions'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sync Actions */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <RefreshCw className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Sync Actions</h4>
+                    <p className="text-xs text-gray-500">Manually trigger sync or clear offline data</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => triggerSync()}
+                    disabled={!isOnline || syncStatus === 'syncing'}
+                    className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    style={{ backgroundColor: '#1e4d6b' }}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${syncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+                    {syncStatus === 'syncing' ? 'Syncing...' : 'Sync Now'}
+                  </button>
+                  {!clearConfirm ? (
+                    <button
+                      onClick={() => setClearConfirm(true)}
+                      className="px-4 py-2 rounded-lg border border-red-200 text-red-700 text-sm font-semibold hover:bg-red-50 transition-colors flex items-center gap-2 cursor-pointer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Clear Offline Data
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-red-600 font-medium">Are you sure?</span>
+                      <button
+                        onClick={async () => { await clearOfflineData(); setClearConfirm(false); alert('Offline data cleared.'); }}
+                        className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors cursor-pointer"
+                      >
+                        Yes, Clear
+                      </button>
+                      <button
+                        onClick={() => setClearConfirm(false)}
+                        className="px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Device Info */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <Smartphone className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Device Information</h4>
+                    <p className="text-xs text-gray-500">This device's sync registration details</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span className="text-sm text-gray-600">Device ID</span>
+                    <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono text-gray-700">{deviceId.slice(0, 8)}...{deviceId.slice(-4)}</code>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span className="text-sm text-gray-600">Platform</span>
+                    <span className="text-sm font-medium text-gray-900">{navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop'} — {navigator.platform || 'Unknown'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-gray-100">
+                    <span className="text-sm text-gray-600">Service Worker</span>
+                    <span className={`text-sm font-medium ${('serviceWorker' in navigator) ? 'text-green-700' : 'text-gray-500'}`}>
+                      {('serviceWorker' in navigator) ? 'Supported' : 'Not Available'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-sm text-gray-600">IndexedDB</span>
+                    <span className={`text-sm font-medium ${('indexedDB' in window) ? 'text-green-700' : 'text-gray-500'}`}>
+                      {('indexedDB' in window) ? 'Available' : 'Not Available'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Storage Usage */}
+              <div className="border border-gray-200 rounded-lg p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                    <HardDrive className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Storage Usage</h4>
+                    <p className="text-xs text-gray-500">Local storage used by offline data and cache</p>
+                  </div>
+                </div>
+                {storageEstimate ? (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">
+                        {(storageEstimate.usage / (1024 * 1024)).toFixed(1)} MB used
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        of {(storageEstimate.quota / (1024 * 1024)).toFixed(0)} MB available
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className="h-2.5 rounded-full"
+                        style={{
+                          width: `${Math.min((storageEstimate.usage / storageEstimate.quota) * 100, 100).toFixed(1)}%`,
+                          backgroundColor: '#1e4d6b',
+                          minWidth: '4px',
+                        }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">Storage estimate not available in this browser.</p>
+                )}
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {[
+                    { label: 'Cached Pages', value: 'App Shell', icon: '📄' },
+                    { label: 'Offline Actions', value: `${pendingCount} pending`, icon: '📝' },
+                    { label: 'Cached Photos', value: '0 photos', icon: '📷' },
+                  ].map(item => (
+                    <div key={item.label} className="bg-gray-50 rounded-lg p-3 text-center">
+                      <span className="text-lg">{item.icon}</span>
+                      <p className="text-xs text-gray-500 mt-1">{item.label}</p>
+                      <p className="text-sm font-medium text-gray-900">{item.value}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

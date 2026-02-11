@@ -1,0 +1,25 @@
+{
+  "name": "EvidLY - Compliance Simplified",
+  "short_name": "EvidLY",
+  "description": "Food safety compliance management platform for restaurants and food service operations",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#faf8f3",
+  "theme_color": "#1e4d6b",
+  "categories": ["business", "productivity", "food"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

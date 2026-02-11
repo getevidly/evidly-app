@@ -8,6 +8,7 @@ import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
 // TODO: Re-enable auth guards before launch — restore useDemo import
 import { DemoProvider } from './contexts/DemoContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { OfflineProvider } from './contexts/OfflineContext';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
@@ -302,7 +303,9 @@ function App() {
           <LanguageProvider>
             <RoleProvider>
               <OperatingHoursProvider>
-                <AppRoutes />
+                <OfflineProvider>
+                  <AppRoutes />
+                </OfflineProvider>
               </OperatingHoursProvider>
             </RoleProvider>
           </LanguageProvider>

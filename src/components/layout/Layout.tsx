@@ -5,6 +5,7 @@ import { MobileTabBar } from './MobileTabBar';
 import { GuidedTour } from '../GuidedTour';
 import { DemoTour } from '../DemoTour';
 import { AIChatPanel } from '../AIChatPanel';
+import { OfflineBanner } from '../OfflineBanner';
 import { useDemo } from '../../contexts/DemoContext';
 
 interface LocationOption {
@@ -51,6 +52,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           onLocationChange={onLocationChange}
           demoMode={demoMode}
         />
+        <OfflineBanner />
         <main className="flex-1 pb-20 md:pb-8">
           <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
         </main>
