@@ -2426,3 +2426,493 @@ export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: Ma
   }
   return results;
 }
+
+// ── Incident Response Playbooks ─────────────────────────────────────────────
+
+export type PlaybookSeverity = 'critical' | 'high' | 'medium' | 'low';
+export type PlaybookCategory = 'environmental' | 'health_safety' | 'regulatory' | 'equipment';
+export type IncidentPlaybookStatus = 'active' | 'completed' | 'abandoned';
+export type PlaybookStepStatus = 'pending' | 'in_progress' | 'completed' | 'skipped';
+
+export interface PlaybookActionItem {
+  id: string;
+  label: string;
+  required: boolean;
+}
+
+export interface PlaybookStep {
+  id: string;
+  stepNumber: number;
+  title: string;
+  description: string;
+  actionItems: PlaybookActionItem[];
+  photoRequired: boolean;
+  photoPrompt?: string;
+  notePrompt?: string;
+  timerMinutes?: number;
+  regulatoryReference?: string;
+  criticalWarning?: string;
+}
+
+export interface PlaybookTemplate {
+  id: string;
+  title: string;
+  shortDescription: string;
+  category: PlaybookCategory;
+  defaultSeverity: PlaybookSeverity;
+  icon: string;
+  color: string;
+  stepCount: number;
+  estimatedMinutes: number;
+  regulatoryBasis: string;
+  steps: PlaybookStep[];
+}
+
+export interface ActivePlaybookStepLog {
+  stepId: string;
+  status: PlaybookStepStatus;
+  startedAt: string | null;
+  completedAt: string | null;
+  notes: string;
+  photosTaken: number;
+  actionItemsCompleted: string[];
+}
+
+export interface ActiveIncidentPlaybook {
+  id: string;
+  templateId: string;
+  templateTitle: string;
+  severity: PlaybookSeverity;
+  status: IncidentPlaybookStatus;
+  location: string;
+  initiatedBy: string;
+  initiatedAt: string;
+  completedAt: string | null;
+  currentStepNumber: number;
+  totalSteps: number;
+  stepLogs: ActivePlaybookStepLog[];
+  incidentNotes: string;
+  reportGenerated: boolean;
+}
+
+export const playbookTemplates: PlaybookTemplate[] = [
+  {
+    id: 'pb-power-outage',
+    title: 'Power Outage Response',
+    shortDescription: 'Systematic protocol for managing power loss, protecting food inventory, and FDA-compliant temperature monitoring with insurance documentation.',
+    category: 'environmental',
+    defaultSeverity: 'critical',
+    icon: 'Zap',
+    color: '#dc2626',
+    stepCount: 9,
+    estimatedMinutes: 240,
+    regulatoryBasis: 'FDA Food Code 3-501.16, 3-501.17; CA Retail Food Code §113996',
+    steps: [
+      {
+        id: 'po-1', stepNumber: 1, title: 'Immediate Response',
+        description: 'Record the exact time power went out. DO NOT open walk-in cooler or freezer doors — each opening accelerates temperature rise significantly. If during food service, pause all food preparation and hold all plated food. Assign someone to monitor the front entrance for customer safety.',
+        actionItems: [
+          { id: 'po-1a', label: 'Record exact time of power loss', required: true },
+          { id: 'po-1b', label: 'Post "DO NOT OPEN" signs on all coolers/freezers', required: true },
+          { id: 'po-1c', label: 'Pause all food preparation if during service', required: true },
+          { id: 'po-1d', label: 'Assign staff to monitor entrance', required: false },
+        ],
+        photoRequired: true, photoPrompt: 'Photograph any displays showing power status',
+        criticalWarning: 'DO NOT open walk-in cooler or freezer doors. A closed unit maintains safe temperature for approximately 4 hours.',
+      },
+      {
+        id: 'po-2', stepNumber: 2, title: 'Assess & Contact Utility',
+        description: 'Contact the utility company to get an estimated restoration time and a reference/ticket number. Check if a backup generator is available and functioning. Notify the owner/operator immediately via phone or EvidLY notification.',
+        actionItems: [
+          { id: 'po-2a', label: 'Call utility company', required: true },
+          { id: 'po-2b', label: 'Record estimated restoration time', required: true },
+          { id: 'po-2c', label: 'Record utility ticket number', required: true },
+          { id: 'po-2d', label: 'Check backup generator availability', required: true },
+          { id: 'po-2e', label: 'Notify owner/operator', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Screenshot or photo of utility company response',
+        notePrompt: 'Record utility company contact details and ticket number',
+      },
+      {
+        id: 'po-3', stepNumber: 3, title: 'Secure Food — Initial Assessment',
+        description: 'Record current temperature of all cold-holding and hot-holding units using a probe thermometer (digital displays may be off). Move any food currently in active prep back to cold storage if it can be done quickly without prolonged door opening. Discard any TCS food already in the danger zone (41°F–135°F) when power went out.',
+        actionItems: [
+          { id: 'po-3a', label: 'Record walk-in cooler temperature', required: true },
+          { id: 'po-3b', label: 'Record walk-in freezer temperature', required: true },
+          { id: 'po-3c', label: 'Record all reach-in unit temperatures', required: true },
+          { id: 'po-3d', label: 'Return prep food to cold storage', required: false },
+          { id: 'po-3e', label: 'Discard any TCS food already in danger zone', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photograph each thermometer reading',
+        notePrompt: 'Record exact temperature for each unit',
+        regulatoryReference: 'FDA Food Code 3-501.16(A)(2)',
+        criticalWarning: 'Do not open cooler/freezer doors unnecessarily. Each opening accelerates temperature rise.',
+      },
+      {
+        id: 'po-4', stepNumber: 4, title: 'Hot Food Decision (1 Hour)',
+        description: 'Evaluate all hot-held food. Items that have dropped below 135°F must be reheated to 165°F within 2 hours if power is restored, or discarded. If no power restoration is expected, all hot-held TCS food must be discarded after being in the danger zone for 4 hours total.',
+        actionItems: [
+          { id: 'po-4a', label: 'Check temperature of all hot-held items', required: true },
+          { id: 'po-4b', label: 'Discard items below 135°F with no reheat capability', required: true },
+          { id: 'po-4c', label: 'Document each discarded item with name, quantity, temp', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photo of each hot-held item with temperature reading before discard',
+        timerMinutes: 60,
+        regulatoryReference: 'FDA Food Code 3-501.16(A)',
+      },
+      {
+        id: 'po-5', stepNumber: 5, title: 'Cold Food Monitoring (Every 30 Min)',
+        description: 'Continue temperature readings on all cold units every 30 minutes. FDA guideline: a closed refrigerator keeps food safe for approximately 4 hours. A full freezer maintains safe temperature for approximately 48 hours (24 hours if half full). If any cold unit rises above 41°F, begin the 4-hour countdown for TCS food in that unit.',
+        actionItems: [
+          { id: 'po-5a', label: 'Record all unit temperatures at 30-min mark', required: true },
+          { id: 'po-5b', label: 'Flag any units above 41°F', required: true },
+          { id: 'po-5c', label: 'Start 4-hour countdown for units above 41°F', required: false },
+        ],
+        photoRequired: true, photoPrompt: 'Photograph thermometer readings at each interval',
+        timerMinutes: 30,
+        regulatoryReference: 'FDA Food Code 3-501.16(A)(2), USDA Cold Storage Guidelines',
+      },
+      {
+        id: 'po-6', stepNumber: 6, title: 'Food Disposition (4 Hours Without Power)',
+        description: 'Evaluate ALL TCS food in refrigerated units: Below 41°F = SAFE, continue monitoring. 41°F–70°F for less than 2 hours = can be saved if immediately cooled when power returns. Above 41°F for more than 4 hours = DISCARD. Any food with off-odor, color, or texture = DISCARD regardless of temperature. Document EVERY item with name, quantity, unit cost (for insurance), temperature, and disposition decision.',
+        actionItems: [
+          { id: 'po-6a', label: 'Evaluate all TCS food in refrigerated units', required: true },
+          { id: 'po-6b', label: 'Document each item: name, qty, cost, temp, decision', required: true },
+          { id: 'po-6c', label: 'Photograph each discarded item individually', required: true },
+          { id: 'po-6d', label: 'Photograph all discarded items together (insurance)', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photo each item before disposal, then group photo of all discards',
+        notePrompt: 'List every discarded item with estimated cost for insurance claim',
+        regulatoryReference: 'FDA Food Code 3-501.17; 21 CFR 110',
+        criticalWarning: 'When in doubt, throw it out. The cost of discarding food is always less than a foodborne illness lawsuit.',
+      },
+      {
+        id: 'po-7', stepNumber: 7, title: 'Freezer Assessment (If >24 Hours)',
+        description: 'Open freezer and evaluate: food still containing ice crystals is SAFE to refreeze (quality may suffer). Food above 40°F for more than 2 hours must be DISCARDED. Thawed food below 40°F should be cooked immediately or discarded. Same documentation protocol as Step 6.',
+        actionItems: [
+          { id: 'po-7a', label: 'Assess freezer contents for ice crystals', required: true },
+          { id: 'po-7b', label: 'Discard items above 40°F for >2 hours', required: true },
+          { id: 'po-7c', label: 'Document all freezer disposition decisions', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photo freezer contents showing ice crystal status',
+      },
+      {
+        id: 'po-8', stepNumber: 8, title: 'Power Restored — Verification',
+        description: 'Verify all electrical equipment restarts properly. Check all circuit breakers. Verify refrigeration units are cooling properly (should reach 41°F within 4 hours). Verify hot-holding equipment reaches 135°F. Run water for 5 minutes to flush lines. Resume normal temperature monitoring schedule.',
+        actionItems: [
+          { id: 'po-8a', label: 'Verify all equipment restarts', required: true },
+          { id: 'po-8b', label: 'Check all circuit breakers', required: true },
+          { id: 'po-8c', label: 'Confirm refrigeration reaching 41°F', required: true },
+          { id: 'po-8d', label: 'Flush water lines for 5 minutes', required: true },
+          { id: 'po-8e', label: 'Resume normal temp monitoring', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photo all equipment displays showing normal operation',
+      },
+      {
+        id: 'po-9', stepNumber: 9, title: 'Post-Incident Report',
+        description: 'Calculate total food loss value for insurance claim. Generate the incident summary report (auto-compiled from all steps). File insurance claim if loss exceeds deductible. Notify health department if required by jurisdiction. Review: was a generator available? Should one be purchased?',
+        actionItems: [
+          { id: 'po-9a', label: 'Calculate total food loss value', required: true },
+          { id: 'po-9b', label: 'Generate incident summary report', required: true },
+          { id: 'po-9c', label: 'File insurance claim if applicable', required: false },
+          { id: 'po-9d', label: 'Notify health department if required', required: false },
+          { id: 'po-9e', label: 'Document lessons learned', required: true },
+        ],
+        photoRequired: false,
+        notePrompt: 'Record total estimated food loss value and any equipment damage',
+      },
+    ],
+  },
+  {
+    id: 'pb-foodborne-illness',
+    title: 'Foodborne Illness Complaint',
+    shortDescription: 'Legal-compliant protocol for receiving, investigating, and documenting foodborne illness complaints while protecting the business.',
+    category: 'health_safety',
+    defaultSeverity: 'critical',
+    icon: 'AlertTriangle',
+    color: '#dc2626',
+    stepCount: 8,
+    estimatedMinutes: 180,
+    regulatoryBasis: 'FDA Food Code 8-404.11; CA Health & Safety Code §113789',
+    steps: [
+      {
+        id: 'fi-1', stepNumber: 1, title: 'Receive Complaint',
+        description: 'Transfer the call or complaint to the designated manager — never let line staff handle. Express empathy without admitting fault: "I can hear you\'re upset. We take this very seriously and want to get to the bottom of this." Record complainant name, phone, email, and date/time of complaint.',
+        actionItems: [
+          { id: 'fi-1a', label: 'Transfer to designated manager', required: true },
+          { id: 'fi-1b', label: 'Record complainant name and contact info', required: true },
+          { id: 'fi-1c', label: 'Record date and time of complaint', required: true },
+        ],
+        photoRequired: false,
+        notePrompt: 'Record complainant full name, phone, email',
+        criticalWarning: 'DO NOT admit fault or responsibility. DO NOT deny their claim. DO NOT suggest symptoms to the complainant.',
+      },
+      {
+        id: 'fi-2', stepNumber: 2, title: 'Gather Information',
+        description: 'Ask what they ate (specific menu items), when (date, time, duration at restaurant), how many in their party, if others got sick, what symptoms they experienced (let THEM describe), when symptoms started (onset time is critical — most foodborne illness takes 6-72 hours), if they\'ve seen a doctor, and if they reported to the health department.',
+        actionItems: [
+          { id: 'fi-2a', label: 'Record specific menu items consumed', required: true },
+          { id: 'fi-2b', label: 'Record date/time of visit and party size', required: true },
+          { id: 'fi-2c', label: 'Record symptoms (in their words)', required: true },
+          { id: 'fi-2d', label: 'Record symptom onset time', required: true },
+          { id: 'fi-2e', label: 'Ask about doctor visit/stool sample', required: true },
+          { id: 'fi-2f', label: 'Ask if reported to health department', required: true },
+        ],
+        photoRequired: false,
+        notePrompt: 'Record all complaint details exactly as described by complainant',
+      },
+      {
+        id: 'fi-3', stepNumber: 3, title: 'Internal Investigation',
+        description: 'Within 2 hours, pull all food safety records for the date in question: temperature logs, cooling logs, receiving logs, employee illness records, cleaning logs, and any corrective actions. Interview staff who prepared/served the suspected items. Check vendor records for any supplier recalls.',
+        actionItems: [
+          { id: 'fi-3a', label: 'Pull temperature logs for the date', required: true },
+          { id: 'fi-3b', label: 'Review employee illness records', required: true },
+          { id: 'fi-3c', label: 'Interview prep/serving staff', required: true },
+          { id: 'fi-3d', label: 'Check vendor recall notices', required: true },
+          { id: 'fi-3e', label: 'Review cleaning/sanitizing logs', required: true },
+        ],
+        photoRequired: true, photoPrompt: 'Photo relevant log pages and any physical evidence',
+        notePrompt: 'Document investigation findings',
+        timerMinutes: 120,
+      },
+      {
+        id: 'fi-4', stepNumber: 4, title: 'Notify Authorities',
+        description: 'Contact local health department proactively: "We received a foodborne illness complaint and have documented it. We completed an internal investigation. Here are our findings." Record who you spoke with, what was communicated, and any instructions received. Contact insurance company to report the incident.',
+        actionItems: [
+          { id: 'fi-4a', label: 'Contact local health department', required: true },
+          { id: 'fi-4b', label: 'Record health dept contact name and instructions', required: true },
+          { id: 'fi-4c', label: 'Contact insurance company', required: true },
+          { id: 'fi-4d', label: 'Contact attorney if multiple complaints or legal threat', required: false },
+        ],
+        photoRequired: false,
+        notePrompt: 'Record health department contact name, time, instructions given',
+      },
+      {
+        id: 'fi-5', stepNumber: 5, title: 'Food Hold (If Warranted)',
+        description: 'If investigation identifies a potentially suspect food item: pull from service immediately, label and set aside in a sealed container (do NOT discard — may need for testing), store separately with date/time label, and check if the same item was used at other locations.',
+        actionItems: [
+          { id: 'fi-5a', label: 'Identify suspect food items', required: true },
+          { id: 'fi-5b', label: 'Pull suspect items from service', required: true },
+          { id: 'fi-5c', label: 'Label, seal, and store separately', required: true },
+          { id: 'fi-5d', label: 'Check other locations for same item', required: false },
+        ],
+        photoRequired: true, photoPrompt: 'Photo held items with labels visible',
+      },
+      {
+        id: 'fi-6', stepNumber: 6, title: 'Staff Communication',
+        description: 'Brief staff on a need-to-know basis only. Reinforce: "If anyone else calls about illness, immediately transfer to [manager name]." Do NOT discuss the complaint with guests, on social media, or with uninvolved staff. Review food safety procedures with relevant kitchen staff as reinforcement.',
+        actionItems: [
+          { id: 'fi-6a', label: 'Brief relevant staff only', required: true },
+          { id: 'fi-6b', label: 'Designate single point of contact for calls', required: true },
+          { id: 'fi-6c', label: 'Reinforce food safety procedures with kitchen staff', required: true },
+        ],
+        photoRequired: false,
+        criticalWarning: 'Treat the complaint as CONFIDENTIAL. Do not discuss with uninvolved staff, guests, or on social media.',
+      },
+      {
+        id: 'fi-7', stepNumber: 7, title: 'Follow-Up With Complainant',
+        description: 'Within 48 hours, call the complainant. Inform them of steps taken: "We conducted a thorough internal investigation, reviewed all our food safety records, and contacted the health department." Remain empathetic and professional regardless of their response. Document the follow-up call details.',
+        actionItems: [
+          { id: 'fi-7a', label: 'Call complainant within 48 hours', required: true },
+          { id: 'fi-7b', label: 'Communicate investigation steps taken', required: true },
+          { id: 'fi-7c', label: 'Document follow-up call details', required: true },
+        ],
+        photoRequired: false,
+        notePrompt: 'Record follow-up conversation details and complainant response',
+        timerMinutes: 2880,
+      },
+      {
+        id: 'fi-8', stepNumber: 8, title: 'Post-Incident Review',
+        description: 'If complaint was substantiated: implement corrective actions, schedule additional staff training, update procedures. If unsubstantiated: file documentation, no further action required. In either case, review and potentially increase monitoring frequency for implicated food items. Generate the full incident report.',
+        actionItems: [
+          { id: 'fi-8a', label: 'Determine if complaint was substantiated', required: true },
+          { id: 'fi-8b', label: 'Implement corrective actions if needed', required: false },
+          { id: 'fi-8c', label: 'Schedule staff training if indicated', required: false },
+          { id: 'fi-8d', label: 'Generate full incident report', required: true },
+        ],
+        photoRequired: false,
+        notePrompt: 'Final determination and corrective actions taken',
+      },
+    ],
+  },
+  {
+    id: 'pb-kitchen-fire',
+    title: 'Kitchen Fire Response',
+    shortDescription: 'Emergency evacuation, fire suppression, regulatory notification, and facility restoration protocol following NFPA 96 requirements.',
+    category: 'health_safety',
+    defaultSeverity: 'critical',
+    icon: 'Flame',
+    color: '#ea580c',
+    stepCount: 7,
+    estimatedMinutes: 480,
+    regulatoryBasis: 'NFPA 96; OSHA 29 CFR 1910.157; Local Fire Code',
+    steps: [
+      { id: 'kf-1', stepNumber: 1, title: 'Immediate Safety', description: 'EVACUATE all customers and staff if fire is not immediately containable. Call 911 if fire is beyond a small grease flare-up. For small grease fire: NEVER use water — use Class K fire extinguisher, smother with metal lid, or activate fire suppression system. Account for all staff members by name.', actionItems: [{ id: 'kf-1a', label: 'Evacuate all occupants', required: true }, { id: 'kf-1b', label: 'Call 911', required: true }, { id: 'kf-1c', label: 'Account for all staff members', required: true }, { id: 'kf-1d', label: 'Use Class K extinguisher if safe', required: false }], photoRequired: true, photoPrompt: 'Photo ONLY if safe from a safe distance', criticalWarning: 'NEVER use water on a grease fire. Evacuate IMMEDIATELY if fire is not containable.' },
+      { id: 'kf-2', stepNumber: 2, title: 'Fire Department Response', description: 'Direct fire department to the specific location of fire. Provide access to hood/duct system if needed. Record time fire department arrived, incident number, and names of responding units. Follow all fire department instructions without exception.', actionItems: [{ id: 'kf-2a', label: 'Direct fire department to fire location', required: true }, { id: 'kf-2b', label: 'Record fire dept arrival time and incident #', required: true }, { id: 'kf-2c', label: 'Provide building access as needed', required: true }], photoRequired: false, notePrompt: 'Record fire department incident number and officer names' },
+      { id: 'kf-3', stepNumber: 3, title: 'Immediate Aftermath', description: 'DO NOT re-enter kitchen until fire department clears the space. DO NOT attempt to clean or restore equipment. Shut off gas supply if not already done. Record extent of damage to equipment, structure, and inventory.', actionItems: [{ id: 'kf-3a', label: 'Wait for fire department all-clear', required: true }, { id: 'kf-3b', label: 'Verify gas supply shut off', required: true }, { id: 'kf-3c', label: 'Document extent of damage', required: true }], photoRequired: true, photoPrompt: 'Photo all damage from multiple angles BEFORE any cleanup', criticalWarning: 'DO NOT re-enter until fire department clears the space.' },
+      { id: 'kf-4', stepNumber: 4, title: 'Food Safety Assessment', description: 'ALL exposed food must be discarded (smoke, chemical, water contamination). Evaluate food in sealed containers case by case. Frozen food that remained sealed and frozen may be safe. Document every item discarded with estimated value for insurance.', actionItems: [{ id: 'kf-4a', label: 'Discard all exposed food', required: true }, { id: 'kf-4b', label: 'Evaluate sealed/frozen items', required: true }, { id: 'kf-4c', label: 'Document all discarded items with values', required: true }], photoRequired: true, photoPrompt: 'Photo all food items before disposal', notePrompt: 'List each item with estimated replacement cost' },
+      { id: 'kf-5', stepNumber: 5, title: 'Vendor & Insurance Notification', description: 'Contact hood cleaning company for fire suppression recharge and inspection. Contact equipment repair vendors. Contact insurance company to file claim. Contact landlord/property management. Fire suppression system MUST be professionally recharged and inspected before resuming cooking operations (NFPA 96).', actionItems: [{ id: 'kf-5a', label: 'Contact hood cleaning company', required: true }, { id: 'kf-5b', label: 'Contact equipment repair vendors', required: true }, { id: 'kf-5c', label: 'File insurance claim', required: true }, { id: 'kf-5d', label: 'Contact landlord if applicable', required: false }], photoRequired: false, notePrompt: 'Record all vendor contact info, claim numbers, and estimated timelines', regulatoryReference: 'NFPA 96 — Suppression system must be recharged before cooking resumes' },
+      { id: 'kf-6', stepNumber: 6, title: 'Regulatory Notification', description: 'Notify local fire marshal (may be automatic via 911). Notify health department that kitchen will be offline. Obtain clearance from fire department before any restoration work. Obtain health department clearance before reopening.', actionItems: [{ id: 'kf-6a', label: 'Notify fire marshal', required: true }, { id: 'kf-6b', label: 'Notify health department', required: true }, { id: 'kf-6c', label: 'Obtain fire dept clearance for restoration', required: true }, { id: 'kf-6d', label: 'Obtain health dept clearance for reopening', required: true }], photoRequired: false, notePrompt: 'Record regulatory contact names and clearance dates' },
+      { id: 'kf-7', stepNumber: 7, title: 'Reopening Verification', description: 'Complete all items: fire suppression recharged and certified, all equipment inspected and functional, entire kitchen deep-cleaned, contaminated food discarded and documented, fresh inventory received, health department clearance obtained, fire department clearance obtained, staff briefed.', actionItems: [{ id: 'kf-7a', label: 'Fire suppression recharged and certified', required: true }, { id: 'kf-7b', label: 'All equipment inspected and functional', required: true }, { id: 'kf-7c', label: 'Entire kitchen deep-cleaned', required: true }, { id: 'kf-7d', label: 'Fresh inventory received and stored', required: true }, { id: 'kf-7e', label: 'All clearances obtained', required: true }, { id: 'kf-7f', label: 'Staff briefed on incident and prevention', required: true }], photoRequired: true, photoPrompt: 'Photo all equipment operational, clean kitchen, new certifications posted' },
+    ],
+  },
+  {
+    id: 'pb-failed-inspection',
+    title: 'Failed Health Inspection Response',
+    shortDescription: 'Structured protocol for responding to critical health inspection violations with documented corrective actions and re-inspection preparation.',
+    category: 'regulatory',
+    defaultSeverity: 'high',
+    icon: 'ClipboardCheck',
+    color: '#d4af37',
+    stepCount: 7,
+    estimatedMinutes: 4320,
+    regulatoryBasis: 'FDA Food Code 8-405.11; CA Retail Food Code §114390',
+    steps: [
+      { id: 'hi-1', stepNumber: 1, title: 'During Inspection', description: 'Cooperate fully with the inspector. Take notes on every item flagged. Ask for clarification on anything unclear. DO NOT argue with the inspector during the inspection. Request a copy of the inspection report before the inspector leaves.', actionItems: [{ id: 'hi-1a', label: 'Take notes on all flagged items', required: true }, { id: 'hi-1b', label: 'Request copy of inspection report', required: true }, { id: 'hi-1c', label: 'Ask for clarification on unclear items', required: false }], photoRequired: true, photoPrompt: 'Photo each cited violation' },
+      { id: 'hi-2', stepNumber: 2, title: 'Immediate Review', description: 'Within 1 hour, enter each violation: code, description, severity (critical/non-critical), location, inspector comments. Categorize: items fixable immediately vs. items requiring time/resources. Assign each violation to a responsible staff member. Set correction deadlines (critical violations: typically 24-72 hours).', actionItems: [{ id: 'hi-2a', label: 'Enter all violations with details', required: true }, { id: 'hi-2b', label: 'Categorize by fixability timeline', required: true }, { id: 'hi-2c', label: 'Assign responsible staff for each', required: true }, { id: 'hi-2d', label: 'Set correction deadlines', required: true }], photoRequired: false, notePrompt: 'List each violation code with assigned owner and deadline', timerMinutes: 60 },
+      { id: 'hi-3', stepNumber: 3, title: 'Immediate Corrections', description: 'Fix everything fixable right now: temperature violations (adjust equipment, discard unsafe food), handwashing violations (restock supplies, retrain), cross-contamination (reorganize storage, label containers), pest evidence (contact pest control), cleaning violations (clean cited areas immediately). Photo EACH correction: before and after.', actionItems: [{ id: 'hi-3a', label: 'Address all temperature violations', required: true }, { id: 'hi-3b', label: 'Restock handwashing stations', required: true }, { id: 'hi-3c', label: 'Fix storage/labeling issues', required: true }, { id: 'hi-3d', label: 'Address cleaning violations', required: true }, { id: 'hi-3e', label: 'Contact pest control if cited', required: false }], photoRequired: true, photoPrompt: 'Before and after photo for EACH corrected violation' },
+      { id: 'hi-4', stepNumber: 4, title: 'Plan Longer-Term Corrections', description: 'Equipment repair/replacement: get quotes, order parts, schedule service. Structural issues: contact landlord/contractor. Staff training gaps: schedule training sessions. Policy/procedure changes: update SOPs, post new signage. Set specific dates for each correction.', actionItems: [{ id: 'hi-4a', label: 'Schedule equipment repairs', required: true }, { id: 'hi-4b', label: 'Contact contractors for structural issues', required: false }, { id: 'hi-4c', label: 'Schedule staff training sessions', required: true }, { id: 'hi-4d', label: 'Update SOPs and post signage', required: true }], photoRequired: false, notePrompt: 'Record scheduled dates for each longer-term correction' },
+      { id: 'hi-5', stepNumber: 5, title: 'Regulatory Response', description: 'Submit corrective action plan to health department (if required by jurisdiction). EvidLY auto-generates this from your documented steps: violation → corrective action → evidence → timeline. Schedule re-inspection when all corrections are complete.', actionItems: [{ id: 'hi-5a', label: 'Submit corrective action plan to health dept', required: true }, { id: 'hi-5b', label: 'Schedule re-inspection date', required: true }], photoRequired: false, notePrompt: 'Record submission confirmation and re-inspection date' },
+      { id: 'hi-6', stepNumber: 6, title: 'Staff Debrief', description: 'Hold team meeting within 24 hours. Review what was cited — no blame, focus on fixes. Retrain on specific procedures that were violated. Post key reminders in relevant kitchen areas. Assign ongoing monitoring responsibilities.', actionItems: [{ id: 'hi-6a', label: 'Hold team meeting', required: true }, { id: 'hi-6b', label: 'Retrain on violated procedures', required: true }, { id: 'hi-6c', label: 'Post reminder signage', required: true }, { id: 'hi-6d', label: 'Assign ongoing monitoring owners', required: true }], photoRequired: false },
+      { id: 'hi-7', stepNumber: 7, title: 'Ongoing Monitoring', description: 'Increase monitoring frequency for cited items (daily checks for 30 days). Track compliance score impact and recovery. Schedule a mock self-inspection in 30 days. Document sustained compliance for the re-inspection visit.', actionItems: [{ id: 'hi-7a', label: 'Set daily monitoring schedule for 30 days', required: true }, { id: 'hi-7b', label: 'Schedule mock self-inspection in 30 days', required: true }, { id: 'hi-7c', label: 'Track compliance score recovery', required: true }], photoRequired: false },
+    ],
+  },
+  {
+    id: 'pb-equipment-failure',
+    title: 'Equipment Failure Response',
+    shortDescription: 'Protocol for managing critical equipment failures (cooler, freezer, hood system, dishwasher) with food protection and vendor coordination.',
+    category: 'equipment',
+    defaultSeverity: 'high',
+    icon: 'Wrench',
+    color: '#0369a1',
+    stepCount: 6,
+    estimatedMinutes: 120,
+    regulatoryBasis: 'FDA Food Code 4-301.11; NFPA 96 §11.4',
+    steps: [
+      { id: 'ef-1', stepNumber: 1, title: 'Identify & Assess', description: 'Determine what equipment failed, whether it is a total or partial failure, what food/operations are affected, and if there is a safety hazard (gas leak, electrical, water). If safety hazard exists: evacuate the area and call 911 or the utility company.', actionItems: [{ id: 'ef-1a', label: 'Identify failed equipment', required: true }, { id: 'ef-1b', label: 'Assess total vs partial failure', required: true }, { id: 'ef-1c', label: 'Identify affected food/operations', required: true }, { id: 'ef-1d', label: 'Check for safety hazards', required: true }], photoRequired: true, photoPrompt: 'Photo equipment error display, current temperature, visible damage' },
+      { id: 'ef-2', stepNumber: 2, title: 'Food Protection', description: 'Walk-in cooler failure: transfer food to backup unit or coolers with ice. Freezer failure: keep door closed (holds 48 hrs if full). Hot-holding failure: serve within 4 hours or reheat to 165°F. Dishwasher failure: switch to 3-compartment sink. Hood system failure: CEASE ALL COOKING OPERATIONS per NFPA 96.', actionItems: [{ id: 'ef-2a', label: 'Transfer at-risk food to backup storage', required: true }, { id: 'ef-2b', label: 'Begin temperature monitoring every 30 min', required: true }, { id: 'ef-2c', label: 'Cease cooking if hood system failed', required: false }], photoRequired: true, photoPrompt: 'Photo food transfer process and temperature readings', criticalWarning: 'Hood system failure = NO COOKING until repaired (NFPA 96). Cannot operate cooking equipment without functioning exhaust hood.', regulatoryReference: 'NFPA 96 §11.4; FDA Food Code 4-301.11' },
+      { id: 'ef-3', stepNumber: 3, title: 'Contact Repair Service', description: 'Call equipment repair service from your vendor directory. Request emergency/priority service. Record ticket number, estimated arrival, and estimated repair time. If repair will take >24 hours, arrange temporary equipment rental.', actionItems: [{ id: 'ef-3a', label: 'Contact equipment vendor/service', required: true }, { id: 'ef-3b', label: 'Record service ticket number', required: true }, { id: 'ef-3c', label: 'Record estimated repair timeline', required: true }, { id: 'ef-3d', label: 'Arrange temp equipment if >24hr repair', required: false }], photoRequired: false, notePrompt: 'Record vendor name, ticket #, ETA, and estimated cost' },
+      { id: 'ef-4', stepNumber: 4, title: 'Operational Adjustment', description: 'Modify menu if needed based on what equipment is down. Notify staff of operational changes. If must close: notify customers, update online hours, post signage. Document estimated revenue impact for insurance.', actionItems: [{ id: 'ef-4a', label: 'Adjust menu/operations as needed', required: true }, { id: 'ef-4b', label: 'Brief staff on changes', required: true }, { id: 'ef-4c', label: 'Document revenue impact', required: true }], photoRequired: false, notePrompt: 'Record menu changes and estimated revenue impact' },
+      { id: 'ef-5', stepNumber: 5, title: 'Repair & Restoration', description: 'Document the repair: what was wrong, what was fixed, parts replaced, cost. Verify equipment operating properly post-repair (temperature reaches safe range within expected time). Return food to repaired equipment only after verified safe.', actionItems: [{ id: 'ef-5a', label: 'Document repair details and cost', required: true }, { id: 'ef-5b', label: 'Verify equipment operating properly', required: true }, { id: 'ef-5c', label: 'Return food only after verified safe', required: true }], photoRequired: true, photoPrompt: 'Photo repaired equipment operating normally with temp display' },
+      { id: 'ef-6', stepNumber: 6, title: 'Post-Incident Review', description: 'Document total food loss and operational cost. File insurance claim if applicable. Review: should equipment be replaced? Is it under warranty? Update preventive maintenance schedule.', actionItems: [{ id: 'ef-6a', label: 'Calculate total food loss and costs', required: true }, { id: 'ef-6b', label: 'File insurance claim if applicable', required: false }, { id: 'ef-6c', label: 'Update maintenance schedule', required: true }], photoRequired: false, notePrompt: 'Record total costs and maintenance plan updates' },
+    ],
+  },
+  {
+    id: 'pb-employee-injury',
+    title: 'Employee Injury Response',
+    shortDescription: 'Workplace injury protocol covering first aid, food safety, workers\' compensation, OSHA reporting, and root cause prevention.',
+    category: 'health_safety',
+    defaultSeverity: 'high',
+    icon: 'UserX',
+    color: '#7c3aed',
+    stepCount: 7,
+    estimatedMinutes: 60,
+    regulatoryBasis: 'OSHA 29 CFR 1904; Cal/OSHA Title 8 §342; CA Labor Code §5401',
+    steps: [
+      { id: 'ei-1', stepNumber: 1, title: 'Immediate Response', description: 'Assess severity: minor (cut, small burn) vs. major (deep laceration, severe burn, fracture, chemical exposure). Minor: administer first aid, bandage wound, provide gloves (food handlers with open wounds MUST wear gloves AND fingerstalls). Major: call 911, do not move injured person unless in immediate danger.', actionItems: [{ id: 'ei-1a', label: 'Assess injury severity', required: true }, { id: 'ei-1b', label: 'Administer first aid or call 911', required: true }, { id: 'ei-1c', label: 'Remove contaminated food from prep area', required: true }], photoRequired: true, photoPrompt: 'Photo the hazard that caused the injury (NOT the injury itself)', criticalWarning: 'For major injuries: call 911 immediately. Do not move the injured person unless they are in immediate danger.' },
+      { id: 'ei-2', stepNumber: 2, title: 'Food Safety Check', description: 'If blood or bodily fluids contacted ANY food, equipment, or surfaces: discard all potentially contaminated food immediately, clean and sanitize all affected surfaces, document what was discarded. If employee was handling food when injured, quarantine all food they were preparing.', actionItems: [{ id: 'ei-2a', label: 'Check for food/surface contamination', required: true }, { id: 'ei-2b', label: 'Discard contaminated food', required: true }, { id: 'ei-2c', label: 'Clean and sanitize affected surfaces', required: true }, { id: 'ei-2d', label: 'Assign replacement for injured employee station', required: true }], photoRequired: false },
+      { id: 'ei-3', stepNumber: 3, title: 'Documentation', description: 'Record: employee name, date/time, location in kitchen, what they were doing, what happened, and witnesses. Record type of injury, body part, and severity assessment. DO NOT speculate on cause or assign blame. Have witnesses write statements in their own words.', actionItems: [{ id: 'ei-3a', label: 'Record complete incident details', required: true }, { id: 'ei-3b', label: 'Record injury type and severity', required: true }, { id: 'ei-3c', label: 'Collect witness statements', required: true }], photoRequired: true, photoPrompt: 'Photo the hazard that caused the injury (wet floor, broken equipment, etc.)', notePrompt: 'Record full incident details: who, what, when, where, witnesses' },
+      { id: 'ei-4', stepNumber: 4, title: 'Workers\' Compensation', description: 'Provide employee with workers\' comp claim form (California: DWC-1 form within 1 business day). Direct employee to approved medical provider. Record medical provider visited, treatment received, and expected return date. File claim with insurance carrier within required timeframe.', actionItems: [{ id: 'ei-4a', label: 'Provide workers comp claim form (DWC-1)', required: true }, { id: 'ei-4b', label: 'Direct to approved medical provider', required: true }, { id: 'ei-4c', label: 'Record treatment details', required: true }, { id: 'ei-4d', label: 'File workers comp claim', required: true }], photoRequired: false, notePrompt: 'Record medical provider, treatment, and expected return date', regulatoryReference: 'CA Labor Code §5401 — DWC-1 within 1 business day' },
+      { id: 'ei-5', stepNumber: 5, title: 'Hazard Correction', description: 'Identify what caused the injury and correct immediately if possible (clean spill, repair equipment, replace broken item). If not immediately fixable, barricade/mark the hazard and schedule repair.', actionItems: [{ id: 'ei-5a', label: 'Identify root cause of injury', required: true }, { id: 'ei-5b', label: 'Correct hazard immediately if possible', required: true }, { id: 'ei-5c', label: 'Barricade hazard if not immediately fixable', required: false }], photoRequired: true, photoPrompt: 'Photo corrected hazard (or barricaded if pending repair)' },
+      { id: 'ei-6', stepNumber: 6, title: 'Regulatory Reporting', description: 'OSHA recordkeeping: record injury on OSHA 300 log if it meets criteria (hospitalization, amputation, loss of eye, or days away/restricted/transferred). California: report serious injuries to Cal/OSHA within 8 hours (hospitalization >24 hours, amputation, loss of eye, serious burn).', actionItems: [{ id: 'ei-6a', label: 'Determine if OSHA 300 log entry required', required: true }, { id: 'ei-6b', label: 'File OSHA 300 log if applicable', required: false }, { id: 'ei-6c', label: 'Report to Cal/OSHA within 8 hrs if serious', required: false }], photoRequired: false, regulatoryReference: 'OSHA 29 CFR 1904; Cal/OSHA Title 8 §342' },
+      { id: 'ei-7', stepNumber: 7, title: 'Prevention Review', description: 'Investigate root cause thoroughly. Update safety procedures if needed. Retrain staff on safe practices related to the injury type. Add safety reminders/signage in the relevant area. Check if similar incidents have occurred (pattern analysis).', actionItems: [{ id: 'ei-7a', label: 'Complete root cause analysis', required: true }, { id: 'ei-7b', label: 'Update safety procedures', required: true }, { id: 'ei-7c', label: 'Retrain staff on relevant safety practices', required: true }, { id: 'ei-7d', label: 'Post safety reminders/signage', required: true }], photoRequired: false },
+    ],
+  },
+  {
+    id: 'pb-water-disruption',
+    title: 'Water Service Disruption',
+    shortDescription: 'Protocol for managing complete water loss or boil-water advisories, including operational shutdown procedures and restoration verification.',
+    category: 'environmental',
+    defaultSeverity: 'critical',
+    icon: 'Droplets',
+    color: '#0891b2',
+    stepCount: 4,
+    estimatedMinutes: 60,
+    regulatoryBasis: 'FDA Food Code 5-101.11, 5-102.11; CA Retail Food Code §114099.4',
+    steps: [
+      { id: 'wd-1', stepNumber: 1, title: 'Assess Disruption', description: 'Determine: complete water loss OR boil-water advisory? Complete water loss = CEASE ALL FOOD OPERATIONS (cannot operate without potable water for handwashing, dishwashing, food prep). Boil-water advisory = can continue limited operations with precautions. Contact water utility for restoration estimate. Notify health department immediately.', actionItems: [{ id: 'wd-1a', label: 'Determine type: complete loss vs advisory', required: true }, { id: 'wd-1b', label: 'Contact water utility', required: true }, { id: 'wd-1c', label: 'Notify health department', required: true }, { id: 'wd-1d', label: 'Record estimated restoration time', required: true }], photoRequired: false, notePrompt: 'Record utility ticket # and estimated restoration time', criticalWarning: 'Complete water loss = CEASE ALL FOOD OPERATIONS. Cannot serve food without handwashing capability.' },
+      { id: 'wd-2', stepNumber: 2, title: 'Operational Response', description: 'If complete loss: stop all food preparation, close to customers, protect all food in storage, use bottled water for critical needs only, document closure time and revenue loss. If boil-water advisory: boil water 1 minute before use, use only boiled/bottled water for food prep and ice, switch to disposable utensils, shut off ice machines, post staff signage.', actionItems: [{ id: 'wd-2a', label: 'Cease operations or implement boil-water procedures', required: true }, { id: 'wd-2b', label: 'Post signage for staff', required: true }, { id: 'wd-2c', label: 'Shut off ice machines and discard existing ice', required: true }, { id: 'wd-2d', label: 'Document closure time if applicable', required: true }], photoRequired: true, photoPrompt: 'Photo posted signage and operational adjustments' },
+      { id: 'wd-3', stepNumber: 3, title: 'Restoration Verification', description: 'When water is restored or advisory lifted: flush all water lines for 5 minutes, discard ice made during advisory, run dishwasher through 2 empty cycles, clean and sanitize all food-contact surfaces, verify hot water heater producing adequate temp (171°F+ for hot-water sanitizing).', actionItems: [{ id: 'wd-3a', label: 'Flush all water lines for 5 minutes', required: true }, { id: 'wd-3b', label: 'Discard all ice from during disruption', required: true }, { id: 'wd-3c', label: 'Run dishwasher through 2 empty cycles', required: true }, { id: 'wd-3d', label: 'Verify hot water temp for sanitizing', required: true }], photoRequired: true, photoPrompt: 'Photo water running clear and equipment operational' },
+      { id: 'wd-4', stepNumber: 4, title: 'Resume & Document', description: 'Resume normal operations only after all verification steps are complete. Document total downtime, revenue impact, and any food discarded. File insurance claim if applicable. Update emergency contact list for water utility.', actionItems: [{ id: 'wd-4a', label: 'Resume normal operations', required: true }, { id: 'wd-4b', label: 'Document downtime and revenue impact', required: true }, { id: 'wd-4c', label: 'File insurance claim if applicable', required: false }], photoRequired: false, notePrompt: 'Record total downtime hours and estimated revenue impact' },
+    ],
+  },
+  {
+    id: 'pb-gas-leak',
+    title: 'Gas Leak / Chemical Exposure',
+    shortDescription: 'Emergency evacuation and response protocol for gas leaks or chemical spills, following SDS procedures and utility company requirements.',
+    category: 'health_safety',
+    defaultSeverity: 'critical',
+    icon: 'Wind',
+    color: '#6b21a8',
+    stepCount: 4,
+    estimatedMinutes: 120,
+    regulatoryBasis: 'OSHA 29 CFR 1910.1200 (HazCom); NFPA 54; Local Fire Code',
+    steps: [
+      { id: 'gl-1', stepNumber: 1, title: 'Immediate Evacuation', description: 'Gas leak: DO NOT turn on/off any electrical switches, DO NOT use phones inside the building, DO NOT light any flames. Evacuate the building immediately. Call 911 from OUTSIDE the building. Account for all staff and customers. Chemical spill: identify the chemical (check SDS), evacuate the area, ventilate if safe to do so.', actionItems: [{ id: 'gl-1a', label: 'Evacuate building immediately', required: true }, { id: 'gl-1b', label: 'Call 911 from OUTSIDE', required: true }, { id: 'gl-1c', label: 'Account for all staff and customers', required: true }, { id: 'gl-1d', label: 'Identify chemical if spill (check SDS)', required: false }], photoRequired: false, criticalWarning: 'Gas leak: DO NOT operate electrical switches, phones, or flames INSIDE the building. Evacuate IMMEDIATELY.' },
+      { id: 'gl-2', stepNumber: 2, title: 'Utility & Emergency Contact', description: 'Gas leak: call gas company emergency line from outside. Do NOT re-enter until gas company clears the building. Chemical spill: follow SDS instructions for the specific chemical. Record all emergency contacts and response details.', actionItems: [{ id: 'gl-2a', label: 'Call gas company or hazmat', required: true }, { id: 'gl-2b', label: 'Wait for professional all-clear', required: true }, { id: 'gl-2c', label: 'Record emergency response details', required: true }], photoRequired: false, notePrompt: 'Record gas company ticket #, responder names, timeline', criticalWarning: 'Do NOT re-enter until gas company or fire department clears the building.' },
+      { id: 'gl-3', stepNumber: 3, title: 'Food & Facility Assessment', description: 'After clearance to re-enter: all exposed food must be discarded (gas/chemical contamination). Evaluate sealed/packaged food based on exposure level. Clean and sanitize all surfaces thoroughly. Document all discarded food with replacement values.', actionItems: [{ id: 'gl-3a', label: 'Discard all exposed food', required: true }, { id: 'gl-3b', label: 'Evaluate sealed food items', required: true }, { id: 'gl-3c', label: 'Clean and sanitize all surfaces', required: true }, { id: 'gl-3d', label: 'Document discarded food with values', required: true }], photoRequired: true, photoPrompt: 'Photo all discarded items and cleaning process' },
+      { id: 'gl-4', stepNumber: 4, title: 'Reopening & Documentation', description: 'Gas: utility company must verify no leak before operations resume. Chemical: area must be fully cleaned and ventilated per SDS. All cooking equipment must be inspected before use. Notify health department if operations were suspended for more than 2 hours. Generate full incident report.', actionItems: [{ id: 'gl-4a', label: 'Obtain utility/safety clearance', required: true }, { id: 'gl-4b', label: 'Inspect all equipment before use', required: true }, { id: 'gl-4c', label: 'Notify health department if >2hr suspension', required: true }, { id: 'gl-4d', label: 'Generate incident report', required: true }], photoRequired: true, photoPrompt: 'Photo equipment operational and clearance documentation' },
+    ],
+  },
+];
+
+const twoHoursAgo = new Date(Date.now() - 2 * 3600000).toISOString();
+const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString();
+const oneDayAgo = new Date(Date.now() - 86400000).toISOString();
+const fortyFiveMinAgo = new Date(Date.now() - 45 * 60000).toISOString();
+
+export const activeIncidentPlaybooks: ActiveIncidentPlaybook[] = [
+  {
+    id: 'aip-001', templateId: 'pb-power-outage', templateTitle: 'Power Outage Response',
+    severity: 'critical', status: 'active', location: 'Airport Terminal',
+    initiatedBy: 'Sarah Lee', initiatedAt: twoHoursAgo, completedAt: null,
+    currentStepNumber: 5, totalSteps: 9,
+    stepLogs: [
+      { stepId: 'po-1', status: 'completed', startedAt: twoHoursAgo, completedAt: new Date(Date.now() - 115 * 60000).toISOString(), notes: 'Power went out at 2:15 AM. All cooler doors secured.', photosTaken: 2, actionItemsCompleted: ['po-1a', 'po-1b', 'po-1c'] },
+      { stepId: 'po-2', status: 'completed', startedAt: new Date(Date.now() - 115 * 60000).toISOString(), completedAt: new Date(Date.now() - 105 * 60000).toISOString(), notes: 'Power company ticket #PWR-20260211-4421. Est. 4-6 hours. No generator on site.', photosTaken: 1, actionItemsCompleted: ['po-2a', 'po-2b', 'po-2c', 'po-2d', 'po-2e'] },
+      { stepId: 'po-3', status: 'completed', startedAt: new Date(Date.now() - 105 * 60000).toISOString(), completedAt: new Date(Date.now() - 90 * 60000).toISOString(), notes: 'Walk-in cooler: 38°F, Freezer: -2°F, Reach-in: 39°F. All within safe range.', photosTaken: 4, actionItemsCompleted: ['po-3a', 'po-3b', 'po-3c', 'po-3e'] },
+      { stepId: 'po-4', status: 'completed', startedAt: new Date(Date.now() - 90 * 60000).toISOString(), completedAt: new Date(Date.now() - 60 * 60000).toISOString(), notes: 'All hot-held items discarded. 3 trays soup, 2 trays rice. Est. value $85.', photosTaken: 3, actionItemsCompleted: ['po-4a', 'po-4b', 'po-4c'] },
+      { stepId: 'po-5', status: 'in_progress', startedAt: new Date(Date.now() - 60 * 60000).toISOString(), completedAt: null, notes: '30-min check: cooler 40°F, freezer 0°F. Still in safe range.', photosTaken: 2, actionItemsCompleted: ['po-5a'] },
+      { stepId: 'po-6', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'po-7', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'po-8', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'po-9', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+    ],
+    incidentNotes: 'Utility confirmed outage affecting entire building. No generator available. Backup coolers running on battery UPS.',
+    reportGenerated: false,
+  },
+  {
+    id: 'aip-002', templateId: 'pb-failed-inspection', templateTitle: 'Failed Health Inspection Response',
+    severity: 'high', status: 'completed', location: 'University Campus',
+    initiatedBy: 'Alex Johnson', initiatedAt: threeDaysAgo, completedAt: oneDayAgo,
+    currentStepNumber: 7, totalSteps: 7,
+    stepLogs: [
+      { stepId: 'hi-1', status: 'completed', startedAt: threeDaysAgo, completedAt: threeDaysAgo, notes: 'Inspector found 3 critical, 5 non-critical violations.', photosTaken: 8, actionItemsCompleted: ['hi-1a', 'hi-1b'] },
+      { stepId: 'hi-2', status: 'completed', startedAt: threeDaysAgo, completedAt: threeDaysAgo, notes: 'All violations cataloged. Critical: improper cold holding, missing date labels, handwash sink blocked.', photosTaken: 0, actionItemsCompleted: ['hi-2a', 'hi-2b', 'hi-2c', 'hi-2d'] },
+      { stepId: 'hi-3', status: 'completed', startedAt: threeDaysAgo, completedAt: threeDaysAgo, notes: 'All 3 critical violations corrected same day. Handwash sink cleared, cold unit recalibrated, all items re-labeled.', photosTaken: 6, actionItemsCompleted: ['hi-3a', 'hi-3b', 'hi-3c', 'hi-3d'] },
+      { stepId: 'hi-4', status: 'completed', startedAt: new Date(Date.now() - 2.5 * 86400000).toISOString(), completedAt: new Date(Date.now() - 2 * 86400000).toISOString(), notes: 'Scheduled thermometer calibration service. Training session for Wednesday.', photosTaken: 0, actionItemsCompleted: ['hi-4a', 'hi-4c', 'hi-4d'] },
+      { stepId: 'hi-5', status: 'completed', startedAt: new Date(Date.now() - 2 * 86400000).toISOString(), completedAt: new Date(Date.now() - 1.5 * 86400000).toISOString(), notes: 'Corrective action plan submitted. Re-inspection scheduled for next Tuesday.', photosTaken: 0, actionItemsCompleted: ['hi-5a', 'hi-5b'] },
+      { stepId: 'hi-6', status: 'completed', startedAt: new Date(Date.now() - 1.5 * 86400000).toISOString(), completedAt: new Date(Date.now() - 1.2 * 86400000).toISOString(), notes: 'Team meeting held. All staff retrained on cold holding and labeling procedures.', photosTaken: 0, actionItemsCompleted: ['hi-6a', 'hi-6b', 'hi-6c', 'hi-6d'] },
+      { stepId: 'hi-7', status: 'completed', startedAt: new Date(Date.now() - 1.2 * 86400000).toISOString(), completedAt: oneDayAgo, notes: 'Daily monitoring schedule set. Mock inspection in 30 days.', photosTaken: 0, actionItemsCompleted: ['hi-7a', 'hi-7b', 'hi-7c'] },
+    ],
+    incidentNotes: 'Citation #HD-2026-0041 for improper food storage. All items corrected within 48 hours. Re-inspection scheduled.',
+    reportGenerated: true,
+  },
+  {
+    id: 'aip-003', templateId: 'pb-employee-injury', templateTitle: 'Employee Injury Response',
+    severity: 'high', status: 'active', location: 'Downtown Kitchen',
+    initiatedBy: 'Maria Garcia', initiatedAt: fortyFiveMinAgo, completedAt: null,
+    currentStepNumber: 3, totalSteps: 7,
+    stepLogs: [
+      { stepId: 'ei-1', status: 'completed', startedAt: fortyFiveMinAgo, completedAt: new Date(Date.now() - 40 * 60000).toISOString(), notes: 'Line cook Carlos M. suffered burn on left forearm from fryer splash. Minor — first aid administered, cold water and burn cream applied.', photosTaken: 1, actionItemsCompleted: ['ei-1a', 'ei-1b', 'ei-1c'] },
+      { stepId: 'ei-2', status: 'completed', startedAt: new Date(Date.now() - 40 * 60000).toISOString(), completedAt: new Date(Date.now() - 30 * 60000).toISOString(), notes: 'No food contamination. Prep area cleaned. Sofia R. covering station.', photosTaken: 0, actionItemsCompleted: ['ei-2a', 'ei-2b', 'ei-2c', 'ei-2d'] },
+      { stepId: 'ei-3', status: 'in_progress', startedAt: new Date(Date.now() - 30 * 60000).toISOString(), completedAt: null, notes: 'Documenting incident details. Witness: Tyler B.', photosTaken: 1, actionItemsCompleted: ['ei-3a'] },
+      { stepId: 'ei-4', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'ei-5', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'ei-6', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+      { stepId: 'ei-7', status: 'pending', startedAt: null, completedAt: null, notes: '', photosTaken: 0, actionItemsCompleted: [] },
+    ],
+    incidentNotes: 'Line cook burn from fryer splash. First aid administered. Minor injury — no 911 needed.',
+    reportGenerated: false,
+  },
+];

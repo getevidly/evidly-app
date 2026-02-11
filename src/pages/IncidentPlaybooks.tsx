@@ -1,0 +1,420 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Siren,
+  Zap,
+  AlertTriangle,
+  Flame,
+  ClipboardCheck,
+  Wrench,
+  UserX,
+  Droplets,
+  Wind,
+  Clock,
+  Play,
+  CheckCircle2,
+  FileText,
+  Search,
+  ChevronRight,
+  BarChart3,
+  Timer,
+  Shield,
+} from 'lucide-react';
+import {
+  playbookTemplates,
+  activeIncidentPlaybooks,
+  type PlaybookTemplate,
+  type ActiveIncidentPlaybook,
+  type PlaybookSeverity,
+  type PlaybookCategory,
+} from '../data/demoData';
+
+// ── Icon map ────────────────────────────────────────────────
+const ICON_MAP: Record<string, typeof Zap> = {
+  Zap, AlertTriangle, Flame, ClipboardCheck, Wrench, UserX, Droplets, Wind,
+};
+
+// ── Severity config ─────────────────────────────────────────
+const SEVERITY_CONFIG: Record<PlaybookSeverity, { label: string; bg: string; text: string; border: string }> = {
+  critical: { label: 'Critical', bg: '#fef2f2', text: '#991b1b', border: '#fca5a5' },
+  high:     { label: 'High',     bg: '#fff7ed', text: '#9a3412', border: '#fdba74' },
+  medium:   { label: 'Medium',   bg: '#fefce8', text: '#854d0e', border: '#fde047' },
+  low:      { label: 'Low',      bg: '#f0fdf4', text: '#166534', border: '#86efac' },
+};
+
+const CATEGORY_LABELS: Record<PlaybookCategory, string> = {
+  environmental: 'Environmental',
+  health_safety: 'Health & Safety',
+  regulatory: 'Regulatory',
+  equipment: 'Equipment',
+};
+
+type Tab = 'library' | 'active' | 'completed';
+
+const TABS: { key: Tab; label: string }[] = [
+  { key: 'library', label: 'Library' },
+  { key: 'active', label: 'Active' },
+  { key: 'completed', label: 'Completed' },
+];
+
+// ── Time helpers ────────────────────────────────────────────
+function getElapsedMinutes(startIso: string): number {
+  const diff = Date.now() - new Date(startIso).getTime();
+  return Math.max(0, Math.floor(diff / 60000));
+}
+
+function formatDuration(mins: number): string {
+  if (mins < 60) return `${mins}m`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+// ── Playbook Card (Library) ─────────────────────────────────
+function PlaybookCard({ template, onActivate }: { template: PlaybookTemplate; onActivate: () => void }) {
+  const Icon = ICON_MAP[template.icon] || Siren;
+  const sev = SEVERITY_CONFIG[template.defaultSeverity];
+  const cat = CATEGORY_LABELS[template.category];
+
+  return (
+    <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
+      {/* Color banner */}
+      <div style={{ height: 6, background: template.color }} />
+      <div style={{ padding: '20px 20px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: template.color + '14', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={22} color={template.color} />
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#111827', margin: 0, lineHeight: 1.3 }}>{template.title}</h3>
+            <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: sev.bg, color: sev.text, border: `1px solid ${sev.border}` }}>{sev.label}</span>
+              <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 9999, background: '#f3f4f6', color: '#4b5563' }}>{cat}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Description */}
+        <p style={{ fontSize: 13, color: '#6b7280', lineHeight: 1.5, margin: '0 0 12px', flex: 1 }}>{template.shortDescription}</p>
+
+        {/* Stats row */}
+        <div style={{ display: 'flex', gap: 16, marginBottom: 14, fontSize: 12, color: '#6b7280' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <CheckCircle2 size={14} /> {template.stepCount} steps
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Clock size={14} /> ~{formatDuration(template.estimatedMinutes)}
+          </span>
+        </div>
+
+        {/* Regulatory basis */}
+        <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 14, padding: '6px 8px', background: '#f9fafb', borderRadius: 6, lineHeight: 1.4 }}>
+          <Shield size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+          {template.regulatoryBasis}
+        </div>
+
+        {/* Activate button */}
+        <button
+          onClick={onActivate}
+          style={{ width: '100%', padding: '10px 0', borderRadius: 8, border: 'none', background: template.color, color: 'white', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44 }}
+        >
+          <Play size={14} /> Activate Playbook
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Active Incident Card ────────────────────────────────────
+function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncidentPlaybook; onContinue: () => void }) {
+  const template = playbookTemplates.find(t => t.id === incident.templateId);
+  const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
+  const color = template?.color || '#1e4d6b';
+  const sev = SEVERITY_CONFIG[incident.severity];
+  const progress = Math.round((incident.currentStepNumber / incident.totalSteps) * 100);
+  const elapsed = getElapsedMinutes(incident.initiatedAt);
+
+  return (
+    <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' }}>
+      <div style={{ height: 4, background: color }} />
+      <div style={{ padding: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: color + '14', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={20} color={color} />
+            </div>
+            <div>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>{incident.templateTitle}</h3>
+              <p style={{ fontSize: 12, color: '#6b7280', margin: '2px 0 0' }}>{incident.location}</p>
+            </div>
+          </div>
+          <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: sev.bg, color: sev.text, border: `1px solid ${sev.border}` }}>{sev.label}</span>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
+            <span>Step {incident.currentStepNumber} of {incident.totalSteps}</span>
+            <span>{progress}%</span>
+          </div>
+          <div style={{ height: 6, background: '#e5e7eb', borderRadius: 3, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${progress}%`, background: color, borderRadius: 3, transition: 'width 0.3s ease' }} />
+          </div>
+        </div>
+
+        {/* Meta row */}
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#6b7280', marginBottom: 14 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Timer size={13} /> {formatDuration(elapsed)} elapsed
+          </span>
+          <span>By {incident.initiatedBy}</span>
+        </div>
+
+        <button
+          onClick={onContinue}
+          style={{ width: '100%', padding: '10px 0', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', fontSize: 13, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, minHeight: 44 }}
+        >
+          Continue <ChevronRight size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Completed Incident Card ─────────────────────────────────
+function CompletedIncidentCard({ incident }: { incident: ActiveIncidentPlaybook }) {
+  const template = playbookTemplates.find(t => t.id === incident.templateId);
+  const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
+  const color = template?.color || '#1e4d6b';
+  const durationMin = incident.completedAt
+    ? Math.round((new Date(incident.completedAt).getTime() - new Date(incident.initiatedAt).getTime()) / 60000)
+    : 0;
+
+  return (
+    <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' }}>
+      <div style={{ padding: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon size={20} color={color} />
+            </div>
+            <div>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>{incident.templateTitle}</h3>
+              <p style={{ fontSize: 12, color: '#6b7280', margin: '2px 0 0' }}>{incident.location}</p>
+            </div>
+          </div>
+          <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#f0fdf4', color: '#166534', border: '1px solid #86efac' }}>Completed</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#6b7280', marginBottom: 12 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Clock size={13} /> Duration: {formatDuration(durationMin)}
+          </span>
+          <span>{formatDate(incident.initiatedAt)}</span>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => alert('Report viewer — view the completed incident report with all steps, timestamps, evidence, and compliance narrative.')}
+            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            <FileText size={13} /> View Report
+          </button>
+          <button
+            onClick={() => alert('Download PDF — the legal defense file including all timestamped evidence, photos, and regulatory references.')}
+            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ──────────────────────────────────────────
+export function IncidentPlaybooks() {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<Tab>('library');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'all'>('all');
+
+  const activeIncidents = activeIncidentPlaybooks.filter(i => i.status === 'active');
+  const completedIncidents = activeIncidentPlaybooks.filter(i => i.status === 'completed');
+
+  // Auto-switch to active tab if incidents exist on first load
+  useEffect(() => {
+    if (activeIncidents.length > 0) setActiveTab('active');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Filter library
+  const filteredTemplates = playbookTemplates.filter(t => {
+    if (categoryFilter !== 'all' && t.category !== categoryFilter) return false;
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase()) && !t.shortDescription.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
+  const handleActivate = (template: PlaybookTemplate) => {
+    alert(`Activate "${template.title}" playbook — in production, this creates a new active incident and navigates to the step-by-step runner. For this demo, navigate to an existing active playbook from the Active tab.`);
+  };
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', sans-serif", maxWidth: 1200, margin: '0 auto' }}>
+      {/* Header */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+          <Siren size={24} color="#1e4d6b" />
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
+        </div>
+        <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Guided crisis response protocols with auto-documentation and legal defense file generation</p>
+      </div>
+
+      {/* KPI Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
+        {[
+          { label: 'Available Playbooks', value: playbookTemplates.length, icon: FileText, color: '#1e4d6b' },
+          { label: 'Active Incidents', value: activeIncidents.length, icon: Siren, color: activeIncidents.length > 0 ? '#dc2626' : '#22c55e' },
+          { label: 'Completed This Month', value: completedIncidents.length, icon: CheckCircle2, color: '#22c55e' },
+          { label: 'Avg Response Time', value: '47m', icon: BarChart3, color: '#d4af37' },
+        ].map(kpi => (
+          <div key={kpi.label} style={{ background: 'white', borderRadius: 10, padding: '16px 18px', border: '1px solid #e5e7eb', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <kpi.icon size={16} color={kpi.color} />
+              <span style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>{kpi.label}</span>
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{kpi.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 0, marginBottom: 20, borderBottom: '2px solid #e5e7eb' }}>
+        {TABS.map(tab => {
+          const isActive = activeTab === tab.key;
+          const count = tab.key === 'active' ? activeIncidents.length : tab.key === 'completed' ? completedIncidents.length : playbookTemplates.length;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              style={{
+                padding: '10px 20px',
+                fontSize: 14,
+                fontWeight: isActive ? 700 : 500,
+                color: isActive ? '#1e4d6b' : '#6b7280',
+                background: 'none',
+                border: 'none',
+                borderBottom: isActive ? '2px solid #1e4d6b' : '2px solid transparent',
+                marginBottom: -2,
+                cursor: 'pointer',
+                fontFamily: "'DM Sans', sans-serif",
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              {tab.label}
+              <span style={{
+                fontSize: 11,
+                fontWeight: 700,
+                padding: '1px 7px',
+                borderRadius: 9999,
+                background: isActive ? '#1e4d6b' : '#e5e7eb',
+                color: isActive ? 'white' : '#6b7280',
+              }}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Library Tab */}
+      {activeTab === 'library' && (
+        <>
+          {/* Filters */}
+          <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', flex: '1 1 240px', maxWidth: 320 }}>
+              <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />
+              <input
+                type="text"
+                placeholder="Search playbooks..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ width: '100%', padding: '9px 12px 9px 36px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: 'none', boxSizing: 'border-box' }}
+              />
+            </div>
+            <select
+              value={categoryFilter}
+              onChange={e => setCategoryFilter(e.target.value as PlaybookCategory | 'all')}
+              style={{ padding: '9px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", background: 'white', color: '#374151', cursor: 'pointer' }}
+            >
+              <option value="all">All Categories</option>
+              {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Cards grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+            {filteredTemplates.map(t => (
+              <PlaybookCard key={t.id} template={t} onActivate={() => handleActivate(t)} />
+            ))}
+          </div>
+          {filteredTemplates.length === 0 && (
+            <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
+              <Search size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+              <p style={{ fontSize: 14 }}>No playbooks match your search.</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Active Tab */}
+      {activeTab === 'active' && (
+        <>
+          {activeIncidents.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
+              <CheckCircle2 size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+              <p style={{ fontSize: 14 }}>No active incidents. All clear!</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+              {activeIncidents.map(incident => (
+                <ActiveIncidentCard
+                  key={incident.id}
+                  incident={incident}
+                  onContinue={() => navigate(`/playbooks/active/${incident.id}`)}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Completed Tab */}
+      {activeTab === 'completed' && (
+        <>
+          {completedIncidents.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
+              <FileText size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+              <p style={{ fontSize: 14 }}>No completed incidents yet.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+              {completedIncidents.map(incident => (
+                <CompletedIncidentCard key={incident.id} incident={incident} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export default IncidentPlaybooks;

@@ -30,6 +30,7 @@ import {
   Radio,
   Plug,
   GraduationCap,
+  Siren,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -63,6 +64,7 @@ const navigation: NavItem[] = [
   { i18nKey: 'nav.documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
   { i18nKey: 'nav.incidentLog', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
+  { i18nKey: 'nav.playbooks', href: '/playbooks', icon: Siren, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
   { i18nKey: 'nav.reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.auditReport', href: '/audit-report', icon: ClipboardCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.scoreBreakdown', href: '/scoring-breakdown', icon: ShieldCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },

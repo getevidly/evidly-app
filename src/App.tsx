@@ -77,6 +77,8 @@ const TrainingHub = lazy(() => import('./pages/TrainingHub').then(m => ({ defaul
 const TrainingCourse = lazy(() => import('./pages/TrainingCourse').then(m => ({ default: m.TrainingCourse })));
 const CourseBuilder = lazy(() => import('./pages/CourseBuilder').then(m => ({ default: m.CourseBuilder })));
 const CertificateViewer = lazy(() => import('./pages/CertificateViewer').then(m => ({ default: m.CertificateViewer })));
+const IncidentPlaybooks = lazy(() => import('./pages/IncidentPlaybooks').then(m => ({ default: m.IncidentPlaybooks })));
+const PlaybookRunner = lazy(() => import('./pages/PlaybookRunner').then(m => ({ default: m.PlaybookRunner })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -278,6 +280,8 @@ function AppRoutes() {
           <Route path="/training/course/:id" element={<TrainingCourse />} />
           <Route path="/training/courses/builder" element={<CourseBuilder />} />
           <Route path="/training/certificates" element={<CertificateViewer />} />
+          <Route path="/playbooks" element={<IncidentPlaybooks />} />
+          <Route path="/playbooks/active/:id" element={<PlaybookRunner />} />
         </Route>
       </Routes>
     </>
