@@ -64,6 +64,7 @@ const OrgHierarchy = lazy(() => import('./pages/OrgHierarchy').then(m => ({ defa
 const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').then(m => ({ default: m.EnterpriseDashboard })));
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
+const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -214,6 +215,7 @@ function AppRoutes() {
         <Route path="/vendor/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ProtectedRoute>} />
         <Route path="/enterprise/admin" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ProtectedRoute>} />
+        <Route path="/enterprise/intelligence" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ProtectedRoute>} />
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
