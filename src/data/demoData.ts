@@ -865,6 +865,194 @@ export const marketplaceReviews: MarketplaceReview[] = [
   { id: 'mr-25', vendorSlug: 'allclear-refrigeration', reviewerName: 'Mark H.', reviewerOrg: 'Valley Steakhouse', rating: 3, text: 'Service was eventually good but took three visits to properly diagnose the issue. Would recommend for straightforward repairs.', serviceType: 'Refrigeration', date: '2025-08-20' },
 ];
 
+// ============================================================
+// Cleaning Pros Plus — Launch Vendor (EvidLY Preferred)
+// ============================================================
+// Append to marketplaceVendors after initialization below
+
+export const cleaningProsPlus: MarketplaceVendor = {
+  id: 'mv-16', slug: 'cleaning-pros-plus', companyName: 'Cleaning Pros Plus',
+  description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including Aramark and Yosemite National Park hospitality. Specializing in NFPA 96 compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
+  tier: 'preferred', rating: 4.8, reviewCount: 34, yearsInBusiness: 18,
+  serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Tulare', 'Stanislaus', 'Mariposa'],
+  responseTimeHours: 2, categories: ['Fire Safety'], subcategories: ['Hood Cleaning'],
+  languages: ['English', 'Spanish'], kitchensServed: 92, totalServices: 1450, onTimeRate: 99, docUploadRate: 98,
+  certifications: [
+    { name: 'IKECA Master Certified', verified: true, expirationDate: '2027-06-30' },
+    { name: 'State Fire Marshal Licensed', verified: true, expirationDate: '2027-01-31' },
+    { name: 'OSHA 30-Hour Construction', verified: true },
+    { name: 'NFPA 96 Compliance Specialist', verified: true },
+  ],
+  insurance: [
+    { type: 'General Liability ($2M)', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Workers Compensation', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Commercial Auto', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Pollution Liability', verified: true, expirationDate: '2026-12-31' },
+  ],
+  serviceOfferings: [
+    { name: 'Hood & Duct Cleaning (NFPA 96)', description: 'Complete exhaust system cleaning to bare metal per NFPA 96 and IKECA standards. Includes before/after photographic documentation, access panel installation if needed, and compliance certificate.', frequencyOptions: ['Monthly', 'Quarterly', 'Semi-Annual'], pricingDisplay: '$450 - $1,200' },
+    { name: 'Kitchen Equipment Cleaning', description: 'Deep cleaning of all commercial kitchen equipment including grills, fryers, ovens, and prep surfaces. Restaurant-grade degreasers and sanitizers used.', frequencyOptions: ['Weekly', 'Monthly', 'Quarterly'], pricingDisplay: '$200 - $600' },
+    { name: 'Rooftop Grease Containment', description: 'Installation and maintenance of rooftop grease containment systems. Prevents grease buildup on roofs that can cause structural damage and fire hazard.', frequencyOptions: ['Quarterly', 'Semi-Annual'], pricingDisplay: '$150 - $350' },
+  ],
+  contactName: 'Marco Reyes', phone: '(559) 555-0100', email: 'marco@cleaningprosplus.com', website: 'cleaningprosplus.com',
+};
+
+// Inject Cleaning Pros Plus into the vendors array
+marketplaceVendors.push(cleaningProsPlus);
+
+// Cleaning Pros Plus reviews
+marketplaceReviews.push(
+  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Aramark Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our Yosemite hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with Aramark across your Yosemite properties. Safety is always job one.' },
+  { id: 'mr-27', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Patricia V.', reviewerOrg: 'Central Valley School District', rating: 5, text: 'They clean all 14 of our school cafeteria kitchens. Always on schedule, documentation uploaded same day, and they work around our school calendar. The best in the Valley.', serviceType: 'Hood Cleaning', date: '2025-12-08' },
+  { id: 'mr-28', vendorSlug: 'cleaning-pros-plus', reviewerName: 'David L.', reviewerOrg: 'Visalia Hotel Group', rating: 5, text: 'Switched to Cleaning Pros after our previous vendor failed an inspection. Night and day difference — their bare metal photos are impressive and the compliance certificate arrives before we even ask.', serviceType: 'Hood Cleaning', date: '2025-10-15', vendorResponse: 'Glad we could help David. Consistent quality and fast documentation is what sets us apart. See you next quarter!' },
+);
+
+// ============================================================
+// Vendor Dashboard Demo Data
+// (from the perspective of ABC Fire Protection as logged-in vendor)
+// ============================================================
+
+export interface VendorLead {
+  id: string;
+  operatorName: string;
+  operatorOrg: string;
+  serviceType: string;
+  locationDetails: string;
+  urgency: 'low' | 'normal' | 'high' | 'emergency';
+  status: 'new' | 'quoted' | 'accepted' | 'scheduled' | 'in_progress' | 'completed' | 'declined';
+  receivedAt: string;
+  respondedAt?: string;
+  quoteAmount?: number;
+  scheduledDate?: string;
+  description: string;
+}
+
+export interface VendorScheduledService {
+  id: string;
+  clientOrg: string;
+  serviceType: string;
+  location: string;
+  scheduledDate: string;
+  scheduledTime: string;
+  status: 'confirmed' | 'pending' | 'in_progress' | 'completed';
+  notes?: string;
+}
+
+export interface VendorCredentialItem {
+  id: string;
+  name: string;
+  type: string;
+  status: 'verified' | 'pending' | 'expiring' | 'expired';
+  issuedDate?: string;
+  expirationDate?: string;
+  documentUrl?: string;
+  verifiedByEvidly: boolean;
+}
+
+export interface VendorSubscriptionPlan {
+  id: string;
+  name: string;
+  price: number | null;
+  interval: 'month' | 'per_lead' | null;
+  features: string[];
+  badge: string | null;
+  highlighted?: boolean;
+}
+
+export interface VendorAnalyticsSnapshot {
+  month: string;
+  profileViews: number;
+  quoteRequests: number;
+  quotesSent: number;
+  quotesAccepted: number;
+  servicesCompleted: number;
+  revenue: number;
+}
+
+export interface VendorMessage {
+  id: string;
+  conversationId: string;
+  senderType: 'vendor' | 'operator' | 'system';
+  senderName: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+}
+
+export const vendorDashboardStats = {
+  activeLeads: 8,
+  upcomingServices: 5,
+  recentReviews: 3,
+  profileViewsMonth: 127,
+  leadConversionRate: 62,
+  currentTier: 'certified' as MarketplaceTier,
+  tierProgress: 82,
+  avgResponseTime: 3.8,
+  totalServicesCompleted: 342,
+  avgRating: 4.6,
+};
+
+export const vendorLeads: VendorLead[] = [
+  { id: 'vl-1', operatorName: 'James Wilson', operatorOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 compliance cert for upcoming inspection.' },
+  { id: 'vl-2', operatorName: 'Maria Santos', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
+  { id: 'vl-3', operatorName: 'Robert Chang', operatorOrg: 'Valley Restaurant Group', serviceType: 'Hood Cleaning', locationDetails: '890 E Shaw Ave, Fresno', urgency: 'normal', status: 'quoted', receivedAt: '2026-02-07T10:00:00', respondedAt: '2026-02-07T13:45:00', quoteAmount: 650, description: 'Quarterly hood cleaning for single-station restaurant. Standard 8ft hood.' },
+  { id: 'vl-4', operatorName: 'Susan Park', operatorOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', locationDetails: '445 Pollasky Ave, Clovis', urgency: 'high', status: 'quoted', receivedAt: '2026-02-05T09:20:00', respondedAt: '2026-02-05T11:00:00', quoteAmount: 875, description: 'Full exhaust system including rooftop unit. Health inspection in 3 weeks.' },
+  { id: 'vl-5', operatorName: 'Tom Harris', operatorOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', locationDetails: 'Fresno Yosemite Int\'l Airport', urgency: 'low', status: 'accepted', receivedAt: '2026-02-03T11:30:00', respondedAt: '2026-02-03T14:00:00', quoteAmount: 480, scheduledDate: '2026-02-18', description: '8 K-class extinguishers in food court area. Annual service.' },
+  { id: 'vl-6', operatorName: 'Lisa Chen', operatorOrg: 'Fresno Eats Group', serviceType: 'Hood Cleaning', locationDetails: '2100 Kern St, Fresno', urgency: 'normal', status: 'scheduled', receivedAt: '2026-01-28T16:00:00', respondedAt: '2026-01-28T18:30:00', quoteAmount: 750, scheduledDate: '2026-02-14', description: 'Quarterly hood and duct cleaning. Two stations with 12ft hoods.' },
+  { id: 'vl-7', operatorName: 'Kevin Martinez', operatorOrg: 'Downtown Grill', serviceType: 'Hood Cleaning', locationDetails: '678 Van Ness Ave, Fresno', urgency: 'normal', status: 'completed', receivedAt: '2026-01-15T09:00:00', respondedAt: '2026-01-15T10:30:00', quoteAmount: 550, scheduledDate: '2026-01-22', description: 'Quarterly hood cleaning. Single station, standard size.' },
+  { id: 'vl-8', operatorName: 'Amanda White', operatorOrg: 'Merced Kitchen Co', serviceType: 'Hood Cleaning', locationDetails: '1500 R St, Merced', urgency: 'low', status: 'declined', receivedAt: '2026-01-20T13:00:00', respondedAt: '2026-01-20T15:00:00', description: 'Outside our primary service area. Referred to partner company.' },
+];
+
+export const vendorScheduledServices: VendorScheduledService[] = [
+  { id: 'vs-1', clientOrg: 'Fresno Eats Group', serviceType: 'Hood Cleaning', location: '2100 Kern St, Fresno', scheduledDate: '2026-02-14', scheduledTime: '10:00 PM', status: 'confirmed', notes: 'Night shift cleaning. Key code: 4521. Two 12ft hoods.' },
+  { id: 'vs-2', clientOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', location: 'Fresno Yosemite Int\'l Airport', scheduledDate: '2026-02-18', scheduledTime: '6:00 AM', status: 'confirmed', notes: 'Before terminal opens. Check in at security desk. 8 K-class units.' },
+  { id: 'vs-3', clientOrg: 'Valley BBQ', serviceType: 'Hood Cleaning', location: '3200 N Blackstone, Fresno', scheduledDate: '2026-02-21', scheduledTime: '11:00 PM', status: 'pending', notes: 'Heavy grease buildup expected. Bring extra degreaser.' },
+  { id: 'vs-4', clientOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', location: '445 Pollasky Ave, Clovis', scheduledDate: '2026-02-25', scheduledTime: '10:00 PM', status: 'pending' },
+  { id: 'vs-5', clientOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', location: '1247 Fulton St, Fresno', scheduledDate: '2026-03-01', scheduledTime: '11:00 PM', status: 'pending', notes: '3-station system. Full duct access from roof.' },
+];
+
+export const vendorCredentials: VendorCredentialItem[] = [
+  { id: 'vc-1', name: 'IKECA Certified Exhaust Cleaning Specialist', type: 'certification', status: 'verified', issuedDate: '2024-03-15', expirationDate: '2027-03-15', verifiedByEvidly: true },
+  { id: 'vc-2', name: 'State Fire Marshal License #FM-28491', type: 'license', status: 'verified', issuedDate: '2025-01-01', expirationDate: '2026-12-31', verifiedByEvidly: true },
+  { id: 'vc-3', name: 'General Liability Insurance ($1M)', type: 'insurance', status: 'verified', issuedDate: '2025-09-15', expirationDate: '2026-09-15', verifiedByEvidly: true },
+  { id: 'vc-4', name: 'Workers Compensation Insurance', type: 'insurance', status: 'verified', issuedDate: '2025-09-15', expirationDate: '2026-09-15', verifiedByEvidly: true },
+  { id: 'vc-5', name: 'OSHA 10-Hour Safety Certification', type: 'certification', status: 'verified', issuedDate: '2023-06-01', verifiedByEvidly: true },
+  { id: 'vc-6', name: 'Vehicle Insurance — Fleet Policy', type: 'insurance', status: 'expiring', issuedDate: '2025-03-01', expirationDate: '2026-03-01', verifiedByEvidly: true },
+];
+
+export const vendorSubscriptionPlans: VendorSubscriptionPlan[] = [
+  { id: 'plan-free', name: 'EvidLY Listed', price: 0, interval: null, badge: null, features: ['Basic marketplace listing', 'Up to 5 quote requests/month', 'Upload credentials for verification', 'Respond to service requests'] },
+  { id: 'plan-standard', name: 'Standard', price: 49, interval: 'month', badge: 'EvidLY Verified', highlighted: true, features: ['Unlimited quote requests', 'EvidLY Verified badge', 'Priority search placement', 'Business analytics dashboard', 'AI-generated recommendations', 'Profile enhancement (photos, packages)'] },
+  { id: 'plan-premium', name: 'Premium', price: 99, interval: 'month', badge: 'EvidLY Preferred', features: ['Everything in Standard', 'Top placement in search & AI', 'Featured on category pages', 'Lead notification via SMS', 'Quarterly performance report', '"EvidLY Preferred" badge eligibility', 'Co-marketing opportunities'] },
+  { id: 'plan-lead', name: 'Per-Lead', price: 25, interval: 'per_lead', badge: null, features: ['No monthly fee', '$25 per qualified lead', '$50 per scheduled service', 'Pay only when you get leads', 'Good for testing the platform'] },
+];
+
+export const vendorCurrentSubscription = { plan: 'free', status: 'active' as const };
+
+export const vendorAnalyticsData: VendorAnalyticsSnapshot[] = [
+  { month: 'Mar 2025', profileViews: 45, quoteRequests: 3, quotesSent: 3, quotesAccepted: 2, servicesCompleted: 8, revenue: 4200 },
+  { month: 'Apr 2025', profileViews: 52, quoteRequests: 4, quotesSent: 4, quotesAccepted: 3, servicesCompleted: 10, revenue: 5100 },
+  { month: 'May 2025', profileViews: 61, quoteRequests: 5, quotesSent: 5, quotesAccepted: 3, servicesCompleted: 11, revenue: 5800 },
+  { month: 'Jun 2025', profileViews: 68, quoteRequests: 5, quotesSent: 4, quotesAccepted: 3, servicesCompleted: 12, revenue: 6200 },
+  { month: 'Jul 2025', profileViews: 78, quoteRequests: 6, quotesSent: 6, quotesAccepted: 4, servicesCompleted: 14, revenue: 7400 },
+  { month: 'Aug 2025', profileViews: 85, quoteRequests: 7, quotesSent: 6, quotesAccepted: 4, servicesCompleted: 13, revenue: 6900 },
+  { month: 'Sep 2025', profileViews: 92, quoteRequests: 7, quotesSent: 7, quotesAccepted: 5, servicesCompleted: 15, revenue: 8100 },
+  { month: 'Oct 2025', profileViews: 98, quoteRequests: 8, quotesSent: 7, quotesAccepted: 5, servicesCompleted: 14, revenue: 7600 },
+  { month: 'Nov 2025', profileViews: 105, quoteRequests: 6, quotesSent: 6, quotesAccepted: 4, servicesCompleted: 12, revenue: 6400 },
+  { month: 'Dec 2025', profileViews: 88, quoteRequests: 5, quotesSent: 5, quotesAccepted: 3, servicesCompleted: 11, revenue: 5900 },
+  { month: 'Jan 2026', profileViews: 112, quoteRequests: 8, quotesSent: 7, quotesAccepted: 5, servicesCompleted: 16, revenue: 8500 },
+  { month: 'Feb 2026', profileViews: 127, quoteRequests: 8, quotesSent: 6, quotesAccepted: 4, servicesCompleted: 9, revenue: 4800 },
+];
+
+export const vendorMessages: VendorMessage[] = [
+  { id: 'vm-1', conversationId: 'conv-1', senderType: 'operator', senderName: 'James Wilson', message: 'Hi, we need hood cleaning for 3 stations. Can you accommodate a night shift next week?', timestamp: '2026-02-10T08:30:00', read: true },
+  { id: 'vm-2', conversationId: 'conv-1', senderType: 'vendor', senderName: 'John (ABC Fire)', message: 'Hi James! Yes, we can do Tuesday or Wednesday night next week. I\'ll send a quote shortly.', timestamp: '2026-02-10T09:15:00', read: true },
+  { id: 'vm-3', conversationId: 'conv-1', senderType: 'operator', senderName: 'James Wilson', message: 'Wednesday works better for us. We close at 10pm. Key code for back entrance is 4521.', timestamp: '2026-02-10T09:45:00', read: false },
+  { id: 'vm-4', conversationId: 'conv-2', senderType: 'operator', senderName: 'Lisa Chen', message: 'Confirming our Feb 14 appointment. Can your crew arrive by 10pm? We close early on Fridays.', timestamp: '2026-02-08T16:00:00', read: true },
+  { id: 'vm-5', conversationId: 'conv-2', senderType: 'vendor', senderName: 'John (ABC Fire)', message: 'Confirmed! We\'ll have a 3-person crew there by 10pm sharp. Should take about 4 hours for both hoods.', timestamp: '2026-02-08T16:30:00', read: true },
+  { id: 'vm-6', conversationId: 'conv-2', senderType: 'system', senderName: 'EvidLY', message: 'Service appointment confirmed for Feb 14, 2026 at 10:00 PM. Both parties will receive a reminder 24 hours before.', timestamp: '2026-02-08T16:31:00', read: true },
+];
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {

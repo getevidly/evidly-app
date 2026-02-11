@@ -208,6 +208,8 @@ export function Vendors() {
   });
   const [vendorPhotos, setVendorPhotos] = useState<PhotoRecord[]>([]);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteForm, setInviteForm] = useState({ companyName: '', email: '', serviceType: 'Hood Cleaning' });
 
   const consolidatedVendors = useMemo(() => buildConsolidatedVendors(), []);
 
@@ -848,13 +850,22 @@ export function Vendors() {
               Performance Scorecard
             </button>
           </div>
-          <button
-            onClick={() => alert('Add Vendor form coming soon.')}
-            className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm self-start transition-colors duration-150"
-          >
-            <Plus className="h-5 w-5" />
-            <span>Add Vendor</span>
-          </button>
+          <div className="flex items-center gap-2 self-start">
+            <button
+              onClick={() => setShowInviteModal(true)}
+              className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+            >
+              <Send className="h-4 w-4" />
+              <span>Invite a Vendor</span>
+            </button>
+            <button
+              onClick={() => alert('Add Vendor form coming soon.')}
+              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Add Vendor</span>
+            </button>
+          </div>
         </div>
 
         {activeTab === 'list' && (
@@ -1123,6 +1134,94 @@ export function Vendors() {
           </>
         )}
       </div>
+
+      {/* Invite a Vendor Modal */}
+      {showInviteModal && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowInviteModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-[#eef4f8] rounded-lg">
+                      <Send className="h-5 w-5 text-[#1e4d6b]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Invite a Vendor</h3>
+                      <p className="text-sm text-gray-500">Send a branded invitation to join EvidLY</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowInviteModal(false)} className="text-gray-400 hover:text-gray-600">
+                    <XCircle className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                  <input
+                    type="text"
+                    value={inviteForm.companyName}
+                    onChange={(e) => setInviteForm({ ...inviteForm, companyName: e.target.value })}
+                    placeholder="e.g., Valley Fire Systems"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                  <input
+                    type="email"
+                    value={inviteForm.email}
+                    onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
+                    placeholder="vendor@example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Service Type</label>
+                  <select
+                    value={inviteForm.serviceType}
+                    onChange={(e) => setInviteForm({ ...inviteForm, serviceType: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  >
+                    {SERVICE_TYPES.map((st) => (
+                      <option key={st} value={st}>{st}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="bg-[#eef4f8] rounded-lg p-3 border border-[#b8d4e8]">
+                  <p className="text-xs text-[#1e4d6b]">
+                    <strong>What happens next:</strong> The vendor will receive a branded email from EvidLY inviting them to create a free vendor account, upload their credentials, and start receiving service requests from your organization.
+                  </p>
+                </div>
+              </div>
+              <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowInviteModal(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (!inviteForm.companyName || !inviteForm.email) {
+                      alert('Please fill in company name and email.');
+                      return;
+                    }
+                    alert(`Invitation sent to ${inviteForm.email}! They will receive a branded email to join EvidLY.`);
+                    setShowInviteModal(false);
+                    setInviteForm({ companyName: '', email: '', serviceType: 'Hood Cleaning' });
+                  }}
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                >
+                  Send Invitation
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
