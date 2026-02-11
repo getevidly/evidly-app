@@ -65,6 +65,8 @@ const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').the
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
+const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
+const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -199,6 +201,7 @@ function AppRoutes() {
         <Route path="/partners/insurance" element={<Suspense fallback={<PageSkeleton />}><CarrierPartnership /></Suspense>} />
         <Route path="/providers" element={<Suspense fallback={<PageSkeleton />}><MarketplaceLanding /></Suspense>} />
         <Route path="/enterprise" element={<Suspense fallback={<PageSkeleton />}><EnterpriseLanding /></Suspense>} />
+        <Route path="/iot" element={<Suspense fallback={<PageSkeleton />}><IoTSensorLanding /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />
@@ -216,6 +219,7 @@ function AppRoutes() {
         <Route path="/enterprise/admin" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ProtectedRoute>} />
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ProtectedRoute>} />
+        <Route path="/iot/hub" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ProtectedRoute>} />
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}

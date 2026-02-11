@@ -1664,6 +1664,218 @@ export const enterprisePricingTiers: EnterprisePricingTier[] = [
   ]},
 ];
 
+// ─── IoT Sensor Integration Framework ──────────────────────────────────────
+
+export interface IoTSensorProvider {
+  id: string;
+  name: string;
+  slug: string;
+  color: string;
+  authType: 'oauth' | 'apikey' | 'webhook' | 'bluetooth' | 'csv';
+  apiBaseUrl: string | null;
+  status: 'connected' | 'pending' | 'available';
+  capabilities: string[];
+  rateLimitPerMin: number | null;
+  pricingNote: string;
+  sensorCount: number;
+  lastSync: string | null;
+}
+
+export interface IoTSensor {
+  id: string;
+  providerSlug: string;
+  name: string;
+  macAddress: string;
+  type: 'temperature' | 'humidity' | 'combo' | 'pressure';
+  locationName: string;
+  zone: string;
+  equipmentLinkId: string | null;
+  batteryPct: number;
+  signalRssi: number;
+  firmware: string;
+  status: 'online' | 'offline' | 'warning' | 'error';
+  lastSeenAt: string;
+  currentTempF: number;
+  currentHumidity: number | null;
+}
+
+export interface IoTSensorReading {
+  sensorId: string;
+  timestamp: string;
+  temperatureF: number;
+  humidityPct: number | null;
+  pressureHpa: number | null;
+  batteryPct: number;
+  isAnomaly: boolean;
+}
+
+export interface IoTSensorAlert {
+  id: string;
+  sensorId: string;
+  sensorName: string;
+  locationName: string;
+  alertType: 'high_temp' | 'low_temp' | 'humidity_high' | 'battery_low' | 'offline' | 'rapid_change';
+  severity: 'critical' | 'warning' | 'info';
+  thresholdValue: number;
+  actualValue: number;
+  message: string;
+  createdAt: string;
+  acknowledged: boolean;
+  acknowledgedBy: string | null;
+}
+
+export interface IoTSensorConfig {
+  providerSlug: string;
+  pollingIntervalMin: number;
+  alertThresholds: { highTempF: number; lowTempF: number; humidityHigh: number; humidityLow: number; batteryLowPct: number };
+  autoLogCompliance: boolean;
+  notificationChannels: string[];
+}
+
+export interface IoTIngestionLog {
+  id: string;
+  provider: string;
+  method: 'api_pull' | 'webhook' | 'manual' | 'bluetooth';
+  sensorCount: number;
+  readingCount: number;
+  timestamp: string;
+  status: 'success' | 'partial' | 'error';
+  durationMs: number;
+  errorMessage: string | null;
+}
+
+export const iotSensorProviders: IoTSensorProvider[] = [
+  { id: 'sp-1', name: 'SensorPush', slug: 'sensorpush', color: '#2563eb', authType: 'oauth', apiBaseUrl: 'https://api.sensorpush.com', status: 'connected', capabilities: ['temperature', 'humidity', 'barometric_pressure'], rateLimitPerMin: 1, pricingNote: 'Sensors $50-80 + G1 Gateway $99. No subscription.', sensorCount: 6, lastSync: '2026-02-10T14:58:00Z' },
+  { id: 'sp-2', name: 'Temp Stick', slug: 'tempstick', color: '#16a34a', authType: 'apikey', apiBaseUrl: 'https://api.tempstick.com', status: 'connected', capabilities: ['temperature', 'humidity'], rateLimitPerMin: 10, pricingNote: '$139-149/sensor. No subscription. WiFi direct.', sensorCount: 4, lastSync: '2026-02-10T14:55:00Z' },
+  { id: 'sp-3', name: 'Monnit', slug: 'monnit', color: '#7c3aed', authType: 'webhook', apiBaseUrl: 'https://www.imonnit.com/api', status: 'connected', capabilities: ['temperature', 'humidity', 'water_detection', 'door_open'], rateLimitPerMin: null, pricingNote: 'Sensors $50-100 + gateway $150-200. Subscription varies.', sensorCount: 2, lastSync: '2026-02-10T14:59:00Z' },
+  { id: 'sp-4', name: 'Cooper-Atkins', slug: 'cooper-atkins', color: '#ea580c', authType: 'bluetooth', apiBaseUrl: null, status: 'connected', capabilities: ['temperature', 'bluetooth_le'], rateLimitPerMin: null, pricingNote: 'Blue2 instruments. BLE to mobile app.', sensorCount: 2, lastSync: '2026-02-10T13:30:00Z' },
+  { id: 'sp-5', name: 'Testo', slug: 'testo', color: '#dc2626', authType: 'apikey', apiBaseUrl: 'https://api.saveris.testo.com', status: 'pending', capabilities: ['temperature', 'humidity', 'co2', 'pressure'], rateLimitPerMin: 5, pricingNote: 'Enterprise Saveris platform. Contact for API access.', sensorCount: 1, lastSync: null },
+  { id: 'sp-6', name: 'ComplianceMate', slug: 'compliancemate', color: '#0891b2', authType: 'csv', apiBaseUrl: null, status: 'connected', capabilities: ['temperature', 'csv_import'], rateLimitPerMin: null, pricingNote: 'Starts $69/mo. No public API — CSV export only.', sensorCount: 1, lastSync: '2026-02-10T08:00:00Z' },
+  { id: 'sp-7', name: 'ThermoWorks', slug: 'thermoworks', color: '#ca8a04', authType: 'bluetooth', apiBaseUrl: null, status: 'available', capabilities: ['temperature', 'spot_check', 'bluetooth_le'], rateLimitPerMin: null, pricingNote: 'Thermapen, Signals, BlueDOT. Manual + BLE.', sensorCount: 0, lastSync: null },
+  { id: 'sp-8', name: 'DeltaTrak', slug: 'deltatrak', color: '#059669', authType: 'apikey', apiBaseUrl: 'https://api.flashlink.deltatrak.com', status: 'available', capabilities: ['temperature', 'cold_chain', 'transit_monitoring'], rateLimitPerMin: null, pricingNote: 'FlashLink platform. Cold chain focus.', sensorCount: 0, lastSync: null },
+];
+
+export const iotSensors: IoTSensor[] = [
+  // Downtown Kitchen (6 sensors)
+  { id: 'iot-s01', providerSlug: 'sensorpush', name: 'Walk-in Cooler #1', macAddress: 'SP:A4:3B:7C:12:F0', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-01', batteryPct: 87, signalRssi: -42, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:12Z', currentTempF: 36.2, currentHumidity: 45 },
+  { id: 'iot-s02', providerSlug: 'sensorpush', name: 'Walk-in Freezer', macAddress: 'SP:A4:3B:7C:12:F1', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Walk-in Freezer', equipmentLinkId: 'eq-wif-01', batteryPct: 72, signalRssi: -55, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:10Z', currentTempF: -2.1, currentHumidity: 28 },
+  { id: 'iot-s03', providerSlug: 'tempstick', name: 'Prep Area Monitor', macAddress: 'TS:B8:2A:5D:09:E3', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Prep Station', equipmentLinkId: null, batteryPct: 94, signalRssi: -38, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 68.4, currentHumidity: 52 },
+  { id: 'iot-s04', providerSlug: 'cooper-atkins', name: 'Hot Hold Station', macAddress: 'CA:BLE:01:4A:88:C2', type: 'temperature', locationName: 'Downtown Kitchen', zone: 'Hot Holding', equipmentLinkId: 'eq-hh-01', batteryPct: 65, signalRssi: -60, firmware: 'BLE-1.8', status: 'online', lastSeenAt: '2026-02-10T13:30:00Z', currentTempF: 148.5, currentHumidity: null },
+  { id: 'iot-s05', providerSlug: 'monnit', name: 'Dry Storage Ambient', macAddress: 'MN:C7:4E:1B:33:A7', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Dry Storage', equipmentLinkId: null, batteryPct: 91, signalRssi: -48, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:01Z', currentTempF: 72.1, currentHumidity: 38 },
+  { id: 'iot-s06', providerSlug: 'testo', name: 'Receiving Dock', macAddress: 'TE:D5:8F:2A:77:B1', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Receiving', equipmentLinkId: null, batteryPct: 100, signalRssi: -35, firmware: 'Saveris-3.2', status: 'warning', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 58.3, currentHumidity: 61 },
+  // Airport Terminal (5 sensors)
+  { id: 'iot-s07', providerSlug: 'sensorpush', name: 'Walk-in Cooler A', macAddress: 'SP:A4:3B:7C:14:A2', type: 'combo', locationName: 'Airport Terminal', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-02', batteryPct: 43, signalRssi: -62, firmware: 'v2.4.1', status: 'warning', lastSeenAt: '2026-02-10T14:57:00Z', currentTempF: 47.1, currentHumidity: 68 },
+  { id: 'iot-s08', providerSlug: 'sensorpush', name: 'Reach-in Cooler B', macAddress: 'SP:A4:3B:7C:14:A3', type: 'combo', locationName: 'Airport Terminal', zone: 'Reach-in Cooler', equipmentLinkId: null, batteryPct: 81, signalRssi: -45, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:05Z', currentTempF: 38.7, currentHumidity: 42 },
+  { id: 'iot-s09', providerSlug: 'tempstick', name: 'Display Case', macAddress: 'TS:B8:2A:5D:11:F7', type: 'combo', locationName: 'Airport Terminal', zone: 'Display Case', equipmentLinkId: null, batteryPct: 88, signalRssi: -40, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 40.2, currentHumidity: 44 },
+  { id: 'iot-s10', providerSlug: 'monnit', name: 'Kitchen Ambient', macAddress: 'MN:C7:4E:1B:35:B9', type: 'combo', locationName: 'Airport Terminal', zone: 'Kitchen', equipmentLinkId: null, batteryPct: 78, signalRssi: -52, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:00Z', currentTempF: 74.8, currentHumidity: 55 },
+  { id: 'iot-s11', providerSlug: 'compliancemate', name: 'Blast Chiller', macAddress: 'CM:CSV:IMPORT:01', type: 'temperature', locationName: 'Airport Terminal', zone: 'Blast Chiller', equipmentLinkId: null, batteryPct: 100, signalRssi: 0, firmware: 'CSV-Import', status: 'online', lastSeenAt: '2026-02-10T08:00:00Z', currentTempF: 34.0, currentHumidity: null },
+  // University Campus (5 sensors)
+  { id: 'iot-s12', providerSlug: 'sensorpush', name: 'Main Walk-in', macAddress: 'SP:A4:3B:7C:16:D4', type: 'combo', locationName: 'University Campus', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-03', batteryPct: 95, signalRssi: -37, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:20Z', currentTempF: 35.8, currentHumidity: 41 },
+  { id: 'iot-s13', providerSlug: 'sensorpush', name: 'Salad Bar Cooler', macAddress: 'SP:A4:3B:7C:16:D5', type: 'combo', locationName: 'University Campus', zone: 'Salad Bar', equipmentLinkId: null, batteryPct: 0, signalRssi: 0, firmware: 'v2.3.8', status: 'offline', lastSeenAt: '2026-02-09T22:15:00Z', currentTempF: 0, currentHumidity: null },
+  { id: 'iot-s14', providerSlug: 'tempstick', name: 'Beverage Cooler', macAddress: 'TS:B8:2A:5D:13:G1', type: 'combo', locationName: 'University Campus', zone: 'Beverage Station', equipmentLinkId: null, batteryPct: 62, signalRssi: -58, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 37.4, currentHumidity: 39 },
+  { id: 'iot-s15', providerSlug: 'cooper-atkins', name: 'Grill Station Probe', macAddress: 'CA:BLE:02:5B:99:D3', type: 'temperature', locationName: 'University Campus', zone: 'Grill Station', equipmentLinkId: null, batteryPct: 34, signalRssi: -65, firmware: 'BLE-1.8', status: 'warning', lastSeenAt: '2026-02-10T12:45:00Z', currentTempF: 165.2, currentHumidity: null },
+  { id: 'iot-s16', providerSlug: 'deltatrak', name: 'Cold Chain Dock', macAddress: 'DT:FL:8A:2C:44:E6', type: 'temperature', locationName: 'University Campus', zone: 'Receiving Dock', equipmentLinkId: null, batteryPct: 100, signalRssi: -41, firmware: 'FL-2.1', status: 'online', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 33.9, currentHumidity: null },
+];
+
+// 3 readings per sensor for last 3 intervals (simplified — 48 readings)
+export const iotSensorReadings: IoTSensorReading[] = [
+  // Downtown Walk-in Cooler #1
+  { sensorId: 'iot-s01', timestamp: '2026-02-10T14:58:12Z', temperatureF: 36.2, humidityPct: 45, pressureHpa: null, batteryPct: 87, isAnomaly: false },
+  { sensorId: 'iot-s01', timestamp: '2026-02-10T14:57:12Z', temperatureF: 36.1, humidityPct: 45, pressureHpa: null, batteryPct: 87, isAnomaly: false },
+  { sensorId: 'iot-s01', timestamp: '2026-02-10T14:56:12Z', temperatureF: 36.3, humidityPct: 44, pressureHpa: null, batteryPct: 87, isAnomaly: false },
+  // Downtown Walk-in Freezer
+  { sensorId: 'iot-s02', timestamp: '2026-02-10T14:58:10Z', temperatureF: -2.1, humidityPct: 28, pressureHpa: null, batteryPct: 72, isAnomaly: false },
+  { sensorId: 'iot-s02', timestamp: '2026-02-10T14:57:10Z', temperatureF: -1.8, humidityPct: 28, pressureHpa: null, batteryPct: 72, isAnomaly: false },
+  { sensorId: 'iot-s02', timestamp: '2026-02-10T14:56:10Z', temperatureF: -2.3, humidityPct: 29, pressureHpa: null, batteryPct: 72, isAnomaly: false },
+  // Downtown Prep Area
+  { sensorId: 'iot-s03', timestamp: '2026-02-10T14:55:00Z', temperatureF: 68.4, humidityPct: 52, pressureHpa: null, batteryPct: 94, isAnomaly: false },
+  { sensorId: 'iot-s03', timestamp: '2026-02-10T14:50:00Z', temperatureF: 68.1, humidityPct: 51, pressureHpa: null, batteryPct: 94, isAnomaly: false },
+  { sensorId: 'iot-s03', timestamp: '2026-02-10T14:45:00Z', temperatureF: 67.9, humidityPct: 52, pressureHpa: null, batteryPct: 94, isAnomaly: false },
+  // Downtown Hot Hold
+  { sensorId: 'iot-s04', timestamp: '2026-02-10T13:30:00Z', temperatureF: 148.5, humidityPct: null, pressureHpa: null, batteryPct: 65, isAnomaly: false },
+  { sensorId: 'iot-s04', timestamp: '2026-02-10T13:15:00Z', temperatureF: 150.1, humidityPct: null, pressureHpa: null, batteryPct: 65, isAnomaly: false },
+  { sensorId: 'iot-s04', timestamp: '2026-02-10T13:00:00Z', temperatureF: 147.8, humidityPct: null, pressureHpa: null, batteryPct: 66, isAnomaly: false },
+  // Downtown Dry Storage
+  { sensorId: 'iot-s05', timestamp: '2026-02-10T14:59:01Z', temperatureF: 72.1, humidityPct: 38, pressureHpa: null, batteryPct: 91, isAnomaly: false },
+  { sensorId: 'iot-s05', timestamp: '2026-02-10T14:58:01Z', temperatureF: 72.0, humidityPct: 38, pressureHpa: null, batteryPct: 91, isAnomaly: false },
+  { sensorId: 'iot-s05', timestamp: '2026-02-10T14:57:01Z', temperatureF: 71.8, humidityPct: 39, pressureHpa: null, batteryPct: 91, isAnomaly: false },
+  // Downtown Receiving Dock (Testo — warning, temp slightly high)
+  { sensorId: 'iot-s06', timestamp: '2026-02-10T14:50:00Z', temperatureF: 58.3, humidityPct: 61, pressureHpa: 1013.2, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s06', timestamp: '2026-02-10T14:45:00Z', temperatureF: 56.8, humidityPct: 60, pressureHpa: 1013.1, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s06', timestamp: '2026-02-10T14:40:00Z', temperatureF: 55.2, humidityPct: 59, pressureHpa: 1013.0, batteryPct: 100, isAnomaly: false },
+  // Airport Walk-in Cooler A — ANOMALY: temp spike to 47°F
+  { sensorId: 'iot-s07', timestamp: '2026-02-10T14:57:00Z', temperatureF: 47.1, humidityPct: 68, pressureHpa: null, batteryPct: 43, isAnomaly: true },
+  { sensorId: 'iot-s07', timestamp: '2026-02-10T14:56:00Z', temperatureF: 44.8, humidityPct: 62, pressureHpa: null, batteryPct: 43, isAnomaly: true },
+  { sensorId: 'iot-s07', timestamp: '2026-02-10T14:55:00Z', temperatureF: 39.2, humidityPct: 50, pressureHpa: null, batteryPct: 44, isAnomaly: false },
+  // Airport Reach-in B
+  { sensorId: 'iot-s08', timestamp: '2026-02-10T14:58:05Z', temperatureF: 38.7, humidityPct: 42, pressureHpa: null, batteryPct: 81, isAnomaly: false },
+  { sensorId: 'iot-s08', timestamp: '2026-02-10T14:57:05Z', temperatureF: 38.5, humidityPct: 42, pressureHpa: null, batteryPct: 81, isAnomaly: false },
+  { sensorId: 'iot-s08', timestamp: '2026-02-10T14:56:05Z', temperatureF: 38.9, humidityPct: 43, pressureHpa: null, batteryPct: 81, isAnomaly: false },
+  // Airport Display Case
+  { sensorId: 'iot-s09', timestamp: '2026-02-10T14:55:00Z', temperatureF: 40.2, humidityPct: 44, pressureHpa: null, batteryPct: 88, isAnomaly: false },
+  { sensorId: 'iot-s09', timestamp: '2026-02-10T14:50:00Z', temperatureF: 40.0, humidityPct: 44, pressureHpa: null, batteryPct: 88, isAnomaly: false },
+  { sensorId: 'iot-s09', timestamp: '2026-02-10T14:45:00Z', temperatureF: 39.8, humidityPct: 45, pressureHpa: null, batteryPct: 88, isAnomaly: false },
+  // Airport Kitchen Ambient
+  { sensorId: 'iot-s10', timestamp: '2026-02-10T14:59:00Z', temperatureF: 74.8, humidityPct: 55, pressureHpa: null, batteryPct: 78, isAnomaly: false },
+  { sensorId: 'iot-s10', timestamp: '2026-02-10T14:58:00Z', temperatureF: 74.5, humidityPct: 55, pressureHpa: null, batteryPct: 78, isAnomaly: false },
+  { sensorId: 'iot-s10', timestamp: '2026-02-10T14:57:00Z', temperatureF: 74.2, humidityPct: 54, pressureHpa: null, batteryPct: 78, isAnomaly: false },
+  // Airport Blast Chiller (CSV import)
+  { sensorId: 'iot-s11', timestamp: '2026-02-10T08:00:00Z', temperatureF: 34.0, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s11', timestamp: '2026-02-10T07:00:00Z', temperatureF: 33.5, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s11', timestamp: '2026-02-10T06:00:00Z', temperatureF: 33.8, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+  // University Main Walk-in
+  { sensorId: 'iot-s12', timestamp: '2026-02-10T14:58:20Z', temperatureF: 35.8, humidityPct: 41, pressureHpa: null, batteryPct: 95, isAnomaly: false },
+  { sensorId: 'iot-s12', timestamp: '2026-02-10T14:57:20Z', temperatureF: 35.7, humidityPct: 41, pressureHpa: null, batteryPct: 95, isAnomaly: false },
+  { sensorId: 'iot-s12', timestamp: '2026-02-10T14:56:20Z', temperatureF: 35.9, humidityPct: 42, pressureHpa: null, batteryPct: 95, isAnomaly: false },
+  // University Salad Bar — OFFLINE (battery dead)
+  { sensorId: 'iot-s13', timestamp: '2026-02-09T22:15:00Z', temperatureF: 41.2, humidityPct: 55, pressureHpa: null, batteryPct: 2, isAnomaly: true },
+  { sensorId: 'iot-s13', timestamp: '2026-02-09T22:10:00Z', temperatureF: 40.8, humidityPct: 54, pressureHpa: null, batteryPct: 3, isAnomaly: false },
+  { sensorId: 'iot-s13', timestamp: '2026-02-09T22:05:00Z', temperatureF: 40.5, humidityPct: 53, pressureHpa: null, batteryPct: 3, isAnomaly: false },
+  // University Beverage Cooler
+  { sensorId: 'iot-s14', timestamp: '2026-02-10T14:55:00Z', temperatureF: 37.4, humidityPct: 39, pressureHpa: null, batteryPct: 62, isAnomaly: false },
+  { sensorId: 'iot-s14', timestamp: '2026-02-10T14:50:00Z', temperatureF: 37.2, humidityPct: 39, pressureHpa: null, batteryPct: 62, isAnomaly: false },
+  { sensorId: 'iot-s14', timestamp: '2026-02-10T14:45:00Z', temperatureF: 37.5, humidityPct: 40, pressureHpa: null, batteryPct: 62, isAnomaly: false },
+  // University Grill Station
+  { sensorId: 'iot-s15', timestamp: '2026-02-10T12:45:00Z', temperatureF: 165.2, humidityPct: null, pressureHpa: null, batteryPct: 34, isAnomaly: false },
+  { sensorId: 'iot-s15', timestamp: '2026-02-10T12:30:00Z', temperatureF: 162.8, humidityPct: null, pressureHpa: null, batteryPct: 34, isAnomaly: false },
+  { sensorId: 'iot-s15', timestamp: '2026-02-10T12:15:00Z', temperatureF: 168.0, humidityPct: null, pressureHpa: null, batteryPct: 35, isAnomaly: false },
+  // University Cold Chain Dock
+  { sensorId: 'iot-s16', timestamp: '2026-02-10T14:50:00Z', temperatureF: 33.9, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s16', timestamp: '2026-02-10T14:40:00Z', temperatureF: 34.1, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+  { sensorId: 'iot-s16', timestamp: '2026-02-10T14:30:00Z', temperatureF: 33.7, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false },
+];
+
+export const iotSensorAlerts: IoTSensorAlert[] = [
+  { id: 'iot-a01', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'high_temp', severity: 'critical', thresholdValue: 41, actualValue: 47.1, message: 'Walk-in cooler temperature exceeded 41°F — possible door left open or compressor failure', createdAt: '2026-02-10T14:57:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a02', sensorId: 'iot-s13', sensorName: 'Salad Bar Cooler', locationName: 'University Campus', alertType: 'offline', severity: 'critical', thresholdValue: 30, actualValue: 960, message: 'Sensor offline for 16+ hours — battery depleted. Replace battery immediately.', createdAt: '2026-02-10T06:15:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a03', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'rapid_change', severity: 'warning', thresholdValue: 5, actualValue: 7.9, message: 'Temperature rose 7.9°F in 2 minutes — abnormal rate of change detected', createdAt: '2026-02-10T14:56:30Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a04', sensorId: 'iot-s06', sensorName: 'Receiving Dock', locationName: 'Downtown Kitchen', alertType: 'humidity_high', severity: 'warning', thresholdValue: 60, actualValue: 61, message: 'Humidity at receiving dock above 60% threshold — check ventilation', createdAt: '2026-02-10T14:50:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a05', sensorId: 'iot-s15', sensorName: 'Grill Station Probe', locationName: 'University Campus', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 34, message: 'Battery at 34% — schedule replacement within next 2 weeks', createdAt: '2026-02-10T12:45:00Z', acknowledged: true, acknowledgedBy: 'Maria Chen' },
+  { id: 'iot-a06', sensorId: 'iot-s02', sensorName: 'Walk-in Freezer', locationName: 'Downtown Kitchen', alertType: 'low_temp', severity: 'info', thresholdValue: -10, actualValue: -2.1, message: 'Freezer temperature nominal — firmware update v2.5.0 available', createdAt: '2026-02-10T10:00:00Z', acknowledged: true, acknowledgedBy: 'System' },
+  { id: 'iot-a07', sensorId: 'iot-s04', sensorName: 'Hot Hold Station', locationName: 'Downtown Kitchen', alertType: 'battery_low', severity: 'info', thresholdValue: 20, actualValue: 65, message: 'Scheduled calibration due Feb 15 — last calibrated Nov 12, 2025', createdAt: '2026-02-10T08:00:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a08', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 43, message: 'Battery below 50% on critical equipment sensor — plan replacement', createdAt: '2026-02-10T09:00:00Z', acknowledged: true, acknowledgedBy: 'James Wilson' },
+];
+
+export const iotSensorConfigs: IoTSensorConfig[] = [
+  { providerSlug: 'sensorpush', pollingIntervalMin: 1, alertThresholds: { highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20 }, autoLogCompliance: true, notificationChannels: ['email', 'sms', 'push'] },
+  { providerSlug: 'tempstick', pollingIntervalMin: 5, alertThresholds: { highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20 }, autoLogCompliance: true, notificationChannels: ['email', 'push'] },
+  { providerSlug: 'monnit', pollingIntervalMin: 0, alertThresholds: { highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20 }, autoLogCompliance: true, notificationChannels: ['email', 'webhook'] },
+  { providerSlug: 'cooper-atkins', pollingIntervalMin: 0, alertThresholds: { highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20 }, autoLogCompliance: false, notificationChannels: ['email'] },
+];
+
+export const iotIngestionLog: IoTIngestionLog[] = [
+  { id: 'il-01', provider: 'SensorPush', method: 'api_pull', sensorCount: 6, readingCount: 6, timestamp: '2026-02-10T14:58:12Z', status: 'success', durationMs: 342, errorMessage: null },
+  { id: 'il-02', provider: 'Monnit', method: 'webhook', sensorCount: 2, readingCount: 2, timestamp: '2026-02-10T14:59:01Z', status: 'success', durationMs: 89, errorMessage: null },
+  { id: 'il-03', provider: 'Temp Stick', method: 'api_pull', sensorCount: 4, readingCount: 4, timestamp: '2026-02-10T14:55:00Z', status: 'success', durationMs: 518, errorMessage: null },
+  { id: 'il-04', provider: 'Cooper-Atkins', method: 'bluetooth', sensorCount: 2, readingCount: 2, timestamp: '2026-02-10T13:30:00Z', status: 'success', durationMs: 1250, errorMessage: null },
+  { id: 'il-05', provider: 'Testo', method: 'api_pull', sensorCount: 1, readingCount: 1, timestamp: '2026-02-10T14:50:00Z', status: 'partial', durationMs: 2100, errorMessage: 'Rate limit approaching — 4/5 requests used this minute' },
+  { id: 'il-06', provider: 'ComplianceMate', method: 'manual', sensorCount: 1, readingCount: 3, timestamp: '2026-02-10T08:00:00Z', status: 'success', durationMs: 0, errorMessage: null },
+  { id: 'il-07', provider: 'SensorPush', method: 'api_pull', sensorCount: 6, readingCount: 6, timestamp: '2026-02-10T14:57:12Z', status: 'success', durationMs: 315, errorMessage: null },
+  { id: 'il-08', provider: 'DeltaTrak', method: 'api_pull', sensorCount: 1, readingCount: 1, timestamp: '2026-02-10T14:50:00Z', status: 'success', durationMs: 445, errorMessage: null },
+  { id: 'il-09', provider: 'SensorPush', method: 'api_pull', sensorCount: 6, readingCount: 5, timestamp: '2026-02-10T14:56:12Z', status: 'partial', durationMs: 890, errorMessage: 'Salad Bar Cooler (iot-s13) — no response, sensor may be offline' },
+  { id: 'il-10', provider: 'Monnit', method: 'webhook', sensorCount: 2, readingCount: 2, timestamp: '2026-02-10T14:58:01Z', status: 'success', durationMs: 76, errorMessage: null },
+];
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {
