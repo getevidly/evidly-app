@@ -79,6 +79,9 @@ const CourseBuilder = lazy(() => import('./pages/CourseBuilder').then(m => ({ de
 const CertificateViewer = lazy(() => import('./pages/CertificateViewer').then(m => ({ default: m.CertificateViewer })));
 const IncidentPlaybooks = lazy(() => import('./pages/IncidentPlaybooks').then(m => ({ default: m.IncidentPlaybooks })));
 const PlaybookRunner = lazy(() => import('./pages/PlaybookRunner').then(m => ({ default: m.PlaybookRunner })));
+const PlaybookBuilder = lazy(() => import('./pages/PlaybookBuilder').then(m => ({ default: m.PlaybookBuilder })));
+const PlaybookAnalytics = lazy(() => import('./pages/PlaybookAnalytics').then(m => ({ default: m.PlaybookAnalytics })));
+const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m => ({ default: m.PlaybookTimeline })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -282,6 +285,9 @@ function AppRoutes() {
           <Route path="/training/certificates" element={<CertificateViewer />} />
           <Route path="/playbooks" element={<IncidentPlaybooks />} />
           <Route path="/playbooks/active/:id" element={<PlaybookRunner />} />
+          <Route path="/playbooks/builder" element={<PlaybookBuilder />} />
+          <Route path="/playbooks/analytics" element={<PlaybookAnalytics />} />
+          <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
         </Route>
       </Routes>
     </>

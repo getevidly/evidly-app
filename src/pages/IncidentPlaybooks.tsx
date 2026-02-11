@@ -19,10 +19,14 @@ import {
   BarChart3,
   Timer,
   Shield,
+  Plus,
+  TrendingUp,
+  Sparkles,
 } from 'lucide-react';
 import {
   playbookTemplates,
   activeIncidentPlaybooks,
+  demoCustomPlaybooks,
   type PlaybookTemplate,
   type ActiveIncidentPlaybook,
   type PlaybookSeverity,
@@ -75,7 +79,7 @@ function formatDate(iso: string): string {
 }
 
 // ── Playbook Card (Library) ─────────────────────────────────
-function PlaybookCard({ template, onActivate }: { template: PlaybookTemplate; onActivate: () => void }) {
+function PlaybookCard({ template, onActivate, isCustom }: { template: PlaybookTemplate; onActivate: () => void; isCustom?: boolean }) {
   const Icon = ICON_MAP[template.icon] || Siren;
   const sev = SEVERITY_CONFIG[template.defaultSeverity];
   const cat = CATEGORY_LABELS[template.category];
@@ -91,7 +95,12 @@ function PlaybookCard({ template, onActivate }: { template: PlaybookTemplate; on
             <Icon size={22} color={template.color} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#111827', margin: 0, lineHeight: 1.3 }}>{template.title}</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: '#111827', margin: 0, lineHeight: 1.3 }}>{template.title}</h3>
+              {isCustom && (
+                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: '#d4af37', color: 'white', whiteSpace: 'nowrap' }}>CUSTOM</span>
+              )}
+            </div>
             <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
               <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: sev.bg, color: sev.text, border: `1px solid ${sev.border}` }}>{sev.label}</span>
               <span style={{ fontSize: 11, fontWeight: 500, padding: '2px 8px', borderRadius: 9999, background: '#f3f4f6', color: '#4b5563' }}>{cat}</span>
@@ -187,7 +196,7 @@ function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncident
 }
 
 // ── Completed Incident Card ─────────────────────────────────
-function CompletedIncidentCard({ incident }: { incident: ActiveIncidentPlaybook }) {
+function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveIncidentPlaybook; onViewReport: () => void }) {
   const template = playbookTemplates.find(t => t.id === incident.templateId);
   const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
   const color = template?.color || '#1e4d6b';
@@ -220,8 +229,8 @@ function CompletedIncidentCard({ incident }: { incident: ActiveIncidentPlaybook 
 
         <div style={{ display: 'flex', gap: 8 }}>
           <button
-            onClick={() => alert('Report viewer — view the completed incident report with all steps, timestamps, evidence, and compliance narrative.')}
-            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+            onClick={onViewReport}
+            style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #1e4d6b', background: '#eef4f8', color: '#1e4d6b', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
           >
             <FileText size={13} /> View Report
           </button>
@@ -260,25 +269,96 @@ export function IncidentPlaybooks() {
     return true;
   });
 
+  // Build custom playbook cards as PlaybookTemplate-like objects for rendering
+  const customPlaybookCards: PlaybookTemplate[] = demoCustomPlaybooks.map(cp => ({
+    id: cp.title.toLowerCase().replace(/\s+/g, '-'),
+    title: cp.title,
+    shortDescription: cp.description,
+    icon: cp.category === 'health_safety' ? 'AlertTriangle' : 'ClipboardCheck',
+    color: cp.severity === 'high' ? '#dc2626' : '#d4af37',
+    defaultSeverity: cp.severity as PlaybookSeverity,
+    category: cp.category as PlaybookCategory,
+    stepCount: cp.steps.length,
+    estimatedMinutes: cp.steps.reduce((sum, s) => sum + (s.timeLimitMinutes || 10), 0),
+    regulatoryBasis: 'Custom protocol — ' + cp.category.replace('_', ' '),
+    steps: [],
+  }));
+
+  const filteredCustom = customPlaybookCards.filter(t => {
+    if (categoryFilter !== 'all' && t.category !== categoryFilter) return false;
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase()) && !t.shortDescription.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+
   const handleActivate = (template: PlaybookTemplate) => {
     alert(`Activate "${template.title}" playbook — in production, this creates a new active incident and navigates to the step-by-step runner. For this demo, navigate to an existing active playbook from the Active tab.`);
   };
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", maxWidth: 1200, margin: '0 auto' }}>
+      {/* Emergency Alert Banner */}
+      {activeIncidents.length > 0 && (
+        <div style={{
+          padding: '12px 20px',
+          borderRadius: 10,
+          background: '#fef2f2',
+          border: '2px solid #fca5a5',
+          marginBottom: 20,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          flexWrap: 'wrap',
+          animation: 'pulse 2s ease-in-out infinite',
+        }}>
+          <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }`}</style>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Siren size={20} color="#dc2626" />
+            <div>
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#991b1b' }}>{activeIncidents.length} Active Incident{activeIncidents.length > 1 ? 's' : ''}</span>
+              <span style={{ fontSize: 13, color: '#b91c1c', marginLeft: 8 }}>
+                {activeIncidents.map(i => i.templateTitle).join(', ')}
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab('active')}
+            style={{ padding: '8px 18px', borderRadius: 8, border: 'none', background: '#dc2626', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+          >
+            <ChevronRight size={14} /> View Active
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Siren size={24} color="#1e4d6b" />
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Siren size={24} color="#1e4d6b" />
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => navigate('/playbooks/builder')}
+              style={{ padding: '9px 18px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+            >
+              <Plus size={14} /> Create Custom Playbook
+            </button>
+            <button
+              onClick={() => navigate('/playbooks/analytics')}
+              style={{ padding: '9px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
+            >
+              <TrendingUp size={14} /> Analytics
+            </button>
+          </div>
         </div>
-        <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Guided crisis response protocols with auto-documentation and legal defense file generation</p>
+        <p style={{ fontSize: 14, color: '#6b7280', margin: '4px 0 0' }}>Guided crisis response protocols with auto-documentation and legal defense file generation</p>
       </div>
 
       {/* KPI Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
         {[
-          { label: 'Available Playbooks', value: playbookTemplates.length, icon: FileText, color: '#1e4d6b' },
+          { label: 'Available Playbooks', value: playbookTemplates.length + customPlaybookCards.length, icon: FileText, color: '#1e4d6b' },
           { label: 'Active Incidents', value: activeIncidents.length, icon: Siren, color: activeIncidents.length > 0 ? '#dc2626' : '#22c55e' },
           { label: 'Completed This Month', value: completedIncidents.length, icon: CheckCircle2, color: '#22c55e' },
           { label: 'Avg Response Time', value: '47m', icon: BarChart3, color: '#d4af37' },
@@ -297,7 +377,7 @@ export function IncidentPlaybooks() {
       <div style={{ display: 'flex', gap: 0, marginBottom: 20, borderBottom: '2px solid #e5e7eb' }}>
         {TABS.map(tab => {
           const isActive = activeTab === tab.key;
-          const count = tab.key === 'active' ? activeIncidents.length : tab.key === 'completed' ? completedIncidents.length : playbookTemplates.length;
+          const count = tab.key === 'active' ? activeIncidents.length : tab.key === 'completed' ? completedIncidents.length : playbookTemplates.length + customPlaybookCards.length;
           return (
             <button
               key={tab.key}
@@ -319,14 +399,19 @@ export function IncidentPlaybooks() {
               }}
             >
               {tab.label}
-              <span style={{
-                fontSize: 11,
-                fontWeight: 700,
-                padding: '1px 7px',
-                borderRadius: 9999,
-                background: isActive ? '#1e4d6b' : '#e5e7eb',
-                color: isActive ? 'white' : '#6b7280',
-              }}>{count}</span>
+              {tab.key === 'active' && activeIncidents.length > 0 && (
+                <span style={{ fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 9999, background: '#dc2626', color: 'white' }}>{count}</span>
+              )}
+              {(tab.key !== 'active' || activeIncidents.length === 0) && (
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  padding: '1px 7px',
+                  borderRadius: 9999,
+                  background: isActive ? '#1e4d6b' : '#e5e7eb',
+                  color: isActive ? 'white' : '#6b7280',
+                }}>{count}</span>
+              )}
             </button>
           );
         })}
@@ -359,13 +444,30 @@ export function IncidentPlaybooks() {
             </select>
           </div>
 
-          {/* Cards grid */}
+          {/* System Playbooks */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
             {filteredTemplates.map(t => (
               <PlaybookCard key={t.id} template={t} onActivate={() => handleActivate(t)} />
             ))}
           </div>
-          {filteredTemplates.length === 0 && (
+
+          {/* Custom Playbooks Section */}
+          {filteredCustom.length > 0 && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 32, marginBottom: 16 }}>
+                <Sparkles size={16} color="#d4af37" />
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: 0 }}>Custom Playbooks</h2>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#d4af37', color: 'white' }}>{filteredCustom.length}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+                {filteredCustom.map(t => (
+                  <PlaybookCard key={t.id} template={t} onActivate={() => handleActivate(t)} isCustom />
+                ))}
+              </div>
+            </>
+          )}
+
+          {filteredTemplates.length === 0 && filteredCustom.length === 0 && (
             <div style={{ textAlign: 'center', padding: 48, color: '#9ca3af' }}>
               <Search size={32} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
               <p style={{ fontSize: 14 }}>No playbooks match your search.</p>
@@ -407,7 +509,11 @@ export function IncidentPlaybooks() {
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
               {completedIncidents.map(incident => (
-                <CompletedIncidentCard key={incident.id} incident={incident} />
+                <CompletedIncidentCard
+                  key={incident.id}
+                  incident={incident}
+                  onViewReport={() => navigate(`/playbooks/history/${incident.id}`)}
+                />
               ))}
             </div>
           )}

@@ -2916,3 +2916,258 @@ export const activeIncidentPlaybooks: ActiveIncidentPlaybook[] = [
     reportGenerated: false,
   },
 ];
+
+// ── Feature #18 Continued — Custom Playbooks, Food Disposition, AI, Analytics ──
+
+export interface FoodDispositionEntry {
+  id: string;
+  foodName: string;
+  category: 'meat' | 'dairy' | 'produce' | 'prepared' | 'frozen' | 'bakery' | 'seafood';
+  quantity: number;
+  unit: 'lbs' | 'oz' | 'each' | 'trays' | 'gallons';
+  costPerUnit: number;
+  currentTemp: number;
+  timeInDangerZone: number;
+  decision: 'keep' | 'discard' | 'cook_now' | 'refreeze';
+  decisionBy: string;
+  decisionAt: string;
+  notes: string;
+}
+
+export interface CustomPlaybookStepDraft {
+  id: string;
+  stepNumber: number;
+  title: string;
+  instructions: string;
+  requirePhoto: boolean;
+  requireTemp: boolean;
+  requireSignature: boolean;
+  requireText: boolean;
+  checklistItems: string[];
+  timeLimitMinutes: number | null;
+  escalationContact: string;
+  escalationMinutes: number | null;
+}
+
+export interface CustomPlaybookDraft {
+  id: string;
+  title: string;
+  description: string;
+  category: PlaybookCategory;
+  severity: PlaybookSeverity;
+  icon: string;
+  color: string;
+  createdBy: string;
+  createdAt: string;
+  status: 'draft' | 'published';
+  assignedLocations: string[];
+  reviewSchedule: 'monthly' | 'quarterly' | 'annually';
+  steps: CustomPlaybookStepDraft[];
+}
+
+export interface PlaybookVendorContact {
+  id: string;
+  activationId: string;
+  vendorName: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  role: string;
+  contactedAt: string;
+  response: string;
+  ticketNumber: string;
+}
+
+export interface PlaybookInsuranceClaim {
+  id: string;
+  activationId: string;
+  claimNumber: string;
+  carrier: string;
+  deductible: number;
+  totalLoss: number;
+  itemCount: number;
+  status: 'draft' | 'filed' | 'under_review' | 'approved' | 'denied';
+  filedAt: string;
+  filedBy: string;
+  notes: string;
+}
+
+export interface PlaybookAiMessage {
+  id: string;
+  playbookType: string;
+  stepNumber: number;
+  role: 'assistant' | 'system';
+  content: string;
+  suggestions: string[];
+  triggerCondition: 'step_enter' | 'time_warning' | 'temp_warning' | 'user_request';
+}
+
+export interface PlaybookAnalyticsData {
+  monthlyIncidents: { month: string; powerOutage: number; foodborne: number; fire: number; equipment: number; other: number }[];
+  responseTimeTrend: { month: string; avgMinutes: number }[];
+  stepCompletionRates: { stepTitle: string; completionRate: number; avgDurationMin: number }[];
+  locationComparison: { location: string; totalIncidents: number; avgResponseMin: number; complianceRate: number; foodLossDollars: number }[];
+}
+
+// ── Demo Custom Playbooks ─────────────────────────────────────
+
+export const demoCustomPlaybooks: CustomPlaybookDraft[] = [
+  {
+    id: 'cpb-allergen',
+    title: 'Allergen Cross-Contact Protocol',
+    description: 'Response protocol when a customer reports an allergic reaction or potential allergen cross-contact is discovered in the kitchen.',
+    category: 'health_safety',
+    severity: 'critical',
+    icon: 'AlertTriangle',
+    color: '#dc2626',
+    createdBy: 'James Wilson',
+    createdAt: '2026-01-15T10:00:00Z',
+    status: 'published',
+    assignedLocations: ['Downtown Kitchen', 'Airport Terminal', 'University Campus'],
+    reviewSchedule: 'quarterly',
+    steps: [
+      { id: 'ac-1', stepNumber: 1, title: 'Assess Customer Condition', instructions: 'Determine severity: Is the customer having difficulty breathing, swelling, or hives? Call 911 immediately if anaphylaxis suspected. Retrieve the EpiPen from the first aid station if available.', requirePhoto: false, requireTemp: false, requireSignature: false, requireText: true, checklistItems: ['Assess customer symptoms', 'Call 911 if severe', 'Locate EpiPen kit'], timeLimitMinutes: 5, escalationContact: 'General Manager', escalationMinutes: 3 },
+      { id: 'ac-2', stepNumber: 2, title: 'Identify the Allergen Source', instructions: 'Pull the customer order ticket. Identify which dish was served and cross-reference ingredients against the allergen matrix. Check if any substitutions or modifications were made.', requirePhoto: true, requireTemp: false, requireSignature: false, requireText: true, checklistItems: ['Pull order ticket', 'Cross-reference allergen matrix', 'Check for substitutions', 'Interview prep cook'], timeLimitMinutes: 10, escalationContact: '', escalationMinutes: null },
+      { id: 'ac-3', stepNumber: 3, title: 'Secure the Kitchen Station', instructions: 'Stop all prep at the suspected station. Remove and hold all ingredients and tools for investigation. Clean and sanitize the entire station before any food preparation resumes.', requirePhoto: true, requireTemp: false, requireSignature: false, requireText: false, checklistItems: ['Stop prep at station', 'Hold all ingredients', 'Clean and sanitize station', 'Replace all utensils'], timeLimitMinutes: 15, escalationContact: '', escalationMinutes: null },
+      { id: 'ac-4', stepNumber: 4, title: 'Document and Report', instructions: 'Complete the allergen incident form. Record customer information (with consent), symptoms, suspected allergen, actions taken, and outcome. Notify the owner/operator immediately.', requirePhoto: false, requireTemp: false, requireSignature: true, requireText: true, checklistItems: ['Complete incident form', 'Record customer information', 'Notify owner/operator', 'File with EvidLY'], timeLimitMinutes: null, escalationContact: '', escalationMinutes: null },
+    ],
+  },
+  {
+    id: 'cpb-delivery-reject',
+    title: 'Vendor Delivery Rejection Protocol',
+    description: 'Step-by-step procedure for rejecting a food delivery that fails temperature, quality, or documentation checks.',
+    category: 'regulatory',
+    severity: 'medium',
+    icon: 'Truck',
+    color: '#d4af37',
+    createdBy: 'Sarah Chen',
+    createdAt: '2026-01-20T14:30:00Z',
+    status: 'published',
+    assignedLocations: ['Downtown Kitchen', 'Airport Terminal'],
+    reviewSchedule: 'annually',
+    steps: [
+      { id: 'dr-1', stepNumber: 1, title: 'Document the Failure', instructions: 'Record the vendor name, driver name, delivery invoice number, and the specific reason for rejection (temperature, damage, pest evidence, wrong items, expired dates).', requirePhoto: true, requireTemp: true, requireSignature: false, requireText: true, checklistItems: ['Record vendor/driver info', 'Record invoice number', 'Document rejection reason'], timeLimitMinutes: 10, escalationContact: '', escalationMinutes: null },
+      { id: 'dr-2', stepNumber: 2, title: 'Notify Vendor', instructions: 'Contact the vendor account manager by phone. Explain the rejection, provide photo evidence. Request a replacement delivery or credit memo. Record the conversation and any reference numbers.', requirePhoto: false, requireTemp: false, requireSignature: false, requireText: true, checklistItems: ['Call vendor account manager', 'Explain rejection with evidence', 'Request replacement or credit', 'Record reference number'], timeLimitMinutes: 15, escalationContact: '', escalationMinutes: null },
+      { id: 'dr-3', stepNumber: 3, title: 'Driver Acknowledgment', instructions: 'Have the delivery driver sign the rejection form acknowledging the refused delivery. Ensure all rejected items are returned to the truck. Do not allow rejected food to be left on premises.', requirePhoto: true, requireTemp: false, requireSignature: true, requireText: false, checklistItems: ['Driver signs rejection form', 'All items returned to truck', 'Verify truck departure'], timeLimitMinutes: null, escalationContact: '', escalationMinutes: null },
+    ],
+  },
+];
+
+// ── Demo Food Disposition (Power Outage aip-001) ──────────────
+
+export const demoFoodDisposition: FoodDispositionEntry[] = [
+  { id: 'fd-1', foodName: 'Chicken Breast (raw)', category: 'meat', quantity: 24, unit: 'lbs', costPerUnit: 4.50, currentTemp: 48, timeInDangerZone: 45, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 90 * 60000).toISOString(), notes: 'Above 41°F for >45 min. FDA requires discard.' },
+  { id: 'fd-2', foodName: 'Ground Beef (raw)', category: 'meat', quantity: 15, unit: 'lbs', costPerUnit: 5.25, currentTemp: 46, timeInDangerZone: 45, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 89 * 60000).toISOString(), notes: 'Above 41°F. Discard per protocol.' },
+  { id: 'fd-3', foodName: 'Shrimp (raw, peeled)', category: 'seafood', quantity: 10, unit: 'lbs', costPerUnit: 12.00, currentTemp: 47, timeInDangerZone: 40, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 88 * 60000).toISOString(), notes: 'Seafood TCS — high risk. Discard.' },
+  { id: 'fd-4', foodName: 'Whole Milk (gallons)', category: 'dairy', quantity: 6, unit: 'gallons', costPerUnit: 4.00, currentTemp: 44, timeInDangerZone: 30, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 87 * 60000).toISOString(), notes: 'Dairy above 41°F for 30 min.' },
+  { id: 'fd-5', foodName: 'Prep Salads (mixed)', category: 'prepared', quantity: 8, unit: 'trays', costPerUnit: 15.00, currentTemp: 50, timeInDangerZone: 60, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 86 * 60000).toISOString(), notes: 'Pre-prepared TCS food — well above safe temp.' },
+  { id: 'fd-6', foodName: 'Butter (sticks)', category: 'dairy', quantity: 20, unit: 'lbs', costPerUnit: 3.50, currentTemp: 55, timeInDangerZone: 60, decision: 'keep', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 85 * 60000).toISOString(), notes: 'Butter is not TCS — safe to keep at room temp.' },
+  { id: 'fd-7', foodName: 'Frozen Fries (cases)', category: 'frozen', quantity: 4, unit: 'each', costPerUnit: 22.00, currentTemp: 18, timeInDangerZone: 0, decision: 'refreeze', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 84 * 60000).toISOString(), notes: 'Still solidly frozen at 18°F. Safe to refreeze when power returns.' },
+  { id: 'fd-8', foodName: 'Chicken Stock (house-made)', category: 'prepared', quantity: 3, unit: 'gallons', costPerUnit: 8.00, currentTemp: 52, timeInDangerZone: 50, decision: 'cook_now', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 83 * 60000).toISOString(), notes: 'Can be rapidly brought to boil on gas stove (gas still working) within 15 min.' },
+];
+
+// ── Demo Vendor Contacts ──────────────────────────────────────
+
+export const demoVendorContacts: PlaybookVendorContact[] = [
+  { id: 'pvc-1', activationId: 'aip-001', vendorName: 'Pacific Gas & Electric', contactName: 'Emergency Dispatch', phone: '1-800-743-5000', email: '', role: 'Utility Provider', contactedAt: new Date(Date.now() - 110 * 60000).toISOString(), response: 'Estimated restoration: 4-6 hours. Transformer failure on block affecting 200 customers. Crew dispatched.', ticketNumber: 'PGE-2026-0211-4782' },
+  { id: 'pvc-2', activationId: 'aip-001', vendorName: 'All-Star Equipment Repair', contactName: 'Mike Torres', phone: '(415) 555-0142', email: 'mike@allstarequip.com', role: 'Equipment Service', contactedAt: new Date(Date.now() - 95 * 60000).toISOString(), response: 'Can send technician to verify refrigeration units once power restored. Earliest slot: tomorrow 8 AM if power returns today.', ticketNumber: 'ASR-8891' },
+  { id: 'pvc-3', activationId: 'aip-001', vendorName: 'Pinnacle Insurance Group', contactName: 'Claims Dept', phone: '1-888-555-0199', email: 'claims@pinnacleins.com', role: 'Insurance Provider', contactedAt: new Date(Date.now() - 80 * 60000).toISOString(), response: 'Claim initiated. Adjuster will contact within 24 hours. Document all food loss with photos and itemized inventory.', ticketNumber: 'CLM-2026-02110547' },
+];
+
+// ── Demo Insurance Claim ──────────────────────────────────────
+
+export const demoInsuranceClaim: PlaybookInsuranceClaim = {
+  id: 'pic-001',
+  activationId: 'aip-001',
+  claimNumber: 'CLM-2026-02110547',
+  carrier: 'Pinnacle Insurance Group',
+  deductible: 500,
+  totalLoss: 523,
+  itemCount: 6,
+  status: 'filed',
+  filedAt: new Date(Date.now() - 60 * 60000).toISOString(),
+  filedBy: 'James Wilson',
+  notes: 'Power outage food loss. 6 items discarded, 1 cooked immediately, 1 refrozen. Total discarded value: $523.00. Exceeds $500 deductible.',
+};
+
+// ── Demo AI Copilot Messages ──────────────────────────────────
+
+export const demoPlaybookAiMessages: PlaybookAiMessage[] = [
+  { id: 'aim-1', playbookType: 'pb-power-outage', stepNumber: 1, role: 'assistant', content: 'Power outage detected. I\'ve started the clock. Remember: a closed walk-in cooler maintains safe temperature (≤41°F) for approximately 4 hours if doors remain shut. A full freezer holds for ~48 hours, half-full for ~24 hours.', suggestions: ['What temp is my cooler at?', 'When should I check food?', 'Do I need to notify health dept?'], triggerCondition: 'step_enter' },
+  { id: 'aim-2', playbookType: 'pb-power-outage', stepNumber: 2, role: 'assistant', content: 'When calling your utility company, ask for: (1) estimated restoration time, (2) cause of outage, (3) ticket/reference number. Document everything — this becomes part of your insurance claim if needed.', suggestions: ['What if they don\'t give an ETA?', 'Should I start the generator?'], triggerCondition: 'step_enter' },
+  { id: 'aim-3', playbookType: 'pb-power-outage', stepNumber: 3, role: 'assistant', content: 'Use your probe thermometer, not digital displays (which may be off without power). Check temps through the door seal if possible to minimize door openings. Each door opening can raise walk-in temps by 3-5°F.', suggestions: ['What\'s the danger zone?', 'How often should I check?'], triggerCondition: 'step_enter' },
+  { id: 'aim-4', playbookType: 'pb-power-outage', stepNumber: 4, role: 'system', content: '⏰ It\'s been 1 hour since the power went out. Begin checking hot-holding food. Any hot TCS food that has dropped below 135°F should be evaluated for discard.', suggestions: ['Show hot-holding rules', 'What about soup on the line?'], triggerCondition: 'time_warning' },
+  { id: 'aim-5', playbookType: 'pb-power-outage', stepNumber: 5, role: 'assistant', content: 'You\'re monitoring cold food temperatures. Per FDA Food Code 3-501.16, TCS food must be maintained at 41°F or below. If any item reaches 41°F+, start the danger zone clock — you have a maximum of 4 hours total (cumulative) in the danger zone before mandatory discard.', suggestions: ['Calculate danger zone time', 'Show FDA reference'], triggerCondition: 'step_enter' },
+  { id: 'aim-6', playbookType: 'pb-power-outage', stepNumber: 5, role: 'system', content: '🌡️ Based on your logged temperatures, your walk-in cooler is at 44°F. It has entered the danger zone. You have approximately 3 hours and 15 minutes remaining before food disposition evaluation is required.', suggestions: ['What should I move first?', 'Can I use ice?'], triggerCondition: 'temp_warning' },
+  { id: 'aim-7', playbookType: 'pb-power-outage', stepNumber: 6, role: 'assistant', content: 'Time for food disposition evaluation. Use the Food Disposition panel to log each TCS item. Remember: when in doubt, throw it out. The cost of food loss is always less than the cost of a foodborne illness outbreak. I\'ll help calculate your total loss for insurance.', suggestions: ['Open food disposition', 'Show TCS food list', 'Insurance deductible info'], triggerCondition: 'step_enter' },
+  { id: 'aim-8', playbookType: 'pb-power-outage', stepNumber: 7, role: 'assistant', content: 'For your freezer assessment: a fully stocked freezer maintains safe temps for ~48 hours, half-full for ~24 hours. Check for ice crystals — if food still has ice crystals and is at or below 40°F, it can be safely refrozen.', suggestions: ['Ice crystal test', 'Partial thaw rules'], triggerCondition: 'step_enter' },
+  { id: 'aim-9', playbookType: 'pb-power-outage', stepNumber: 8, role: 'assistant', content: 'Power is back! Before resuming food service: (1) verify all equipment reaches safe operating temps, (2) re-check all food items, (3) discard anything questionable. Document the restoration time — this is critical for your insurance claim timeline.', suggestions: ['Equipment verification checklist', 'When can I reopen?'], triggerCondition: 'step_enter' },
+  { id: 'aim-10', playbookType: 'pb-power-outage', stepNumber: 9, role: 'assistant', content: 'Great work completing this playbook. I\'m generating your incident report now. Your total food loss was $523.00, which exceeds your $500 deductible. I recommend filing an insurance claim. I\'ve also drafted a compliance narrative for your records.', suggestions: ['View insurance summary', 'Download full report', 'View compliance narrative'], triggerCondition: 'step_enter' },
+  { id: 'aim-11', playbookType: 'pb-foodborne-illness', stepNumber: 1, role: 'assistant', content: 'Foodborne illness complaint received. Stay calm and professional. Your first priority is documenting the complaint details accurately. Do NOT admit fault — simply gather facts. Ask: what did they eat, when did symptoms start, who else is affected.', suggestions: ['What questions to ask', 'Do I need to notify health dept?'], triggerCondition: 'step_enter' },
+  { id: 'aim-12', playbookType: 'pb-kitchen-fire', stepNumber: 1, role: 'assistant', content: '🔥 FIRE EMERGENCY. Safety first: (1) Evacuate if fire is beyond a small contained grease fire, (2) Never use water on a grease fire, (3) Use Class K extinguisher for cooking oil fires, (4) The hood suppression system should activate automatically — if not, use the manual pull station.', suggestions: ['PASS technique', 'When to evacuate vs fight'], triggerCondition: 'step_enter' },
+  { id: 'aim-13', playbookType: 'pb-failed-inspection', stepNumber: 1, role: 'assistant', content: 'Failed inspection — let\'s fix this systematically. Start by categorizing each violation as Critical (immediate health hazard), Major (potential hazard), or Minor (general maintenance). Critical violations need same-day correction. I\'ll help you prioritize.', suggestions: ['Show violation categories', 'Common critical violations'], triggerCondition: 'step_enter' },
+  { id: 'aim-14', playbookType: 'pb-equipment-failure', stepNumber: 1, role: 'assistant', content: 'Equipment failure detected. First, identify which equipment and assess impact on food safety. If it\'s a refrigeration unit, this becomes a time-sensitive food safety issue similar to a power outage. If it\'s cooking equipment, assess whether you can continue service safely.', suggestions: ['Refrigeration failure protocol', 'Can I still serve food?'], triggerCondition: 'step_enter' },
+  { id: 'aim-15', playbookType: 'pb-employee-injury', stepNumber: 1, role: 'assistant', content: 'Employee injury — address medical needs first, then food safety. If the injury involves bleeding near food prep areas, immediately secure all food in the area. Clean and sanitize all surfaces within 6 feet of the incident. Report any injury requiring medical attention to workers\' comp.', suggestions: ['First aid steps', 'Workers comp requirements', 'Blood cleanup protocol'], triggerCondition: 'step_enter' },
+];
+
+// ── Demo Playbook Analytics ───────────────────────────────────
+
+export const demoPlaybookAnalytics: PlaybookAnalyticsData = {
+  monthlyIncidents: [
+    { month: 'Sep 2025', powerOutage: 1, foodborne: 0, fire: 0, equipment: 2, other: 1 },
+    { month: 'Oct 2025', powerOutage: 0, foodborne: 1, fire: 0, equipment: 1, other: 0 },
+    { month: 'Nov 2025', powerOutage: 2, foodborne: 0, fire: 1, equipment: 0, other: 1 },
+    { month: 'Dec 2025', powerOutage: 1, foodborne: 1, fire: 0, equipment: 1, other: 0 },
+    { month: 'Jan 2026', powerOutage: 0, foodborne: 0, fire: 0, equipment: 2, other: 1 },
+    { month: 'Feb 2026', powerOutage: 1, foodborne: 0, fire: 0, equipment: 0, other: 1 },
+  ],
+  responseTimeTrend: [
+    { month: 'Sep 2025', avgMinutes: 72 },
+    { month: 'Oct 2025', avgMinutes: 65 },
+    { month: 'Nov 2025', avgMinutes: 58 },
+    { month: 'Dec 2025', avgMinutes: 52 },
+    { month: 'Jan 2026', avgMinutes: 48 },
+    { month: 'Feb 2026', avgMinutes: 47 },
+  ],
+  stepCompletionRates: [
+    { stepTitle: 'Immediate Response', completionRate: 98, avgDurationMin: 4 },
+    { stepTitle: 'Assess & Contact', completionRate: 95, avgDurationMin: 12 },
+    { stepTitle: 'Secure Food / Area', completionRate: 92, avgDurationMin: 18 },
+    { stepTitle: 'Documentation', completionRate: 88, avgDurationMin: 25 },
+    { stepTitle: 'Notification / Escalation', completionRate: 85, avgDurationMin: 8 },
+    { stepTitle: 'Food Disposition', completionRate: 90, avgDurationMin: 35 },
+    { stepTitle: 'Vendor Coordination', completionRate: 82, avgDurationMin: 15 },
+    { stepTitle: 'Restoration / Verification', completionRate: 94, avgDurationMin: 20 },
+    { stepTitle: 'Post-Incident Report', completionRate: 78, avgDurationMin: 30 },
+  ],
+  locationComparison: [
+    { location: 'Downtown Kitchen', totalIncidents: 5, avgResponseMin: 42, complianceRate: 96, foodLossDollars: 850 },
+    { location: 'Airport Terminal', totalIncidents: 8, avgResponseMin: 55, complianceRate: 88, foodLossDollars: 2340 },
+    { location: 'University Campus', totalIncidents: 3, avgResponseMin: 38, complianceRate: 94, foodLossDollars: 420 },
+  ],
+};
+
+// ── Common TCS Foods (for food disposition quick-add) ─────────
+
+export const commonTCSFoods: { name: string; category: string; avgCostPerUnit: number; unit: string }[] = [
+  { name: 'Chicken Breast (raw)', category: 'meat', avgCostPerUnit: 4.50, unit: 'lbs' },
+  { name: 'Ground Beef (raw)', category: 'meat', avgCostPerUnit: 5.25, unit: 'lbs' },
+  { name: 'Pork Tenderloin (raw)', category: 'meat', avgCostPerUnit: 5.00, unit: 'lbs' },
+  { name: 'Salmon Fillet (raw)', category: 'seafood', avgCostPerUnit: 14.00, unit: 'lbs' },
+  { name: 'Shrimp (raw, peeled)', category: 'seafood', avgCostPerUnit: 12.00, unit: 'lbs' },
+  { name: 'Whole Milk', category: 'dairy', avgCostPerUnit: 4.00, unit: 'gallons' },
+  { name: 'Heavy Cream', category: 'dairy', avgCostPerUnit: 6.50, unit: 'gallons' },
+  { name: 'Shredded Cheese (mixed)', category: 'dairy', avgCostPerUnit: 5.50, unit: 'lbs' },
+  { name: 'Shell Eggs', category: 'dairy', avgCostPerUnit: 3.50, unit: 'each' },
+  { name: 'Sliced Deli Turkey', category: 'meat', avgCostPerUnit: 7.00, unit: 'lbs' },
+  { name: 'Cooked Rice (batch)', category: 'prepared', avgCostPerUnit: 8.00, unit: 'trays' },
+  { name: 'Cooked Pasta (batch)', category: 'prepared', avgCostPerUnit: 6.00, unit: 'trays' },
+  { name: 'House Soup (batch)', category: 'prepared', avgCostPerUnit: 12.00, unit: 'gallons' },
+  { name: 'Prep Salads (mixed)', category: 'prepared', avgCostPerUnit: 15.00, unit: 'trays' },
+  { name: 'Cut Melon', category: 'produce', avgCostPerUnit: 4.00, unit: 'trays' },
+  { name: 'Sliced Tomatoes', category: 'produce', avgCostPerUnit: 3.00, unit: 'trays' },
+  { name: 'Bean Sprouts', category: 'produce', avgCostPerUnit: 2.50, unit: 'lbs' },
+  { name: 'Tofu (firm)', category: 'produce', avgCostPerUnit: 3.00, unit: 'lbs' },
+  { name: 'Cream Sauce (house)', category: 'prepared', avgCostPerUnit: 10.00, unit: 'gallons' },
+  { name: 'Chicken Stock (house)', category: 'prepared', avgCostPerUnit: 8.00, unit: 'gallons' },
+];
