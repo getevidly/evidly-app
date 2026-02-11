@@ -58,6 +58,7 @@ const navigation: NavItem[] = [
   { i18nKey: 'nav.leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.benchmarks', href: '/benchmarks', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.complianceIndex', href: '/compliance-index', icon: Shield, tourId: '', roles: ['executive', 'management'], section: 'insights' },
+  { i18nKey: 'nav.insuranceRisk', href: '/insurance-risk', icon: Shield, tourId: '', roles: ['executive', 'management'], section: 'insights' },
   { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
   { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
   { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },

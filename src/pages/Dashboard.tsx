@@ -29,6 +29,7 @@ import { OnboardingChecklist } from '../components/OnboardingChecklist';
 import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
 import { BenchmarkWidget } from '../components/BenchmarkWidget';
+import { InsuranceReadinessWidget } from '../components/InsuranceReadinessWidget';
 import { useTranslation } from '../contexts/LanguageContext';
 import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
@@ -967,6 +968,13 @@ export function Dashboard() {
         {['executive', 'management'].includes(userRole) && (
           <div className="mt-4">
             <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+          </div>
+        )}
+
+        {/* Insurance Risk Score Widget */}
+        {['executive', 'management'].includes(userRole) && (
+          <div className="mt-4">
+            <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
           </div>
         )}
 
