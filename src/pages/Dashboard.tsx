@@ -28,6 +28,7 @@ import { LiveActivityFeed } from '../components/LiveActivityFeed';
 import { OnboardingChecklist } from '../components/OnboardingChecklist';
 import { KitchenDashboard } from './KitchenDashboard';
 import { FacilitiesDashboard } from './FacilitiesDashboard';
+import { BenchmarkWidget } from '../components/BenchmarkWidget';
 import { useTranslation } from '../contexts/LanguageContext';
 import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
@@ -959,6 +960,13 @@ export function Dashboard() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* Industry Benchmark Widget */}
+        {['executive', 'management'].includes(userRole) && (
+          <div className="mt-4">
+            <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
           </div>
         )}
 

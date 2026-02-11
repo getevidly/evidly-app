@@ -20,6 +20,7 @@ import {
   LogOut,
   AlertCircle,
   ClipboardCheck,
+  Target,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -71,6 +72,7 @@ export function MobileTabBar() {
       { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
+      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/alerts', icon: Bell, label: 'Alerts' },
@@ -85,6 +87,7 @@ export function MobileTabBar() {
       { path: '/audit-report', icon: ClipboardCheck, label: 'Audit Report' },
       { path: '/analysis', icon: TrendingUp, label: 'Analysis' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
+      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/alerts', icon: Bell, label: 'Alerts' },

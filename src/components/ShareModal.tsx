@@ -5,7 +5,7 @@ interface ShareModalProps {
   isOpen: boolean;
   onClose: () => void;
   preselectedDocuments?: string[];
-  documentType?: 'document' | 'report' | 'compliance';
+  documentType?: 'document' | 'report' | 'compliance' | 'benchmark';
 }
 
 export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documentType = 'document' }: ShareModalProps) {
@@ -71,7 +71,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                 <CheckCircle className="h-10 w-10 text-green-600" />
               </div>
               <h3 className="text-2xl font-semibold text-gray-900 mb-2">
-                {documentType === 'document' ? 'Documents Shared!' : documentType === 'report' ? 'Report Shared!' : 'Compliance Report Shared!'}
+                {documentType === 'document' ? 'Documents Shared!' : documentType === 'report' ? 'Report Shared!' : documentType === 'benchmark' ? 'Benchmark Shared!' : 'Compliance Report Shared!'}
               </h3>
               <p className="text-gray-600">
                 Successfully shared with {recipientEmail}
@@ -86,7 +86,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                       <Mail className="h-5 w-5 text-[#1e4d6b]" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900">
-                      Share {documentType === 'document' ? 'Documents' : documentType === 'report' ? 'Report' : 'Compliance Report'}
+                      Share {documentType === 'document' ? 'Documents' : documentType === 'report' ? 'Report' : documentType === 'benchmark' ? 'Benchmark Report' : 'Compliance Report'}
                     </h3>
                   </div>
                   <button
@@ -97,7 +97,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                   </button>
                 </div>
                 <p className="text-sm text-gray-600">
-                  Send {documentType === 'document' ? 'documents' : 'reports'} securely to third parties. Links expire in 7 days.
+                  Send {documentType === 'document' ? 'documents' : documentType === 'benchmark' ? 'benchmark rankings' : 'reports'} securely to third parties. Links expire in 7 days.
                 </p>
               </div>
 
