@@ -43,13 +43,18 @@ const TOUR_STEPS: TourStep[] = [
 
 interface GuidedTourProps {
   onComplete?: () => void;
+  onActiveChange?: (active: boolean) => void;
 }
 
-export function GuidedTour({ onComplete }: GuidedTourProps) {
+export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
   const [highlightRect, setHighlightRect] = useState({ top: 0, left: 0, width: 0, height: 0 });
+
+  useEffect(() => {
+    onActiveChange?.(isActive);
+  }, [isActive, onActiveChange]);
 
   const positionTooltip = useCallback(() => {
     const step = TOUR_STEPS[currentStep];

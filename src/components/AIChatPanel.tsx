@@ -46,7 +46,7 @@ function getDemoResponse(question: string): { text: string; suggestions: string[
   return { text, suggestions };
 }
 
-export function AIChatPanel() {
+export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -65,6 +65,11 @@ export function AIChatPanel() {
     }
   }, [isOpen]);
 
+  // Close panel and hide FAB when a tour is active
+  useEffect(() => {
+    if (hidden && isOpen) setIsOpen(false);
+  }, [hidden]);
+
   const sendMessage = async (text: string) => {
     if (!text.trim() || isTyping) return;
 
@@ -80,6 +85,8 @@ export function AIChatPanel() {
     setMessages(prev => [...prev, aiMsg]);
     setIsTyping(false);
   };
+
+  if (hidden) return null;
 
   return (
     <>

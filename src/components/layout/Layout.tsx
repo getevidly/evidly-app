@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
@@ -24,6 +24,9 @@ interface LayoutProps {
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
   const { tourActive } = useDemo();
+  const [guidedTourActive, setGuidedTourActive] = useState(false);
+  const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
+  const anyTourActive = tourActive || guidedTourActive;
 
   // Load Zendesk Web Widget (hidden launcher — opened programmatically from Help page)
   useEffect(() => {
@@ -58,8 +61,8 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
         </main>
       </div>
       <MobileTabBar />
-      {tourActive ? <DemoTour /> : <GuidedTour />}
-      <AIChatPanel />
+      {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
+      <AIChatPanel hidden={anyTourActive} />
     </div>
   );
 }
