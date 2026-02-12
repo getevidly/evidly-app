@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Trophy, Medal, Award, TrendingUp, Flame, Target, Zap, Star } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -39,7 +39,10 @@ function HorizontalBar({ label, value, max, color, suffix }: { label: string; va
 export function Leaderboard() {
   const { profile } = useAuth();
   const { getAccessibleLocations } = useRole();
-  const accessibleLocationIds = getAccessibleLocations().map(l => l.locationId);
+  const accessibleLocationIds = useMemo(
+    () => getAccessibleLocations().map(l => l.locationId),
+    [getAccessibleLocations]
+  );
   const [locations, setLocations] = useState<LocationLeaderboard[]>([]);
 
   useEffect(() => {
