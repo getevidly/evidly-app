@@ -2739,7 +2739,7 @@ export const playbookTemplates: PlaybookTemplate[] = [
     id: 'pb-kitchen-fire',
     title: 'Kitchen Fire Response',
     shortDescription: 'Emergency evacuation, fire suppression, regulatory notification, and facility restoration protocol following NFPA 96 requirements.',
-    category: 'health_safety',
+    category: 'fire_safety',
     defaultSeverity: 'critical',
     icon: 'Flame',
     color: '#ea580c',
