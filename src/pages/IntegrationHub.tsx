@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ShoppingBag, Link2, Key, Activity, HeartPulse,
   Search, ExternalLink, CheckCircle2, AlertTriangle,
@@ -162,11 +163,11 @@ function IntegrationCard({ platform }: { platform: IntegrationPlatform }) {
         <button
           onClick={() => {
             if (platform.status === 'connected') {
-              alert('Integration already connected. Go to Connected tab to manage.');
+              toast.info('Already connected. Go to Connected tab.');
             } else if (platform.status === 'coming_soon') {
-              alert('This integration is coming soon! We\'ll notify you when it\'s available.');
+              toast.info('This integration is coming soon');
             } else {
-              alert(`Demo: Would start OAuth 2.0 authorization flow for ${platform.name}`);
+              toast.info(`OAuth flow for ${platform.name} (demo)`);
             }
           }}
           className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
@@ -268,13 +269,13 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
       <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.documentsSynced || '—'}</td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-1">
-          <button onClick={() => alert(`Demo: Syncing ${connection.platformDisplayName}...`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
+          <button onClick={() => toast.info(`Syncing ${connection.platformDisplayName} (demo)`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => alert(`Demo: ${connection.status === 'paused' ? 'Resuming' : 'Pausing'} ${connection.platformDisplayName}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title={connection.status === 'paused' ? 'Resume' : 'Pause'}>
+          <button onClick={() => toast.info(`${connection.status === 'paused' ? 'Resuming' : 'Pausing'} ${connection.platformDisplayName}`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title={connection.status === 'paused' ? 'Resume' : 'Pause'}>
             {connection.status === 'paused' ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
           </button>
-          <button onClick={() => alert(`Demo: Would disconnect ${connection.platformDisplayName}. This action requires confirmation.`)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500" title="Disconnect">
+          <button onClick={() => toast.warning(`Disconnect ${connection.platformDisplayName}? (demo)`)} className="p-1.5 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500" title="Disconnect">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -300,7 +301,7 @@ function ApiManagementTab() {
             <h3 className="font-semibold text-gray-900">API Keys</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys</p>
           </div>
-          <button onClick={() => alert('Demo: Would generate a new API key')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+          <button onClick={() => toast.info('Generate new API key (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
             <Plus className="h-3.5 w-3.5" /> New Key
           </button>
         </div>
@@ -321,7 +322,7 @@ function ApiManagementTab() {
               <button onClick={() => setShowKey(!showKey)} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
                 {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               </button>
-              <button onClick={() => { navigator.clipboard.writeText(demoApiKey); alert('API key copied to clipboard'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+              <button onClick={() => { navigator.clipboard.writeText(demoApiKey); toast.success('API key copied to clipboard'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
                 <Copy className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -339,7 +340,7 @@ function ApiManagementTab() {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={() => { navigator.clipboard.writeText(demoSandboxKey); alert('Sandbox key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+              <button onClick={() => { navigator.clipboard.writeText(demoSandboxKey); toast.success('Sandbox key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
                 <Copy className="h-3.5 w-3.5" />
               </button>
             </div>
@@ -394,7 +395,7 @@ function ApiManagementTab() {
             <h3 className="font-semibold text-gray-900">Webhook Subscriptions</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery</p>
           </div>
-          <button onClick={() => alert('Demo: Would open webhook subscription form')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+          <button onClick={() => toast.info('Open webhook subscription form (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
             <Plus className="h-3.5 w-3.5" /> Add Webhook
           </button>
         </div>
@@ -418,10 +419,10 @@ function ApiManagementTab() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => alert(`Demo: ${wh.status === 'paused' ? 'Resuming' : 'Pausing'} webhook`)} className="p-1 rounded hover:bg-gray-200 text-gray-400">
+                  <button onClick={() => toast.info(`${wh.status === 'paused' ? 'Resuming' : 'Pausing'} webhook`)} className="p-1 rounded hover:bg-gray-200 text-gray-400">
                     {wh.status === 'paused' ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
                   </button>
-                  <button onClick={() => alert('Demo: Would send test webhook event')} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Test">
+                  <button onClick={() => toast.info('Send test webhook event (demo)')} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Test">
                     <Zap className="h-3 w-3" />
                   </button>
                 </div>

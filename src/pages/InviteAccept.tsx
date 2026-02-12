@@ -4,6 +4,7 @@ import { Eye, EyeOff, Check, X, UserPlus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDemo } from '../contexts/DemoContext';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { toast } from 'sonner';
 
 export function InviteAccept() {
   const { token } = useParams<{ token: string }>();
@@ -89,7 +90,7 @@ export function InviteAccept() {
     // Demo mode: simulate success without writing to database
     if (isDemoMode) {
       setSubmitting(false);
-      alert('Invitation accepted! (Demo mode)');
+      toast.success('Invitation accepted (demo mode)');
       navigate('/dashboard');
       return;
     }

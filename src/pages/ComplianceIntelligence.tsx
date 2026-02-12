@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ShieldCheck, AlertTriangle, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
   Minus, Search, Download, ChevronRight, ExternalLink, Share2,
@@ -216,7 +217,7 @@ function CommandCenterTab() {
       {/* Row 1 — Critical Intelligence Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1 — Urgent Attention */}
-        <button onClick={() => alert('View urgent locations — coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View urgent locations coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50"><AlertTriangle className="h-4 w-4 text-red-500" /></div>
             <h3 className="text-xs font-semibold text-gray-900">Urgent Attention</h3>
@@ -227,7 +228,7 @@ function CommandCenterTab() {
         </button>
 
         {/* Card 2 — Expiring This Quarter */}
-        <button onClick={() => alert('View expiration calendar — coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View expiration calendar coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-50"><CalendarDays className="h-4 w-4 text-amber-500" /></div>
             <h3 className="text-xs font-semibold text-gray-900">Expiring This Quarter</h3>
@@ -250,7 +251,7 @@ function CommandCenterTab() {
         </button>
 
         {/* Card 3 — Incident Velocity */}
-        <button onClick={() => alert('View incident analytics — coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View incident analytics coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-green-50"><Activity className="h-4 w-4 text-green-600" /></div>
             <h3 className="text-xs font-semibold text-gray-900">Incident Velocity</h3>
@@ -266,7 +267,7 @@ function CommandCenterTab() {
         </button>
 
         {/* Card 4 — Compliance Momentum */}
-        <button onClick={() => alert('View location movement analysis — coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
+        <button onClick={() => toast.info('View location movement analysis coming soon')} className="bg-white rounded-xl border border-gray-200 p-5 text-left hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50"><TrendingUp className="h-4 w-4 text-blue-600" /></div>
             <h3 className="text-xs font-semibold text-gray-900">Compliance Momentum</h3>
@@ -340,10 +341,10 @@ function CommandCenterTab() {
                     <span className="text-[10px] text-gray-400"><Zap className="h-3 w-3 inline mr-0.5" />{insight.action}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <button onClick={() => alert(insight.drillDownLabel + ' — coming soon')} className="text-[10px] font-medium text-[#1e4d6b] hover:underline cursor-pointer flex items-center gap-0.5">
+                    <button onClick={() => toast.info(insight.drillDownLabel + ' — coming soon')} className="text-[10px] font-medium text-[#1e4d6b] hover:underline cursor-pointer flex items-center gap-0.5">
                       <ChevronRight className="h-3 w-3" />{insight.drillDownLabel}
                     </button>
-                    <button onClick={() => alert('Share insight — coming soon')} className="text-[10px] font-medium text-gray-400 hover:text-gray-600 cursor-pointer flex items-center gap-0.5">
+                    <button onClick={() => toast.info('Share insight coming soon')} className="text-[10px] font-medium text-gray-400 hover:text-gray-600 cursor-pointer flex items-center gap-0.5">
                       <Share2 className="h-3 w-3" />Share
                     </button>
                   </div>
@@ -427,7 +428,7 @@ function CompareTab() {
                 <option value="all">All Verticals</option>
                 {verticals.map(v => <option key={v} value={v}>{v}</option>)}
               </select>
-              <button onClick={() => alert('Export to Excel — coming soon')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => toast.info('Export to Excel coming soon')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                 <Download className="h-3.5 w-3.5" /> Export
               </button>
               <span className="text-[10px] text-gray-400">{filtered.length} of {TOTAL_LOCATIONS} locations</span>
@@ -453,7 +454,7 @@ function CompareTab() {
                 </thead>
                 <tbody>
                   {filtered.slice(0, 100).map(loc => (
-                    <tr key={loc.id} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => alert(`View ${loc.name} — coming soon`)}>
+                    <tr key={loc.id} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => toast.info(`View ${loc.name} coming soon`)}>
                       <td className="px-2 py-2 text-center text-gray-400 font-mono">{loc.rank}</td>
                       <td className="px-3 py-2 font-medium text-gray-900">{loc.name}</td>
                       <td className="px-2 py-2 text-gray-500">{loc.region}</td>
@@ -836,8 +837,8 @@ function RiskTab() {
                       </table>
                     </div>
                     <div className="flex gap-2 mt-3">
-                      <button onClick={() => alert('Assign mitigation plan — coming soon')} className="px-3 py-1.5 text-[10px] font-medium rounded-md cursor-pointer text-white" style={{ backgroundColor: '#1e4d6b' }}>Assign Plan</button>
-                      <button onClick={() => alert('Export mitigation plan — coming soon')} className="px-3 py-1.5 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Export PDF</button>
+                      <button onClick={() => toast.info('Assign mitigation plan coming soon')} className="px-3 py-1.5 text-[10px] font-medium rounded-md cursor-pointer text-white" style={{ backgroundColor: '#1e4d6b' }}>Assign Plan</button>
+                      <button onClick={() => toast.info('Export mitigation plan coming soon')} className="px-3 py-1.5 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Export PDF</button>
                     </div>
                   </div>
                 </div>
@@ -1032,7 +1033,7 @@ function StaffingTab() {
                 <p className="text-[11px] text-gray-600 mt-0.5">{ind.description}</p>
               </div>
               <span className="text-[10px] text-gray-400 flex-shrink-0">{ind.detectedDate}</span>
-              <button onClick={() => alert(`Investigate ${ind.locationName} — coming soon`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 flex-shrink-0">Investigate</button>
+              <button onClick={() => toast.info(`Investigate ${ind.locationName} coming soon`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 flex-shrink-0">Investigate</button>
             </div>
           ))}
         </div>
@@ -1157,7 +1158,7 @@ function FinancialTab() {
         </div>
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
           <p className="text-[10px] text-gray-400 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
-          <button onClick={() => alert('Generate Board Report — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate Board Report</button>
+          <button onClick={() => toast.info('Generate Board Report coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate Board Report</button>
         </div>
       </div>
 
@@ -1249,8 +1250,8 @@ function ReportsTab() {
                   <span className="text-[10px] text-green-600 flex items-center gap-1"><CheckCircle className="h-3 w-3" /> Ready</span>
                 )}
                 <div className="flex-1" />
-                <button onClick={() => alert(`Generating ${rpt.title}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate</button>
-                <button onClick={() => alert(`Schedule ${rpt.title}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule</button>
+                <button onClick={() => toast.info(`Generating ${rpt.title}`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Generate</button>
+                <button onClick={() => toast.info(`Schedule ${rpt.title} coming soon`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule</button>
               </div>
             </div>
           ))}
@@ -1305,7 +1306,7 @@ function ReportsTab() {
                 { label: 'PowerPoint', desc: 'Editable slide deck' },
                 { label: 'Interactive Web Link', desc: 'Shareable dashboard link' },
               ].map(fmt => (
-                <button key={fmt.label} onClick={() => alert(`Building ${fmt.label} report...`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-left">
+                <button key={fmt.label} onClick={() => toast.info(`Building ${fmt.label} report`)} className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer text-left">
                   <Download className="h-4 w-4 text-gray-400" />
                   <div>
                     <p className="text-[11px] font-medium text-gray-800">{fmt.label}</p>
@@ -1318,7 +1319,7 @@ function ReportsTab() {
         </div>
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <p className="text-[10px] text-gray-400">{selectedMetrics.length} sections selected</p>
-          <button onClick={() => alert('Building custom report...')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Build Report</button>
+          <button onClick={() => toast.info('Building custom report')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Build Report</button>
         </div>
       </div>
 
@@ -1326,7 +1327,7 @@ function ReportsTab() {
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-900">Distribution List</h3>
-          <button onClick={() => alert('Add recipient — coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">
+          <button onClick={() => toast.info('Add recipient coming soon')} className="flex items-center gap-1 px-3 py-1.5 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">
             <Plus className="h-3 w-3" /> Add Recipient
           </button>
         </div>
@@ -1355,7 +1356,7 @@ function ReportsTab() {
                     }`}>{rec.deliveryMethod.charAt(0).toUpperCase() + rec.deliveryMethod.slice(1)}</span>
                   </td>
                   <td className="py-2 text-center">
-                    <button onClick={() => alert(`Send report to ${rec.name} — coming soon`)} className="text-[10px] text-[#1e4d6b] hover:underline cursor-pointer"><Send className="h-3 w-3 inline" /></button>
+                    <button onClick={() => toast.info(`Send report to ${rec.name} coming soon`)} className="text-[10px] text-[#1e4d6b] hover:underline cursor-pointer"><Send className="h-3 w-3 inline" /></button>
                   </td>
                 </tr>
               ))}
@@ -1363,8 +1364,8 @@ function ReportsTab() {
           </table>
         </div>
         <div className="flex gap-2 mt-3">
-          <button onClick={() => alert('Send to all recipients — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Send Now</button>
-          <button onClick={() => alert('Schedule distribution — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
+          <button onClick={() => toast.info('Send to all recipients coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Send Now</button>
+          <button onClick={() => toast.info('Schedule distribution coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Schedule Delivery</button>
         </div>
       </div>
     </div>
@@ -1463,8 +1464,8 @@ function AnomalyTab() {
                   <p className="text-[10px] text-gray-500 mt-1"><strong>Context:</strong> {a.context}</p>
                   <p className="text-[10px] text-gray-500 mt-1"><strong>Suggested:</strong> {a.suggestedAction}</p>
                   <div className="flex gap-2 mt-2">
-                    <button onClick={() => alert(`Investigating ${a.location}...`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Investigate</button>
-                    <button onClick={() => alert(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Update Status</button>
+                    <button onClick={() => toast.info(`Investigating ${a.location}`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Investigate</button>
+                    <button onClick={() => toast.success(`Status updated for ${a.location}`)} className="px-2.5 py-1 text-[10px] font-medium rounded-md border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50">Update Status</button>
                   </div>
                 </div>
               </div>
@@ -1499,7 +1500,7 @@ function AnomalyTab() {
         </div>
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-100">
           <p className="text-[10px] text-amber-700 italic">Recommend on-site data quality audit for flagged locations.</p>
-          <button onClick={() => alert('Schedule on-site audit — coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50">Schedule Audit</button>
+          <button onClick={() => toast.info('Schedule on-site audit coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50">Schedule Audit</button>
         </div>
       </div>
     </div>
@@ -1787,7 +1788,7 @@ function PlatformTab() {
                 ))}
               </ul>
               <button
-                onClick={() => alert(`Contact sales for ${tier.name} tier`)}
+                onClick={() => toast.info(`Contact sales for ${tier.name} tier`)}
                 className={`w-full mt-5 py-2.5 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
                   tier.highlighted
                     ? 'text-white hover:opacity-90'

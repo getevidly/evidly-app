@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ArrowLeft, ArrowRight, BookOpen, Plus, Trash2, GripVertical,
   CheckCircle2, Clock, Settings2, Users, Save, Eye,
@@ -113,7 +114,7 @@ export function CourseBuilder() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Course Builder</h1>
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create a custom training course with modules, lessons, and assessments</p>
         </div>
-        <button onClick={() => alert('Save draft (demo)')}
+        <button onClick={() => toast.success('Draft saved')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Save size={14} /> Save Draft
         </button>
@@ -367,7 +368,7 @@ export function CourseBuilder() {
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '2px dashed #d1d5db', background: '#f9fafb', color: '#6b7280', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Plus size={16} /> Add Question
                 </button>
-                <button onClick={() => alert('AI generates 5 quiz questions from your lesson content (demo)')}
+                <button onClick={() => toast.info('AI question generation coming soon')}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Brain size={16} /> AI Generate Questions
                 </button>
@@ -463,11 +464,11 @@ export function CourseBuilder() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
-              <button onClick={() => alert(`Published "${title || 'Untitled'}" course to ${assignLocations.size} location(s) (demo)`)}
+              <button onClick={() => toast.success(`Course published to ${assignLocations.size} location(s)`)}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: 'none', background: '#15803d', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <CheckCircle2 size={16} /> Publish Course
               </button>
-              <button onClick={() => alert('Preview course as student (demo)')}
+              <button onClick={() => toast.info('Student preview coming soon')}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <Eye size={16} /> Preview as Student
               </button>

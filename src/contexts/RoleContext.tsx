@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { toast } from 'sonner';
 
 export type UserRole = 'executive' | 'management' | 'kitchen' | 'facilities';
 
@@ -110,12 +111,12 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     if (userRole === 'management') {
       const accessible = ROLE_LOCATION_ASSIGNMENTS.management.map(l => l.locationId);
       if (!accessible.includes(assignment.locationId)) {
-        alert('You can only assign temporary coverage for locations you have access to.');
+        toast.warning('You can only assign coverage for your locations');
         return;
       }
     }
     if (new Date(assignment.endDate) <= new Date(assignment.startDate)) {
-      alert('End date must be after start date.');
+      toast.warning('End date must be after start date');
       return;
     }
     const newAssignment: TempCoverageAssignment = {

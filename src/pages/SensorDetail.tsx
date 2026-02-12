@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Thermometer, Droplets, Battery, BatteryWarning, Wifi, WifiOff,
@@ -285,19 +286,19 @@ export function SensorDetail() {
         </div>
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button onClick={() => alert('Edit thresholds — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
+          <button onClick={() => toast.info('Edit thresholds — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
             <Settings className="h-3.5 w-3.5" /> Thresholds
           </button>
-          <button onClick={() => alert('Edit alerts — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
+          <button onClick={() => toast.info('Edit alerts — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
             <Bell className="h-3.5 w-3.5" /> Alerts
           </button>
-          <button onClick={() => alert('Reassign zone — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
+          <button onClick={() => toast.info('Reassign zone — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
             <MapPin className="h-3.5 w-3.5" /> Zone
           </button>
-          <button onClick={() => alert('Pause monitoring — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-yellow-200 text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
+          <button onClick={() => toast.info('Pause monitoring — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-yellow-200 text-xs font-medium text-yellow-700 bg-yellow-50 hover:bg-yellow-100">
             <Pause className="h-3.5 w-3.5" /> Pause
           </button>
-          <button onClick={() => alert('Remove sensor — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-red-200 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100">
+          <button onClick={() => toast.info('Remove sensor — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-red-200 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100">
             <Trash2 className="h-3.5 w-3.5" /> Remove
           </button>
         </div>
@@ -451,7 +452,7 @@ export function SensorDetail() {
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-bold text-gray-900">Maintenance Log</h3>
-            <button onClick={() => alert('Add maintenance entry — demo mode')} className="flex items-center gap-1 text-xs font-medium hover:text-gray-700" style={{ color: PRIMARY }}>
+            <button onClick={() => toast.info('Add maintenance entry — demo mode')} className="flex items-center gap-1 text-xs font-medium hover:text-gray-700" style={{ color: PRIMARY }}>
               <Wrench className="h-3.5 w-3.5" /> Add Entry
             </button>
           </div>

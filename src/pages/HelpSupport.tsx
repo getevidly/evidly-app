@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 // ── Styles ───────────────────────────────────────────────────────
@@ -107,7 +108,7 @@ export function HelpSupport() {
 
   const handleSubmitTicket = async () => {
     if (!ticketCat || !ticketSubject.trim() || !ticketDesc.trim()) {
-      alert('Please fill in all required fields');
+      toast.warning('Please fill in all required fields');
       return;
     }
     const num = `TKT-${5000 + Math.floor(Math.random() * 999)}`;
@@ -211,7 +212,7 @@ export function HelpSupport() {
             <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', textAlign: 'center' }}>
               <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px', ...F }}>Was this article helpful?</div>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                <button onClick={() => alert('Thanks for your feedback!')} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F }}>👍 Yes</button>
+                <button onClick={() => toast.success('Thanks for your feedback')} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F }}>👍 Yes</button>
                 <button onClick={() => { setActiveTab('ticket'); setSelectedArticle(null); }} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F }}>👎 No — Contact Support</button>
               </div>
             </div>
@@ -373,7 +374,7 @@ export function HelpSupport() {
         {/* File upload */}
         <div style={{ marginBottom: '24px' }}>
           <label style={labelStyle}>Attachments (optional)</label>
-          <div style={{ border: '2px dashed #e5e7eb', borderRadius: '8px', padding: '20px', textAlign: 'center', cursor: 'pointer' }} onClick={() => alert('File upload available in production — attachments will be sent to Zendesk with your ticket.')}>
+          <div style={{ border: '2px dashed #e5e7eb', borderRadius: '8px', padding: '20px', textAlign: 'center', cursor: 'pointer' }} onClick={() => toast.info('File upload available in production')}>
             <div style={{ fontSize: '24px', marginBottom: '4px' }}>📎</div>
             <div style={{ fontSize: '13px', color: '#6b7280', ...F }}>Click to attach screenshots or files</div>
             <div style={{ fontSize: '11px', color: '#9ca3af', ...F }}>PNG, JPG, PDF up to 10MB</div>
@@ -429,7 +430,7 @@ export function HelpSupport() {
   // ── Contact Us ─────────────────────────────────────────────────
   function renderContact() {
     const openChat = () => {
-      try { (window as any).zE?.('messenger', 'open'); } catch { alert('Live chat will be available once Zendesk is configured.'); }
+      try { (window as any).zE?.('messenger', 'open'); } catch { toast.info('Live chat coming soon'); }
     };
 
     return (
@@ -465,7 +466,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>📅</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Schedule a Call</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Book a 15-minute call with our support team at your convenience.</div>
-            <button onClick={() => alert('Booking link will be configured with Calendly.')} style={{ ...btnPrimary, width: '100%' }}>Book Time</button>
+            <button onClick={() => toast.info('Booking link coming soon')} style={{ ...btnPrimary, width: '100%' }}>Book Time</button>
           </div>
         </div>
 

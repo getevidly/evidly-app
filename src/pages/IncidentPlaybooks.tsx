@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   Siren,
@@ -235,7 +236,7 @@ function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveInc
             <FileText size={13} /> View Report
           </button>
           <button
-            onClick={() => alert('Download PDF — the legal defense file including all timestamped evidence, photos, and regulatory references.')}
+            onClick={() => toast.info('PDF download coming soon')}
             style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
           >
             Download PDF
@@ -291,7 +292,7 @@ export function IncidentPlaybooks() {
   });
 
   const handleActivate = (template: PlaybookTemplate) => {
-    alert(`Activate "${template.title}" playbook — in production, this creates a new active incident and navigates to the step-by-step runner. For this demo, navigate to an existing active playbook from the Active tab.`);
+    toast.info(`Playbook "${template.title}" activated (demo)`);
   };
 
   return (

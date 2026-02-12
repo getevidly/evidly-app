@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Siren,
@@ -357,7 +358,7 @@ export function PlaybookRunner() {
       ...prev,
       [stepKey]: (prev[stepKey] || 0) + 1,
     }));
-    alert('Photo captured! (Demo — in production, opens device camera)');
+    toast.success('Photo captured');
   };
 
   const handleCompleteStep = () => {
@@ -384,7 +385,7 @@ export function PlaybookRunner() {
   const handleAbandon = () => {
     if (!abandonReason.trim()) return;
     setShowAbandonModal(false);
-    alert(`Playbook abandoned. Reason: "${abandonReason}"\n\nA partial incident report has been saved and the regional manager has been notified.`);
+    toast.success('Playbook abandoned. Partial report saved');
     navigate('/playbooks');
   };
 
@@ -536,13 +537,13 @@ export function PlaybookRunner() {
             {/* Actions */}
             <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
               <button
-                onClick={() => alert('Download PDF — complete incident report with all timestamped evidence, photos, action items, food disposition, and compliance narrative.')}
+                onClick={() => toast.success('PDF download started')}
                 style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <Download size={14} /> Download PDF
               </button>
               <button
-                onClick={() => alert('Insurance Claim Report generated with food disposition totals, timeline, and evidence attachments.')}
+                onClick={() => toast.success('Insurance claim report generated')}
                 style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <DollarSign size={14} /> Insurance Report
@@ -1151,7 +1152,7 @@ export function PlaybookRunner() {
                       {msg.suggestions.map((s, si) => (
                         <button
                           key={si}
-                          onClick={() => alert(`AI suggestion: "${s}" — In production, this would execute the recommended action or provide detailed guidance.`)}
+                          onClick={() => toast.info(`AI suggestion: "${s}" — demo mode`)}
                           style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid #b8d4e8', background: 'white', color: '#1e4d6b', fontSize: 11, fontWeight: 500, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
                         >
                           {s}
@@ -1177,14 +1178,14 @@ export function PlaybookRunner() {
                   placeholder="Ask AI for help..."
                   onKeyDown={e => {
                     if (e.key === 'Enter') {
-                      alert('AI response: In production, this sends your question to the Claude API with full incident context for real-time guidance.');
+                      toast.info('AI Copilot coming soon');
                       (e.target as HTMLInputElement).value = '';
                     }
                   }}
                   style={{ flex: 1, padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: 'none' }}
                 />
                 <button
-                  onClick={() => alert('AI response: In production, this sends your question to the Claude API with full incident context for real-time guidance.')}
+                  onClick={() => toast.info('AI Copilot coming soon')}
                   style={{ padding: '8px 12px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
                   <MessageSquare size={14} />

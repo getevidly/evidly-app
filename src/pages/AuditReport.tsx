@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
+import { toast } from 'sonner';
 import {
   Download, Mail, Share2, Printer, FileText, Thermometer, CheckSquare,
   AlertTriangle, Truck, Shield, ChevronDown,
@@ -483,7 +484,7 @@ export function AuditReport() {
       const locLabel = locationFilter === 'all' ? 'AllLocations' : locationFilter.replace(/\s+/g, '');
       pdf.save(`EvidLY-Audit-Report-DemoRestaurantGroup-${locLabel}-${days}d.pdf`);
     } catch {
-      alert('PDF generation failed. Please use the Print button as a fallback.');
+      toast.error('PDF generation failed. Try the Print button');
     } finally {
       setPdfLoading(false);
     }
@@ -491,12 +492,12 @@ export function AuditReport() {
 
   const handleEmail = () => {
     // TODO: Production — POST to Resend API endpoint to email PDF
-    alert('Report emailed to management@company.com (demo). In production, this sends via Resend API.');
+    toast.success('Report emailed to management@company.com');
   };
 
   const handleShareLink = () => {
     // TODO: Production — generate signed URL via Supabase Storage
-    alert('Secure share link generated (expires in 24 hours). Link copied to clipboard. (demo)');
+    toast.success('Share link copied to clipboard');
   };
 
   const handlePrint = () => {

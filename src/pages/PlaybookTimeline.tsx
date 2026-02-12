@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ArrowLeft, CheckCircle2, Clock, Camera, FileText, Thermometer,
   User, MapPin, Phone, Download, Printer, Shield, Share2,
@@ -448,7 +449,7 @@ export function PlaybookTimeline() {
         display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 28,
       }}>
         <button
-          onClick={() => alert('Demo: Full PDF Report would be generated and downloaded.')}
+          onClick={() => toast.info('PDF report generation coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1e4d6b',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
@@ -458,7 +459,7 @@ export function PlaybookTimeline() {
           <Download size={15} /> Full PDF Report
         </button>
         <button
-          onClick={() => alert('Demo: Insurance Claim Package would be compiled and downloaded.')}
+          onClick={() => toast.info('Insurance claim package coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#d4af37',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
@@ -468,7 +469,7 @@ export function PlaybookTimeline() {
           <FileText size={15} /> Insurance Claim Package
         </button>
         <button
-          onClick={() => alert('Demo: Health Department Report would be generated.')}
+          onClick={() => toast.info('Health dept report coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
             color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
@@ -478,7 +479,7 @@ export function PlaybookTimeline() {
           <Printer size={15} /> Health Dept Report
         </button>
         <button
-          onClick={() => alert('Demo: Legal Summary document would be generated.')}
+          onClick={() => toast.info('Legal summary coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
             color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
@@ -492,7 +493,7 @@ export function PlaybookTimeline() {
       {/* ── Share with Insurance Button ───────────────────────────────────── */}
       <div style={{ marginBottom: 36 }}>
         <button
-          onClick={() => alert('Demo: Incident package would be shared securely with your insurance carrier via encrypted link.')}
+          onClick={() => toast.info('Insurance sharing coming soon')}
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#d4af37',
             color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px',

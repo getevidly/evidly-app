@@ -1,4 +1,5 @@
 import { Shield, ShieldCheck, Download, Printer, Share2, QrCode, Lock } from 'lucide-react';
+import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
 import type { BadgeQualification, BadgeTier } from '../data/benchmarkData';
@@ -73,13 +74,13 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
 
           <div className="flex flex-wrap justify-center gap-1.5">
             <button
-              onClick={() => alert('Badge image downloaded. In production, this generates a PNG via html2canvas.')}
+              onClick={() => toast.success('Badge image downloaded')}
               className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <Download className="h-3 w-3" /> Download
             </button>
             <button
-              onClick={() => alert('Certificate PDF generated. In production, this uses jsPDF to create a printable certificate.')}
+              onClick={() => toast.success('Certificate PDF generated')}
               className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >
               <Printer className="h-3 w-3" /> Certificate
@@ -87,7 +88,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
             <button
               onClick={() => {
                 const post = generateSocialPost(tier, locationName, percentile);
-                navigator.clipboard.writeText(post).then(() => alert('Share text copied to clipboard:\n\n' + post));
+                navigator.clipboard.writeText(post).then(() => toast.success('Share text copied to clipboard'));
               }}
               className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium rounded border border-gray-200 hover:bg-gray-50 text-gray-600"
             >

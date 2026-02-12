@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   BarChart3, TrendingUp, TrendingDown, Award, Share2, Download,
   ChevronDown, ChevronRight, ArrowRight, Star, Shield, Crown,
@@ -206,7 +207,7 @@ export function Benchmarks() {
               <Filter className="h-4 w-4" /> Filters {showFilters ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             </button>
             <button
-              onClick={() => alert('Report download coming in Premium tier.')}
+              onClick={() => toast.info('Report download coming in Premium tier')}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-white"
               style={{ backgroundColor: '#1e4d6b' }}
             >
@@ -632,10 +633,10 @@ export function Benchmarks() {
                     <div className="space-y-2">
                       <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">Qualified</span>
                       <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => alert('Badge image downloaded!')} className="p-1.5 rounded-lg hover:bg-white/50" title="Download">
+                        <button onClick={() => toast.success('Badge image downloaded')} className="p-1.5 rounded-lg hover:bg-white/50" title="Download">
                           <Download className="h-3.5 w-3.5 text-gray-500" />
                         </button>
-                        <button onClick={() => alert('Share link copied to clipboard!')} className="p-1.5 rounded-lg hover:bg-white/50" title="Share">
+                        <button onClick={() => toast.success('Share link copied to clipboard')} className="p-1.5 rounded-lg hover:bg-white/50" title="Share">
                           <Share2 className="h-3.5 w-3.5 text-gray-500" />
                         </button>
                         <button onClick={() => navigate(`/verify/DWN-2024-EXCL`)} className="p-1.5 rounded-lg hover:bg-white/50" title="View public page">
@@ -660,7 +661,7 @@ export function Benchmarks() {
                 {['LinkedIn', 'Facebook', 'X'].map(platform => (
                   <button
                     key={platform}
-                    onClick={() => alert(`Share to ${platform} — coming soon!`)}
+                    onClick={() => toast.info(`Share to ${platform} — coming soon`)}
                     className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 hover:bg-gray-50"
                   >
                     {platform}
@@ -749,7 +750,7 @@ export function Benchmarks() {
           <Users className="h-8 w-8 mx-auto mb-2" style={{ color: '#1e4d6b' }} />
           <h3 className="text-lg font-bold text-gray-900 mb-1">Based on data from 2,340+ commercial kitchens</h3>
           <p className="text-sm text-gray-600 mb-3">The more kitchens on EvidLY, the more accurate your benchmarks become. Share with peers to strengthen the network.</p>
-          <button onClick={() => alert('Referral link copied!')} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => toast.success('Referral link copied')} className="px-4 py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Invite a Peer Kitchen
           </button>
         </div>

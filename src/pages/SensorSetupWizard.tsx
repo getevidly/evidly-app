@@ -6,6 +6,7 @@ import {
   ChevronDown, Mail, Phone, MessageSquare, AlertTriangle,
 } from 'lucide-react';
 import { iotSensorProviders } from '../data/demoData';
+import { toast } from 'sonner';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -334,7 +335,7 @@ export function SensorSetupWizard() {
                       className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600"
                     />
                     <button
-                      onClick={() => { navigator.clipboard.writeText(state.webhookUrl); alert('Webhook URL copied!'); }}
+                      onClick={() => { navigator.clipboard.writeText(state.webhookUrl); toast.success('Webhook URL copied'); }}
                       className="px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50"
                     >
                       Copy

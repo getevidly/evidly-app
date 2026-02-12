@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   LayoutDashboard, MessageSquare, CalendarDays, FileText, Star, BarChart3,
   Shield, ShieldCheck, Award, Eye, TrendingUp, Clock, MapPin, Users,
@@ -216,7 +217,7 @@ export function VendorDashboard() {
           <div className="space-y-2">
             {[
               { label: 'Respond to New Leads', count: vendorLeads.filter(l => l.status === 'new').length, action: () => setActiveTab('leads'), icon: Send, color: 'text-blue-600' },
-              { label: 'View Messages', count: unreadMessages, action: () => alert('Messages panel coming soon!'), icon: MessageSquare, color: 'text-purple-600' },
+              { label: 'View Messages', count: unreadMessages, action: () => toast.info('Messages panel coming soon'), icon: MessageSquare, color: 'text-purple-600' },
               { label: 'Upload Credential', count: expiringCredentials.length, action: () => setActiveTab('documents'), icon: Upload, color: 'text-amber-600' },
               { label: 'Respond to Reviews', count: vendorReviews.filter(r => !r.vendorResponse).length, action: () => setActiveTab('reviews'), icon: Star, color: 'text-yellow-600' },
             ].map(a => (
@@ -340,10 +341,10 @@ export function VendorDashboard() {
               <div className="flex gap-2">
                 {lead.status === 'new' && (
                   <>
-                    <button onClick={() => alert(`Quote form for ${lead.operatorOrg} coming soon! In production, you'd enter your price, availability, and any notes.`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
+                    <button onClick={() => toast.info(`Quote form for ${lead.operatorOrg} coming soon`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
                       <Send className="h-3.5 w-3.5 inline mr-1.5" />Send Quote
                     </button>
-                    <button onClick={() => alert('Lead declined. In production, you could provide a reason and optionally refer to a partner vendor.')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
+                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
                       Decline
                     </button>
                   </>
@@ -352,12 +353,12 @@ export function VendorDashboard() {
                   <span className="text-sm text-purple-600 font-medium flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> Awaiting operator response</span>
                 )}
                 {lead.status === 'accepted' && (
-                  <button onClick={() => alert(`Schedule service for ${lead.operatorOrg}. In production, you'd pick a date, time, and assign a crew.`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
+                  <button onClick={() => toast.info(`Schedule service for ${lead.operatorOrg} (demo)`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
                     <CalendarDays className="h-3.5 w-3.5 inline mr-1.5" />Schedule Service
                   </button>
                 )}
                 {lead.status === 'completed' && (
-                  <button onClick={() => alert('Service completion report with photos, certificates, and compliance updates. Available in production.')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
+                  <button onClick={() => toast.info('Completion report available in production')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
                     View Completion Report
                   </button>
                 )}
@@ -397,16 +398,16 @@ export function VendorDashboard() {
 
               {/* Service Completion Workflow */}
               <div className="flex flex-wrap gap-2">
-                <button onClick={() => alert(`Service marked as started for ${svc.clientOrg}. Your crew is now on-site. Timer started for response tracking.`)} className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service started for ${svc.clientOrg}`)} className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
                   <CheckCircle className="h-3.5 w-3.5" /> Mark Started
                 </button>
-                <button onClick={() => alert('Camera opens for before/after photos. In production, photos are geotagged and timestamped for compliance verification.')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Camera className="h-3.5 w-3.5" /> Upload Photos
                 </button>
-                <button onClick={() => alert('Upload service report/certificate. Supported formats: PDF, JPG, PNG. Document will be auto-linked to operator\'s compliance records.')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Upload className="h-3.5 w-3.5" /> Upload Report
                 </button>
-                <button onClick={() => alert(`Service completed for ${svc.clientOrg}! In production: operator notified, compliance records updated, insurance risk score recalculated.`)} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <ClipboardCheck className="h-3.5 w-3.5" /> Mark Completed
                 </button>
               </div>
@@ -453,10 +454,10 @@ export function VendorDashboard() {
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button onClick={() => alert('Upload new credential. Supported: PDF, JPG, PNG (max 10MB). Your credential will be verified by EvidLY within 24 hours.')} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] flex items-center gap-1.5">
+        <button onClick={() => toast.info('Upload new credential (demo)')} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] flex items-center gap-1.5">
           <Upload className="h-4 w-4" /> Upload Credential
         </button>
-        <button onClick={() => alert('Share credentials with all connected operators. They will receive a notification with your updated documents.')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
           <Send className="h-4 w-4" /> Share with Operators
         </button>
       </div>
@@ -487,7 +488,7 @@ export function VendorDashboard() {
               {cred.verifiedByEvidly && <div className="text-green-600 font-medium">Verified by EvidLY</div>}
             </div>
             <div className="ml-7 mt-3">
-              <button onClick={() => alert(`Update ${cred.name}. Upload a new document to replace the current one.`)} className="text-xs text-[#1e4d6b] font-medium hover:underline">
+              <button onClick={() => toast.info(`Update ${cred.name} (demo)`)} className="text-xs text-[#1e4d6b] font-medium hover:underline">
                 Update Document
               </button>
             </div>
@@ -556,7 +557,7 @@ export function VendorDashboard() {
                 </div>
               ) : (
                 <button
-                  onClick={() => alert('Write your response to this review. In production, your response will be visible on your marketplace profile.')}
+                  onClick={() => toast.info('Write your review response (demo)')}
                   className="mt-3 text-sm text-[#1e4d6b] font-medium hover:underline"
                 >
                   Respond to this review
@@ -744,7 +745,7 @@ export function VendorDashboard() {
                   <button
                     onClick={() => {
                       if (isCurrent) return;
-                      alert(`Upgrade to ${plan.name} coming soon! Contact sales@evidly.com for early access pricing.`);
+                      toast.info(`Upgrade to ${plan.name} coming soon`);
                     }}
                     className={`w-full py-2 text-sm font-medium rounded-lg transition-colors ${
                       isCurrent
@@ -794,7 +795,7 @@ export function VendorDashboard() {
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={() => alert('Notifications: 2 new leads, 1 credential expiring. Full notification center coming soon!')} className="relative p-2 text-gray-500 hover:text-gray-700">
+              <button onClick={() => toast.info('Notification center coming soon')} className="relative p-2 text-gray-500 hover:text-gray-700">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>

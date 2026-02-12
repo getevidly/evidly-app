@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   BookOpen, GraduationCap, Award, Scale, Settings2,
   Search, Filter, Clock, Users, Play, ChevronRight,
@@ -173,7 +174,7 @@ function CourseCatalogTab() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: 12, color: '#9ca3af' }}>Pass: {course.passingScorePercent}%</span>
                   <button
-                    onClick={e => { e.stopPropagation(); alert(`Enrolled in "${course.title}" (demo)`); }}
+                    onClick={e => { e.stopPropagation(); toast.success(`Enrolled in "${course.title}"`);; }}
                     style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                     <Play size={14} /> Enroll
                   </button>
@@ -265,7 +266,7 @@ function MyLearningTab() {
               const isUrgent = days !== null && days <= 14;
               return (
                 <div key={e.id} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb', cursor: 'pointer' }}
-                  onClick={() => alert(`Resume "${e.courseTitle}" for ${e.employeeName} (demo)`)}>
+                  onClick={() => toast.info(`Resume "${e.courseTitle}" (demo)`)}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{e.employeeName}</div>
@@ -286,7 +287,7 @@ function MyLearningTab() {
                       <div style={{ width: `${e.progressPercent}%`, height: '100%', background: isUrgent ? '#dc2626' : '#1e4d6b', borderRadius: 4, transition: 'width 0.3s' }} />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1e4d6b', minWidth: 36 }}>{e.progressPercent}%</span>
-                    <button onClick={ev => { ev.stopPropagation(); alert(`Resume learning (demo)`); }}
+                    <button onClick={ev => { ev.stopPropagation(); toast.info('Resume learning (demo)'); }}
                       style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                       <Play size={12} /> Resume
                     </button>
@@ -322,7 +323,7 @@ function MyLearningTab() {
                         Due in {days}d
                       </span>
                     )}
-                    <button onClick={() => alert(`Start "${e.courseTitle}" for ${e.employeeName} (demo)`)}
+                    <button onClick={() => toast.info(`Start "${e.courseTitle}" (demo)`)}
                       style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                       <Play size={12} /> Start
                     </button>
@@ -457,11 +458,11 @@ function CertificationsTab() {
                     </td>
                     <td style={{ padding: '12px 14px' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button onClick={() => alert(`View certificate ${cert.certificateNumber} (demo)`)}
+                        <button onClick={() => toast.info(`View certificate ${cert.certificateNumber} (demo)`)}
                           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                           <Eye size={14} color="#6b7280" />
                         </button>
-                        <button onClick={() => alert(`Download certificate ${cert.certificateNumber} (demo)`)}
+                        <button onClick={() => toast.info(`Download certificate ${cert.certificateNumber} (demo)`)}
                           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                           <Download size={14} color="#6b7280" />
                         </button>
@@ -582,7 +583,7 @@ function SB476TrackerTab() {
 
       {/* Export Button */}
       <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={() => alert('Export SB 476 report as CSV (demo)')}
+        <button onClick={() => toast.info('Export SB 476 report as CSV (demo)')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Download size={14} /> Export Report
         </button>
@@ -624,7 +625,7 @@ function AdminTab() {
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Send size={16} /> Assign Training
         </button>
-        <button onClick={() => alert('Bulk enroll employees (demo)')}
+        <button onClick={() => toast.info('Bulk enroll employees (demo)')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Plus size={16} /> Bulk Enroll
         </button>
@@ -632,7 +633,7 @@ function AdminTab() {
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <BookOpen size={16} /> Create Course
         </button>
-        <button onClick={() => alert('Download all training records (demo)')}
+        <button onClick={() => toast.info('Download all training records (demo)')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Download size={16} /> Export Records
         </button>
@@ -839,7 +840,7 @@ function PricingTab() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => alert(`Contact sales for ${tier.name} plan (demo)`)}
+              <button onClick={() => toast.info(`Contact sales for ${tier.name} plan`)}
                 style={{ width: '100%', padding: '10px 16px', borderRadius: 8, border: tier.popular ? 'none' : `1px solid ${tier.color}`, background: tier.popular ? tier.color : '#fff', color: tier.popular ? '#fff' : tier.color, fontSize: 14, fontWeight: 600, cursor: 'pointer', marginTop: 20, fontFamily: "'DM Sans', sans-serif" }}>
                 {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
               </button>
@@ -969,7 +970,7 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
             style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             Cancel
           </button>
-          <button onClick={() => { alert(`Assigned training to ${selected.size} employees (demo)`); onClose(); }}
+          <button onClick={() => { toast.success(`Assigned training to ${selected.size} employees`); onClose(); }}
             style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             <Send size={14} style={{ marginRight: 6 }} /> Assign
           </button>
@@ -1046,7 +1047,7 @@ export function TrainingHub() {
             <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => alert('AI Study Companion — ask questions about any training topic (demo)')}
+            <button onClick={() => toast.info('AI Study Companion coming soon')}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={14} /> AI Study Companion
             </button>

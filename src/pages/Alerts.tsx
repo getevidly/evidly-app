@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
@@ -275,7 +276,7 @@ export function Alerts() {
 
   const handleResolveSubmit = () => {
     if (!resolutionNotes.trim() || !resolutionType) {
-      window.alert('Please provide resolution type and action taken');
+      toast.warning('Please provide resolution type and action taken');
       return;
     }
 
@@ -327,7 +328,7 @@ export function Alerts() {
       a.id === alertId ? { ...a, assigned_to: memberName } : a
     ));
     setOpenReassignDropdown(null);
-    window.alert(`Reassigned to ${memberName}`);
+    toast.success(`Reassigned to ${memberName}`);
   };
 
   const handleDismiss = (alertId: string) => {

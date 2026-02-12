@@ -13,6 +13,7 @@ import {
   type TrainingCourse as TCourse, type TrainingModule, type TrainingEnrollment,
   type TrainingCategory,
 } from '../data/demoData';
+import { toast } from 'sonner';
 
 type ViewState = 'overview' | 'lesson' | 'quiz' | 'certificate';
 
@@ -411,7 +412,7 @@ function CertificateView({ cert, course }: { cert: TrainingCertificate; course: 
           </div>
         )}
       </div>
-      <button onClick={() => alert('Download certificate PDF (demo)')}
+      <button onClick={() => toast.info('Certificate PDF download (demo)')}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
         <Download size={16} /> Download PDF
       </button>

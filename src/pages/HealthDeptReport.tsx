@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   FileText, Download, Eye, AlertTriangle, CheckCircle, XCircle,
@@ -140,19 +141,19 @@ export function HealthDeptReport() {
   };
 
   const handleDownloadPDF = () => {
-    alert('PDF download initiated! In production, this generates a formatted PDF using jsPDF with the county-specific template applied.');
+    toast.success('PDF download initiated');
   };
 
   const handleShare = (method: string) => {
     setShowShareModal(false);
     if (method === 'link') {
-      alert('Shareable link created! Link expires in 7 days.\nhttps://evidly-app.vercel.app/shared/' + (generatedReport?.id || 'RPT-DEMO'));
+      toast.success('Shareable link created (expires in 7 days)');
     } else if (method === 'email-health-dept') {
-      alert('Report emailed to Fresno County Health Department at envhealth@co.fresno.ca.us');
+      toast.success('Report emailed to Health Department');
     } else if (method === 'email-insurance') {
-      alert('Report emailed to insurance broker.');
+      toast.success('Report emailed to insurance broker');
     } else if (method === 'email-corporate') {
-      alert('Report shared with corporate/franchisor.');
+      toast.success('Report shared with corporate/franchisor');
     }
   };
 
@@ -945,14 +946,14 @@ export function HealthDeptReport() {
                         <td className="px-6 py-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button
-                              onClick={() => alert(`Downloading report ${report.id}...`)}
+                              onClick={() => toast.success(`Downloading report ${report.id}`)}
                               className="text-[#1e4d6b] hover:text-[#163a52]"
                               title="Download PDF"
                             >
                               <Download className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => alert(`Sharing report ${report.id}...`)}
+                              onClick={() => toast.success(`Sharing report ${report.id}`)}
                               className="text-[#1e4d6b] hover:text-[#163a52]"
                               title="Share"
                             >

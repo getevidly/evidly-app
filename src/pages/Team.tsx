@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
@@ -222,7 +223,7 @@ export function Team() {
 
   const resendInvitation = async (invitation: Invitation, method?: 'email' | 'sms') => {
     if (!profile?.organization_id) {
-      window.alert('Invitation resent. (Demo mode — no actual invite sent.)');
+      toast.success("Invitation resent (demo)");
       return;
     }
     try {
@@ -617,7 +618,7 @@ export function Team() {
                 <button
                   onClick={() => {
                     if (!tempForm.userId || !tempForm.locationId || !tempForm.startDate || !tempForm.endDate) {
-                      alert('Please fill in all fields.');
+                      toast.warning("Please fill in all fields");
                       return;
                     }
                     addTempCoverage({

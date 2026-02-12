@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Mail, UserPlus, Smartphone } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { toast } from 'sonner';
 
 interface TeamInviteModalProps {
   isOpen: boolean;
@@ -49,7 +50,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent 
     // Demo mode: no org ID means we're in demo
     if (!organizationId) {
       setLoading(false);
-      alert(`Invitation sent to ${email || phone} as ${role}. (Demo mode — no actual invite sent.)`);
+      toast.success(`Invitation sent to ${email || phone} as ${role}`);
       setEmail('');
       setPhone('');
       setRole('Staff');

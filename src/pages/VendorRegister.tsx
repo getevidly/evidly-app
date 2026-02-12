@@ -4,6 +4,7 @@ import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useDemo } from '../contexts/DemoContext';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { toast } from 'sonner';
 
 const SERVICE_TYPES = [
   'Hood Cleaning',
@@ -106,7 +107,7 @@ export function VendorRegister() {
     // Demo mode: simulate success without writing to database
     if (isDemoMode) {
       setLoading(false);
-      alert('Vendor account created successfully! (Demo mode)');
+      toast.success('Vendor account created (demo mode)');
       navigate('/vendor/dashboard');
       return;
     }

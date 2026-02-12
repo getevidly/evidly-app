@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import {
   Thermometer, Wifi, WifiOff, Battery, BatteryWarning, BatteryCharging,
   AlertTriangle, CheckCircle, XCircle, Clock, Activity, Settings as SettingsIcon,
@@ -286,7 +287,7 @@ export function IoTSensorHub() {
             <button onClick={() => setShowWizard(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
               <Plus className="h-4 w-4" /> Add Sensor
             </button>
-            <button onClick={() => alert('Sign out clicked (demo)')} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+            <button onClick={() => toast.info('Sign out clicked (demo)')} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
               <LogOut className="h-4 w-4" /> Sign Out
             </button>
           </div>
@@ -491,7 +492,7 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
           <option value="offline">Offline</option>
           <option value="error">Error</option>
         </select>
-        <button onClick={() => alert('Bulk actions: Export CSV, Firmware Update, Recalibrate (demo)')} className="px-3 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => toast.info('Bulk actions: Export, Update, Recalibrate (demo)')} className="px-3 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
           Bulk Actions <ChevronDown className="h-3 w-3 inline ml-1" />
         </button>
       </div>
@@ -552,7 +553,7 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <button onClick={() => onViewDetail(sensor.id)} className="text-gray-400 hover:text-[#1e4d6b]" title="View detail"><Eye className="h-4 w-4" /></button>
-                        <button onClick={() => alert(`Configure ${sensor.name} (demo)`)} className="text-gray-400 hover:text-[#1e4d6b]" title="Configure"><MoreHorizontal className="h-4 w-4" /></button>
+                        <button onClick={() => toast.info(`Configure ${sensor.name} (demo)`)} className="text-gray-400 hover:text-[#1e4d6b]" title="Configure"><MoreHorizontal className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
@@ -587,7 +588,7 @@ function AlertsTab() {
       <div className="flex-1">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-900">Active Alerts ({iotSensorAlerts.filter(a => !a.acknowledged).length})</h2>
-          <button onClick={() => alert('Acknowledge all alerts (demo)')} className="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => toast.success('All alerts acknowledged (demo)')} className="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Acknowledge All
           </button>
         </div>
@@ -614,7 +615,7 @@ function AlertsTab() {
                   </div>
                 </div>
                 {!alert.acknowledged && (
-                  <button onClick={() => window.alert(`Acknowledged alert for ${alert.sensorName} (demo)`)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 hover:bg-gray-50 text-gray-600 flex-shrink-0">
+                  <button onClick={() => toast.success(`Acknowledged alert for ${alert.sensorName}`)} className="px-3 py-1.5 rounded-lg text-xs font-medium border border-gray-200 hover:bg-gray-50 text-gray-600 flex-shrink-0">
                     Acknowledge
                   </button>
                 )}
@@ -646,7 +647,7 @@ function AlertsTab() {
               </div>
             ))}
           </div>
-          <button onClick={() => alert('Thresholds saved (demo)')} className="w-full mt-4 px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => toast.success('Thresholds saved (demo)')} className="w-full mt-4 px-4 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Save Thresholds
           </button>
         </div>
@@ -684,7 +685,7 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
                   </div>
                 </div>
                 {provider.status !== 'available' ? (
-                  <button onClick={() => alert(`Configure ${provider.name} integration (demo)`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600">
+                  <button onClick={() => toast.info(`Configure ${provider.name} integration (demo)`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600">
                     Configure
                   </button>
                 ) : (
@@ -931,7 +932,7 @@ function SettingsTab() {
           <p className="text-xs text-gray-500 mb-3">Configure your sensor platforms to push data to this URL. Include your API key in the X-API-Key header.</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm font-mono text-gray-700 truncate">{webhookUrl}</code>
-            <button onClick={() => { navigator.clipboard.writeText(webhookUrl).then(() => alert('Webhook URL copied to clipboard!')); }} className="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50">
+            <button onClick={() => { navigator.clipboard.writeText(webhookUrl).then(() => toast.success('Webhook URL copied to clipboard')); }} className="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50">
               <Copy className="h-4 w-4 text-gray-500" />
             </button>
           </div>
@@ -1002,13 +1003,13 @@ Content-Type: application/json
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => alert('Export all sensor data as CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => toast.info('Export sensor data as CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Download className="h-4 w-4" /> Export CSV
             </button>
-            <button onClick={() => alert('Export all sensor data as JSON (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => toast.info('Export sensor data as JSON (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Download className="h-4 w-4" /> Export JSON
             </button>
-            <button onClick={() => alert('Import sensor configuration from CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => toast.info('Import sensor config from CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Upload className="h-4 w-4" /> Import Config
             </button>
           </div>
@@ -1016,7 +1017,7 @@ Content-Type: application/json
 
         {/* Save */}
         <div className="flex justify-end">
-          <button onClick={() => alert('Settings saved successfully (demo)')} className="px-6 py-2.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => toast.success('Settings saved (demo)')} className="px-6 py-2.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Save All Settings
           </button>
         </div>
@@ -1147,7 +1148,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                       </div>
                     </div>
                     <p className="text-xs text-purple-700 mb-3">Clicking "Authorize" will redirect you to {selectedProv.name}'s login page. After granting access, you'll be redirected back to EvidLY.</p>
-                    <button onClick={() => alert(`OAuth redirect to ${selectedProv.name} authorization page (demo)\n\nIn production, this would redirect to:\n${selectedProv.apiBaseUrl}/oauth/authorize?client_id=evidly&scope=read_sensors`)} className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-purple-600 hover:bg-purple-700">
+                    <button onClick={() => toast.info(`OAuth redirect to ${selectedProv.name} (demo)`)} className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-purple-600 hover:bg-purple-700">
                       Authorize with {selectedProv.name}
                     </button>
                   </div>
@@ -1420,7 +1421,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
               Next <ChevronRight className="h-4 w-4" />
             </button>
           ) : (
-            <button onClick={() => { alert('Integration configured successfully! Sensor data will begin syncing shortly. (demo)'); onClose(); }} className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#22c55e' }}>
+            <button onClick={() => { toast.success('Integration configured, syncing shortly'); onClose(); }} className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#22c55e' }}>
               <CheckCircle className="h-4 w-4" /> Complete Setup
             </button>
           )}
@@ -1742,7 +1743,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                 ))}
               </div>
             )}
-            <button onClick={() => alert('Add maintenance entry (demo)')} className="w-full mt-3 px-3 py-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center justify-center gap-1.5">
+            <button onClick={() => toast.info('Add maintenance entry (demo)')} className="w-full mt-3 px-3 py-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 flex items-center justify-center gap-1.5">
               <Plus className="h-3.5 w-3.5" /> Add Entry
             </button>
           </div>
@@ -1751,19 +1752,19 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h3 className="text-sm font-bold text-gray-900 mb-3">Actions</h3>
             <div className="space-y-2">
-              <button onClick={() => alert('Edit thresholds for this sensor (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
+              <button onClick={() => toast.info('Edit thresholds for this sensor (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
                 <SettingsIcon className="h-4 w-4 text-gray-400" /> Edit Thresholds
               </button>
-              <button onClick={() => alert('Edit alert recipients (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
+              <button onClick={() => toast.info('Edit alert recipients (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
                 <Bell className="h-4 w-4 text-gray-400" /> Edit Alert Recipients
               </button>
-              <button onClick={() => alert('Reassign kitchen zone (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
+              <button onClick={() => toast.info('Reassign kitchen zone (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">
                 <Layers className="h-4 w-4 text-gray-400" /> Reassign Zone
               </button>
-              <button onClick={() => alert('Sensor monitoring paused (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 border border-amber-200">
+              <button onClick={() => toast.warning('Sensor monitoring paused (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-50 border border-amber-200">
                 <Pause className="h-4 w-4" /> Pause Monitoring
               </button>
-              <button onClick={() => alert('Are you sure? This will remove the sensor from your fleet. (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-red-700 hover:bg-red-50 border border-red-200">
+              <button onClick={() => toast.warning('Sensor removal requested (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-red-700 hover:bg-red-50 border border-red-200">
                 <Trash2 className="h-4 w-4" /> Remove Sensor
               </button>
             </div>

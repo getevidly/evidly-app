@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, ExternalLink, Upload, Share2,
   CheckCircle2, Square, Calendar, Shield, AlertTriangle,
@@ -329,7 +330,7 @@ export function RegulatoryAlerts() {
                             <span className={action.completed ? 'text-gray-500' : 'text-gray-700'}>{action.text}</span>
                             {!action.completed && action.actionType === 'upload' && (
                               <button
-                                onClick={() => window.alert('File upload dialog would open here. (Demo mode)')}
+                                onClick={() => toast.info("File upload coming soon")}
                                 className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
                               >
                                 <Upload className="w-3 h-3" />
@@ -362,7 +363,7 @@ export function RegulatoryAlerts() {
                     )}
                     {/* TODO: Wire to Resend for team share emails */}
                     <button
-                      onClick={() => window.alert('Team notification sent. (Demo mode)')}
+                      onClick={() => toast.success("Team notification sent")}
                       className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
                     >
                       <Share2 className="w-3.5 h-3.5" />

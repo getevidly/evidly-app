@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import { useSearchParams } from 'react-router-dom';
 import {
   Network, ChevronRight, ChevronDown, MapPin, Settings,
@@ -280,9 +281,9 @@ export function OrgHierarchy() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => alert('Hierarchy configuration saved (demo)')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
-            <button onClick={() => alert('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
-            <button onClick={() => alert('Remove hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">- Remove Level</button>
+            <button onClick={() => toast.success('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
+            <button onClick={() => toast.info('Add hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
+            <button onClick={() => toast.info('Remove hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">- Remove Level</button>
           </div>
         </div>
       )}

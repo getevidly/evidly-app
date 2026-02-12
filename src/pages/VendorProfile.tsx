@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   ArrowLeft, Star, Clock, MapPin, Shield, ShieldCheck, Award,
   Phone, Mail, Globe, CheckCircle, XCircle, Calendar, MessageSquare,
@@ -127,10 +128,7 @@ export function VendorProfile() {
 
   // ── Modal submit ────────────────────────────────────────────
   function handleSubmitRequest() {
-    alert(
-      'Service request submitted to ' + vendor!.companyName +
-      '. They typically respond within ' + vendor!.responseTimeHours + ' hours.',
-    );
+    toast.success(`Request sent to ${vendor!.companyName}`);
     setShowRequestModal(false);
     setRequestForm({ serviceType: '', location: '', preferredDates: '', description: '', urgency: 'Normal' });
   }
@@ -188,7 +186,7 @@ export function VendorProfile() {
                 <Send className="h-4 w-4" /> Request Quote
               </button>
               <button
-                onClick={() => alert('Messaging feature coming soon.')}
+                onClick={() => toast.info("Messaging feature coming soon")}
                 className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor
@@ -423,7 +421,7 @@ export function VendorProfile() {
             {/* Write a Review button */}
             <div className="mb-6">
               <button
-                onClick={() => alert('Reviews can only be submitted after a completed service.')}
+                onClick={() => toast.info("Reviews require a completed service")}
                 className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 <MessageSquare className="h-4 w-4" /> Write a Review

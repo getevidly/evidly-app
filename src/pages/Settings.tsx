@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -250,7 +251,7 @@ export function Settings() {
                 </select>
               </div>
 
-              <button onClick={() => alert('Profile saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Profile saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -275,7 +276,7 @@ export function Settings() {
                   </div>
                   <div>
                     <button
-                      onClick={() => alert('Logo upload coming soon. (Demo mode)')}
+                      onClick={() => toast.info('Logo upload coming soon')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.chooseFile')}
@@ -325,14 +326,14 @@ export function Settings() {
                   ))}
                 </div>
                 <button
-                  onClick={() => alert('Add location coming soon. (Demo mode)')}
+                  onClick={() => toast.info('Add location coming soon')}
                   className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
                 >
                   {t('settings.addLocation')}
                 </button>
               </div>
 
-              <button onClick={() => alert('Organization settings saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Organization settings saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -603,7 +604,7 @@ export function Settings() {
                     </div>
                   ))}
                   <button
-                    onClick={() => alert('Custom jurisdiction added. (Demo mode)')}
+                    onClick={() => toast.success('Custom jurisdiction added')}
                     className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"
                   >
                     + Add Custom Jurisdiction
@@ -611,7 +612,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => alert('Regulatory monitoring preferences saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Regulatory monitoring preferences saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -661,7 +662,7 @@ export function Settings() {
                       <label className="text-xs font-medium text-gray-500">County:</label>
                       <select
                         defaultValue={loc.detectedSlug}
-                        onChange={() => alert(`Jurisdiction override saved for ${loc.name}. Scores will recalculate.`)}
+                        onChange={() => toast.success(`Jurisdiction override saved for ${loc.name}`)}
                         className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
                       >
                         {availableCounties.map(c => (
@@ -685,7 +686,7 @@ export function Settings() {
                   <input
                     type="checkbox"
                     defaultChecked={true}
-                    onChange={() => alert('Dashboard display preference saved.')}
+                    onChange={() => toast.success('Dashboard display preference saved')}
                     className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
                   />
                 </label>
@@ -700,7 +701,7 @@ export function Settings() {
                   <input
                     type="checkbox"
                     defaultChecked={true}
-                    onChange={() => alert('Report inclusion preference saved.')}
+                    onChange={() => toast.success('Report inclusion preference saved')}
                     className="w-5 h-5 text-[#1e4d6b] border-gray-300 rounded focus:ring-[#1e4d6b]"
                   />
                 </label>
@@ -713,7 +714,7 @@ export function Settings() {
                 <select
                   defaultValue=""
                   onChange={(e) => {
-                    if (e.target.value) alert(`Manual jurisdiction set to ${e.target.value}. Apply this to specific locations using the dropdowns above.`);
+                    if (e.target.value) toast.success(`Manual jurisdiction set to ${e.target.value}`);
                   }}
                   className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
                 >
@@ -754,7 +755,7 @@ export function Settings() {
                     </div>
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => alert('Insurance data sharing is currently disabled. Enable it from the Insurance Settings page.')}
+                        onClick={() => toast.info('Insurance data sharing is currently disabled')}
                         className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors"
                       >
                         <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
@@ -795,7 +796,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => alert('Restaurant365 integration coming soon. Contact support for early access.')}
+                      onClick={() => toast.info('Restaurant365 integration coming soon')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -820,7 +821,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => alert('Cintas integration coming soon. Contact support for early access.')}
+                      onClick={() => toast.info('Cintas integration coming soon')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -845,7 +846,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => alert('Ecolab integration coming soon. Contact support for early access.')}
+                      onClick={() => toast.info('Ecolab integration coming soon')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -1129,7 +1130,7 @@ export function Settings() {
               </div>
 
               {canEditHours && (
-                <button onClick={() => alert('Hours and shifts saved.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => toast.success('Hours and shifts saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                   {t('settings.saveChanges')}
                 </button>
               )}
@@ -1170,7 +1171,7 @@ export function Settings() {
                   <button
                     onClick={() => {
                       setBenchmarkOptIn(!benchmarkOptIn);
-                      alert(benchmarkOptIn ? 'You have opted out of benchmarking. Your data will no longer appear in aggregated comparisons.' : 'You have opted in to benchmarking. Your anonymized data will contribute to industry benchmarks.');
+                      toast.success(benchmarkOptIn ? 'Opted out of benchmarking' : 'Opted in to benchmarking');
                     }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0 ${benchmarkOptIn ? 'bg-green-500' : 'bg-gray-300'}`}
                   >
@@ -1395,7 +1396,7 @@ export function Settings() {
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-red-600 font-medium">Are you sure?</span>
                       <button
-                        onClick={async () => { await clearOfflineData(); setClearConfirm(false); alert('Offline data cleared.'); }}
+                        onClick={async () => { await clearOfflineData(); setClearConfirm(false); toast.success('Offline data cleared'); }}
                         className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors cursor-pointer"
                       >
                         Yes, Clear

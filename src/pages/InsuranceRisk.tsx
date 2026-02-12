@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   Shield,
   Flame,
@@ -848,7 +849,7 @@ export function InsuranceRisk() {
                   : locations.find(l => l.urlId === locationParam)?.name || locationParam;
                 await generateInsuranceReportPDF(riskResult, locLabel);
               } catch {
-                alert('PDF generation failed. Please try again.');
+                toast.error("PDF generation failed. Please try again");
               } finally {
                 setPdfLoading(false);
               }

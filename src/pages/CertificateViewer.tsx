@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Award, Download, Eye, Search, Filter,
@@ -89,11 +90,11 @@ function CertificateCard({ cert, onView }: { cert: TrainingCertificate; onView: 
             style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Eye size={14} /> View
           </button>
-          <button onClick={() => alert(`Download certificate ${cert.certificateNumber} as PDF (demo)`)}
+          <button onClick={() => toast.success(`Downloaded ${cert.certificateNumber}`)}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', minHeight: 48 }}>
             <Download size={16} color="#6b7280" />
           </button>
-          <button onClick={() => alert(`Print certificate ${cert.certificateNumber} (demo)`)}
+          <button onClick={() => toast.info(`Print ${cert.certificateNumber} — demo mode`)}
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 14px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', minHeight: 48 }}>
             <Printer size={16} color="#6b7280" />
           </button>
@@ -147,11 +148,11 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
         </div>
         {/* Modal Actions */}
         <div style={{ padding: '16px 32px 24px', display: 'flex', gap: 12, justifyContent: 'center', borderTop: '1px solid #e5e7eb' }}>
-          <button onClick={() => alert(`Download PDF for ${cert.certificateNumber} (demo)`)}
+          <button onClick={() => toast.success(`Downloaded ${cert.certificateNumber}`)}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Download size={16} /> Download PDF
           </button>
-          <button onClick={() => alert(`Print ${cert.certificateNumber} (demo)`)}
+          <button onClick={() => toast.info(`Print ${cert.certificateNumber} — demo mode`)}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Printer size={16} /> Print
           </button>
@@ -204,7 +205,7 @@ export function CertificateViewer() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Certificate Manager</h1>
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>View, download, and manage all training certificates</p>
         </div>
-        <button onClick={() => alert('Bulk download all certificates as ZIP (demo)')}
+        <button onClick={() => toast.info('Bulk download — demo mode')}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
           <Download size={16} /> Bulk Download
         </button>

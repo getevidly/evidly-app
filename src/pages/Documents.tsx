@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
 import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -331,7 +332,7 @@ export function Documents() {
             {docPhotos.length > 0 && (
               <div className="mt-3 space-y-3">
                 <button
-                  onClick={() => { alert('Document photo saved. It will appear in your documents list after processing.'); setShowPhotoCapture(false); setDocPhotos([]); }}
+                  onClick={() => { toast.success('Document photo saved'); setShowPhotoCapture(false); setDocPhotos([]); }}
                   className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                 >
                   Save Document Photo
@@ -620,7 +621,7 @@ export function Documents() {
                                   <Download className="h-4 w-4" />
                                 </button>
                                 <button
-                                  onClick={() => alert(`"${doc.title}" deleted.`)}
+                                  onClick={() => toast.success(`"${doc.title}" deleted`)}
                                   className="text-red-600 hover:text-red-800"
                                   title="Delete"
                                 >

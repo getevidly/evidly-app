@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, Crown, ExternalLink, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { PLANS, createCheckoutSession, createPortalSession, type Plan } from '../lib/stripe';
@@ -15,12 +16,12 @@ export function BillingPanel() {
 
   const handleSubscribe = async (plan: Plan) => {
     if (isDemoMode) {
-      alert('Stripe checkout would open in production. Subscribe at app.getevidly.com');
+      toast.info('Stripe checkout available in production');
       return;
     }
 
     if (!plan.priceId) {
-      alert('Please contact sales@getevidly.com for Enterprise pricing.');
+      toast.info('Contact sales@getevidly.com for Enterprise pricing');
       return;
     }
 
@@ -32,7 +33,7 @@ export function BillingPanel() {
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      alert('Failed to start checkout. Please try again.');
+      toast.error('Failed to start checkout. Please try again');
     } finally {
       setLoading(null);
     }
@@ -40,7 +41,7 @@ export function BillingPanel() {
 
   const handleManageSubscription = async () => {
     if (isDemoMode) {
-      alert('Stripe billing portal would open in production. Manage your subscription at app.getevidly.com');
+      toast.info('Billing portal available in production');
       return;
     }
 
@@ -52,7 +53,7 @@ export function BillingPanel() {
       }
     } catch (err) {
       console.error('Portal error:', err);
-      alert('Failed to open billing portal. Please try again.');
+      toast.error('Failed to open billing portal. Please try again');
     } finally {
       setPortalLoading(false);
     }

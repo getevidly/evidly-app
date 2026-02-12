@@ -1,5 +1,6 @@
 import { Target, ArrowRight, TrendingUp, TrendingDown, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { getBenchmarkComparison, getPercentile } from '../data/benchmarkData';
 import { getBadgeColor, getBadgeLabel } from '../lib/benchmarkBadges';
 
@@ -139,7 +140,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
             Full Report
           </button>
           <button
-            onClick={() => alert('Share your benchmark ranking via email, LinkedIn, or download a certificate from the full Benchmarks page.')}
+            onClick={() => toast.info("Share from the full Benchmarks page")}
             className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors hover:bg-gray-50"
             style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
           >

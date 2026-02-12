@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/industryTemplates';
+import { toast } from 'sonner';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: Shield },
@@ -412,7 +413,7 @@ export function Onboarding() {
             <div className="bg-white p-8 rounded-lg border border-gray-300 text-center">
               <QrCode className="h-32 w-32 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">Your QR codes will be generated after setup</p>
-              <button onClick={() => alert('QR codes will be generated after setup is complete.')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
+              <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
                 Preview QR Codes
               </button>
             </div>

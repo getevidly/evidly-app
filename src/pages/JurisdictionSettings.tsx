@@ -1,5 +1,6 @@
 // TODO: i18n
 import { type ReactNode, useState } from 'react';
+import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, MapPin, Shield, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
@@ -499,7 +500,7 @@ export function JurisdictionSettings() {
   // Handle adding a new location from the dialog
   const handleAddLocation = (config: LocationJurisdictionConfig) => {
     setAddedLocations(prev => [...prev, config]);
-    alert(`Location "${config.locationName}" added with ${config.jurisdictionChain.length}-level jurisdiction chain. ${config.regulations.length} regulations applied. (Demo mode — in production this saves to the database)`);
+    toast.success(`"${config.locationName}" added with ${config.regulations.length} regulations`);
   };
 
   // Toggle a regulation override for a location
@@ -1303,16 +1304,14 @@ export function JurisdictionSettings() {
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3">
                   <button
                     onClick={() =>
-                      alert(
-                        'Override controls available for Management and Executive roles. (Demo mode)'
-                      )
+                      toast.info('Override available for Management roles')
                     }
                     className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
                   >
                     Override
                   </button>
                   <button
-                    onClick={() => alert('Reset to jurisdiction defaults. (Demo mode)')}
+                    onClick={() => toast.info('Reset to defaults coming soon')}
                     className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 flex items-center gap-1.5"
                   >
                     <RotateCcw className="w-3 h-3" />
@@ -1370,7 +1369,7 @@ export function JurisdictionSettings() {
                         <p className="text-xs text-gray-500">{gap.detail}</p>
                       </div>
                       <button
-                        onClick={() => alert(`${gap.action || 'Action'} (Demo mode)`)}
+                        onClick={() => toast.info(`${gap.action || 'Action'} coming soon`)}
                         className="px-3 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
                       >
                         {getGapActionLabel(gap.category)}
@@ -1429,7 +1428,7 @@ export function JurisdictionSettings() {
                       </p>
                     </div>
                     <button
-                      onClick={() => alert(`Preparing compliance plan for ${law.billNumber}: ${law.name}. (Demo mode)`)}
+                      onClick={() => toast.info(`Compliance plan for ${law.billNumber} coming soon`)}
                       className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
                       style={{ backgroundColor: '#1e4d6b' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}

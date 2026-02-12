@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
+import { toast } from 'sonner';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -457,7 +458,7 @@ export function TempLogs() {
     const isWithinRange = tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
     if (!isWithinRange && !correctiveAction.trim()) {
-      alert('Corrective action is required when temperature is out of range');
+      toast.warning('Corrective action required for out-of-range temp');
       return;
     }
 
@@ -546,7 +547,7 @@ export function TempLogs() {
     const validEntries = batchEntries.filter(entry => !entry.skipped && entry.temperature);
 
     if (validEntries.length === 0) {
-      alert('Please log at least one temperature');
+      toast.warning('Please log at least one temperature');
       return;
     }
 
@@ -631,12 +632,12 @@ export function TempLogs() {
 
   const handleFinalizeReceiving = async () => {
     if (receivingItems.length === 0) {
-      alert('Please add at least one item');
+      toast.warning('Please add at least one item');
       return;
     }
 
     if (!vendorName || !receivedBy) {
-      alert('Please complete all required fields');
+      toast.warning('Please complete all required fields');
       return;
     }
 
@@ -1072,7 +1073,7 @@ export function TempLogs() {
 
     const currentTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
     if (currentTemp > 41) {
-      alert('Cannot complete cooldown - temperature must be 41°F or below');
+      toast.warning('Temperature must be 41°F or below to complete');
       return;
     }
 

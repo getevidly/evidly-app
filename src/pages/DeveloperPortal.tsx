@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, BookOpen, Key, Code2, Webhook, FlaskConical,
@@ -365,7 +366,7 @@ function SandboxSection() {
               <div className="text-[10px] text-gray-500 mb-1">Test API Key</div>
               <div className="bg-gray-50 rounded px-3 py-2 flex items-center justify-between">
                 <code className="text-xs font-mono text-gray-700">evd_sandbox_sk_test_••••••••</code>
-                <button onClick={() => alert('Demo: Key copied')} className="text-gray-400 hover:text-gray-600"><Copy className="h-3 w-3" /></button>
+                <button onClick={() => toast.info('Demo: Key copied')} className="text-gray-400 hover:text-gray-600"><Copy className="h-3 w-3" /></button>
               </div>
             </div>
           </div>
@@ -543,7 +544,7 @@ function PricingSection() {
               ))}
             </ul>
             <button
-              onClick={() => alert(`Demo: Would start ${tier.name} API plan signup`)}
+              onClick={() => toast.info(`Demo: ${tier.name} plan signup preview`)}
               className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors ${tier.highlight ? 'bg-[#d4af37] text-[#1e4d6b] hover:bg-[#c4a030]' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
             >
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}

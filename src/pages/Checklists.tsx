@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -526,13 +527,13 @@ export function Checklists() {
       if (templateError) {
         console.error('Template creation error:', templateError);
         setLoading(false);
-        alert(`Error creating template: ${templateError.message}`);
+        toast.error(`Error creating template: ${templateError.message}`);
         return;
       }
 
       if (!templateData) {
         setLoading(false);
-        alert('Error: No data returned after creating template');
+        toast.error('No data returned after creating template');
         return;
       }
 
@@ -550,9 +551,9 @@ export function Checklists() {
 
       if (itemsError) {
         console.error('Items creation error:', itemsError);
-        alert(`Error creating template items: ${itemsError.message}`);
+        toast.error(`Error creating template items: ${itemsError.message}`);
       } else {
-        alert('Template created!');
+        toast.success('Template created');
       }
 
       setLoading(false);
@@ -560,7 +561,7 @@ export function Checklists() {
     } catch (error) {
       console.error('Unexpected error:', error);
       setLoading(false);
-      alert('An unexpected error occurred');
+      toast.error('An unexpected error occurred');
     }
   };
 
@@ -586,7 +587,7 @@ export function Checklists() {
   const handleCreateTemplate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) {
-      alert('Please add at least one item to the checklist');
+      toast.warning('Please add at least one item to the checklist');
       return;
     }
 
@@ -650,13 +651,13 @@ export function Checklists() {
       if (templateError) {
         console.error('Template creation error:', templateError);
         setLoading(false);
-        alert(`Error creating template: ${templateError.message}`);
+        toast.error(`Error creating template: ${templateError.message}`);
         return;
       }
 
       if (!templateData) {
         setLoading(false);
-        alert('Error: No data returned after creating template');
+        toast.error('No data returned after creating template');
         return;
       }
 
@@ -674,9 +675,9 @@ export function Checklists() {
 
       if (itemsError) {
         console.error('Items creation error:', itemsError);
-        alert(`Error creating template items: ${itemsError.message}`);
+        toast.error(`Error creating template items: ${itemsError.message}`);
       } else {
-        alert('Template created!');
+        toast.success('Template created');
       }
 
       setLoading(false);
@@ -688,7 +689,7 @@ export function Checklists() {
     } catch (error) {
       console.error('Unexpected error:', error);
       setLoading(false);
-      alert('An unexpected error occurred');
+      toast.error('An unexpected error occurred');
     }
   };
 
@@ -735,7 +736,7 @@ export function Checklists() {
     const answeredRequired = requiredItems.filter((item) => itemResponses[item.id]);
 
     if (answeredRequired.length < requiredItems.length) {
-      alert('Please complete all required items');
+      toast.warning('Please complete all required items');
       return;
     }
 
@@ -749,9 +750,9 @@ export function Checklists() {
       setShowCompleteModal(false);
       setItemResponses({});
       if (scorePercentage === 100) {
-        setTimeout(() => alert('Checklist completed with 100% score!'), 100);
+        setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
       } else {
-        alert(`Checklist submitted — score: ${scorePercentage}%`);
+        toast.success(`Checklist submitted — score: ${scorePercentage}%`);
       }
       return;
     }
@@ -779,7 +780,7 @@ export function Checklists() {
 
     if (completionError || !completionData) {
       setLoading(false);
-      alert('Error saving checklist completion');
+      toast.error('Error saving checklist completion');
       return;
     }
 
@@ -799,13 +800,11 @@ export function Checklists() {
     fetchCompletions();
 
     if (scorePercentage === 100) {
-      setTimeout(() => alert('Checklist completed with 100% score!'), 100);
+      setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
     }
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    if (!confirm('Are you sure you want to delete this template?')) return;
-
     // Demo mode: remove from local state
     if (isDemoMode || !profile?.organization_id) {
       setTemplates(prev => prev.filter(t => t.id !== templateId));
@@ -814,10 +813,12 @@ export function Checklists() {
         delete copy[templateId];
         return copy;
       });
+      toast.success('Template deleted');
       return;
     }
 
     await supabase.from('checklist_templates').delete().eq('id', templateId);
+    toast.success('Template deleted');
     fetchTemplates();
   };
 
@@ -1067,7 +1068,7 @@ export function Checklists() {
                       </div>
                       {cl.status !== 'complete' && (
                         <button
-                          onClick={() => alert(`${templateNameMap[cl.name] || cl.name} opened — complete items to update your compliance score.`)}
+                          onClick={() => toast.info(`${templateNameMap[cl.name] || cl.name} opened`)}
                           className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
                         >
                           {cl.status === 'in_progress' ? t('common.continue') : t('common.start')}

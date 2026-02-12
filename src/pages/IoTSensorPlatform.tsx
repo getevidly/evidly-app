@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   Activity, Radio, Cloud, Zap, Upload, Bluetooth, Thermometer,
   Wifi, WifiOff, Battery, BatteryWarning, AlertTriangle, CheckCircle,
@@ -287,7 +288,7 @@ function DeviceManagement({ navigate }: { navigate: (p: string) => void }) {
                     {provider && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>}
                   </td>
                   <td className="px-4 py-2.5">
-                    <button onClick={e => { e.stopPropagation(); alert(`Edit ${s.name} — demo mode`); }} className="text-[10px] font-medium px-2 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50">Edit</button>
+                    <button onClick={e => { e.stopPropagation(); toast.info(`Edit ${s.name} coming soon`); }} className="text-[10px] font-medium px-2 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50">Edit</button>
                   </td>
                 </tr>
               );
@@ -364,7 +365,7 @@ function IntegrationSetup() {
                 </div>
               </div>
               <button
-                onClick={() => alert(`${p.status === 'connected' ? 'Configure' : 'Connect'} ${p.name} — demo mode`)}
+                onClick={() => toast.info(`${p.status === 'connected' ? 'Configure' : 'Connect'} ${p.name} coming soon`)}
                 className="px-3 py-1.5 rounded-lg text-xs font-medium border"
                 style={p.status === 'connected'
                   ? { borderColor: '#e5e7eb', color: '#6b7280' }
@@ -414,7 +415,7 @@ function AlertConfig() {
                   <div className="text-[10px] text-gray-500">{alert.message.slice(0, 100)}</div>
                 </div>
               </div>
-              <button onClick={() => alert('Acknowledge — demo mode')} className="px-2 py-1 rounded text-[10px] font-medium border border-gray-200 text-gray-500 hover:bg-white">Ack</button>
+              <button onClick={() => toast.success('Alert acknowledged')} className="px-2 py-1 rounded text-[10px] font-medium border border-gray-200 text-gray-500 hover:bg-white">Ack</button>
             </div>
           ))}
         </div>
@@ -661,7 +662,7 @@ function PricingTab() {
             <div className="text-lg font-bold text-gray-900">{tier.name}</div>
             <div className="text-3xl font-bold mt-2" style={{ color: PRIMARY }}>{tier.price}</div>
             <div className="text-xs text-gray-400">{tier.period}</div>
-            <button onClick={() => alert(`Select ${tier.name} — demo mode`)} className="mt-4 w-full py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: tier.highlight ? GOLD : PRIMARY }}>
+            <button onClick={() => toast.info(`${tier.name} plan selection coming soon`)} className="mt-4 w-full py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: tier.highlight ? GOLD : PRIMARY }}>
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
             </button>
           </div>

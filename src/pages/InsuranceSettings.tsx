@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield,
@@ -65,7 +66,7 @@ export function InsuranceSettings() {
     if (!sharingEnabled) {
       setShowConsentModal(true);
     } else {
-      alert('Data sharing disabled. All carrier API access has been revoked immediately.');
+      toast.success('Data sharing disabled. Carrier access revoked');
       setSharingEnabled(false);
     }
   };
@@ -73,7 +74,7 @@ export function InsuranceSettings() {
   const handleConsentConfirm = () => {
     setSharingEnabled(true);
     setShowConsentModal(false);
-    alert('Data sharing enabled. Authorized carriers can now access your risk score via API.');
+    toast.success('Data sharing enabled');
   };
 
   return (
@@ -189,7 +190,7 @@ export function InsuranceSettings() {
                 </div>
               </div>
               <button
-                onClick={() => alert(`${carrier.name} carrier integration coming soon. We will notify you when this carrier is available for connection.`)}
+                onClick={() => toast.info(`${carrier.name} integration coming soon`)}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
               >
                 Connect
@@ -240,7 +241,7 @@ export function InsuranceSettings() {
                     {showApiKey ? <EyeOff className="h-3.5 w-3.5 text-gray-500" /> : <Eye className="h-3.5 w-3.5 text-gray-500" />}
                   </button>
                   <button
-                    onClick={() => { navigator.clipboard.writeText(demoApiKey); alert('API key copied to clipboard'); }}
+                    onClick={() => { navigator.clipboard.writeText(demoApiKey); toast.success('API key copied to clipboard'); }}
                     className="p-1 rounded hover:bg-gray-200 transition-colors"
                     title="Copy"
                   >
@@ -259,7 +260,7 @@ export function InsuranceSettings() {
                 <span>Status: <span className="text-green-600 font-medium">Active</span></span>
               </div>
               <button
-                onClick={() => alert('API key regenerated. Share the new key with your carrier contacts. Old key invalidated immediately.')}
+                onClick={() => toast.success('API key regenerated')}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <RefreshCw className="h-3 w-3" /> Regenerate Key

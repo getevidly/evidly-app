@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight, Download, MapPin, Clock, Camera } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
 import type { PhotoRecord } from './PhotoEvidence';
+import { toast } from 'sonner';
 
 interface PhotoGalleryProps {
   photos: PhotoRecord[];
@@ -68,7 +69,7 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
 
   const handleDownload = (photo: PhotoRecord) => {
     if (!canDownload) {
-      alert('Download restricted to executive-level accounts for privacy compliance.');
+      toast.warning('Download restricted to executive accounts');
       return;
     }
     const link = document.createElement('a');

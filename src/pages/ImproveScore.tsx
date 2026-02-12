@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   Shield,
   Flame,
@@ -127,7 +128,7 @@ export function ImproveScore() {
 
   const handleQuickAction = (idx: number, item: InsuranceActionItem) => {
     const msg = item.quickActionType ? QUICK_ACTION_LABELS[item.quickActionType] || 'Action completed' : 'Action completed';
-    alert(`${msg} — ${item.title}\n\nIn production, this triggers the actual workflow. For demo, marking as addressed.`);
+    toast.success(`${msg} — ${item.title}`);
     setCompletedActions(prev => new Set(prev).add(idx));
   };
 

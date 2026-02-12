@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Mail, FileText, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
 
   const handleSend = async () => {
     if (!recipientEmail) {
-      alert('Please enter recipient email');
+      toast.warning('Please enter recipient email');
       return;
     }
 

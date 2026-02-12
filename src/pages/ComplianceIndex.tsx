@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   BarChart3, TrendingUp, TrendingDown, Download, Share2, ArrowRight,
   AlertTriangle, CheckCircle2, Brain, Info, Users, MapPin, Building2,
@@ -242,14 +243,14 @@ export function ComplianceIndex() {
             </div>
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => alert('PDF report download coming soon. This report will be published at evidly.com/index.')}
+                onClick={() => toast.info('PDF download coming soon')}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
                 style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
               >
                 <Download className="h-4 w-4" /> Download PDF
               </button>
               <button
-                onClick={() => alert('Report link copied! Share with industry colleagues, press, and partners.')}
+                onClick={() => toast.success('Report link copied')}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-white/30 text-white hover:bg-white/10"
               >
                 <Share2 className="h-4 w-4" /> Share Report
@@ -759,7 +760,7 @@ export function ComplianceIndex() {
 
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => alert('Report link copied to clipboard! Share with press, health departments, insurance companies, and franchise partners.')}
+              onClick={() => toast.success('Report link copied')}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold"
               style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
             >

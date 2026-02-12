@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { toast } from 'sonner';
 import { Camera, Upload, X, FileText, Image as ImageIcon, Loader2 } from 'lucide-react';
 
 interface FileUploadProps {
@@ -81,7 +82,7 @@ export function FileUpload({
       const error = validateFile(file);
 
       if (error) {
-        alert(`${file.name}: ${error}`);
+        toast.error(`${file.name}: ${error}`);
         continue;
       }
 
@@ -176,7 +177,7 @@ export function FileUpload({
 
             <button
               type="button"
-              onClick={() => alert('Google Drive integration coming soon')}
+              onClick={() => toast.info('Google Drive integration coming soon')}
               className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -187,7 +188,7 @@ export function FileUpload({
 
             <button
               type="button"
-              onClick={() => alert('Dropbox integration coming soon')}
+              onClick={() => toast.info('Dropbox integration coming soon')}
               className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
