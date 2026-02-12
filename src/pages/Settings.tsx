@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { ReportSettings } from '../components/ReportSettings';
 import { getAvailableCounties } from '../lib/jurisdictionScoring';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { BillingPanel } from '../components/BillingPanel';
 import { useRole, UserRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generateAllTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
@@ -1208,40 +1209,7 @@ export function Settings() {
           )}
 
           {activeTab === 'billing' && (
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold text-gray-900">{t('settings.billingTitle')}</h3>
-              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
-                <h4 className="text-lg font-semibold mb-2">{t('settings.professionalPlan')}</h4>
-                <div className="text-3xl font-bold mb-1">$99<span className="text-lg font-normal">{t('settings.perMonth')}</span></div>
-                <p className="text-gray-200 text-sm">{t('settings.planDesc')}</p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">{t('settings.planFeatures')}</h4>
-                <div className="space-y-2">
-                  {billingFeatures.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-sm text-gray-700">
-                      <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-3">{t('settings.paymentMethod')}</h4>
-                <div className="border border-gray-300 rounded-lg p-4 flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <CreditCard className="h-6 w-6 text-gray-400" />
-                    <div>
-                      <div className="font-medium text-gray-900">•••• •••• •••• 4242</div>
-                      <div className="text-sm text-gray-500">{t('settings.expires')} 12/24</div>
-                    </div>
-                  </div>
-                  <button onClick={() => alert('Payment method update coming soon.')} className="text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium">
-                    {t('common.update')}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <BillingPanel />
           )}
 
           {activeTab === 'enterprise' && (

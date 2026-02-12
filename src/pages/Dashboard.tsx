@@ -18,6 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { complianceScores, locationScores, getGrade, locations, scoreImpactData, complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo, getTrend, getWeights, needsAttentionItems, vendors as demoVendors } from '../data/demoData';
+import { loadDashboardData, type DashboardData } from '../lib/dashboardQueries';
 import { useRole } from '../contexts/RoleContext';
 import { QRCodeSVG } from 'qrcode.react';
 import { ShareModal } from '../components/ShareModal';
@@ -57,9 +58,43 @@ export function Dashboard() {
   const [pillarFilter, setPillarFilter] = useState<string | null>(null);
   const [inspectorMode, setInspectorMode] = useState(false);
   const [inspectorVisit, setInspectorVisit] = useState<InspectorVisit | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
 
-  const currentScores = selectedLocation === 'all' ? complianceScores : locationScores[selectedLocation] || complianceScores;
-  const currentScoresThirtyDaysAgo = selectedLocation === 'all' ? complianceScoresThirtyDaysAgo : locationScoresThirtyDaysAgo[selectedLocation] || complianceScoresThirtyDaysAgo;
+  // Load real Supabase data with demo fallback
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setDataLoading(true);
+      try {
+        const data = await loadDashboardData(profile?.organization_id);
+        if (!cancelled) {
+          setDashboardData(data);
+        }
+      } catch (err) {
+        console.error('Dashboard data load failed, using demo data:', err);
+      } finally {
+        if (!cancelled) setDataLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [profile?.organization_id]);
+
+  // Resolve data: prefer loaded Supabase data, fall back to demo imports
+  const resolvedLocations = dashboardData?.locations ?? locations;
+  const resolvedLocationScores = dashboardData?.complianceData.locationScores ?? locationScores;
+  const resolvedLocationScoresThirtyDaysAgo = dashboardData?.complianceData.locationScoresThirtyDaysAgo ?? locationScoresThirtyDaysAgo;
+  const resolvedComplianceScores = dashboardData?.complianceData.scores ?? complianceScores;
+  const resolvedComplianceScoresThirtyDaysAgo = dashboardData?.complianceData.scoresThirtyDaysAgo ?? complianceScoresThirtyDaysAgo;
+  const resolvedVendors = dashboardData?.vendors ?? demoVendors;
+  const resolvedNeedsAttention = dashboardData?.needsAttention ?? needsAttentionItems;
+  const resolvedScoreImpact = dashboardData?.scoreImpact ?? scoreImpactData;
+  const resolvedActivity = dashboardData?.activity ?? [];
+  const resolvedProgress = dashboardData?.progress ?? {};
+
+  const currentScores = selectedLocation === 'all' ? resolvedComplianceScores : resolvedLocationScores[selectedLocation] || resolvedComplianceScores;
+  const currentScoresThirtyDaysAgo = selectedLocation === 'all' ? resolvedComplianceScoresThirtyDaysAgo : resolvedLocationScoresThirtyDaysAgo[selectedLocation] || resolvedComplianceScoresThirtyDaysAgo;
   const complianceScore = currentScores.overall;
   const operationalScore = currentScores.operational;
   const equipmentScore = currentScores.equipment;
@@ -82,7 +117,7 @@ export function Dashboard() {
   const { getAccessibleLocationUrlIds, hasMultipleLocations, canAccessLocation } = useRole();
   const accessibleUrlIds = getAccessibleLocationUrlIds();
   const availableLocations = hasMultipleLocations() ? ['all', ...accessibleUrlIds] : accessibleUrlIds;
-  const filteredLocationOptions = locations.filter(loc => accessibleUrlIds.includes(loc.urlId));
+  const filteredLocationOptions = resolvedLocations.filter(loc => accessibleUrlIds.includes(loc.urlId));
 
   const getScoreHexColor = (score: number) => {
     if (score >= 90) return '#22c55e';
@@ -93,10 +128,10 @@ export function Dashboard() {
 
   // Jurisdiction score for single-location view
   const jurisdictionResult = selectedLocation !== 'all' ? (() => {
-    const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+    const selectedLocationObj = resolvedLocations.find(loc => loc.urlId === selectedLocation);
     const jurisdictionMapping = DEMO_LOCATION_JURISDICTIONS.find(j => j.locationName === selectedLocationObj?.name);
     const countySlug = jurisdictionMapping ? extractCountySlug(jurisdictionMapping.county) : 'generic';
-    const locationItems = scoreImpactData.filter(item => item.locationId === selectedLocationObj?.id);
+    const locationItems = resolvedScoreImpact.filter(item => item.locationId === selectedLocationObj?.id);
     return calculateJurisdictionScore(locationItems, countySlug);
   })() : null;
 
@@ -148,20 +183,16 @@ export function Dashboard() {
   const locationDropdownOptions = filteredLocationOptions.map(loc => ({ id: loc.urlId, name: loc.name }));
   const showLocationDropdown = locationDropdownOptions.length > 1;
 
-  // Today's Progress — per-location data (All = sum of locations, guaranteed)
-  const todaysProgress: Record<string, { tempDone: number; tempTotal: number; checkDone: number; checkTotal: number }> = {
-    downtown: { tempDone: 10, tempTotal: 12, checkDone: 2, checkTotal: 3 },
-    airport: { tempDone: 4, tempTotal: 12, checkDone: 1, checkTotal: 3 },
-    university: { tempDone: 0, tempTotal: 12, checkDone: 0, checkTotal: 3 },
-  };
+  // Today's Progress — per-location data from Supabase or demo fallback
+  const todaysProgressData = resolvedProgress;
   const progress = selectedLocation === 'all'
-    ? Object.values(todaysProgress).reduce((acc, d) => ({
+    ? Object.values(todaysProgressData).reduce((acc, d) => ({
         tempDone: acc.tempDone + d.tempDone,
         tempTotal: acc.tempTotal + d.tempTotal,
         checkDone: acc.checkDone + d.checkDone,
         checkTotal: acc.checkTotal + d.checkTotal,
       }), { tempDone: 0, tempTotal: 0, checkDone: 0, checkTotal: 0 })
-    : todaysProgress[selectedLocation] || todaysProgress['downtown'];
+    : todaysProgressData[selectedLocation] || todaysProgressData['downtown'] || { tempDone: 0, tempTotal: 0, checkDone: 0, checkTotal: 0 };
   const tempPct = progress.tempTotal > 0 ? Math.round((progress.tempDone / progress.tempTotal) * 100) : 0;
   const checkPct = progress.checkTotal > 0 ? Math.round((progress.checkDone / progress.checkTotal) * 100) : 0;
   const pctColor = (p: number) => p >= 90 ? '#22c55e' : p >= 75 ? '#eab308' : p >= 60 ? '#f59e0b' : '#ef4444';
@@ -180,7 +211,7 @@ export function Dashboard() {
 
           (window as any).dashboardMap = map;
 
-          locations.forEach((loc) => {
+          resolvedLocations.forEach((loc) => {
             const color = loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#eab308' : loc.score >= 60 ? '#f59e0b' : '#ef4444';
             const icon = L.divIcon({
               className: 'custom-marker',
@@ -203,10 +234,10 @@ export function Dashboard() {
       }
     };
 
-    if (locations.length > 1) {
+    if (resolvedLocations.length > 1) {
       setTimeout(loadMap, 100);
     }
-  }, []);
+  }, [resolvedLocations]);
 
   useEffect(() => {
     const map = (window as any).dashboardMap;
@@ -214,7 +245,7 @@ export function Dashboard() {
       if (selectedLocation === 'all') {
         map.setView([37.05, -120.25], 8);
       } else {
-        const location = locations.find(loc => loc.urlId === selectedLocation);
+        const location = resolvedLocations.find(loc => loc.urlId === selectedLocation);
         if (location) {
           map.setView([location.lat, location.lng], 13);
         }
@@ -224,6 +255,37 @@ export function Dashboard() {
 
   if (userRole === 'kitchen') return <KitchenDashboard />;
   if (userRole === 'facilities') return <FacilitiesDashboard />;
+
+  // Loading skeleton — only shows on first load
+  if (dataLoading && !dashboardData) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="bg-[#1e4d6b] text-white px-6 py-3 flex items-center space-x-2 rounded-lg">
+          <Info className="h-5 w-5" />
+          <span className="font-medium">{t('dashboard.demoMode')}</span>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+          <div className="flex justify-center mb-6">
+            <div className="w-32 h-32 bg-gray-200 rounded-full"></div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-1 h-24 bg-gray-100 rounded-lg"></div>
+            <div className="flex-1 h-24 bg-gray-100 rounded-lg"></div>
+            <div className="flex-1 h-24 bg-gray-100 rounded-lg"></div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-gray-100 rounded"></div>
+            <div className="h-12 bg-gray-100 rounded"></div>
+            <div className="h-12 bg-gray-100 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -415,8 +477,8 @@ export function Dashboard() {
             </div>
 
           {expandedPillar && selectedLocation !== 'all' && (() => {
-            const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
-            const pillarItems = scoreImpactData
+            const selectedLocationObj = resolvedLocations.find(loc => loc.urlId === selectedLocation);
+            const pillarItems = resolvedScoreImpact
               .filter(item => item.locationId === selectedLocationObj?.id && item.pillar === expandedPillar)
               .sort((a, b) => {
                 const statusOrder: Record<string, number> = { overdue: 0, expired: 0, missing: 0, due_soon: 1, current: 2 };
@@ -568,9 +630,9 @@ export function Dashboard() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {locations.map((loc) => {
-                      const locScores = locationScores[loc.urlId];
-                      const locScoresThirtyDaysAgo = locationScoresThirtyDaysAgo[loc.urlId];
+                    {resolvedLocations.map((loc) => {
+                      const locScores = resolvedLocationScores[loc.urlId];
+                      const locScoresThirtyDaysAgo = resolvedLocationScoresThirtyDaysAgo[loc.urlId];
                       const locTrend = getTrend(locScores.overall, locScoresThirtyDaysAgo.overall);
                       const grade = getGrade(locScores.overall);
                       return (
@@ -623,13 +685,7 @@ export function Dashboard() {
               </div>
 
               <div className="space-y-3">
-                {[
-                  { initials: 'MJ', name: 'Marcus J.', action: 'logged Walk-in Cooler: 38\u00b0F \u2713', time: '15 min ago', url: '/temp-logs?id=walk-in-cooler-downtown', borderColor: '#22c55e' },
-                  { initials: 'SC', name: 'Sarah C.', action: 'completed Opening Checklist', time: '45 min ago', url: '/checklists?id=opening-checklist', borderColor: '#22c55e' },
-                  { initials: 'DP', name: 'David P.', action: 'logged Freezer: 15\u00b0F \u2713', time: '1h ago', url: '/temp-logs?id=freezer-downtown', borderColor: '#22c55e' },
-                  { initials: 'ER', name: 'Emma R.', action: 'uploaded Food Handler Cert', time: '2h ago', url: '/documents?id=food-handler-cert', borderColor: '#1e4d6b' },
-                  { initials: 'AT', name: 'Alex T.', action: 'logged Hot Hold: 127\u00b0F \u2717', time: '3h ago', url: '/temp-logs?id=hot-hold-airport', borderColor: '#ef4444' },
-                ].map((activity, idx) => (
+                {resolvedActivity.map((activity, idx) => (
                   <div
                     key={idx}
                     onClick={() => { navigate(activity.url); }}
@@ -688,10 +744,10 @@ export function Dashboard() {
 
           {/* Action Center */}
           {activeTab === 'action' && (() => {
-            const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+            const selectedLocationObj = resolvedLocations.find(loc => loc.urlId === selectedLocation);
             const locationFilteredItems = selectedLocation === 'all'
-              ? needsAttentionItems
-              : needsAttentionItems.filter(item => item.locationId === selectedLocationObj?.id);
+              ? resolvedNeedsAttention
+              : resolvedNeedsAttention.filter(item => item.locationId === selectedLocationObj?.id);
             const allActionItems = locationFilteredItems.map(item => ({
               priority: item.color === 'red' ? 'high' as const : item.color === 'amber' ? 'medium' as const : 'low' as const,
               pillar: (() => {
@@ -765,12 +821,12 @@ export function Dashboard() {
 
           {/* Vendor Services */}
           {activeTab === 'vendors' && (() => {
-            const selectedLocationObj = locations.find(loc => loc.urlId === selectedLocation);
+            const selectedLocationObj = resolvedLocations.find(loc => loc.urlId === selectedLocation);
             const filteredVendors = selectedLocation === 'all'
-              ? demoVendors
-              : demoVendors.filter(v => v.locationId === selectedLocationObj?.id);
+              ? resolvedVendors
+              : resolvedVendors.filter(v => v.locationId === selectedLocationObj?.id);
             const locationMap: Record<string, string> = {};
-            locations.forEach(l => { locationMap[l.id] = l.name; });
+            resolvedLocations.forEach(l => { locationMap[l.id] = l.name; });
             const statusColor = (s: string) => s === 'overdue' ? '#ef4444' : s === 'upcoming' ? '#d4af37' : '#22c55e';
             const statusLabel = (s: string) => s === 'overdue' ? t('common.overdue') : s === 'upcoming' ? t('dashboard.dueSoon') : t('dashboard.onTrack');
             const formatDate = (d: string) => { const dt = new Date(d); return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); };
@@ -878,11 +934,17 @@ export function Dashboard() {
 
           {/* QR Passport */}
           {activeTab === 'passport' && (() => {
-            const allQrLocations = [
-              { id: 'downtown', name: 'Downtown Kitchen', address: '1245 Fulton St, Fresno', score: locationScores['downtown'].overall, color: getGrade(locationScores['downtown'].overall).hex },
-              { id: 'airport', name: 'Airport Cafe', address: '1636 Macready Dr, Merced', score: locationScores['airport'].overall, color: getGrade(locationScores['airport'].overall).hex },
-              { id: 'university', name: 'University Dining', address: '1 University Cir, Modesto', score: locationScores['university'].overall, color: getGrade(locationScores['university'].overall).hex }
-            ];
+            const allQrLocations = resolvedLocations.map(loc => {
+              const locScore = resolvedLocationScores[loc.urlId];
+              const score = locScore?.overall ?? 0;
+              return {
+                id: loc.urlId,
+                name: loc.name,
+                address: loc.address || '',
+                score,
+                color: getGrade(score).hex,
+              };
+            });
             const qrLocations = selectedLocation === 'all' ? allQrLocations : allQrLocations.filter(l => l.id === selectedLocation);
             return (
             <div>

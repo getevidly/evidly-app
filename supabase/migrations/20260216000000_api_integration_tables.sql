@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS api_applications (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   name            text NOT NULL,
-  client_id       text NOT NULL UNIQUE DEFAULT 'evd_' || encode(gen_random_bytes(16), 'hex'),
-  client_secret   text NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
+  client_id       text NOT NULL UNIQUE DEFAULT 'evd_' || encode(extensions.gen_random_bytes(16), 'hex'),
+  client_secret   text NOT NULL DEFAULT encode(extensions.gen_random_bytes(32), 'hex'),
   redirect_uris   text[] NOT NULL DEFAULT '{}',
   scopes          text[] NOT NULL DEFAULT '{read:locations,read:compliance}',
   grant_types     text[] NOT NULL DEFAULT '{client_credentials}',
@@ -95,7 +95,7 @@ CREATE INDEX idx_webhook_deliveries_sub ON api_webhook_deliveries (subscription_
 CREATE TABLE IF NOT EXISTS api_sandbox_keys (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   application_id  uuid NOT NULL REFERENCES api_applications(id) ON DELETE CASCADE,
-  sandbox_key     text NOT NULL UNIQUE DEFAULT 'evd_sandbox_sk_' || encode(gen_random_bytes(24), 'hex'),
+  sandbox_key     text NOT NULL UNIQUE DEFAULT 'evd_sandbox_sk_' || encode(extensions.gen_random_bytes(24), 'hex'),
   expires_at      timestamptz NOT NULL DEFAULT now() + interval '90 days',
   last_used_at    timestamptz,
   created_at      timestamptz NOT NULL DEFAULT now()

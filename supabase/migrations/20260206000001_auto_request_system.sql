@@ -190,7 +190,7 @@ RETURNS varchar(64) AS $$
 DECLARE
   token varchar(64);
 BEGIN
-  SELECT encode(gen_random_bytes(32), 'hex') INTO token;
+  SELECT encode(extensions.gen_random_bytes(32), 'hex') INTO token;
   RETURN token;
 END;
 $$ LANGUAGE plpgsql;

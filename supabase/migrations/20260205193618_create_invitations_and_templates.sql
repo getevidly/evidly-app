@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS user_invitations (
   email text NOT NULL,
   role varchar(50) NOT NULL DEFAULT 'Staff',
   invited_by uuid REFERENCES auth.users(id) ON DELETE SET NULL,
-  token text UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(32), 'base64'),
+  token text UNIQUE NOT NULL DEFAULT replace(gen_random_uuid()::text, '-', ''),
   status varchar(20) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'expired')),
   expires_at timestamptz DEFAULT (now() + interval '7 days'),
   accepted_at timestamptz,
