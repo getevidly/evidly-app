@@ -100,6 +100,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, roles: mgmtRoles },
       { i18nKey: 'nav.complianceIntelligence', href: '/compliance-index', icon: Shield, roles: mgmtRoles },
       { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4 },
+      { i18nKey: 'nav.inspectorView', href: '/inspector-view', icon: ClipboardCheck, roles: mgmtRoles },
     ],
   },
   {

@@ -88,6 +88,7 @@ const en = {
     helpSupport: 'Help & Support',
     importData: 'Import Data',
     systemAdmin: 'System Admin',
+    inspectorView: 'Inspector View',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -695,6 +696,7 @@ const es: typeof en = {
     helpSupport: 'Ayuda y Soporte',
     importData: 'Importar Datos',
     systemAdmin: 'Admin del Sistema',
+    inspectorView: 'Vista del Inspector',
   },
 
   common: {

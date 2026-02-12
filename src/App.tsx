@@ -83,6 +83,7 @@ const PlaybookBuilder = lazy(() => import('./pages/PlaybookBuilder').then(m => (
 const PlaybookAnalytics = lazy(() => import('./pages/PlaybookAnalytics').then(m => ({ default: m.PlaybookAnalytics })));
 const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m => ({ default: m.PlaybookTimeline })));
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
+const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -287,6 +288,7 @@ function AppRoutes() {
           <Route path="/playbooks/builder" element={<PlaybookBuilder />} />
           <Route path="/playbooks/analytics" element={<PlaybookAnalytics />} />
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
+          <Route path="/inspector-view" element={<InspectorView />} />
         </Route>
       </Routes>
     </>
