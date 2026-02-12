@@ -165,7 +165,7 @@ ${(insights.data || []).slice(0, 5).map((i: any) => `  - [${i.severity}] ${i.tit
                 body: JSON.stringify({
                   model: "claude-sonnet-4-5-20250929",
                   max_tokens: 1200,
-                  system: `You are generating a weekly compliance digest for a commercial kitchen manager. Equipment items (hood cleaning, fire suppression, grease traps, fire extinguishers) are FIRE SAFETY issues under NFPA 96 — never categorize them as food/health safety. ${roleContext} Return a JSON object:
+                  system: `You are generating a weekly compliance digest for a commercial kitchen manager. Equipment items (hood cleaning, fire suppression, grease traps, fire extinguishers) are FIRE SAFETY issues under NFPA 96 (2025 Edition) — never categorize them as food/health safety. ${roleContext} Return a JSON object:
 {
   "summary": "2-3 sentence executive summary",
   "highlights": ["Array of 3-5 key highlights"],

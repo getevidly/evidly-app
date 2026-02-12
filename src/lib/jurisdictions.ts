@@ -135,7 +135,7 @@ export interface JurisdictionProfile {
   specialRequirements: string[];
 }
 
-// ── Federal (FDA Food Code 2022 + NFPA + OSHA) ─────────────
+// ── Federal (FDA Food Code 2022 + NFPA 2025 + OSHA) ─────────────
 
 const FEDERAL: JurisdictionProfile = {
   id: 'federal-fda',
@@ -166,15 +166,15 @@ const FEDERAL: JurisdictionProfile = {
   requiredDocuments: [],
   requiredPostings: [],
   serviceFrequencies: [
-    { service: 'Hood Cleaning (Solid Fuel)', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Solid fuel cooking (wood, charcoal, pellets)', source: 'NFPA 96 Table 11.4' },
-    { service: 'Hood Cleaning (High Volume)', frequencyDays: 90, frequencyLabel: 'Quarterly', condition: '24-hour operations, wok cooking, charbroiling', source: 'NFPA 96 Table 11.4' },
-    { service: 'Hood Cleaning (Moderate Volume)', frequencyDays: 180, frequencyLabel: 'Semi-annually', condition: 'Standard cooking operations', source: 'NFPA 96 Table 11.4' },
-    { service: 'Hood Cleaning (Low Volume)', frequencyDays: 365, frequencyLabel: 'Annually', condition: 'Churches, day camps, seasonal, low-volume', source: 'NFPA 96 Table 11.4' },
-    { service: 'Fire Suppression System', frequencyDays: 180, frequencyLabel: 'Semi-annually', source: 'NFPA 96 §11.2.2 / NFPA 17A' },
-    { service: 'Fire Extinguisher Visual Inspection', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual check', source: 'NFPA 10 §7.2.1' },
-    { service: 'Fire Extinguisher Professional Service', frequencyDays: 365, frequencyLabel: 'Annually', source: 'NFPA 10 §7.3.1' },
-    { service: 'Fire Extinguisher 6-Year Maintenance', frequencyDays: 2190, frequencyLabel: 'Every 6 years', source: 'NFPA 10 §7.3.3' },
-    { service: 'Fire Extinguisher Hydrostatic Test', frequencyDays: 4380, frequencyLabel: 'Every 12 years', source: 'NFPA 10 §8.3.1' },
+    { service: 'Hood Cleaning (Solid Fuel)', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Solid fuel cooking (wood, charcoal, pellets)', source: 'NFPA 96-2025 Table 11.4' },
+    { service: 'Hood Cleaning (High Volume)', frequencyDays: 90, frequencyLabel: 'Quarterly', condition: '24-hour operations, wok cooking, charbroiling', source: 'NFPA 96-2025 Table 11.4' },
+    { service: 'Hood Cleaning (Moderate Volume)', frequencyDays: 180, frequencyLabel: 'Semi-annually', condition: 'Standard cooking operations', source: 'NFPA 96-2025 Table 11.4' },
+    { service: 'Hood Cleaning (Low Volume)', frequencyDays: 365, frequencyLabel: 'Annually', condition: 'Churches, day camps, seasonal, low-volume', source: 'NFPA 96-2025 Table 11.4' },
+    { service: 'Fire Suppression System', frequencyDays: 180, frequencyLabel: 'Semi-annually', source: 'NFPA 96-2025 §11.2.2 / NFPA 17A-2025' },
+    { service: 'Fire Extinguisher Visual Inspection', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual check', source: 'NFPA 10-2025 §7.2.1' },
+    { service: 'Fire Extinguisher Professional Service', frequencyDays: 365, frequencyLabel: 'Annually', source: 'NFPA 10-2025 §7.3.1' },
+    { service: 'Fire Extinguisher 6-Year Maintenance', frequencyDays: 2190, frequencyLabel: 'Every 6 years', source: 'NFPA 10-2025 §7.3.3' },
+    { service: 'Fire Extinguisher Hydrostatic Test', frequencyDays: 4380, frequencyLabel: 'Every 12 years', source: 'NFPA 10-2025 §8.3.1' },
   ],
   specialRequirements: [
     'Date marking: 7 days max for ready-to-eat TCS food held at 41°F or below (day 1 = day of preparation)',
@@ -183,9 +183,9 @@ const FEDERAL: JurisdictionProfile = {
     'Person in charge must be present during all hours of operation',
     'Thermometer calibration: accurate to ±2°F, calibrated regularly',
     'Cross-contamination: separate cutting boards/equipment for raw and ready-to-eat',
-    'NFPA 96: Automatic fire suppression (UL 300 wet chemical) required for all hoods/ducts',
-    'NFPA 96: Manual pull station required, automatic gas/electric shut-offs on suppression activation',
-    'NFPA 10: Class K extinguisher required in ALL commercial kitchens',
+    'NFPA 96 (2025 Edition): Automatic fire suppression (UL 300 wet chemical) required for all hoods/ducts',
+    'NFPA 96 (2025 Edition): Manual pull station required, automatic gas/electric shut-offs on suppression activation',
+    'NFPA 10 (2025 Edition): Class K extinguisher required in ALL commercial kitchens',
     'OSHA: Hazard Communication required (GHS labels, SDS sheets)',
     'OSHA: Recordkeeping for injuries/illnesses (OSHA 300 log)',
   ],
@@ -229,16 +229,16 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'Workers Compensation Insurance', description: 'Certificate of workers compensation insurance', renewalFrequency: 'Annual', source: 'California Labor Code §3700' },
     { name: 'General Liability Insurance', description: 'Certificate of general liability insurance', renewalFrequency: 'Annual', source: 'Business requirement' },
     { name: 'Fire Inspection Certificate', description: 'Annual fire inspection by local fire department', renewalFrequency: 'Annual', source: 'California Fire Code' },
-    { name: 'Hood Cleaning Certificate', description: 'Professional hood/exhaust system cleaning certificate — must clean to bare metal', renewalFrequency: 'Per NFPA 96 schedule', source: 'NFPA 96 / CalCode' },
-    { name: 'Fire Suppression Inspection', description: 'Semi-annual fire suppression system inspection', renewalFrequency: 'Semi-annual', source: 'NFPA 96 §11.2.2' },
-    { name: 'Fire Extinguisher Certification', description: 'Annual professional fire extinguisher service', renewalFrequency: 'Annual', source: 'NFPA 10 §7.3.1' },
+    { name: 'Hood Cleaning Certificate', description: 'Professional hood/exhaust system cleaning certificate — must clean to bare metal', renewalFrequency: 'Per NFPA 96 (2025 Edition) schedule', source: 'NFPA 96-2025 / CalCode' },
+    { name: 'Fire Suppression Inspection', description: 'Semi-annual fire suppression system inspection', renewalFrequency: 'Semi-annual', source: 'NFPA 96-2025 §11.2.2' },
+    { name: 'Fire Extinguisher Certification', description: 'Annual professional fire extinguisher service', renewalFrequency: 'Annual', source: 'NFPA 10-2025 §7.3.1' },
     { name: 'Grease Trap Maintenance Record', description: 'Grease interceptor pumping and cleaning records', renewalFrequency: 'Per local requirement', source: 'Local pretreatment ordinance' },
     { name: 'Pest Control Service Agreement', description: 'Active pest control service contract', renewalFrequency: 'Ongoing (monthly service)', source: 'CalCode §114259' },
     { name: 'Indoor Heat Illness Prevention Plan (IHIPP)', description: 'Written plan required for all indoor workplaces including commercial kitchens', renewalFrequency: 'Ongoing — maintain for 12 months min', source: 'Cal/OSHA §3396' },
     { name: 'Pest Prevention Training Records', description: 'Training records for all employees on pest prevention procedures', renewalFrequency: 'Ongoing', source: 'AB 1147 / H&S Code §114266' },
     // California Fire Code (CFC) — Title 24, Part 9 documents
     { name: 'Fire Prevention Permit', description: 'Fire prevention permit from local fire authority (AHJ) — separate from health department permit. Permit fees vary by jurisdiction.', renewalFrequency: 'Annual', source: 'CFC §105.6' },
-    { name: 'UL 300 Suppression System Compliance Certificate', description: 'Certificate verifying UL 300 compliant wet chemical fire suppression system installed on all Type I commercial cooking hoods', renewalFrequency: 'Upon installation / modification', source: 'CFC Ch. 6.07 / NFPA 96' },
+    { name: 'UL 300 Suppression System Compliance Certificate', description: 'Certificate verifying UL 300 compliant wet chemical fire suppression system installed on all Type I commercial cooking hoods', renewalFrequency: 'Upon installation / modification', source: 'CFC Ch. 6.07 / NFPA 96-2025' },
     { name: 'SDS (Safety Data Sheets) Binder', description: 'Safety Data Sheets for all cleaning chemicals and hazardous materials — must be accessible to all employees at all times', renewalFrequency: 'Ongoing — update when products change', source: 'CFC Ch. 50 / OSHA 29 CFR 1910.1200' },
   ],
   requiredPostings: [
@@ -255,8 +255,8 @@ const CALIFORNIA: JurisdictionProfile = {
   ],
   serviceFrequencies: [
     // CFC-specific service frequencies (supplement federal NFPA entries)
-    { service: 'Hood Filter Cleaning', frequencyDays: 7, frequencyLabel: 'Weekly (min)', condition: 'Staff cleaning of removable hood filters — more frequent for high-volume', source: 'CFC Ch. 6.07 / NFPA 96 §11.6' },
-    { service: 'Fire Suppression Tamper Check', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual: verify seals intact, nozzles unobstructed, gauge in range', source: 'CFC Ch. 6 / NFPA 96 §11.2.1' },
+    { service: 'Hood Filter Cleaning', frequencyDays: 7, frequencyLabel: 'Weekly (min)', condition: 'Staff cleaning of removable hood filters — more frequent for high-volume', source: 'CFC Ch. 6.07 / NFPA 96-2025 §11.6' },
+    { service: 'Fire Suppression Tamper Check', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual: verify seals intact, nozzles unobstructed, gauge in range', source: 'CFC Ch. 6 / NFPA 96-2025 §11.2.1' },
     { service: 'Fire Prevention Permit Renewal', frequencyDays: 365, frequencyLabel: 'Annually', source: 'CFC §105.6 — local fire authority (AHJ)' },
   ],
   minimumWage: {
@@ -288,12 +288,12 @@ const CALIFORNIA: JurisdictionProfile = {
     'CFC Ch. 6: Fire suppression system required for ALL Type I commercial cooking hoods',
     'CFC Ch. 6: Automatic shutdown of fuel/electrical supply upon suppression system activation',
     'CFC Ch. 6: Manual pull station required within 10-20 ft travel distance of egress path',
-    'CFC Ch. 6.07: Adopts NFPA 96 by reference with California amendments',
+    'CFC Ch. 6.07: Adopts NFPA 96 (2025 Edition) by reference with California amendments',
     'CFC Ch. 6.07: UL 300 compliant wet chemical suppression systems mandatory for all Type I hoods',
-    'CFC Ch. 6.07: Hood and duct cleaning must meet bare metal standard per NFPA 96 schedule',
+    'CFC Ch. 6.07: Hood and duct cleaning must meet bare metal standard per NFPA 96 (2025 Edition) schedule',
     'CFC Ch. 6.07: Hood cleaning documentation MUST be maintained on-site and available for fire inspector',
-    'CFC Ch. 9: Fire alarm system maintenance per NFPA 72',
-    'CFC Ch. 9: Fire extinguisher requirements per NFPA 10 — Class K mandatory in ALL commercial kitchens',
+    'CFC Ch. 9: Fire alarm system maintenance per NFPA 72-2025',
+    'CFC Ch. 9: Fire extinguisher requirements per NFPA 10 (2025 Edition) — Class K mandatory in ALL commercial kitchens',
     'CFC Ch. 9: Annual extinguisher inspection + 6-year maintenance + 12-year hydrostatic test',
     'CFC Ch. 50: Cleaning chemical storage must meet hazardous materials requirements (if applicable)',
     'CFC Ch. 50: SDS (Safety Data Sheets) must be accessible to all employees at all times',

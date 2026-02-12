@@ -40,7 +40,7 @@ const SHARED_DATA = [
   'Anonymized incident counts by severity (no descriptions)',
   'Service compliance dates (hood cleaning, fire suppression, extinguishers)',
   'Score trend direction (improving, stable, declining)',
-  'Factor-level compliance status against NFPA/FDA standards',
+  'Factor-level compliance status against NFPA (2025)/FDA standards',
 ];
 
 const NEVER_SHARED = [
@@ -291,7 +291,7 @@ export function InsuranceSettings() {
             { method: 'POST', path: '/api/v1/risk-score/verify', desc: 'Verify current risk score for a location' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/summary', desc: 'Overall score with category breakdown' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/history', desc: '12-month score trend with direction' },
-            { method: 'GET', path: '/api/v1/risk-score/{location_id}/fire-safety', desc: 'Fire safety compliance and NFPA status' },
+            { method: 'GET', path: '/api/v1/risk-score/{location_id}/fire-safety', desc: 'Fire safety compliance and NFPA (2025) status' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/incidents', desc: 'Anonymized incident metrics (no PII)' },
           ].map(ep => (
             <div key={ep.path} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 flex-wrap">

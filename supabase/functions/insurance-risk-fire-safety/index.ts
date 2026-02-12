@@ -2,7 +2,7 @@
 // Insurance Risk Fire Safety — Property insurance underwriting data
 // ============================================================
 // Returns fire safety compliance details: hood cleaning dates,
-// suppression inspection dates, extinguisher status, NFPA compliance.
+// suppression inspection dates, extinguisher status, NFPA (2025) compliance.
 // Critical for property insurance underwriting decisions.
 // ============================================================
 
@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
       factors = factorData || [];
     }
 
-    // ── Derive NFPA compliance from factors ──
+    // ── Derive NFPA (2025) compliance from factors ──
     function getNfpaStatus(refStandard: string): string {
       const factor = factors.find((f: Record<string, unknown>) =>
         (f.reference_standard as string || "").includes(refStandard)
@@ -166,10 +166,10 @@ Deno.serve(async (req: Request) => {
         improvement_action: f.improvement_action,
       })),
       nfpa_compliance: {
-        nfpa_96_hood_duct: getNfpaStatus("NFPA 96"),
-        nfpa_17a_suppression: getNfpaStatus("NFPA 17A"),
-        nfpa_10_extinguisher: getNfpaStatus("NFPA 10"),
-        nfpa_72_alarm: getNfpaStatus("NFPA 72"),
+        nfpa_96_hood_duct: getNfpaStatus("NFPA 96-2025"),
+        nfpa_17a_suppression: getNfpaStatus("NFPA 17A-2025"),
+        nfpa_10_extinguisher: getNfpaStatus("NFPA 10-2025"),
+        nfpa_72_alarm: getNfpaStatus("NFPA 72-2025"),
       },
       factors_evaluated: factors.length,
       note: "Fire risk is weighted at 40% of the overall risk score — the #1 underwriting concern for commercial kitchens.",

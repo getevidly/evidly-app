@@ -559,7 +559,7 @@ export function JurisdictionSettings() {
             <p className="text-sm font-semibold text-gray-900">Jurisdiction Auto-Detection</p>
             <p className="text-sm text-gray-700 mt-0.5">
               When a location is added with a California address or zip code (900xx–961xx), EvidLY automatically
-              layers <strong>Federal (FDA/NFPA/OSHA)</strong> + <strong>California state</strong> + <strong>county-specific</strong> requirements.
+              layers <strong>Federal (FDA/NFPA 2025/OSHA)</strong> + <strong>California state</strong> + <strong>county-specific</strong> requirements.
               County health department, grading system, and inspection frequency are detected from the zip code.
             </p>
           </div>

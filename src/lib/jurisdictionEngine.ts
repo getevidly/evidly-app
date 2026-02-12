@@ -502,7 +502,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
         { category: 'document', item: 'Hood Cleaning Certificate', status: 'missing', detail: 'No hood cleaning certificate on file — last cleaning was 7 months ago', action: 'Schedule hood cleaning and upload certificate' },
         { category: 'document', item: 'Fire Prevention Permit', status: 'missing', detail: 'No fire prevention permit on file — required by CFC §105.6 from local fire authority (AHJ), separate from health permit', action: 'Contact local fire authority to obtain fire prevention permit' },
         { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396', action: 'Create IHIPP template from Cal/OSHA guidelines' },
-        { category: 'service', item: 'Fire Suppression System', status: 'overdue', detail: 'Semi-annual fire suppression service is 3 weeks overdue — CFC Ch. 6.07 / NFPA 96 §11.2.2', action: 'Schedule emergency fire suppression service' },
+        { category: 'service', item: 'Fire Suppression System', status: 'overdue', detail: 'Semi-annual fire suppression service is 3 weeks overdue — CFC Ch. 6.07 / NFPA 96-2025 §11.2.2', action: 'Schedule emergency fire suppression service' },
         { category: 'certification', item: 'Food Protection Manager Certification', status: 'missing', detail: '0 of 1 required managers have current certification', action: 'Register manager for ServSafe Manager exam' },
       ];
       return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 6, gaps };
@@ -516,7 +516,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
       { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396', action: 'Create IHIPP template from Cal/OSHA guidelines' },
       { category: 'document', item: 'Pest Prevention Training Records', status: 'missing', detail: 'No pest prevention training records on file — required by AB 1147', action: 'Conduct pest prevention training and document' },
       { category: 'document', item: 'SDS (Safety Data Sheets) Binder', status: 'missing', detail: 'No SDS binder on file — CFC Ch. 50 requires safety data sheets accessible to all employees', action: 'Compile SDS binder for all cleaning chemicals and hazardous materials' },
-      { category: 'service', item: 'Fire Extinguisher 6-Year Maintenance', status: 'overdue', detail: 'Class K extinguisher 6-year maintenance overdue by 2 months — CFC Ch. 9 / NFPA 10 §7.3.3', action: 'Schedule 6-year fire extinguisher maintenance service' },
+      { category: 'service', item: 'Fire Extinguisher 6-Year Maintenance', status: 'overdue', detail: 'Class K extinguisher 6-year maintenance overdue by 2 months — CFC Ch. 9 / NFPA 10-2025 §7.3.3', action: 'Schedule 6-year fire extinguisher maintenance service' },
       { category: 'certification', item: 'Food Handler Certification', status: 'missing', detail: '3 of 12 staff missing current food handler certification', action: 'Notify staff to complete certification' },
       { category: 'posting', item: 'Handwashing Signage', status: 'missing', detail: 'Spanish-language handwashing signs not posted at 2 stations', action: 'Print and post bilingual handwashing signs' },
     ];
