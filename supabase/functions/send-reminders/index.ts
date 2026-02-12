@@ -1,28 +1,12 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
-
-interface Organization {
-  id: string;
-  name: string;
-  created_at: string;
-  onboarding_completed: boolean;
-}
-
-interface UserProfile {
-  id: string;
-  full_name: string;
-  organization_id: string;
-  role: string;
-  organizations: {
-    name: string;
-  };
-}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -35,6 +19,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: orgs } = await supabase
@@ -105,7 +90,8 @@ Deno.serve(async (req: Request) => {
           email!,
           owner?.full_name || "there",
           org.name,
-          reminderType
+          reminderType,
+          appUrl
         );
 
         emailsSent.push({ email, org: org.name, type: reminderType });
@@ -129,7 +115,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending reminders:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       {
         status: 500,
         headers: {
@@ -145,24 +131,47 @@ async function sendReminderEmail(
   email: string,
   name: string,
   orgName: string,
-  reminderType: string
+  reminderType: string,
+  appUrl: string
 ) {
-  const messages = {
+  const messages: Record<string, { subject: string; bodyHtml: string }> = {
     day_1: {
       subject: "Welcome to EvidLY - Let's finish your setup!",
+      bodyHtml: `
+        <p>You created your <strong>${orgName}</strong> account on EvidLY yesterday. Let's get you set up so your team can start tracking compliance right away.</p>
+        <p>Here's what's left:</p>
+        <ul style="color: #334155; line-height: 1.8;">
+          <li>Add your locations</li>
+          <li>Upload key documents (permits, licenses, insurance)</li>
+          <li>Invite your team members</li>
+        </ul>
+      `,
     },
     day_3: {
       subject: "You're almost there - Complete your EvidLY setup",
+      bodyHtml: `
+        <p>It's been a few days since you created <strong>${orgName}</strong> on EvidLY. Your compliance dashboard is ready and waiting &mdash; just a few steps to go.</p>
+        <p>Most teams finish setup in under 10 minutes. Pick up where you left off:</p>
+      `,
     },
     day_7: {
       subject: "Your compliance dashboard is waiting - Complete setup",
+      bodyHtml: `
+        <p>Your <strong>${orgName}</strong> account on EvidLY has been waiting for a week. We don't want you to miss out on real-time compliance monitoring, automated checklists, and audit-ready documentation.</p>
+        <p>Need help getting started? Reply to this email and our team will walk you through it.</p>
+      `,
     },
   };
 
-  const message = messages[reminderType as keyof typeof messages];
+  const template = messages[reminderType] || messages.day_1;
 
-  console.log(`[EMAIL] Would send onboarding reminder to: ${email}`);
-  console.log(`[EMAIL] Organization: ${orgName}`);
-  console.log(`[EMAIL] Reminder type: ${reminderType}`);
-  console.log(`[EMAIL] Subject: ${message.subject}`);
+  const html = buildEmailHtml({
+    recipientName: name,
+    bodyHtml: template.bodyHtml,
+    ctaText: "Complete Setup →",
+    ctaUrl: `${appUrl}/onboarding`,
+    footerNote: "You're receiving this because you signed up for EvidLY. If this wasn't you, you can safely ignore this email.",
+  });
+
+  await sendEmail({ to: email, subject: template.subject, html });
 }

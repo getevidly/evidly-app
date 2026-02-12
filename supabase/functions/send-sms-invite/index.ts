@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { sendSms } from "../_shared/sms.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,17 +38,15 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    const message = `You've been invited to ${organizationName} on EvidLY as ${role}. Set up your account: ${inviteUrl}`;
+    const body = `You've been invited to ${organizationName} on EvidLY as ${role}. Set up your account: ${inviteUrl}`;
 
-    console.log(`[SMS] Would send invite to: ${phone}`);
-    console.log(`[SMS] Organization: ${organizationName}`);
-    console.log(`[SMS] Role: ${role}`);
-    console.log(`[SMS] Message: ${message}`);
+    const sid = await sendSms({ to: phone, body });
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: "SMS invitation logged (sending not configured)",
+        message: sid ? "SMS invitation sent" : "SMS invitation logged (Twilio not configured)",
+        messageSid: sid,
       }),
       {
         status: 200,
@@ -61,7 +60,7 @@ Deno.serve(async (req: Request) => {
     console.error("Error sending SMS:", error);
     return new Response(
       JSON.stringify({
-        error: error.message || "Failed to send SMS invitation",
+        error: (error as Error).message || "Failed to send SMS invitation",
       }),
       {
         status: 500,

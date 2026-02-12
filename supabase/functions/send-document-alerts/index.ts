@@ -1,19 +1,13 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
+import { sendSms } from "../_shared/sms.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
-
-interface Document {
-  id: string;
-  title: string;
-  expiration_date: string;
-  organization_id: string;
-  category: string;
-}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -26,6 +20,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: documents } = await supabase
@@ -91,13 +86,14 @@ Deno.serve(async (req: Request) => {
 
       const { data: orgUsers } = await supabase
         .from("user_profiles")
-        .select("id, full_name, organizations(name)")
+        .select("id, full_name, phone, organizations(name)")
         .eq("organization_id", doc.organization_id)
         .in("role", ["owner", "admin", "manager"]);
 
       if (!orgUsers || orgUsers.length === 0) continue;
 
       const { data: authUsers } = await supabase.auth.admin.listUsers();
+      const orgName = (orgUsers[0] as any).organizations?.name || "your organization";
 
       for (const user of orgUsers) {
         const authUser = authUsers.users.find((u) => u.id === user.id);
@@ -116,20 +112,31 @@ Deno.serve(async (req: Request) => {
           await sendAlertEmail(
             authUser.email,
             user.full_name || "there",
-            user.organizations?.name || "your organization",
+            orgName,
             doc.title,
             daysUntilExpiry,
             alertType,
-            expirationDate
+            expirationDate,
+            appUrl
           );
-
-          alertsSent.push({
-            email: authUser.email,
-            document: doc.title,
-            type: alertType,
-            via: shouldSendSMS ? ['email', 'sms'] : ['email'],
-          });
         }
+
+        if (shouldSendSMS && (user as any).phone) {
+          await sendAlertSms(
+            (user as any).phone,
+            orgName,
+            doc.title,
+            daysUntilExpiry,
+            alertType
+          );
+        }
+
+        alertsSent.push({
+          email: authUser.email,
+          document: doc.title,
+          type: alertType,
+          via: shouldSendSMS ? ['email', 'sms'] : ['email'],
+        });
       }
 
       await supabase.from("document_alerts").insert({
@@ -154,7 +161,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending document alerts:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       {
         status: 500,
         headers: {
@@ -173,41 +180,118 @@ async function sendAlertEmail(
   documentName: string,
   daysUntilExpiry: number,
   alertType: string,
-  expirationDate: Date
+  expirationDate: Date,
+  appUrl: string
 ) {
-  const messages = {
+  const formattedDate = expirationDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const templates: Record<string, { subject: string; bodyHtml: string; urgency?: { text: string; color: string } }> = {
     "30_days": {
       subject: `${documentName} expires in 30 days - Action needed`,
-      urgency: "Notice",
+      bodyHtml: `
+        <p>A document for <strong>${orgName}</strong> is approaching its expiration date:</p>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0;">${documentName}</p>
+          <p style="color: #64748b; font-size: 14px; margin: 0;">Expires: ${formattedDate}</p>
+        </div>
+        <p>Plan ahead to renew this document before it expires.</p>
+      `,
     },
     "14_days": {
       subject: `${documentName} expires in 14 days - Urgent`,
-      urgency: "Urgent",
+      bodyHtml: `
+        <p>A document for <strong>${orgName}</strong> will expire in <strong>14 days</strong>:</p>
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0; color: #92400e;">${documentName}</p>
+          <p style="color: #92400e; font-size: 14px; margin: 0;">Expires: ${formattedDate}</p>
+        </div>
+        <p>Begin the renewal process now to avoid a compliance gap.</p>
+      `,
+      urgency: { text: "Urgent — Expiring Soon", color: "#f59e0b" },
     },
     "7_days": {
       subject: `${documentName} expires in 7 days - CRITICAL`,
-      urgency: "Critical",
+      bodyHtml: `
+        <p>A critical document for <strong>${orgName}</strong> expires in <strong>7 days</strong>:</p>
+        <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0; color: #991b1b;">${documentName}</p>
+          <p style="color: #991b1b; font-size: 14px; margin: 0;">Expires: ${formattedDate}</p>
+        </div>
+        <p>Immediate action required to maintain compliance.</p>
+      `,
+      urgency: { text: "Critical — 7 Days Remaining", color: "#dc2626" },
     },
     "1_day": {
       subject: `${documentName} expires TOMORROW - IMMEDIATE ACTION REQUIRED`,
-      urgency: "IMMEDIATE",
+      bodyHtml: `
+        <p>A document for <strong>${orgName}</strong> expires <strong>tomorrow</strong>:</p>
+        <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0; color: #991b1b;">${documentName}</p>
+          <p style="color: #991b1b; font-size: 14px; margin: 0;">Expires: ${formattedDate}</p>
+        </div>
+      `,
+      urgency: { text: "Expires Tomorrow — Act Now", color: "#dc2626" },
     },
     expired: {
       subject: `${documentName} EXPIRED TODAY - IMMEDIATE ACTION REQUIRED`,
-      urgency: "EXPIRED",
+      bodyHtml: `
+        <p>A required document for <strong>${orgName}</strong> has <strong>expired today</strong>:</p>
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0; color: #991b1b;">${documentName}</p>
+          <p style="color: #991b1b; font-size: 14px; margin: 0;">Expired: ${formattedDate}</p>
+        </div>
+        <p style="color: #dc2626; font-weight: 600;">Your compliance score is affected until this document is renewed.</p>
+      `,
+      urgency: { text: "EXPIRED — Compliance at Risk", color: "#dc2626" },
     },
     overdue: {
       subject: `${documentName} is OVERDUE - Immediate renewal required`,
-      urgency: "OVERDUE",
+      bodyHtml: `
+        <p>A required document for <strong>${orgName}</strong> is <strong>overdue by ${Math.abs(daysUntilExpiry)} days</strong>:</p>
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0; color: #991b1b;">${documentName}</p>
+          <p style="color: #991b1b; font-size: 14px; margin: 0;">Was due: ${formattedDate} (${Math.abs(daysUntilExpiry)} days overdue)</p>
+        </div>
+        <p style="color: #dc2626; font-weight: 600;">Operating without this document may have regulatory consequences.</p>
+      `,
+      urgency: { text: "OVERDUE — Immediate Action Required", color: "#7f1d1d" },
     },
   };
 
-  const message = messages[alertType as keyof typeof messages];
+  const template = templates[alertType] || templates["30_days"];
 
-  console.log(`[EMAIL] Would send document alert to: ${email}`);
-  console.log(`[EMAIL] Organization: ${orgName}`);
-  console.log(`[EMAIL] Document: ${documentName}`);
-  console.log(`[EMAIL] Days until expiry: ${daysUntilExpiry}`);
-  console.log(`[EMAIL] Alert type: ${alertType}`);
-  console.log(`[EMAIL] Subject: ${message.subject}`);
+  const html = buildEmailHtml({
+    recipientName: name,
+    bodyHtml: template.bodyHtml,
+    ctaText: "View Documents →",
+    ctaUrl: `${appUrl}/documents`,
+    urgencyBanner: template.urgency,
+    footerNote: "You can manage notification preferences in Settings.",
+  });
+
+  await sendEmail({ to: email, subject: template.subject, html });
+}
+
+async function sendAlertSms(
+  phone: string,
+  orgName: string,
+  documentName: string,
+  daysUntilExpiry: number,
+  alertType: string
+) {
+  const urgencyMap: Record<string, string> = {
+    "7_days": `URGENT: ${documentName} for ${orgName} expires in 7 days. Renew now to stay compliant. -EvidLY`,
+    "1_day": `CRITICAL: ${documentName} for ${orgName} expires TOMORROW. Immediate action required. -EvidLY`,
+    expired: `ALERT: ${documentName} for ${orgName} EXPIRED TODAY. Renew immediately. -EvidLY`,
+    overdue: `ALERT: ${documentName} for ${orgName} is ${Math.abs(daysUntilExpiry)} days overdue. Renew immediately. -EvidLY`,
+  };
+
+  const body = urgencyMap[alertType];
+  if (body) {
+    await sendSms({ to: phone, body });
+  }
 }

@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,7 @@ interface InviteRequest {
   inviteUrl: string;
   role: string;
   inviterName: string;
+  organizationName?: string;
 }
 
 Deno.serve(async (req: Request) => {
@@ -22,19 +24,37 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { email, inviteUrl, role, inviterName }: InviteRequest = await req.json();
+    const { email, inviteUrl, role, inviterName, organizationName }: InviteRequest = await req.json();
 
-    console.log(`[EMAIL] Would send team invite to: ${email}`);
-    console.log(`[EMAIL] Inviter: ${inviterName}`);
-    console.log(`[EMAIL] Role: ${role}`);
-    console.log(`[EMAIL] Invite URL: ${inviteUrl}`);
-    console.log(`[EMAIL] Subject: You've been invited to join EvidLY as ${role}`);
+    const orgLabel = organizationName || "their team";
+
+    const html = buildEmailHtml({
+      recipientName: email.split("@")[0],
+      bodyHtml: `
+        <p><strong>${inviterName}</strong> has invited you to join <strong>${orgLabel}</strong> on EvidLY as <strong>${role}</strong>.</p>
+        <p>EvidLY is a compliance management platform that helps food-service teams stay audit-ready with real-time monitoring, smart checklists, and automated documentation.</p>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0 0 4px 0;">Your role: ${role}</p>
+          <p style="color: #64748b; font-size: 14px; margin: 0;">Invited by: ${inviterName}</p>
+        </div>
+      `,
+      ctaText: "Accept Invitation →",
+      ctaUrl: inviteUrl,
+      footerNote: "This invitation link is unique to you. If you did not expect this invite, you can safely ignore this email.",
+    });
+
+    const result = await sendEmail({
+      to: email,
+      subject: `You've been invited to join ${orgLabel} on EvidLY as ${role}`,
+      html,
+    });
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Invitation logged (email sending not configured)",
-        inviteUrl
+        message: result ? "Invitation email sent" : "Invitation logged (email service unavailable)",
+        emailId: result?.id || null,
+        inviteUrl,
       }),
       {
         headers: {
@@ -46,7 +66,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending invite email:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       {
         status: 500,
         headers: {

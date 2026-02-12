@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { sendEmail, buildEmailHtml } from "../_shared/email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,6 +19,7 @@ Deno.serve(async (req: Request) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: orgs } = await supabase
@@ -138,7 +140,8 @@ Deno.serve(async (req: Request) => {
               org.name,
               item.item_name,
               reminderType!,
-              reminderCount
+              reminderCount,
+              appUrl
             );
 
             remindersSent.push({
@@ -181,7 +184,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error("Error sending missing doc reminders:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       {
         status: 500,
         headers: {
@@ -199,26 +202,54 @@ async function sendMissingDocEmail(
   orgName: string,
   documentType: string,
   reminderType: string,
-  reminderCount: number
+  reminderCount: number,
+  appUrl: string
 ) {
-  const messages = {
+  const messages: Record<string, { subject: string; bodyHtml: string; urgency?: { text: string; color: string } }> = {
     day_3: {
       subject: `Don't forget to upload your ${documentType}`,
+      bodyHtml: `
+        <p>Your <strong>${orgName}</strong> compliance checklist requires the following document:</p>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0;">${documentType}</p>
+        </div>
+        <p>Uploading this document keeps your compliance record complete and audit-ready.</p>
+      `,
     },
     day_7: {
       subject: `Reminder: ${documentType} still needed`,
+      bodyHtml: `
+        <p>This is a reminder that <strong>${orgName}</strong> still needs the following document uploaded to stay compliant:</p>
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0; color: #92400e;">${documentType}</p>
+          <p style="color: #92400e; font-size: 13px; margin: 4px 0 0 0;">This document is required for compliance.</p>
+        </div>
+      `,
+      urgency: { text: "Action Required", color: "#f59e0b" },
     },
     day_14: {
       subject: `Final reminder: ${documentType} required for compliance`,
+      bodyHtml: `
+        <p>This is the <strong>final reminder</strong> that <strong>${orgName}</strong> is missing a required compliance document:</p>
+        <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="font-weight: 600; margin: 0; color: #991b1b;">${documentType}</p>
+          <p style="color: #991b1b; font-size: 13px; margin: 4px 0 0 0;">Missing this document may affect your compliance score and audit readiness.</p>
+        </div>
+      `,
+      urgency: { text: "Final Notice — Compliance at Risk", color: "#dc2626" },
     },
   };
 
-  const message = messages[reminderType as keyof typeof messages];
+  const template = messages[reminderType] || messages.day_3;
 
-  console.log(`[EMAIL] Would send missing doc reminder to: ${email}`);
-  console.log(`[EMAIL] Organization: ${orgName}`);
-  console.log(`[EMAIL] Document type: ${documentType}`);
-  console.log(`[EMAIL] Reminder type: ${reminderType}`);
-  console.log(`[EMAIL] Reminder count: ${reminderCount + 1}`);
-  console.log(`[EMAIL] Subject: ${message.subject}`);
+  const html = buildEmailHtml({
+    recipientName: name,
+    bodyHtml: template.bodyHtml,
+    ctaText: "Upload Document →",
+    ctaUrl: `${appUrl}/documents`,
+    urgencyBanner: template.urgency,
+    footerNote: `This is reminder ${reminderCount + 1} for ${orgName}. You can manage notification preferences in Settings.`,
+  });
+
+  await sendEmail({ to: email, subject: template.subject, html });
 }
