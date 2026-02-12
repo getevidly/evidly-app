@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -12,6 +12,8 @@ import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistor
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface TemperatureEquipment {
   id: string;
@@ -82,6 +84,7 @@ export function TempLogs() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -160,24 +163,46 @@ export function TempLogs() {
 
   const loadDemoData = () => {
     const now = new Date();
+    const todayAt = (h: number, m: number) => {
+      const d = new Date(now);
+      d.setHours(h, m, 0, 0);
+      return d;
+    };
+
+    // 8 equipment items: 4 already logged today (green), 4 pending (amber)
     const demoEquipment: TemperatureEquipment[] = [
       {
         id: '1',
-        name: 'Walk-in Cooler',
+        name: 'Walk-in Cooler #1',
         equipment_type: 'cooler',
-        min_temp: 32,
-        max_temp: 41,
+        min_temp: 35,
+        max_temp: 38,
         unit: 'F',
         location: 'Downtown Kitchen',
         last_check: {
-          temperature_value: 38,
-          created_at: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
+          temperature_value: 36,
+          created_at: todayAt(6, 0).toISOString(),
           is_within_range: true,
-          recorded_by_name: 'Mike Johnson',
+          recorded_by_name: 'Sarah Chen',
         },
       },
       {
         id: '2',
+        name: 'Walk-in Cooler #2',
+        equipment_type: 'cooler',
+        min_temp: 35,
+        max_temp: 38,
+        unit: 'F',
+        location: 'Downtown Kitchen',
+        last_check: {
+          temperature_value: 37,
+          created_at: todayAt(6, 15).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'Sarah Chen',
+        },
+      },
+      {
+        id: '3',
         name: 'Walk-in Freezer',
         equipment_type: 'freezer',
         min_temp: -10,
@@ -185,70 +210,86 @@ export function TempLogs() {
         unit: 'F',
         location: 'Downtown Kitchen',
         last_check: {
-          temperature_value: -2,
-          created_at: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
+          temperature_value: -3,
+          created_at: todayAt(6, 30).toISOString(),
           is_within_range: true,
           recorded_by_name: 'Mike Johnson',
         },
       },
       {
-        id: '3',
-        name: 'Prep Cooler',
+        id: '4',
+        name: 'Prep Table Cooler',
         equipment_type: 'cooler',
-        min_temp: 32,
-        max_temp: 41,
+        min_temp: 33,
+        max_temp: 40,
         unit: 'F',
         location: 'Airport Cafe',
         last_check: {
-          temperature_value: 40,
-          created_at: new Date(now.getTime() - 1 * 60 * 60 * 1000).toISOString(),
+          temperature_value: 37,
+          created_at: todayAt(6, 45).toISOString(),
           is_within_range: true,
-          recorded_by_name: 'Sarah Chen',
+          recorded_by_name: 'Mike Johnson',
         },
       },
+      // 4 not-yet-logged today (with yesterday's readings for context)
       {
-        id: '4',
-        name: 'Hot Hold Cabinet',
+        id: '5',
+        name: 'Hot Holding Unit',
         equipment_type: 'hot_hold',
         min_temp: 135,
         max_temp: 165,
         unit: 'F',
         location: 'University Dining',
         last_check: {
-          temperature_value: 127,
-          created_at: new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString(),
-          is_within_range: false,
-          recorded_by_name: 'Sarah Chen',
-        },
-      },
-      {
-        id: '5',
-        name: 'Salad Bar',
-        equipment_type: 'cooler',
-        min_temp: 32,
-        max_temp: 41,
-        unit: 'F',
-        location: 'Airport Cafe',
-        last_check: {
-          temperature_value: 43,
-          created_at: new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString(),
-          is_within_range: false,
+          temperature_value: 148,
+          created_at: new Date(now.getTime() - 18 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
           recorded_by_name: 'Emma Davis',
         },
       },
       {
         id: '6',
-        name: 'Reach-in Freezer',
+        name: 'Salad Bar',
+        equipment_type: 'cooler',
+        min_temp: 33,
+        max_temp: 41,
+        unit: 'F',
+        location: 'Airport Cafe',
+        last_check: {
+          temperature_value: 38,
+          created_at: new Date(now.getTime() - 16 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'Emma Davis',
+        },
+      },
+      {
+        id: '7',
+        name: 'Ice Machine',
         equipment_type: 'freezer',
-        min_temp: -10,
-        max_temp: 0,
+        min_temp: 28,
+        max_temp: 32,
+        unit: 'F',
+        location: 'Downtown Kitchen',
+        last_check: {
+          temperature_value: 30,
+          created_at: new Date(now.getTime() - 20 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'John Smith',
+        },
+      },
+      {
+        id: '8',
+        name: 'Blast Chiller',
+        equipment_type: 'cooler',
+        min_temp: 33,
+        max_temp: 38,
         unit: 'F',
         location: 'University Dining',
         last_check: {
-          temperature_value: 2,
-          created_at: new Date(now.getTime() - 4 * 60 * 60 * 1000).toISOString(),
-          is_within_range: false,
-          recorded_by_name: 'Mike Johnson',
+          temperature_value: 35,
+          created_at: new Date(now.getTime() - 14 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'John Smith',
         },
       },
     ];
@@ -457,14 +498,12 @@ export function TempLogs() {
     const tempValue = parseFloat(temperature);
     const isWithinRange = tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
-    if (!isWithinRange && !correctiveAction.trim()) {
-      toast.warning('Corrective action required for out-of-range temp');
-      return;
-    }
-
-    // Demo mode: update local state only
+    // Demo mode: auto-fill corrective action, don't block on it
     if (isDemoMode || !profile?.organization_id) {
       const now = new Date();
+      const demoCorrectiveNote = !isWithinRange
+        ? (correctiveAction.trim() || 'Temperature deviation noted — monitoring closely')
+        : null;
       setEquipment(prev => prev.map(eq =>
         eq.id === selectedEquipment.id
           ? { ...eq, last_check: { temperature_value: tempValue, created_at: now.toISOString(), is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
@@ -478,12 +517,35 @@ export function TempLogs() {
         temperature_value: tempValue,
         is_within_range: isWithinRange,
         recorded_by_name: 'Demo User',
-        corrective_action: !isWithinRange ? correctiveAction : null,
+        corrective_action: demoCorrectiveNote,
         created_at: now.toISOString(),
       }, ...prev]);
       setShowLogModal(false);
       setTempPhotos([]);
-      showSuccessToast(`${tempValue}°F logged for ${selectedEquipment.name}`);
+
+      if (isWithinRange) {
+        toast.success(`${tempValue}°F logged for ${selectedEquipment.name} — Within safe range`);
+      } else {
+        toast.warning(`${tempValue}°F logged for ${selectedEquipment.name} — Outside safe range`);
+      }
+
+      // Quick-log: auto-advance to next unlogged equipment after brief delay
+      setTimeout(() => {
+        const nextUnlogged = equipment.find(eq => {
+          if (eq.id === selectedEquipment.id) return false;
+          if (!eq.last_check) return true;
+          const isLoggedToday = new Date(eq.last_check.created_at).toDateString() === new Date().toDateString();
+          return !isLoggedToday;
+        });
+        if (nextUnlogged) {
+          handleLogTemp(nextUnlogged);
+        }
+      }, 800);
+      return;
+    }
+
+    if (!isWithinRange && !correctiveAction.trim()) {
+      toast.warning('Corrective action required for out-of-range temp');
       return;
     }
 
@@ -769,10 +831,21 @@ export function TempLogs() {
     return `${diffDays}d ago`;
   };
 
-  const isEquipmentOutOfRange = (eq: TemperatureEquipment) => {
-    if (!eq.last_check) return true;
+  const getEquipmentState = (eq: TemperatureEquipment): 'logged' | 'pending' | 'outOfRange' => {
+    if (!eq.last_check) return 'pending';
     const isToday = new Date(eq.last_check.created_at).toDateString() === new Date().toDateString();
-    return !isToday || !eq.last_check.is_within_range;
+    if (!isToday) return 'pending';
+    if (!eq.last_check.is_within_range) return 'outOfRange';
+    return 'logged';
+  };
+
+  const isEquipmentOutOfRange = (eq: TemperatureEquipment) => {
+    const state = getEquipmentState(eq);
+    return state === 'outOfRange' || state === 'pending';
+  };
+
+  const getLoggedTodayCount = () => {
+    return equipment.filter(eq => getEquipmentState(eq) === 'logged').length;
   };
 
   const getSortedEquipment = () => {
@@ -1207,10 +1280,35 @@ export function TempLogs() {
               </div>
             </div>
 
+            {/* Logging Progress */}
+            {isDemoMode && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Today's Progress</span>
+                  <span className="text-sm font-bold text-[#1e4d6b]">{getLoggedTodayCount()} of {equipment.length} logged</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div
+                    className="h-2.5 rounded-full transition-all duration-500"
+                    style={{ width: `${equipment.length > 0 ? (getLoggedTodayCount() / equipment.length) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === equipment.length ? '#16a34a' : '#d4af37' }}
+                  />
+                </div>
+                {getLoggedTodayCount() === equipment.length && (
+                  <p className="text-xs text-green-600 font-medium mt-1">All equipment logged — great job!</p>
+                )}
+              </div>
+            )}
+
             {/* Equipment Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getSortedEquipment().map((eq) => (
-                <div key={eq.id} className={`bg-white rounded-lg shadow p-6 ${isEquipmentOutOfRange(eq) ? 'border-2 border-red-300' : 'border-2 border-green-300'}`}>
+              {getSortedEquipment().map((eq) => {
+                const eqState = getEquipmentState(eq);
+                return (
+                <div key={eq.id} className={`bg-white rounded-lg shadow p-6 ${
+                  eqState === 'logged' ? 'border-2 border-green-300' :
+                  eqState === 'outOfRange' ? 'border-2 border-red-300' :
+                  'border-2 border-amber-300'
+                }`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className="p-3 rounded-lg" style={{ backgroundColor: '#e8f0f5' }}>
@@ -1247,12 +1345,19 @@ export function TempLogs() {
 
                   <button
                     onClick={() => handleLogTemp(eq)}
-                    className={`w-full px-4 py-2 min-h-[44px] text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#163a52]'}`}
+                    className={`w-full px-4 py-2 min-h-[44px] text-white rounded-lg transition-colors font-medium shadow-sm ${
+                      eqState === 'outOfRange' ? 'bg-red-600 hover:bg-red-700' :
+                      eqState === 'pending' ? 'bg-amber-500 hover:bg-amber-600' :
+                      'bg-[#1e4d6b] hover:bg-[#163a52]'
+                    }`}
                   >
-                    {isEquipmentOutOfRange(eq) ? t('tempLogs.logTempNowWarning') : t('tempLogs.logTemp')}
+                    {eqState === 'outOfRange' ? t('tempLogs.logTempNowWarning') :
+                     eqState === 'pending' ? 'Log Now' :
+                     t('tempLogs.logTemp')}
                   </button>
                 </div>
-              ))}
+              );
+              })}
 
               {equipment.length === 0 && (
                 <div className="col-span-full text-center py-12">
@@ -1359,6 +1464,7 @@ export function TempLogs() {
                   <input
                     type="number"
                     step="0.1"
+                    inputMode="decimal"
                     value={receivingTemp}
                     onChange={(e) => setReceivingTemp(e.target.value)}
                     required
@@ -1561,7 +1667,7 @@ export function TempLogs() {
                 </div>
 
                 <button
-                  onClick={exportToCSV}
+                  onClick={() => guardAction('export', 'temperature logs', () => exportToCSV())}
                   className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium flex items-center space-x-2"
                 >
                   <Download className="h-4 w-4" />
@@ -2010,8 +2116,10 @@ export function TempLogs() {
                 <input
                   type="number"
                   step="0.1"
+                  inputMode="decimal"
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
+                  autoFocus
                   required
                   className={`w-full px-4 py-6 text-4xl font-bold text-center border-4 rounded-lg focus:outline-none focus:ring-4 transition-all ${
                     temperature && isWithinRange
@@ -2025,9 +2133,9 @@ export function TempLogs() {
                 {temperature && (
                   <div className="mt-3 text-center">
                     {isWithinRange ? (
-                      <span className="text-green-600 font-bold text-2xl">PASS ✓</span>
+                      <span className="text-green-600 font-bold text-2xl">Within safe range ✅</span>
                     ) : (
-                      <span className="text-red-600 font-bold text-2xl">FAIL ✗</span>
+                      <span className="text-red-600 font-bold text-2xl">Outside safe range ⚠️</span>
                     )}
                   </div>
                 )}
@@ -2035,22 +2143,42 @@ export function TempLogs() {
 
               {temperature && !isWithinRange && (
                 <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4">
-                  <div className="flex items-center mb-3">
-                    <X className="h-6 w-6 text-red-600 mr-2" />
-                    <span className="text-lg font-bold text-red-600">Temperature out of range!</span>
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
+                    <span className="text-lg font-bold text-red-600">
+                      {tempValue > selectedEquipment.max_temp
+                        ? `${tempValue}°F is above the safe range (${selectedEquipment.min_temp}–${selectedEquipment.max_temp}°F)`
+                        : `${tempValue}°F is below the safe range (${selectedEquipment.min_temp}–${selectedEquipment.max_temp}°F)`
+                      }
+                    </span>
                   </div>
 
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('common.correctiveActionRequired')} <span className="text-red-600">*</span>
-                  </label>
-                  <textarea
-                    value={correctiveAction}
-                    onChange={(e) => setCorrectiveAction(e.target.value)}
-                    required
-                    rows={3}
-                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                    placeholder="Describe the corrective action taken..."
-                  />
+                  {isDemoMode ? (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-700">A corrective action is recommended</p>
+                      <button
+                        type="button"
+                        onClick={() => guardAction('edit', 'corrective actions', () => {})}
+                        className="w-full px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                      >
+                        Create Corrective Action
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('common.correctiveActionRequired')} <span className="text-red-600">*</span>
+                      </label>
+                      <textarea
+                        value={correctiveAction}
+                        onChange={(e) => setCorrectiveAction(e.target.value)}
+                        required
+                        rows={3}
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                        placeholder="Describe the corrective action taken..."
+                      />
+                    </>
+                  )}
                 </div>
               )}
 
@@ -2150,6 +2278,7 @@ export function TempLogs() {
                           <input
                             type="number"
                             step="0.1"
+                            inputMode="decimal"
                             value={entry.temperature}
                             onChange={(e) => handleBatchTempChange(entry.equipment_id, e.target.value)}
                             placeholder="Temp"
@@ -2224,6 +2353,7 @@ export function TempLogs() {
                 <input
                   type="number"
                   step="0.1"
+                  inputMode="decimal"
                   value={cooldownForm.startTemp}
                   onChange={(e) => setCooldownForm({ ...cooldownForm, startTemp: e.target.value })}
                   required
@@ -2295,6 +2425,11 @@ export function TempLogs() {
         </div>
       )}
 
+      {/* Demo Upgrade Prompt */}
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
+
       {/* Cooldown Check Modal */}
       {showCooldownCheckModal && selectedCooldown && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
@@ -2308,6 +2443,7 @@ export function TempLogs() {
                 <input
                   type="number"
                   step="0.1"
+                  inputMode="decimal"
                   value={cooldownCheckTemp}
                   onChange={(e) => setCooldownCheckTemp(e.target.value)}
                   required

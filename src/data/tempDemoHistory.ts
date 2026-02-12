@@ -20,16 +20,16 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
   const history: TempHistoryEntry[] = [];
   const staff = ['Sarah Chen', 'Mike Johnson', 'Emma Davis', 'John Smith'];
 
-  // Equipment definitions with realistic fluctuation ranges
-  // User-specified ranges: Prep Cooler 36-40, Walk-in Cooler 35-39, Walk-in Freezer -5 to 0,
-  // Hot Hold 125-145 with dips below 135, Salad Bar 34-41, Reach-in Freezer -8 to 0
+  // 8 equipment items matching the demo equipment list
   const eqDefs = [
-    { id: '1', name: 'Walk-in Cooler', type: 'cooler', base: 37, spread: 2, min: 32, max: 41 },
-    { id: '2', name: 'Walk-in Freezer', type: 'freezer', base: -2.5, spread: 2.5, min: -10, max: 0 },
-    { id: '3', name: 'Prep Cooler', type: 'cooler', base: 38, spread: 2, min: 32, max: 41 },
-    { id: '4', name: 'Hot Hold Cabinet', type: 'hot_hold', base: 140, spread: 5, min: 135, max: 165 },
-    { id: '5', name: 'Salad Bar', type: 'cooler', base: 37.5, spread: 3.5, min: 32, max: 41 },
-    { id: '6', name: 'Reach-in Freezer', type: 'freezer', base: -4, spread: 4, min: -10, max: 0 },
+    { id: '1', name: 'Walk-in Cooler #1', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
+    { id: '2', name: 'Walk-in Cooler #2', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
+    { id: '3', name: 'Walk-in Freezer', type: 'freezer', base: -5, spread: 5, min: -10, max: 0 },
+    { id: '4', name: 'Prep Table Cooler', type: 'cooler', base: 36.5, spread: 3.5, min: 33, max: 40 },
+    { id: '5', name: 'Hot Holding Unit', type: 'hot_hold', base: 150, spread: 15, min: 135, max: 165 },
+    { id: '6', name: 'Salad Bar', type: 'cooler', base: 37, spread: 4, min: 33, max: 41 },
+    { id: '7', name: 'Ice Machine', type: 'freezer', base: 30, spread: 2, min: 28, max: 32 },
+    { id: '8', name: 'Blast Chiller', type: 'cooler', base: 35.5, spread: 2.5, min: 33, max: 38 },
   ];
 
   // Readings every 3 hours: 6am, 9am, 12pm, 3pm, 6pm, 9pm
@@ -55,21 +55,33 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
         let temp = eq.base + (pRand(seed) - 0.5) * eq.spread * 2;
 
-        // Hot Hold Cabinet: occasional dips below 135 (~8% of readings)
-        if (eq.id === '4' && pRand(seed * 3 + 7) < 0.08) {
+        // Walk-in Cooler #1: rare spike above 38 (~3%)
+        if (eq.id === '1' && pRand(seed * 3 + 19) < 0.03) {
+          temp = 38 + pRand(seed * 5 + 11) * 2; // 38-40
+        }
+        // Walk-in Cooler #2: rare spike above 38 (~3%)
+        if (eq.id === '2' && pRand(seed * 3 + 29) < 0.03) {
+          temp = 38 + pRand(seed * 5 + 13) * 2; // 38-40
+        }
+        // Prep Table Cooler: occasional drift above 40 (~4%)
+        if (eq.id === '4' && pRand(seed * 3 + 23) < 0.04) {
+          temp = 40 + pRand(seed * 5 + 17) * 2; // 40-42
+        }
+        // Hot Holding Unit: occasional dips below 135 (~8%)
+        if (eq.id === '5' && pRand(seed * 3 + 7) < 0.08) {
           temp = 125 + pRand(seed * 5) * 10; // 125-135
         }
         // Salad Bar: occasional spike above 41 (~5%)
-        if (eq.id === '5' && pRand(seed * 3 + 13) < 0.05) {
+        if (eq.id === '6' && pRand(seed * 3 + 13) < 0.05) {
           temp = 41 + pRand(seed * 5 + 3) * 3; // 41-44
         }
-        // Walk-in Cooler: rare spike (~3%)
-        if (eq.id === '1' && pRand(seed * 3 + 19) < 0.03) {
-          temp = 41 + pRand(seed * 5 + 11) * 2; // 41-43
+        // Ice Machine: occasional spike above 32 (~4%)
+        if (eq.id === '7' && pRand(seed * 3 + 37) < 0.04) {
+          temp = 32 + pRand(seed * 5 + 19) * 2; // 32-34
         }
-        // Prep Cooler: occasional drift (~4%)
-        if (eq.id === '3' && pRand(seed * 3 + 23) < 0.04) {
-          temp = 40 + pRand(seed * 5 + 17) * 2; // 40-42
+        // Blast Chiller: occasional drift above 38 (~3%)
+        if (eq.id === '8' && pRand(seed * 3 + 41) < 0.03) {
+          temp = 38 + pRand(seed * 5 + 23) * 2; // 38-40
         }
 
         temp = Math.round(temp * 10) / 10;
@@ -97,10 +109,12 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
 // Color map for chart lines
 export const equipmentColors: Record<string, string> = {
-  'Walk-in Cooler': '#1e4d6b',
+  'Walk-in Cooler #1': '#1e4d6b',
+  'Walk-in Cooler #2': '#2a6a8f',
   'Walk-in Freezer': '#6366f1',
-  'Prep Cooler': '#2a6a8f',
-  'Hot Hold Cabinet': '#dc2626',
+  'Prep Table Cooler': '#059669',
+  'Hot Holding Unit': '#dc2626',
   'Salad Bar': '#16a34a',
-  'Reach-in Freezer': '#8b5cf6',
+  'Ice Machine': '#0891b2',
+  'Blast Chiller': '#8b5cf6',
 };
