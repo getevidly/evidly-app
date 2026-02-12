@@ -96,7 +96,6 @@ import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import MobileStickyBar from './components/MobileStickyBar';
 import { PageSkeleton } from './components/LoadingSkeleton';
-import { DemoBanner } from './components/DemoBanner';
 import { Layout } from './components/layout/Layout';
 
 function LandingPage() {
@@ -204,7 +203,6 @@ function ProtectedLayout() {
 function AppRoutes() {
   return (
     <>
-      <DemoBanner />
       <Routes>
         <Route path="/" element={<LandingPage />} />
 

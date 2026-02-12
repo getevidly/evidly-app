@@ -35,6 +35,7 @@ import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 
 // ── Types ───────────────────────────────────────────────
 
@@ -283,6 +284,9 @@ export function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Demo upgrade badge at bottom of sidebar */}
+        <SidebarUpgradeBadge />
       </div>
     </div>
   );

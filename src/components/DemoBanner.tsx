@@ -1,37 +1,32 @@
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
-import { Sparkles, X } from 'lucide-react';
 
 export function DemoBanner() {
-  const { isDemoMode, exitDemo } = useDemo();
+  const { isDemoMode } = useDemo();
   const navigate = useNavigate();
 
   if (!isDemoMode) return null;
 
-  const handleSignUp = () => {
-    exitDemo();
+  const handleClick = () => {
+    console.log('[CTA] Upgrade clicked from: top-banner');
     navigate('/signup');
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2a6a8f] text-white px-4 py-2.5 flex items-center justify-center gap-3 text-sm relative z-50">
-      <Sparkles className="h-4 w-4 text-[#d4af37] flex-shrink-0" />
-      <span className="text-center">
-        You're exploring the <strong>EvidLY demo</strong> — 
-        <button
-          onClick={handleSignUp}
-          className="ml-1 underline font-semibold hover:text-[#d4af37] transition-colors"
-        >
-          Sign up free
-        </button>
-        {' '}to start your own compliance dashboard
-      </span>
+    <div
+      className="w-full flex items-center justify-center gap-2 sm:gap-3 px-4 py-2 text-sm font-medium"
+      style={{ backgroundColor: '#C49A2B', color: '#1a1a1a', minHeight: '36px' }}
+    >
+      <span className="hidden sm:inline">You're exploring EvidLY in demo mode.</span>
+      <span className="sm:hidden text-xs font-semibold">Demo Mode</span>
       <button
-        onClick={() => { exitDemo(); navigate('/'); }}
-        className="absolute right-3 p-1 hover:bg-white/20 rounded transition-colors"
-        title="Exit demo"
+        onClick={handleClick}
+        className="inline-flex items-center gap-1 px-3 py-1 rounded-md text-xs sm:text-sm font-bold transition-colors hover:bg-gray-100"
+        style={{ backgroundColor: 'white', color: '#1e4d6b' }}
       >
-        <X className="h-4 w-4" />
+        Start Free Trial
+        <ArrowRight className="h-3.5 w-3.5" />
       </button>
     </div>
   );

@@ -37,6 +37,7 @@ import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
 import { JurisdictionScoreDisplay } from '../components/JurisdictionScoreDisplay';
 import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
+import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -547,6 +548,9 @@ export function Dashboard() {
 
         </div>
         {/* End of static top section (Compliance Score + Pillars) */}
+
+        {/* Demo upgrade CTA — shows after visiting 2+ pages */}
+        <DashboardUpgradeCard pagesVisited={parseInt(sessionStorage.getItem('evidly_demo_pages') || '0', 10)} />
 
         {/* Tab Navigation + Location Filter — stays in fixed position */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-3 sm:px-6 mt-4">
