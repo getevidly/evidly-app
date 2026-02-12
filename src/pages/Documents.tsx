@@ -13,6 +13,8 @@ import { useRole } from '../contexts/RoleContext';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface Document {
   id: string;
@@ -152,6 +154,7 @@ export function Documents() {
   const [showPhotoCapture, setShowPhotoCapture] = useState(false);
   const [docPhotos, setDocPhotos] = useState<PhotoRecord[]>([]);
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
     ? ['All Locations', ...docAccessibleLocs.map(l => l.locationName)]
@@ -205,18 +208,20 @@ export function Documents() {
   }, [locationFilteredDocs]);
 
   const handleDownload = (doc: Document) => {
-    const blob = new Blob(
-      [`EvidLY Compliance Document\n\nDocument: ${doc.title}\nCategory: ${doc.category}\nLocation: ${doc.location}\nStatus: ${doc.status}\nExpiration: ${doc.expiration_date || 'N/A'}\n${doc.provided_by ? `Provided by: ${doc.provided_by}\n` : ''}\nThis is a demo placeholder. In production, the actual file from Supabase Storage would download.`],
-      { type: 'text/plain' }
-    );
-    const url = URL.createObjectURL(blob);
-    const a = window.document.createElement('a');
-    a.href = url;
-    a.download = `${doc.title.replace(/\s+/g, '_')}.txt`;
-    window.document.body.appendChild(a);
-    a.click();
-    window.document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    guardAction('download', 'compliance documents', () => {
+      const blob = new Blob(
+        [`EvidLY Compliance Document\n\nDocument: ${doc.title}\nCategory: ${doc.category}\nLocation: ${doc.location}\nStatus: ${doc.status}\nExpiration: ${doc.expiration_date || 'N/A'}\n${doc.provided_by ? `Provided by: ${doc.provided_by}\n` : ''}\nThis is a demo placeholder. In production, the actual file from Supabase Storage would download.`],
+        { type: 'text/plain' }
+      );
+      const url = URL.createObjectURL(blob);
+      const a = window.document.createElement('a');
+      a.href = url;
+      a.download = `${doc.title.replace(/\s+/g, '_')}.txt`;
+      window.document.body.appendChild(a);
+      a.click();
+      window.document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
   };
 
   useEffect(() => {
@@ -246,13 +251,17 @@ export function Documents() {
   };
 
   const handleShareDocument = (docTitle: string) => {
-    setSelectedDocForShare(docTitle);
-    setShowShareModal(true);
+    guardAction('export', 'compliance documents', () => {
+      setSelectedDocForShare(docTitle);
+      setShowShareModal(true);
+    });
   };
 
   const handleShareMultiple = () => {
-    setSelectedDocForShare(null);
-    setShowShareModal(true);
+    guardAction('export', 'compliance documents', () => {
+      setSelectedDocForShare(null);
+      setShowShareModal(true);
+    });
   };
 
   const handleToggleDoc = (docId: string) => {
@@ -722,6 +731,10 @@ export function Documents() {
           documentType="document"
         />
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }

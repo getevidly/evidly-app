@@ -22,6 +22,8 @@ import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { getAiTier, isFeatureAvailable } from '../lib/aiTier';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
@@ -55,6 +57,7 @@ export function InsuranceSettings() {
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
   const aiTier = getAiTier(isDemoMode);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [sharingEnabled, setSharingEnabled] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
@@ -260,7 +263,7 @@ export function InsuranceSettings() {
                 <span>Status: <span className="text-green-600 font-medium">Active</span></span>
               </div>
               <button
-                onClick={() => toast.success('API key regenerated')}
+                onClick={() => guardAction('settings', 'insurance settings', () => toast.success('API key regenerated'))}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 <RefreshCw className="h-3 w-3" /> Regenerate Key
@@ -401,6 +404,13 @@ export function InsuranceSettings() {
           </div>
         </div>
       )}
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        action={upgradeAction}
+        feature={upgradeFeature}
+      />
     </div>
   );
 }

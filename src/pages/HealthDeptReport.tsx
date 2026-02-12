@@ -20,6 +20,8 @@ import {
   type MissingDocAlert,
   type ReportHistory,
 } from '../lib/reportGenerator';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Helpers ────────────────────────────────────────────────
 
@@ -95,6 +97,7 @@ export function HealthDeptReport() {
   const [isPaidTier, setIsPaidTier] = useState(true);
   const [generatedReport, setGeneratedReport] = useState<ReportType | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [sections, setSections] = useState({
     facilityInfo: true,
@@ -141,20 +144,24 @@ export function HealthDeptReport() {
   };
 
   const handleDownloadPDF = () => {
-    toast.success('PDF download initiated');
+    guardAction('download', 'health department reports', () => {
+      toast.success('PDF download initiated');
+    });
   };
 
   const handleShare = (method: string) => {
-    setShowShareModal(false);
-    if (method === 'link') {
-      toast.success('Shareable link created (expires in 7 days)');
-    } else if (method === 'email-health-dept') {
-      toast.success('Report emailed to Health Department');
-    } else if (method === 'email-insurance') {
-      toast.success('Report emailed to insurance broker');
-    } else if (method === 'email-corporate') {
-      toast.success('Report shared with corporate/franchisor');
-    }
+    guardAction('export', 'health department reports', () => {
+      setShowShareModal(false);
+      if (method === 'link') {
+        toast.success('Shareable link created (expires in 7 days)');
+      } else if (method === 'email-health-dept') {
+        toast.success('Report emailed to Health Department');
+      } else if (method === 'email-insurance') {
+        toast.success('Report emailed to insurance broker');
+      } else if (method === 'email-corporate') {
+        toast.success('Report shared with corporate/franchisor');
+      }
+    });
   };
 
   return (
@@ -1015,6 +1022,9 @@ export function HealthDeptReport() {
           </div>
         )}
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }

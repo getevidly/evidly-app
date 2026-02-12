@@ -11,6 +11,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { locationScores, locations, complianceScores } from '../data/demoData';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Demo benchmark data ──────────────────────────────────────────────
 
@@ -167,6 +169,7 @@ export function Benchmarks() {
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
   const isPremium = false; // Standard tier demo
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [vertical, setVertical] = useState('Restaurant');
   const [subVertical, setSubVertical] = useState('All Sub-Verticals');
@@ -207,7 +210,7 @@ export function Benchmarks() {
               <Filter className="h-4 w-4" /> Filters {showFilters ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             </button>
             <button
-              onClick={() => toast.info('Report download coming in Premium tier')}
+              onClick={() => guardAction('download', 'benchmark reports', () => toast.info('Report download coming in Premium tier'))}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-white min-h-[44px]"
               style={{ backgroundColor: '#1e4d6b' }}
             >
@@ -633,7 +636,7 @@ export function Benchmarks() {
                     <div className="space-y-2">
                       <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">Qualified</span>
                       <div className="flex items-center justify-center gap-2">
-                        <button onClick={() => toast.success('Badge image downloaded')} className="p-1.5 rounded-lg hover:bg-white/50" title="Download">
+                        <button onClick={() => guardAction('download', 'benchmark badges', () => toast.success('Badge image downloaded'))} className="p-1.5 rounded-lg hover:bg-white/50" title="Download">
                           <Download className="h-3.5 w-3.5 text-gray-500" />
                         </button>
                         <button onClick={() => toast.success('Share link copied to clipboard')} className="p-1.5 rounded-lg hover:bg-white/50" title="Share">
@@ -755,6 +758,13 @@ export function Benchmarks() {
           </button>
         </div>
       </div>
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        action={upgradeAction}
+        feature={upgradeFeature}
+      />
     </>
   );
 }

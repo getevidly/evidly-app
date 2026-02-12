@@ -8,6 +8,8 @@ import {
   BookOpenCheck, FileText,
 } from 'lucide-react';
 import { trainingCourses, type TrainingCategory } from '../data/demoData';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 type Step = 'basics' | 'modules' | 'lessons' | 'questions' | 'config' | 'assign';
 
@@ -38,6 +40,7 @@ interface ModuleDraft {
 
 export function CourseBuilder() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
 
   // Step 1: Basics
@@ -114,7 +117,7 @@ export function CourseBuilder() {
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Course Builder</h1>
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create a custom training course with modules, lessons, and assessments</p>
         </div>
-        <button onClick={() => toast.success('Draft saved')}
+        <button onClick={() => guardAction('edit', 'training courses', () => toast.success('Draft saved'))}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
           <Save size={14} /> Save Draft
         </button>
@@ -494,6 +497,13 @@ export function CourseBuilder() {
           </button>
         )}
       </div>
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        feature={upgradeFeature}
+        action={upgradeAction}
+      />
     </div>
   );
 }

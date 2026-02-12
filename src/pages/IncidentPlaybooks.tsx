@@ -33,6 +33,8 @@ import {
   type PlaybookSeverity,
   type PlaybookCategory,
 } from '../data/demoData';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Icon map ────────────────────────────────────────────────
 const ICON_MAP: Record<string, typeof Zap> = {
@@ -197,7 +199,7 @@ function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncident
 }
 
 // ── Completed Incident Card ─────────────────────────────────
-function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveIncidentPlaybook; onViewReport: () => void }) {
+function CompletedIncidentCard({ incident, onViewReport, guardAction }: { incident: ActiveIncidentPlaybook; onViewReport: () => void; guardAction: (action: string, feature: string, cb: () => void) => void }) {
   const template = playbookTemplates.find(t => t.id === incident.templateId);
   const Icon = template ? ICON_MAP[template.icon] || Siren : Siren;
   const color = template?.color || '#1e4d6b';
@@ -236,7 +238,7 @@ function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveInc
             <FileText size={13} /> View Report
           </button>
           <button
-            onClick={() => toast.info('PDF download coming soon')}
+            onClick={() => guardAction('download', 'playbook documents', () => toast.info('PDF download coming soon'))}
             style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
           >
             Download PDF
@@ -250,6 +252,7 @@ function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveInc
 // ── Main Component ──────────────────────────────────────────
 export function IncidentPlaybooks() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('library');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'all'>('all');
@@ -515,12 +518,20 @@ export function IncidentPlaybooks() {
                   key={incident.id}
                   incident={incident}
                   onViewReport={() => navigate(`/playbooks/history/${incident.id}`)}
+                  guardAction={guardAction}
                 />
               ))}
             </div>
           )}
         </>
       )}
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        feature={upgradeFeature}
+        action={upgradeAction}
+      />
     </div>
   );
 }

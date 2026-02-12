@@ -10,6 +10,8 @@ import { getScoreColor } from '../lib/complianceScoring';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -412,6 +414,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -1029,7 +1032,7 @@ export function Equipment() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
                     <button
-                      onClick={() => showToast('Photo capture would open here. In production, uses PhotoEvidence component.')}
+                      onClick={() => guardAction('edit', 'equipment records', () => showToast('Photo capture would open here. In production, uses PhotoEvidence component.'))}
                       className="w-full flex items-center justify-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-[#1e4d6b] hover:text-[#1e4d6b] transition-colors"
                     >
                       <Edit3 className="h-4 w-4" /> Upload Photo
@@ -1046,7 +1049,7 @@ export function Equipment() {
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button
-                    onClick={async () => {
+                    onClick={() => guardAction('edit', 'equipment records', async () => {
                       if (!isDemoMode && profile?.organization_id) {
                         const form = document.querySelector('#equipment-form') as HTMLFormElement | null;
                         const formData = form ? new FormData(form) : null;
@@ -1078,7 +1081,7 @@ export function Equipment() {
                       }
                       showToast('Equipment saved successfully.');
                       setShowForm(false);
-                    }}
+                    })}
                     className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg font-medium hover:bg-[#163a52] text-sm"
                   >
                     Save Equipment
@@ -1103,6 +1106,10 @@ export function Equipment() {
           </div>
         )}
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }

@@ -16,6 +16,8 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -216,6 +218,7 @@ export function Vendors() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
@@ -596,7 +599,7 @@ export function Vendors() {
                   {vendorPhotos.length > 0 && (
                     <div className="mt-3 space-y-3">
                       <button
-                        onClick={() => { showToast('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
+                        onClick={() => guardAction('edit', 'vendor records', () => { showToast('Photos saved for vendor record.'); setShowPhotoUpload(false); })}
                         className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                       >
                         Save Photos
@@ -633,7 +636,7 @@ export function Vendors() {
                     <div className="flex items-center space-x-2 mt-2 md:mt-0">
                       {doc.status === 'on-file' && (
                         <button
-                          onClick={() => showToast('Downloading ' + doc.name + '...')}
+                          onClick={() => guardAction('download', 'vendor documents', () => showToast('Downloading ' + doc.name + '...'))}
                           className="flex items-center text-sm px-2 hover:opacity-70"
                           style={{ color: '#1e4d6b' }}
                         >
@@ -955,7 +958,7 @@ export function Vendors() {
           </div>
           <div className="flex items-center gap-2 self-start">
             <button
-              onClick={() => setShowInviteModal(true)}
+              onClick={() => guardAction('invite', 'vendor management', () => setShowInviteModal(true))}
               className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
               <Send className="h-4 w-4" />
@@ -1374,6 +1377,10 @@ export function Vendors() {
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium text-sm">{toastMessage}</span>
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

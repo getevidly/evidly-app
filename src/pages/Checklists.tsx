@@ -10,6 +10,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface ChecklistTemplate {
   id: string;
@@ -332,6 +334,7 @@ export function Checklists() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
@@ -805,21 +808,23 @@ export function Checklists() {
   };
 
   const handleDeleteTemplate = async (templateId: string) => {
-    // Demo mode: remove from local state
-    if (isDemoMode || !profile?.organization_id) {
-      setTemplates(prev => prev.filter(t => t.id !== templateId));
-      setDemoItemsMap(prev => {
-        const copy = { ...prev };
-        delete copy[templateId];
-        return copy;
-      });
-      toast.success('Template deleted');
-      return;
-    }
+    guardAction('delete', 'checklist templates', async () => {
+      // Demo mode: remove from local state
+      if (isDemoMode || !profile?.organization_id) {
+        setTemplates(prev => prev.filter(t => t.id !== templateId));
+        setDemoItemsMap(prev => {
+          const copy = { ...prev };
+          delete copy[templateId];
+          return copy;
+        });
+        toast.success('Template deleted');
+        return;
+      }
 
-    await supabase.from('checklist_templates').delete().eq('id', templateId);
-    toast.success('Template deleted');
-    fetchTemplates();
+      await supabase.from('checklist_templates').delete().eq('id', templateId);
+      toast.success('Template deleted');
+      fetchTemplates();
+    });
   };
 
   const renderItemInput = (item: ChecklistTemplateItem) => {
@@ -1493,6 +1498,10 @@ export function Checklists() {
             </div>
           </div>
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

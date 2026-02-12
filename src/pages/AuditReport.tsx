@@ -9,6 +9,8 @@ import {
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -287,6 +289,7 @@ const statusBg = (s: string) => {
 
 export function AuditReport() {
   const reportRef = useRef<HTMLDivElement>(null);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Config state
   const [dateRange, setDateRange] = useState<DateRange>('30');
@@ -423,85 +426,93 @@ export function AuditReport() {
   // ── Handlers ─────────────────────────────────────────────────────
 
   const handleDownloadPDF = async () => {
-    if (!reportRef.current) return;
-    setPdfLoading(true);
-    try {
-      const html2canvas = (await import('html2canvas')).default;
-      const jsPDFModule = await import('jspdf');
-      const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
+    guardAction('download', 'audit reports', async () => {
+      if (!reportRef.current) return;
+      setPdfLoading(true);
+      try {
+        const html2canvas = (await import('html2canvas')).default;
+        const jsPDFModule = await import('jspdf');
+        const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
 
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-      });
+        const canvas = await html2canvas(reportRef.current, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+        });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pageW = 210;
-      const pageH = 297;
-      const margin = 8;
-      const hdrH = 10;
-      const ftrH = 8;
-      const usableH = pageH - hdrH - ftrH;
-      const imgW = pageW - 2 * margin;
-      const imgH = (canvas.height * imgW) / canvas.width;
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageW = 210;
+        const pageH = 297;
+        const margin = 8;
+        const hdrH = 10;
+        const ftrH = 8;
+        const usableH = pageH - hdrH - ftrH;
+        const imgW = pageW - 2 * margin;
+        const imgH = (canvas.height * imgW) / canvas.width;
 
-      let heightLeft = imgH;
-      let pageIdx = 0;
+        let heightLeft = imgH;
+        let pageIdx = 0;
 
-      while (heightLeft > 0 || pageIdx === 0) {
-        if (pageIdx > 0) pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', margin, hdrH - pageIdx * usableH, imgW, imgH);
-        heightLeft -= usableH;
-        pageIdx++;
+        while (heightLeft > 0 || pageIdx === 0) {
+          if (pageIdx > 0) pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', margin, hdrH - pageIdx * usableH, imgW, imgH);
+          heightLeft -= usableH;
+          pageIdx++;
+        }
+
+        // Brand every page with header, footer, page numbers
+        const total = pdf.getNumberOfPages();
+        for (let i = 1; i <= total; i++) {
+          pdf.setPage(i);
+          // White-out header/footer zones so content doesn't bleed through
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(0, 0, pageW, hdrH, 'F');
+          pdf.rect(0, pageH - ftrH, pageW, ftrH, 'F');
+          // Header bar
+          pdf.setFillColor(30, 77, 107);
+          pdf.rect(0, 0, pageW, hdrH, 'F');
+          pdf.setFontSize(7);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text('EvidLY — Compliance Management Platform', margin, 6.5);
+          pdf.setTextColor(212, 175, 55);
+          pdf.text(reportTitle, pageW - margin, 6.5, { align: 'right' });
+          // Footer
+          pdf.setFontSize(6);
+          pdf.setTextColor(160, 160, 160);
+          pdf.text(generatedAt, margin, pageH - 3);
+          pdf.text(`Page ${i} of ${total}`, pageW - margin, pageH - 3, { align: 'right' });
+        }
+
+        const locLabel = locationFilter === 'all' ? 'AllLocations' : locationFilter.replace(/\s+/g, '');
+        pdf.save(`EvidLY-Audit-Report-DemoRestaurantGroup-${locLabel}-${days}d.pdf`);
+      } catch {
+        toast.error('PDF generation failed. Try the Print button');
+      } finally {
+        setPdfLoading(false);
       }
-
-      // Brand every page with header, footer, page numbers
-      const total = pdf.getNumberOfPages();
-      for (let i = 1; i <= total; i++) {
-        pdf.setPage(i);
-        // White-out header/footer zones so content doesn't bleed through
-        pdf.setFillColor(255, 255, 255);
-        pdf.rect(0, 0, pageW, hdrH, 'F');
-        pdf.rect(0, pageH - ftrH, pageW, ftrH, 'F');
-        // Header bar
-        pdf.setFillColor(30, 77, 107);
-        pdf.rect(0, 0, pageW, hdrH, 'F');
-        pdf.setFontSize(7);
-        pdf.setTextColor(255, 255, 255);
-        pdf.text('EvidLY — Compliance Management Platform', margin, 6.5);
-        pdf.setTextColor(212, 175, 55);
-        pdf.text(reportTitle, pageW - margin, 6.5, { align: 'right' });
-        // Footer
-        pdf.setFontSize(6);
-        pdf.setTextColor(160, 160, 160);
-        pdf.text(generatedAt, margin, pageH - 3);
-        pdf.text(`Page ${i} of ${total}`, pageW - margin, pageH - 3, { align: 'right' });
-      }
-
-      const locLabel = locationFilter === 'all' ? 'AllLocations' : locationFilter.replace(/\s+/g, '');
-      pdf.save(`EvidLY-Audit-Report-DemoRestaurantGroup-${locLabel}-${days}d.pdf`);
-    } catch {
-      toast.error('PDF generation failed. Try the Print button');
-    } finally {
-      setPdfLoading(false);
-    }
+    });
   };
 
   const handleEmail = () => {
-    // TODO: Production — POST to Resend API endpoint to email PDF
-    toast.success('Report emailed to management@company.com');
+    guardAction('export', 'audit reports', () => {
+      // TODO: Production — POST to Resend API endpoint to email PDF
+      toast.success('Report emailed to management@company.com');
+    });
   };
 
   const handleShareLink = () => {
-    // TODO: Production — generate signed URL via Supabase Storage
-    toast.success('Share link copied to clipboard');
+    guardAction('export', 'audit reports', () => {
+      // TODO: Production — generate signed URL via Supabase Storage
+      toast.success('Share link copied to clipboard');
+    });
   };
 
   const handlePrint = () => {
-    window.print();
+    guardAction('print', 'audit reports', () => {
+      window.print();
+    });
   };
 
   const sectionEnabled = (id: string) => sections.find(s => s.id === id)?.enabled ?? false;
@@ -1158,6 +1169,13 @@ export function AuditReport() {
           </>
         )}
       </div>
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        feature={upgradeFeature}
+        action={upgradeAction}
+      />
     </>
   );
 }

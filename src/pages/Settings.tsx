@@ -14,6 +14,8 @@ import { useOperatingHours, generateOpeningTimes, generateClosingTimes, generate
 import { useTranslation } from '../contexts/LanguageContext';
 import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
 import { useOffline } from '../contexts/OfflineContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
@@ -45,6 +47,7 @@ export function Settings() {
   });
   const [saving, setSaving] = useState(false);
   const [benchmarkOptIn, setBenchmarkOptIn] = useState(true);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
   const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
@@ -253,7 +256,7 @@ export function Settings() {
                 </select>
               </div>
 
-              <button onClick={() => toast.success('Profile saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -335,7 +338,7 @@ export function Settings() {
                 </button>
               </div>
 
-              <button onClick={() => toast.success('Organization settings saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'organization settings', () => toast.success('Organization settings saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -614,7 +617,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => toast.success('Regulatory monitoring preferences saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => guardAction('settings', 'regulatory settings', () => toast.success('Regulatory monitoring preferences saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -1132,7 +1135,7 @@ export function Settings() {
               </div>
 
               {canEditHours && (
-                <button onClick={() => toast.success('Hours and shifts saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => guardAction('settings', 'operating hours', () => toast.success('Hours and shifts saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                   {t('settings.saveChanges')}
                 </button>
               )}
@@ -1502,6 +1505,9 @@ export function Settings() {
           )}
         </div>
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }

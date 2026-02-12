@@ -14,6 +14,8 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -392,6 +394,7 @@ function isOverdue(incident: Incident): boolean {
 export function IncidentLog() {
   const { userRole } = useRole();
   const { t } = useTranslation();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const canVerify = userRole === 'executive' || userRole === 'management';
 
   // ── Lookup maps for module-level data arrays ──────────────────
@@ -1220,7 +1223,7 @@ export function IncidentLog() {
 
               {/* Export */}
               <button
-                onClick={() => showToast('PDF export generated for incident ' + inc.id)}
+                onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
@@ -1518,7 +1521,7 @@ export function IncidentLog() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => showToast('PDF export of all incidents generated.')}
+              onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export of all incidents generated.'))}
               className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
@@ -1684,6 +1687,10 @@ export function IncidentLog() {
           <CheckCircle className="h-4 w-4 flex-shrink-0" />
           {toastMessage}
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

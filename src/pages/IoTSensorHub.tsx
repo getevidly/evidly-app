@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   Thermometer, Wifi, WifiOff, Battery, BatteryWarning, BatteryCharging,
   AlertTriangle, CheckCircle, XCircle, Clock, Activity, Settings as SettingsIcon,
@@ -915,6 +917,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
 // ═══════════════════════════════════════════════════════════════════════════
 
 function SettingsTab() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [globalConfig, setGlobalConfig] = useState({
     highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20,
     defaultPollingMin: 5, autoLogCompliance: true, dataRetentionDays: 90,
@@ -924,6 +927,7 @@ function SettingsTab() {
   const webhookUrl = 'https://api.evidly.com/v1/iot/webhook/ingest';
 
   return (
+    <>
     <div className="max-w-4xl">
       <h2 className="text-lg font-bold text-gray-900 mb-6">IoT Sensor Settings</h2>
 
@@ -1005,10 +1009,10 @@ Content-Type: application/json
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button onClick={() => toast.info('Export sensor data as CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as CSV (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Download className="h-4 w-4" /> Export CSV
             </button>
-            <button onClick={() => toast.info('Export sensor data as JSON (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
+            <button onClick={() => guardAction('export', 'sensor data', () => toast.info('Export sensor data as JSON (demo)'))} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Download className="h-4 w-4" /> Export JSON
             </button>
             <button onClick={() => toast.info('Import sensor config from CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
@@ -1019,12 +1023,16 @@ Content-Type: application/json
 
         {/* Save */}
         <div className="flex justify-end">
-          <button onClick={() => toast.success('Settings saved (demo)')} className="px-6 py-2.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => guardAction('settings', 'sensor settings', () => toast.success('Settings saved (demo)'))} className="px-6 py-2.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Save All Settings
           </button>
         </div>
       </div>
     </div>
+    {showUpgrade && (
+      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+    )}
+    </>
   );
 }
 

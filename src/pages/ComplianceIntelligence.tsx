@@ -42,6 +42,8 @@ import {
   databaseTables, edgeFunctions, pricingTiers, enterpriseBundles, cSuitePitch,
   type AggregationStats,
 } from '../data/intelligenceData';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -100,6 +102,7 @@ export function ComplianceIntelligence() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('command');
   const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa', ...F }}>
@@ -158,6 +161,13 @@ export function ComplianceIntelligence() {
           <p className="text-xs text-gray-400">Powered by <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span></p>
         </footer>
       )}
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        action={upgradeAction}
+        feature={upgradeFeature}
+      />
     </div>
   );
 }
@@ -428,7 +438,7 @@ function CompareTab() {
                 <option value="all">All Verticals</option>
                 {verticals.map(v => <option key={v} value={v}>{v}</option>)}
               </select>
-              <button onClick={() => toast.info('Export to Excel coming soon')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+              <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Export to Excel coming soon'))} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                 <Download className="h-3.5 w-3.5" /> Export
               </button>
               <span className="text-[10px] text-gray-400">{filtered.length} of {TOTAL_LOCATIONS} locations</span>
@@ -1158,7 +1168,7 @@ function FinancialTab() {
         </div>
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 flex-wrap gap-2">
           <p className="text-[10px] text-gray-400 italic">Estimates based on industry averages and your organization's compliance data. Actual results may vary.</p>
-          <button onClick={() => toast.info('Generate Board Report coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>Generate Board Report</button>
+          <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Generate Board Report coming soon'))} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>Generate Board Report</button>
         </div>
       </div>
 
@@ -1319,7 +1329,7 @@ function ReportsTab() {
         </div>
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <p className="text-[10px] text-gray-400">{selectedMetrics.length} sections selected</p>
-          <button onClick={() => toast.info('Building custom report')} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Build Report</button>
+          <button onClick={() => guardAction('export', 'compliance analytics', () => toast.info('Building custom report'))} className="px-4 py-2 text-[11px] font-semibold rounded-lg text-white cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Build Report</button>
         </div>
       </div>
 

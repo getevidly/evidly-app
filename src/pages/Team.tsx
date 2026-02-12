@@ -7,6 +7,8 @@ import { supabase } from '../lib/supabase';
 import { TeamInviteModal } from '../components/TeamInviteModal';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface TeamMember {
   id: string;
@@ -164,6 +166,8 @@ export function Team() {
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetMember, setResetMember] = useState<TeamMember | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
+
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const isDemoMode = !profile?.organization_id;
 
@@ -432,7 +436,7 @@ export function Team() {
             )}
             {canManageTeam() && (
               <button
-                onClick={() => setShowInviteModal(true)}
+                onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
                 className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
               >
                 <Plus className="h-5 w-5" />
@@ -521,7 +525,7 @@ export function Team() {
                       <RotateCw className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => cancelInvitation(invitation.id)}
+                      onClick={() => guardAction('delete', 'team invitations', () => cancelInvitation(invitation.id))}
                       className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       title="Revoke invitation"
                     >
@@ -780,7 +784,7 @@ export function Team() {
                               {canManageTeam() && (
                                 <button
                                   onMouseDown={(e) => e.preventDefault()}
-                                  onClick={() => { setOpenActionMenu(null); setResetMember(member); setShowResetModal(true); }}
+                                  onClick={() => { setOpenActionMenu(null); guardAction('edit', 'team management', () => { setResetMember(member); setShowResetModal(true); }); }}
                                   className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                 >
                                   <KeyRound className="h-4 w-4 text-gray-400" />
@@ -862,7 +866,7 @@ export function Team() {
             {canManageTeam() && (
               <div className="mb-6 flex gap-2">
                 <button
-                  onClick={() => { setShowDetailsModal(false); setResetMember(selectedMember); setShowResetModal(true); }}
+                  onClick={() => { setShowDetailsModal(false); guardAction('edit', 'team management', () => { setResetMember(selectedMember); setShowResetModal(true); }); }}
                   className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce8f0] rounded-lg transition-colors"
                 >
                   <KeyRound className="h-4 w-4" />
@@ -1039,6 +1043,10 @@ export function Team() {
         organizationId={profile?.organization_id || ''}
         onInviteSent={handleInviteSent}
       />
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   ShoppingBag, Link2, Key, Activity, HeartPulse,
   Search, ExternalLink, CheckCircle2, AlertTriangle,
@@ -289,10 +291,12 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
 function ApiManagementTab() {
   const navigate = useNavigate();
   const [showKey, setShowKey] = useState(false);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const demoApiKey = 'evd_live_sk_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
   const demoSandboxKey = 'evd_sandbox_sk_x9y8w7v6u5t4s3r2q1p0o9n8m7l6k5j4';
 
   return (
+    <>
     <div className="space-y-6">
       {/* API Keys */}
       <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
@@ -301,7 +305,7 @@ function ApiManagementTab() {
             <h3 className="font-semibold text-gray-900">API Keys</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys</p>
           </div>
-          <button onClick={() => toast.info('Generate new API key (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
+          <button onClick={() => guardAction('settings', 'API integrations', () => toast.info('Generate new API key (demo)'))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
             <Plus className="h-3.5 w-3.5" /> New Key
           </button>
         </div>
@@ -395,7 +399,7 @@ function ApiManagementTab() {
             <h3 className="font-semibold text-gray-900">Webhook Subscriptions</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery</p>
           </div>
-          <button onClick={() => toast.info('Open webhook subscription form (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+          <button onClick={() => guardAction('settings', 'webhook integrations', () => toast.info('Open webhook subscription form (demo)'))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
             <Plus className="h-3.5 w-3.5" /> Add Webhook
           </button>
         </div>
@@ -452,6 +456,10 @@ function ApiManagementTab() {
         </div>
       </div>
     </div>
+    {showUpgrade && (
+      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+    )}
+    </>
   );
 }
 

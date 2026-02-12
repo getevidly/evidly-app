@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Q4 2025 Demo Report Data ──────────────────────────────────────────
 
@@ -217,6 +219,7 @@ function QuarterlyTrendChart({ data }: { data: typeof SEASONAL_DATA }) {
 export function ComplianceIndex() {
   const navigate = useNavigate();
   const [expandedViolation, setExpandedViolation] = useState<number | null>(null);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   return (
     <>
@@ -243,14 +246,14 @@ export function ComplianceIndex() {
             </div>
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => toast.info('PDF download coming soon')}
+                onClick={() => guardAction('download', 'compliance reports', () => toast.info('PDF download coming soon'))}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold"
                 style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
               >
                 <Download className="h-4 w-4" /> Download PDF
               </button>
               <button
-                onClick={() => toast.success('Report link copied')}
+                onClick={() => guardAction('export', 'compliance reports', () => toast.success('Report link copied'))}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-white/30 text-white hover:bg-white/10"
               >
                 <Share2 className="h-4 w-4" /> Share Report
@@ -760,7 +763,7 @@ export function ComplianceIndex() {
 
           <div className="flex items-center justify-center gap-3">
             <button
-              onClick={() => toast.success('Report link copied')}
+              onClick={() => guardAction('export', 'compliance reports', () => toast.success('Report link copied'))}
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold"
               style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
             >
@@ -779,6 +782,13 @@ export function ComplianceIndex() {
           </div>
         </div>
       </div>
+
+      <DemoUpgradePrompt
+        isOpen={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        action={upgradeAction}
+        feature={upgradeFeature}
+      />
     </>
   );
 }

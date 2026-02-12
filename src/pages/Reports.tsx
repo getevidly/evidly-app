@@ -4,6 +4,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { Printer, Download, TrendingUp, ShieldX, Activity, Thermometer, FileText, ClipboardCheck } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRole } from '../contexts/RoleContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
 
@@ -89,6 +91,7 @@ function getScoreColor(score: number): string {
 export function Reports() {
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
   const [dateRange, setDateRange] = useState('this-month');
@@ -391,62 +394,66 @@ export function Reports() {
     : allLoginActivity;
 
   const handlePrint = () => {
-    window.print();
+    guardAction('print', 'compliance reports', () => {
+      window.print();
+    });
   };
 
   const handleExportCSV = () => {
-    let csvContent = '';
-    let filename = '';
+    guardAction('export', 'compliance reports', () => {
+      let csvContent = '';
+      let filename = '';
 
-    if (activeTab === 'executive') {
-      csvContent = 'Location,Score,Change,Status\n';
-      locationComparison.forEach(r => {
-        csvContent += `"${r.location}",${r.score},"${r.change}","${r.status}"\n`;
-      });
-      csvContent += '\nTop Issues\nIssue,Priority,Affected\n';
-      topIssues.forEach(r => {
-        csvContent += `"${r.issue}","${r.priority}","${r.affected}"\n`;
-      });
-      filename = `evidly-executive-summary-${dateRange}.csv`;
-    } else if (activeTab === 'operational') {
-      csvContent = 'Template,Completion Rate,Completed,Missed\n';
-      checklistCompletion.forEach(r => {
-        csvContent += `"${r.template}",${r.rate}%,${r.completed},${r.missed}\n`;
-      });
-      csvContent += '\nMissed Tasks\nDate,Task,Location,Responsible\n';
-      missedTasks.forEach(r => {
-        csvContent += `"${r.date}","${r.task}","${r.location}","${r.responsible}"\n`;
-      });
-      filename = `evidly-operational-report-${dateRange}.csv`;
-    } else if (activeTab === 'equipment') {
-      csvContent = 'Equipment,Location,Status,Expires\n';
-      equipmentCertifications.forEach(r => {
-        csvContent += `"${r.equipment}","${r.location}","${r.status}","${r.expires}"\n`;
-      });
-      filename = `evidly-equipment-report-${dateRange}.csv`;
-    } else if (activeTab === 'vendorCompliance') {
-      csvContent = 'Type,Total,Current,Expiring,Expired\n';
-      documentInventory.forEach(r => {
-        csvContent += `"${r.type}",${r.total},${r.current},${r.expiring},${r.expired}\n`;
-      });
-      filename = `evidly-vendor-compliance-report-${dateRange}.csv`;
-    } else {
-      csvContent = 'Employee,Completed,Missed,Rate\n';
-      taskCompletionByEmployee.forEach(r => {
-        csvContent += `"${r.employee}",${r.completed},${r.missed},${r.rate}%\n`;
-      });
-      filename = `evidly-team-report-${dateRange}.csv`;
-    }
+      if (activeTab === 'executive') {
+        csvContent = 'Location,Score,Change,Status\n';
+        locationComparison.forEach(r => {
+          csvContent += `"${r.location}",${r.score},"${r.change}","${r.status}"\n`;
+        });
+        csvContent += '\nTop Issues\nIssue,Priority,Affected\n';
+        topIssues.forEach(r => {
+          csvContent += `"${r.issue}","${r.priority}","${r.affected}"\n`;
+        });
+        filename = `evidly-executive-summary-${dateRange}.csv`;
+      } else if (activeTab === 'operational') {
+        csvContent = 'Template,Completion Rate,Completed,Missed\n';
+        checklistCompletion.forEach(r => {
+          csvContent += `"${r.template}",${r.rate}%,${r.completed},${r.missed}\n`;
+        });
+        csvContent += '\nMissed Tasks\nDate,Task,Location,Responsible\n';
+        missedTasks.forEach(r => {
+          csvContent += `"${r.date}","${r.task}","${r.location}","${r.responsible}"\n`;
+        });
+        filename = `evidly-operational-report-${dateRange}.csv`;
+      } else if (activeTab === 'equipment') {
+        csvContent = 'Equipment,Location,Status,Expires\n';
+        equipmentCertifications.forEach(r => {
+          csvContent += `"${r.equipment}","${r.location}","${r.status}","${r.expires}"\n`;
+        });
+        filename = `evidly-equipment-report-${dateRange}.csv`;
+      } else if (activeTab === 'vendorCompliance') {
+        csvContent = 'Type,Total,Current,Expiring,Expired\n';
+        documentInventory.forEach(r => {
+          csvContent += `"${r.type}",${r.total},${r.current},${r.expiring},${r.expired}\n`;
+        });
+        filename = `evidly-vendor-compliance-report-${dateRange}.csv`;
+      } else {
+        csvContent = 'Employee,Completed,Missed,Rate\n';
+        taskCompletionByEmployee.forEach(r => {
+          csvContent += `"${r.employee}",${r.completed},${r.missed},${r.rate}%\n`;
+        });
+        filename = `evidly-team-report-${dateRange}.csv`;
+      }
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
   };
 
   return (
@@ -1186,6 +1193,9 @@ export function Reports() {
           </div>
         )}
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 }
