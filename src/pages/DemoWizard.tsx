@@ -15,12 +15,12 @@ const INDUSTRIES = [
   { code: 'HIGHER_EDUCATION', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
 ];
 
-const WEIGHTS: Record<string, { operational: number; equipment: number; documentation: number }> = {
-  RESTAURANT: { operational: 45, equipment: 30, documentation: 25 },
-  HEALTHCARE: { operational: 35, equipment: 25, documentation: 40 },
-  SENIOR_LIVING: { operational: 35, equipment: 25, documentation: 40 },
-  K12_EDUCATION: { operational: 40, equipment: 20, documentation: 40 },
-  HIGHER_EDUCATION: { operational: 45, equipment: 30, documentation: 25 },
+const WEIGHTS: Record<string, { foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
+  RESTAURANT: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 },
+  HEALTHCARE: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 },
+  SENIOR_LIVING: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 },
+  K12_EDUCATION: { foodSafety: 40, fireSafety: 20, vendorCompliance: 40 },
+  HIGHER_EDUCATION: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 },
 };
 
 interface DemoLead {
@@ -276,9 +276,9 @@ export function DemoWizard() {
                   <div className="bg-blue-50 rounded-lg p-4 mt-4">
                     <p className="text-sm font-medium text-[#1e4d6b] mb-2">Your compliance scoring weights:</p>
                     <div className="flex gap-4 text-sm">
-                      <span>Operational: <strong>{weights.operational}%</strong></span>
-                      <span>Equipment: <strong>{weights.equipment}%</strong></span>
-                      <span>Documentation: <strong>{weights.documentation}%</strong></span>
+                      <span>Food Safety: <strong>{weights.foodSafety}%</strong></span>
+                      <span>Fire Safety: <strong>{weights.fireSafety}%</strong></span>
+                      <span>Vendor Compliance: <strong>{weights.vendorCompliance}%</strong></span>
                     </div>
                   </div>
                 )}
@@ -506,7 +506,7 @@ export function DemoWizard() {
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Compliance dashboard with your {selectedIndustry?.label} scoring weights ({weights.operational}/{weights.equipment}/{weights.documentation})</span>
+                    <span>Compliance dashboard with your {selectedIndustry?.label} scoring weights ({weights.foodSafety}/{weights.fireSafety}/{weights.vendorCompliance})</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />

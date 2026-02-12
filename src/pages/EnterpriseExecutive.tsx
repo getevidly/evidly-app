@@ -141,9 +141,9 @@ export function EnterpriseExecutive() {
       trend: nodeTrend(c.id),
       worstLocation: findWorstInSubtree(c),
       criticalItems: countCriticalBelow(c, 75),
-      operational: c.operational,
-      equipment: c.equipment,
-      documentation: c.documentation,
+      foodSafety: c.foodSafety,
+      fireSafety: c.fireSafety,
+      vendorCompliance: c.vendorCompliance,
     }));
   }, [drillDownNodeId, activeNode]);
 
@@ -281,22 +281,22 @@ export function EnterpriseExecutive() {
             </div>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.operational : latestTrend.operational) }}>
-                  {drillDownNodeId ? activeNode.operational : latestTrend.operational}%
+                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety) }}>
+                  {drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety}%
                 </p>
-                <p className="text-[10px] text-gray-400">Operational</p>
+                <p className="text-[10px] text-gray-400">Food Safety</p>
               </div>
               <div>
-                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.equipment : latestTrend.equipment) }}>
-                  {drillDownNodeId ? activeNode.equipment : latestTrend.equipment}%
+                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.fireSafety : latestTrend.fireSafety) }}>
+                  {drillDownNodeId ? activeNode.fireSafety : latestTrend.fireSafety}%
                 </p>
-                <p className="text-[10px] text-gray-400">Equipment</p>
+                <p className="text-[10px] text-gray-400">Fire Safety</p>
               </div>
               <div>
-                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.documentation : latestTrend.documentation) }}>
-                  {drillDownNodeId ? activeNode.documentation : latestTrend.documentation}%
+                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.vendorCompliance : latestTrend.vendorCompliance) }}>
+                  {drillDownNodeId ? activeNode.vendorCompliance : latestTrend.vendorCompliance}%
                 </p>
-                <p className="text-[10px] text-gray-400">Documentation</p>
+                <p className="text-[10px] text-gray-400">Vendor Compliance</p>
               </div>
             </div>
           </div>
@@ -325,9 +325,9 @@ export function EnterpriseExecutive() {
             <div className="flex gap-1 mb-4">
               {([
                 { key: 'overall', label: 'Overall' },
-                { key: 'operational', label: 'Fire Safety' },
-                { key: 'equipment', label: 'Food Safety' },
-                { key: 'documentation', label: 'Documentation' },
+                { key: 'foodSafety', label: 'Food Safety' },
+                { key: 'fireSafety', label: 'Fire Safety' },
+                { key: 'vendorCompliance', label: 'Vendor Compliance' },
               ] as { key: ComplianceCategory; label: string }[]).map(cat => (
                 <button
                   key={cat.key}
@@ -373,9 +373,9 @@ export function EnterpriseExecutive() {
                     </div>
                     <div className="mt-2 grid grid-cols-3 gap-1">
                       {[
-                        { label: 'Op', val: node.operational },
-                        { label: 'Eq', val: node.equipment },
-                        { label: 'Doc', val: node.documentation },
+                        { label: 'FS', val: node.foodSafety },
+                        { label: 'Fire', val: node.fireSafety },
+                        { label: 'VC', val: node.vendorCompliance },
                       ].map(p => (
                         <div key={p.label} className="text-center">
                           <p className="text-[8px] text-gray-400">{p.label}</p>

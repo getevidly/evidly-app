@@ -160,7 +160,7 @@ export function ScoringBreakdown() {
 
   // Group items by pillar
   const pillarGroups = useMemo(() => {
-    const groups: Record<string, ScoreImpactItem[]> = { Operational: [], Equipment: [], Documentation: [] };
+    const groups: Record<string, ScoreImpactItem[]> = { 'Food Safety': [], 'Fire Safety': [], 'Vendor Compliance': [] };
     locationItems.forEach(item => {
       if (groups[item.pillar]) groups[item.pillar].push(item);
     });
@@ -200,9 +200,9 @@ export function ScoringBreakdown() {
   }, [locationParam, trendRange]);
 
   const pillarMeta: Record<string, { weight: number; score: number; color: string }> = {
-    Operational: { weight: Math.round(weights.operational * 100), score: scores.operational, color: '#1e4d6b' },
-    Equipment: { weight: Math.round(weights.equipment * 100), score: scores.equipment, color: '#d4af37' },
-    Documentation: { weight: Math.round(weights.documentation * 100), score: scores.documentation, color: '#6366f1' },
+    'Food Safety': { weight: Math.round(weights.foodSafety * 100), score: scores.foodSafety, color: '#1e4d6b' },
+    'Fire Safety': { weight: Math.round(weights.fireSafety * 100), score: scores.fireSafety, color: '#d4af37' },
+    'Vendor Compliance': { weight: Math.round(weights.vendorCompliance * 100), score: scores.vendorCompliance, color: '#6366f1' },
   };
 
   return (
@@ -251,7 +251,7 @@ export function ScoringBreakdown() {
           EvidLY Score Breakdown
         </h2>
 
-        {(['Operational', 'Equipment', 'Documentation'] as const).map(pillar => {
+        {(['Food Safety', 'Fire Safety', 'Vendor Compliance'] as const).map(pillar => {
           const meta = pillarMeta[pillar];
           const items = pillarGroups[pillar] || [];
           const pillarTier = getScoreTier(meta.score);
@@ -265,7 +265,7 @@ export function ScoringBreakdown() {
                   {meta.score}/100
                 </span>
               }
-              defaultOpen={pillar === 'Operational'}
+              defaultOpen={pillar === 'Food Safety'}
             >
               <div className="mt-3 space-y-1">
                 {items.sort((a, b) => {

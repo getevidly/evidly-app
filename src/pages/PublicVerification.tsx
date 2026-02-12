@@ -10,9 +10,9 @@ interface VerificationData {
   badgeTier: 'verified' | 'excellence' | 'elite' | 'platinum';
   qualifyingPeriod: string;
   overallPercentile: number;
-  operationalPercentile: number;
-  equipmentPercentile: number;
-  documentationPercentile: number;
+  foodSafetyPercentile: number;
+  fireSafetyPercentile: number;
+  vendorCompliancePercentile: number;
   verifiedSince: string;
 }
 
@@ -24,9 +24,9 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     badgeTier: 'excellence',
     qualifyingPeriod: 'Dec 2025 — Feb 2026',
     overallPercentile: 89,
-    operationalPercentile: 92,
-    equipmentPercentile: 87,
-    documentationPercentile: 71,
+    foodSafetyPercentile: 92,
+    fireSafetyPercentile: 87,
+    vendorCompliancePercentile: 71,
     verifiedSince: 'September 2025',
   },
   'DWN-2024-VRFD': {
@@ -36,9 +36,9 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     badgeTier: 'verified',
     qualifyingPeriod: 'Sep 2025 — Nov 2025',
     overallPercentile: 82,
-    operationalPercentile: 85,
-    equipmentPercentile: 80,
-    documentationPercentile: 68,
+    foodSafetyPercentile: 85,
+    fireSafetyPercentile: 80,
+    vendorCompliancePercentile: 68,
     verifiedSince: 'June 2025',
   },
 };
@@ -137,9 +137,9 @@ export default function PublicVerification() {
 
             <h3 className="text-sm font-bold text-gray-900 mb-3">Category Rankings</h3>
             <div className="space-y-3">
-              <PercentileBar label="Operational" value={data.operationalPercentile} />
-              <PercentileBar label="Equipment" value={data.equipmentPercentile} />
-              <PercentileBar label="Documentation" value={data.documentationPercentile} />
+              <PercentileBar label="Food Safety" value={data.foodSafetyPercentile} />
+              <PercentileBar label="Fire Safety" value={data.fireSafetyPercentile} />
+              <PercentileBar label="Vendor Compliance" value={data.vendorCompliancePercentile} />
             </div>
           </div>
 

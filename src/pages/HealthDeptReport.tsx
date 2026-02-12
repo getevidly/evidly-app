@@ -333,9 +333,9 @@ export function HealthDeptReport() {
                 </div>
                 <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                   {[
-                    { label: 'Operational', score: scores.operational },
-                    { label: 'Equipment', score: scores.equipment },
-                    { label: 'Documentation', score: scores.documentation },
+                    { label: 'Food Safety', score: scores.foodSafety },
+                    { label: 'Fire Safety', score: scores.fireSafety },
+                    { label: 'Vendor Compliance', score: scores.vendorCompliance },
                   ].map(p => (
                     <div key={p.label} style={{ padding: '8px 4px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
                       <div style={{ fontSize: 11, color: '#6b7280' }}>{p.label}</div>
@@ -725,9 +725,9 @@ export function HealthDeptReport() {
                           <div style={{ fontSize: 12, color: '#6b7280' }}>Overall</div>
                         </div>
                         {[
-                          { label: 'Operational', value: generatedReport.complianceScore.operational },
-                          { label: 'Equipment', value: generatedReport.complianceScore.equipment },
-                          { label: 'Documentation', value: generatedReport.complianceScore.documentation },
+                          { label: 'Food Safety', value: generatedReport.complianceScore.foodSafety },
+                          { label: 'Fire Safety', value: generatedReport.complianceScore.fireSafety },
+                          { label: 'Vendor Compliance', value: generatedReport.complianceScore.vendorCompliance },
                         ].map(p => (
                           <div key={p.label} style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
                             <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 75 ? '#eab308' : p.value >= 60 ? '#f59e0b' : '#ef4444' }}>

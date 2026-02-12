@@ -31,9 +31,9 @@ export interface BusinessUnitScorecard {
   trend: number;
   worstLocation: { name: string; score: number } | null;
   criticalItems: number;
-  operational: number;
-  equipment: number;
-  documentation: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
 }
 
 export interface RegulatoryOverlay {
@@ -50,7 +50,7 @@ export interface PredictedScore {
   confidence: 'high' | 'medium' | 'low';
 }
 
-export type ComplianceCategory = 'overall' | 'operational' | 'equipment' | 'documentation';
+export type ComplianceCategory = 'overall' | 'foodSafety' | 'fireSafety' | 'vendorCompliance';
 
 // ── Aramark tenant ───────────────────────────────────────────────
 export const aramarkTenant = enterpriseTenants.find(t => t.id === 'ent-aramark')!;
@@ -68,9 +68,9 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     trend: 2.1,
     worstLocation: { name: 'Temple University', score: 68 },
     criticalItems: 3,
-    operational: 93.1,
-    equipment: 89.4,
-    documentation: 90.8,
+    foodSafety: 93.1,
+    fireSafety: 89.4,
+    vendorCompliance: 90.8,
   },
   {
     id: 'h-healthcare',
@@ -80,9 +80,9 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     trend: 0.8,
     worstLocation: null,
     criticalItems: 0,
-    operational: 96.2,
-    equipment: 93.0,
-    documentation: 94.1,
+    foodSafety: 96.2,
+    fireSafety: 93.0,
+    vendorCompliance: 94.1,
   },
   {
     id: 'h-destinations',
@@ -92,9 +92,9 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     trend: -1.2,
     worstLocation: { name: 'Badger Pass', score: 74 },
     criticalItems: 1,
-    operational: 90.1,
-    equipment: 86.2,
-    documentation: 87.5,
+    foodSafety: 90.1,
+    fireSafety: 86.2,
+    vendorCompliance: 87.5,
   },
   {
     id: 'h-corrections',
@@ -104,9 +104,9 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     trend: 3.4,
     worstLocation: null,
     criticalItems: 0,
-    operational: 88.3,
-    equipment: 83.7,
-    documentation: 85.4,
+    foodSafety: 88.3,
+    fireSafety: 83.7,
+    vendorCompliance: 85.4,
   },
   {
     id: 'h-sports',
@@ -116,9 +116,9 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     trend: 1.5,
     worstLocation: { name: 'SoCal District', score: 85 },
     criticalItems: 2,
-    operational: 90.2,
-    equipment: 85.8,
-    documentation: 87.1,
+    foodSafety: 90.2,
+    fireSafety: 85.8,
+    vendorCompliance: 87.1,
   },
 ];
 

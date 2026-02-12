@@ -19,7 +19,7 @@ export interface AiMessage {
 
 export interface ComplianceContext {
   orgName: string;
-  locations: { name: string; score: number; operational: number; equipment: number; documentation: number }[];
+  locations: { name: string; score: number; foodSafety: number; fireSafety: number; vendorCompliance: number }[];
   overallScore: number;
   recentAlerts: string[];
   overdueItems: string[];
@@ -30,9 +30,9 @@ const DEMO_CONTEXT: ComplianceContext = {
   orgName: 'Pacific Coast Dining',
   overallScore: 76,
   locations: [
-    { name: 'Downtown Kitchen', score: 92, operational: 95, equipment: 91, documentation: 89 },
-    { name: 'Airport Cafe', score: 74, operational: 78, equipment: 70, documentation: 72 },
-    { name: 'University Dining', score: 57, operational: 62, equipment: 55, documentation: 52 },
+    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, fireSafety: 88, vendorCompliance: 91 },
+    { name: 'Airport Cafe', score: 69, foodSafety: 72, fireSafety: 62, vendorCompliance: 74 },
+    { name: 'University Dining', score: 56, foodSafety: 62, fireSafety: 55, vendorCompliance: 42 },
   ],
   recentAlerts: [
     'Airport Cafe Walk-in Cooler #2 above 41°F',
@@ -62,12 +62,12 @@ function buildSystemPrompt(context: ComplianceContext, mode: 'chat' | 'inspectio
   }
 
   const locSummary = context.locations
-    .map((l) => `  - ${l.name}: Overall ${l.score}% (Ops ${l.operational}%, Equip ${l.equipment}%, Docs ${l.documentation}%)`)
+    .map((l) => `  - ${l.name}: Overall ${l.score}% (Food Safety ${l.foodSafety}%, Fire Safety ${l.fireSafety}%, Vendor Compliance ${l.vendorCompliance}%)`)
     .join('\n');
 
   return `You are EvidLY's AI Compliance Advisor. You help commercial kitchen managers with food safety, fire safety, and vendor compliance. You have access to the user's compliance data, temperature logs, checklists, corrective actions, and vendor records. Be specific, actionable, and reference their actual data. Keep responses concise and professional. When recommending actions, format them as clear steps. If you identify action items, format each one on its own line starting with "Action:" followed by the action description.
 
-CRITICAL CATEGORIZATION RULE: Equipment cleaning (hoods, exhaust systems, grease traps, fire suppression systems, fire extinguishers) and equipment inspections are ALWAYS categorized as FIRE SAFETY issues under NFPA 96 — never as health/food safety. Hood cleaning, fire suppression inspection, grease trap service, and fire extinguisher checks fall under the Equipment compliance pillar and NFPA 96 regulatory standards.
+CRITICAL CATEGORIZATION RULE: Equipment cleaning (hoods, exhaust systems, grease traps, fire suppression systems, fire extinguishers) and equipment inspections are ALWAYS categorized as FIRE SAFETY issues under NFPA 96 — never as health/food safety. Hood cleaning, fire suppression inspection, grease trap service, and fire extinguisher checks fall under the Fire Safety compliance pillar and NFPA 96 regulatory standards.
 
 COMPLIANCE CONTEXT:
 Organization: ${context.orgName}

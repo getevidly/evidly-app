@@ -11,9 +11,9 @@ export type BadgeTier = 'bronze' | 'silver' | 'gold' | 'platinum';
 export interface VerticalBenchmark {
   vertical: BenchmarkVertical;
   avgScore: number;
-  avgOperational: number;
-  avgEquipment: number;
-  avgDocumentation: number;
+  avgFoodSafety: number;
+  avgFireSafety: number;
+  avgVendorCompliance: number;
   peerCount: number;
 }
 
@@ -34,7 +34,7 @@ export interface SizeBenchmark {
 export interface SubcategoryBenchmark {
   key: string;
   label: string;
-  pillar: 'Operational' | 'Equipment' | 'Documentation';
+  pillar: 'Food Safety' | 'Fire Safety' | 'Vendor Compliance';
   industryAvg: number;
   verticalAvg: number;
 }
@@ -97,12 +97,12 @@ interface BenchmarkFilters {
 // ─── Vertical Benchmarks ──────────────────────────────────────────────────
 
 export const VERTICAL_BENCHMARKS: VerticalBenchmark[] = [
-  { vertical: 'Restaurant', avgScore: 74, avgOperational: 76, avgEquipment: 70, avgDocumentation: 72, peerCount: 4200 },
-  { vertical: 'Healthcare', avgScore: 78, avgOperational: 80, avgEquipment: 76, avgDocumentation: 75, peerCount: 2100 },
-  { vertical: 'Senior Living', avgScore: 76, avgOperational: 78, avgEquipment: 73, avgDocumentation: 74, peerCount: 890 },
-  { vertical: 'K-12', avgScore: 72, avgOperational: 74, avgEquipment: 68, avgDocumentation: 70, peerCount: 1560 },
-  { vertical: 'Hotel', avgScore: 75, avgOperational: 77, avgEquipment: 72, avgDocumentation: 73, peerCount: 1340 },
-  { vertical: 'QSR', avgScore: 71, avgOperational: 73, avgEquipment: 67, avgDocumentation: 69, peerCount: 3800 },
+  { vertical: 'Restaurant', avgScore: 74, avgFoodSafety: 76, avgFireSafety: 70, avgVendorCompliance: 72, peerCount: 4200 },
+  { vertical: 'Healthcare', avgScore: 78, avgFoodSafety: 80, avgFireSafety: 76, avgVendorCompliance: 75, peerCount: 2100 },
+  { vertical: 'Senior Living', avgScore: 76, avgFoodSafety: 78, avgFireSafety: 73, avgVendorCompliance: 74, peerCount: 890 },
+  { vertical: 'K-12', avgScore: 72, avgFoodSafety: 74, avgFireSafety: 68, avgVendorCompliance: 70, peerCount: 1560 },
+  { vertical: 'Hotel', avgScore: 75, avgFoodSafety: 77, avgFireSafety: 72, avgVendorCompliance: 73, peerCount: 1340 },
+  { vertical: 'QSR', avgScore: 71, avgFoodSafety: 73, avgFireSafety: 67, avgVendorCompliance: 69, peerCount: 3800 },
 ];
 
 export const SUB_VERTICAL_BENCHMARKS: Record<BenchmarkSubVertical, { avgScore: number; peerCount: number }> = {
@@ -134,14 +134,14 @@ export const SIZE_BENCHMARKS: SizeBenchmark[] = [
 // ─── Subcategory Benchmarks ───────────────────────────────────────────────
 
 export const SUBCATEGORY_BENCHMARKS: SubcategoryBenchmark[] = [
-  { key: 'temp_compliance', label: 'Temperature Compliance', pillar: 'Operational', industryAvg: 82, verticalAvg: 79 },
-  { key: 'checklist_completion', label: 'Checklist Completion Rate', pillar: 'Operational', industryAvg: 76, verticalAvg: 74 },
-  { key: 'cooling_log', label: 'Cooling Log Compliance', pillar: 'Operational', industryAvg: 74, verticalAvg: 71 },
-  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Equipment', industryAvg: 71, verticalAvg: 68 },
-  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Equipment', industryAvg: 84, verticalAvg: 82 },
-  { key: 'food_handler_cert', label: 'Food Handler Cert Currency', pillar: 'Documentation', industryAvg: 85, verticalAvg: 83 },
-  { key: 'vendor_coi', label: 'Vendor COI Completeness', pillar: 'Documentation', industryAvg: 78, verticalAvg: 75 },
-  { key: 'corrective_action', label: 'Corrective Action Response Time', pillar: 'Operational', industryAvg: 72, verticalAvg: 70 },
+  { key: 'temp_compliance', label: 'Temperature Compliance', pillar: 'Food Safety', industryAvg: 82, verticalAvg: 79 },
+  { key: 'checklist_completion', label: 'Checklist Completion Rate', pillar: 'Food Safety', industryAvg: 76, verticalAvg: 74 },
+  { key: 'cooling_log', label: 'Cooling Log Compliance', pillar: 'Food Safety', industryAvg: 74, verticalAvg: 71 },
+  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Fire Safety', industryAvg: 71, verticalAvg: 68 },
+  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Fire Safety', industryAvg: 84, verticalAvg: 82 },
+  { key: 'food_handler_cert', label: 'Food Handler Cert Currency', pillar: 'Vendor Compliance', industryAvg: 85, verticalAvg: 83 },
+  { key: 'vendor_coi', label: 'Vendor COI Completeness', pillar: 'Vendor Compliance', industryAvg: 78, verticalAvg: 75 },
+  { key: 'corrective_action', label: 'Corrective Action Response Time', pillar: 'Food Safety', industryAvg: 72, verticalAvg: 70 },
 ];
 
 // ─── Per-Location Subcategory Scores ──────────────────────────────────────
@@ -246,9 +246,9 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     qualifyingPeriod: 'Nov 2025 - Feb 2026',
     percentile: 89,
     categoryRankings: [
-      { category: 'Operational Excellence', percentile: 91 },
-      { category: 'Equipment & Fire Safety', percentile: 85 },
-      { category: 'Documentation & Compliance', percentile: 88 },
+      { category: 'Food Safety', percentile: 91 },
+      { category: 'Fire Safety', percentile: 85 },
+      { category: 'Vendor Compliance', percentile: 88 },
     ],
   },
   'airport-cafe': {
@@ -260,9 +260,9 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     qualifyingPeriod: '',
     percentile: 52,
     categoryRankings: [
-      { category: 'Operational Excellence', percentile: 55 },
-      { category: 'Equipment & Fire Safety', percentile: 44 },
-      { category: 'Documentation & Compliance', percentile: 51 },
+      { category: 'Food Safety', percentile: 55 },
+      { category: 'Fire Safety', percentile: 44 },
+      { category: 'Vendor Compliance', percentile: 51 },
     ],
   },
   'university-dining': {
@@ -274,9 +274,9 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     qualifyingPeriod: '',
     percentile: 18,
     categoryRankings: [
-      { category: 'Operational Excellence', percentile: 22 },
-      { category: 'Equipment & Fire Safety', percentile: 15 },
-      { category: 'Documentation & Compliance', percentile: 12 },
+      { category: 'Food Safety', percentile: 22 },
+      { category: 'Fire Safety', percentile: 15 },
+      { category: 'Vendor Compliance', percentile: 12 },
     ],
   },
 };

@@ -8,31 +8,31 @@ const INDUSTRY_TYPES = {
     code: 'RESTAURANT',
     label: 'Restaurant',
     subtypes: ['Restaurant', 'Hotel Restaurant', 'Casino Restaurant', 'Bar / Lounge', 'Ghost Kitchen', 'Catering Company', 'Corporate Cafeteria', 'Other'],
-    weights: { operational: 45, equipment: 30, documentation: 25 }
+    weights: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 }
   },
   HEALTHCARE: {
     code: 'HEALTHCARE',
     label: 'Healthcare',
     subtypes: ['Hospital', 'Medical Center'],
-    weights: { operational: 35, equipment: 25, documentation: 40 }
+    weights: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 }
   },
   SENIOR_LIVING: {
     code: 'SENIOR_LIVING',
     label: 'Senior Living',
     subtypes: ['Assisted Living', 'Nursing Home / Skilled Nursing', 'Memory Care', 'Independent Living'],
-    weights: { operational: 35, equipment: 25, documentation: 40 }
+    weights: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 }
   },
   K12_EDUCATION: {
     code: 'K12_EDUCATION',
     label: 'K-12 Education',
     subtypes: ['School District', 'Private School', 'Charter School'],
-    weights: { operational: 40, equipment: 20, documentation: 40 }
+    weights: { foodSafety: 40, fireSafety: 20, vendorCompliance: 40 }
   },
   HIGHER_EDUCATION: {
     code: 'HIGHER_EDUCATION',
     label: 'Higher Education',
     subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'],
-    weights: { operational: 45, equipment: 30, documentation: 25 }
+    weights: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 }
   }
 };
 

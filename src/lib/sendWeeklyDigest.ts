@@ -9,9 +9,9 @@ export interface DigestLocationScore {
   name: string;
   overall: number;
   trend: number; // +/- vs last week
-  operational: number;
-  equipment: number;
-  documentation: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
   status: 'Inspection Ready' | 'Needs Attention' | 'Critical';
 }
 
@@ -94,9 +94,9 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
           <span style="display:inline-block;background:${statusColor(loc.status)};color:#fff;border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;">${loc.overall}</span>
         </td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">${trendArrow(loc.trend)}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.operational}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.equipment}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.documentation}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.foodSafety}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.fireSafety}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.vendorCompliance}</td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
           <span style="display:inline-block;background:${statusColor(loc.status)}22;color:${statusColor(loc.status)};border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600;">${loc.status}</span>
         </td>
@@ -203,9 +203,9 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
     <th style="padding:10px 12px;text-align:left;font-size:12px;color:#6b7280;font-weight:600;">Location</th>
     <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Score</th>
     <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Trend</th>
-    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Ops</th>
-    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Equip</th>
-    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Docs</th>
+    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Food</th>
+    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Fire</th>
+    <th style="padding:10px 8px;text-align:center;font-size:11px;color:#6b7280;font-weight:600;">Vendor</th>
     <th style="padding:10px 12px;text-align:center;font-size:12px;color:#6b7280;font-weight:600;">Status</th>
   </tr>
   ${locationRows}

@@ -755,7 +755,7 @@ export function AuditReport() {
                         </div>
                         <div>
                           <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
-                          <p className="text-sm text-gray-600">Weighted: Operational (45%) + Equipment (30%) + Documentation (25%)</p>
+                          <p className="text-sm text-gray-600">Weighted: Food Safety (45%) + Fire Safety (30%) + Vendor Compliance (25%)</p>
                           <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
                             {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
                           </p>

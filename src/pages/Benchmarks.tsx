@@ -13,9 +13,9 @@ import { locationScores, locations, complianceScores } from '../data/demoData';
 
 // ── Demo benchmark data ──────────────────────────────────────────────
 
-const INDUSTRY_AVG = { overall: 79, operational: 79, equipment: 76, documentation: 81 };
-const VERTICAL_AVG = { overall: 82, operational: 82, equipment: 78, documentation: 84 };
-const GEOGRAPHIC_AVG = { overall: 81, operational: 80, equipment: 77, documentation: 83 };
+const INDUSTRY_AVG = { overall: 79, foodSafety: 79, fireSafety: 76, vendorCompliance: 81 };
+const VERTICAL_AVG = { overall: 82, foodSafety: 82, fireSafety: 78, vendorCompliance: 84 };
+const GEOGRAPHIC_AVG = { overall: 81, foodSafety: 80, fireSafety: 77, vendorCompliance: 83 };
 
 function percentile(yourScore: number, avg: number): number {
   const diff = yourScore - avg;
@@ -90,9 +90,9 @@ const BADGE_TIERS = [
 ];
 
 const LOCATION_RANKS = [
-  { name: 'Downtown Kitchen', score: 92, industryPct: 89, operational: 94, equipment: 88, documentation: 91, badge: 'excellence' },
-  { name: 'Airport Cafe', score: 70, industryPct: 43, operational: 72, equipment: 62, documentation: 74, badge: null },
-  { name: 'University Dining', score: 55, industryPct: 22, operational: 62, equipment: 55, documentation: 42, badge: null },
+  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, fireSafety: 88, vendorCompliance: 91, badge: 'excellence' },
+  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, fireSafety: 62, vendorCompliance: 74, badge: null },
+  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, fireSafety: 55, vendorCompliance: 42, badge: null },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -346,9 +346,9 @@ export function Benchmarks() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {[
-                    { cat: 'Operational (Food Safety)', yours: complianceScores.operational, vert: VERTICAL_AVG.operational, ind: INDUSTRY_AVG.operational },
-                    { cat: 'Equipment (Fire Safety)', yours: complianceScores.equipment, vert: VERTICAL_AVG.equipment, ind: INDUSTRY_AVG.equipment },
-                    { cat: 'Documentation (Vendor/Certs)', yours: complianceScores.documentation, vert: VERTICAL_AVG.documentation, ind: INDUSTRY_AVG.documentation },
+                    { cat: 'Food Safety', yours: complianceScores.foodSafety, vert: VERTICAL_AVG.foodSafety, ind: INDUSTRY_AVG.foodSafety },
+                    { cat: 'Fire Safety', yours: complianceScores.fireSafety, vert: VERTICAL_AVG.fireSafety, ind: INDUSTRY_AVG.fireSafety },
+                    { cat: 'Vendor Compliance', yours: complianceScores.vendorCompliance, vert: VERTICAL_AVG.vendorCompliance, ind: INDUSTRY_AVG.vendorCompliance },
                     { cat: 'Overall', yours: complianceScores.overall, vert: VERTICAL_AVG.overall, ind: INDUSTRY_AVG.overall },
                   ].map((row) => {
                     const pct = percentile(row.yours, row.ind);
@@ -539,9 +539,9 @@ export function Benchmarks() {
                     <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">Location</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Score</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Industry Pct</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Operational</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Equipment</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Documentation</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Food Safety</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Fire Safety</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Vendor Compliance</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Badge</th>
                   </tr>
                 </thead>
@@ -557,9 +557,9 @@ export function Benchmarks() {
                       </td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{loc.score}</td>
                       <td className="py-3 text-center"><PercentileBadge pct={loc.industryPct} /></td>
-                      <td className="py-3 text-center text-sm text-gray-600">{loc.operational}</td>
-                      <td className="py-3 text-center text-sm text-gray-600">{loc.equipment}</td>
-                      <td className="py-3 text-center text-sm text-gray-600">{loc.documentation}</td>
+                      <td className="py-3 text-center text-sm text-gray-600">{loc.foodSafety}</td>
+                      <td className="py-3 text-center text-sm text-gray-600">{loc.fireSafety}</td>
+                      <td className="py-3 text-center text-sm text-gray-600">{loc.vendorCompliance}</td>
                       <td className="py-3 text-center">
                         {loc.badge ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#64748b' }}>
@@ -588,11 +588,11 @@ export function Benchmarks() {
                 </div>
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span><strong>Documentation</strong> is the weakest category across all locations (systemic issue) — vendor cert follow-up process needs standardization.</span>
+                  <span><strong>Vendor Compliance</strong> is the weakest category across all locations (systemic issue) — vendor cert follow-up process needs standardization.</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                  <span><strong>University Dining</strong> has declined 8 points in Equipment over 3 months — correlates with manager vacancy Aug-Oct.</span>
+                  <span><strong>University Dining</strong> has declined 8 points in Fire Safety over 3 months — correlates with manager vacancy Aug-Oct.</span>
                 </div>
               </div>
             </div>

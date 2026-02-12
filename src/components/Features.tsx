@@ -80,7 +80,7 @@ export default function Features() {
           </p>
           <img
             src="/dashboard-location.png"
-            alt="EvidLY Downtown Kitchen detail view — 92 compliance score with operational, equipment, and documentation breakdown"
+            alt="EvidLY Downtown Kitchen detail view — 91 compliance score with food safety, fire safety, and vendor compliance breakdown"
             className="w-full rounded-2xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-gray-200/60"
           />
         </div>

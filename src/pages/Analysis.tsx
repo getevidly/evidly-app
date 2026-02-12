@@ -387,19 +387,19 @@ export function Analysis() {
     { week: '+4w', actual: null, noAction: 65, recommended: 82 },
   ];
 
-  const operationalTrend = [
+  const foodSafetyTrend = [
     { week: '12w', score: 72 }, { week: '11w', score: 74 }, { week: '10w', score: 76 },
     { week: '9w', score: 75 }, { week: '8w', score: 77 }, { week: '7w', score: 78 },
     { week: '6w', score: 79 }, { week: '5w', score: 80 }, { week: '4w', score: 81 },
     { week: '3w', score: 82 }, { week: '2w', score: 83 }, { week: 'Now', score: 84 },
   ];
-  const equipmentTrend = [
+  const fireSafetyTrend = [
     { week: '12w', score: 68 }, { week: '11w', score: 70 }, { week: '10w', score: 71 },
     { week: '9w', score: 70 }, { week: '8w', score: 72 }, { week: '7w', score: 73 },
     { week: '6w', score: 74 }, { week: '5w', score: 75 }, { week: '4w', score: 76 },
     { week: '3w', score: 77 }, { week: '2w', score: 78 }, { week: 'Now', score: 79 },
   ];
-  const documentationTrend = [
+  const vendorComplianceTrend = [
     { week: '12w', score: 55 }, { week: '11w', score: 58 }, { week: '10w', score: 60 },
     { week: '9w', score: 61 }, { week: '8w', score: 63 }, { week: '7w', score: 64 },
     { week: '6w', score: 65 }, { week: '5w', score: 66 }, { week: '4w', score: 65 },
@@ -407,36 +407,36 @@ export function Analysis() {
   ];
 
   const downtownTrends = {
-    operational: operationalTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
-    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
-    documentation: documentationTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 20) })),
+    foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
+    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
+    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 20) })),
   };
   const airportTrends = {
-    operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
-    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
-    documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score + 3) })),
+    foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
+    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
+    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.max(0, d.score + 3) })),
   };
   const universityTrends = {
-    operational: operationalTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
-    equipment: equipmentTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
-    documentation: documentationTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 15) })),
+    foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
+    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
+    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 15) })),
   };
   const allTrends = {
-    operational: operationalTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.operational[i].score + airportTrends.operational[i].score + universityTrends.operational[i].score) / 3) })),
-    equipment: equipmentTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.equipment[i].score + airportTrends.equipment[i].score + universityTrends.equipment[i].score) / 3) })),
-    documentation: documentationTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.documentation[i].score + airportTrends.documentation[i].score + universityTrends.documentation[i].score) / 3) })),
+    foodSafety: foodSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.foodSafety[i].score + airportTrends.foodSafety[i].score + universityTrends.foodSafety[i].score) / 3) })),
+    fireSafety: fireSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.fireSafety[i].score + airportTrends.fireSafety[i].score + universityTrends.fireSafety[i].score) / 3) })),
+    vendorCompliance: vendorComplianceTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.vendorCompliance[i].score + airportTrends.vendorCompliance[i].score + universityTrends.vendorCompliance[i].score) / 3) })),
   };
   const locationTrends = {
     'all': allTrends, 'downtown': downtownTrends, 'airport': airportTrends, 'university': universityTrends,
-  } as Record<string, { operational: typeof operationalTrend; equipment: typeof equipmentTrend; documentation: typeof documentationTrend }>;
+  } as Record<string, { foodSafety: typeof foodSafetyTrend; fireSafety: typeof fireSafetyTrend; vendorCompliance: typeof vendorComplianceTrend }>;
 
   const currentTrends = locationTrends[selectedLocation] || locationTrends['all'];
-  const opStart = currentTrends.operational[0].score;
-  const opEnd = currentTrends.operational[currentTrends.operational.length - 1].score;
-  const eqStart = currentTrends.equipment[0].score;
-  const eqEnd = currentTrends.equipment[currentTrends.equipment.length - 1].score;
-  const docStart = currentTrends.documentation[0].score;
-  const docEnd = currentTrends.documentation[currentTrends.documentation.length - 1].score;
+  const opStart = currentTrends.foodSafety[0].score;
+  const opEnd = currentTrends.foodSafety[currentTrends.foodSafety.length - 1].score;
+  const eqStart = currentTrends.fireSafety[0].score;
+  const eqEnd = currentTrends.fireSafety[currentTrends.fireSafety.length - 1].score;
+  const docStart = currentTrends.vendorCompliance[0].score;
+  const docEnd = currentTrends.vendorCompliance[currentTrends.vendorCompliance.length - 1].score;
 
   // ── Actions to improve score (existing table) ─────────────────
   const getRecoverablePoints = (impact: string): number => {
@@ -810,7 +810,7 @@ export function Analysis() {
                         <td className="px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{action.action}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Operational' ? '#dbeafe' : action.pillar === 'Equipment' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Operational' ? '#1e4d6b' : action.pillar === 'Equipment' ? '#166534' : '#92400e' }}>
+                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Fire Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1e4d6b' : action.pillar === 'Fire Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
                           </span>
                         </td>
@@ -833,9 +833,9 @@ export function Analysis() {
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white rounded-lg shadow p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Operational ({Math.round(getWeights().operational * 100)}% weight)</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety ({Math.round(getWeights().foodSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.operational}>
+                    <LineChart data={currentTrends.foodSafety}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
@@ -849,9 +849,9 @@ export function Analysis() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg shadow p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Equipment ({Math.round(getWeights().equipment * 100)}% weight)</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety ({Math.round(getWeights().fireSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.equipment}>
+                    <LineChart data={currentTrends.fireSafety}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
@@ -865,9 +865,9 @@ export function Analysis() {
                   </p>
                 </div>
                 <div className="bg-white rounded-lg shadow p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Documentation ({Math.round(getWeights().documentation * 100)}% weight)</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.documentation}>
+                    <LineChart data={currentTrends.vendorCompliance}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />

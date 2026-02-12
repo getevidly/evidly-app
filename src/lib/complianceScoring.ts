@@ -1,10 +1,27 @@
 // ============================================================
 // Compliance Scoring Engine — Single Source of Truth
 // ============================================================
+// Three-Pillar Model: Food Safety, Fire Safety, Vendor Compliance
 // NO letter grades (A/B/C/D/F) anywhere. Status labels only.
 // ============================================================
 
-// --------------- Industry Pillar Weights ---------------
+// --------------- Pillar Names & Weights ---------------
+
+export type PillarName = 'foodSafety' | 'fireSafety' | 'vendorCompliance';
+
+export const PILLAR_WEIGHTS: Record<PillarName, number> = {
+  foodSafety: 0.45,
+  fireSafety: 0.35,
+  vendorCompliance: 0.20,
+} as const;
+
+export const PILLAR_LABELS: Record<PillarName, string> = {
+  foodSafety: 'Food Safety',
+  fireSafety: 'Fire Safety',
+  vendorCompliance: 'Vendor Compliance',
+} as const;
+
+// --------------- Industry Vertical Weights ---------------
 
 export type IndustryVertical =
   | 'RESTAURANT'
@@ -14,20 +31,101 @@ export type IndustryVertical =
   | 'HIGHER_EDUCATION';
 
 export interface PillarWeights {
-  operational: number;
-  equipment: number;
-  documentation: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
 }
 
 export const INDUSTRY_WEIGHTS: Record<IndustryVertical, PillarWeights> = {
-  RESTAURANT:       { operational: 0.50, equipment: 0.25, documentation: 0.25 },
-  HEALTHCARE:       { operational: 0.45, equipment: 0.25, documentation: 0.30 },
-  SENIOR_LIVING:    { operational: 0.45, equipment: 0.25, documentation: 0.30 },
-  K12_EDUCATION:    { operational: 0.45, equipment: 0.20, documentation: 0.35 },
-  HIGHER_EDUCATION: { operational: 0.45, equipment: 0.30, documentation: 0.25 },
+  RESTAURANT:       { foodSafety: 0.45, fireSafety: 0.35, vendorCompliance: 0.20 },
+  HEALTHCARE:       { foodSafety: 0.45, fireSafety: 0.25, vendorCompliance: 0.30 },
+  SENIOR_LIVING:    { foodSafety: 0.45, fireSafety: 0.25, vendorCompliance: 0.30 },
+  K12_EDUCATION:    { foodSafety: 0.45, fireSafety: 0.20, vendorCompliance: 0.35 },
+  HIGHER_EDUCATION: { foodSafety: 0.45, fireSafety: 0.30, vendorCompliance: 0.25 },
 };
 
 export const DEFAULT_WEIGHTS = INDUSTRY_WEIGHTS.RESTAURANT;
+
+// --------------- Unified Scoring Item Interface ---------------
+
+export interface ScoringItem {
+  id: string;
+  name: string;
+  pillar: PillarName;
+  status: 'compliant' | 'non_compliant' | 'pending' | 'not_applicable';
+  dueDate?: string;
+  lastCompleted?: string;
+}
+
+export interface PillarScore {
+  name: PillarName;
+  label: string;
+  score: number;        // 0-100
+  weight: number;       // 0.35, 0.45, 0.20
+  totalItems: number;
+  completedItems: number;
+  items: ScoringItem[];
+}
+
+export interface ComplianceScore {
+  overall: number;              // 0-100, weighted
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
+  pillars: PillarScore[];
+  locationId: string;
+  computedAt: string;           // ISO timestamp
+}
+
+/**
+ * Compute compliance score from a list of scoring items.
+ * Groups by pillar, calculates (compliant / applicable) × 100 per pillar,
+ * then computes weighted overall.
+ */
+export function computeComplianceScore(
+  items: ScoringItem[],
+  locationId: string = '',
+  weights: PillarWeights = DEFAULT_WEIGHTS,
+): ComplianceScore {
+  const pillarNames: PillarName[] = ['foodSafety', 'fireSafety', 'vendorCompliance'];
+  const pillars: PillarScore[] = pillarNames.map((name) => {
+    const pillarItems = items.filter((i) => i.pillar === name);
+    const applicable = pillarItems.filter((i) => i.status !== 'not_applicable');
+    const compliant = applicable.filter((i) => i.status === 'compliant').length;
+    const total = applicable.length;
+    const score = total > 0 ? Math.round((compliant / total) * 100) : 0;
+    return {
+      name,
+      label: PILLAR_LABELS[name],
+      score,
+      weight: weights[name],
+      totalItems: total,
+      completedItems: compliant,
+      items: pillarItems,
+    };
+  });
+
+  const pillarMap: Record<PillarName, number> = { foodSafety: 0, fireSafety: 0, vendorCompliance: 0 };
+  for (const p of pillars) {
+    pillarMap[p.name] = p.score;
+  }
+
+  const overall = Math.round(
+    pillarMap.foodSafety * weights.foodSafety +
+    pillarMap.fireSafety * weights.fireSafety +
+    pillarMap.vendorCompliance * weights.vendorCompliance,
+  );
+
+  return {
+    overall,
+    foodSafety: pillarMap.foodSafety,
+    fireSafety: pillarMap.fireSafety,
+    vendorCompliance: pillarMap.vendorCompliance,
+    pillars,
+    locationId,
+    computedAt: new Date().toISOString(),
+  };
+}
 
 // --------------- Color Thresholds (4-Tier) ---------------
 
@@ -100,22 +198,23 @@ export function getGraduatedPenalty(daysUntilDue: number, fullPenaltyPoints: num
 }
 
 // --------------- Pillar Sub-Component Interfaces ---------------
+// Used for detailed scoring when real data is available
 
-export interface OperationalData {
+export interface FoodSafetyData {
   tempCheckCompletionRate: number;       // 0-100 %
   checklistCompletionRate: number;       // 0-100 %
   incidentResolutionAvgHours: number;    // hours, or -1 if unresolved
   haccpMonitoringRate: number;           // 0-100 %
 }
 
-export interface EquipmentItem {
+export interface FireSafetyItem {
   name: string;
   weight: number;          // fraction of pillar (e.g. 0.30)
   daysUntilDue: number;    // for graduated items; Infinity if not date-based
   conditionScore?: number; // 0-100 for condition-based items
 }
 
-export interface DocumentItem {
+export interface VendorComplianceItem {
   name: string;
   weight: number;          // fraction of pillar
   daysUntilExpiry: number; // for graduated items
@@ -123,7 +222,7 @@ export interface DocumentItem {
   expiredCount?: number;   // how many are expired
 }
 
-// --------------- Operational Pillar Score ---------------
+// --------------- Food Safety Pillar Score ---------------
 
 function incidentResolutionScore(avgHours: number): number {
   if (avgHours < 0) return 0;         // unresolved
@@ -134,7 +233,7 @@ function incidentResolutionScore(avgHours: number): number {
   return 20;                           // over 48hrs
 }
 
-export function calculateOperationalScore(data: OperationalData): number {
+export function calculateFoodSafetyScore(data: FoodSafetyData): number {
   const tempScore = data.tempCheckCompletionRate * 0.35;
   const checklistScore = data.checklistCompletionRate * 0.30;
   const incidentScore = incidentResolutionScore(data.incidentResolutionAvgHours) * 0.20;
@@ -142,17 +241,15 @@ export function calculateOperationalScore(data: OperationalData): number {
   return Math.round(tempScore + checklistScore + incidentScore + haccpScore);
 }
 
-// --------------- Equipment Pillar Score ---------------
+// --------------- Fire Safety Pillar Score ---------------
 
-export function calculateEquipmentScore(items: EquipmentItem[]): number {
+export function calculateFireSafetyScore(items: FireSafetyItem[]): number {
   let totalScore = 0;
   for (const item of items) {
     const maxPoints = item.weight * 100;
     if (item.conditionScore !== undefined) {
-      // Not date-based: straight condition rating
       totalScore += (item.conditionScore / 100) * maxPoints;
     } else {
-      // Date-based: apply graduated penalty
       const penalty = getGraduatedPenalty(item.daysUntilDue, maxPoints);
       totalScore += maxPoints - penalty;
     }
@@ -160,17 +257,15 @@ export function calculateEquipmentScore(items: EquipmentItem[]): number {
   return Math.round(Math.max(0, Math.min(100, totalScore)));
 }
 
-// --------------- Documentation Pillar Score ---------------
+// --------------- Vendor Compliance Pillar Score ---------------
 
-export function calculateDocumentationScore(items: DocumentItem[]): number {
+export function calculateVendorComplianceScore(items: VendorComplianceItem[]): number {
   let totalScore = 0;
   for (const item of items) {
     const maxPoints = item.weight * 100;
     if (item.count !== undefined && item.count > 0) {
-      // Per-item graduated penalty (e.g. food handler certs, vendor certs)
       const perItemPenalty = maxPoints / item.count;
       const expiredItems = item.expiredCount || 0;
-      // For expired items: full penalty. For others: graduated based on daysUntilExpiry.
       const expiredPenalty = expiredItems * perItemPenalty;
       const remainingCount = item.count - expiredItems;
       const remainingPenalty = remainingCount > 0
@@ -178,7 +273,6 @@ export function calculateDocumentationScore(items: DocumentItem[]): number {
         : 0;
       totalScore += maxPoints - expiredPenalty - remainingPenalty;
     } else {
-      // Single document: direct graduated penalty
       const penalty = getGraduatedPenalty(item.daysUntilExpiry, maxPoints);
       totalScore += maxPoints - penalty;
     }
@@ -190,15 +284,15 @@ export function calculateDocumentationScore(items: DocumentItem[]): number {
 
 export interface LocationScoreResult {
   overall: number;
-  operational: number;
-  equipment: number;
-  documentation: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
 }
 
 export interface LocationData {
-  operational: OperationalData;
-  equipment: EquipmentItem[];
-  documentation: DocumentItem[];
+  foodSafety: FoodSafetyData;
+  fireSafety: FireSafetyItem[];
+  vendorCompliance: VendorComplianceItem[];
 }
 
 export function calculateLocationScore(
@@ -206,15 +300,15 @@ export function calculateLocationScore(
   verticalCode: IndustryVertical = 'RESTAURANT',
 ): LocationScoreResult {
   const weights = INDUSTRY_WEIGHTS[verticalCode] || DEFAULT_WEIGHTS;
-  const operational = calculateOperationalScore(locationData.operational);
-  const equipment = calculateEquipmentScore(locationData.equipment);
-  const documentation = calculateDocumentationScore(locationData.documentation);
+  const foodSafety = calculateFoodSafetyScore(locationData.foodSafety);
+  const fireSafety = calculateFireSafetyScore(locationData.fireSafety);
+  const vendorCompliance = calculateVendorComplianceScore(locationData.vendorCompliance);
   const overall = Math.round(
-    operational * weights.operational +
-    equipment * weights.equipment +
-    documentation * weights.documentation,
+    foodSafety * weights.foodSafety +
+    fireSafety * weights.fireSafety +
+    vendorCompliance * weights.vendorCompliance,
   );
-  return { overall, operational, equipment, documentation };
+  return { overall, foodSafety, fireSafety, vendorCompliance };
 }
 
 // --------------- Organization Score ---------------
@@ -229,12 +323,28 @@ export function calculateOrgScore(locationScores: LocationScoreResult[]): number
 
 /** Compute weighted overall from raw pillar scores (0-100 each). */
 export function computeWeightedOverall(
-  scores: { operational: number; equipment: number; documentation: number },
+  scores: { foodSafety: number; fireSafety: number; vendorCompliance: number },
   weights: PillarWeights = DEFAULT_WEIGHTS,
 ): number {
   return Math.round(
-    scores.operational * weights.operational +
-    scores.equipment * weights.equipment +
-    scores.documentation * weights.documentation,
+    scores.foodSafety * weights.foodSafety +
+    scores.fireSafety * weights.fireSafety +
+    scores.vendorCompliance * weights.vendorCompliance,
   );
 }
+
+// --------------- Legacy Aliases ---------------
+// Keep old type names as aliases during migration
+
+/** @deprecated Use FoodSafetyData */
+export type OperationalData = FoodSafetyData;
+/** @deprecated Use FireSafetyItem */
+export type EquipmentItem = FireSafetyItem;
+/** @deprecated Use VendorComplianceItem */
+export type DocumentItem = VendorComplianceItem;
+/** @deprecated Use calculateFoodSafetyScore */
+export const calculateOperationalScore = calculateFoodSafetyScore;
+/** @deprecated Use calculateFireSafetyScore */
+export const calculateEquipmentScore = calculateFireSafetyScore;
+/** @deprecated Use calculateVendorComplianceScore */
+export const calculateDocumentationScore = calculateVendorComplianceScore;

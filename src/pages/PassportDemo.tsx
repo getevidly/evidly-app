@@ -9,9 +9,9 @@ export default function PassportDemo() {
 
   const complianceData = {
     overall: 92,
-    operational: 95,
-    equipment: 89,
-    documentation: 88
+    foodSafety: 95,
+    fireSafety: 89,
+    vendorCompliance: 88
   };
 
   const recentActivity = [
@@ -102,39 +102,39 @@ export default function PassportDemo() {
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Operational</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.operational}</span>
+                <span className="font-semibold text-gray-700">Food Safety</span>
+                <span className="font-bold text-[#1e4d6b]">{complianceData.foodSafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${complianceData.operational}%` }}
+                  style={{ width: `${complianceData.foodSafety}%` }}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Equipment</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.equipment}</span>
+                <span className="font-semibold text-gray-700">Fire Safety</span>
+                <span className="font-bold text-[#1e4d6b]">{complianceData.fireSafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${complianceData.equipment}%` }}
+                  style={{ width: `${complianceData.fireSafety}%` }}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Documentation</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.documentation}</span>
+                <span className="font-semibold text-gray-700">Vendor Compliance</span>
+                <span className="font-bold text-[#1e4d6b]">{complianceData.vendorCompliance}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${complianceData.documentation}%` }}
+                  style={{ width: `${complianceData.vendorCompliance}%` }}
                 />
               </div>
             </div>

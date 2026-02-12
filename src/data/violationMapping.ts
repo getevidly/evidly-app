@@ -17,7 +17,7 @@ export interface ViolationMapping {
   /** County-specific severity overrides (county slug → severity) */
   countyOverrides?: Partial<Record<string, ViolationSeverity>>;
   /** Which pillar this maps to */
-  pillar: 'Operational' | 'Equipment' | 'Documentation';
+  pillar: 'Food Safety' | 'Fire Safety' | 'Vendor Compliance';
 }
 
 /**
@@ -31,49 +31,49 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§113996',
     description: 'Cold holding temperature violation (below 41°F required)',
     defaultSeverity: 'critical',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'hot_holding',
     calCodeSection: '§113996',
     description: 'Hot holding temperature violation (above 135°F required)',
     defaultSeverity: 'critical',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'temperature',
     calCodeSection: '§113996',
     description: 'Temperature monitoring violation',
     defaultSeverity: 'major',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'food_manager',
     calCodeSection: '§113947.1',
     description: 'No certified food protection manager on duty',
     defaultSeverity: 'major',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'food_handler',
     calCodeSection: '§113948',
     description: 'Expired or missing food handler card',
     defaultSeverity: 'minor',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'handwash',
     calCodeSection: '§113953',
     description: 'Handwash sink blocked, inaccessible, or not supplied',
     defaultSeverity: 'critical',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'thermometer',
     calCodeSection: '§114157',
     description: 'Missing or non-functional probe thermometer',
     defaultSeverity: 'minor',
-    pillar: 'Equipment',
+    pillar: 'Fire Safety',
   },
   {
     evidlyItem: 'hood_cleaning',
@@ -83,63 +83,63 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     countyOverrides: {
       kern: 'major',
     },
-    pillar: 'Equipment',
+    pillar: 'Fire Safety',
   },
   {
     evidlyItem: 'fire_suppression',
     calCodeSection: 'CFC §904',
     description: 'Fire suppression system inspection expired',
     defaultSeverity: 'critical',
-    pillar: 'Equipment',
+    pillar: 'Fire Safety',
   },
   {
     evidlyItem: 'pest_control',
     calCodeSection: '§114259',
     description: 'Pest control records missing or service overdue',
     defaultSeverity: 'major',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'cooling',
     calCodeSection: '§114002(a)',
     description: 'Cooling time/temperature violation',
     defaultSeverity: 'critical',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'employee_health',
     calCodeSection: '§113949.5',
     description: 'Employee health certification gap',
     defaultSeverity: 'minor',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'health_permit',
     calCodeSection: '§114381',
     description: 'Health permit expired or not displayed',
     defaultSeverity: 'critical',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'haccp',
     calCodeSection: '§114419',
     description: 'HACCP plan monitoring not performed',
     defaultSeverity: 'major',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'checklist',
     calCodeSection: '§114419',
     description: 'Required operational checklist not completed',
     defaultSeverity: 'minor',
-    pillar: 'Operational',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'vendor_cert',
     calCodeSection: '§114065',
     description: 'Vendor certificate of insurance expired',
     defaultSeverity: 'minor',
-    pillar: 'Documentation',
+    pillar: 'Vendor Compliance',
   },
   {
     evidlyItem: 'grease_trap',
@@ -149,14 +149,14 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     countyOverrides: {
       kern: 'major',
     },
-    pillar: 'Equipment',
+    pillar: 'Fire Safety',
   },
   {
     evidlyItem: 'equipment_maintenance',
     calCodeSection: '§114130',
     description: 'Equipment maintenance overdue',
     defaultSeverity: 'minor',
-    pillar: 'Equipment',
+    pillar: 'Fire Safety',
   },
 ];
 

@@ -11,9 +11,9 @@ export const SAMPLE_DATA = {
   },
   complianceScore: 76,
   complianceBreakdown: {
-    operational: 91,
-    equipment: 73,
-    documentation: 65,
+    foodSafety: 91,
+    fireSafety: 73,
+    vendorCompliance: 65,
   },
   locations: [
     {

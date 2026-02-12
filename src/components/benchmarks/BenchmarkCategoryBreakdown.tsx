@@ -6,11 +6,11 @@ interface Props {
 }
 
 // Simulated percentiles for category-level comparison
-const CATEGORY_PERCENTILES: Record<string, { operational: number; equipment: number; documentation: number; overall: number }> = {
-  downtown: { operational: 93, equipment: 85, documentation: 90, overall: 89 },
-  airport: { operational: 50, equipment: 38, documentation: 53, overall: 52 },
-  university: { operational: 25, equipment: 15, documentation: 10, overall: 18 },
-  all: { operational: 62, equipment: 50, documentation: 55, overall: 58 },
+const CATEGORY_PERCENTILES: Record<string, { foodSafety: number; fireSafety: number; vendorCompliance: number; overall: number }> = {
+  downtown: { foodSafety: 93, fireSafety: 85, vendorCompliance: 90, overall: 89 },
+  airport: { foodSafety: 50, fireSafety: 38, vendorCompliance: 53, overall: 52 },
+  university: { foodSafety: 25, fireSafety: 15, vendorCompliance: 10, overall: 18 },
+  all: { foodSafety: 62, fireSafety: 50, vendorCompliance: 55, overall: 58 },
 };
 
 export function BenchmarkCategoryBreakdown({ locationId }: Props) {
@@ -19,9 +19,9 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
   const pct = CATEGORY_PERCENTILES[locationId] || CATEGORY_PERCENTILES['all'];
 
   const rows = [
-    { category: 'Operational', yours: scores.operational, verticalAvg: vertical.avgOperational, industryAvg: 76, percentile: pct.operational },
-    { category: 'Equipment & Fire Safety', yours: scores.equipment, verticalAvg: vertical.avgEquipment, industryAvg: 70, percentile: pct.equipment },
-    { category: 'Documentation', yours: scores.documentation, verticalAvg: vertical.avgDocumentation, industryAvg: 72, percentile: pct.documentation },
+    { category: 'Food Safety', yours: scores.foodSafety, verticalAvg: vertical.avgFoodSafety, industryAvg: 76, percentile: pct.foodSafety },
+    { category: 'Fire Safety', yours: scores.fireSafety, verticalAvg: vertical.avgFireSafety, industryAvg: 70, percentile: pct.fireSafety },
+    { category: 'Vendor Compliance', yours: scores.vendorCompliance, verticalAvg: vertical.avgVendorCompliance, industryAvg: 72, percentile: pct.vendorCompliance },
     { category: 'Overall', yours: scores.overall, verticalAvg: vertical.avgScore, industryAvg: 73, percentile: pct.overall },
   ];
 

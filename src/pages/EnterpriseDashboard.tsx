@@ -339,9 +339,9 @@ function OverviewTab() {
             <div className="space-y-2 flex-shrink-0">
               {[
                 { label: 'Current', value: latestTrend.overall, color: '#1e4d6b' },
-                { label: 'Operational', value: latestTrend.operational, color: '#22c55e' },
-                { label: 'Equipment', value: latestTrend.equipment, color: '#d4af37' },
-                { label: 'Documentation', value: latestTrend.documentation, color: '#6b21a8' },
+                { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
+                { label: 'Fire Safety', value: latestTrend.fireSafety, color: '#d4af37' },
+                { label: 'Vendor Compliance', value: latestTrend.vendorCompliance, color: '#6b21a8' },
               ].map(m => (
                 <div key={m.label} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
@@ -810,9 +810,9 @@ function HierarchyTab() {
                 <div className="space-y-3 mb-4">
                   <h4 className="text-xs font-semibold text-gray-700">Score Breakdown</h4>
                   {[
-                    { label: 'Operational', value: selectedNode.operational, trend: nodeTrend(selectedNode.id + '-op') },
-                    { label: 'Equipment', value: selectedNode.equipment, trend: nodeTrend(selectedNode.id + '-eq') },
-                    { label: 'Documentation', value: selectedNode.documentation, trend: nodeTrend(selectedNode.id + '-doc') },
+                    { label: 'Food Safety', value: selectedNode.foodSafety, trend: nodeTrend(selectedNode.id + '-op') },
+                    { label: 'Fire Safety', value: selectedNode.fireSafety, trend: nodeTrend(selectedNode.id + '-eq') },
+                    { label: 'Vendor Compliance', value: selectedNode.vendorCompliance, trend: nodeTrend(selectedNode.id + '-doc') },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="flex items-center justify-between mb-1">

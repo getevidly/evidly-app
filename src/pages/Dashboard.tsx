@@ -96,20 +96,20 @@ export function Dashboard() {
   const currentScores = selectedLocation === 'all' ? resolvedComplianceScores : resolvedLocationScores[selectedLocation] || resolvedComplianceScores;
   const currentScoresThirtyDaysAgo = selectedLocation === 'all' ? resolvedComplianceScoresThirtyDaysAgo : resolvedLocationScoresThirtyDaysAgo[selectedLocation] || resolvedComplianceScoresThirtyDaysAgo;
   const complianceScore = currentScores.overall;
-  const operationalScore = currentScores.operational;
-  const equipmentScore = currentScores.equipment;
-  const documentationScore = currentScores.documentation;
+  const foodSafetyScore = currentScores.foodSafety;
+  const fireSafetyScore = currentScores.fireSafety;
+  const vendorComplianceScore = currentScores.vendorCompliance;
 
   const overallTrend = getTrend(currentScores.overall, currentScoresThirtyDaysAgo.overall);
-  const operationalTrend = getTrend(currentScores.operational, currentScoresThirtyDaysAgo.operational);
-  const equipmentTrend = getTrend(currentScores.equipment, currentScoresThirtyDaysAgo.equipment);
-  const documentationTrend = getTrend(currentScores.documentation, currentScoresThirtyDaysAgo.documentation);
+  const foodSafetyTrend = getTrend(currentScores.foodSafety, currentScoresThirtyDaysAgo.foodSafety);
+  const fireSafetyTrend = getTrend(currentScores.fireSafety, currentScoresThirtyDaysAgo.fireSafety);
+  const vendorComplianceTrend = getTrend(currentScores.vendorCompliance, currentScoresThirtyDaysAgo.vendorCompliance);
 
   const weights = getWeights();
   const pillarScores = [
-    { name: t('dashboard.operational'), weight: Math.round(weights.operational * 100), score: operationalScore, tooltip: t('dashboard.operationalTooltip'), trend: operationalTrend },
-    { name: t('dashboard.equipmentSafety'), weight: Math.round(weights.equipment * 100), score: equipmentScore, tooltip: t('dashboard.equipmentTooltip'), trend: equipmentTrend },
-    { name: t('dashboard.documentationCompliance'), weight: Math.round(weights.documentation * 100), score: documentationScore, tooltip: t('dashboard.documentationTooltip'), trend: documentationTrend },
+    { name: t('dashboard.foodSafety'), weight: Math.round(weights.foodSafety * 100), score: foodSafetyScore, tooltip: t('dashboard.foodSafetyTooltip'), trend: foodSafetyTrend },
+    { name: t('dashboard.fireSafety'), weight: Math.round(weights.fireSafety * 100), score: fireSafetyScore, tooltip: t('dashboard.fireSafetyTooltip'), trend: fireSafetyTrend },
+    { name: t('dashboard.vendorCompliance'), weight: Math.round(weights.vendorCompliance * 100), score: vendorComplianceScore, tooltip: t('dashboard.vendorComplianceTooltip'), trend: vendorComplianceTrend },
   ].sort((a, b) => b.score - a.score);
 
   const scoreInfo = getGrade(complianceScore);
@@ -622,9 +622,9 @@ export function Dashboard() {
                     <tr>
                       <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>{t('common.location')}</th>
                       <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.complianceScore')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.operational')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.equipmentSafety')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.documentationCompliance')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.foodSafety')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.fireSafety')}</th>
+                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.vendorCompliance')}</th>
                       <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.trend')}</th>
                       <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>{t('common.status')}</th>
                     </tr>
@@ -646,13 +646,13 @@ export function Dashboard() {
                             <span className="text-sm font-bold" style={{ color: grade.hex }}>{locScores.overall}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
-                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.operational) }}>{locScores.operational}</span>
+                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.foodSafety) }}>{locScores.foodSafety}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
-                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.equipment) }}>{locScores.equipment}</span>
+                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.fireSafety) }}>{locScores.fireSafety}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
-                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.documentation) }}>{locScores.documentation}</span>
+                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.vendorCompliance) }}>{locScores.vendorCompliance}</span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-semibold" style={{ color: locTrend.color }}>{locTrend.icon} {locTrend.diff}</span>
@@ -751,17 +751,17 @@ export function Dashboard() {
             const allActionItems = locationFilteredItems.map(item => ({
               priority: item.color === 'red' ? 'high' as const : item.color === 'amber' ? 'medium' as const : 'low' as const,
               pillar: (() => {
-                if (item.url === '/temp-logs' || item.url === '/checklists' || item.url === '/haccp') return 'Operational';
-                if (item.url === '/vendors') return 'Equipment';
-                return 'Documentation';
+                if (item.url === '/temp-logs' || item.url === '/checklists' || item.url === '/haccp') return 'Food Safety';
+                if (item.url === '/vendors') return 'Fire Safety';
+                return 'Vendor Compliance';
               })(),
               title: item.title,
               desc: item.detail,
               link: item.url,
             }));
             const filteredItems = pillarFilter ? allActionItems.filter(item => item.pillar === pillarFilter) : allActionItems;
-            const pillarCounts = { Operational: 0, Equipment: 0, Documentation: 0 };
-            allActionItems.forEach(item => { pillarCounts[item.pillar as keyof typeof pillarCounts]++; });
+            const pillarCounts: Record<string, number> = { 'Food Safety': 0, 'Fire Safety': 0, 'Vendor Compliance': 0 };
+            allActionItems.forEach(item => { if (pillarCounts[item.pillar] !== undefined) pillarCounts[item.pillar]++; });
 
             return (
               <div>
@@ -769,9 +769,9 @@ export function Dashboard() {
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
                   {[
                     { key: null, label: t('common.all'), count: allActionItems.length },
-                    { key: 'Operational', label: t('dashboard.operational'), count: pillarCounts.Operational },
-                    { key: 'Equipment', label: t('dashboard.equipmentSafety'), count: pillarCounts.Equipment },
-                    { key: 'Documentation', label: t('dashboard.documentationCompliance'), count: pillarCounts.Documentation },
+                    { key: 'Food Safety', label: t('dashboard.foodSafety'), count: pillarCounts['Food Safety'] },
+                    { key: 'Fire Safety', label: t('dashboard.fireSafety'), count: pillarCounts['Fire Safety'] },
+                    { key: 'Vendor Compliance', label: t('dashboard.vendorCompliance'), count: pillarCounts['Vendor Compliance'] },
                   ].map(chip => (
                     <button
                       key={chip.label}

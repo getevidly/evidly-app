@@ -106,7 +106,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Verify your cooldown monitoring alerts are set to flag items exceeding the 2-hour mark from start (not from 135°F)',
       'Post cooling reference chart in kitchen showing both FDA and California requirements',
     ],
-    affectedAreas: ['Food Safety', 'Training', 'Documentation', 'Temperature Monitoring'],
+    affectedAreas: ['Food Safety', 'Training', 'Vendor Compliance', 'Temperature Monitoring'],
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'Cooldown tracker updated — displays both FDA and California cooling standards side by side', completed: true },
@@ -133,7 +133,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Ensure your EvidLY account is set up to export records on demand for inspectors',
       'Keep paper logs as backup if desired, but digital must be the primary record',
     ],
-    affectedAreas: ['Documentation', 'Equipment'],
+    affectedAreas: ['Vendor Compliance', 'Fire Safety'],
     affectedLocations: ['Downtown Kitchen'],
     autoActions: [
       { text: 'Your EvidLY digital temperature logs already meet this requirement', completed: true },
@@ -159,7 +159,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Update your vendor service calendar to reflect any frequency changes',
       'Document your daily meal counts to justify your cleaning frequency during inspections',
     ],
-    affectedAreas: ['Equipment', 'Fire Safety'],
+    affectedAreas: ['Fire Safety'],
     affectedLocations: ['Downtown Kitchen', 'University Dining'],
     autoActions: [
       { text: 'Vendor service calendar flagged for review', completed: true },
@@ -187,7 +187,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Consider submitting comments if changes would significantly impact your operations',
       'No immediate action needed — monitor for California adoption timeline',
     ],
-    affectedAreas: ['Food Safety', 'Documentation'],
+    affectedAreas: ['Food Safety', 'Vendor Compliance'],
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'Monitoring California adoption timeline — will alert when CalCode updates', completed: true },
@@ -210,7 +210,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Review your current food handler certification tracking to ensure renewal dates are monitored',
       'If passed, you will need to update renewal schedules for all staff',
     ],
-    affectedAreas: ['Training', 'Documentation'],
+    affectedAreas: ['Training', 'Vendor Compliance'],
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'Monitoring bill status — will alert if it passes committee', completed: true },
@@ -235,7 +235,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Ensure your EvidLY equipment tracking includes monthly visual inspection records',
       'Inform your fire protection vendor that digital records are now standard-approved',
     ],
-    affectedAreas: ['Fire Safety', 'Documentation'],
+    affectedAreas: ['Fire Safety', 'Vendor Compliance'],
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'Equipment tracking module already supports digital fire extinguisher records', completed: true },
@@ -264,7 +264,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Review fire suppression system service reports — semi-annual professional service required',
       'Verify manual pull station is accessible within 10-20 ft travel distance of egress path',
     ],
-    affectedAreas: ['Fire Safety', 'Equipment', 'Documentation'],
+    affectedAreas: ['Fire Safety', 'Vendor Compliance'],
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'CFC requirements added to jurisdiction compliance engine', completed: true },

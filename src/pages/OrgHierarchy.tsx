@@ -50,7 +50,7 @@ function getNodeTrend(nodeId: string): number {
   return current.complianceScore - prev.complianceScore;
 }
 
-function getPillarTrend(nodeId: string, pillar: 'operational' | 'equipment' | 'documentation'): number {
+function getPillarTrend(nodeId: string, pillar: 'foodSafety' | 'fireSafety' | 'vendorCompliance'): number {
   const current = findNode(demoHierarchyTree, nodeId);
   const prev = findNode(demoHierarchyTreeThirtyDaysAgo, nodeId);
   if (!current || !prev) return 0;
@@ -158,7 +158,7 @@ export function OrgHierarchy() {
     if (rollupMethod === demoHierarchyConfig.rollupMethod) return selectedNode;
     if (!selectedNode.children || selectedNode.children.length === 0) return selectedNode;
     const recomputed = computeRollup(selectedNode.children, rollupMethod);
-    return { ...selectedNode, complianceScore: recomputed.overall, operational: recomputed.operational, equipment: recomputed.equipment, documentation: recomputed.documentation };
+    return { ...selectedNode, complianceScore: recomputed.overall, foodSafety: recomputed.foodSafety, fireSafety: recomputed.fireSafety, vendorCompliance: recomputed.vendorCompliance };
   }, [selectedNode, rollupMethod]);
 
   const levelLabel = demoHierarchyConfig.levels.find(l => l.key === selectedNode.level)?.label || selectedNode.level;
@@ -328,9 +328,9 @@ export function OrgHierarchy() {
             <div className="space-y-3 mb-4">
               <h4 className="text-xs font-semibold text-gray-700">Score Breakdown</h4>
               {([
-                { label: 'Operational', value: displayNode.operational, pillar: 'operational' as const },
-                { label: 'Equipment', value: displayNode.equipment, pillar: 'equipment' as const },
-                { label: 'Documentation', value: displayNode.documentation, pillar: 'documentation' as const },
+                { label: 'Food Safety', value: displayNode.foodSafety, pillar: 'foodSafety' as const },
+                { label: 'Fire Safety', value: displayNode.fireSafety, pillar: 'fireSafety' as const },
+                { label: 'Vendor Compliance', value: displayNode.vendorCompliance, pillar: 'vendorCompliance' as const },
               ]).map(item => (
                 <div key={item.label}>
                   <div className="flex items-center justify-between mb-1">
@@ -464,9 +464,9 @@ export function OrgHierarchy() {
                     <Tooltip />
                     <Legend wrapperStyle={{ fontSize: 10 }} />
                     <Line type="monotone" dataKey="overall" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2 }} name="Overall" />
-                    <Line type="monotone" dataKey="operational" stroke="#22c55e" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Operational" />
-                    <Line type="monotone" dataKey="equipment" stroke="#d4af37" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Equipment" />
-                    <Line type="monotone" dataKey="documentation" stroke="#6366f1" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Documentation" />
+                    <Line type="monotone" dataKey="foodSafety" stroke="#22c55e" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Food Safety" />
+                    <Line type="monotone" dataKey="fireSafety" stroke="#d4af37" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Fire Safety" />
+                    <Line type="monotone" dataKey="vendorCompliance" stroke="#6366f1" strokeWidth={1} dot={false} strokeDasharray="4 2" name="Vendor Compliance" />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

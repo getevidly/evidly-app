@@ -98,9 +98,9 @@ export interface CorrectiveAction {
 
 export interface ComplianceScoreSection {
   overall: number;
-  operational: number;
-  equipment: number;
-  documentation: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorCompliance: number;
   countyGrade?: string;
   countyScoreLabel?: string;
   jurisdictionScore?: number;
@@ -522,9 +522,9 @@ export function generateHealthDeptReport(config: ReportConfig): HealthDeptReport
       const jResult = calculateJurisdictionScore(locationItems, countySlug);
       return {
         overall: scores.overall,
-        operational: scores.operational,
-        equipment: scores.equipment,
-        documentation: scores.documentation,
+        foodSafety: scores.foodSafety,
+        fireSafety: scores.fireSafety,
+        vendorCompliance: scores.vendorCompliance,
         countyGrade: template.getGrade(scores.overall),
         countyScoreLabel: template.gradingSystem,
         jurisdictionScore: jResult.numericScore,

@@ -15,9 +15,9 @@ export default function Passport() {
     name: 'Pacific Coast Dining — Downtown',
     address: '1245 Fulton Street, Fresno, CA 93721',
     overall: 92,
-    operational: 95,
-    equipment: 89,
-    documentation: 88,
+    foodSafety: 95,
+    fireSafety: 89,
+    vendorCompliance: 88,
   };
 
   const recentActivity = [
@@ -117,39 +117,39 @@ export default function Passport() {
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Operational</span>
-                <span className="font-bold" style={{ color: locationData.operational >= 90 ? '#22c55e' : locationData.operational >= 75 ? '#eab308' : locationData.operational >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.operational}</span>
+                <span className="font-semibold text-gray-700">Food Safety</span>
+                <span className="font-bold" style={{ color: locationData.foodSafety >= 90 ? '#22c55e' : locationData.foodSafety >= 75 ? '#eab308' : locationData.foodSafety >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.foodSafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${locationData.operational}%` }}
+                  style={{ width: `${locationData.foodSafety}%` }}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Equipment</span>
-                <span className="font-bold" style={{ color: locationData.equipment >= 90 ? '#22c55e' : locationData.equipment >= 75 ? '#eab308' : locationData.equipment >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.equipment}</span>
+                <span className="font-semibold text-gray-700">Fire Safety</span>
+                <span className="font-bold" style={{ color: locationData.fireSafety >= 90 ? '#22c55e' : locationData.fireSafety >= 75 ? '#eab308' : locationData.fireSafety >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.fireSafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${locationData.equipment}%` }}
+                  style={{ width: `${locationData.fireSafety}%` }}
                 />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Documentation</span>
-                <span className="font-bold" style={{ color: locationData.documentation >= 90 ? '#22c55e' : locationData.documentation >= 75 ? '#eab308' : locationData.documentation >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.documentation}</span>
+                <span className="font-semibold text-gray-700">Vendor Compliance</span>
+                <span className="font-bold" style={{ color: locationData.vendorCompliance >= 90 ? '#22c55e' : locationData.vendorCompliance >= 75 ? '#eab308' : locationData.vendorCompliance >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.vendorCompliance}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${locationData.documentation}%` }}
+                  style={{ width: `${locationData.vendorCompliance}%` }}
                 />
               </div>
             </div>

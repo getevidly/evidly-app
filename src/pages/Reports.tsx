@@ -7,7 +7,7 @@ import { useRole } from '../contexts/RoleContext';
 
 import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
 
-type TabType = 'executive' | 'operational' | 'equipment' | 'documentation' | 'team';
+type TabType = 'executive' | 'operational' | 'equipment' | 'vendorCompliance' | 'team';
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; text: string; border: string }> = {
@@ -148,9 +148,9 @@ export function Reports() {
     return {
       location: loc.name,
       score: scores?.overall || 0,
-      operational: scores?.operational || 0,
-      equipment: scores?.equipment || 0,
-      documentation: scores?.documentation || 0,
+      foodSafety: scores?.foodSafety || 0,
+      fireSafety: scores?.fireSafety || 0,
+      vendorCompliance: scores?.vendorCompliance || 0,
       change: '+5%',
       status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 70 ? 'Needs Attention' : 'Critical',
     };
@@ -424,12 +424,12 @@ export function Reports() {
         csvContent += `"${r.equipment}","${r.location}","${r.status}","${r.expires}"\n`;
       });
       filename = `evidly-equipment-report-${dateRange}.csv`;
-    } else if (activeTab === 'documentation') {
+    } else if (activeTab === 'vendorCompliance') {
       csvContent = 'Type,Total,Current,Expiring,Expired\n';
       documentInventory.forEach(r => {
         csvContent += `"${r.type}",${r.total},${r.current},${r.expiring},${r.expired}\n`;
       });
-      filename = `evidly-documentation-report-${dateRange}.csv`;
+      filename = `evidly-vendor-compliance-report-${dateRange}.csv`;
     } else {
       csvContent = 'Employee,Completed,Missed,Rate\n';
       taskCompletionByEmployee.forEach(r => {
@@ -506,9 +506,9 @@ export function Reports() {
         <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           {[
             { id: 'executive', label: 'Executive Summary' },
-            { id: 'operational', label: 'Operational' },
-            { id: 'equipment', label: 'Equipment' },
-            { id: 'documentation', label: 'Documentation' },
+            { id: 'operational', label: 'Food Safety' },
+            { id: 'equipment', label: 'Fire Safety' },
+            { id: 'vendorCompliance', label: 'Vendor Compliance' },
             { id: 'team', label: 'Team' },
           ].map((tab) => (
             <button
@@ -551,11 +551,11 @@ export function Reports() {
               <div className="grid grid-cols-3 gap-4 mb-4">
                 {(() => {
                   const opScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].operational : complianceScores.operational;
+                    ? locationScores[selectedLocation].foodSafety : complianceScores.foodSafety;
                   const eqScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].equipment : complianceScores.equipment;
+                    ? locationScores[selectedLocation].fireSafety : complianceScores.fireSafety;
                   const docScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].documentation : complianceScores.documentation;
+                    ? locationScores[selectedLocation].vendorCompliance : complianceScores.vendorCompliance;
                   const opColor = getScoreColor(opScore);
                   const eqColor = getScoreColor(eqScore);
                   const docColor = getScoreColor(docScore);
@@ -564,21 +564,21 @@ export function Reports() {
                       <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Activity className="h-3.5 w-3.5" style={{ color: opColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Operational ({Math.round(getWeights().operational * 100)}%)</span>
+                          <span className="text-sm text-gray-500 font-medium">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: opColor }}>{opScore}</p>
                       </div>
                       <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Thermometer className="h-3.5 w-3.5" style={{ color: eqColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Equipment ({Math.round(getWeights().equipment * 100)}%)</span>
+                          <span className="text-sm text-gray-500 font-medium">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
                       </div>
                       <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${docColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <FileText className="h-3.5 w-3.5" style={{ color: docColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Documentation ({Math.round(getWeights().documentation * 100)}%)</span>
+                          <span className="text-sm text-gray-500 font-medium">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: docColor }}>{docScore}</p>
                       </div>
@@ -607,9 +607,9 @@ export function Reports() {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operational ({Math.round(getWeights().operational * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment ({Math.round(getWeights().equipment * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documentation ({Math.round(getWeights().documentation * 100)}%)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}%)</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
@@ -618,9 +618,9 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loc.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: getScoreColor(loc.score) }}>{loc.score}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.operational) }}>{loc.operational}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.equipment) }}>{loc.equipment}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.documentation) }}>{loc.documentation}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.foodSafety) }}>{loc.foodSafety}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.fireSafety) }}>{loc.fireSafety}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium" style={{ color: getScoreColor(loc.vendorCompliance) }}>{loc.vendorCompliance}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <StatusBadge status={loc.status} />
                         </td>
@@ -910,7 +910,7 @@ export function Reports() {
           </div>
         )}
 
-        {activeTab === 'documentation' && (
+        {activeTab === 'vendorCompliance' && (
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow overflow-hidden">
               <div className="p-6 pb-4">
