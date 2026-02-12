@@ -6,6 +6,7 @@ import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
 import { DemoProvider, useDemo } from './contexts/DemoContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { OfflineProvider } from './contexts/OfflineContext';
+import { InactivityProvider } from './contexts/InactivityContext';
 import { Toaster } from 'sonner';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
@@ -301,8 +302,10 @@ function App() {
             <RoleProvider>
               <OperatingHoursProvider>
                 <OfflineProvider>
-                  <AppRoutes />
-                  <Toaster position="top-right" richColors closeButton duration={3000} />
+                  <InactivityProvider>
+                    <AppRoutes />
+                    <Toaster position="top-right" richColors closeButton duration={3000} />
+                  </InactivityProvider>
                 </OfflineProvider>
               </OperatingHoursProvider>
             </RoleProvider>
