@@ -388,6 +388,14 @@ export function autoDetectJurisdiction(input: {
     city: input.city,
   });
 
+  // Detect state code from input
+  const stateUpper = (input.state || '').trim().toUpperCase();
+  const SUPPORTED_STATES: Record<string, string> = {
+    CA: 'California', TX: 'Texas', FL: 'Florida', NY: 'New York',
+    WA: 'Washington', OR: 'Oregon', AZ: 'Arizona',
+  };
+  const detectedStateCode = SUPPORTED_STATES[stateUpper] ? stateUpper : null;
+
   // Compute regulation statuses for all CA laws
   const regulations: RegulationStatus[] = detection.isCalifornnia
     ? CALIFORNIA_STATE_LAWS.map(getRegulationStatus)
@@ -399,6 +407,12 @@ export function autoDetectJurisdiction(input: {
   // Determine county name from detection or from input
   const countyName = detection.countyName || '';
 
+  // For non-CA supported states, build a basic jurisdiction chain
+  let jurisdictionChain = detection.jurisdictionChain;
+  if (!detection.isCalifornnia && detectedStateCode) {
+    jurisdictionChain = ['federal-fda', `state-${detectedStateCode.toLowerCase()}`];
+  }
+
   return {
     locationId: input.locationId,
     locationName: input.locationName,
@@ -407,10 +421,12 @@ export function autoDetectJurisdiction(input: {
     county: countyName,
     state: input.state,
     zip: input.zip,
-    detectedState: detection.isCalifornnia ? 'California' : null,
+    detectedState: detection.isCalifornnia
+      ? 'California'
+      : (detectedStateCode ? SUPPORTED_STATES[detectedStateCode] : null),
     detectedCounty: detection.countyName,
     detectionMethod: detection.detectionMethod === 'none' ? 'manual' : detection.detectionMethod,
-    jurisdictionChain: detection.jurisdictionChain,
+    jurisdictionChain,
     isCaliforniaLocation: detection.isCalifornnia,
     regulations,
     overrides,

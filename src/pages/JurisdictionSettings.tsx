@@ -266,13 +266,21 @@ function AddLocationDialog({
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-              <input
-                type="text"
+              <select
                 value={state}
                 onChange={e => setState(e.target.value)}
-                placeholder="CA"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
-              />
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b] bg-white"
+              >
+                <option value="">Select State...</option>
+                <option value="CA">California</option>
+                <option value="TX">Texas</option>
+                <option value="FL">Florida</option>
+                <option value="NY">New York</option>
+                <option value="WA">Washington</option>
+                <option value="OR">Oregon</option>
+                <option value="AZ">Arizona</option>
+                <option value="OTHER">Other State (FDA baseline)</option>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Zip Code</label>

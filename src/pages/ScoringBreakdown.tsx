@@ -16,6 +16,7 @@ import { getScoreTier } from '../lib/complianceScoring';
 import { calculateJurisdictionScore, extractCountySlug, getCountyProfile } from '../lib/jurisdictionScoring';
 import { findViolationMapping } from '../data/violationMapping';
 import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
+import { getStateLabel } from '../lib/stateCodes';
 
 // ── Effort classification for Quick Wins ──────────────────────
 
@@ -224,7 +225,13 @@ export function ScoringBreakdown() {
             Back to Dashboard
           </button>
           <h1 className="text-2xl font-bold text-gray-900">Score Breakdown</h1>
-          <p className="text-gray-500 text-sm mt-1">{selectedLocation.name} — {jurisdictionMapping?.county || 'California'}</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {selectedLocation.name}
+            {selectedLocation.stateCode && (
+              <span className="text-xs text-gray-500 ml-2">{getStateLabel(selectedLocation.stateCode)}</span>
+            )}
+            {' '} — {jurisdictionMapping?.county || 'California'}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {/* EvidLY Score Badge */}

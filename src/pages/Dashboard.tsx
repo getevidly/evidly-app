@@ -37,6 +37,7 @@ import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
 import { JurisdictionScoreDisplay } from '../components/JurisdictionScoreDisplay';
 import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
+import { getStateLabel } from '../lib/stateCodes';
 import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
 
 export function Dashboard() {
@@ -360,6 +361,8 @@ export function Dashboard() {
             'university': { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' },
           };
           const locationInfo = locationMap[selectedLocation] || { name: 'Location', address: '' };
+          const selectedLocationObj = resolvedLocations.find(loc => loc.urlId === selectedLocation);
+          const stateLabel = selectedLocationObj?.stateCode ? getStateLabel(selectedLocationObj.stateCode) : null;
           return (
             <div className="mb-6">
               <button
@@ -371,6 +374,9 @@ export function Dashboard() {
               </button>
               <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
                 {locationInfo.name}
+                {stateLabel && (
+                  <span className="text-xs text-gray-500 ml-2 font-normal">{stateLabel}</span>
+                )}
               </h1>
               <p className="text-gray-600">
                 {locationInfo.address}
