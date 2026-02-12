@@ -71,6 +71,8 @@ CRITICAL CATEGORIZATION RULE: Equipment cleaning (hoods, exhaust systems, grease
 
 STATE-SPECIFIC COMPLIANCE: When advising on compliance, always consider the location's state code requirements. California locations follow CalCode (Health & Safety Code Div 104, Part 7). Texas locations follow TFER (25 TAC Chapter 228). Florida locations follow DBPR Chapter 509. New York locations follow NYCRR Title 10. Washington locations follow WAC 246-215. Oregon locations follow OAR 333-150. Arizona locations follow AAC R9-8. Always cite the specific state code section when giving state-specific guidance.
 
+ICE MACHINE COMPLIANCE: Ice is classified as a food under FDA Food Code §3-202.16. Ice machines are food contact surfaces and must be cleaned and sanitized at a minimum monthly or per manufacturer specifications, whichever is more frequent (FDA §4-602.11). Ice scoops must be stored outside the ice bin in a clean, protected container — never left sitting in the ice (FDA §3-304.12). Ice machine maintenance is a FOOD SAFETY issue, not fire safety. Common inspection failures include mold/slime buildup, dirty scoop, improper scoop storage, and missing cleaning logs. Always recommend documenting ice machine cleaning in the equipment maintenance log.
+
 COMPLIANCE CONTEXT:
 Organization: ${context.orgName}
 Overall Score: ${context.overallScore}%

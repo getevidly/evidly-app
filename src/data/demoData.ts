@@ -780,7 +780,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     serviceOfferings: [
       { name: 'Refrigeration Repair', description: 'Walk-in cooler, freezer, and reach-in repair for all major brands. Most parts in stock for same-day service.', frequencyOptions: ['As Needed'], pricingDisplay: '$125/hr + parts' },
       { name: 'Preventive Maintenance', description: 'Quarterly cleaning of condenser coils, door gasket inspection, temperature calibration, and refrigerant check.', frequencyOptions: ['Quarterly'], pricingDisplay: '$150 - $250' },
-      { name: 'Ice Machine Cleaning', description: 'Deep cleaning and sanitizing of ice machines per manufacturer specs and health code requirements.', frequencyOptions: ['Quarterly', 'Semi-Annual'], pricingDisplay: '$125 - $200' },
+      { name: 'Ice Machine Cleaning', description: 'Deep cleaning and sanitizing of ice machines per FDA Food Code §4-602.11 and manufacturer specifications. Includes mold/slime removal, sanitizing food contact surfaces, and scoop storage verification.', frequencyOptions: ['Quarterly', 'Semi-Annual'], pricingDisplay: '$125 - $200' },
     ],
     contactName: 'Kevin O\'Brien', phone: '(555) 333-4455', email: 'kevin@allclearrefrig.com',
   },

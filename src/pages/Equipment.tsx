@@ -303,14 +303,18 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2024-07-08', warrantyProvider: 'Manitowoc Ice', warrantyTerms: '3-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-01-08', maintenanceInterval: 'Quarterly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 8, replacementCost: 6000,
-    notes: 'Maintenance overdue. Scale buildup reported. Schedule descaling ASAP.',
+    notes: 'Maintenance overdue — monthly cleaning cycle and condenser service past due. Scale buildup reported. FDA Food Code §4-602.11 requires food contact surfaces (including ice machines) cleaned at frequency to prevent buildup. Schedule descaling ASAP.',
     serviceHistory: [
       { date: '2025-10-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 325, notes: 'Cleaned condenser, sanitized bin. Noted early scale buildup.' },
       { date: '2025-07-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance + Descale', cost: 425, notes: 'Full descale treatment. Water filter replaced.' },
     ],
     schedule: [
-      { task: 'Condenser cleaning & sanitize', interval: 'Quarterly', lastDone: '2025-10-08', nextDue: '2026-01-08' },
+      { task: 'Daily ice quality & scoop storage check', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Weekly bin cleaning & gasket wipe', interval: 'Weekly', lastDone: '2026-02-03', nextDue: '2026-02-10' },
+      { task: 'Monthly cleaning & sanitizer cycle (FDA §4-602.11)', interval: 'Monthly', lastDone: '2026-01-08', nextDue: '2026-02-08' },
+      { task: 'Condenser coil cleaning', interval: 'Quarterly', lastDone: '2025-10-08', nextDue: '2026-01-08' },
       { task: 'Water filter replacement', interval: 'Semi-Annual', lastDone: '2025-07-08', nextDue: '2026-01-08' },
+      { task: 'Deep clean — full disassembly per manufacturer specs', interval: 'Semi-Annual', lastDone: '2025-07-08', nextDue: '2026-01-08' },
     ],
   },
   // ─── University Dining ───
@@ -398,6 +402,29 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     ],
     schedule: [
       { task: 'Thermostat calibration & burner cleaning', interval: 'Annual', lastDone: '2025-08-10', nextDue: '2026-08-10' },
+    ],
+  },
+  // ─── Downtown Kitchen — Ice Machine ───
+  {
+    id: 'EQ-016', name: 'Ice Machine', type: 'Ice Machine',
+    make: 'Hoshizaki', model: 'KM-660MAJ', serial: 'HZ-2022-55123',
+    locationId: '1', location: 'Downtown Kitchen',
+    installDate: '2022-03-15', purchasePrice: 7800,
+    warrantyExpiry: '2025-03-15', warrantyProvider: 'Hoshizaki', warrantyTerms: '3-year parts and labor',
+    condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Monthly',
+    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 8500,
+    notes: 'Monthly cleaning on schedule. Last deep clean July 2025. Water filter due March 2026. FDA Food Code §4-602.11 — food contact surface, monthly cleaning minimum.',
+    serviceHistory: [
+      { date: '2026-01-28', vendor: 'CleanAir HVAC', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Cleaning cycle run, bin sanitized, ice quality good.' },
+      { date: '2025-12-28', vendor: 'CleanAir HVAC', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Routine monthly service. No issues.' },
+    ],
+    schedule: [
+      { task: 'Daily ice quality & scoop storage check', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Weekly bin cleaning & gasket wipe', interval: 'Weekly', lastDone: '2026-02-03', nextDue: '2026-02-10' },
+      { task: 'Monthly cleaning & sanitizer cycle (FDA §4-602.11)', interval: 'Monthly', lastDone: '2026-01-28', nextDue: '2026-02-28' },
+      { task: 'Condenser coil cleaning', interval: 'Quarterly', lastDone: '2025-12-28', nextDue: '2026-03-28' },
+      { task: 'Water filter replacement', interval: 'Semi-Annual', lastDone: '2025-09-15', nextDue: '2026-03-15' },
+      { task: 'Deep clean — full disassembly per manufacturer specs', interval: 'Semi-Annual', lastDone: '2025-07-15', nextDue: '2026-01-15' },
     ],
   },
 ];

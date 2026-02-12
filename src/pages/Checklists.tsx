@@ -76,7 +76,7 @@ const TEMPLATE_CATEGORIES = [
       {
         key: 'opening',
         name: 'Opening Checklist',
-        itemCount: 14,
+        itemCount: 17,
         estimatedTime: '15-20 min',
         role: 'Kitchen Staff',
         items: [
@@ -94,12 +94,15 @@ const TEMPLATE_CATEGORIES = [
           'Check FIFO rotation',
           'Review daily specials/allergens',
           'Verify staff certifications on duty',
+          'Ice machine: verify ice quality (clear, odorless, no discoloration) — FDA §3-202.16',
+          'Ice machine: scoop stored in clean container outside bin — FDA §3-304.12',
+          'Ice machine: exterior and dispenser area clean',
         ],
       },
       {
         key: 'closing',
         name: 'Closing Checklist',
-        itemCount: 11,
+        itemCount: 12,
         estimatedTime: '20-25 min',
         role: 'Kitchen Staff',
         items: [
@@ -114,6 +117,7 @@ const TEMPLATE_CATEGORIES = [
           'Equipment shut down properly',
           'Waste removal complete',
           'Closing manager sign-off',
+          'Ice machine: verify scoop stored properly, bin lid closed',
         ],
       },
       {
@@ -211,6 +215,56 @@ const TEMPLATE_CATEGORIES = [
           'Check cooler door seals',
           'Verify date labels current',
           'Document any items discarded',
+        ],
+      },
+    ],
+  },
+  {
+    category: 'Equipment Maintenance',
+    templates: [
+      {
+        key: 'ice_machine_weekly',
+        name: 'Ice Machine Weekly Cleaning',
+        itemCount: 5,
+        estimatedTime: '20-30 min',
+        role: 'Kitchen Staff',
+        items: [
+          'Empty ice bin completely — discard all ice',
+          'Wash bin interior with warm water and food-safe sanitizer',
+          'Wipe door gaskets and exterior surfaces',
+          'Inspect water filter indicator — replace if due',
+          'Refill bin — verify first batch ice quality after restart',
+        ],
+      },
+      {
+        key: 'ice_machine_monthly',
+        name: 'Ice Machine Monthly Service (FDA §4-602.11)',
+        itemCount: 7,
+        estimatedTime: '45-60 min',
+        role: 'Manager',
+        items: [
+          'Run manufacturer-recommended cleaning cycle with approved ice machine cleaner',
+          'Run sanitizer cycle after cleaning cycle completes',
+          'Inspect condenser coils — clean if dusty or dirty',
+          'Check water inlet valve and lines for leaks or mineral buildup',
+          'Inspect drain line — clear any blockages',
+          'Verify ice quality after cleaning (clear, odorless, proper size)',
+          'Document cleaning in equipment maintenance log — FDA §4-602.11(D)',
+        ],
+      },
+      {
+        key: 'equipment_weekly',
+        name: 'Equipment Weekly Inspection',
+        itemCount: 6,
+        estimatedTime: '15-20 min',
+        role: 'Facilities',
+        items: [
+          'Walk-in cooler: check door seals, clean condenser if accessible',
+          'Walk-in freezer: verify defrost cycle, check for ice buildup',
+          'Ice machine: weekly bin cleaning (see Ice Machine Weekly checklist)',
+          'Prep cooler: clean interior shelves, check door gasket',
+          'Dishwasher: verify rinse temp, clean spray arms and filters',
+          'Grease trap: check level, schedule pump-out if needed',
         ],
       },
     ],
@@ -391,6 +445,7 @@ export function Checklists() {
   const categoryMap: Record<string, string> = {
     'Daily Operations': t('checklists.dailyOperations'),
     'HACCP Checklists': t('checklists.haccpChecklists'),
+    'Equipment Maintenance': t('checklists.equipmentMaintenance'),
   };
 
   const roleMap: Record<string, string> = {
