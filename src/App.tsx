@@ -1,12 +1,9 @@
-﻿// TODO: Re-enable auth guards before launch — restore Navigate import
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-// TODO: Re-enable auth guards before launch — restore useAuth import
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
-// TODO: Re-enable auth guards before launch — restore useDemo import
-import { DemoProvider } from './contexts/DemoContext';
+import { DemoProvider, useDemo } from './contexts/DemoContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { OfflineProvider } from './contexts/OfflineContext';
 
@@ -118,74 +115,71 @@ function LandingPage() {
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  // TODO: Re-enable auth guards before launch
-  // const { user, loading } = useAuth();
-  // const { isDemoMode } = useDemo();
+  const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
 
-  // if (isDemoMode) {
-  //   return <>{children}</>;
-  // }
+  if (isDemoMode) {
+    return <>{children}</>;
+  }
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-  //         <p className="mt-4 text-gray-600">Loading...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // if (!user) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  // TODO: Re-enable auth guards before launch
-  // const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-  //         <p className="mt-4 text-gray-600">Loading...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // if (user) {
-  //   return <Navigate to="/dashboard" replace />;
-  // }
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return <>{children}</>;
 }
 
 function ProtectedLayout() {
-  // TODO: Re-enable auth guards before launch
-  // const { user, loading } = useAuth();
-  // const { isDemoMode } = useDemo();
+  const { user, loading } = useAuth();
+  const { isDemoMode } = useDemo();
 
-  // if (!isDemoMode) {
-  //   if (loading) {
-  //     return (
-  //       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
-  //         <div className="text-center">
-  //           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
-  //           <p className="mt-4 text-gray-600">Loading...</p>
-  //         </div>
-  //       </div>
-  //     );
-  //   }
-  //   if (!user) {
-  //     return <Navigate to="/login" replace />;
-  //   }
-  // }
+  if (!isDemoMode) {
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d4af37] mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </div>
+      );
+    }
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
+  }
 
   return (
     <Layout>

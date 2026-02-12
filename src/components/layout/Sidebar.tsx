@@ -1,125 +1,161 @@
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
+  CalendarDays,
+  FileText,
   Thermometer,
   CheckSquare,
-  FileText,
-  Truck,
-  ShieldCheck,
   ClipboardList,
-  Bell,
-  MessageSquare,
+  Cog,
+  ClipboardCheck,
+  Truck,
+  ShoppingBag,
+  ShieldCheck,
+  Building2,
+  MailOpen,
+  Shield,
+  TrendingUp,
+  Brain,
+  Siren,
+  GraduationCap,
+  Network,
   Trophy,
   Users,
   Settings,
-  BarChart3,
-  TrendingUp,
+  CreditCard,
   HelpCircle,
-  CalendarDays,
+  BarChart3,
   Lock,
-  MailOpen,
-  AlertTriangle,
-  ClipboardCheck,
-  Cog,
-  Megaphone,
-  Shield,
-  ShoppingBag,
-  Network,
-  Building2,
-  Brain,
-  Radio,
-  Plug,
-  GraduationCap,
-  Siren,
+  ChevronDown,
+  ChevronRight,
+  type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
 
-type Section = 'operations' | 'insights' | 'system';
+// ── Types ───────────────────────────────────────────────
+
+type SectionId = 'main' | 'compliance' | 'vendors' | 'reports' | 'aiTools' | 'organization' | 'settings' | 'admin';
 
 interface NavItem {
   i18nKey: string;
   href: string;
-  icon: typeof LayoutDashboard;
-  tourId: string;
+  icon: LucideIcon;
   roles: UserRole[];
-  section: Section;
-  badge?: boolean;
-  badgeCount?: number;
+  badge?: number;
 }
 
-const navigation: NavItem[] = [
-  { i18nKey: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.temperatures', href: '/temp-logs', icon: Thermometer, tourId: 'temp-logs-nav', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
-  { i18nKey: 'nav.checklists', href: '/checklists', icon: CheckSquare, tourId: 'checklists-nav', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
-  { i18nKey: 'nav.haccp', href: '/haccp', icon: ClipboardList, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
-  { i18nKey: 'nav.vendorServices', href: '/vendors', icon: Truck, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.marketplace', href: '/marketplace', icon: ShoppingBag, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations', badgeCount: 3 },
-  { i18nKey: 'nav.iotSensors', href: '/iot-platform', icon: Radio, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.integrations', href: '/integrations', icon: Plug, tourId: '', roles: ['executive', 'management'], section: 'operations' },
-  { i18nKey: 'nav.training', href: '/training', icon: GraduationCap, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
-  { i18nKey: 'nav.documentation', href: '/documents', icon: FileText, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.calendar', href: '/calendar', icon: CalendarDays, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.incidentLog', href: '/incidents', icon: AlertTriangle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'operations' },
-  { i18nKey: 'nav.playbooks', href: '/playbooks', icon: Siren, tourId: '', roles: ['executive', 'management', 'kitchen'], section: 'operations' },
-  { i18nKey: 'nav.reporting', href: '/reports', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.auditReport', href: '/audit-report', icon: ClipboardCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.scoreBreakdown', href: '/scoring-breakdown', icon: ShieldCheck, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.leaderboard', href: '/leaderboard', icon: Trophy, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.benchmarks', href: '/benchmarks', icon: BarChart3, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.complianceIndex', href: '/compliance-index', icon: Shield, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.orgHierarchy', href: '/org-hierarchy', icon: Network, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.insuranceRisk', href: '/insurance-risk', icon: Shield, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, tourId: '', roles: ['executive', 'management'], section: 'insights', badge: true },
-  { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: MessageSquare, tourId: 'ai-advisor-nav', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'insights' },
-  { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, tourId: '', roles: ['executive', 'management'], section: 'insights' },
-  { i18nKey: 'nav.regulatoryAlerts', href: '/regulatory-alerts', icon: Megaphone, tourId: '', roles: ['executive', 'management'], section: 'insights', badgeCount: 2 },
-  { i18nKey: 'nav.alerts', href: '/alerts', icon: Bell, tourId: '', roles: ['executive', 'management', 'facilities'], section: 'insights' },
-  { i18nKey: 'nav.teams', href: '/team', icon: Users, tourId: '', roles: ['executive', 'management'], section: 'system' },
-  { i18nKey: 'nav.settings', href: '/settings', icon: Settings, tourId: '', roles: ['executive', 'management'], section: 'system' },
-  { i18nKey: 'nav.help', href: '/help', icon: HelpCircle, tourId: '', roles: ['executive', 'management', 'kitchen', 'facilities'], section: 'system' },
+interface NavSection {
+  id: SectionId;
+  i18nKey: string;
+  items: NavItem[];
+  adminOnly?: boolean;
+}
+
+// ── Navigation structure ────────────────────────────────
+
+const allRoles: UserRole[] = ['executive', 'management', 'kitchen', 'facilities'];
+const mgmtRoles: UserRole[] = ['executive', 'management'];
+
+const sections: NavSection[] = [
+  {
+    id: 'main',
+    i18nKey: 'nav.sectionMain',
+    items: [
+      { i18nKey: 'nav.dashboard', href: '/dashboard', icon: LayoutDashboard, roles: allRoles },
+      { i18nKey: 'nav.calendar', href: '/calendar', icon: CalendarDays, roles: allRoles },
+    ],
+  },
+  {
+    id: 'compliance',
+    i18nKey: 'nav.sectionCompliance',
+    items: [
+      { i18nKey: 'nav.fireSafetyDocs', href: '/documents', icon: FileText, roles: allRoles },
+      { i18nKey: 'nav.temperatureLogs', href: '/temp-logs', icon: Thermometer, roles: ['executive', 'management', 'kitchen'] },
+      { i18nKey: 'nav.dailyChecklists', href: '/checklists', icon: CheckSquare, roles: ['executive', 'management', 'kitchen'] },
+      { i18nKey: 'nav.foodSafety', href: '/haccp', icon: ClipboardList, roles: ['executive', 'management', 'kitchen'] },
+      { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, roles: allRoles },
+      { i18nKey: 'nav.selfAudit', href: '/audit-report', icon: ClipboardCheck, roles: mgmtRoles },
+    ],
+  },
+  {
+    id: 'vendors',
+    i18nKey: 'nav.sectionVendors',
+    items: [
+      { i18nKey: 'nav.vendorManagement', href: '/vendors', icon: Truck, roles: ['executive', 'management', 'facilities'] },
+      { i18nKey: 'nav.vendorPortal', href: '/marketplace', icon: ShoppingBag, roles: ['executive', 'management', 'facilities'] },
+    ],
+  },
+  {
+    id: 'reports',
+    i18nKey: 'nav.sectionReports',
+    items: [
+      { i18nKey: 'nav.complianceScore', href: '/scoring-breakdown', icon: ShieldCheck, roles: mgmtRoles },
+      { i18nKey: 'nav.healthDeptReports', href: '/health-dept-report', icon: Building2, roles: mgmtRoles },
+      { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, roles: mgmtRoles },
+      { i18nKey: 'nav.complianceIntelligence', href: '/compliance-index', icon: Shield, roles: mgmtRoles },
+      { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4 },
+    ],
+  },
+  {
+    id: 'aiTools',
+    i18nKey: 'nav.sectionAiTools',
+    items: [
+      { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: Brain, roles: allRoles },
+      { i18nKey: 'nav.incidentPlaybooks', href: '/playbooks', icon: Siren, roles: ['executive', 'management', 'kitchen'] },
+      { i18nKey: 'nav.training', href: '/training', icon: GraduationCap, roles: ['executive', 'management', 'kitchen'] },
+    ],
+  },
+  {
+    id: 'organization',
+    i18nKey: 'nav.sectionOrganization',
+    items: [
+      { i18nKey: 'nav.locations', href: '/org-hierarchy', icon: Network, roles: mgmtRoles },
+      { i18nKey: 'nav.leaderboard', href: '/leaderboard', icon: Trophy, roles: mgmtRoles },
+      { i18nKey: 'nav.teams', href: '/team', icon: Users, roles: mgmtRoles },
+    ],
+  },
+  {
+    id: 'settings',
+    i18nKey: 'nav.sectionSettings',
+    items: [
+      { i18nKey: 'nav.settings', href: '/settings', icon: Settings, roles: mgmtRoles },
+      { i18nKey: 'nav.billing', href: '/settings', icon: CreditCard, roles: mgmtRoles },
+      { i18nKey: 'nav.helpSupport', href: '/help', icon: HelpCircle, roles: allRoles },
+    ],
+  },
+  {
+    id: 'admin',
+    i18nKey: 'nav.admin',
+    items: [
+      { i18nKey: 'nav.usageAnalytics', href: '/admin/usage-analytics', icon: BarChart3, roles: allRoles },
+      { i18nKey: 'nav.systemAdmin', href: '/enterprise/dashboard', icon: Building2, roles: allRoles },
+    ],
+    adminOnly: true,
+  },
 ];
 
-const mainSections: Section[] = ['operations', 'insights'];
+// ── Collapse state persistence ──────────────────────────
 
-// Demo: count of active high-severity predictive alerts for badge
-const HIGH_ALERT_COUNT = 4;
+const STORAGE_KEY = 'evidly_sidebar_sections';
+const DEFAULT_EXPANDED: SectionId[] = ['main', 'compliance'];
 
-function NavItemRow({ item, label, isActive, onClick }: { item: NavItem; label: string; isActive: boolean; onClick: () => void }) {
-  return (
-    <div
-      key={item.i18nKey}
-      onClick={onClick}
-      data-tour={item.tourId || undefined}
-      className={`group flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-        isActive
-          ? 'text-[#d4af37] bg-[#163a52]'
-          : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
-      }`}
-      style={isActive ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-    >
-      <item.icon
-        className={`mr-3 flex-shrink-0 h-5 w-5 ${
-          isActive ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
-        }`}
-      />
-      <span className="flex-1">{label}</span>
-      {item.badge && HIGH_ALERT_COUNT > 0 && (
-        <span style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '9999px', minWidth: '18px', textAlign: 'center', lineHeight: '16px' }}>
-          {HIGH_ALERT_COUNT}
-        </span>
-      )}
-      {item.badgeCount && item.badgeCount > 0 && (
-        <span style={{ backgroundColor: '#dc2626', color: 'white', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '9999px', minWidth: '18px', textAlign: 'center', lineHeight: '16px' }}>
-          {item.badgeCount}
-        </span>
-      )}
-    </div>
-  );
+function loadExpandedState(): Record<string, boolean> {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch { /* noop */ }
+  return Object.fromEntries(DEFAULT_EXPANDED.map(id => [id, true]));
 }
+
+function saveExpandedState(state: Record<string, boolean>) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* noop */ }
+}
+
+// ── Sidebar component ───────────────────────────────────
 
 export function Sidebar() {
   const location = useLocation();
@@ -128,129 +164,125 @@ export function Sidebar() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
-  const showAdminSection = isEvidlyAdmin || isDemoMode;
+  const showAdmin = isEvidlyAdmin || isDemoMode;
 
-  const filteredNavigation = navigation.filter(item => item.roles.includes(userRole));
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(loadExpandedState);
 
-  const mainItems = filteredNavigation.filter(item => mainSections.includes(item.section));
-  const systemItems = filteredNavigation.filter(item => item.section === 'system');
+  const isExpanded = (id: SectionId) => expanded[id] ?? false;
 
-  const sectionLabelKeys: Record<Section, string> = {
-    operations: 'nav.operations',
-    insights: 'nav.insights',
-    system: 'nav.system',
+  const toggleSection = (id: SectionId) => {
+    setExpanded(prev => {
+      const next = { ...prev, [id]: !isExpanded(id) };
+      saveExpandedState(next);
+      return next;
+    });
   };
 
-  const renderSection = (sectionKey: Section, items: NavItem[]) => {
-    const sectionItems = items.filter(item => item.section === sectionKey);
-    if (sectionItems.length === 0) return null;
-    return (
-      <div key={sectionKey}>
-        <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-4 pb-1">
-          {t(sectionLabelKeys[sectionKey])}
-        </div>
-        <div className="space-y-0.5">
-          {sectionItems.map(item => (
-            <NavItemRow
-              key={item.i18nKey}
-              item={item}
-              label={t(item.i18nKey)}
-              isActive={location.pathname === item.href}
-              onClick={() => navigate(item.href)}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  };
+  // Auto-expand the section containing the current route
+  useEffect(() => {
+    for (const section of sections) {
+      if (section.items.some(item => location.pathname === item.href)) {
+        if (!isExpanded(section.id)) {
+          setExpanded(prev => {
+            const next = { ...prev, [section.id]: true };
+            saveExpandedState(next);
+            return next;
+          });
+        }
+        break;
+      }
+    }
+  }, [location.pathname]);
+
+  // Filter sections & items by role and admin visibility
+  const visibleSections = sections
+    .filter(section => {
+      if (section.adminOnly && !showAdmin) return false;
+      return section.items.some(item => item.roles.includes(userRole));
+    });
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
-      <div className="flex flex-col flex-grow bg-[#1e4d6b]">
-        <div className="flex items-center flex-shrink-0 px-6 py-6">
+      <div className="flex flex-col h-full bg-[#1e4d6b]">
+        {/* Logo — sticky top */}
+        <div className="flex items-center flex-shrink-0 px-6 py-5">
           <ShieldCheck className="h-8 w-8" style={{ color: '#d4af37' }} />
-          <span className="ml-3 text-xl font-bold">
-            <span className="text-white">Evid</span>
-            <span className="text-[#d4af37]">LY</span>
-          </span>
+          <div className="ml-3">
+            <span className="text-xl font-bold">
+              <span className="text-white">Evid</span>
+              <span className="text-[#d4af37]">LY</span>
+            </span>
+            <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">Compliance Simplified</p>
+          </div>
         </div>
 
-        {/* Scrollable main nav: Operations + Insights */}
-        <nav className="flex-1 overflow-y-auto px-3 pb-2" data-tour="sidebar-nav">
-          {mainSections.map(section => renderSection(section, mainItems))}
+        {/* Scrollable navigation */}
+        <nav className="flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
+          {visibleSections.map((section) => {
+            const visibleItems = section.items.filter(item => item.roles.includes(userRole));
+            if (visibleItems.length === 0) return null;
+
+            const sectionOpen = isExpanded(section.id);
+            const isAdmin = section.adminOnly;
+
+            return (
+              <div key={section.id} className={isAdmin ? 'border-t border-white/10 mt-2 pt-1' : ''}>
+                {/* Section header — clickable to toggle */}
+                <button
+                  onClick={() => toggleSection(section.id)}
+                  className="w-full flex items-center justify-between px-3 pt-3 pb-1 group"
+                >
+                  <div className="flex items-center gap-1.5">
+                    {isAdmin && <Lock className="h-3 w-3 text-gray-500" />}
+                    <span className={`text-[11px] uppercase tracking-wider font-semibold ${isAdmin ? 'text-gray-500' : 'text-gray-400'} group-hover:text-gray-300 transition-colors`}>
+                      {t(section.i18nKey)}
+                    </span>
+                  </div>
+                  {sectionOpen ? (
+                    <ChevronDown className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                  ) : (
+                    <ChevronRight className="h-3.5 w-3.5 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                  )}
+                </button>
+
+                {/* Section items — shown when expanded */}
+                {sectionOpen && (
+                  <div className="space-y-0.5 mt-0.5">
+                    {visibleItems.map(item => {
+                      const active = location.pathname === item.href;
+                      return (
+                        <div
+                          key={item.i18nKey}
+                          onClick={() => navigate(item.href)}
+                          className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+                            active
+                              ? 'text-[#d4af37] bg-[#163a52]'
+                              : isAdmin
+                              ? 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
+                              : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
+                          }`}
+                          style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+                        >
+                          <item.icon
+                            className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
+                              active ? 'text-[#d4af37]' : isAdmin ? 'text-gray-500 group-hover:text-gray-300' : 'text-gray-300 group-hover:text-white'
+                            }`}
+                          />
+                          <span className="flex-1 truncate">{t(item.i18nKey)}</span>
+                          {item.badge && item.badge > 0 && (
+                            <span className="ml-auto bg-red-600 text-white text-[10px] font-bold px-1.5 rounded-full min-w-[18px] text-center leading-4">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
-
-        {/* Pinned bottom: System */}
-        {systemItems.length > 0 && (
-          <div className="px-3 pb-4 pt-2 border-t border-white/10">
-            <div className="text-[11px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-2 pb-1">
-              {t('nav.system')}
-            </div>
-            <div className="space-y-0.5">
-              {systemItems.map(item => (
-                <NavItemRow
-                  key={item.i18nKey}
-                  item={item}
-                  label={t(item.i18nKey)}
-                  isActive={location.pathname === item.href}
-                  onClick={() => navigate(item.href)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Admin — EvidLY internal only */}
-        {showAdminSection && (
-          <div className="px-3 pb-4 pt-1 border-t border-white/10">
-            <div className="flex items-center gap-1.5 px-3 pt-2 pb-1">
-              <Lock className="h-3 w-3 text-gray-500" />
-              <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">{t('nav.admin')}</span>
-            </div>
-            <div
-              onClick={() => navigate('/admin/usage-analytics')}
-              className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-                location.pathname === '/admin/usage-analytics'
-                  ? 'text-[#d4af37] bg-[#163a52]'
-                  : 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
-              }`}
-              style={location.pathname === '/admin/usage-analytics' ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-            >
-              <BarChart3 className={`mr-3 flex-shrink-0 h-4 w-4 ${
-                location.pathname === '/admin/usage-analytics' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
-              }`} />
-              {t('nav.usageAnalytics')}
-            </div>
-            <div
-              onClick={() => navigate('/enterprise/dashboard')}
-              className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-                location.pathname === '/enterprise/dashboard'
-                  ? 'text-[#d4af37] bg-[#163a52]'
-                  : 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
-              }`}
-              style={location.pathname === '/enterprise/dashboard' ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-            >
-              <Building2 className={`mr-3 flex-shrink-0 h-4 w-4 ${
-                location.pathname === '/enterprise/dashboard' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
-              }`} />
-              Enterprise Dashboard
-            </div>
-            <div
-              onClick={() => navigate('/enterprise/intelligence')}
-              className={`group flex items-center px-3 py-2 text-xs font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-                location.pathname === '/enterprise/intelligence'
-                  ? 'text-[#d4af37] bg-[#163a52]'
-                  : 'text-gray-400 hover:bg-[#163a52] hover:text-gray-200'
-              }`}
-              style={location.pathname === '/enterprise/intelligence' ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-            >
-              <Brain className={`mr-3 flex-shrink-0 h-4 w-4 ${
-                location.pathname === '/enterprise/intelligence' ? 'text-[#d4af37]' : 'text-gray-500 group-hover:text-gray-300'
-              }`} />
-              Compliance Intelligence
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
