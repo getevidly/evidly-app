@@ -1,7 +1,10 @@
-import { useState } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -346,20 +349,142 @@ export function HACCP() {
   const { getAccessibleLocations } = useRole();
   const haccpAccessibleLocs = getAccessibleLocations();
 
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState(false);
+  const [livePlans, setLivePlans] = useState<HACCPPlan[]>([]);
+  const [liveCorrectiveActions, setLiveCorrectiveActions] = useState<CorrectiveActionRecord[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
+
+  // Fetch HACCP data from Supabase in live mode
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+
+    async function fetchHACCPData() {
+      setLoading(true);
+
+      // Fetch plans with their CCPs
+      const { data: plansData, error: plansError } = await supabase
+        .from('haccp_plans')
+        .select('*, haccp_critical_control_points(*)')
+        .eq('organization_id', profile!.organization_id)
+        .neq('status', 'archived')
+        .order('created_at', { ascending: true });
+
+      if (plansError) {
+        console.error('Error fetching HACCP plans:', plansError);
+        setLoading(false);
+        return;
+      }
+
+      // For each CCP, get latest monitoring log
+      const ccpIds = (plansData || []).flatMap((p: any) =>
+        (p.haccp_critical_control_points || []).map((c: any) => c.id)
+      );
+
+      let latestLogs: Record<string, any> = {};
+      if (ccpIds.length > 0) {
+        const { data: logsData } = await supabase
+          .from('haccp_monitoring_logs')
+          .select('*')
+          .in('ccp_id', ccpIds)
+          .order('monitored_at', { ascending: false });
+
+        // Group by ccp_id, keep only latest
+        (logsData || []).forEach((log: any) => {
+          if (!latestLogs[log.ccp_id]) latestLogs[log.ccp_id] = log;
+        });
+      }
+
+      // Map to HACCPPlan format
+      const mapped: HACCPPlan[] = (plansData || []).map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description || '',
+        lastReviewed: p.last_reviewed || p.created_at,
+        status: p.status as 'active' | 'needs_review',
+        ccps: (p.haccp_critical_control_points || []).map((c: any) => {
+          const log = latestLogs[c.id];
+          return {
+            id: c.id,
+            ccpNumber: c.ccp_number,
+            hazard: c.hazard,
+            criticalLimit: c.critical_limit,
+            monitoringProcedure: c.monitoring_procedure,
+            correctiveAction: c.corrective_action,
+            verification: c.verification,
+            lastReading: log?.reading_text || (log?.reading_value != null ? `${log.reading_value}${log.reading_unit || ''}` : undefined),
+            lastReadingValue: log?.reading_value != null ? Number(log.reading_value) : undefined,
+            lastReadingUnit: log?.reading_unit || undefined,
+            isWithinLimit: log ? log.is_within_limit : true,
+            lastMonitoredAt: log?.monitored_at || c.created_at,
+            lastMonitoredBy: log?.monitored_by_name || 'System',
+            source: c.source as 'temp_log' | 'checklist',
+            equipmentName: c.equipment_name || undefined,
+            locationId: c.location_id || '',
+          };
+        }),
+      }));
+
+      setLivePlans(mapped);
+
+      // Fetch corrective actions
+      const { data: actionsData, error: actionsError } = await supabase
+        .from('haccp_corrective_actions')
+        .select('*')
+        .eq('organization_id', profile!.organization_id)
+        .order('created_at', { ascending: false });
+
+      if (!actionsError && actionsData) {
+        const mappedActions: CorrectiveActionRecord[] = actionsData.map((a: any) => ({
+          id: a.id,
+          planName: a.plan_name,
+          ccpNumber: a.ccp_number,
+          ccpHazard: a.ccp_hazard,
+          deviation: a.deviation,
+          criticalLimit: a.critical_limit,
+          recordedValue: a.recorded_value,
+          actionTaken: a.action_taken,
+          actionBy: a.action_by,
+          verifiedBy: a.verified_by,
+          status: a.status as 'open' | 'in_progress' | 'resolved',
+          createdAt: a.created_at,
+          resolvedAt: a.resolved_at,
+          source: a.source || '',
+          locationId: a.location_id || '',
+        }));
+        setLiveCorrectiveActions(mappedActions);
+      }
+
+      setLoading(false);
+    }
+
+    fetchHACCPData();
+  }, [isDemoMode, profile?.organization_id]);
+
+  // Use live data or demo data
+  const allPlans = isDemoMode ? HACCP_PLANS : livePlans.length > 0 ? livePlans : HACCP_PLANS;
+  const allCorrectiveActions = isDemoMode ? CORRECTIVE_ACTIONS : liveCorrectiveActions.length > 0 ? liveCorrectiveActions : CORRECTIVE_ACTIONS;
+
   // Aggregate stats — filtered by selected location
   const locId = selectedLocation !== 'all' ? LOCATION_ID_MAP[selectedLocation] : null;
-  const allCCPs = HACCP_PLANS.flatMap((p) => p.ccps).filter(c => !locId || c.locationId === locId);
+  const allCCPs = allPlans.flatMap((p) => p.ccps).filter(c => !locId || c.locationId === locId);
   const totalCCPs = allCCPs.length;
   const passingCCPs = allCCPs.filter((c) => c.isWithinLimit).length;
   const failingCCPs = totalCCPs - passingCCPs;
   const overallCompliance = totalCCPs > 0 ? Math.round((passingCCPs / totalCCPs) * 100) : 100;
-  const filteredCorrectiveActions = CORRECTIVE_ACTIONS.filter(a => !locId || a.locationId === locId);
+  const filteredCorrectiveActions = allCorrectiveActions.filter(a => !locId || a.locationId === locId);
   const openActions = filteredCorrectiveActions.filter((a) => a.status === 'open' || a.status === 'in_progress').length;
 
   // Filter plans to only those with CCPs at the selected location
   const filteredPlans = locId
-    ? HACCP_PLANS.map(p => ({ ...p, ccps: p.ccps.filter(c => c.locationId === locId) })).filter(p => p.ccps.length > 0)
-    : HACCP_PLANS;
+    ? allPlans.map(p => ({ ...p, ccps: p.ccps.filter(c => c.locationId === locId) })).filter(p => p.ccps.length > 0)
+    : allPlans;
 
   const getPlanCompliance = (plan: HACCPPlan) => {
     const total = plan.ccps.length;
@@ -472,8 +597,16 @@ export function HACCP() {
           </button>
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+            <span className="ml-3 text-gray-600">Loading HACCP data...</span>
+          </div>
+        )}
+
         {/* ── Plans Tab ─────────────────────────────────────── */}
-        {activeTab === 'plans' && !selectedPlan && (
+        {!loading && activeTab === 'plans' && !selectedPlan && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredPlans.map((plan) => {
               const compliance = getPlanCompliance(plan);
@@ -557,7 +690,7 @@ export function HACCP() {
         )}
 
         {/* ── Plan Detail View ──────────────────────────────── */}
-        {activeTab === 'plans' && selectedPlan && (
+        {!loading && activeTab === 'plans' && selectedPlan && (
           <div>
             {/* Breadcrumb navigation */}
             <div className="flex items-center space-x-2 text-sm mb-4">
@@ -656,7 +789,7 @@ export function HACCP() {
         )}
 
         {/* ── Monitoring Tab (Real-time CCP Grid) ───────────── */}
-        {activeTab === 'monitoring' && (
+        {!loading && activeTab === 'monitoring' && (
           <div>
             <div className="mb-4">
               <p className="text-sm text-gray-600">
@@ -736,7 +869,7 @@ export function HACCP() {
         )}
 
         {/* ── Corrective Actions Tab ────────────────────────── */}
-        {activeTab === 'corrective' && (
+        {!loading && activeTab === 'corrective' && (
           <div>
             <div className="mb-4">
               <p className="text-sm text-gray-600">
@@ -874,6 +1007,14 @@ export function HACCP() {
           </div>
         )}
       </div>
+
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+          <CheckCircle className="h-4 w-4" />
+          <span className="font-medium text-sm">{toastMessage}</span>
+        </div>
+      )}
     </>
   );
 }
