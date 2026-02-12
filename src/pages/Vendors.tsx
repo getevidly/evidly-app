@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
   ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download, Shield,
   Bell, BellOff, ExternalLink, XCircle, Filter, CheckCircle2, TrendingUp,
-  TrendingDown, Minus, Link2,
+  TrendingDown, Minus, Link2, Loader2,
 } from 'lucide-react';
 import { vendors as demoVendors, locations as demoLocations } from '../data/demoData';
 import { format } from 'date-fns';
@@ -13,6 +13,9 @@ import { VendorContactActions } from '../components/VendorContactActions';
 import { useRole } from '../contexts/RoleContext';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -211,7 +214,60 @@ export function Vendors() {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteForm, setInviteForm] = useState({ companyName: '', email: '', serviceType: 'Hood Cleaning' });
 
-  const consolidatedVendors = useMemo(() => buildConsolidatedVendors(), []);
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
+
+  const demoVendorList = useMemo(() => buildConsolidatedVendors(), []);
+
+  // Fetch vendors from Supabase in live mode
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+
+    async function fetchVendors() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('vendors')
+        .select('*, vendor_client_relationships!inner(organization_id, status)')
+        .eq('vendor_client_relationships.organization_id', profile!.organization_id);
+
+      if (error) {
+        console.error('Error fetching vendors:', error);
+        setLoading(false);
+        return;
+      }
+
+      const mapped: ConsolidatedVendor[] = (data || []).map((v: any) => ({
+        id: v.id,
+        companyName: v.company_name,
+        contactName: v.contact_name || '',
+        email: v.email || '',
+        phone: v.phone || '',
+        serviceType: v.service_type || '',
+        locations: [],
+        overallStatus: v.status === 'overdue' ? 'overdue' : v.status === 'upcoming' ? 'upcoming' : 'current',
+        pendingDocuments: 0,
+        totalDocuments: 0,
+        autoRequestEnabled: false,
+        coiExpiration: '',
+        coiStatus: 'current' as const,
+      }));
+
+      setLiveVendors(mapped);
+      setLoading(false);
+    }
+
+    fetchVendors();
+  }, [isDemoMode, profile?.organization_id]);
+
+  const consolidatedVendors = isDemoMode ? demoVendorList : liveVendors.length > 0 ? liveVendors : demoVendorList;
 
   // Helper: get vendor's effective status for display (location-aware)
   const getDisplayStatus = (vendor: ConsolidatedVendor): 'current' | 'overdue' | 'upcoming' => {
@@ -500,7 +556,20 @@ export function Vendors() {
                 </div>
                 <div className="flex gap-2 mt-4 md:mt-0">
                   <button
-                    onClick={() => alert('Document request sent to ' + selectedVendor.email)}
+                    onClick={async () => {
+                      if (!isDemoMode && profile?.organization_id) {
+                        await supabase.from('vendor_upload_requests').insert({
+                          organization_id: profile.organization_id,
+                          vendor_id: selectedVendor.id,
+                          request_type: 'document',
+                          description: 'Document request',
+                          status: 'pending',
+                          requested_by: profile.id,
+                          vendor_email: selectedVendor.email,
+                        });
+                      }
+                      showToast('Document request sent to ' + selectedVendor.email);
+                    }}
                     className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
@@ -527,7 +596,7 @@ export function Vendors() {
                   {vendorPhotos.length > 0 && (
                     <div className="mt-3 space-y-3">
                       <button
-                        onClick={() => { alert('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
+                        onClick={() => { showToast('Photos saved for vendor record.'); setShowPhotoUpload(false); }}
                         className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                       >
                         Save Photos
@@ -564,7 +633,7 @@ export function Vendors() {
                     <div className="flex items-center space-x-2 mt-2 md:mt-0">
                       {doc.status === 'on-file' && (
                         <button
-                          onClick={() => alert('Downloading ' + doc.name + '...')}
+                          onClick={() => showToast('Downloading ' + doc.name + '...')}
                           className="flex items-center text-sm px-2 hover:opacity-70"
                           style={{ color: '#1e4d6b' }}
                         >
@@ -574,7 +643,20 @@ export function Vendors() {
                       )}
                       {(doc.status === 'missing' || doc.status === 'expired') && (
                         <button
-                          onClick={() => alert('Document request sent to ' + selectedVendor.email)}
+                          onClick={async () => {
+                            if (!isDemoMode && profile?.organization_id) {
+                              await supabase.from('vendor_upload_requests').insert({
+                                organization_id: profile.organization_id,
+                                vendor_id: selectedVendor.id,
+                                request_type: doc.type,
+                                description: `Request for ${doc.name}`,
+                                status: 'pending',
+                                requested_by: profile.id,
+                                vendor_email: selectedVendor.email,
+                              });
+                            }
+                            showToast('Document request sent to ' + selectedVendor.email);
+                          }}
                           className="flex items-center text-[#1e4d6b] hover:text-[#163a52] text-sm px-2"
                         >
                           <Send className="h-4 w-4 mr-1" />
@@ -719,7 +801,7 @@ export function Vendors() {
                       </code>
                     </div>
                     <button
-                      onClick={() => { navigator.clipboard.writeText(`https://evidly-app.vercel.app/vendor/upload/${selectedVendor.id}`); alert('Link copied to clipboard!'); }}
+                      onClick={() => { navigator.clipboard.writeText(`https://evidly-app.vercel.app/vendor/upload/${selectedVendor.id}`); showToast('Link copied to clipboard!'); }}
                       className="flex items-center text-sm text-[#1e4d6b] hover:text-[#163a52] font-medium px-3 py-1"
                     >
                       <ExternalLink className="h-4 w-4 mr-1" />
@@ -730,14 +812,27 @@ export function Vendors() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => alert('Upload link sent to ' + selectedVendor.email)}
+                    onClick={async () => {
+                      if (!isDemoMode && profile?.organization_id) {
+                        await supabase.from('vendor_contact_log').insert({
+                          organization_id: profile.organization_id,
+                          vendor_id: selectedVendor.id,
+                          contact_type: 'email',
+                          initiated_by: profile.id,
+                          subject: 'Secure Upload Link',
+                          recipient_email: selectedVendor.email,
+                          status: 'sent',
+                        });
+                      }
+                      showToast('Upload link sent to ' + selectedVendor.email);
+                    }}
                     className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Send Link to Vendor
                   </button>
                   <button
-                    onClick={() => alert('Upload link regenerated.')}
+                    onClick={() => showToast('Upload link regenerated.')}
                     className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
                   >
                     <Calendar className="h-4 w-4 mr-2" />
@@ -819,6 +914,14 @@ export function Vendors() {
             </div>
           )}
         </div>
+
+        {/* Toast */}
+        {toastMessage && (
+          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
+            <span className="font-medium text-sm">{toastMessage}</span>
+          </div>
+        )}
       </>
     );
   }
@@ -859,7 +962,7 @@ export function Vendors() {
               <span>Invite a Vendor</span>
             </button>
             <button
-              onClick={() => alert('Add Vendor form coming soon.')}
+              onClick={() => showToast('Add Vendor form coming soon.')}
               className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
@@ -918,8 +1021,16 @@ export function Vendors() {
               </div>
             </div>
 
+            {/* Loading state */}
+            {loading && (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+                <span className="ml-3 text-gray-600">Loading vendors...</span>
+              </div>
+            )}
+
             {/* Vendor Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {!loading && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {filteredVendors.map((vendor) => {
                 const displayStatus = getDisplayStatus(vendor);
                 const displayLocations = getDisplayLocations(vendor);
@@ -1006,7 +1117,7 @@ export function Vendors() {
                   {/* Quick Action Buttons */}
                   <div className="flex gap-2 pt-3 border-t border-gray-100">
                     <button
-                      onClick={(e) => { e.stopPropagation(); alert('Schedule service for ' + vendor.companyName); }}
+                      onClick={(e) => { e.stopPropagation(); showToast('Schedule service for ' + vendor.companyName); }}
                       className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
@@ -1016,7 +1127,21 @@ export function Vendors() {
                       Schedule
                     </button>
                     <button
-                      onClick={(e) => { e.stopPropagation(); alert('COI request sent to ' + vendor.email); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!isDemoMode && profile?.organization_id) {
+                          supabase.from('vendor_upload_requests').insert({
+                            organization_id: profile.organization_id,
+                            vendor_id: vendor.id,
+                            request_type: 'COI',
+                            description: 'Certificate of Insurance request',
+                            status: 'pending',
+                            requested_by: profile.id,
+                            vendor_email: vendor.email,
+                          });
+                        }
+                        showToast('COI request sent to ' + vendor.email);
+                      }}
                       className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
@@ -1039,9 +1164,9 @@ export function Vendors() {
                 </div>
                 );
               })}
-            </div>
+            </div>}
 
-            {filteredVendors.length === 0 && (
+            {!loading && filteredVendors.length === 0 && (
               <div className="text-center py-12 text-gray-500">
                 <Building2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                 <p className="font-medium">No vendors match your filters</p>
@@ -1204,12 +1329,32 @@ export function Vendors() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     if (!inviteForm.companyName || !inviteForm.email) {
-                      alert('Please fill in company name and email.');
+                      showToast('Please fill in company name and email.');
                       return;
                     }
-                    alert(`Invitation sent to ${inviteForm.email}! They will receive a branded email to join EvidLY.`);
+                    if (!isDemoMode && profile?.organization_id) {
+                      const { data: vendorData, error: vendorError } = await supabase
+                        .from('vendors')
+                        .insert({
+                          company_name: inviteForm.companyName,
+                          email: inviteForm.email,
+                          service_type: inviteForm.serviceType,
+                          status: 'current',
+                        })
+                        .select('id')
+                        .single();
+
+                      if (!vendorError && vendorData) {
+                        await supabase.from('vendor_client_relationships').insert({
+                          vendor_id: vendorData.id,
+                          organization_id: profile.organization_id,
+                          status: 'active',
+                        });
+                      }
+                    }
+                    showToast(`Invitation sent to ${inviteForm.email}! They will receive a branded email to join EvidLY.`);
                     setShowInviteModal(false);
                     setInviteForm({ companyName: '', email: '', serviceType: 'Hood Cleaning' });
                   }}
@@ -1221,6 +1366,14 @@ export function Vendors() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Toast */}
+      {toastMessage && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+          <CheckCircle className="h-4 w-4" />
+          <span className="font-medium text-sm">{toastMessage}</span>
+        </div>
       )}
     </>
   );
