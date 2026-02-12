@@ -1,9 +1,12 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck, TrendingUp, TrendingDown, MapPin, CheckCircle, AlertTriangle,
-  ArrowUp, ArrowDown, Minus, ChevronRight, ExternalLink, X,
+  ArrowUp, ArrowDown, Minus, ChevronRight, ExternalLink, X, Loader2, CheckCircle2,
 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine,
 } from 'recharts';
@@ -78,7 +81,15 @@ function TrendBadge({ value }: { value: number }) {
 
 export function EnterpriseExecutive() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const tenant = aramarkTenant;
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
 
   // State
   const [drillDownNodeId, setDrillDownNodeId] = useState<string | null>(null);
@@ -186,7 +197,7 @@ export function EnterpriseExecutive() {
     if (node && node.children && node.children.length > 0) {
       setDrillDownNodeId(nodeId);
     } else {
-      alert(`View ${node?.name || 'location'} detail — coming soon`);
+      showToast(`View ${node?.name || 'location'} detail — coming soon`);
     }
   }
 
@@ -194,6 +205,14 @@ export function EnterpriseExecutive() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa', ...F }}>
+      {/* Toast */}
+      {toastMessage && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, backgroundColor: '#065f46', color: 'white', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', ...F }}>
+          <CheckCircle2 className="h-4 w-4" />
+          {toastMessage}
+        </div>
+      )}
+
       {/* ── A. Aramark Branded Header ─────────────────────────── */}
       <header className="px-4 sm:px-6 py-3" style={{ backgroundColor: tenant.branding.secondaryColor }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -428,7 +447,7 @@ export function EnterpriseExecutive() {
                       <p className="text-xs text-gray-700">{a.message}</p>
                       <p className="text-[10px] text-gray-400 mt-1">{a.nodeName} ({a.nodeCode}) · {formatTime(a.detectedAt)}</p>
                     </div>
-                    <button onClick={() => alert('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
+                    <button onClick={() => showToast('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
                       Ack
                     </button>
                   </div>

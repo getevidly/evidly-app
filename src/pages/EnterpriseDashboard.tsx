@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, Network, KeyRound, Users, Palette, FileText,
@@ -7,7 +7,7 @@ import {
   UserPlus, Download, Upload, Search, Filter, Globe, Lock,
   BarChart3, Zap, ExternalLink, CheckCircle, XCircle, AlertTriangle,
   Layers, Monitor, Paintbrush, ArrowUp, ArrowDown, Minus,
-  Thermometer, ClipboardCheck, Wrench, FileWarning,
+  Thermometer, ClipboardCheck, Wrench, FileWarning, Loader2, CheckCircle2,
 } from 'lucide-react';
 import {
   enterpriseTenants, enterpriseHierarchy, enterpriseUsers,
@@ -21,6 +21,9 @@ import {
   type EnterpriseIntegration, type EnterpriseOnboardingPhase,
   type EnterpriseTrendPoint, type EnterpriseBulkOp,
 } from '../data/demoData';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────
 type Tab = 'overview' | 'tenants' | 'hierarchy' | 'sso' | 'users' | 'branding' | 'reports' | 'integrations' | 'bulk_ops' | 'onboarding';
@@ -157,17 +160,57 @@ const REGULATORY_MARKERS = [
 ];
 
 // ── Corporate View (Overview Tab) ─────────────────────────────
-function OverviewTab() {
+function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState(false);
+  const [liveTenants, setLiveTenants] = useState<any[]>([]);
+  const [liveAuditLog, setLiveAuditLog] = useState<any[]>([]);
+  const [liveAlerts, setLiveAlerts] = useState<any[]>([]);
+  const [liveRollupScores, setLiveRollupScores] = useState<any[]>([]);
+
+  // ── Live mode: fetch enterprise data ────────────────────────
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const [tenantsRes, auditRes, rollupRes] = await Promise.all([
+          supabase.from('enterprise_tenants').select('*').limit(20),
+          supabase.from('enterprise_audit_log').select('*').order('created_at', { ascending: false }).limit(10),
+          supabase.from('enterprise_rollup_scores').select('*').order('period_date', { ascending: false }).limit(50),
+        ]);
+        if (!cancelled) {
+          if (tenantsRes.data) setLiveTenants(tenantsRes.data);
+          if (auditRes.data) setLiveAuditLog(auditRes.data);
+          if (rollupRes.data) setLiveRollupScores(rollupRes.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch enterprise overview:', err);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isDemoMode, profile?.organization_id]);
+
+  // Use live or demo data
+  const tenants = !isDemoMode && liveTenants.length > 0 ? liveTenants : enterpriseTenants;
+  const alerts = !isDemoMode && liveAlerts.length > 0 ? liveAlerts : enterpriseAlerts;
+  const auditLog = !isDemoMode && liveAuditLog.length > 0 ? liveAuditLog : enterpriseAuditLog;
+  const trendData = enterpriseTrendData; // always demo for trend charts
+
   const totalLocations = enterpriseTenants.reduce((s, t) => s + t.stats.totalLocations, 0);
   const totalUsers = enterpriseTenants.reduce((s, t) => s + t.stats.activeUsers, 0);
   const avgScore = +(enterpriseTenants.reduce((s, t) => s + t.stats.avgComplianceScore, 0) / enterpriseTenants.length).toFixed(1);
   const totalARR = enterpriseTenants.reduce((s, t) => s + t.contract.annualValue, 0);
   const ssoEnabled = enterpriseTenants.filter(t => t.ssoConfig.enabled).length;
-  const criticalAlerts = enterpriseAlerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
-  const latestTrend = enterpriseTrendData[enterpriseTrendData.length - 1];
-  const prevTrend = enterpriseTrendData[enterpriseTrendData.length - 2];
-  const threeMonthAgo = enterpriseTrendData[enterpriseTrendData.length - 4];
+  const criticalAlerts = alerts.filter((a: any) => a.severity === 'critical' && !a.acknowledged).length;
+  const latestTrend = trendData[trendData.length - 1];
+  const prevTrend = trendData[trendData.length - 2];
+  const threeMonthAgo = trendData[trendData.length - 4];
   const trendDelta = +(latestTrend.overall - prevTrend.overall).toFixed(1);
   const trend3mDelta = +(latestTrend.overall - threeMonthAgo.overall).toFixed(1);
   // Division scorecard from hierarchy
@@ -178,6 +221,15 @@ function OverviewTab() {
   const locationsCritical = totalLocations - locationsCompliant - locationsAtRisk; // <60
   // Data points counter
   const dataPointsThisMonth = 1_284_720;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1e4d6b' }} />
+        <span className="ml-3 text-sm text-gray-500">Loading enterprise data...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -241,7 +293,7 @@ function OverviewTab() {
                   const critItems = countCriticalItems(div);
                   const trend = nodeTrend(div.id);
                   return (
-                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => alert(`Drill down to ${div.name} — coming soon`)}>
+                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => showToast(`Drill down to ${div.name} — coming soon`)}>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS.division }} />
@@ -286,11 +338,11 @@ function OverviewTab() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900">Critical Alerts</h3>
             <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
-              {enterpriseAlerts.filter(a => !a.acknowledged).length} active
+              {alerts.filter((a: any) => !a.acknowledged).length} active
             </span>
           </div>
           <div className="space-y-2 max-h-[340px] overflow-y-auto">
-            {enterpriseAlerts.filter(a => !a.acknowledged).map(a => (
+            {alerts.filter((a: any) => !a.acknowledged).map((a: any) => (
               <div key={a.id} className={`p-3 rounded-lg border ${a.severity === 'critical' ? 'border-red-200 bg-red-50/50' : a.severity === 'warning' ? 'border-amber-200 bg-amber-50/50' : 'border-blue-200 bg-blue-50/50'}`}>
                 <div className="flex items-start gap-2">
                   <AlertTriangle className={`h-3.5 w-3.5 mt-0.5 flex-shrink-0 ${a.severity === 'critical' ? 'text-red-500' : a.severity === 'warning' ? 'text-amber-500' : 'text-blue-500'}`} />
@@ -304,7 +356,7 @@ function OverviewTab() {
                     <p className="text-xs text-gray-700">{a.message}</p>
                     <p className="text-[10px] text-gray-400 mt-1">{a.nodeName} ({a.nodeCode}) · {formatTime(a.detectedAt)}</p>
                   </div>
-                  <button onClick={() => alert('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
+                  <button onClick={() => showToast('Alert acknowledged')} className="text-[10px] font-medium px-2 py-0.5 rounded border border-gray-200 hover:bg-white cursor-pointer text-gray-500">
                     Ack
                   </button>
                 </div>
@@ -322,12 +374,12 @@ function OverviewTab() {
           <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
           <div className="flex items-end gap-6">
             <div className="relative">
-              <TrendSparkline data={enterpriseTrendData} width={320} height={100} />
+              <TrendSparkline data={trendData} width={320} height={100} />
               {/* Regulatory overlay markers */}
               {REGULATORY_MARKERS.map(marker => {
-                const idx = enterpriseTrendData.findIndex(d => d.month === marker.month);
+                const idx = trendData.findIndex(d => d.month === marker.month);
                 if (idx < 0) return null;
-                const x = (idx / (enterpriseTrendData.length - 1)) * 320;
+                const x = (idx / (trendData.length - 1)) * 320;
                 return (
                   <div key={marker.label} className="absolute" style={{ left: x - 1, top: 0, height: 100 }}>
                     <div className="w-0.5 h-full opacity-40" style={{ backgroundColor: marker.color }} />
@@ -352,7 +404,7 @@ function OverviewTab() {
             </div>
           </div>
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-            {enterpriseTrendData.filter((_, i) => i % 3 === 0 || i === enterpriseTrendData.length - 1).map(d => (
+            {trendData.filter((_, i) => i % 3 === 0 || i === trendData.length - 1).map(d => (
               <span key={d.month} className="text-[9px] text-gray-400">{d.month}</span>
             ))}
           </div>
@@ -383,7 +435,7 @@ function OverviewTab() {
           <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Recent Activity</h3>
             <div className="space-y-1.5">
-              {enterpriseAuditLog.slice(0, 4).map(e => (
+              {auditLog.slice(0, 4).map((e: any) => (
                 <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50">
                   <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: e.action.includes('provision') || e.action.includes('created') ? '#22c55e' : e.action.includes('deactivated') ? '#ef4444' : '#1e4d6b' }} />
                   <div className="flex-1 min-w-0">
@@ -409,7 +461,7 @@ function OverviewTab() {
             { label: 'Export Audit Log', icon: Download },
             { label: 'View All Alerts', icon: AlertTriangle },
           ].map(a => (
-            <button key={a.label} onClick={() => alert(`${a.label} — coming soon`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">
+            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">
               <a.icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
               <span className="text-xs font-medium text-gray-700">{a.label}</span>
             </button>
@@ -421,14 +473,14 @@ function OverviewTab() {
 }
 
 // ── Tenant Management Tab ──────────────────────────────────────
-function TenantManagementTab() {
+function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }) {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-semibold text-gray-900">All Tenants ({enterpriseTenants.length})</h3>
-        <button onClick={() => alert('Provision New Tenant — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Provision New Tenant — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
           + New Tenant
         </button>
       </div>
@@ -529,7 +581,7 @@ function TenantManagementTab() {
               {/* Actions */}
               <div className="flex items-center gap-2 mt-4">
                 {['Edit Config', 'View Users', 'Test SSO', 'Export Data'].map(label => (
-                  <button key={label} onClick={() => alert(`${label} for ${t.displayName} — coming soon`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer">
+                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName} — coming soon`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer">
                     {label}
                   </button>
                 ))}
@@ -648,7 +700,7 @@ function HeatMapCell({ score, label, onClick }: { score: number; label: string; 
   );
 }
 
-function HierarchyTab() {
+function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
   const [selectedNode, setSelectedNode] = useState<EnterpriseHierarchyNode | null>(null);
   const [showConfig, setShowConfig] = useState(false);
@@ -761,9 +813,9 @@ function HierarchyTab() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => alert('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
-            <button onClick={() => alert('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
-            <button onClick={() => alert('Reset to default — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">Reset</button>
+            <button onClick={() => showToast('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
+            <button onClick={() => showToast('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
+            <button onClick={() => showToast('Reset to default — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">Reset</button>
           </div>
         </div>
       )}
@@ -937,7 +989,7 @@ function HierarchyTab() {
 }
 
 // ── SSO Configuration Tab ──────────────────────────────────────
-function SSOTab() {
+function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
   const tenant = enterpriseTenants.find(t => t.id === selectedTenant)!;
   const [ssoType, setSsoType] = useState<'saml' | 'oidc'>(tenant.ssoConfig.providerType === 'oidc' ? 'oidc' : 'saml');
@@ -1039,10 +1091,10 @@ function SSOTab() {
           )}
 
           <div className="flex items-center gap-2 mt-4">
-            <button onClick={() => alert('SSO test initiated — connection passed!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+            <button onClick={() => showToast('SSO test initiated — connection passed!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
               Test Connection
             </button>
-            <button onClick={() => alert('SSO configuration saved')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+            <button onClick={() => showToast('SSO configuration saved')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
               Save Config
             </button>
           </div>
@@ -1077,7 +1129,7 @@ function SSOTab() {
                 <label className="block text-[11px] font-medium text-gray-600 mb-1">SCIM Endpoint</label>
                 <div className="flex items-center gap-2">
                   <input type="text" readOnly value={tenant.scimEndpoint} className="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg bg-gray-50 font-mono" />
-                  <button onClick={() => { navigator.clipboard.writeText(tenant.scimEndpoint); alert('Copied!'); }} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                  <button onClick={() => { navigator.clipboard.writeText(tenant.scimEndpoint); showToast('Copied!'); }} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                     <Copy className="h-3.5 w-3.5 text-gray-500" />
                   </button>
                 </div>
@@ -1086,7 +1138,7 @@ function SSOTab() {
                 <label className="block text-[11px] font-medium text-gray-600 mb-1">Bearer Token</label>
                 <div className="flex items-center gap-2">
                   <input type="password" readOnly value="●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●" className="flex-1 px-3 py-2 text-xs border border-gray-200 rounded-lg bg-gray-50 font-mono" />
-                  <button onClick={() => alert('Token regenerated — copy the new token before closing')} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                  <button onClick={() => showToast('Token regenerated — copy the new token before closing')} className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
                     <RefreshCw className="h-3.5 w-3.5 text-gray-500" />
                   </button>
                 </div>
@@ -1106,7 +1158,7 @@ function SSOTab() {
 }
 
 // ── User Directory Tab ─────────────────────────────────────────
-function UserDirectoryTab() {
+function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
   const [tenantFilter, setTenantFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
 
@@ -1148,13 +1200,13 @@ function UserDirectoryTab() {
           />
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <button onClick={() => alert('Provision user — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => showToast('Provision user — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
             <UserPlus className="h-3.5 w-3.5" /> Provision
           </button>
-          <button onClick={() => alert('Export user list — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+          <button onClick={() => showToast('Export user list — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
-          <button onClick={() => alert('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+          <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
             <RefreshCw className="h-3.5 w-3.5" /> Sync
           </button>
         </div>
@@ -1209,7 +1261,7 @@ function UserDirectoryTab() {
         </div>
         <div className="px-4 py-2 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
           <p className="text-[10px] text-gray-500">{filtered.length} of {enterpriseUsers.length} users</p>
-          <button onClick={() => alert('Bulk actions — coming soon')} className="text-[10px] font-medium cursor-pointer" style={{ color: '#1e4d6b' }}>Bulk Actions</button>
+          <button onClick={() => showToast('Bulk actions — coming soon')} className="text-[10px] font-medium cursor-pointer" style={{ color: '#1e4d6b' }}>Bulk Actions</button>
         </div>
       </div>
     </div>
@@ -1217,7 +1269,7 @@ function UserDirectoryTab() {
 }
 
 // ── Branding & Theming Tab ─────────────────────────────────────
-function BrandingTab() {
+function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
   const tenant = enterpriseTenants.find(t => t.id === selectedTenant)!;
   const [colors, setColors] = useState({ ...tenant.branding });
@@ -1308,7 +1360,7 @@ function BrandingTab() {
             </div>
           </div>
 
-          <button onClick={() => alert('Branding saved!')} className="mt-4 px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => showToast('Branding saved!')} className="mt-4 px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
             Save Branding
           </button>
         </div>
@@ -1386,7 +1438,7 @@ function BrandingTab() {
 }
 
 // ── Reports & Templates Tab ────────────────────────────────────
-function ReportsTab() {
+function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTemplate, setSelectedTemplate] = useState<EnterpriseReportTemplate | null>(null);
   const [showBuilder, setShowBuilder] = useState(false);
   const [builderSections, setBuilderSections] = useState<string[]>(['Compliance Overview', 'Score Trends']);
@@ -1413,7 +1465,7 @@ function ReportsTab() {
           <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
             {showBuilder ? 'Close Builder' : 'Custom Report Builder'}
           </button>
-          <button onClick={() => alert('Create template — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => showToast('Create template — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
             + New Template
           </button>
         </div>
@@ -1483,10 +1535,10 @@ function ReportsTab() {
                 )}
               </div>
               <div className="flex items-center gap-2 mt-3">
-                <button onClick={() => alert('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+                <button onClick={() => showToast('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
                   Generate Report
                 </button>
-                <button onClick={() => alert('Template saved!')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Template saved!')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
                   Save as Template
                 </button>
               </div>
@@ -1576,13 +1628,13 @@ function ReportsTab() {
               </div>
 
               <div className="flex items-center gap-2">
-                <button onClick={() => alert(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+                <button onClick={() => showToast(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
                   Generate Report
                 </button>
-                <button onClick={() => alert('Edit template — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Edit template — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
                   Edit
                 </button>
-                <button onClick={() => alert('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
                   Duplicate
                 </button>
               </div>
@@ -1601,7 +1653,7 @@ function ReportsTab() {
 }
 
 // ── Integrations Tab ──────────────────────────────────────────
-function IntegrationsTab() {
+function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
   const [tenantFilter, setTenantFilter] = useState<string>('all');
 
   const filtered = tenantFilter === 'all'
@@ -1641,7 +1693,7 @@ function IntegrationsTab() {
             {enterpriseTenants.map(t => <option key={t.id} value={t.id}>{t.displayName.split(' ')[0]}</option>)}
           </select>
         </div>
-        <button onClick={() => alert('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
           + Add Integration
         </button>
       </div>
@@ -1693,7 +1745,7 @@ function IntegrationsTab() {
                         )}
                       </div>
                     </div>
-                    <button onClick={() => alert(`Configure ${intg.providerName} — coming soon`)} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer flex-shrink-0">
+                    <button onClick={() => showToast(`Configure ${intg.providerName} — coming soon`)} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer flex-shrink-0">
                       <Settings className="h-3.5 w-3.5 text-gray-400" />
                     </button>
                   </div>
@@ -1708,7 +1760,7 @@ function IntegrationsTab() {
 }
 
 // ── Bulk Operations Tab ────────────────────────────────────────
-function BulkOpsTab() {
+function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
   const typeLabels: Record<string, string> = {
     location_import: 'Location Import',
     template_deploy: 'Template Deploy',
@@ -1735,7 +1787,7 @@ function BulkOpsTab() {
             { label: 'Assign Vendors', icon: Users },
             { label: 'Provision Users', icon: UserPlus },
           ].map(a => (
-            <button key={a.label} onClick={() => alert(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
               <a.icon className="h-3.5 w-3.5" />
               {a.label}
             </button>
@@ -1800,16 +1852,16 @@ function BulkOpsTab() {
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {op.status === 'running' && (
-                    <button onClick={() => alert('Operation paused')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
+                    <button onClick={() => showToast('Operation paused')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
                       Pause
                     </button>
                   )}
                   {op.status === 'pending' && (
-                    <button onClick={() => alert('Operation started')} className="px-2.5 py-1 rounded-lg text-white text-[10px] font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+                    <button onClick={() => showToast('Operation started')} className="px-2.5 py-1 rounded-lg text-white text-[10px] font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
                       Start
                     </button>
                   )}
-                  <button onClick={() => alert('Operation details')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
+                  <button onClick={() => showToast('Operation details')} className="px-2.5 py-1 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 cursor-pointer">
                     Details
                   </button>
                 </div>
@@ -1823,7 +1875,7 @@ function BulkOpsTab() {
 }
 
 // ── Onboarding Tab ─────────────────────────────────────────────
-function OnboardingTab() {
+function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
   const phases = selectedTenant === 'ent-aramark' ? enterpriseOnboardingAramark
     : selectedTenant === 'ent-sodexo' ? enterpriseOnboardingSodexo
@@ -1958,7 +2010,7 @@ function OnboardingTab() {
                   </div>
                 ))}
               </div>
-              <button onClick={() => alert(`Contact sales for ${tier.name} tier`)} className="w-full mt-4 px-4 py-2 rounded-lg text-xs font-medium cursor-pointer" style={tier.highlighted ? { backgroundColor: '#1e4d6b', color: 'white' } : { border: '1px solid #e5e7eb', color: '#374151' }}>
+              <button onClick={() => showToast(`Contact sales for ${tier.name} tier`)} className="w-full mt-4 px-4 py-2 rounded-lg text-xs font-medium cursor-pointer" style={tier.highlighted ? { backgroundColor: '#1e4d6b', color: 'white' } : { border: '1px solid #e5e7eb', color: '#374151' }}>
                 {tier.highlighted ? 'Contact Sales' : 'Learn More'}
               </button>
             </div>
@@ -1972,10 +2024,26 @@ function OnboardingTab() {
 // ── Main Component ─────────────────────────────────────────────
 export function EnterpriseDashboard() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#faf8f3]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+      {/* Toast */}
+      {toastMessage && (
+        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, backgroundColor: '#065f46', color: 'white', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: "'DM Sans', sans-serif" }}>
+          <CheckCircle2 className="h-4 w-4" />
+          {toastMessage}
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -2026,16 +2094,16 @@ export function EnterpriseDashboard() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-6">
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'tenants' && <TenantManagementTab />}
-        {activeTab === 'hierarchy' && <HierarchyTab />}
-        {activeTab === 'sso' && <SSOTab />}
-        {activeTab === 'users' && <UserDirectoryTab />}
-        {activeTab === 'branding' && <BrandingTab />}
-        {activeTab === 'reports' && <ReportsTab />}
-        {activeTab === 'integrations' && <IntegrationsTab />}
-        {activeTab === 'bulk_ops' && <BulkOpsTab />}
-        {activeTab === 'onboarding' && <OnboardingTab />}
+        {activeTab === 'overview' && <OverviewTab showToast={showToast} />}
+        {activeTab === 'tenants' && <TenantManagementTab showToast={showToast} />}
+        {activeTab === 'hierarchy' && <HierarchyTab showToast={showToast} />}
+        {activeTab === 'sso' && <SSOTab showToast={showToast} />}
+        {activeTab === 'users' && <UserDirectoryTab showToast={showToast} />}
+        {activeTab === 'branding' && <BrandingTab showToast={showToast} />}
+        {activeTab === 'reports' && <ReportsTab showToast={showToast} />}
+        {activeTab === 'integrations' && <IntegrationsTab showToast={showToast} />}
+        {activeTab === 'bulk_ops' && <BulkOpsTab showToast={showToast} />}
+        {activeTab === 'onboarding' && <OnboardingTab showToast={showToast} />}
       </div>
     </div>
   );
