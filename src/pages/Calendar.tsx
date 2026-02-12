@@ -1,8 +1,11 @@
-import { useState, useMemo } from 'react';
-import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle } from 'lucide-react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_LABELS } from '../contexts/OperatingHoursContext';
 import type { LocationHours } from '../contexts/OperatingHoursContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -205,7 +208,175 @@ export function Calendar() {
   const [locationFilter, setLocationFilter] = useState('all');
   const { locationHours: opHours, getHoursForLocation, getShiftsForLocation } = useOperatingHours();
 
-  const events = useMemo(() => generateDemoEvents(opHours), [opHours]);
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState(false);
+  const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
+
+  // Fetch calendar events from multiple Supabase tables in live mode
+  const viewMonth = currentDate.getFullYear() * 12 + currentDate.getMonth();
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+
+    async function fetchCalendarEvents() {
+      setLoading(true);
+      const orgId = profile!.organization_id;
+
+      // Generous date range: current month ± 15 days
+      const rangeStartDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), -14);
+      const rangeEndDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 15);
+      const startStr = formatDateKey(rangeStartDate);
+      const endStr = formatDateKey(rangeEndDate);
+
+      // Fetch location map
+      const { data: locData } = await supabase
+        .from('locations')
+        .select('id, name')
+        .eq('organization_id', orgId);
+      const locMap: Record<string, string> = {};
+      (locData || []).forEach((l: any) => { locMap[l.id] = l.name; });
+
+      const allEvents: CalendarEvent[] = [];
+      let nextId = 10000;
+
+      // Query 5 tables in parallel
+      const [tempRes, checklistRes, equipRes, docsRes, correctiveRes] = await Promise.all([
+        supabase
+          .from('temp_check_completions')
+          .select('*, temperature_equipment(name)')
+          .eq('organization_id', orgId)
+          .gte('created_at', startStr)
+          .lte('created_at', endStr),
+        supabase
+          .from('checklist_template_completions')
+          .select('*, checklist_templates(name)')
+          .eq('organization_id', orgId)
+          .gte('completed_at', startStr)
+          .lte('completed_at', endStr),
+        supabase
+          .from('equipment')
+          .select('*, equipment_service_records(*)')
+          .eq('organization_id', orgId)
+          .eq('is_active', true),
+        supabase
+          .from('documents')
+          .select('*')
+          .eq('organization_id', orgId)
+          .not('expiration_date', 'is', null)
+          .gte('expiration_date', startStr)
+          .lte('expiration_date', endStr),
+        supabase
+          .from('haccp_corrective_actions')
+          .select('*')
+          .eq('organization_id', orgId)
+          .in('status', ['open', 'in_progress']),
+      ]);
+
+      // 1. Temperature checks → temp-check events
+      for (const t of (tempRes.data || [])) {
+        const createdAt = new Date(t.created_at);
+        const eqName = t.temperature_equipment?.name || 'Equipment';
+        allEvents.push({
+          id: String(nextId++),
+          title: `Temp Check: ${eqName}`,
+          type: 'temp-check',
+          date: formatDateKey(createdAt),
+          time: createdAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          location: locMap[t.location_id] || 'Unknown',
+          description: `${t.temperature_value}° — ${t.is_within_range ? 'Within range' : 'OUT OF RANGE'}`,
+        });
+      }
+
+      // 2. Checklist completions → checklist events
+      for (const c of (checklistRes.data || [])) {
+        const completedAt = new Date(c.completed_at);
+        const tmplName = c.checklist_templates?.name || 'Checklist';
+        allEvents.push({
+          id: String(nextId++),
+          title: tmplName,
+          type: 'checklist',
+          date: formatDateKey(completedAt),
+          time: completedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          location: locMap[c.location_id] || 'Unknown',
+          description: c.score_percentage != null ? `Score: ${c.score_percentage}%` : undefined,
+        });
+      }
+
+      // 3. Equipment maintenance due dates + service records → vendor events
+      for (const eq of (equipRes.data || [])) {
+        if (eq.next_maintenance_due && eq.next_maintenance_due >= startStr && eq.next_maintenance_due <= endStr) {
+          allEvents.push({
+            id: String(nextId++),
+            title: `Maintenance Due: ${eq.name}`,
+            type: 'vendor',
+            date: eq.next_maintenance_due,
+            time: '9:00 AM',
+            location: locMap[eq.location_id] || 'Unknown',
+            description: `${eq.maintenance_interval || ''} maintenance — ${eq.linked_vendor || 'Unassigned'}`,
+          });
+        }
+        for (const sr of (eq.equipment_service_records || [])) {
+          if (sr.service_date >= startStr && sr.service_date <= endStr) {
+            allEvents.push({
+              id: String(nextId++),
+              title: `Service: ${sr.service_type}`,
+              type: 'vendor',
+              date: sr.service_date,
+              time: '8:00 AM',
+              location: locMap[eq.location_id] || 'Unknown',
+              description: `${sr.vendor} — $${sr.cost || 0}`,
+            });
+          }
+        }
+      }
+
+      // 4. Document expirations → certification events
+      for (const doc of (docsRes.data || [])) {
+        allEvents.push({
+          id: String(nextId++),
+          title: `Expiring: ${doc.title}`,
+          type: 'certification',
+          date: doc.expiration_date,
+          time: '9:00 AM',
+          location: locMap[doc.location_id] || 'All Locations',
+          allDay: true,
+          description: `${doc.category} — Status: ${doc.status}`,
+        });
+      }
+
+      // 5. Corrective actions → corrective events
+      for (const ca of (correctiveRes.data || [])) {
+        const createdAt = new Date(ca.created_at);
+        const daysOld = Math.floor((Date.now() - createdAt.getTime()) / 86400000);
+        allEvents.push({
+          id: String(nextId++),
+          title: `CA: ${ca.deviation}`,
+          type: 'corrective',
+          date: formatDateKey(createdAt),
+          time: createdAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+          location: locMap[ca.location_id] || 'Unknown',
+          description: `${ca.ccp_hazard} — ${ca.action_taken}`,
+          overdue: ca.status === 'open' && daysOld > 2,
+        });
+      }
+
+      setLiveEvents(allEvents);
+      setLoading(false);
+    }
+
+    fetchCalendarEvents();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDemoMode, profile?.organization_id, viewMonth]);
+
+  // Use live events or demo events
+  const demoEvents = useMemo(() => generateDemoEvents(opHours), [opHours]);
+  const events = isDemoMode ? demoEvents : liveEvents.length > 0 ? liveEvents : demoEvents;
 
   const filteredEvents = useMemo(() =>
     events.filter(e =>
@@ -277,6 +448,17 @@ export function Calendar() {
       .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
       .slice(0, 6);
   }, [filteredEvents, todayKey]);
+
+  // Daily temp/checklist completion status for month view indicators
+  const dailyStatus = useMemo(() => {
+    const status: Record<string, { tempDone: boolean; checklistDone: boolean }> = {};
+    for (const e of events) {
+      if (!status[e.date]) status[e.date] = { tempDone: false, checklistDone: false };
+      if (e.type === 'temp-check') status[e.date].tempDone = true;
+      if (e.type === 'checklist') status[e.date].checklistDone = true;
+    }
+    return status;
+  }, [events]);
 
   // ── Render Event Chip (month view) ──
   const renderEventChip = (event: CalendarEvent) => {
@@ -376,6 +558,29 @@ export function Calendar() {
                         </div>
                       )}
                     </div>
+                    {/* Daily temp/checklist status indicators */}
+                    {dateKey <= todayKey && (() => {
+                      const ds = dailyStatus[dateKey];
+                      const isPast = dateKey < todayKey;
+                      return (
+                        <div style={{ display: 'flex', gap: '3px', marginTop: 'auto', padding: '1px 2px 0' }}>
+                          <span style={{
+                            fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
+                            backgroundColor: ds?.tempDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
+                            color: ds?.tempDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
+                          }}>
+                            T{ds?.tempDone ? '✓' : isPast ? '✗' : '…'}
+                          </span>
+                          <span style={{
+                            fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
+                            backgroundColor: ds?.checklistDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
+                            color: ds?.checklistDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
+                          }}>
+                            C{ds?.checklistDone ? '✓' : isPast ? '✗' : '…'}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </>
                 )}
               </div>
@@ -721,7 +926,7 @@ export function Calendar() {
 
             <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
               <button
-                onClick={() => { alert('Edit event — available in full version'); }}
+                onClick={() => { showToast('Edit event — available in full version'); }}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '8px',
                   border: '2px solid #e5e7eb', backgroundColor: 'white',
@@ -900,9 +1105,17 @@ export function Calendar() {
         <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
           {/* Calendar */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            {view === 'month' && renderMonthView()}
-            {view === 'week' && renderWeekView()}
-            {view === 'day' && renderDayView()}
+            {loading ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
+                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1e4d6b' }} />
+              </div>
+            ) : (
+              <>
+                {view === 'month' && renderMonthView()}
+                {view === 'week' && renderWeekView()}
+                {view === 'day' && renderDayView()}
+              </>
+            )}
           </div>
 
           {/* Sidebar */}
@@ -1078,6 +1291,21 @@ export function Calendar() {
 
         {/* Event detail modal */}
         {renderEventModal()}
+
+        {/* Toast notification */}
+        {toastMessage && (
+          <div style={{
+            position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 60,
+            display: 'flex', alignItems: 'center', gap: '8px',
+            backgroundColor: '#16a34a', color: 'white',
+            padding: '12px 20px', borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            fontSize: '14px', fontWeight: 500, fontFamily: "'DM Sans', sans-serif",
+          }}>
+            <CheckCircle size={16} />
+            {toastMessage}
+          </div>
+        )}
       </div>
     </>
   );
