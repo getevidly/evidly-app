@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info, Clock, ChevronDown, UserPlus, X, CheckCircle2, ShieldAlert, Eye } from 'lucide-react';
+import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info, Clock, ChevronDown, UserPlus, X, CheckCircle2, ShieldAlert, Eye, Loader2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
 import { scoreImpactData, locations, getWeights } from '../data/demoData';
 import { useRole } from '../contexts/RoleContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 type AlertSeverity = 'high' | 'medium' | 'low';
@@ -272,11 +275,15 @@ const SNOOZE_OPTIONS = [
 
 export function Analysis() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const { getAccessibleLocations, showAllLocationsOption } = useRole();
   const analysisAccessibleLocs = getAccessibleLocations();
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [actionLocationFilter, setActionLocationFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
+  const [loading, setLoading] = useState(false);
+  const [liveAlerts, setLiveAlerts] = useState<PredictiveAlert[]>([]);
 
   // Alert state
   const [alerts, setAlerts] = useState<PredictiveAlert[]>(DEMO_ALERTS);
@@ -295,22 +302,88 @@ export function Analysis() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // ── Live mode: fetch from ai_insights ────────────────────────
+  const fetchAlerts = useCallback(async () => {
+    if (isDemoMode || !profile?.organization_id) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('ai_insights')
+        .select('*, locations(name)')
+        .eq('organization_id', profile.organization_id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const sevMap: Record<string, AlertSeverity> = { urgent: 'high', advisory: 'medium', info: 'low' };
+      const statusMap: Record<string, AlertStatus> = { new: 'active', read: 'active', actioned: 'resolved', dismissed: 'dismissed', snoozed: 'snoozed' };
+      const typeMap: Record<string, AlertType> = { prediction: 'inspection_due', pattern: 'checklist_drop', seasonal: 'temp_trending', auto_draft: 'service_overdue', digest: 'document_expiring' };
+
+      const mapped: PredictiveAlert[] = (data || []).map((row: any) => {
+        const refs = row.data_references || {};
+        const actions = Array.isArray(row.suggested_actions) ? row.suggested_actions : [];
+        const firstAction = actions[0] || {};
+        return {
+          id: row.id,
+          alert_type: (refs.alert_type as AlertType) || typeMap[row.insight_type] || 'inspection_due',
+          severity: sevMap[row.severity] || 'medium',
+          title: row.title,
+          description: row.body || '',
+          recommended_action: firstAction.description || (actions.length > 0 ? actions.map((a: any) => a.label || a).join('; ') : 'Review and take appropriate action'),
+          data_points: Array.isArray(refs.data_points) ? refs.data_points : [],
+          location: row.locations?.name || refs.location_name || 'Unknown',
+          status: statusMap[row.status] || 'active',
+          assigned_to: refs.assigned_to,
+          snoozed_until: row.snoozed_until,
+          resolved_at: row.status === 'actioned' ? row.created_at : undefined,
+          created_at: row.created_at,
+          action_label: firstAction.label || 'View Details',
+          action_href: firstAction.href || '/dashboard',
+        };
+      });
+
+      setLiveAlerts(mapped);
+    } catch (err) {
+      console.error('Failed to fetch ai_insights:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [isDemoMode, profile?.organization_id]);
+
+  useEffect(() => { fetchAlerts(); }, [fetchAlerts]);
+
+  // Sync live data into alerts state
+  useEffect(() => {
+    if (!isDemoMode && liveAlerts.length > 0) {
+      setAlerts(liveAlerts);
+    }
+  }, [isDemoMode, liveAlerts]);
+
   // ── Alert actions ─────────────────────────────────────────────
-  const resolveAlert = (id: string) => {
+  const resolveAlert = async (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'resolved' as AlertStatus, resolved_at: new Date().toISOString() } : a));
     showToast('Alert resolved successfully');
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('ai_insights').update({ status: 'actioned' }).eq('id', id).eq('organization_id', profile.organization_id);
+    }
   };
 
-  const snoozeAlert = (id: string, days: number) => {
+  const snoozeAlert = async (id: string, days: number) => {
     const until = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'snoozed' as AlertStatus, snoozed_until: until } : a));
     setOpenSnoozeId(null);
     showToast(`Alert snoozed for ${days} day${days > 1 ? 's' : ''}`);
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('ai_insights').update({ status: 'snoozed', snoozed_until: until }).eq('id', id).eq('organization_id', profile.organization_id);
+    }
   };
 
-  const dismissAlert = (id: string) => {
+  const dismissAlert = async (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'dismissed' as AlertStatus } : a));
     showToast('Alert dismissed');
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('ai_insights').update({ status: 'dismissed' }).eq('id', id).eq('organization_id', profile.organization_id);
+    }
   };
 
   const assignAlert = (id: string, person: string) => {
@@ -576,8 +649,16 @@ export function Analysis() {
           </select>
         </div>
 
+        {/* Loading spinner */}
+        {loading && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '60px 0' }}>
+            <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#1e4d6b' }} />
+            <span style={{ marginLeft: '12px', color: '#6b7280', fontSize: '14px', ...F }}>Loading alerts...</span>
+          </div>
+        )}
+
         {/* KPI Summary Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
+        {!loading && <><div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
           {[
             { label: 'Critical', count: highCount, bg: '#fef2f2', border: '#fecaca', color: '#991b1b', icon: <ShieldAlert className="h-5 w-5" style={{ color: '#dc2626' }} /> },
             { label: 'Warning', count: mediumCount, bg: '#fffbeb', border: '#fde68a', color: '#92400e', icon: <AlertTriangle className="h-5 w-5" style={{ color: '#d97706' }} /> },
@@ -954,6 +1035,7 @@ export function Analysis() {
             </div>
           </div>
         </div>
+        </>}
       </div>
     </>
   );
