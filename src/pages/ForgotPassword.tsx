@@ -19,7 +19,14 @@ export function ForgotPassword() {
     });
 
     if (error) {
-      setError(error.message);
+      // Sanitize error messages for user-friendliness
+      if (error.message.toLowerCase().includes('rate') || error.message.toLowerCase().includes('limit')) {
+        setError('Too many requests. Please wait a few minutes before trying again.');
+      } else if (error.message.toLowerCase().includes('network') || error.message.toLowerCase().includes('fetch')) {
+        setError('Unable to connect. Please check your internet connection and try again.');
+      } else {
+        setError(error.message);
+      }
     } else {
       setSent(true);
     }
