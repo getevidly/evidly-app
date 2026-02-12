@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Check, X, UserPlus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useDemo } from '../contexts/DemoContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 export function InviteAccept() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -83,6 +85,14 @@ export function InviteAccept() {
     }
 
     setSubmitting(true);
+
+    // Demo mode: simulate success without writing to database
+    if (isDemoMode) {
+      setSubmitting(false);
+      alert('Invitation accepted! (Demo mode)');
+      navigate('/dashboard');
+      return;
+    }
 
     try {
       const { data: authData, error: signUpError } = await supabase.auth.signUp({

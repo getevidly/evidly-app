@@ -3,9 +3,11 @@ import { Building2, MapPin, Users, Mail, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemo } from '../contexts/DemoContext';
 
 export function AdminClientOnboarding() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -23,6 +25,16 @@ export function AdminClientOnboarding() {
     setError('');
     setSuccess('');
     setLoading(true);
+
+    // Demo mode: simulate success without writing to database
+    if (isDemoMode) {
+      setSuccess(`Client organization created successfully! An account claim email will be sent to ${ownerEmail}.`);
+      setTimeout(() => {
+        setOrgName(''); setOwnerName(''); setOwnerEmail(''); setOwnerPhone(''); setLocationCount(1); setSuccess('');
+      }, 5000);
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data: orgData, error: orgError } = await supabase

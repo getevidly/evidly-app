@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useDemo } from '../contexts/DemoContext';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 const SERVICE_TYPES = [
@@ -29,6 +30,7 @@ export function VendorRegister() {
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const formatPhoneNumber = (value: string) => {
@@ -100,6 +102,14 @@ export function VendorRegister() {
     }
 
     setLoading(true);
+
+    // Demo mode: simulate success without writing to database
+    if (isDemoMode) {
+      setLoading(false);
+      alert('Vendor account created successfully! (Demo mode)');
+      navigate('/vendor/dashboard');
+      return;
+    }
 
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,

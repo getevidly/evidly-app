@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Check, MapPin, Thermometer, CheckSquare, FileText, Users, QrCode, PartyPopper, Plus } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/industryTemplates';
 
@@ -29,6 +30,7 @@ export function Onboarding() {
   const [industryType, setIndustryType] = useState<string>('');
   const [customItems, setCustomItems] = useState<{ [category: string]: string }>({});
   const { profile, refreshProfile } = useAuth();
+  const { isDemoMode } = useDemo();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,24 +62,22 @@ export function Onboarding() {
   }, [profile, navigate]);
 
   const updateOnboardingStep = async (step: number) => {
-    if (profile?.organization_id) {
-      await supabase
-        .from('organizations')
-        .update({ onboarding_step: step })
-        .eq('id', profile.organization_id);
-    }
+    if (isDemoMode || !profile?.organization_id) return;
+    await supabase
+      .from('organizations')
+      .update({ onboarding_step: step })
+      .eq('id', profile.organization_id);
   };
 
   const completeOnboarding = async () => {
-    if (profile?.organization_id) {
-      await supabase
-        .from('organizations')
-        .update({
-          onboarding_completed: true,
-          onboarding_completed_at: new Date().toISOString(),
-        })
-        .eq('id', profile.organization_id);
-    }
+    if (isDemoMode || !profile?.organization_id) return;
+    await supabase
+      .from('organizations')
+      .update({
+        onboarding_completed: true,
+        onboarding_completed_at: new Date().toISOString(),
+      })
+      .eq('id', profile.organization_id);
   };
 
   const toggleTemplateItem = (index: number) => {
@@ -102,7 +102,7 @@ export function Onboarding() {
   };
 
   const saveChecklistItems = async () => {
-    if (!profile?.organization_id) return;
+    if (isDemoMode || !profile?.organization_id) return;
 
     const enabledItems = templateItems.filter(item => item.enabled).map(item => ({
       organization_id: profile.organization_id,
@@ -133,13 +133,15 @@ export function Onboarding() {
 
   const handleNext = async () => {
     if (currentStep === 3 && locationName) {
-      await supabase.from('locations').insert([
-        {
-          organization_id: profile?.organization_id,
-          name: locationName,
-          address: locationAddress,
-        },
-      ]);
+      if (!isDemoMode && profile?.organization_id) {
+        await supabase.from('locations').insert([
+          {
+            organization_id: profile.organization_id,
+            name: locationName,
+            address: locationAddress,
+          },
+        ]);
+      }
       setLocationName('');
       setLocationAddress('');
     }
