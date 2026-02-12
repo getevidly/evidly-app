@@ -43,7 +43,7 @@ export default function Features() {
   ];
 
   return (
-    <section className="py-[100px] px-6 bg-[var(--color-gold-bg)] border-t border-b border-[var(--color-gold-border)]">
+    <section className="py-16 sm:py-[100px] px-4 sm:px-6 bg-[var(--color-gold-bg)] border-t border-b border-[var(--color-gold-border)]">
       <div className="max-w-[1200px] mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">
@@ -60,7 +60,7 @@ export default function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white rounded-[20px] p-8 border border-[var(--color-gold-border)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(30,77,107,0.1)]"
+              className="bg-white rounded-[20px] p-5 sm:p-8 border border-[var(--color-gold-border)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(30,77,107,0.1)]"
             >
               <div className="w-14 h-14 bg-[var(--color-blue)] rounded-[14px] flex items-center justify-center text-[1.5rem] mb-5">
                 {feature.icon}
@@ -81,6 +81,7 @@ export default function Features() {
           <img
             src="/dashboard-location.png"
             alt="EvidLY Downtown Kitchen detail view — 91 compliance score with food safety, fire safety, and vendor compliance breakdown"
+            loading="lazy"
             className="w-full rounded-2xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.2)] border border-gray-200/60"
           />
         </div>

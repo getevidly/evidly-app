@@ -25,7 +25,7 @@ export default function BeforeAfter() {
   ];
 
   return (
-    <section className="py-[100px] px-6 bg-white">
+    <section className="py-16 sm:py-[100px] px-4 sm:px-6 bg-white">
       <div className="max-w-[1000px] mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-[0.875rem] font-bold text-[var(--color-gold-dark)] uppercase tracking-[0.1em] mb-4">
@@ -39,7 +39,7 @@ export default function BeforeAfter() {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[var(--color-gray-50)] rounded-[20px] p-8 border-2 border-[var(--color-gray-200)]">
+          <div className="bg-[var(--color-gray-50)] rounded-[20px] p-5 sm:p-8 border-2 border-[var(--color-gray-200)]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                 <X className="w-6 h-6 text-red-600" strokeWidth={2.5} />
@@ -55,7 +55,7 @@ export default function BeforeAfter() {
               ))}
             </ul>
           </div>
-          <div className="bg-gradient-to-br from-[var(--color-gold-bg)] to-white rounded-[20px] p-8 border-2 border-[var(--color-gold)]">
+          <div className="bg-gradient-to-br from-[var(--color-gold-bg)] to-white rounded-[20px] p-5 sm:p-8 border-2 border-[var(--color-gold)]">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-[var(--color-gold)] rounded-full flex items-center justify-center">
                 <Check className="w-6 h-6 text-[var(--color-blue)]" strokeWidth={2.5} />

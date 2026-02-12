@@ -42,7 +42,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" className="py-24 px-6 bg-gradient-to-b from-white to-gray-50">
+    <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
@@ -56,13 +56,13 @@ export default function Pricing() {
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Founder Pricing Card */}
           <div className="relative">
-            <div className="bg-white rounded-2xl p-8 relative border-4 border-[#d4af37] shadow-2xl shadow-[#d4af37]/20 h-full flex flex-col">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-2xl shadow-[#d4af37]/20 h-full flex flex-col">
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-lg">
                 Best Value
               </div>
 
               {/* Founder Urgency Banner */}
-              <div className="mb-4 pt-6 -mx-8 px-8">
+              <div className="mb-4 pt-6 -mx-5 px-5 sm:-mx-8 sm:px-8">
                 <div className="bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 border border-[#d4af37]/30 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-bold text-[#1e4d6b]">Founder Pricing — Only 87 of 100 spots remaining</span>
@@ -116,12 +116,12 @@ export default function Pricing() {
                     </div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg font-semibold text-[#1e4d6b]">Founder:</span>
-                      <span className="text-6xl font-extrabold text-[#1e4d6b]">
+                      <span className="text-4xl sm:text-6xl font-extrabold text-[#1e4d6b]">
                         ${founderTier.monthlyPrice}
                       </span>
-                      <span className="text-xl text-gray-600">/month</span>
+                      <span className="text-lg sm:text-xl text-gray-600">/month</span>
                     </div>
-                    <div className="text-gray-700 font-medium mt-3">
+                    <div className="text-sm sm:text-base text-gray-700 font-medium mt-3">
                       + ${founderTier.additionalLocation}/month per additional location (up to 10)
                     </div>
                   </div>
@@ -153,12 +153,12 @@ export default function Pricing() {
                     </div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg font-semibold text-[#1e4d6b]">Founder:</span>
-                      <span className="text-6xl font-extrabold text-[#1e4d6b]">
+                      <span className="text-4xl sm:text-6xl font-extrabold text-[#1e4d6b]">
                         ${founderTier.annualPrice}
                       </span>
-                      <span className="text-xl text-gray-600">/year</span>
+                      <span className="text-lg sm:text-xl text-gray-600">/year</span>
                     </div>
-                    <div className="text-gray-700 font-medium mt-3">
+                    <div className="text-sm sm:text-base text-gray-700 font-medium mt-3">
                       + ${founderTier.additionalLocation}/month per additional location (up to 10)
                     </div>
                   </div>
@@ -212,7 +212,7 @@ export default function Pricing() {
           </div>
 
           {/* Enterprise Card */}
-          <div id="contact" className="bg-white rounded-2xl p-8 border-2 border-gray-200 shadow-lg h-full flex flex-col">
+          <div id="contact" className="bg-white rounded-2xl p-5 sm:p-8 border-2 border-gray-200 shadow-lg h-full flex flex-col">
             <div className="mb-6">
               <div className="text-xl font-bold text-[#1e4d6b] mb-1">
                 {enterpriseTier.name}

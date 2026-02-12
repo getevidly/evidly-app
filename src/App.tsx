@@ -93,6 +93,7 @@ import AllFeatures from './components/AllFeatures';
 import Trust from './components/Trust';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
+import MobileStickyBar from './components/MobileStickyBar';
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { DemoBanner } from './components/DemoBanner';
 import { Layout } from './components/layout/Layout';
@@ -111,6 +112,7 @@ function LandingPage() {
       <Trust />
       <FinalCTA />
       <Footer />
+      <MobileStickyBar />
     </div>
   );
 }

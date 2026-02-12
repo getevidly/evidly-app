@@ -42,7 +42,7 @@ const featureCategories: { title: string; features: Feature[] }[] = [
 
 export default function AllFeatures() {
   return (
-    <section id="features" className="py-24 px-6 bg-white">
+    <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
@@ -94,7 +94,7 @@ export default function AllFeatures() {
           </p>
           <button
             onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-            className="inline-block px-8 py-4 bg-[#1e4d6b] text-white rounded-xl font-semibold hover:bg-[#2a6a8f] shadow-lg hover:shadow-xl transition-all"
+            className="inline-block px-8 py-4 bg-[#1e4d6b] text-white rounded-xl font-semibold hover:bg-[#2a6a8f] shadow-lg hover:shadow-xl transition-all min-h-[44px]"
           >
             See Pricing
           </button>
