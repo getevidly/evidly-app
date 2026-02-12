@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
 import {
   Building2, MapPin, Thermometer, ClipboardCheck, CheckCircle,
-  ChevronRight, ChevronLeft, Sparkles, ArrowRight, User, Mail, Phone, Clock
+  ChevronRight, ChevronLeft, Sparkles, ArrowRight, User, Mail, Phone, Clock, LogIn
 } from 'lucide-react';
 
 const INDUSTRIES = [
@@ -53,8 +53,40 @@ const CHECKLIST_ITEMS = [
 
 export function DemoWizard() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { enterDemo } = useDemo();
   const { updateLocationHours, addShift, setLocationHours, setShifts } = useOperatingHours();
+
+  // ── Bypass: URL param ──────────────────────────────────
+  const [bypassChecked, setBypassChecked] = useState(false);
+  useEffect(() => {
+    const bypassKey = searchParams.get('bypass');
+    const expectedKey = import.meta.env.VITE_DEMO_BYPASS_KEY;
+    if (bypassKey && expectedKey && bypassKey === expectedKey) {
+      enterDemo();
+      navigate('/dashboard', { replace: true });
+    } else {
+      setBypassChecked(true);
+    }
+  }, []);
+
+  // ── Bypass: Staff login ────────────────────────────────
+  const [showStaffLogin, setShowStaffLogin] = useState(false);
+  const [staffUser, setStaffUser] = useState('');
+  const [staffPass, setStaffPass] = useState('');
+  const [staffError, setStaffError] = useState('');
+
+  const handleStaffLogin = () => {
+    const expectedUser = import.meta.env.VITE_DEMO_STAFF_USER;
+    const expectedPass = import.meta.env.VITE_DEMO_STAFF_PASS;
+    if (staffUser === expectedUser && staffPass === expectedPass) {
+      enterDemo();
+      navigate('/dashboard', { replace: true });
+    } else {
+      setStaffError('Invalid credentials');
+    }
+  };
+
   const [step, setStep] = useState(0);
   const [lead, setLead] = useState<DemoLead>({
     name: '', email: '', phone: '', orgName: '',
@@ -148,6 +180,9 @@ export function DemoWizard() {
     { label: 'Checklist', icon: ClipboardCheck },
     { label: 'Your Dashboard', icon: Sparkles },
   ];
+
+  // Don't render the wizard until we've checked the bypass param
+  if (!bypassChecked) return null;
 
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-8 px-4">
@@ -516,6 +551,58 @@ export function DemoWizard() {
           Already have an account?{' '}
           <button onClick={() => navigate('/login')} className="text-[#1e4d6b] font-medium hover:underline">Sign in</button>
         </p>
+
+        {/* Staff login — subtle link for sales team */}
+        {!showStaffLogin ? (
+          <p className="text-center mt-6">
+            <button
+              onClick={() => setShowStaffLogin(true)}
+              className="text-xs text-gray-300 hover:text-gray-400 transition-colors"
+            >
+              Staff Login
+            </button>
+          </p>
+        ) : (
+          <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-5 max-w-sm mx-auto">
+            <div className="flex items-center gap-2 mb-4">
+              <LogIn className="h-4 w-4 text-[#1e4d6b]" />
+              <span className="text-sm font-semibold text-[#1e4d6b]">Staff Login</span>
+            </div>
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Username"
+                value={staffUser}
+                onChange={e => { setStaffUser(e.target.value); setStaffError(''); }}
+                onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
+                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={staffPass}
+                onChange={e => { setStaffPass(e.target.value); setStaffError(''); }}
+                onKeyDown={e => e.key === 'Enter' && handleStaffLogin()}
+                className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+              />
+              {staffError && <p className="text-xs text-red-500">{staffError}</p>}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleStaffLogin}
+                  className="flex-1 px-4 py-2 text-sm font-medium bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] transition-colors"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => { setShowStaffLogin(false); setStaffError(''); setStaffUser(''); setStaffPass(''); }}
+                  className="px-4 py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
