@@ -29,6 +29,7 @@ import {
   Lock,
   ChevronDown,
   ChevronRight,
+  Upload,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -124,6 +125,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.sectionSettings',
     items: [
       { i18nKey: 'nav.settings', href: '/settings', icon: Settings, roles: mgmtRoles },
+      { i18nKey: 'nav.importData', href: '/import', icon: Upload, roles: mgmtRoles },
       { i18nKey: 'nav.billing', href: '/settings', icon: CreditCard, roles: mgmtRoles },
       { i18nKey: 'nav.helpSupport', href: '/help', icon: HelpCircle, roles: allRoles },
     ],

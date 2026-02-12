@@ -82,6 +82,7 @@ const PlaybookRunner = lazy(() => import('./pages/PlaybookRunner').then(m => ({ 
 const PlaybookBuilder = lazy(() => import('./pages/PlaybookBuilder').then(m => ({ default: m.PlaybookBuilder })));
 const PlaybookAnalytics = lazy(() => import('./pages/PlaybookAnalytics').then(m => ({ default: m.PlaybookAnalytics })));
 const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m => ({ default: m.PlaybookTimeline })));
+const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -253,6 +254,7 @@ function AppRoutes() {
           <Route path="/team" element={<Team />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />

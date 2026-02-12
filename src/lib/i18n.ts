@@ -86,6 +86,7 @@ const en = {
     locations: 'Locations',
     billing: 'Billing',
     helpSupport: 'Help & Support',
+    importData: 'Import Data',
     systemAdmin: 'System Admin',
   },
 
@@ -692,6 +693,7 @@ const es: typeof en = {
     locations: 'Ubicaciones',
     billing: 'Facturación',
     helpSupport: 'Ayuda y Soporte',
+    importData: 'Importar Datos',
     systemAdmin: 'Admin del Sistema',
   },
 
