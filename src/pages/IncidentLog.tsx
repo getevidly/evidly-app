@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Plus, AlertTriangle, Clock, CheckCircle2, XCircle, User, MapPin,
   ChevronDown, ChevronRight, ArrowLeft, Filter, Download, MessageSquare,
   Thermometer, ClipboardList, Bug, Wrench, ShieldAlert, Users as UsersIcon,
-  AlertCircle, FileText, Camera, Sparkles,
+  AlertCircle, FileText, Camera, Sparkles, Loader2, CheckCircle,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -11,6 +11,9 @@ import { useRole } from '../contexts/RoleContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -436,6 +439,17 @@ export function IncidentLog() {
     'Other': t('incidents.other'),
   };
 
+  // Auth & demo mode
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
+
   // State
   const [incidents, setIncidents] = useState<Incident[]>(DEMO_INCIDENTS);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
@@ -475,6 +489,88 @@ export function IncidentLog() {
 
   // Comment
   const [commentText, setCommentText] = useState('');
+
+  // Fetch incidents from Supabase in live mode
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+
+    async function fetchIncidents() {
+      setLoading(true);
+      const orgId = profile!.organization_id;
+
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*, incident_timeline(*), incident_comments(*)')
+        .eq('organization_id', orgId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching incidents:', error);
+        setLoading(false);
+        return;
+      }
+
+      // Map location IDs to names
+      const { data: locData } = await supabase
+        .from('locations')
+        .select('id, name')
+        .eq('organization_id', orgId);
+      const locMap: Record<string, string> = {};
+      (locData || []).forEach((l: any) => { locMap[l.id] = l.name; });
+
+      const mapped: Incident[] = (data || []).map((row: any) => ({
+        id: row.incident_number || row.id,
+        type: row.type as IncidentType,
+        severity: row.severity as Severity,
+        title: row.title,
+        description: row.description,
+        location: row.location_name || locMap[row.location_id] || 'Unknown',
+        status: row.status as IncidentStatus,
+        assignedTo: row.assigned_to || '',
+        reportedBy: row.reported_by,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        resolvedAt: row.resolved_at || undefined,
+        verifiedAt: row.verified_at || undefined,
+        verifiedBy: row.verified_by || undefined,
+        correctiveAction: row.corrective_action || undefined,
+        actionChips: row.action_chips || undefined,
+        resolutionSummary: row.resolution_summary || undefined,
+        rootCause: (row.root_cause || undefined) as RootCause | undefined,
+        sourceType: row.source_type || undefined,
+        sourceId: row.source_id || undefined,
+        sourceLabel: row.source_label || undefined,
+        photos: row.photos || [],
+        resolutionPhotos: row.resolution_photos || [],
+        timeline: (row.incident_timeline || [])
+          .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+          .map((t: any) => ({
+            id: t.id,
+            action: t.action,
+            status: t.status as IncidentStatus,
+            user: t.performed_by,
+            timestamp: t.created_at,
+            notes: t.notes || undefined,
+            photos: t.photos || undefined,
+          })),
+        comments: (row.incident_comments || [])
+          .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+          .map((c: any) => ({
+            id: c.id,
+            user: c.user_name,
+            text: c.comment_text,
+            timestamp: c.created_at,
+          })),
+      }));
+
+      if (mapped.length > 0) {
+        setIncidents(mapped);
+      }
+      setLoading(false);
+    }
+
+    fetchIncidents();
+  }, [isDemoMode, profile?.organization_id]);
 
   // ── KPI calculations ───────────────────────────────────────────
   const openIncidents = incidents.filter(i => !['resolved', 'verified'].includes(i.status)).length;
@@ -578,39 +674,75 @@ export function IncidentLog() {
   };
 
   // ── Handlers ───────────────────────────────────────────────────
-  const handleCreateIncident = () => {
+  const handleCreateIncident = async () => {
     if (!newTitle.trim() || !newDescription.trim()) {
-      alert('Title and description are required.');
+      showToast('Title and description are required.');
       return;
     }
+    const assignee = TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)];
+    const incNumber = `INC-${String(incidents.length + 1).padStart(3, '0')}`;
+    const nowIso = new Date().toISOString();
+
+    // Live mode: insert to Supabase
+    if (!isDemoMode && profile?.organization_id) {
+      const { data: inserted, error } = await supabase.from('incidents').insert({
+        organization_id: profile.organization_id,
+        incident_number: incNumber,
+        type: newType,
+        severity: newSeverity,
+        title: newTitle,
+        description: newDescription,
+        location_name: newLocation,
+        status: 'assigned',
+        assigned_to: assignee,
+        reported_by: 'Current User',
+        photos: newPhotos,
+        resolution_photos: [],
+      }).select().single();
+
+      if (error) {
+        console.error('Error creating incident:', error);
+        showToast('Failed to create incident.');
+        return;
+      }
+
+      // Insert timeline entries
+      if (inserted) {
+        await supabase.from('incident_timeline').insert([
+          { incident_id: inserted.id, action: 'Incident reported', status: 'reported', performed_by: 'Current User' },
+          { incident_id: inserted.id, action: 'Auto-assigned to location manager', status: 'assigned', performed_by: 'System' },
+        ]);
+      }
+    }
+
     const newIncident: Incident = {
-      id: `INC-${String(incidents.length + 1).padStart(3, '0')}`,
+      id: incNumber,
       type: newType,
       severity: newSeverity,
       title: newTitle,
       description: newDescription,
       location: newLocation,
       status: 'assigned',
-      assignedTo: TEAM_MEMBERS[Math.floor(Math.random() * TEAM_MEMBERS.length)],
+      assignedTo: assignee,
       reportedBy: 'Current User',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: nowIso,
+      updatedAt: nowIso,
       photos: newPhotos,
       resolutionPhotos: [],
       timeline: [
-        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: 'Current User', timestamp: new Date().toISOString() },
-        { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: new Date().toISOString() },
+        { id: `t-${Date.now()}`, action: 'Incident reported', status: 'reported', user: 'Current User', timestamp: nowIso },
+        { id: `t-${Date.now() + 1}`, action: 'Auto-assigned to location manager', status: 'assigned', user: 'System', timestamp: nowIso },
       ],
       comments: [],
     };
-    // TODO: Send notification to assigned manager (Resend email / Twilio SMS)
     setIncidents(prev => [newIncident, ...prev]);
     setShowCreateForm(false);
     setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false);
     setSelectedIncident(newIncident);
+    showToast('Incident reported successfully.');
   };
 
-  const handleTakeAction = () => {
+  const handleTakeAction = async () => {
     if (!selectedIncident || !actionText.trim()) return;
     const updated = { ...selectedIncident };
     updated.status = 'in_progress';
@@ -626,18 +758,38 @@ export function IncidentLog() {
       timestamp: new Date().toISOString(),
       photos: actionPhotos.length > 0 ? actionPhotos : undefined,
     }];
+
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('incidents').update({
+        status: 'in_progress',
+        corrective_action: actionText,
+        action_chips: actionChips,
+        updated_at: new Date().toISOString(),
+      }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+
+      await supabase.from('incident_timeline').insert({
+        incident_id: selectedIncident.id,
+        action: `Corrective action: ${actionText}${estLabel}`,
+        status: 'in_progress',
+        performed_by: 'Current User',
+        photos: actionPhotos.length > 0 ? actionPhotos : [],
+      });
+    }
+
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
     setSelectedIncident(updated);
     setShowActionForm(false);
     setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion('');
+    showToast('Corrective action recorded.');
   };
 
-  const handleResolve = () => {
+  const handleResolve = async () => {
     if (!selectedIncident || !resolutionSummary.trim()) return;
+    const nowIso = new Date().toISOString();
     const updated = { ...selectedIncident };
     updated.status = 'resolved';
-    updated.resolvedAt = new Date().toISOString();
-    updated.updatedAt = new Date().toISOString();
+    updated.resolvedAt = nowIso;
+    updated.updatedAt = nowIso;
     updated.resolutionSummary = resolutionSummary;
     updated.rootCause = rootCause;
     updated.resolutionPhotos = resolutionPhotos;
@@ -646,23 +798,45 @@ export function IncidentLog() {
       action: `Resolved: ${resolutionSummary}`,
       status: 'resolved',
       user: 'Current User',
-      timestamp: new Date().toISOString(),
+      timestamp: nowIso,
       photos: resolutionPhotos.length > 0 ? resolutionPhotos : undefined,
     }];
+
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('incidents').update({
+        status: 'resolved',
+        resolved_at: nowIso,
+        resolution_summary: resolutionSummary,
+        root_cause: rootCause,
+        resolution_photos: resolutionPhotos,
+        updated_at: nowIso,
+      }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+
+      await supabase.from('incident_timeline').insert({
+        incident_id: selectedIncident.id,
+        action: `Resolved: ${resolutionSummary}`,
+        status: 'resolved',
+        performed_by: 'Current User',
+        photos: resolutionPhotos.length > 0 ? resolutionPhotos : [],
+      });
+    }
+
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
     setSelectedIncident(updated);
     setShowResolveForm(false);
     setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]);
+    showToast('Incident resolved.');
   };
 
-  const handleVerify = (approved: boolean) => {
+  const handleVerify = async (approved: boolean) => {
     if (!selectedIncident) return;
+    const nowIso = new Date().toISOString();
     const updated = { ...selectedIncident };
     if (approved) {
       updated.status = 'verified';
-      updated.verifiedAt = new Date().toISOString();
+      updated.verifiedAt = nowIso;
       updated.verifiedBy = 'Current User';
-      updated.updatedAt = new Date().toISOString();
+      updated.updatedAt = nowIso;
       updated.timeline = [...updated.timeline, {
         id: `t-${Date.now()}`,
         action: 'Resolution verified and approved',
@@ -682,11 +856,44 @@ export function IncidentLog() {
         timestamp: new Date().toISOString(),
       }];
     }
+
+    if (!isDemoMode && profile?.organization_id) {
+      if (approved) {
+        await supabase.from('incidents').update({
+          status: 'verified',
+          verified_at: nowIso,
+          verified_by: 'Current User',
+          updated_at: nowIso,
+        }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+
+        await supabase.from('incident_timeline').insert({
+          incident_id: selectedIncident.id,
+          action: 'Resolution verified and approved',
+          status: 'verified',
+          performed_by: 'Current User',
+        });
+      } else {
+        await supabase.from('incidents').update({
+          status: 'in_progress',
+          resolved_at: null,
+          updated_at: nowIso,
+        }).eq('incident_number', selectedIncident.id).eq('organization_id', profile.organization_id);
+
+        await supabase.from('incident_timeline').insert({
+          incident_id: selectedIncident.id,
+          action: 'Resolution rejected — sent back for additional action',
+          status: 'in_progress',
+          performed_by: 'Current User',
+        });
+      }
+    }
+
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
     setSelectedIncident(updated);
+    showToast(approved ? 'Incident verified.' : 'Incident sent back for additional action.');
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!selectedIncident || !commentText.trim()) return;
     const updated = { ...selectedIncident };
     updated.comments = [...updated.comments, {
@@ -695,6 +902,15 @@ export function IncidentLog() {
       text: commentText,
       timestamp: new Date().toISOString(),
     }];
+
+    if (!isDemoMode && profile?.organization_id) {
+      await supabase.from('incident_comments').insert({
+        incident_id: selectedIncident.id,
+        user_name: 'Current User',
+        comment_text: commentText,
+      });
+    }
+
     setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
     setSelectedIncident(updated);
     setCommentText('');
@@ -1004,7 +1220,7 @@ export function IncidentLog() {
 
               {/* Export */}
               <button
-                onClick={() => alert('PDF export generated for incident ' + inc.id)}
+                onClick={() => showToast('PDF export generated for incident ' + inc.id)}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
@@ -1164,6 +1380,14 @@ export function IncidentLog() {
             </div>
           </div>
         )}
+
+        {/* Toast notification */}
+        {toastMessage && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+            <CheckCircle className="h-4 w-4 flex-shrink-0" />
+            {toastMessage}
+          </div>
+        )}
       </>
     );
   }
@@ -1294,7 +1518,7 @@ export function IncidentLog() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => alert('PDF export of all incidents generated.')}
+              onClick={() => showToast('PDF export of all incidents generated.')}
               className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
@@ -1383,8 +1607,15 @@ export function IncidentLog() {
           </div>
         </div>
 
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+          </div>
+        )}
+
         {/* Incident Cards */}
-        <div className="space-y-3">
+        {!loading && <div className="space-y-3">
           {filteredIncidents.map(inc => {
             const typeInfo = INCIDENT_TYPES.find(tp => tp.value === inc.type);
             const TypeIcon = typeInfo?.icon || AlertCircle;
@@ -1443,9 +1674,17 @@ export function IncidentLog() {
               <p className="text-gray-500">No incidents match your filters.</p>
             </div>
           )}
-        </div>
+        </div>}
       </div>
       {CreateModal}
+
+      {/* Toast notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          <CheckCircle className="h-4 w-4 flex-shrink-0" />
+          {toastMessage}
+        </div>
+      )}
     </>
   );
 }
