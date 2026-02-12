@@ -104,7 +104,7 @@ export function PlaybookAnalytics() {
 
   /* ════════════════════════════════════════════════════════════ */
   return (
-    <div style={{ fontFamily: FONT, background: LIGHT_BG, minHeight: '100vh', padding: 32 }}>
+    <div style={{ fontFamily: FONT, background: LIGHT_BG, minHeight: '100vh', padding: '24px 12px' }} className="sm:!p-8">
       {/* ── Header ───────────────────────────────────────────── */}
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         <button
@@ -152,7 +152,7 @@ export function PlaybookAnalytics() {
               <Siren size={22} color="#fff" />
             </div>
             <div>
-              <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: '#111' }}>
+              <h1 style={{ margin: 0, fontWeight: 700, color: '#111' }} className="text-xl sm:text-2xl">
                 Playbook Analytics
               </h1>
               <p style={{ margin: 0, fontSize: 14, color: '#6b7280', marginTop: 2 }}>
@@ -162,7 +162,7 @@ export function PlaybookAnalytics() {
           </div>
 
           {/* Time filter buttons */}
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {timeOptions.map((opt) => (
               <button
                 key={opt.key}
@@ -190,7 +190,7 @@ export function PlaybookAnalytics() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))',
             gap: 16,
             marginBottom: 28,
           }}
@@ -225,7 +225,7 @@ export function PlaybookAnalytics() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(400px, 100%), 1fr))',
             gap: 20,
             marginBottom: 28,
           }}
@@ -235,9 +235,9 @@ export function PlaybookAnalytics() {
             style={{
               background: '#fff',
               borderRadius: 12,
-              padding: 24,
               boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}
+            className="p-4 sm:p-6"
           >
             <h3
               style={{
@@ -277,9 +277,9 @@ export function PlaybookAnalytics() {
             style={{
               background: '#fff',
               borderRadius: 12,
-              padding: 24,
               boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             }}
+            className="p-4 sm:p-6"
           >
             <h3
               style={{
@@ -340,10 +340,10 @@ export function PlaybookAnalytics() {
           style={{
             background: '#fff',
             borderRadius: 12,
-            padding: 24,
             boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
             marginBottom: 28,
           }}
+          className="p-4 sm:p-6"
         >
           <h3
             style={{
@@ -379,8 +379,8 @@ export function PlaybookAnalytics() {
                       padding: '10px 12px',
                       color: '#6b7280',
                       fontWeight: 600,
-                      minWidth: 260,
                     }}
+                    className="min-w-0 sm:min-w-[260px]"
                   >
                     Completion Rate
                   </th>
@@ -466,7 +466,7 @@ export function PlaybookAnalytics() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
               gap: 16,
             }}
           >
@@ -476,12 +476,12 @@ export function PlaybookAnalytics() {
                 style={{
                   background: '#fff',
                   borderRadius: 12,
-                  padding: 24,
                   boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: 14,
                 }}
+                className="p-4 sm:p-6"
               >
                 {/* Location header */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -590,13 +590,14 @@ function KpiCard({
       style={{
         background: '#fff',
         borderRadius: 12,
-        padding: '20px 22px',
+        padding: '14px 12px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         borderLeft: `4px solid ${accent}`,
         display: 'flex',
         alignItems: 'center',
         gap: 14,
       }}
+      className="sm:!p-5"
     >
       <div
         style={{

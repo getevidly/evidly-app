@@ -183,25 +183,27 @@ export function Settings() {
       </div>
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
         <div className="lg:w-64 flex-shrink-0">
-          <nav className="bg-white rounded-lg shadow overflow-hidden">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-[#1e4d6b] text-white'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <tab.icon className="h-5 w-5" />
-                <span>{tabI18n[tab.id]}</span>
-              </button>
-            ))}
+          <nav className="bg-white rounded-lg shadow overflow-x-auto lg:overflow-visible">
+            <div className="flex lg:flex-col">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-3 px-4 py-3 text-left transition-colors whitespace-nowrap min-h-[44px] ${
+                    activeTab === tab.id
+                      ? 'bg-[#1e4d6b] text-white'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  } lg:w-full`}
+                >
+                  <tab.icon className="h-5 w-5 flex-shrink-0" />
+                  <span>{tabI18n[tab.id]}</span>
+                </button>
+              ))}
+            </div>
           </nav>
         </div>
 
-        <div className="flex-1 bg-white rounded-lg shadow p-6">
+        <div className="flex-1 bg-white rounded-lg shadow p-4 sm:p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
@@ -251,7 +253,7 @@ export function Settings() {
                 </select>
               </div>
 
-              <button onClick={() => toast.success('Profile saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Profile saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -333,7 +335,7 @@ export function Settings() {
                 </button>
               </div>
 
-              <button onClick={() => toast.success('Organization settings saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Organization settings saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -400,7 +402,7 @@ export function Settings() {
                   <p className="text-sm text-gray-600 mb-4">
                     {t('settings.quietHoursDesc')}
                   </p>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.startTimeLabel')}</label>
                       <input
@@ -488,7 +490,7 @@ export function Settings() {
               <button
                 onClick={saveNotificationSettings}
                 disabled={saving}
-                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? t('common.saving') : t('settings.savePreferences')}
               </button>
@@ -508,7 +510,7 @@ export function Settings() {
               {/* Enable/disable toggle */}
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-4">Monitoring Status</h4>
-                <label className="flex items-center justify-between">
+                <label className="flex items-center justify-between gap-3">
                   <div>
                     <span className="text-sm font-medium text-gray-900">Enable Regulatory Alerts</span>
                     <p className="text-xs text-gray-500">Automatically monitor regulatory changes for your jurisdictions</p>
@@ -612,7 +614,7 @@ export function Settings() {
                 </div>
               </div>
 
-              <button onClick={() => toast.success('Regulatory monitoring preferences saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+              <button onClick={() => toast.success('Regulatory monitoring preferences saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                 {t('settings.saveChanges')}
               </button>
             </div>
@@ -648,7 +650,7 @@ export function Settings() {
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Detected Jurisdictions</h4>
                 {locationJurisdictions.map((loc) => (
                   <div key={loc.name} className="border border-gray-200 rounded-lg p-4 bg-white">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div>
                         <h4 className="font-semibold text-gray-900">{loc.name}</h4>
                         <p className="text-xs text-gray-500 mt-1">{loc.chain}</p>
@@ -658,7 +660,7 @@ export function Settings() {
                         Auto-detected
                       </span>
                     </div>
-                    <div className="mt-3 flex items-center gap-3">
+                    <div className="mt-3 flex flex-wrap items-center gap-3">
                       <label className="text-xs font-medium text-gray-500">County:</label>
                       <select
                         defaultValue={loc.detectedSlug}
@@ -675,7 +677,7 @@ export function Settings() {
               </div>
 
               {/* Dashboard & Reporting Toggles */}
-              <div className="border border-gray-200 rounded-lg p-5 bg-white space-y-4">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5 bg-white space-y-4">
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Display Preferences</h4>
 
                 <label className="flex items-center justify-between cursor-pointer">
@@ -708,7 +710,7 @@ export function Settings() {
               </div>
 
               {/* Manual jurisdiction selection */}
-              <div className="border border-gray-200 rounded-lg p-5 bg-white">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5 bg-white">
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Manual Jurisdiction Override</h4>
                 <p className="text-xs text-gray-500 mb-3">If auto-detection is incorrect for a location, select the correct county scoring system manually.</p>
                 <select
@@ -727,7 +729,7 @@ export function Settings() {
 
               <button
                 onClick={() => navigate('/jurisdiction')}
-                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
               >
                 View Full Jurisdiction Configuration →
               </button>
@@ -742,10 +744,10 @@ export function Settings() {
 
               <div className="space-y-4">
                 {/* Insurance Risk Score Sharing */}
-                <div className="border-2 rounded-lg p-5" style={{ borderColor: '#1e4d6b' }}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
+                <div className="border-2 rounded-lg p-4 sm:p-5" style={{ borderColor: '#1e4d6b' }}>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1e4d6b' }}>
                         <Shield className="h-6 w-6 text-white" />
                       </div>
                       <div>
@@ -784,10 +786,10 @@ export function Settings() {
                 </div>
 
                 {/* Restaurant365 */}
-                <div className="border border-gray-200 rounded-lg p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-orange-600 font-bold text-lg">R365</span>
                       </div>
                       <div>
@@ -809,10 +811,10 @@ export function Settings() {
                 </div>
 
                 {/* Cintas */}
-                <div className="border border-gray-200 rounded-lg p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-blue-700 font-bold text-sm">CINTAS</span>
                       </div>
                       <div>
@@ -834,10 +836,10 @@ export function Settings() {
                 </div>
 
                 {/* Ecosure / Ecolab */}
-                <div className="border border-gray-200 rounded-lg p-5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
                         <span className="text-green-700 font-bold text-sm">ECO</span>
                       </div>
                       <div>
@@ -859,8 +861,8 @@ export function Settings() {
                 </div>
 
                 {/* API Access */}
-                <div className="border border-dashed border-gray-300 rounded-lg p-5">
-                  <div className="flex items-center gap-4">
+                <div className="border border-dashed border-gray-300 rounded-lg p-4 sm:p-5">
+                  <div className="flex items-center gap-3 sm:gap-4">
                     <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
                       <Plug className="h-6 w-6 text-gray-500" />
                     </div>
@@ -954,7 +956,7 @@ export function Settings() {
                     }
                   });
                 }}
-                className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
+                className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
               >
                 {t('topBar.updatePassword')}
               </button>
@@ -978,7 +980,7 @@ export function Settings() {
                 <h4 className="font-semibold text-gray-900 mb-4">{t('settings.operatingHours')}</h4>
                 <div className="space-y-4">
                   {locationHours.map((loc) => (
-                    <div key={loc.locationName} className="border border-gray-200 rounded-lg p-5">
+                    <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
                       <div className="flex items-center gap-2 mb-4">
                         <MapPin className="h-5 w-5 text-[#1e4d6b]" />
                         <span className="font-semibold text-gray-900">{loc.locationName}</span>
@@ -1003,7 +1005,7 @@ export function Settings() {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.opens')}</label>
                           <select
@@ -1043,7 +1045,7 @@ export function Settings() {
                   {locationHours.map((loc) => {
                     const locShifts = getShiftsForLocation(loc.locationName).filter(s => s.locationName === loc.locationName);
                     return (
-                      <div key={loc.locationName} className="border border-gray-200 rounded-lg p-5">
+                      <div key={loc.locationName} className="border border-gray-200 rounded-lg p-4 sm:p-5">
                         <div className="flex items-center gap-2 mb-4">
                           <MapPin className="h-5 w-5 text-[#1e4d6b]" />
                           <span className="font-semibold text-gray-900">{loc.locationName}</span>
@@ -1070,7 +1072,7 @@ export function Settings() {
                                   </button>
                                 )}
                               </div>
-                              <div className="grid grid-cols-2 gap-3 mb-3">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                                 <div>
                                   <label className="block text-xs font-medium text-gray-500 mb-1">{t('settings.startTimeLabel')}</label>
                                   <select
@@ -1130,7 +1132,7 @@ export function Settings() {
               </div>
 
               {canEditHours && (
-                <button onClick={() => toast.success('Hours and shifts saved')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                <button onClick={() => toast.success('Hours and shifts saved')} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
                   {t('settings.saveChanges')}
                 </button>
               )}
@@ -1142,9 +1144,9 @@ export function Settings() {
               <h3 className="text-xl font-bold text-gray-900">Privacy & Benchmarking</h3>
               <p className="text-sm text-gray-600">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 pr-8">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-gray-900 mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
                     <p className="text-sm text-gray-500 mb-3">
                       When enabled, your location scores are included in aggregate industry benchmarks. Your data is fully anonymized — no business names, addresses, or employee information is ever shared.
@@ -1197,7 +1199,7 @@ export function Settings() {
 
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-semibold text-gray-900 mb-2 text-sm">Data We Never Share</h4>
-                <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
                   <div>• Business names or addresses</div>
                   <div>• Employee information</div>
                   <div>• Specific violation details</div>
@@ -1219,8 +1221,8 @@ export function Settings() {
               <p className="text-sm text-gray-600">Manage enterprise tenants, SSO configuration, and white-label branding.</p>
 
               {/* SSO Quick Status */}
-              <div className="border border-gray-200 rounded-lg p-5">
-                <div className="flex items-center gap-3 mb-3">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                     <KeyRound className="h-5 w-5" style={{ color: '#1e4d6b' }} />
                   </div>
@@ -1258,7 +1260,7 @@ export function Settings() {
               </div>
 
               {/* Tenant Branding Preview */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                     <Layers className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -1268,7 +1270,7 @@ export function Settings() {
                     <p className="text-xs text-gray-500">White-label configuration for enterprise clients</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-3 mb-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
                   {[
                     { name: 'Aramark Compliance Hub', colors: ['#C8102E', '#002855', '#F0AB00'] },
                     { name: 'Compass Compliance', colors: ['#003DA5', '#1B365D', '#FFB81C'] },
@@ -1290,7 +1292,7 @@ export function Settings() {
               </div>
 
               {/* Enterprise Admin Portal Link */}
-              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
+              <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
                 <h4 className="text-lg font-semibold mb-2">Enterprise Admin Portal</h4>
                 <p className="text-gray-200 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
                 <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-lg bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
@@ -1299,9 +1301,9 @@ export function Settings() {
               </div>
 
               {/* SCIM Status */}
-              <div className="border border-gray-200 rounded-lg p-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
                     <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
                   </div>
                   <div className="flex-1">
@@ -1322,9 +1324,9 @@ export function Settings() {
               <p className="text-sm text-gray-600">Manage offline data, sync status, and device registration for this browser.</p>
 
               {/* Connection Status */}
-              <div className="border border-gray-200 rounded-lg p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: isOnline ? '#dcfce7' : '#fee2e2' }}>
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: isOnline ? '#dcfce7' : '#fee2e2' }}>
                     {isOnline ? <Wifi className="h-5 w-5 text-green-600" /> : <WifiOff className="h-5 w-5 text-red-600" />}
                   </div>
                   <div>
@@ -1347,7 +1349,7 @@ export function Settings() {
                     </span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Last Sync</p>
                     <p className="text-sm font-medium text-gray-900">
@@ -1364,7 +1366,7 @@ export function Settings() {
               </div>
 
               {/* Sync Actions */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                     <RefreshCw className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -1413,7 +1415,7 @@ export function Settings() {
               </div>
 
               {/* Device Info */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                     <Smartphone className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -1448,7 +1450,7 @@ export function Settings() {
               </div>
 
               {/* Storage Usage */}
-              <div className="border border-gray-200 rounded-lg p-5">
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                     <HardDrive className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -1482,7 +1484,7 @@ export function Settings() {
                 ) : (
                   <p className="text-sm text-gray-500">Storage estimate not available in this browser.</p>
                 )}
-                <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
                     { label: 'Cached Pages', value: 'App Shell', icon: '📄' },
                     { label: 'Offline Actions', value: `${pendingCount} pending`, icon: '📝' },

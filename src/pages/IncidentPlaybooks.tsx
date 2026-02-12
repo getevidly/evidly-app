@@ -89,7 +89,7 @@ function PlaybookCard({ template, onActivate, isCustom }: { template: PlaybookTe
     <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
       {/* Color banner */}
       <div style={{ height: 6, background: template.color }} />
-      <div style={{ padding: '20px 20px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '16px 16px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
           <div style={{ width: 44, height: 44, borderRadius: 10, background: template.color + '14', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -152,8 +152,8 @@ function ActiveIncidentCard({ incident, onContinue }: { incident: ActiveIncident
   return (
     <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' }}>
       <div style={{ height: 4, background: color }} />
-      <div style={{ padding: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+      <div style={{ padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: color + '14', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon size={20} color={color} />
@@ -207,8 +207,8 @@ function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveInc
 
   return (
     <div style={{ background: 'white', borderRadius: 12, overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' }}>
-      <div style={{ padding: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+      <div style={{ padding: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Icon size={20} color={color} />
@@ -221,14 +221,14 @@ function CompletedIncidentCard({ incident, onViewReport }: { incident: ActiveInc
           <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#f0fdf4', color: '#166534', border: '1px solid #86efac' }}>Completed</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#6b7280', marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#6b7280', marginBottom: 12, flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Clock size={13} /> Duration: {formatDuration(durationMin)}
           </span>
           <span>{formatDate(incident.initiatedAt)}</span>
         </div>
 
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={onViewReport}
             style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid #1e4d6b', background: '#eef4f8', color: '#1e4d6b', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
@@ -336,9 +336,9 @@ export function IncidentPlaybooks() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Siren size={24} color="#1e4d6b" />
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Response Playbooks</h1>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button
               onClick={() => navigate('/playbooks/builder')}
               style={{ padding: '9px 18px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 40, fontFamily: "'DM Sans', sans-serif" }}
@@ -357,7 +357,7 @@ export function IncidentPlaybooks() {
       </div>
 
       {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Available Playbooks', value: playbookTemplates.length + customPlaybookCards.length, icon: FileText, color: '#1e4d6b' },
           { label: 'Active Incidents', value: activeIncidents.length, icon: Siren, color: activeIncidents.length > 0 ? '#dc2626' : '#22c55e' },
@@ -375,7 +375,7 @@ export function IncidentPlaybooks() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, marginBottom: 20, borderBottom: '2px solid #e5e7eb' }}>
+      <div style={{ display: 'flex', gap: 0, marginBottom: 20, borderBottom: '2px solid #e5e7eb', overflowX: 'auto' }}>
         {TABS.map(tab => {
           const isActive = activeTab === tab.key;
           const count = tab.key === 'active' ? activeIncidents.length : tab.key === 'completed' ? completedIncidents.length : playbookTemplates.length + customPlaybookCards.length;
@@ -397,6 +397,7 @@ export function IncidentPlaybooks() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
+                whiteSpace: 'nowrap',
               }}
             >
               {tab.label}
@@ -446,7 +447,7 @@ export function IncidentPlaybooks() {
           </div>
 
           {/* System Playbooks */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: 16 }}>
             {filteredTemplates.map(t => (
               <PlaybookCard key={t.id} template={t} onActivate={() => handleActivate(t)} />
             ))}
@@ -460,7 +461,7 @@ export function IncidentPlaybooks() {
                 <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: 0 }}>Custom Playbooks</h2>
                 <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: '#d4af37', color: 'white' }}>{filteredCustom.length}</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(320px, 100%), 1fr))', gap: 16 }}>
                 {filteredCustom.map(t => (
                   <PlaybookCard key={t.id} template={t} onActivate={() => handleActivate(t)} isCustom />
                 ))}
@@ -486,7 +487,7 @@ export function IncidentPlaybooks() {
               <p style={{ fontSize: 14 }}>No active incidents. All clear!</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
               {activeIncidents.map(incident => (
                 <ActiveIncidentCard
                   key={incident.id}
@@ -508,7 +509,7 @@ export function IncidentPlaybooks() {
               <p style={{ fontSize: 14 }}>No completed incidents yet.</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
               {completedIncidents.map(incident => (
                 <CompletedIncidentCard
                   key={incident.id}

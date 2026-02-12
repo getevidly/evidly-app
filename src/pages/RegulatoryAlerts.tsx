@@ -207,7 +207,7 @@ export function RegulatoryAlerts() {
 
         {/* Alert Banner */}
         {actionRequiredCount > 0 && !dismissedBanner && (
-          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-lg p-4 mt-4 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-red-600 to-amber-500 text-white rounded-lg p-4 mt-4 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">{actionRequiredCount} regulatory change{actionRequiredCount !== 1 ? 's' : ''} require{actionRequiredCount === 1 ? 's' : ''} your action</span>
@@ -218,7 +218,7 @@ export function RegulatoryAlerts() {
                   setImpactFilter('action_required');
                   setStatusFilter('new');
                 }}
-                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 text-sm"
+                className="bg-white text-red-600 font-semibold px-4 py-2 rounded-lg hover:bg-gray-50 text-sm min-h-[44px]"
               >
                 Review Now
               </button>
@@ -245,7 +245,7 @@ export function RegulatoryAlerts() {
               const isExpanded = expandedId === alert.id;
 
               return (
-                <div key={alert.id} className="bg-white rounded-lg shadow border border-gray-100 p-6 space-y-4">
+                <div key={alert.id} className="bg-white rounded-lg shadow border border-gray-100 p-4 sm:p-6 space-y-4">
                   {/* Top row: badges */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getSourceBadgeClasses(alert.source)}`}>
@@ -352,11 +352,11 @@ export function RegulatoryAlerts() {
                   )}
 
                   {/* Button row */}
-                  <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-3 pt-3 border-t border-gray-100 flex-wrap">
                     {status === 'new' && (
                       <button
                         onClick={() => markReviewed(alert.id)}
-                        className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]"
+                        className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] min-h-[44px]"
                       >
                         Mark as Reviewed
                       </button>
@@ -364,7 +364,7 @@ export function RegulatoryAlerts() {
                     {/* TODO: Wire to Resend for team share emails */}
                     <button
                       onClick={() => toast.success("Team notification sent")}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+                      className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 min-h-[44px]"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                       Share with Team
@@ -412,7 +412,7 @@ export function RegulatoryAlerts() {
           {/* Right Sidebar */}
           <div className="w-full lg:w-[280px] flex-shrink-0">
             {/* Your Jurisdictions */}
-            <div className="bg-white rounded-lg shadow p-5 border border-gray-100">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Your Jurisdictions</h3>
@@ -429,7 +429,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Monitoring Sources */}
-            <div className="bg-white rounded-lg shadow p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100 mt-4">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Monitoring Sources</h3>
@@ -448,7 +448,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Compliance Calendar mini card */}
-            <div className="bg-white rounded-lg shadow p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100 mt-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Upcoming Effective Dates</h3>

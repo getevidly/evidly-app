@@ -93,7 +93,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
     <div className="border border-gray-200 rounded-xl bg-white overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-3 sm:px-5 py-4 hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
           {icon}
@@ -102,7 +102,7 @@ function CollapsibleSection({ title, icon, badge, defaultOpen = false, children 
         </div>
         {isOpen ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
       </button>
-      {isOpen && <div className="px-5 pb-5 border-t border-gray-100">{children}</div>}
+      {isOpen && <div className="px-3 sm:px-5 pb-4 sm:pb-5 border-t border-gray-100">{children}</div>}
     </div>
   );
 }
@@ -214,11 +214,11 @@ export function ScoringBreakdown() {
       ]} />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <button
             onClick={() => navigate(`/dashboard?location=${locationParam}`)}
-            className="flex items-center gap-1 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors mb-2"
+            className="flex items-center gap-1 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors mb-2 min-h-[44px]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -229,7 +229,7 @@ export function ScoringBreakdown() {
         <div className="flex items-center gap-3">
           {/* EvidLY Score Badge */}
           <div className="text-center">
-            <div className="text-3xl font-bold" style={{ color: tier.hex }}>{scores.overall}</div>
+            <div className="text-xl sm:text-3xl font-bold" style={{ color: tier.hex }}>{scores.overall}</div>
             <div className={`text-xs font-semibold px-2 py-0.5 rounded-full mt-1 ${
               tier.color === 'green' ? 'bg-green-100 text-green-800' :
               tier.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
@@ -276,7 +276,7 @@ export function ScoringBreakdown() {
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 py-2.5 px-3 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="flex items-center gap-2 sm:gap-3 py-2.5 px-2 sm:px-3 rounded-lg hover:bg-gray-50 transition-colors flex-wrap"
                       style={{ borderBottom: idx < items.length - 1 ? '1px solid #f1f5f9' : 'none' }}
                     >
                       <StatusIcon status={item.status} />
@@ -307,7 +307,7 @@ export function ScoringBreakdown() {
       </div>
 
       {/* ─── Section 2: Jurisdiction Score ─── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <Shield className="w-5 h-5 text-[#1e4d6b]" />
           Jurisdiction Score — {jurisdictionResult.countyName}
@@ -316,7 +316,7 @@ export function ScoringBreakdown() {
         <div className="flex items-start gap-8 flex-wrap">
           <JurisdictionScoreDisplay result={jurisdictionResult} />
 
-          <div className="flex-1 min-w-[300px]">
+          <div className="flex-1 min-w-0 sm:min-w-[300px]">
             {/* Deduction Summary */}
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <div className="text-sm text-gray-600">
@@ -331,9 +331,9 @@ export function ScoringBreakdown() {
             {jurisdictionResult.violations.length > 0 ? (
               <div className="space-y-2">
                 {jurisdictionResult.violations.map((v, idx) => (
-                  <div key={idx} className="flex items-center gap-3 py-2 px-3 bg-red-50 rounded-lg border border-red-100">
+                  <div key={idx} className="flex items-center gap-2 sm:gap-3 py-2 px-2 sm:px-3 bg-red-50 rounded-lg border border-red-100 flex-wrap">
                     <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-gray-800">{v.label}</div>
                       <div className="text-xs text-gray-500">{v.calCodeSection}</div>
                     </div>
@@ -350,7 +350,7 @@ export function ScoringBreakdown() {
       </div>
 
       {/* ─── Section 3: What Would Hurt Your Grade ─── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <AlertTriangle className="w-5 h-5 text-red-500" />
           What Would Hurt Your Grade
@@ -365,9 +365,9 @@ export function ScoringBreakdown() {
               const gradeWithout = countyProfile.getGrade(scoreWithout, false);
               const gradeImproved = gradeWithout.label !== jurisdictionResult.grade.label;
               return (
-                <div key={idx} className="flex items-center gap-3 py-3 px-4 rounded-lg border border-gray-100 hover:bg-gray-50">
+                <div key={idx} className="flex items-center gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-lg border border-gray-100 hover:bg-gray-50 flex-wrap">
                   <div className="text-lg font-bold text-gray-300 w-6 text-center">{idx + 1}</div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-gray-800">{v.label}</div>
                     <div className="text-xs text-gray-500">{v.calCodeSection}</div>
                   </div>
@@ -388,7 +388,7 @@ export function ScoringBreakdown() {
       </div>
 
       {/* ─── Section 4: Quick Wins ─── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
           <Zap className="w-5 h-5 text-[#d4af37]" />
           Quick Wins
@@ -400,9 +400,9 @@ export function ScoringBreakdown() {
             {quickWins.map((item, idx) => {
               const effortInfo = EFFORT_LABELS[item.effort];
               return (
-                <div key={idx} className="flex items-center gap-3 py-3 px-4 rounded-lg border border-gray-100 hover:bg-gray-50">
+                <div key={idx} className="flex items-center gap-2 sm:gap-3 py-3 px-3 sm:px-4 rounded-lg border border-gray-100 hover:bg-gray-50 flex-wrap">
                   <StatusIcon status={item.status} />
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-gray-800">{item.label}</div>
                     {item.mapping && (
                       <div className="text-xs text-gray-500">{item.mapping.calCodeSection}</div>
@@ -441,8 +441,8 @@ export function ScoringBreakdown() {
       </div>
 
       {/* ─── Section 5: Historical Trend ─── */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-[#1e4d6b]" />
             Score Trend
@@ -452,7 +452,7 @@ export function ScoringBreakdown() {
               <button
                 key={range}
                 onClick={() => setTrendRange(range)}
-                className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors ${
+                className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
                   trendRange === range
                     ? 'bg-[#1e4d6b] text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

@@ -749,7 +749,7 @@ export function Calendar() {
             const shiftStart = activeShifts.find(s => parseInt(s.startTime.split(':')[0]) === hour);
             if (shiftStart) {
               elements.push(
-                <div key={`shift-${hour}`} style={{ display: 'flex', alignItems: 'center', padding: '6px 12px 6px 80px', gap: '10px' }}>
+                <div key={`shift-${hour}`} className="pl-[60px] sm:pl-[80px]" style={{ display: 'flex', alignItems: 'center', paddingTop: '6px', paddingRight: '12px', paddingBottom: '6px', gap: '10px' }}>
                   <div style={{ fontSize: '11px', fontWeight: 700, color: '#d4af37', whiteSpace: 'nowrap', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {shiftStart.name} Shift
                   </div>
@@ -772,7 +772,7 @@ export function Calendar() {
 
             elements.push(
               <div key={hour} style={{ display: 'flex', borderBottom: '1px solid #f3f4f6', minHeight: '64px', backgroundColor: isOutside ? '#f3f4f6' : 'transparent' }}>
-                <div style={{ width: '80px', padding: '8px 12px', textAlign: 'right', fontSize: '12px', color: isOutside ? '#c9cdd2' : '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
+                <div className="w-[56px] sm:w-[80px]" style={{ padding: '8px 6px', textAlign: 'right', fontSize: '12px', color: isOutside ? '#c9cdd2' : '#9ca3af', fontWeight: 500, fontFamily: "'DM Sans', sans-serif", flexShrink: 0 }}>
                   {hourLabel(hour)}
                 </div>
                 <div style={{ flex: 1, padding: '4px 8px', borderLeft: '1px solid #e5e7eb', opacity: isOutside ? 0.5 : 1 }}>
@@ -785,6 +785,7 @@ export function Calendar() {
                         style={{
                           display: 'flex',
                           alignItems: 'center',
+                          flexWrap: 'wrap',
                           gap: '12px',
                           padding: '8px 12px',
                           borderRadius: '8px',
@@ -849,12 +850,12 @@ export function Calendar() {
       >
         <div
           onClick={(e) => e.stopPropagation()}
+          className="w-[95vw] sm:w-full"
           style={{
             backgroundColor: 'white',
             borderRadius: '16px',
             boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
             maxWidth: '440px',
-            width: '100%',
             overflow: 'hidden',
             fontFamily: "'DM Sans', sans-serif",
           }}
@@ -907,7 +908,7 @@ export function Calendar() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563', flexWrap: 'wrap' }}>
                 <Clock size={16} color="#6b7280" />
                 <span>{selectedEvent.time}{selectedEvent.endTime ? ` – ${selectedEvent.endTime}` : ''}</span>
                 <span style={{ color: '#d1d5db' }}>|</span>
@@ -969,7 +970,7 @@ export function Calendar() {
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'right 10px center',
-    minWidth: '150px',
+    minWidth: 0,
   };
 
   // ── Main Render ──
@@ -977,7 +978,7 @@ export function Calendar() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Calendar' }]} />
 
-      <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>Calendar</h1>
@@ -1014,7 +1015,7 @@ export function Calendar() {
             >
               <ChevronRight size={18} color="#374151" />
             </button>
-            <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0, fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
+            <h2 className="text-sm sm:text-lg" style={{ fontWeight: 700, color: '#111827', margin: 0, fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' }}>
               {headerTitle()}
             </h2>
           </div>
@@ -1044,7 +1045,7 @@ export function Calendar() {
                   key={v}
                   onClick={() => setView(v)}
                   style={{
-                    padding: '8px 16px', fontSize: '13px', fontWeight: 600,
+                    padding: '8px 12px', fontSize: '13px', fontWeight: 600,
                     fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
                     backgroundColor: view === v ? '#1e4d6b' : 'white',
                     color: view === v ? 'white' : '#4b5563',
@@ -1062,6 +1063,7 @@ export function Calendar() {
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               style={selectStyle}
+              className="w-full sm:w-auto sm:min-w-[150px]"
             >
               <option value="all">All Types</option>
               {eventTypes.map(t => (
@@ -1074,6 +1076,7 @@ export function Calendar() {
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
               style={selectStyle}
+              className="w-full sm:w-auto sm:min-w-[150px]"
             >
               <option value="all">All Locations</option>
               {LOCATIONS.map(loc => (
@@ -1093,7 +1096,7 @@ export function Calendar() {
               display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px',
               padding: '8px 14px', borderRadius: '8px', backgroundColor: '#eef4f8',
               border: '1px solid #b8d4e8', fontSize: '13px', color: '#1e4d6b',
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 500, flexWrap: 'wrap',
             }}>
               <Clock size={14} />
               <span><strong>{locationFilter}</strong>: {openDays} · {formatTime24to12(locH.openTime)} – {formatTime24to12(locH.closeTime)}</span>
@@ -1102,7 +1105,7 @@ export function Calendar() {
         })()}
 
         {/* Content area: Calendar + Sidebar */}
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+        <div className="flex flex-col lg:flex-row" style={{ gap: '24px', alignItems: 'flex-start' }}>
           {/* Calendar */}
           <div style={{ flex: 1, minWidth: 0 }}>
             {loading ? (
@@ -1119,7 +1122,7 @@ export function Calendar() {
           </div>
 
           {/* Sidebar */}
-          <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="w-full lg:w-[280px]" style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Legend */}
             <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>

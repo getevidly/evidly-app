@@ -504,7 +504,7 @@ export function HACCP() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">HACCP Management</h1>
             <p className="text-sm text-gray-600 mt-1">
@@ -527,44 +527,44 @@ export function HACCP() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Shield className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Active Plans</span>
             </div>
-            <p className="text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
+            <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Activity className="h-4 w-4" style={{ color: overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444' }} />
               <span className="text-sm text-gray-500 font-medium">Overall Compliance</span>
             </div>
-            <p className={`text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
+            <p className={`text-xl sm:text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">CCPs in Compliance</span>
             </div>
-            <p className="text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
+            <p className="text-xl sm:text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
               <span className="text-sm text-gray-500 font-medium">Open Actions</span>
             </div>
-            <p className={`text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
+            <p className={`text-xl sm:text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-2 border-b border-gray-200">
+        <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           <button
             onClick={() => { setActiveTab('plans'); setSelectedPlan(null); }}
-            className={`px-6 py-3 font-medium ${
+            className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'plans'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -574,7 +574,7 @@ export function HACCP() {
           </button>
           <button
             onClick={() => setActiveTab('monitoring')}
-            className={`px-6 py-3 font-medium ${
+            className={`px-6 py-3 font-medium whitespace-nowrap ${
               activeTab === 'monitoring'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -584,7 +584,7 @@ export function HACCP() {
           </button>
           <button
             onClick={() => setActiveTab('corrective')}
-            className={`px-6 py-3 font-medium flex items-center space-x-2 ${
+            className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
               activeTab === 'corrective'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -620,7 +620,7 @@ export function HACCP() {
                 <div
                   key={plan.id}
                   onClick={() => setSelectedPlan(plan)}
-                  className="bg-white rounded-lg shadow p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
+                  className="bg-white rounded-lg shadow p-4 sm:p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
                   style={{
                     borderLeftColor: planStatus === 'critical' ? '#dc2626' : planStatus === 'review' ? '#d97706' : '#16a34a',
                   }}
@@ -704,15 +704,15 @@ export function HACCP() {
               <span className="text-gray-600">{selectedPlan.name}</span>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <div className="flex items-start justify-between mb-4">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
+              <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
                   <p className="text-gray-600 mt-1">{selectedPlan.description}</p>
                   <p className="text-xs text-gray-400 mt-1">Last reviewed: {new Date(selectedPlan.lastReviewed).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
                 <div className="text-center">
-                  <p className={`text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
+                  <p className={`text-xl sm:text-3xl font-bold text-center ${getPlanCompliance(selectedPlan) === 100 ? 'text-green-600' : 'text-amber-600'}`}>
                     {getPlanCompliance(selectedPlan)}%
                   </p>
                   <p className="text-xs text-gray-500 text-center">Compliance</p>
@@ -725,9 +725,9 @@ export function HACCP() {
               {selectedPlan.ccps.map((ccp) => (
                 <div
                   key={ccp.id}
-                  className={`bg-white rounded-lg shadow p-5 border-l-4 ${ccp.isWithinLimit ? 'border-l-green-500' : 'border-l-red-500'}`}
+                  className={`bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 ${ccp.isWithinLimit ? 'border-l-green-500' : 'border-l-red-500'}`}
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${ccp.isWithinLimit ? 'bg-green-600' : 'bg-red-600'}`}>
                         {ccp.isWithinLimit ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
@@ -804,7 +804,7 @@ export function HACCP() {
                     key={ccp.id}
                     className={`bg-white rounded-lg shadow p-4 border-t-4 ${ccp.isWithinLimit ? 'border-t-green-500' : 'border-t-red-500'}`}
                   >
-                    <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div>
                         <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">{plan.name}</p>
                         <h4 className="text-sm font-bold text-gray-900 mt-0.5">{ccp.ccpNumber}: {ccp.hazard}</h4>
@@ -888,8 +888,8 @@ export function HACCP() {
                     const workflowSteps = ['Identified', 'Assigned', 'In Progress', 'Resolved'];
                     const currentStep = action.status === 'open' ? 0 : action.status === 'in_progress' ? 2 : 3;
                     return (
-                    <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-red-500">
-                      <div className="flex items-start justify-between mb-3">
+                    <div key={action.id} className="bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 border-l-red-500">
+                      <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                         <div className="flex items-start space-x-3">
                           <AlertTriangle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
                           <div>
@@ -904,8 +904,8 @@ export function HACCP() {
                       </div>
 
                       {/* Workflow Progress */}
-                      <div className="mb-4 bg-gray-50 rounded-lg p-3">
-                        <div className="flex items-center justify-between">
+                      <div className="mb-4 bg-gray-50 rounded-lg p-3 overflow-x-auto">
+                        <div className="flex items-center justify-between min-w-[320px]">
                           {workflowSteps.map((step, i) => (
                             <div key={step} className="flex items-center" style={{ flex: i < workflowSteps.length - 1 ? 1 : 'none' }}>
                               <div className="flex flex-col items-center">
@@ -962,8 +962,8 @@ export function HACCP() {
               </h3>
               <div className="space-y-4">
                 {filteredCorrectiveActions.filter((a) => a.status === 'resolved').map((action) => (
-                  <div key={action.id} className="bg-white rounded-lg shadow p-5 border-l-4 border-l-green-500">
-                    <div className="flex items-start justify-between mb-3">
+                  <div key={action.id} className="bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 border-l-green-500">
+                    <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div className="flex items-start space-x-3">
                         <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
@@ -995,7 +995,7 @@ export function HACCP() {
                     <div className="text-sm">
                       <p className="font-medium text-gray-700 mb-1">Action Taken:</p>
                       <p className="text-gray-900">{action.actionTaken}</p>
-                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500 flex-wrap gap-y-1">
                         <span>By: {action.actionBy}</span>
                         {action.verifiedBy && <span>Verified by: {action.verifiedBy}</span>}
                       </div>

@@ -289,15 +289,15 @@ export function Dashboard() {
 
   return (
     <>
-      <div className="bg-[#1e4d6b] text-white px-6 py-3 flex items-center space-x-2 rounded-lg mb-6">
+      <div className="bg-[#1e4d6b] text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center space-x-2 rounded-lg mb-6">
         <Info className="h-5 w-5" />
         <span className="font-medium">{t('dashboard.demoMode')}</span>
       </div>
 
       {/* Inspector Mode Panel */}
       {inspectorMode && inspectorVisit && (
-        <div style={{ backgroundColor: '#fef2f2', border: '2px solid #ef4444', borderRadius: 12, padding: 20, marginBottom: 24 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div style={{ backgroundColor: '#fef2f2', border: '2px solid #ef4444', borderRadius: 12, marginBottom: 24 }} className="p-3 sm:p-5">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 mb-4">
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 40, height: 40, borderRadius: '50%', backgroundColor: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ShieldAlert className="h-6 w-6 text-white" />
@@ -318,7 +318,7 @@ export function Dashboard() {
             </button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }}>
             <div style={{ backgroundColor: 'white', borderRadius: 8, padding: 16, textAlign: 'center', border: '1px solid #fecaca' }}>
               <div style={{ fontSize: 36, fontWeight: 800, color: inspectorVisit.gradeColor, lineHeight: 1 }}>{inspectorVisit.score}</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: inspectorVisit.gradeColor, marginTop: 4 }}>{inspectorVisit.grade}</div>
@@ -368,7 +368,7 @@ export function Dashboard() {
                 <ArrowLeft className="h-4 w-4" />
                 <span>{t('dashboard.backToAllLocations')}</span>
               </button>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-xl sm:text-3xl font-bold text-gray-900 mb-2">
                 {locationInfo.name}
               </h1>
               <p className="text-gray-600">
@@ -382,8 +382,8 @@ export function Dashboard() {
           <>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('dashboard.complianceOverview')}</h2>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-200">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
             <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.complianceScore')}</h3>
             <div className="flex items-center gap-2 flex-wrap">
               {selectedLocation !== 'all' && !inspectorMode && (
@@ -455,7 +455,7 @@ export function Dashboard() {
             />
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', marginTop: '24px', width: '100%' }}>
+          <div className="flex flex-col sm:flex-row gap-4 mt-6 w-full">
               {pillarScores.map((pillar, index) => (
                 <AnimatedPillarBar
                   key={pillar.name}
@@ -501,15 +501,13 @@ export function Dashboard() {
                 {pillarItems.map((item, idx) => (
                   <div
                     key={idx}
+                    className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-1 sm:gap-0"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
                       padding: '12px 0',
                       borderBottom: idx < pillarItems.length - 1 ? '1px solid #f1f5f9' : 'none'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
                       {getStatusIcon(item.status)}
                       <span style={{
                         fontSize: '14px',
@@ -519,7 +517,7 @@ export function Dashboard() {
                         {item.label}
                       </span>
                     </div>
-                    <div style={{ fontSize: '13px', color: '#64748b', width: '100px', textAlign: 'center', flexShrink: 0 }}>
+                    <div className="hidden sm:block" style={{ fontSize: '13px', color: '#64748b', width: '100px', textAlign: 'center', flexShrink: 0 }}>
                       {item.impact}
                     </div>
                     {item.action && item.actionLink ? (
@@ -528,20 +526,18 @@ export function Dashboard() {
                           e.stopPropagation();
                           navigate(item.actionLink);
                         }}
+                        className="w-auto sm:w-[160px] text-right flex-shrink-0"
                         style={{
                           fontSize: '13px',
                           color: '#1e4d6b',
                           cursor: 'pointer',
                           fontWeight: '600',
-                          width: '160px',
-                          textAlign: 'right',
-                          flexShrink: 0
                         }}
                       >
                         {item.action} &rarr;
                       </div>
                     ) : (
-                      <div style={{ width: '160px', flexShrink: 0 }}></div>
+                      <div className="hidden sm:block" style={{ width: '160px', flexShrink: 0 }}></div>
                     )}
                   </div>
                 ))}
@@ -553,9 +549,9 @@ export function Dashboard() {
         {/* End of static top section (Compliance Score + Pillars) */}
 
         {/* Tab Navigation + Location Filter — stays in fixed position */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-6 mt-4">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-3 sm:px-6 mt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="flex overflow-x-auto flex-1 -mx-1">
               {[
                 { id: 'overview', label: t('dashboard.overview') },
                 { id: 'progress', label: t('dashboard.todaysProgress') },
@@ -566,12 +562,12 @@ export function Dashboard() {
                 { id: 'passport', label: t('dashboard.qrPassport') }
               ].map(tab => (
                 <div key={tab.id} onClick={() => setActiveTab(tab.id as any)} style={{
-                  padding: '12px 20px',
+                  padding: '10px 12px',
                   cursor: 'pointer',
                   borderBottom: activeTab === tab.id ? '2px solid #1e4d6b' : '2px solid transparent',
                   color: activeTab === tab.id ? '#1e4d6b' : '#64748b',
                   fontWeight: activeTab === tab.id ? '600' : '400',
-                  fontSize: '15px',
+                  fontSize: '13px',
                   whiteSpace: 'nowrap'
                 }}>
                   {tab.label}
@@ -584,6 +580,7 @@ export function Dashboard() {
                 const val = e.target.value;
                 navigate(val === 'all' ? '/dashboard' : `/dashboard?location=${val}`);
               }}
+              className="w-full sm:w-auto mb-2 sm:mb-0 flex-shrink-0"
               style={{
                 padding: '8px 32px 8px 12px',
                 fontSize: '14px',
@@ -594,8 +591,6 @@ export function Dashboard() {
                 backgroundColor: 'white',
                 cursor: 'pointer',
                 appearance: 'auto',
-                marginLeft: '16px',
-                flexShrink: 0,
               }}
             >
               <option value="all">{t('common.allLocations')}</option>
@@ -607,7 +602,7 @@ export function Dashboard() {
         </div>
 
         {/* Tab Content — only this section changes when switching tabs */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mt-4" style={{ minHeight: '300px' }}>
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-200 mt-4" style={{ minHeight: '300px' }}>
 
           {/* Overview — All Locations */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
@@ -620,13 +615,13 @@ export function Dashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>{t('common.location')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.complianceScore')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.foodSafety')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.fireSafety')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.vendorCompliance')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.trend')}</th>
-                      <th className="px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '150px' }}>{t('common.status')}</th>
+                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>{t('common.location')}</th>
+                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.complianceScore')}</th>
+                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.foodSafety')}</th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.fireSafety')}</th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.vendorCompliance')}</th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.trend')}</th>
+                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '100px' }}>{t('common.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -641,23 +636,23 @@ export function Dashboard() {
                           onClick={() => { navigate(`/dashboard?location=${loc.urlId}`); }}
                           className="hover:bg-gray-50 cursor-pointer"
                         >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style={{ textAlign: 'left' }}>{loc.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style={{ textAlign: 'left' }}>{loc.name}</td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: grade.hex }}>{locScores.overall}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.foodSafety) }}>{locScores.foodSafety}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.fireSafety) }}>{locScores.fireSafety}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.vendorCompliance) }}>{locScores.vendorCompliance}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-semibold" style={{ color: locTrend.color }}>{locTrend.icon} {locTrend.diff}</span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                               grade.color === 'green' ? 'bg-green-100 text-green-800' : grade.color === 'blue' ? 'bg-blue-100 text-blue-800' : grade.color === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800'
                             }`}>
@@ -800,15 +795,17 @@ export function Dashboard() {
                   };
                   const ps = priorityStyles[item.priority];
                   return (
-                    <div key={i} onClick={() => { navigate(item.link) }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', borderRadius: '8px' }} className="hover:bg-gray-50 transition-colors">
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: ps.dot, flexShrink: 0 }}></div>
-                      <div style={{ flex: 1 }}>
+                    <div key={i} onClick={() => { navigate(item.link) }} className="flex flex-wrap sm:flex-nowrap items-start sm:items-center gap-2 sm:gap-3 p-3 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors" style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: ps.dot, flexShrink: 0, marginTop: '6px' }}></div>
+                      <div className="flex-1 min-w-0">
                         <div style={{ fontWeight: '600', fontSize: '15px', color: '#1e293b' }}>{item.title}</div>
                         <div style={{ fontSize: '14px', color: '#64748b' }}>{item.desc}</div>
                       </div>
-                      <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0', marginRight: '4px' }}>{item.pillar}</span>
-                      <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: ps.bg, color: ps.dot, border: `1px solid ${ps.border}` }}>{ps.label}</span>
-                      <span style={{ color: '#94a3b8', fontSize: '18px' }}>&rsaquo;</span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className="hidden sm:inline" style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}>{item.pillar}</span>
+                        <span style={{ fontSize: '11px', fontWeight: '600', padding: '2px 8px', borderRadius: '10px', backgroundColor: ps.bg, color: ps.dot, border: `1px solid ${ps.border}` }}>{ps.label}</span>
+                        <span style={{ color: '#94a3b8', fontSize: '18px' }}>&rsaquo;</span>
+                      </div>
                     </div>
                   );
                 })}
@@ -951,7 +948,7 @@ export function Dashboard() {
               <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px' }}>{t('dashboard.qrCompliancePassport')}</h3>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                 {qrLocations.map((loc, i) => (
-                  <div key={i} style={{ flex: '1 1 280px', background: 'white', borderRadius: '12px', padding: '24px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div key={i} className="p-4 sm:p-6" style={{ flex: '1 1 250px', background: 'white', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                     <div style={{ fontWeight: '600', fontSize: '16px', marginBottom: '4px', color: '#1e293b' }}>{loc.name}</div>
                     <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>{loc.address}</div>
                     <div style={{ margin: '0 auto 16px', display: 'flex', justifyContent: 'center' }}>
@@ -974,8 +971,8 @@ export function Dashboard() {
 
         {/* AI Insights Widget */}
         {['executive', 'management'].includes(userRole) && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fdf8e8' }}>
                   <Brain className="h-5 w-5" style={{ color: '#d4af37' }} />
@@ -1011,8 +1008,8 @@ export function Dashboard() {
                   >
                     <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: sevStyles.dot }} />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-semibold text-gray-900 truncate">{alert.title}</span>
+                      <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                        <span className="text-sm font-semibold text-gray-900 break-words">{alert.title}</span>
                         <span style={{ fontSize: '10px', fontWeight: 600, padding: '1px 6px', borderRadius: '6px', backgroundColor: sevStyles.bg, color: sevStyles.dot, border: `1px solid ${sevStyles.border}`, flexShrink: 0 }}>
                           {sevStyles.label}
                         </span>

@@ -94,7 +94,7 @@ function LiveDashboard({ navigate }: { navigate: (p: string) => void }) {
   return (
     <div>
       {/* Summary Bar */}
-      <div className="flex items-center gap-4 p-3 rounded-xl mb-4" style={{ backgroundColor: LIGHT_BG, border: `1px solid ${BORDER}` }}>
+      <div className="flex items-center gap-4 p-3 rounded-xl mb-4 flex-wrap" style={{ backgroundColor: LIGHT_BG, border: `1px solid ${BORDER}` }}>
         <span className="flex items-center gap-1.5 text-sm font-medium"><span className="w-2 h-2 rounded-full bg-green-400" />{online} sensors online</span>
         <span className="text-gray-300">|</span>
         <span className="flex items-center gap-1.5 text-sm font-medium" style={{ color: violations > 0 ? '#ef4444' : '#22c55e' }}><span className="w-2 h-2 rounded-full" style={{ backgroundColor: violations > 0 ? '#ef4444' : '#22c55e' }} />{violations} violation{violations !== 1 ? 's' : ''}</span>
@@ -167,9 +167,9 @@ function LiveDashboard({ navigate }: { navigate: (p: string) => void }) {
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Sensor</th>
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Frequency</th>
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Duration</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Recovery</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Last Defrost</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Auto-Detect</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Recovery</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Last Defrost</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Auto-Detect</th>
               </tr>
             </thead>
             <tbody>
@@ -178,9 +178,9 @@ function LiveDashboard({ navigate }: { navigate: (p: string) => void }) {
                   <td className="py-2 font-medium text-gray-900">{d.sensorName}</td>
                   <td className="py-2 text-gray-600">{d.frequency}</td>
                   <td className="py-2 text-gray-600">{d.durationMin} min</td>
-                  <td className="py-2 text-gray-600">{d.expectedRecoveryMin} min</td>
-                  <td className="py-2 text-gray-600">{timeAgo(d.lastDefrostAt)} ago</td>
-                  <td className="py-2">
+                  <td className="py-2 text-gray-600 hidden sm:table-cell">{d.expectedRecoveryMin} min</td>
+                  <td className="py-2 text-gray-600 hidden sm:table-cell">{timeAgo(d.lastDefrostAt)} ago</td>
+                  <td className="py-2 hidden sm:table-cell">
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: d.autoDetect ? '#ecfdf5' : '#f3f4f6', color: d.autoDetect ? '#059669' : '#6b7280' }}>
                       {d.autoDetect ? 'AI Enabled' : 'Manual'}
                     </span>
@@ -235,22 +235,23 @@ function LiveDashboard({ navigate }: { navigate: (p: string) => void }) {
 function DeviceManagement({ navigate }: { navigate: (p: string) => void }) {
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
         <p className="text-sm text-gray-500">{iotSensors.length} sensors across {new Set(iotSensors.map(s => s.locationName)).size} locations</p>
-        <button onClick={() => navigate('/sensors/add')} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
+        <button onClick={() => navigate('/sensors/add')} className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-bold text-white min-h-[44px]" style={{ backgroundColor: PRIMARY }}>
           <Plus className="h-4 w-4" /> Add Sensor
         </button>
       </div>
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100" style={{ backgroundColor: LIGHT_BG }}>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Device</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Zone</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5 hidden sm:table-cell">Zone</th>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Reading</th>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Status</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Battery</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Provider</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5 hidden sm:table-cell">Battery</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5 hidden sm:table-cell">Provider</th>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide px-4 py-2.5">Actions</th>
             </tr>
           </thead>
@@ -264,7 +265,7 @@ function DeviceManagement({ navigate }: { navigate: (p: string) => void }) {
                     <div className="text-sm font-medium text-gray-900">{s.name}</div>
                     <div className="text-[10px] text-gray-400">{s.locationName}</div>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-gray-700">{s.zone}</td>
+                  <td className="px-4 py-2.5 text-xs text-gray-700 hidden sm:table-cell">{s.zone}</td>
                   <td className="px-4 py-2.5">
                     {s.status !== 'offline' ? (
                       <span className="text-sm font-bold" style={{ color }}>{s.currentTempF}°F</span>
@@ -278,13 +279,13 @@ function DeviceManagement({ navigate }: { navigate: (p: string) => void }) {
                       {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-4 py-2.5 hidden sm:table-cell">
                     <div className="flex items-center gap-1">
                       {s.batteryPct <= 20 ? <BatteryWarning className="h-3 w-3 text-red-400" /> : <Battery className="h-3 w-3 text-gray-400" />}
                       <span className="text-xs text-gray-500">{s.batteryPct}%</span>
                     </div>
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-4 py-2.5 hidden sm:table-cell">
                     {provider && <span className="px-1.5 py-0.5 rounded text-[10px] font-bold" style={{ backgroundColor: provider.color + '15', color: provider.color }}>{provider.name}</span>}
                   </td>
                   <td className="px-4 py-2.5">
@@ -295,6 +296,7 @@ function DeviceManagement({ navigate }: { navigate: (p: string) => void }) {
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -399,7 +401,7 @@ function AlertConfig() {
     <div>
       {/* Active Alerts */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
           <h3 className="text-sm font-bold text-gray-900">Active Alerts ({activeAlerts.length})</h3>
           {criticalCount > 0 && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-600">{criticalCount} Critical</span>}
         </div>
@@ -424,7 +426,7 @@ function AlertConfig() {
       {/* Threshold Rules */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
         <h3 className="text-sm font-bold text-gray-900 mb-3">Zone Threshold Rules (FDA Standard)</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { zone: 'Walk-in Cooler', max: '41°F', warning: '39°F', icon: '❄️' },
             { zone: 'Walk-in Freezer', max: '0°F', warning: '-3°F', icon: '🧊' },
@@ -473,7 +475,7 @@ function ComplianceImpactTab() {
     <div>
       {/* Before / After */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Before IoT Sensors</div>
           <div className="space-y-2">
             {[
@@ -490,7 +492,7 @@ function ComplianceImpactTab() {
             ))}
           </div>
         </div>
-        <div className="bg-white rounded-xl border-2 p-5" style={{ borderColor: '#22c55e' }}>
+        <div className="bg-white rounded-xl border-2 p-4 sm:p-5" style={{ borderColor: '#22c55e' }}>
           <div className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: '#22c55e' }}>After IoT Sensors</div>
           <div className="space-y-2">
             {[
@@ -519,9 +521,9 @@ function ComplianceImpactTab() {
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Location</th>
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Sensors</th>
                 <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Compliance Rate</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Data Completeness</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Manual Log Reduction</th>
-                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2">Avg Response</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Data Completeness</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Manual Log Reduction</th>
+                <th className="text-left text-[10px] font-semibold text-gray-500 uppercase pb-2 hidden sm:table-cell">Avg Response</th>
               </tr>
             </thead>
             <tbody>
@@ -537,9 +539,9 @@ function ComplianceImpactTab() {
                       <span className="font-bold" style={{ color: loc.tempComplianceRate >= 97 ? '#22c55e' : loc.tempComplianceRate >= 95 ? '#f59e0b' : '#ef4444' }}>{loc.tempComplianceRate}%</span>
                     </div>
                   </td>
-                  <td className="py-2.5 font-bold" style={{ color: loc.dataCompletenessScore >= 95 ? '#22c55e' : '#f59e0b' }}>{loc.dataCompletenessScore}%</td>
-                  <td className="py-2.5 text-green-600 font-bold">{loc.manualLogReduction}% less</td>
-                  <td className="py-2.5 text-gray-600">{loc.avgResponseTimeMin} min</td>
+                  <td className="py-2.5 font-bold hidden sm:table-cell" style={{ color: loc.dataCompletenessScore >= 95 ? '#22c55e' : '#f59e0b' }}>{loc.dataCompletenessScore}%</td>
+                  <td className="py-2.5 text-green-600 font-bold hidden sm:table-cell">{loc.manualLogReduction}% less</td>
+                  <td className="py-2.5 text-gray-600 hidden sm:table-cell">{loc.avgResponseTimeMin} min</td>
                 </tr>
               ))}
             </tbody>
@@ -657,10 +659,10 @@ function PricingTab() {
       {/* Tier Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {tiers.map(tier => (
-          <div key={tier.name} className="bg-white rounded-xl border-2 p-6 text-center" style={{ borderColor: tier.highlight ? GOLD : '#e5e7eb' }}>
+          <div key={tier.name} className="bg-white rounded-xl border-2 p-4 sm:p-6 text-center" style={{ borderColor: tier.highlight ? GOLD : '#e5e7eb' }}>
             {tier.highlight && <div className="text-[10px] font-bold uppercase tracking-wide mb-2" style={{ color: GOLD }}>Most Popular</div>}
             <div className="text-lg font-bold text-gray-900">{tier.name}</div>
-            <div className="text-3xl font-bold mt-2" style={{ color: PRIMARY }}>{tier.price}</div>
+            <div className="text-xl sm:text-3xl font-bold mt-2" style={{ color: PRIMARY }}>{tier.price}</div>
             <div className="text-xs text-gray-400">{tier.period}</div>
             <button onClick={() => toast.info(`${tier.name} plan selection coming soon`)} className="mt-4 w-full py-2 rounded-lg text-sm font-bold text-white" style={{ backgroundColor: tier.highlight ? GOLD : PRIMARY }}>
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
@@ -671,6 +673,7 @@ function PricingTab() {
 
       {/* Feature Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr style={{ backgroundColor: LIGHT_BG }}>
@@ -691,6 +694,7 @@ function PricingTab() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -703,19 +707,19 @@ export function IoTSensorPlatform() {
   const [tab, setTab] = useState<Tab>('live');
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto" style={F}>
+    <div className="px-3 sm:px-6 py-6 max-w-[1400px] mx-auto" style={F}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: PRIMARY }}>
             <Radio className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">IoT Sensor Integration</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">IoT Sensor Integration</h1>
             <p className="text-sm text-gray-500">Hardware-agnostic sensor ingestion &mdash; the central nervous system for all your temperature data</p>
           </div>
         </div>
-        <button onClick={() => navigate('/sensors/add')} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white" style={{ backgroundColor: PRIMARY }}>
+        <button onClick={() => navigate('/sensors/add')} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white min-h-[44px]" style={{ backgroundColor: PRIMARY }}>
           <Plus className="h-4 w-4" /> Add Sensor
         </button>
       </div>

@@ -164,7 +164,7 @@ function CollapsibleSection({
     <div className="border-b border-gray-100 last:border-b-0">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-3 px-3 sm:px-6 py-3 text-left hover:bg-gray-50 transition-colors"
       >
         <span className="text-[#1e4d6b]">{icon}</span>
         <span className="text-sm font-semibold text-gray-800 flex-1">{title}</span>
@@ -175,7 +175,7 @@ function CollapsibleSection({
           <ChevronDown className="w-4 h-4 text-gray-400" />
         )}
       </button>
-      {open && <div className="px-6 pb-4">{children}</div>}
+      {open && <div className="px-3 sm:px-6 pb-4">{children}</div>}
     </div>
   );
 }
@@ -224,15 +224,15 @@ function AddLocationDialog({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-100">
+      <div className="bg-white rounded-xl shadow-2xl w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-900">Add Location</h2>
           <p className="text-sm text-gray-500 mt-1">
             Enter an address to auto-detect jurisdiction requirements
           </p>
         </div>
 
-        <div className="p-6 space-y-4">
+        <div className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Location Name</label>
             <input
@@ -253,7 +253,7 @@ function AddLocationDialog({
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
             />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
               <input
@@ -375,7 +375,7 @@ function AddLocationDialog({
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-100 flex justify-end gap-3">
+        <div className="p-4 sm:p-6 border-t border-gray-100 flex justify-end gap-3">
           <button
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
@@ -522,7 +522,7 @@ export function JurisdictionSettings() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="px-3 sm:px-6 py-6 max-w-5xl mx-auto">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -532,16 +532,16 @@ export function JurisdictionSettings() {
       />
 
       {/* Header */}
-      <div className="mt-4 mb-6 flex items-start justify-between">
+      <div className="mt-4 mb-6 flex items-start justify-between flex-wrap gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jurisdiction Configuration</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Jurisdiction Configuration</h1>
           <p className="text-sm text-gray-600 mt-1">
             Auto-detect and configure compliance requirements based on location
           </p>
         </div>
         <button
           onClick={() => setShowAddDialog(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-lg min-h-[44px]"
           style={{ backgroundColor: '#1e4d6b' }}
           onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
           onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
@@ -568,10 +568,10 @@ export function JurisdictionSettings() {
 
       {/* Key California Regulations Summary */}
       <div className="bg-white rounded-lg shadow border border-gray-100 mb-6 overflow-hidden">
-        <div className="p-5 border-b border-gray-100">
+        <div className="p-4 sm:p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-[#1e4d6b]" />
-            <h2 className="text-lg font-bold text-gray-900">California Regulations — Auto-Applied</h2>
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">California Regulations — Auto-Applied</h2>
           </div>
           <p className="text-sm text-gray-500 mt-1">
             These regulations are automatically applied to all California locations
@@ -582,7 +582,7 @@ export function JurisdictionSettings() {
           {keyRegulations.map(reg => (
             <div
               key={reg.law.id}
-              className="px-5 py-3 flex items-center gap-4"
+              className="px-3 sm:px-5 py-3 flex items-center gap-4 flex-wrap"
             >
               {/* Status indicator */}
               <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
@@ -629,7 +629,7 @@ export function JurisdictionSettings() {
           ))}
 
           {/* Additional auto-applied items not in CALIFORNIA_STATE_LAWS */}
-          <div className="px-5 py-3 flex items-center gap-4">
+          <div className="px-3 sm:px-5 py-3 flex items-center gap-4 flex-wrap">
             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-green-500" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
@@ -643,7 +643,7 @@ export function JurisdictionSettings() {
             <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 whitespace-nowrap">Active</span>
           </div>
 
-          <div className="px-5 py-3 flex items-center gap-4">
+          <div className="px-3 sm:px-5 py-3 flex items-center gap-4 flex-wrap">
             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-green-500" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
@@ -662,7 +662,7 @@ export function JurisdictionSettings() {
       {/* Added Locations (from Add Location dialog) */}
       {addedLocations.map(config => (
         <div key={config.locationId} className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden mb-4">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="w-5 h-5 text-[#1e4d6b]" />
               <span className="text-lg font-semibold text-gray-900">{config.locationName}</span>
@@ -731,7 +731,7 @@ export function JurisdictionSettings() {
             className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden mb-4"
           >
             {/* Card Header */}
-            <div className="p-6 flex items-center justify-between">
+            <div className="p-4 sm:p-6 flex items-center justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-[#1e4d6b]" />
@@ -1301,7 +1301,7 @@ export function JurisdictionSettings() {
                 </CollapsibleSection>
 
                 {/* Override Controls */}
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3">
+                <div className="px-3 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3 flex-wrap">
                   <button
                     onClick={() =>
                       toast.info('Override available for Management roles')
@@ -1337,10 +1337,10 @@ export function JurisdictionSettings() {
           return (
             <div
               key={locationGap.locationName}
-              className="bg-white rounded-lg shadow border border-gray-100 p-6 mb-4"
+              className="bg-white rounded-lg shadow border border-gray-100 p-4 sm:p-6 mb-4"
             >
               {/* Summary */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                 <h3 className="text-sm font-semibold text-gray-900">
                   {locationGap.locationName}
                 </h3>
@@ -1405,7 +1405,7 @@ export function JurisdictionSettings() {
               return (
                 <div
                   key={law.id}
-                  className={`bg-white rounded-lg shadow border-l-4 ${urgencyBorder} p-5`}
+                  className={`bg-white rounded-lg shadow border-l-4 ${urgencyBorder} p-4 sm:p-5`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">

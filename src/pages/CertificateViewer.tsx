@@ -39,9 +39,9 @@ function CertificateCard({ cert, onView }: { cert: TrainingCertificate; onView: 
       onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
       {/* Gold Top Stripe */}
       <div style={{ height: 4, background: '#d4af37' }} />
-      <div style={{ padding: 20 }}>
+      <div style={{ padding: 16 }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 44, height: 44, borderRadius: 22, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Award size={22} color="#d4af37" />
@@ -110,17 +110,17 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}
       onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 12, width: 600, maxWidth: '100%', maxHeight: '90vh', overflow: 'auto', padding: 0 }}
+      <div style={{ background: '#fff', borderRadius: 12, width: '95vw', maxWidth: 600, maxHeight: '90vh', overflow: 'auto', padding: 0 }}
         onClick={e => e.stopPropagation()}>
         {/* Certificate Render */}
-        <div style={{ padding: '40px 32px', textAlign: 'center', background: 'linear-gradient(180deg, #fffbeb 0%, #fff 40%)' }}>
-          <div style={{ border: '3px solid #d4af37', borderRadius: 12, padding: 32, background: '#fff' }}>
+        <div style={{ padding: '24px 16px', textAlign: 'center', background: 'linear-gradient(180deg, #fffbeb 0%, #fff 40%)' }}>
+          <div style={{ border: '3px solid #d4af37', borderRadius: 12, padding: '20px 16px', background: '#fff' }}>
             <Award size={48} color="#d4af37" style={{ marginBottom: 12 }} />
-            <h2 style={{ fontSize: 26, fontWeight: 700, color: '#1e4d6b', margin: '0 0 4px' }}>Certificate of Completion</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', margin: '0 0 4px' }}>Certificate of Completion</h2>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 24px' }}>EvidLY Training & Certification Platform</p>
 
             <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 4px' }}>This certifies that</p>
-            <p style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>{cert.employeeName}</p>
+            <p style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>{cert.employeeName}</p>
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 20px' }}>{cert.locationName}</p>
             <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 4px' }}>has successfully completed</p>
             <p style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', margin: '0 0 4px' }}>{cert.courseTitle}</p>
@@ -128,7 +128,7 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
               Score: {cert.scorePercent}% {course && `• ${course.moduleCount} modules • ${course.estimatedDurationMin} min`}
             </p>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: 32, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 16, paddingTop: 16, borderTop: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
               <div>
                 <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 2 }}>Certificate #</div>
                 <code style={{ fontSize: 13, fontWeight: 600 }}>{cert.certificateNumber}</code>
@@ -147,7 +147,7 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
           </div>
         </div>
         {/* Modal Actions */}
-        <div style={{ padding: '16px 32px 24px', display: 'flex', gap: 12, justifyContent: 'center', borderTop: '1px solid #e5e7eb' }}>
+        <div style={{ padding: '16px 16px 24px', display: 'flex', gap: 12, justifyContent: 'center', borderTop: '1px solid #e5e7eb', flexWrap: 'wrap' }}>
           <button onClick={() => toast.success(`Downloaded ${cert.certificateNumber}`)}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
             <Download size={16} /> Download PDF
@@ -231,7 +231,7 @@ export function CertificateViewer() {
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
           <Search size={16} style={{ position: 'absolute', left: 10, top: 12, color: '#9ca3af' }} />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Search by name, course, or certificate number..."
@@ -258,7 +258,7 @@ export function CertificateViewer() {
       </div>
 
       {/* Certificate Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: 16 }}>
         {filtered.map(cert => (
           <CertificateCard key={cert.id} cert={cert} onView={() => setViewCert(cert)} />
         ))}

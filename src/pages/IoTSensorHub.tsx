@@ -261,7 +261,7 @@ export function IoTSensorHub() {
     <div className="min-h-screen bg-gray-50" style={F}>
       {/* ── Header ────────────────────────────────────────────────────── */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-6 h-16 flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-4">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
               <Thermometer className="h-5 w-5 text-white" />
@@ -269,12 +269,12 @@ export function IoTSensorHub() {
             <div className="flex items-center gap-1.5">
               <span className="text-lg font-bold text-gray-900">Evid</span>
               <span className="text-lg font-bold" style={{ color: '#d4af37' }}>LY</span>
-              <span className="text-gray-400 mx-1">|</span>
-              <span className="text-lg font-semibold text-gray-700">IoT Sensor Hub</span>
+              <span className="text-gray-400 mx-1 hidden sm:inline">|</span>
+              <span className="text-lg font-semibold text-gray-700 hidden sm:inline">IoT Sensor Hub</span>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-200">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-200">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span className="text-sm font-medium text-green-700">{onlineCount} sensors online</span>
             </div>
@@ -284,17 +284,17 @@ export function IoTSensorHub() {
                 <span className="text-sm font-medium text-red-700">{criticalAlerts} critical</span>
               </div>
             )}
-            <button onClick={() => setShowWizard(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
-              <Plus className="h-4 w-4" /> Add Sensor
+            <button onClick={() => setShowWizard(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-white min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+              <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Add Sensor</span>
             </button>
-            <button onClick={() => toast.info('Sign out clicked (demo)')} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+            <button onClick={() => toast.info('Sign out clicked (demo)')} className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors">
               <LogOut className="h-4 w-4" /> Sign Out
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="max-w-[1400px] mx-auto px-6">
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-6">
           <div className="flex gap-1 overflow-x-auto">
             {TABS.map(t => {
               const active = activeTab === t.key;
@@ -309,7 +309,7 @@ export function IoTSensorHub() {
       </header>
 
       {/* ── Content ──────────────────────────────────────────────────── */}
-      <main className="max-w-[1400px] mx-auto px-6 py-6">
+      <main className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6">
         {deviceDetailId ? (
           <DeviceDetailView sensorId={deviceDetailId} onBack={() => setDeviceDetailId(null)} />
         ) : (
@@ -364,7 +364,7 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
         ))}
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Sensor grid */}
         <div className={`grid gap-4 ${selectedSensor ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 flex-1' : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full'}`}>
           {sensors.map(sensor => {
@@ -390,7 +390,7 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
                 {/* Temperature display */}
                 {sensor.status !== 'offline' ? (
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-3xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
+                    <span className="text-xl sm:text-3xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
                     <span className="text-sm text-gray-400">°F</span>
                     {sensor.currentHumidity !== null && (
                       <span className="text-sm text-gray-500 ml-auto">{sensor.currentHumidity}% RH</span>
@@ -421,7 +421,7 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
 
         {/* Selected sensor detail panel */}
         {selected && (
-          <div className="w-80 flex-shrink-0 bg-white rounded-xl border border-gray-200 p-5 sticky top-24 h-fit">
+          <div className="w-full lg:w-80 flex-shrink-0 bg-white rounded-xl border border-gray-200 p-4 sm:p-5 sticky top-24 h-fit">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900">{selected.name}</h3>
               <button onClick={() => setSelectedSensor(null)} className="text-gray-400 hover:text-gray-600">
@@ -473,7 +473,7 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
     <div>
       {/* Filters */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4 flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
         </div>
@@ -504,15 +504,15 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
             <thead>
               <tr className="border-b border-gray-200" style={{ backgroundColor: '#f8fafc' }}>
                 <th className="text-left px-4 py-3 font-semibold text-gray-700">Sensor</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Provider</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">MAC Address</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Location</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Zone</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Provider</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">MAC Address</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Location</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Zone</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Temp</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Battery</th>
-                <th className="text-center px-4 py-3 font-semibold text-gray-700">Signal</th>
+                <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Battery</th>
+                <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">Signal</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Last Seen</th>
+                <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Last Seen</th>
                 <th className="text-center px-4 py-3 font-semibold text-gray-700">Actions</th>
               </tr>
             </thead>
@@ -525,15 +525,15 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
                       <div className="font-medium text-gray-900">{sensor.name}</div>
                       <div className="text-xs text-gray-400">{sensor.firmware}</div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="flex items-center gap-2">
                         <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: provider?.color }} />
                         <span className="text-gray-700">{provider?.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-500">{sensor.macAddress}</td>
-                    <td className="px-4 py-3 text-gray-700">{sensor.locationName}</td>
-                    <td className="px-4 py-3"><span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>{sensor.zone}</span></td>
+                    <td className="px-4 py-3 font-mono text-xs text-gray-500 hidden lg:table-cell">{sensor.macAddress}</td>
+                    <td className="px-4 py-3 text-gray-700 hidden md:table-cell">{sensor.locationName}</td>
+                    <td className="px-4 py-3 hidden sm:table-cell"><span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>{sensor.zone}</span></td>
                     <td className="px-4 py-3 text-center">
                       {sensor.status !== 'offline' ? (
                         <span className="font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}°F</span>
@@ -541,15 +541,15 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
                         <span className="text-gray-400">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3"><div className="flex justify-center"><BatteryBar pct={sensor.batteryPct} /></div></td>
-                    <td className="px-4 py-3"><div className="flex justify-center">{sensor.signalRssi !== 0 ? <SignalBars rssi={sensor.signalRssi} /> : <span className="text-gray-400">—</span>}</div></td>
+                    <td className="px-4 py-3 hidden md:table-cell"><div className="flex justify-center"><BatteryBar pct={sensor.batteryPct} /></div></td>
+                    <td className="px-4 py-3 hidden lg:table-cell"><div className="flex justify-center">{sensor.signalRssi !== 0 ? <SignalBars rssi={sensor.signalRssi} /> : <span className="text-gray-400">—</span>}</div></td>
                     <td className="px-4 py-3 text-center">
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: statusColor(sensor.status) + '20', color: statusColor(sensor.status) }}>
                         <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: statusColor(sensor.status) }} />
                         {sensor.status.charAt(0).toUpperCase() + sensor.status.slice(1)}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">{timeAgo(sensor.lastSeenAt)}</td>
+                    <td className="px-4 py-3 text-xs text-gray-500 hidden sm:table-cell">{timeAgo(sensor.lastSeenAt)}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="flex items-center justify-center gap-1">
                         <button onClick={() => onViewDetail(sensor.id)} className="text-gray-400 hover:text-[#1e4d6b]" title="View detail"><Eye className="h-4 w-4" /></button>
@@ -583,10 +583,10 @@ function AlertsTab() {
   });
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Alerts list */}
       <div className="flex-1">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <h2 className="text-lg font-bold text-gray-900">Active Alerts ({iotSensorAlerts.filter(a => !a.acknowledged).length})</h2>
           <button onClick={() => toast.success('All alerts acknowledged (demo)')} className="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
             Acknowledge All
@@ -626,8 +626,8 @@ function AlertsTab() {
       </div>
 
       {/* Threshold configuration */}
-      <div className="w-80 flex-shrink-0">
-        <div className="bg-white rounded-xl border border-gray-200 p-5 sticky top-24">
+      <div className="w-full lg:w-80 flex-shrink-0">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 sticky top-24">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Alert Thresholds</h3>
           <div className="space-y-4">
             {[
@@ -670,8 +670,8 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
         {iotSensorProviders.map(provider => {
           const config = iotSensorConfigs.find(c => c.providerSlug === provider.slug);
           return (
-            <div key={provider.id} className="bg-white rounded-xl border border-gray-200 p-5">
-              <div className="flex items-start justify-between mb-3">
+            <div key={provider.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: provider.color + '20' }}>
                     <Thermometer className="h-5 w-5" style={{ color: provider.color }} />
@@ -737,17 +737,18 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
       {/* Ingestion log */}
       <h3 className="text-lg font-bold text-gray-900 mb-3">Ingestion Log</h3>
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200" style={{ backgroundColor: '#f8fafc' }}>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">Time</th>
               <th className="text-left px-4 py-3 font-semibold text-gray-700">Provider</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Method</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Sensors</th>
+              <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Sensors</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Readings</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Duration</th>
+              <th className="text-center px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Duration</th>
               <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Details</th>
+              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Details</th>
             </tr>
           </thead>
           <tbody>
@@ -756,15 +757,16 @@ function IntegrationsTab({ onOpenWizard }: { onOpenWizard: () => void }) {
                 <td className="px-4 py-3 text-xs text-gray-500">{formatTime(entry.timestamp)}</td>
                 <td className="px-4 py-3 font-medium text-gray-700">{entry.provider}</td>
                 <td className="px-4 py-3 text-center">{methodBadge(entry.method)}</td>
-                <td className="px-4 py-3 text-center text-gray-700">{entry.sensorCount}</td>
+                <td className="px-4 py-3 text-center text-gray-700 hidden sm:table-cell">{entry.sensorCount}</td>
                 <td className="px-4 py-3 text-center text-gray-700">{entry.readingCount}</td>
-                <td className="px-4 py-3 text-center text-gray-500">{entry.durationMs}ms</td>
+                <td className="px-4 py-3 text-center text-gray-500 hidden sm:table-cell">{entry.durationMs}ms</td>
                 <td className="px-4 py-3 text-center">{logStatusBadge(entry.status)}</td>
-                <td className="px-4 py-3 text-xs text-gray-400 max-w-[200px] truncate">{entry.errorMessage || '—'}</td>
+                <td className="px-4 py-3 text-xs text-gray-400 max-w-[200px] truncate hidden md:table-cell">{entry.errorMessage || '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
@@ -811,7 +813,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Temperature trend chart */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Cold Storage Temperature Trend</h3>
           <svg width="100%" height="200" viewBox="0 0 500 200" preserveAspectRatio="xMidYMid meet">
             {/* Grid lines */}
@@ -849,7 +851,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         </div>
 
         {/* Compliance donut + anomaly count */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Cold Storage Compliance</h3>
           <div className="flex items-center justify-around">
             <DonutChart value={data.coolerInRange} total={data.coolerTotal} color="#22c55e" label="In Range" />
@@ -862,7 +864,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         </div>
 
         {/* Readings by provider */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Readings by Provider</h3>
           <div className="space-y-3">
             {providerEntries.map(([name, count]) => {
@@ -882,7 +884,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         </div>
 
         {/* Ingestion methods breakdown */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Ingestion Methods</h3>
           <div className="space-y-4">
             {[
@@ -927,11 +929,11 @@ function SettingsTab() {
 
       <div className="space-y-6">
         {/* Webhook URL */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-1">Webhook Ingestion Endpoint</h3>
           <p className="text-xs text-gray-500 mb-3">Configure your sensor platforms to push data to this URL. Include your API key in the X-API-Key header.</p>
-          <div className="flex items-center gap-2">
-            <code className="flex-1 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm font-mono text-gray-700 truncate">{webhookUrl}</code>
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <code className="flex-1 min-w-0 px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-sm font-mono text-gray-700 truncate">{webhookUrl}</code>
             <button onClick={() => { navigator.clipboard.writeText(webhookUrl).then(() => toast.success('Webhook URL copied to clipboard')); }} className="px-3 py-2 rounded-lg border border-gray-200 hover:bg-gray-50">
               <Copy className="h-4 w-4 text-gray-500" />
             </button>
@@ -954,9 +956,9 @@ Content-Type: application/json
         </div>
 
         {/* Global thresholds */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-3">Default Alert Thresholds</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[
               { label: 'High Temp (°F)', key: 'highTempF' as const },
               { label: 'Low Temp (°F)', key: 'lowTempF' as const },
@@ -974,7 +976,7 @@ Content-Type: application/json
         </div>
 
         {/* Auto-log + notifications */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-3">Compliance & Notifications</h3>
           <div className="space-y-3">
             {[
@@ -994,7 +996,7 @@ Content-Type: application/json
         </div>
 
         {/* Data retention + export */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-3">Data Management</h3>
           <div className="flex items-center gap-4 mb-4">
             <div className="flex-1">
@@ -1002,7 +1004,7 @@ Content-Type: application/json
               <input type="number" value={globalConfig.dataRetentionDays} onChange={e => setGlobalConfig(prev => ({ ...prev, dataRetentionDays: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <button onClick={() => toast.info('Export sensor data as CSV (demo)')} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50 text-gray-700">
               <Download className="h-4 w-4" /> Export CSV
             </button>
@@ -1078,9 +1080,9 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
+      <div className="bg-white rounded-2xl shadow-2xl w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Add New Sensor Integration</h2>
             <p className="text-xs text-gray-500">Step {step} of 5 — {WIZARD_STEPS[step - 1].label}</p>
@@ -1089,7 +1091,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Step indicators */}
-        <div className="px-6 py-3 border-b border-gray-100 flex items-center gap-2">
+        <div className="px-4 sm:px-6 py-3 border-b border-gray-100 flex items-center gap-2 overflow-x-auto">
           {WIZARD_STEPS.map(s => (
             <div key={s.step} className="flex items-center gap-2 flex-1">
               <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${s.step < step ? 'bg-green-500 text-white' : s.step === step ? 'text-white' : 'bg-gray-200 text-gray-500'}`} style={s.step === step ? { backgroundColor: '#1e4d6b' } : undefined}>
@@ -1102,13 +1104,13 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
           {/* Step 1: Select Brand */}
           {step === 1 && (
             <div>
               <h3 className="text-sm font-bold text-gray-900 mb-1">Select Sensor Brand</h3>
               <p className="text-xs text-gray-500 mb-4">Choose the sensor platform you want to connect to EvidLY.</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {iotSensorProviders.map(p => (
                   <button key={p.slug} onClick={() => { setSelectedProvider(p.slug); setAuthMethod(p.authType as any); }} className={`p-4 rounded-xl border text-left transition-all ${selectedProvider === p.slug ? 'border-[#1e4d6b] ring-2 ring-[#1e4d6b]/20 bg-[#eef4f8]' : 'border-gray-200 hover:border-gray-300'}`}>
                     <div className="flex items-center gap-3 mb-2">
@@ -1229,7 +1231,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
               <h3 className="text-sm font-bold text-gray-900 mb-1">Configure Compliance Thresholds</h3>
               <p className="text-xs text-gray-500 mb-4">Set temperature and humidity limits based on your kitchen zone and jurisdiction requirements.</p>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="text-xs font-medium text-gray-600 mb-1 block">Kitchen Zone</label>
                   <select value={zone} onChange={e => { setZone(e.target.value); const z = zoneThresholds[e.target.value]; if (z) setThresholds(prev => ({ ...prev, highTempF: z.highTempF, lowTempF: z.lowTempF })); }} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm">
@@ -1277,7 +1279,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-gray-600 mb-1 block">High Temp Alert (°F)</label>
                   <input type="number" value={thresholds.highTempF} onChange={e => setThresholds(prev => ({ ...prev, highTempF: Number(e.target.value) }))} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20" />
@@ -1332,7 +1334,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                 <div>
                   <label className="text-xs font-medium text-gray-600 mb-1 block">Escalation Timer (minutes)</label>
                   <p className="text-xs text-gray-400 mb-2">If alert is not acknowledged within this time, escalate to secondary contacts.</p>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     {[5, 10, 15, 30, 60].map(m => (
                       <button key={m} onClick={() => setEscalationMinutes(m)} className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${escalationMinutes === m ? 'border-[#1e4d6b] bg-[#eef4f8] text-[#1e4d6b]' : 'border-gray-200 text-gray-500'}`}>
                         {m} min
@@ -1359,7 +1361,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
               <p className="text-xs text-gray-500 mb-4">How often should EvidLY pull readings from this sensor platform?</p>
 
               <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {[
                     { min: 1, label: '1 min', desc: 'Maximum frequency', note: 'SensorPush rate limit: 1/min' },
                     { min: 5, label: '5 min', desc: 'Recommended', note: 'Good balance of freshness and API usage' },
@@ -1412,7 +1414,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex items-center justify-between">
           <button onClick={() => step > 1 ? setStep((step - 1) as WizardStep) : onClose()} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 border border-gray-200">
             <ChevronLeft className="h-4 w-4" /> {step === 1 ? 'Cancel' : 'Back'}
           </button>
@@ -1498,11 +1500,11 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
   return (
     <div>
       {/* Back button + sensor name */}
-      <div className="flex items-center gap-4 mb-6">
-        <button onClick={onBack} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 border border-gray-200">
+      <div className="flex items-center gap-4 mb-6 flex-wrap">
+        <button onClick={onBack} className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 border border-gray-200 min-h-[44px]">
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: statusColor(sensor.status) }} />
           <h1 className="text-xl font-bold text-gray-900">{sensor.name}</h1>
           <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>{sensor.zone}</span>
@@ -1514,12 +1516,12 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
         {/* LEFT: Current reading + chart */}
         <div className="lg:col-span-2 space-y-6">
           {/* Current reading */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-start justify-between mb-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
               <div>
                 <div className="text-sm text-gray-500 mb-1">Current Temperature</div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
+                  <span className="text-3xl sm:text-5xl font-bold" style={{ color: tempColor(sensor.currentTempF, sensor.zone) }}>{sensor.currentTempF.toFixed(1)}</span>
                   <span className="text-xl text-gray-400">°F</span>
                 </div>
                 {sensor.currentHumidity !== null && (
@@ -1570,7 +1572,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           </div>
 
           {/* 24h temperature chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-gray-900 mb-4">Temperature History</h3>
             <svg width="100%" height={chartH} viewBox={`0 0 ${chartW} ${chartH}`} preserveAspectRatio="xMidYMid meet">
               {/* Grid lines */}
@@ -1639,14 +1641,15 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
             <div className="px-5 py-3 border-b border-gray-200">
               <h3 className="text-sm font-bold text-gray-900">Reading History</h3>
             </div>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100" style={{ backgroundColor: '#f8fafc' }}>
                   <th className="text-left px-4 py-2 font-semibold text-gray-600 text-xs">Time</th>
                   <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Temp</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Humidity</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Battery</th>
-                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Quality</th>
+                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden sm:table-cell">Humidity</th>
+                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden sm:table-cell">Battery</th>
+                  <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs hidden md:table-cell">Quality</th>
                   <th className="text-center px-4 py-2 font-semibold text-gray-600 text-xs">Compliance</th>
                 </tr>
               </thead>
@@ -1655,9 +1658,9 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                   <tr key={i} className={`border-b border-gray-50 ${r.isAnomaly ? 'bg-red-50' : ''}`}>
                     <td className="px-4 py-2 text-xs text-gray-500">{formatTime(r.timestamp)}</td>
                     <td className="px-4 py-2 text-center font-bold" style={{ color: tempColor(r.temperatureF, sensor.zone) }}>{r.temperatureF.toFixed(1)}°F</td>
-                    <td className="px-4 py-2 text-center text-gray-500">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
-                    <td className="px-4 py-2"><div className="flex justify-center"><BatteryBar pct={r.batteryPct} /></div></td>
-                    <td className="px-4 py-2 text-center">
+                    <td className="px-4 py-2 text-center text-gray-500 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
+                    <td className="px-4 py-2 hidden sm:table-cell"><div className="flex justify-center"><BatteryBar pct={r.batteryPct} /></div></td>
+                    <td className="px-4 py-2 text-center hidden md:table-cell">
                       <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${r.quality === 'good' ? 'bg-green-100 text-green-700' : r.quality === 'suspect' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>{r.quality}</span>
                     </td>
                     <td className="px-4 py-2 text-center">
@@ -1669,13 +1672,14 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
         {/* RIGHT: Device info + maintenance + actions */}
         <div className="space-y-6">
           {/* Device info */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-gray-900 mb-3">Device Information</h3>
             <div className="space-y-2.5">
               {[
@@ -1702,7 +1706,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
 
           {/* Active alerts for this sensor */}
           {alerts.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
               <h3 className="text-sm font-bold text-gray-900 mb-3">Alerts ({alerts.length})</h3>
               <div className="space-y-2">
                 {alerts.map(a => (
@@ -1719,7 +1723,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           )}
 
           {/* Maintenance log */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-gray-900 mb-3">Maintenance Log</h3>
             {maintenance.length === 0 ? (
               <p className="text-xs text-gray-400">No maintenance records for this sensor.</p>
@@ -1749,7 +1753,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
           </div>
 
           {/* Actions */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-bold text-gray-900 mb-3">Actions</h3>
             <div className="space-y-2">
               <button onClick={() => toast.info('Edit thresholds for this sensor (demo)')} className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-gray-200">

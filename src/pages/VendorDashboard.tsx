@@ -160,7 +160,7 @@ export function VendorDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Certification Status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-gray-900">EvidLY Certification</h3>
             <TierBadge tier={vendorDashboardStats.currentTier} />
@@ -186,7 +186,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Subscription Plan */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Your Plan</h3>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -212,7 +212,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
           <div className="space-y-2">
             {[
@@ -313,9 +313,9 @@ export function VendorDashboard() {
         {/* Lead Cards */}
         <div className="space-y-3">
           {filteredLeads.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500">No leads matching this filter.</div>
+            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-8 text-center text-gray-500">No leads matching this filter.</div>
           ) : filteredLeads.map(lead => (
-            <div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div key={lead.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -341,10 +341,10 @@ export function VendorDashboard() {
               <div className="flex gap-2">
                 {lead.status === 'new' && (
                   <>
-                    <button onClick={() => toast.info(`Quote form for ${lead.operatorOrg} coming soon`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
+                    <button onClick={() => toast.info(`Quote form for ${lead.operatorOrg} coming soon`)} className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
                       <Send className="h-3.5 w-3.5 inline mr-1.5" />Send Quote
                     </button>
-                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
+                    <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
                       Decline
                     </button>
                   </>
@@ -353,7 +353,7 @@ export function VendorDashboard() {
                   <span className="text-sm text-purple-600 font-medium flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> Awaiting operator response</span>
                 )}
                 {lead.status === 'accepted' && (
-                  <button onClick={() => toast.info(`Schedule service for ${lead.operatorOrg} (demo)`)} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
+                  <button onClick={() => toast.info(`Schedule service for ${lead.operatorOrg} (demo)`)} className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
                     <CalendarDays className="h-3.5 w-3.5 inline mr-1.5" />Schedule Service
                   </button>
                 )}
@@ -377,7 +377,7 @@ export function VendorDashboard() {
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Upcoming Services (Next 14 Days)</h3>
         <div className="space-y-3">
           {vendorScheduledServices.map(svc => (
-            <div key={svc.id} className="bg-white rounded-xl border border-gray-200 p-5">
+            <div key={svc.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -398,16 +398,16 @@ export function VendorDashboard() {
 
               {/* Service Completion Workflow */}
               <div className="flex flex-wrap gap-2">
-                <button onClick={() => toast.success(`Service started for ${svc.clientOrg}`)} className="px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service started for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] bg-green-600 text-white text-xs font-medium rounded-lg hover:bg-green-700 flex items-center gap-1">
                   <CheckCircle className="h-3.5 w-3.5" /> Mark Started
                 </button>
-                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Camera for before/after photos (demo)')} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Camera className="h-3.5 w-3.5" /> Upload Photos
                 </button>
-                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.info('Upload service report (demo)')} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <Upload className="h-3.5 w-3.5" /> Upload Report
                 </button>
-                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
+                <button onClick={() => toast.success(`Service completed for ${svc.clientOrg}`)} className="px-3 py-1.5 min-h-[44px] border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1">
                   <ClipboardCheck className="h-3.5 w-3.5" /> Mark Completed
                 </button>
               </div>
@@ -454,10 +454,10 @@ export function VendorDashboard() {
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button onClick={() => toast.info('Upload new credential (demo)')} className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] flex items-center gap-1.5">
+        <button onClick={() => toast.info('Upload new credential (demo)')} className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] flex items-center gap-1.5">
           <Upload className="h-4 w-4" /> Upload Credential
         </button>
-        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
+        <button onClick={() => toast.info('Share credentials with operators (demo)')} className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5">
           <Send className="h-4 w-4" /> Share with Operators
         </button>
       </div>
@@ -465,7 +465,7 @@ export function VendorDashboard() {
       {/* Credentials Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {vendorCredentials.map(cred => (
-          <div key={cred.id} className="bg-white rounded-xl border border-gray-200 p-5">
+          <div key={cred.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
                 {cred.verifiedByEvidly ? (
@@ -505,10 +505,10 @@ export function VendorDashboard() {
     return (
       <div className="space-y-6">
         {/* Rating Summary */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900">{vendorDashboardStats.avgRating.toFixed(1)}</div>
+              <div className="text-3xl sm:text-4xl font-bold text-gray-900">{vendorDashboardStats.avgRating.toFixed(1)}</div>
               <StarRating rating={vendorDashboardStats.avgRating} size="lg" />
               <p className="text-xs text-gray-500 mt-1">Based on {vendorReviews.length} reviews</p>
             </div>
@@ -534,8 +534,8 @@ export function VendorDashboard() {
         {/* Review List */}
         <div className="space-y-3">
           {vendorReviews.map(review => (
-            <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-5">
-              <div className="flex items-start justify-between mb-2">
+            <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+              <div className="flex items-start justify-between flex-wrap gap-2 mb-2">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900">{review.reviewerName}</span>
@@ -568,7 +568,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Tips */}
-        <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-5">
+        <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-[#1e4d6b] mb-3">Tips to Improve Your Rating</h3>
           <ul className="space-y-2 text-sm text-gray-700">
             <li className="flex items-start gap-2"><Zap className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" /> Respond to all reviews within 48 hours — operators notice and appreciate it</li>
@@ -592,7 +592,7 @@ export function VendorDashboard() {
       <div className="space-y-6">
         {/* Premium Upsell Banner */}
         {vendorCurrentSubscription.plan === 'free' && (
-          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-5 text-white">
+          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-4 sm:p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
               <Lock className="h-5 w-5 text-[#d4af37]" />
               <span className="font-semibold">Premium Analytics</span>
@@ -621,7 +621,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Profile Views Chart (div-based bars) */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Profile Views (12 Months)</h3>
           <div className="flex items-end gap-1.5 h-40">
             {vendorAnalyticsData.map(d => (
@@ -648,9 +648,9 @@ export function VendorDashboard() {
                 <tr className="bg-gray-50 text-left">
                   <th className="px-4 py-2 text-xs font-medium text-gray-500">Month</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Views</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Requests</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Quoted</th>
-                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Accepted</th>
+                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Requests</th>
+                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Quoted</th>
+                  <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right hidden sm:table-cell">Accepted</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Completed</th>
                   <th className="px-4 py-2 text-xs font-medium text-gray-500 text-right">Revenue</th>
                 </tr>
@@ -660,9 +660,9 @@ export function VendorDashboard() {
                   <tr key={d.month} className="hover:bg-gray-50">
                     <td className="px-4 py-2 font-medium text-gray-900">{d.month}</td>
                     <td className="px-4 py-2 text-right text-gray-600">{d.profileViews}</td>
-                    <td className="px-4 py-2 text-right text-gray-600">{d.quoteRequests}</td>
-                    <td className="px-4 py-2 text-right text-gray-600">{d.quotesSent}</td>
-                    <td className="px-4 py-2 text-right text-gray-600">{d.quotesAccepted}</td>
+                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quoteRequests}</td>
+                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quotesSent}</td>
+                    <td className="px-4 py-2 text-right text-gray-600 hidden sm:table-cell">{d.quotesAccepted}</td>
                     <td className="px-4 py-2 text-right text-gray-600">{d.servicesCompleted}</td>
                     <td className="px-4 py-2 text-right font-medium text-gray-900">${d.revenue.toLocaleString()}</td>
                   </tr>
@@ -673,7 +673,7 @@ export function VendorDashboard() {
         </div>
 
         {/* Category Comparison */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">How You Compare (Hood Cleaning Category)</h3>
           <div className="space-y-3">
             {[
@@ -704,8 +704,8 @@ export function VendorDashboard() {
     if (!showSubscriptionModal) return null;
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowSubscriptionModal(false)}>
-        <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
             <h2 className="text-xl font-bold text-gray-900">Choose Your Plan</h2>
             <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
               <XCircle className="h-5 w-5 text-gray-400" />
@@ -715,7 +715,7 @@ export function VendorDashboard() {
             {vendorSubscriptionPlans.map(plan => {
               const isCurrent = vendorCurrentSubscription.plan === plan.id.replace('plan-', '');
               return (
-                <div key={plan.id} className={`rounded-xl border-2 p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-lg' : isCurrent ? 'border-[#1e4d6b]' : 'border-gray-200'}`}>
+                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-lg' : isCurrent ? 'border-[#1e4d6b]' : 'border-gray-200'}`}>
                   {plan.highlighted && (
                     <div className="text-xs font-bold text-[#d4af37] uppercase mb-2">Most Popular</div>
                   )}
@@ -788,10 +788,10 @@ export function VendorDashboard() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-2xl font-bold">
+              <span className="ml-3 text-xl sm:text-2xl font-bold">
                 <span className="text-[#1e4d6b]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
-                <span className="ml-2 text-sm text-gray-600">Vendor Portal</span>
+                <span className="ml-2 text-sm text-gray-600 hidden sm:inline">Vendor Portal</span>
               </span>
             </div>
             <div className="flex items-center gap-3">

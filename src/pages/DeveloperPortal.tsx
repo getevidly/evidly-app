@@ -163,7 +163,7 @@ function AuthenticationSection() {
 
       {/* Auth flows */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Lock className="h-4 w-4 text-[#1e4d6b]" />
             <h3 className="font-semibold text-gray-900 text-sm">Authorization Code Flow</h3>
@@ -176,7 +176,7 @@ function AuthenticationSection() {
             <div>4. Use access token in API requests</div>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Server className="h-4 w-4 text-[#1e4d6b]" />
             <h3 className="font-semibold text-gray-900 text-sm">Client Credentials Flow</h3>
@@ -253,7 +253,7 @@ function ApiReferenceSection() {
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded w-14 text-center" style={{ backgroundColor: mc.bg, color: mc.text }}>
                   {ep.method}
                 </span>
-                <code className="text-xs font-mono text-gray-700 flex-1">{ep.path}</code>
+                <code className="text-xs font-mono text-gray-700 flex-1 break-all sm:break-normal">{ep.path}</code>
                 <ChevronDown className={`h-3.5 w-3.5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
               </button>
               {isExpanded && (
@@ -299,8 +299,8 @@ function verifyWebhook(payload, signature, secret) {
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Available Events ({WEBHOOK_EVENTS.length})</h3>
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           {WEBHOOK_EVENTS.map(we => (
-            <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-gray-50 last:border-b-0">
-              <code className="text-[10px] font-mono bg-gray-50 px-2 py-0.5 rounded text-gray-700 whitespace-nowrap">{we.event}</code>
+            <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-gray-50 last:border-b-0 flex-wrap">
+              <code className="text-[10px] font-mono bg-gray-50 px-2 py-0.5 rounded text-gray-700 break-all sm:whitespace-nowrap">{we.event}</code>
               <span className="text-xs text-gray-500">{we.desc}</span>
             </div>
           ))}
@@ -338,7 +338,7 @@ function SandboxSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
           <h3 className="font-semibold text-gray-900 text-sm mb-2">Sandbox Features</h3>
           <ul className="space-y-2 text-xs text-gray-600">
             {[
@@ -353,7 +353,7 @@ function SandboxSection() {
             ))}
           </ul>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
           <h3 className="font-semibold text-gray-900 text-sm mb-2">Test Credentials</h3>
           <div className="space-y-3">
             <div>
@@ -449,15 +449,15 @@ function RateLimitsSection() {
         <p className="text-sm text-gray-600">Rate limits protect the API and ensure fair usage. Limits are applied per API key.</p>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="overflow-x-auto bg-white border border-gray-200 rounded-lg">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 text-gray-600 text-xs uppercase">
               <th className="text-left px-4 py-3 font-semibold">Plan</th>
               <th className="text-center px-4 py-3 font-semibold">Requests/min</th>
               <th className="text-center px-4 py-3 font-semibold">Requests/day</th>
-              <th className="text-center px-4 py-3 font-semibold">Webhooks</th>
-              <th className="text-center px-4 py-3 font-semibold">Burst</th>
+              <th className="text-center px-4 py-3 font-semibold hidden sm:table-cell">Webhooks</th>
+              <th className="text-center px-4 py-3 font-semibold hidden sm:table-cell">Burst</th>
             </tr>
           </thead>
           <tbody>
@@ -471,8 +471,8 @@ function RateLimitsSection() {
                 <td className="px-4 py-3 font-medium text-gray-900">{r.plan}</td>
                 <td className="px-4 py-3 text-center text-gray-600">{r.rpm}</td>
                 <td className="px-4 py-3 text-center text-gray-600">{r.rpd}</td>
-                <td className="px-4 py-3 text-center text-gray-600">{r.wh}</td>
-                <td className="px-4 py-3 text-center text-gray-600">{r.burst}</td>
+                <td className="px-4 py-3 text-center text-gray-600 hidden sm:table-cell">{r.wh}</td>
+                <td className="px-4 py-3 text-center text-gray-600 hidden sm:table-cell">{r.burst}</td>
               </tr>
             ))}
           </tbody>
@@ -529,7 +529,7 @@ function PricingSection() {
             highlight: false,
           },
         ].map(tier => (
-          <div key={tier.name} className={`rounded-xl p-6 ${tier.highlight ? 'bg-[#1e4d6b] text-white border-2 border-[#d4af37]' : 'bg-white border border-gray-200'}`}>
+          <div key={tier.name} className={`rounded-xl p-4 sm:p-6 ${tier.highlight ? 'bg-[#1e4d6b] text-white border-2 border-[#d4af37]' : 'bg-white border border-gray-200'}`}>
             <div className="text-sm font-semibold mb-1">{tier.name}</div>
             <div className="flex items-baseline gap-1 mb-1">
               <span className="text-2xl font-bold">{tier.price}</span>
@@ -545,7 +545,7 @@ function PricingSection() {
             </ul>
             <button
               onClick={() => toast.info(`Demo: ${tier.name} plan signup preview`)}
-              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors ${tier.highlight ? 'bg-[#d4af37] text-[#1e4d6b] hover:bg-[#c4a030]' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+              className={`w-full mt-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px] ${tier.highlight ? 'bg-[#d4af37] text-[#1e4d6b] hover:bg-[#c4a030]' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
             >
               {tier.name === 'Enterprise' ? 'Contact Sales' : 'Get Started'}
             </button>
@@ -594,7 +594,7 @@ export function DeveloperPortal() {
       </div>
 
       {/* Layout: sidebar nav + content */}
-      <div className="flex gap-6">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-6">
         {/* Section nav */}
         <div className="hidden md:block w-52 flex-shrink-0">
           <div className="sticky top-4 space-y-0.5">
@@ -620,7 +620,7 @@ export function DeveloperPortal() {
           <select
             value={activeSection}
             onChange={e => setActiveSection(e.target.value as Section)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm min-h-[44px]"
           >
             {SECTIONS.map(sec => <option key={sec.id} value={sec.id}>{sec.label}</option>)}
           </select>

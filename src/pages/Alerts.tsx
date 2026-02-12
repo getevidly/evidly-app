@@ -365,26 +365,26 @@ export function Alerts() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Alerts' }]} />
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-6 text-white">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
-            <h2 className="text-2xl font-bold">Compliance Alerts</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">Compliance Alerts</h2>
           </div>
           <p className="text-gray-300">AI-powered predictive alerts and notifications</p>
-          <div className="flex items-center space-x-6 mt-4">
+          <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Bell className="h-4 w-4 text-[#d4af37]" />
                 <span className="text-sm text-gray-300 font-medium">Active Alerts</span>
               </div>
-              <div className="text-3xl font-bold text-white text-center">{activeCount}</div>
+              <div className="text-xl sm:text-3xl font-bold text-white text-center">{activeCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
                 <span className="text-sm text-gray-300 font-medium">Critical</span>
               </div>
-              <div className="text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
+              <div className="text-xl sm:text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
             </div>
           </div>
         </div>
@@ -486,10 +486,10 @@ export function Alerts() {
             filteredAlerts.map((alertItem) => (
               <div
                 key={alertItem.id}
-                className={`bg-white rounded-lg shadow p-6 border-l-4 ${getSeverityColor(alertItem.severity)}`}
+                className={`bg-white rounded-lg shadow p-4 sm:p-6 border-l-4 ${getSeverityColor(alertItem.severity)}`}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-start space-x-3 flex-1">
+                <div className="flex items-start justify-between mb-4 flex-wrap gap-2">
+                  <div className="flex items-start space-x-3 flex-1 min-w-0">
                     <div className={`p-2 rounded-lg ${
                       alertItem.severity === 'high' ? 'bg-red-100' :
                       alertItem.severity === 'medium' ? 'bg-yellow-100' : 'bg-blue-100'
@@ -555,14 +555,14 @@ export function Alerts() {
                   <div className="flex items-center space-x-2 pt-3 border-t flex-wrap gap-y-2">
                     <button
                       onClick={() => handleResolveClick(alertItem)}
-                      className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors"
+                      className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors"
                     >
                       Resolve
                     </button>
                     {alertItem.navigate_to && (
                       <button
                         onClick={() => navigate(alertItem.navigate_to!)}
-                        className="px-4 py-2 bg-[#d4af37] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-[#d4af37] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
                       >
                         <span>Go to {alertItem.navigate_to === '/documents' ? 'Documents' :
                           alertItem.navigate_to === '/temp-logs' ? 'Temp Logs' :
@@ -577,7 +577,7 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>Snooze</span>
                         <ChevronDown className="h-4 w-4" />
@@ -625,7 +625,7 @@ export function Alerts() {
                     <div className="relative">
                       <button
                         onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
-                        className="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
+                        className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
                         <span>Reassign</span>
                         <ChevronDown className="h-4 w-4" />
@@ -656,8 +656,8 @@ export function Alerts() {
       {/* Resolve Modal */}
       {showResolveModal && selectedAlert && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <h3 className="text-2xl font-bold mb-4">Resolve Alert</h3>
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full">
+            <h3 className="text-xl sm:text-2xl font-bold mb-4">Resolve Alert</h3>
             <p className="text-gray-600 mb-6">{selectedAlert.title}</p>
 
             <div className="space-y-4">
@@ -730,13 +730,13 @@ export function Alerts() {
             <div className="flex space-x-3 mt-6">
               <button
                 onClick={() => setShowResolveModal(false)}
-                className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResolveSubmit}
-                className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors"
+                className="flex-1 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors"
               >
                 Submit Resolution
               </button>

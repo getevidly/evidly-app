@@ -234,8 +234,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
   return (
     <div className="space-y-6">
       {/* Executive Summary Panel */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
           <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
           <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
           <button
@@ -249,7 +249,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             View Executive Dashboard
           </button>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
             { label: 'Overall Score', value: avgScore + '%', icon: ShieldCheck, highlight: true },
             { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
@@ -273,7 +273,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Hierarchy Scorecard Table */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Organization Scorecard — Aramark</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
@@ -282,8 +282,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                   <th className="text-left px-3 py-2 font-medium text-gray-600">Business Unit</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Locations</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Avg Score</th>
-                  <th className="text-center px-3 py-2 font-medium text-gray-600">Trend</th>
-                  <th className="text-left px-3 py-2 font-medium text-gray-600">Worst Location</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600 hidden sm:table-cell">Trend</th>
+                  <th className="text-left px-3 py-2 font-medium text-gray-600 hidden sm:table-cell">Worst Location</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Action</th>
                 </tr>
               </thead>
@@ -304,8 +304,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                       <td className="px-3 py-2.5 text-center">
                         <span className="font-bold" style={{ color: scoreColor(div.complianceScore) }}>{div.complianceScore}%</span>
                       </td>
-                      <td className="px-3 py-2.5 text-center"><TrendBadge value={trend} /></td>
-                      <td className="px-3 py-2.5 text-gray-500">{worst && worst.complianceScore < 80 ? `${worst.name} (${worst.complianceScore})` : '—'}</td>
+                      <td className="px-3 py-2.5 text-center hidden sm:table-cell"><TrendBadge value={trend} /></td>
+                      <td className="px-3 py-2.5 text-gray-500 hidden sm:table-cell">{worst && worst.complianceScore < 80 ? `${worst.name} (${worst.complianceScore})` : '—'}</td>
                       <td className="px-3 py-2.5 text-center">
                         {critItems > 0 ? (
                           <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">{critItems} critical</span>
@@ -324,8 +324,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                   <td className="px-3 py-2.5 text-center">
                     <span className="font-bold" style={{ color: scoreColor(enterpriseHierarchy.complianceScore) }}>{enterpriseHierarchy.complianceScore}%</span>
                   </td>
-                  <td className="px-3 py-2.5 text-center"><TrendBadge value={nodeTrend(enterpriseHierarchy.id)} /></td>
-                  <td className="px-3 py-2.5 text-gray-500">—</td>
+                  <td className="px-3 py-2.5 text-center hidden sm:table-cell"><TrendBadge value={nodeTrend(enterpriseHierarchy.id)} /></td>
+                  <td className="px-3 py-2.5 text-gray-500 hidden sm:table-cell">—</td>
                   <td className="px-3 py-2.5" />
                 </tr>
               </tbody>
@@ -334,8 +334,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
 
         {/* Critical Alerts */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">Critical Alerts</h3>
             <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
               {alerts.filter((a: any) => !a.acknowledged).length} active
@@ -369,11 +369,11 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
       {/* Trend Analytics + Tenant Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* 12-Month Trend */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
           <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
-          <div className="flex items-end gap-6">
-            <div className="relative">
+          <div className="flex items-end gap-6 flex-wrap">
+            <div className="relative overflow-x-auto">
               <TrendSparkline data={trendData} width={320} height={100} />
               {/* Regulatory overlay markers */}
               {REGULATORY_MARKERS.map(marker => {
@@ -412,7 +412,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
 
         {/* Tenant Status + Audit */}
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Tenant Status</h3>
             <div className="space-y-2">
               {enterpriseTenants.map(t => (
@@ -432,7 +432,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
               ))}
             </div>
           </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Recent Activity</h3>
             <div className="space-y-1.5">
               {auditLog.slice(0, 4).map((e: any) => (
@@ -450,9 +450,9 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
             { label: 'Provision Tenant', icon: Building2 },
             { label: 'Run SCIM Sync', icon: RefreshCw },
@@ -478,9 +478,9 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <h3 className="text-sm font-semibold text-gray-900">All Tenants ({enterpriseTenants.length})</h3>
-        <button onClick={() => showToast('Provision New Tenant — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Provision New Tenant — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
           + New Tenant
         </button>
       </div>
@@ -490,7 +490,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
           {/* Header */}
           <button
             onClick={() => setExpanded(expanded === t.id ? null : t.id)}
-            className="w-full flex items-center gap-4 p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            className="w-full flex items-center gap-4 p-4 sm:p-5 text-left hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-bold flex-shrink-0" style={{ backgroundColor: t.branding.primaryColor }}>
               {t.logoPlaceholder}
@@ -517,7 +517,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
 
           {/* Expanded Details */}
           {expanded === t.id && (
-            <div className="border-t border-gray-100 px-5 pb-5">
+            <div className="border-t border-gray-100 px-4 sm:px-5 pb-4 sm:pb-5">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                 {/* Branding */}
                 <div className="p-3 rounded-lg bg-gray-50">
@@ -579,9 +579,9 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2 mt-4">
+              <div className="flex items-center gap-2 mt-4 flex-wrap">
                 {['Edit Config', 'View Users', 'Test SSO', 'Export Data'].map(label => (
-                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName} — coming soon`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer">
+                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName} — coming soon`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                     {label}
                   </button>
                 ))}
@@ -749,7 +749,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
 
       {/* Hierarchy Configuration Panel */}
       {showConfig && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <Network className="h-4 w-4" style={{ color: '#1e4d6b' }} />
             <h3 className="text-sm font-semibold text-gray-900">Hierarchy Configuration — {tenant.displayName}</h3>
@@ -758,7 +758,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
           {/* Levels */}
           <div>
             <p className="text-xs font-medium text-gray-700 mb-2">Hierarchy Levels ({tenant.hierarchy.length} of 6)</p>
-            <div className="flex items-center gap-1 mb-2">
+            <div className="flex items-center gap-1 mb-2 flex-wrap">
               {tenant.hierarchy.map((h, i) => (
                 <span key={h.key} className="flex items-center gap-1">
                   <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-gray-200 bg-white">
@@ -780,7 +780,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
           {/* Rollup Rules */}
           <div>
             <p className="text-xs font-medium text-gray-700 mb-2">Score Rollup Method</p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="radio" name="rollup" checked={rollupWeight === 'by_size'} onChange={() => setRollupWeight('by_size')} className="accent-[#1e4d6b]" />
                 <span className="text-xs text-gray-600">Weighted by location count</span>
@@ -812,10 +812,10 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button onClick={() => showToast('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
-            <button onClick={() => showToast('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
-            <button onClick={() => showToast('Reset to default — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">Reset</button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button onClick={() => showToast('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
+            <button onClick={() => showToast('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">+ Add Level</button>
+            <button onClick={() => showToast('Reset to default — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">Reset</button>
           </div>
         </div>
       )}
@@ -823,9 +823,9 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Tree View */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">Organization Hierarchy</h3>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {Object.entries(LEVEL_COLORS).filter(([k]) => tenant.hierarchy.some(h => h.key === k)).map(([k, c]) => (
                 <span key={k} className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
@@ -997,9 +997,9 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
   return (
     <div className="space-y-4">
       {/* Tenant Selector */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <span className="text-xs font-medium text-gray-600">Tenant:</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {enterpriseTenants.map(t => (
             <button
               key={t.id}
@@ -1017,7 +1017,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* SAML / OIDC Form */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-4">
             <button onClick={() => setSsoType('saml')} className={`px-3 py-1 rounded-lg text-xs font-medium cursor-pointer ${ssoType === 'saml' ? 'text-white' : 'text-gray-600 bg-gray-100'}`} style={ssoType === 'saml' ? { backgroundColor: '#1e4d6b' } : {}}>
               SAML 2.0
@@ -1090,11 +1090,11 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
           )}
 
-          <div className="flex items-center gap-2 mt-4">
-            <button onClick={() => showToast('SSO test initiated — connection passed!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          <div className="flex items-center gap-2 mt-4 flex-wrap">
+            <button onClick={() => showToast('SSO test initiated — connection passed!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
               Test Connection
             </button>
-            <button onClick={() => showToast('SSO configuration saved')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+            <button onClick={() => showToast('SSO configuration saved')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
               Save Config
             </button>
           </div>
@@ -1102,7 +1102,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
 
         {/* SCIM Provisioning */}
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">SSO Status</h3>
             <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50">
               {tenant.ssoConfig.enabled ? (
@@ -1122,7 +1122,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">SCIM 2.0 Provisioning</h3>
             <div className="space-y-3">
               <div>
@@ -1199,14 +1199,14 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
             className="w-full px-3 py-1.5 text-xs border border-gray-200 rounded-lg"
           />
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <button onClick={() => showToast('Provision user — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={() => showToast('Provision user — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
             <UserPlus className="h-3.5 w-3.5" /> Provision
           </button>
-          <button onClick={() => showToast('Export user list — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+          <button onClick={() => showToast('Export user list — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
-          <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+          <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
             <RefreshCw className="h-3.5 w-3.5" /> Sync
           </button>
         </div>
@@ -1219,20 +1219,20 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-4 py-2.5 font-medium text-gray-600">Name</th>
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Email</th>
+                <th className="text-left px-4 py-2.5 font-medium text-gray-600 hidden sm:table-cell">Email</th>
                 <th className="text-left px-4 py-2.5 font-medium text-gray-600">Tenant</th>
                 <th className="text-left px-4 py-2.5 font-medium text-gray-600">Role</th>
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Location</th>
-                <th className="text-center px-4 py-2.5 font-medium text-gray-600">SSO</th>
-                <th className="text-center px-4 py-2.5 font-medium text-gray-600">SCIM</th>
-                <th className="text-left px-4 py-2.5 font-medium text-gray-600">Last Login</th>
+                <th className="text-left px-4 py-2.5 font-medium text-gray-600 hidden sm:table-cell">Location</th>
+                <th className="text-center px-4 py-2.5 font-medium text-gray-600 hidden sm:table-cell">SSO</th>
+                <th className="text-center px-4 py-2.5 font-medium text-gray-600 hidden sm:table-cell">SCIM</th>
+                <th className="text-left px-4 py-2.5 font-medium text-gray-600 hidden sm:table-cell">Last Login</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(u => (
                 <tr key={u.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-4 py-2.5 font-medium text-gray-900">{u.name}</td>
-                  <td className="px-4 py-2.5 text-gray-500 font-mono">{u.email}</td>
+                  <td className="px-4 py-2.5 text-gray-500 font-mono hidden sm:table-cell">{u.email}</td>
                   <td className="px-4 py-2.5">
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-medium" style={{
                       backgroundColor: enterpriseTenants.find(t => t.id === u.tenantId)?.branding.primaryColor + '15',
@@ -1242,9 +1242,9 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-gray-600">{u.role}</td>
-                  <td className="px-4 py-2.5 text-gray-500">{u.location}</td>
-                  <td className="px-4 py-2.5 text-center">{ssoStatusBadge(u.ssoStatus)}</td>
-                  <td className="px-4 py-2.5 text-center">
+                  <td className="px-4 py-2.5 text-gray-500 hidden sm:table-cell">{u.location}</td>
+                  <td className="px-4 py-2.5 text-center hidden sm:table-cell">{ssoStatusBadge(u.ssoStatus)}</td>
+                  <td className="px-4 py-2.5 text-center hidden sm:table-cell">
                     {u.scimManaged ? (
                       <span className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-blue-50 text-blue-700">
                         <RefreshCw className="h-2.5 w-2.5" /> SCIM
@@ -1253,7 +1253,7 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
                       <span className="text-[10px] text-gray-400">Manual</span>
                     )}
                   </td>
-                  <td className="px-4 py-2.5 text-gray-500">{u.lastLogin ? formatTime(u.lastLogin) : '—'}</td>
+                  <td className="px-4 py-2.5 text-gray-500 hidden sm:table-cell">{u.lastLogin ? formatTime(u.lastLogin) : '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -1287,9 +1287,9 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
   return (
     <div className="space-y-4">
       {/* Tenant Selector */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <span className="text-xs font-medium text-gray-600">Tenant:</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {enterpriseTenants.map(t => (
             <button
               key={t.id}
@@ -1307,7 +1307,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Color Inputs */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Brand Colors</h3>
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -1366,7 +1366,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
 
         {/* Live Preview */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Live Preview</h3>
 
           {/* Mini Sidebar + Content Preview */}
@@ -1459,9 +1459,9 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <h3 className="text-sm font-semibold text-gray-900">Report Templates ({enterpriseReportTemplates.length})</h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
             {showBuilder ? 'Close Builder' : 'Custom Report Builder'}
           </button>
@@ -1473,7 +1473,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
 
       {/* Custom Report Builder */}
       {showBuilder && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Custom Report Builder</h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div>
@@ -1534,11 +1534,11 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                   <p className="text-[11px] text-gray-400 text-center py-4">Click sections on the left to add them</p>
                 )}
               </div>
-              <div className="flex items-center gap-2 mt-3">
-                <button onClick={() => showToast('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+              <div className="flex items-center gap-2 mt-3 flex-wrap">
+                <button onClick={() => showToast('Custom report generated!')} className="px-4 py-2 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
                   Generate Report
                 </button>
-                <button onClick={() => showToast('Template saved!')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Template saved!')} className="px-4 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                   Save as Template
                 </button>
               </div>
@@ -1586,7 +1586,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
 
         {/* Detail Panel */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           {selectedTemplate ? (
             <>
               <h3 className="text-sm font-bold text-gray-900 mb-1">{selectedTemplate.name}</h3>
@@ -1627,14 +1627,14 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button onClick={() => showToast(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button onClick={() => showToast(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
                   Generate Report
                 </button>
-                <button onClick={() => showToast('Edit template — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Edit template — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                   Edit
                 </button>
-                <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+                <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                   Duplicate
                 </button>
               </div>
@@ -1685,7 +1685,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium text-gray-600">Tenant:</span>
           <select value={tenantFilter} onChange={e => setTenantFilter(e.target.value)} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer">
@@ -1693,7 +1693,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
             {enterpriseTenants.map(t => <option key={t.id} value={t.id}>{t.displayName.split(' ')[0]}</option>)}
           </select>
         </div>
-        <button onClick={() => showToast('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
           + Add Integration
         </button>
       </div>
@@ -1778,16 +1778,16 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <h3 className="text-sm font-semibold text-gray-900">Bulk Operations ({enterpriseBulkOps.length})</h3>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {[
             { label: 'Import Locations', icon: Upload },
             { label: 'Deploy Templates', icon: FileText },
             { label: 'Assign Vendors', icon: Users },
             { label: 'Provision Users', icon: UserPlus },
           ].map(a => (
-            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">
+            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
               <a.icon className="h-3.5 w-3.5" />
               {a.label}
             </button>
@@ -1796,7 +1796,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
       </div>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Completed', count: enterpriseBulkOps.filter(o => o.status === 'completed').length, color: '#22c55e' },
           { label: 'Running', count: enterpriseBulkOps.filter(o => o.status === 'running').length, color: '#3b82f6' },
@@ -1892,9 +1892,9 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
   return (
     <div className="space-y-4">
       {/* Tenant selector */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <span className="text-xs font-medium text-gray-600">Tenant:</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {enterpriseTenants.map(t => (
             <button
               key={t.id}
@@ -1911,8 +1911,8 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
       </div>
 
       {/* Overall progress */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <div className="flex items-center justify-between mb-3">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div>
             <h3 className="text-sm font-semibold text-gray-900">Enterprise Onboarding — 60-90 Day Implementation</h3>
             <p className="text-[10px] text-gray-400 mt-0.5">{enterpriseTenants.find(t => t.id === selectedTenant)?.displayName}</p>
@@ -1950,7 +1950,7 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
           const st = phaseStatusColors[p.status];
           const doneTasks = p.tasks.filter(t => t.done).length;
           return (
-            <div key={p.id} className={`bg-white rounded-xl border ${st.border} p-5`}>
+            <div key={p.id} className={`bg-white rounded-xl border ${st.border} p-4 sm:p-5`}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: st.dot }}>
                   {p.phase}
@@ -1990,11 +1990,11 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
       </div>
 
       {/* Pricing tiers */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
         <h3 className="text-sm font-semibold text-gray-900 mb-4">Enterprise Pricing Tiers</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {enterprisePricingTiers.map(tier => (
-            <div key={tier.name} className={`rounded-xl border p-5 ${tier.highlighted ? 'border-2 shadow-lg' : 'border-gray-200'}`} style={tier.highlighted ? { borderColor: '#1e4d6b' } : {}}>
+            <div key={tier.name} className={`rounded-xl border p-4 sm:p-5 ${tier.highlighted ? 'border-2 shadow-lg' : 'border-gray-200'}`} style={tier.highlighted ? { borderColor: '#1e4d6b' } : {}}>
               {tier.highlighted && (
                 <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-semibold rounded-full text-white mb-3" style={{ backgroundColor: '#1e4d6b' }}>
                   Most Popular
@@ -2045,7 +2045,7 @@ export function EnterpriseDashboard() {
       )}
 
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3">
+      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
@@ -2071,7 +2071,7 @@ export function EnterpriseDashboard() {
 
       {/* Tab Navigation */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center gap-1 overflow-x-auto -mb-px">
             {TABS.map(tab => (
               <button
@@ -2093,7 +2093,7 @@ export function EnterpriseDashboard() {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {activeTab === 'overview' && <OverviewTab showToast={showToast} />}
         {activeTab === 'tenants' && <TenantManagementTab showToast={showToast} />}
         {activeTab === 'hierarchy' && <HierarchyTab showToast={showToast} />}

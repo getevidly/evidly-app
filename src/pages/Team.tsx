@@ -330,40 +330,40 @@ export function Team() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Users className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Team Members</span>
             </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{filteredMembers.length}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredMembers.length}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">Certs Current</span>
             </div>
-            <div className="text-3xl font-bold text-green-600 text-center">
+            <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">
               {filteredMembers.filter(m => m.certifications && m.certifications.every(c => {
                 if (!c.expiration_date) return true;
                 return new Date(c.expiration_date) > new Date();
               })).length}
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Award className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm text-gray-500 font-medium">Total Certs</span>
             </div>
-            <div className="text-3xl font-bold text-[#d4af37] text-center">
+            <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">
               {filteredMembers.reduce((sum, m) => sum + (m.certifications?.length || 0), 0)}
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
             </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">
               {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / filteredMembers.length) : 0}%
             </div>
           </div>
@@ -406,7 +406,7 @@ export function Team() {
             {canManageTeam() && (
               <button
                 onClick={() => setShowInviteModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
               >
                 <Plus className="h-5 w-5" />
                 <span>Invite Member</span>
@@ -416,14 +416,14 @@ export function Team() {
         </div>
 
         {invitations.length > 0 && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-blue-600" />
               Pending Invitations
             </h3>
             <div className="space-y-3">
               {invitations.map((invitation) => (
-                <div key={invitation.id} className="flex items-center justify-between bg-white p-4 rounded-lg">
+                <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-lg">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex gap-1">
                       {(invitation.invitation_method === 'email' || invitation.invitation_method === 'both') && (
@@ -509,8 +509,8 @@ export function Team() {
 
         {/* Temporary Coverage Assignments */}
         {canAssignTempCoverage() && (
-          <div className="bg-white shadow rounded-lg p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[#1e4d6b]" />
                 Temporary Coverage Assignments
@@ -533,7 +533,7 @@ export function Team() {
                     return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                   };
                   return (
-                    <div key={assignment.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div key={assignment.id} className="flex flex-wrap items-center justify-between gap-2 p-4 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3 flex-1">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold" style={{ backgroundColor: '#1e4d6b' }}>
                           {assignment.userName.split(' ').map(n => n[0]).join('')}
@@ -565,7 +565,7 @@ export function Team() {
             <div className="border border-dashed border-gray-300 rounded-lg p-4">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">Grant Temporary Access</h4>
               <div className="flex flex-wrap items-end gap-3">
-                <div className="flex-1 min-w-[150px]">
+                <div className="flex-1 min-w-0 sm:min-w-[150px]">
                   <label className="block text-xs text-gray-500 mb-1">Team Member</label>
                   <select
                     value={tempForm.userId}
@@ -581,7 +581,7 @@ export function Team() {
                     ))}
                   </select>
                 </div>
-                <div className="flex-1 min-w-[150px]">
+                <div className="flex-1 min-w-0 sm:min-w-[150px]">
                   <label className="block text-xs text-gray-500 mb-1">Location</label>
                   <select
                     value={tempForm.locationId}
@@ -597,7 +597,7 @@ export function Team() {
                     ))}
                   </select>
                 </div>
-                <div className="min-w-[130px]">
+                <div className="min-w-0 sm:min-w-[130px]">
                   <label className="block text-xs text-gray-500 mb-1">Start Date</label>
                   <input
                     type="date"
@@ -606,7 +606,7 @@ export function Team() {
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   />
                 </div>
-                <div className="min-w-[130px]">
+                <div className="min-w-0 sm:min-w-[130px]">
                   <label className="block text-xs text-gray-500 mb-1">End Date</label>
                   <input
                     type="date"
@@ -633,7 +633,7 @@ export function Team() {
                     });
                     setTempForm({ userId: '', userName: '', locationId: '', locationName: '', startDate: '', endDate: '' });
                   }}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm font-medium whitespace-nowrap"
+                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 text-sm font-medium whitespace-nowrap"
                 >
                   Grant Access
                 </button>
@@ -648,13 +648,13 @@ export function Team() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certs</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Active</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Role</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Location</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Certs</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Training</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Last Active</th>
+                  <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -669,7 +669,7 @@ export function Team() {
 
                   return (
                     <tr key={member.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white font-medium flex-shrink-0">
                             {member.full_name.charAt(0)}
@@ -680,10 +680,10 @@ export function Team() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                         {getRoleBadge(member.role)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden md:table-cell">
                         {member.location ? (
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3.5 w-3.5 text-gray-400" />
@@ -691,7 +691,7 @@ export function Team() {
                           </span>
                         ) : '—'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell">
                         {certCount > 0 ? (
                           <div className="flex items-center gap-1">
                             <span className="text-gray-900 font-medium">{certCount}</span>
@@ -705,7 +705,7 @@ export function Team() {
                           <span className="text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell">
                         {trainingPct !== null ? (
                           <div className="flex items-center gap-2">
                             <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -723,7 +723,7 @@ export function Team() {
                           <span className="text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                         {member.last_active ? (
                           <span className="flex items-center gap-1">
                             <span className="h-2 w-2 bg-green-500 rounded-full" />
@@ -731,10 +731,10 @@ export function Team() {
                           </span>
                         ) : '—'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => viewMemberDetails(member)}
-                          className="text-[#1e4d6b] hover:text-[#163a52] font-medium"
+                          className="text-[#1e4d6b] hover:text-[#163a52] font-medium min-h-[44px]"
                         >
                           View Details
                         </button>
@@ -758,14 +758,14 @@ export function Team() {
       {/* Member Details Modal */}
       {showDetailsModal && selectedMember && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-start mb-6">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-2xl font-medium">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-6 flex-wrap gap-2">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
                   {selectedMember.full_name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">{selectedMember.full_name}</h3>
+                  <h3 className="text-lg sm:text-2xl font-bold text-gray-900">{selectedMember.full_name}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     {getRoleBadge(selectedMember.role)}
                     {selectedMember.location && (
@@ -788,7 +788,7 @@ export function Team() {
             {/* Contact Info */}
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <h4 className="font-semibold text-gray-900 mb-3">Contact Information</h4>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Email:</span> {selectedMember.email}
                 </p>
@@ -857,10 +857,10 @@ export function Team() {
 
                     return (
                       <div key={cert.id} className="p-3 border border-gray-200 rounded-lg">
-                        <div className="flex justify-between items-start">
+                        <div className="flex flex-wrap justify-between items-start gap-2">
                           <div>
                             <p className="font-medium text-gray-900">{cert.certification_name}</p>
-                            <div className="flex gap-4 mt-1">
+                            <div className="flex flex-wrap gap-2 sm:gap-4 mt-1">
                               {cert.issue_date && (
                                 <p className="text-sm text-gray-600">
                                   Issued: {format(new Date(cert.issue_date), 'MMM d, yyyy')}

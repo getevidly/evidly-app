@@ -244,7 +244,7 @@ export function EnterpriseExecutive() {
 
         {/* ── B. Drill-Down Breadcrumb ──────────────────────── */}
         {drillDownNodeId && breadcrumb.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-1.5 text-xs bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-100 flex-wrap">
             <button onClick={() => setDrillDownNodeId(null)} className="text-gray-400 hover:text-gray-700 font-medium cursor-pointer">Corporate</button>
             {breadcrumb.slice(1).map((node, i) => (
               <span key={node.id} className="flex items-center gap-1.5">
@@ -264,7 +264,7 @@ export function EnterpriseExecutive() {
         )}
 
         {/* ── C. Executive Summary Panel ────────────────────── */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
             <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
@@ -290,7 +290,7 @@ export function EnterpriseExecutive() {
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-6 mt-4 pt-3 border-t border-gray-100">
+          <div className="flex items-center gap-4 sm:gap-6 mt-4 pt-3 border-t border-gray-100 flex-wrap">
             <div className="flex items-center gap-2">
               <ScoreCircle score={overallScore} size={52} />
               <div>
@@ -324,7 +324,7 @@ export function EnterpriseExecutive() {
         {/* ── D. Heat Map + Critical Alerts ─────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Organization Heat Map */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-5">
+          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
               <h3 className="text-sm font-semibold text-gray-900">Organization Heat Map</h3>
               <div className="flex items-center gap-2">
@@ -341,7 +341,7 @@ export function EnterpriseExecutive() {
               </div>
             </div>
             {/* Category toggle */}
-            <div className="flex gap-1 mb-4">
+            <div className="flex gap-1 mb-4 overflow-x-auto">
               {([
                 { key: 'overall', label: 'Overall' },
                 { key: 'foodSafety', label: 'Food Safety' },
@@ -351,7 +351,7 @@ export function EnterpriseExecutive() {
                 <button
                   key={cat.key}
                   onClick={() => setHeatMapCategory(cat.key)}
-                  className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer ${
+                  className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer whitespace-nowrap ${
                     heatMapCategory === cat.key
                       ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
                       : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
@@ -409,7 +409,7 @@ export function EnterpriseExecutive() {
               )}
             </div>
             {/* Legend */}
-            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100">
+            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 flex-wrap">
               {[
                 { label: '90+ Excellent', color: '#dcfce7' },
                 { label: '80-89 Good', color: '#fef9c3' },
@@ -425,7 +425,7 @@ export function EnterpriseExecutive() {
           </div>
 
           {/* Critical Alerts */}
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-gray-900">Critical Alerts</h3>
               <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">
@@ -461,8 +461,8 @@ export function EnterpriseExecutive() {
         </div>
 
         {/* ── E. Hierarchy Scorecard Table ──────────────────── */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">
               {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — Aramark'}
             </h3>
@@ -480,8 +480,8 @@ export function EnterpriseExecutive() {
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Locations</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Avg Score</th>
                   <th className="text-center px-3 py-2 font-medium text-gray-600">Trend</th>
-                  <th className="text-left px-3 py-2 font-medium text-gray-600">Worst Location</th>
-                  <th className="text-center px-3 py-2 font-medium text-gray-600">Action</th>
+                  <th className="text-left px-3 py-2 font-medium text-gray-600 hidden sm:table-cell">Worst Location</th>
+                  <th className="text-center px-3 py-2 font-medium text-gray-600 hidden sm:table-cell">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -498,12 +498,12 @@ export function EnterpriseExecutive() {
                       <span className="font-bold" style={{ color: scoreColor(row.avgScore) }}>{row.avgScore}%</span>
                     </td>
                     <td className="px-3 py-2.5 text-center"><TrendBadge value={row.trend} /></td>
-                    <td className="px-3 py-2.5 text-gray-500">
+                    <td className="px-3 py-2.5 text-gray-500 hidden sm:table-cell">
                       {row.worstLocation && row.worstLocation.score < 80
                         ? `${row.worstLocation.name} (${row.worstLocation.score})`
                         : '—'}
                     </td>
-                    <td className="px-3 py-2.5 text-center">
+                    <td className="px-3 py-2.5 text-center hidden sm:table-cell">
                       {row.criticalItems > 0 ? (
                         <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-red-700 border border-red-200">{row.criticalItems} critical</span>
                       ) : row.avgScore < 89 ? (
@@ -522,8 +522,8 @@ export function EnterpriseExecutive() {
                     <span className="font-bold" style={{ color: scoreColor(overallScore) }}>{overallScore}%</span>
                   </td>
                   <td className="px-3 py-2.5 text-center"><TrendBadge value={trendDelta} /></td>
-                  <td className="px-3 py-2.5 text-gray-500">—</td>
-                  <td className="px-3 py-2.5" />
+                  <td className="px-3 py-2.5 text-gray-500 hidden sm:table-cell">—</td>
+                  <td className="px-3 py-2.5 hidden sm:table-cell" />
                 </tr>
               </tbody>
             </table>
@@ -531,7 +531,7 @@ export function EnterpriseExecutive() {
         </div>
 
         {/* ── F. Trend Analytics ────────────────────────────── */}
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">12-Month Compliance Trend</h3>
             <div className="flex items-center gap-2">
@@ -624,7 +624,7 @@ export function EnterpriseExecutive() {
           {/* Predicted scores table */}
           <div className="mt-4 pt-3 border-t border-gray-100">
             <h4 className="text-[11px] font-semibold text-gray-700 mb-2">Next Quarter Predictions</h4>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
               {predictedScores.map(p => (
                 <div key={p.businessUnit} className="rounded-lg border border-gray-100 p-2 bg-gray-50">
                   <p className="text-[10px] text-gray-500 truncate">{p.businessUnit}</p>

@@ -257,14 +257,14 @@ export function SensorDetail() {
   const { max: thMax, min: thMin } = getThresholdLimits(sensor.zone);
 
   return (
-    <div className="p-6 max-w-[1200px] mx-auto" style={F}>
+    <div className="px-3 sm:px-6 py-6 max-w-[1200px] mx-auto" style={F}>
       {/* Back nav */}
       <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
         <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
       </button>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between flex-wrap gap-3 mb-6">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: compliance.bg }}>
             <Thermometer className="h-6 w-6" style={{ color: compliance.color }} />
@@ -285,8 +285,8 @@ export function SensorDetail() {
           </div>
         </div>
         {/* Actions */}
-        <div className="flex items-center gap-2">
-          <button onClick={() => toast.info('Edit thresholds — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button onClick={() => toast.info('Edit thresholds — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 min-h-[44px]">
             <Settings className="h-3.5 w-3.5" /> Thresholds
           </button>
           <button onClick={() => toast.info('Edit alerts — demo mode')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50">
@@ -307,7 +307,7 @@ export function SensorDetail() {
       {/* Top Row: Current Reading + Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {/* Current Temperature — large */}
-        <div className="md:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <div className="md:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Current Temperature</span>
             <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: compliance.bg, color: compliance.color }}>
@@ -394,8 +394,8 @@ export function SensorDetail() {
       </div>
 
       {/* Temperature Chart */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <h3 className="text-sm font-bold text-gray-900">Temperature History</h3>
           <div className="flex items-center gap-1 p-0.5 rounded-lg bg-gray-100">
             {(['24h', '7d', '30d'] as const).map(r => (
@@ -414,7 +414,7 @@ export function SensorDetail() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-4 mb-2 text-xs text-gray-400">
+        <div className="flex items-center gap-4 mb-2 text-xs text-gray-400 flex-wrap">
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded" style={{ backgroundColor: PRIMARY }} /> Temperature</span>
           <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded bg-red-400" style={{ borderTop: '2px dashed #ef4444' }} /> Threshold</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-50" /> Violation Zone</span>
@@ -426,7 +426,7 @@ export function SensorDetail() {
       {/* Bottom grid: Device Info + Maintenance Log */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Device Info */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Device Information</h3>
           <div className="space-y-3">
             {[
@@ -449,8 +449,8 @@ export function SensorDetail() {
         </div>
 
         {/* Maintenance Log */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <h3 className="text-sm font-bold text-gray-900">Maintenance Log</h3>
             <button onClick={() => toast.info('Add maintenance entry — demo mode')} className="flex items-center gap-1 text-xs font-medium hover:text-gray-700" style={{ color: PRIMARY }}>
               <Wrench className="h-3.5 w-3.5" /> Add Entry
@@ -485,17 +485,18 @@ export function SensorDetail() {
       </div>
 
       {/* Recent Readings Table */}
-      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <h3 className="text-sm font-bold text-gray-900 mb-4">Recent Readings</h3>
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-100">
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Timestamp</th>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Temperature</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Humidity</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Quality</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Humidity</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Quality</th>
               <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Compliance</th>
-              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2">Battery</th>
+              <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wide pb-2 hidden sm:table-cell">Battery</th>
             </tr>
           </thead>
           <tbody>
@@ -507,8 +508,8 @@ export function SensorDetail() {
                 <tr key={i} className="border-b border-gray-50">
                   <td className="py-2.5 text-xs text-gray-600">{formatTime(r.timestamp)}</td>
                   <td className="py-2.5 text-xs font-bold" style={{ color: comp.color }}>{r.temperatureF}°F</td>
-                  <td className="py-2.5 text-xs text-gray-600">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
-                  <td className="py-2.5">
+                  <td className="py-2.5 text-xs text-gray-600 hidden sm:table-cell">{r.humidityPct !== null ? `${r.humidityPct}%` : '—'}</td>
+                  <td className="py-2.5 hidden sm:table-cell">
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-medium" style={{
                       backgroundColor: r.quality === 'good' ? '#ecfdf5' : r.quality === 'suspect' ? '#fffbeb' : '#fef2f2',
                       color: r.quality === 'good' ? '#059669' : r.quality === 'suspect' ? '#d97706' : '#ef4444',
@@ -521,12 +522,13 @@ export function SensorDetail() {
                       {r.complianceStatus === 'in_range' ? 'In Range' : r.complianceStatus === 'warning' ? 'Warning' : 'Violation'}
                     </span>
                   </td>
-                  <td className="py-2.5 text-xs text-gray-600">{r.batteryPct}%</td>
+                  <td className="py-2.5 text-xs text-gray-600 hidden sm:table-cell">{r.batteryPct}%</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

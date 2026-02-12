@@ -284,16 +284,16 @@ export function Documents() {
       <div className="space-y-6">
         {demoMode && <DemoModeBanner />}
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center flex-wrap gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Documentation</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Documentation</h1>
             <p className="text-sm text-gray-600 mt-1">Store and manage compliance documents</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
+                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
               >
                 <Share2 className="h-5 w-5" />
                 <span>Share {selectedDocs.length} Selected</span>
@@ -301,24 +301,26 @@ export function Documents() {
             )}
             <button
               onClick={() => setShowScanAnimation(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
-              <span>Upload Document</span>
+              <span className="hidden sm:inline">Upload Document</span>
+              <span className="sm:hidden">Upload</span>
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
-              className="flex items-center space-x-2 px-4 py-2 bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-lg hover:bg-gray-50 shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-lg hover:bg-gray-50 shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
-              <span>Take Photo</span>
+              <span className="hidden sm:inline">Take Photo</span>
+              <span className="sm:hidden">Photo</span>
             </button>
           </div>
         </div>
 
         {/* Photo Capture Panel — documentMode auto-enhances for readability */}
         {showPhotoCapture && (
-          <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200">
             <PhotoEvidence
               photos={docPhotos}
               onChange={setDocPhotos}
@@ -344,40 +346,40 @@ export function Documents() {
         )}
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <FileText className="h-4 w-4 text-[#1e4d6b]" />
               <span className="text-sm text-gray-500 font-medium">Total Documents</span>
             </div>
-            <div className="text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">Current</span>
             </div>
-            <div className="text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
+            <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm text-gray-500 font-medium">Expiring Soon</span>
             </div>
-            <div className="text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #ef4444' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #ef4444' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
               <span className="text-sm text-gray-500 font-medium">Expired</span>
             </div>
-            <div className="text-3xl font-bold text-red-600 text-center">{statusCounts.expired}</div>
+            <div className="text-xl sm:text-3xl font-bold text-red-600 text-center">{statusCounts.expired}</div>
           </div>
         </div>
 
         {/* Expiring/Expired Alert Banner */}
         {(statusCounts.expiring > 0 || statusCounts.expired > 0) && (
-          <div style={{ background: statusCounts.expired > 0 ? '#fef2f2' : '#fffbeb', border: `1px solid ${statusCounts.expired > 0 ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ background: statusCounts.expired > 0 ? '#fef2f2' : '#fffbeb', border: `1px solid ${statusCounts.expired > 0 ? '#fecaca' : '#fde68a'}`, borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <AlertTriangle style={{ width: '20px', height: '20px', color: statusCounts.expired > 0 ? '#dc2626' : '#d97706', flexShrink: 0 }} />
             <span style={{ fontSize: '14px', color: '#374151' }}>
               {statusCounts.expired > 0 && (
@@ -417,10 +419,10 @@ export function Documents() {
           </div>
         )}
 
-        <div className="flex space-x-2 border-b border-gray-200">
+        <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           <button
             onClick={() => setActiveTab('documents')}
-            className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+            className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'documents'
                 ? 'border-[#d4af37] text-[#1e4d6b]'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
@@ -430,7 +432,7 @@ export function Documents() {
           </button>
           <button
             onClick={() => setActiveTab('shared')}
-            className={`px-6 py-3 font-medium text-sm border-b-2 transition-colors ${
+            className={`px-6 py-3 font-medium text-sm whitespace-nowrap border-b-2 transition-colors ${
               activeTab === 'shared'
                 ? 'border-[#d4af37] text-[#1e4d6b]'
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
@@ -444,7 +446,7 @@ export function Documents() {
           <>
             {/* Search bar + Location filter */}
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', flex: '1', minWidth: '200px' }}>
+              <div style={{ position: 'relative', flex: '1', minWidth: '0' }}>
                 <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#9ca3af' }} />
                 <input
                   type="text"
@@ -538,16 +540,16 @@ export function Documents() {
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Document Name
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                           Category
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                           Location
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Status
                         </th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                           Uploaded
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -584,18 +586,18 @@ export function Documents() {
                                 </div>
                               </div>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap">
+                            <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                 {doc.category}
                               </span>
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                               {doc.location}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
                               <DocStatusBadge status={docStatus} />
                             </td>
-                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                               {format(new Date(doc.created_at), 'MMM d, yyyy')}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -655,51 +657,53 @@ export function Documents() {
                 }}
               />
             ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Document
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipient
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipient Type
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date Shared
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {sharedItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <FileText className="h-5 w-5 text-gray-400 mr-2" />
-                          <span className="text-sm font-medium text-gray-900">{item.document}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.recipient}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {item.recipientType}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {format(new Date(item.date), 'MMM d, yyyy')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getSharedStatusBadge(item.status)}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Document
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Recipient
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Recipient Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Date Shared
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {sharedItems.map((item) => (
+                      <tr key={item.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                            <span className="text-sm font-medium text-gray-900">{item.document}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {item.recipient}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
+                          {item.recipientType}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                          {format(new Date(item.date), 'MMM d, yyyy')}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getSharedStatusBadge(item.status)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
           </div>
         )}

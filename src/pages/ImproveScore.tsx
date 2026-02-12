@@ -145,7 +145,7 @@ export function ImproveScore() {
       ]} />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(`/insurance-risk?location=${locationParam}`)} className="p-2 rounded-lg hover:bg-gray-100">
             <ArrowLeft className="h-5 w-5 text-gray-500" />
@@ -158,10 +158,10 @@ export function ImproveScore() {
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-2 mb-6 flex-wrap overflow-x-auto">
         <button
           onClick={() => handleLocationChange('all')}
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
           style={locationParam === 'all' ? { backgroundColor: '#1e4d6b', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
         >
           All Locations
@@ -170,7 +170,7 @@ export function ImproveScore() {
           <button
             key={loc.urlId}
             onClick={() => handleLocationChange(loc.urlId)}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
             style={locationParam === loc.urlId ? { backgroundColor: '#1e4d6b', color: 'white' } : { backgroundColor: '#f3f4f6', color: '#374151' }}
           >
             {loc.name}
@@ -179,7 +179,7 @@ export function ImproveScore() {
       </div>
 
       {/* Score Projection Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex flex-col md:flex-row items-center gap-6">
           {/* Current Score */}
           <div className="text-center">
@@ -213,8 +213,8 @@ export function ImproveScore() {
           </div>
 
           {/* Summary Stats */}
-          <div className="flex-1 ml-4">
-            <div className="grid grid-cols-3 gap-4">
+          <div className="flex-1 ml-0 sm:ml-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="text-center p-3 rounded-lg bg-gray-50">
                 <div className="text-lg font-bold text-green-600">+{totalPotentialGain}</div>
                 <div className="text-[10px] text-gray-400">Total Points Available</div>
@@ -233,7 +233,7 @@ export function ImproveScore() {
       </div>
 
       {/* Category Impact Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {categoryGroups.map(group => {
           const Icon = CATEGORY_ICONS[group.name] || Shield;
           const color = CATEGORY_COLORS[group.name] || '#6b7280';
@@ -354,11 +354,11 @@ export function ImproveScore() {
 
                   {/* Action Buttons */}
                   {!isCompleted && (
-                    <div className="flex items-center gap-2 mt-3 ml-12">
+                    <div className="flex items-center gap-2 mt-3 ml-0 sm:ml-12 flex-wrap">
                       {item.quickAction && QuickIcon && (
                         <button
                           onClick={(e) => { e.stopPropagation(); handleQuickAction(globalIdx, item); }}
-                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5 transition-colors hover:opacity-90"
+                          className="px-3 py-1.5 rounded-lg text-xs font-medium text-white flex items-center gap-1.5 transition-colors hover:opacity-90 min-h-[44px]"
                           style={{ backgroundColor: '#1e4d6b' }}
                         >
                           <QuickIcon className="h-3.5 w-3.5" />
@@ -367,7 +367,7 @@ export function ImproveScore() {
                       )}
                       <button
                         onClick={() => navigate(item.actionLink)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 flex items-center gap-1.5 transition-colors"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 flex items-center gap-1.5 transition-colors min-h-[44px]"
                       >
                         Go to {item.actionLink.replace('/', '').replace('-', ' ')} <ArrowRight className="h-3 w-3" />
                       </button>
@@ -381,8 +381,8 @@ export function ImproveScore() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
             <Zap className="h-5 w-5" style={{ color: '#d4af37' }} />
             <div>
@@ -398,7 +398,7 @@ export function ImproveScore() {
           </div>
           <button
             onClick={() => navigate(`/insurance-risk?location=${locationParam}`)}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 min-h-[44px]"
             style={{ backgroundColor: '#1e4d6b' }}
           >
             Back to Risk Score <ArrowRight className="h-4 w-4" />

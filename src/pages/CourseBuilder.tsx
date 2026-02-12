@@ -109,7 +109,7 @@ export function CourseBuilder() {
         <ArrowLeft size={16} /> Back to Training
       </button>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Course Builder</h1>
           <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create a custom training course with modules, lessons, and assessments</p>
@@ -121,7 +121,7 @@ export function CourseBuilder() {
       </div>
 
       {/* Step Progress */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 28 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 28, overflowX: 'auto' }}>
         {STEPS.map((s, i) => {
           const isCurrent = s.id === step;
           const isDone = i < stepIdx;
@@ -148,7 +148,7 @@ export function CourseBuilder() {
       </div>
 
       {/* Step Content */}
-      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 24, marginBottom: 20 }}>
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 16, marginBottom: 20 }}>
         {/* Step 1: Basics */}
         {step === 'basics' && (
           <div>
@@ -165,7 +165,7 @@ export function CourseBuilder() {
                   placeholder="Brief description of what employees will learn..."
                   style={{ ...inputStyle, resize: 'vertical' }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
                 <div>
                   <label style={labelStyle}>Category</label>
                   <select value={category} onChange={e => setCategory(e.target.value as TrainingCategory)} style={inputStyle}>
@@ -196,7 +196,7 @@ export function CourseBuilder() {
         {/* Step 2: Modules */}
         {step === 'modules' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>Course Modules ({modules.length})</h2>
               <button onClick={addModule}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
@@ -208,7 +208,7 @@ export function CourseBuilder() {
                 <div key={mod.id} style={{ padding: 16, borderRadius: 10, border: activeModuleIdx === idx ? '2px solid #1e4d6b' : '1px solid #e5e7eb',
                   background: activeModuleIdx === idx ? '#fafbfc' : '#fff', cursor: 'pointer' }}
                   onClick={() => setActiveModuleIdx(idx)}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                     <GripVertical size={16} color="#9ca3af" />
                     <span style={{ width: 24, height: 24, borderRadius: 12, background: '#eef4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#1e4d6b', flexShrink: 0 }}>{idx + 1}</span>
                     <div style={{ flex: 1 }}>
@@ -333,7 +333,7 @@ export function CourseBuilder() {
                   }}
                     placeholder="Question text"
                     style={{ ...inputStyle, marginBottom: 10 }} />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 8, marginBottom: 10 }}>
                     {q.options.map((opt, oIdx) => (
                       <div key={oIdx} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <input type="radio" name={`q-${qIdx}-correct`} checked={q.correctIndex === oIdx}
@@ -363,7 +363,7 @@ export function CourseBuilder() {
                     style={{ ...inputStyle, fontSize: 13 }} />
                 </div>
               ))}
-              <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <button onClick={() => addQuestion(activeModuleIdx)}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '2px dashed #d1d5db', background: '#f9fafb', color: '#6b7280', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Plus size={16} /> Add Question
@@ -381,7 +381,7 @@ export function CourseBuilder() {
         {step === 'config' && (
           <div>
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: '0 0 20px' }}>Course Configuration</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20 }}>
               <div>
                 <label style={labelStyle}>Passing Score (%)</label>
                 <input type="number" value={passingScore} onChange={e => setPassingScore(Number(e.target.value))} min={50} max={100}
@@ -463,7 +463,7 @@ export function CourseBuilder() {
                 <span>Pass: {passingScore}%</span>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button onClick={() => toast.success(`Course published to ${assignLocations.size} location(s)`)}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: 'none', background: '#15803d', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <CheckCircle2 size={16} /> Publish Course
@@ -478,7 +478,7 @@ export function CourseBuilder() {
       </div>
 
       {/* Step Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <button onClick={goBack} disabled={stepIdx === 0}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: '1px solid #d1d5db',
             background: '#fff', color: stepIdx === 0 ? '#d1d5db' : '#374151', fontSize: 14, fontWeight: 600,

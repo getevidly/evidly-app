@@ -596,7 +596,7 @@ export function Analysis() {
 
       {/* Toast */}
       {toastMessage && (
-        <div style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999, backgroundColor: '#065f46', color: 'white', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', ...F }}>
+        <div style={{ position: 'fixed', bottom: '24px', left: '16px', right: '16px', zIndex: 9999, backgroundColor: '#065f46', color: 'white', padding: '12px 20px', borderRadius: '10px', fontSize: '14px', fontWeight: 500, boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', gap: '8px', maxWidth: '400px', marginLeft: 'auto', ...F }}>
           <CheckCircle2 className="h-4 w-4" />
           {toastMessage}
         </div>
@@ -658,14 +658,14 @@ export function Analysis() {
         )}
 
         {/* KPI Summary Row */}
-        {!loading && <><div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '24px' }}>
+        {!loading && <><div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {[
             { label: 'Critical', count: highCount, bg: '#fef2f2', border: '#fecaca', color: '#991b1b', icon: <ShieldAlert className="h-5 w-5" style={{ color: '#dc2626' }} /> },
             { label: 'Warning', count: mediumCount, bg: '#fffbeb', border: '#fde68a', color: '#92400e', icon: <AlertTriangle className="h-5 w-5" style={{ color: '#d97706' }} /> },
             { label: 'Watch', count: lowCount, bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: <Eye className="h-5 w-5" style={{ color: '#2563eb' }} /> },
             { label: 'Resolved This Week', count: resolvedThisWeek, bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: <CheckCircle className="h-5 w-5" style={{ color: '#16a34a' }} /> },
           ].map((kpi) => (
-            <div key={kpi.label} style={{ backgroundColor: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: '12px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div key={kpi.label} style={{ backgroundColor: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: '12px', padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               {kpi.icon}
               <div>
                 <div style={{ fontSize: '24px', fontWeight: 700, color: kpi.color, ...F }}>{kpi.count}</div>
@@ -676,13 +676,13 @@ export function Analysis() {
         </div>
 
         {/* Main content + Sidebar */}
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div className="flex flex-col lg:flex-row gap-5">
           {/* Main content */}
           <div style={{ flex: 1, minWidth: 0 }}>
 
             {/* Risk Forecast Cards */}
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
                 <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: 0, ...F }}>Risk Forecast (Next 30 Days)</h2>
                 <span style={{ fontSize: '13px', color: '#6b7280', ...F }}>{filteredAlerts.length} alert{filteredAlerts.length !== 1 ? 's' : ''}</span>
               </div>
@@ -698,11 +698,11 @@ export function Analysis() {
                   const isSnoozed = alert.status === 'snoozed';
 
                   return (
-                    <div key={alert.id} style={{ backgroundColor: isResolved ? '#f9fafb' : s.bg, border: `2px solid ${isResolved ? '#d1d5db' : s.border}`, borderRadius: '12px', padding: '20px', opacity: isResolved ? 0.75 : 1, position: 'relative' }}>
+                    <div key={alert.id} style={{ backgroundColor: isResolved ? '#f9fafb' : s.bg, border: `2px solid ${isResolved ? '#d1d5db' : s.border}`, borderRadius: '12px', padding: '16px', opacity: isResolved ? 0.75 : 1, position: 'relative' }}>
                       {/* Header row */}
-                      <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '8px', gap: '12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-                          {isResolved ? <CheckCircle className="h-5 w-5" style={{ color: '#16a34a' }} /> : getSeverityIcon(alert.severity)}
+                      <div style={{ display: 'flex', alignItems: 'start', justifyContent: 'space-between', marginBottom: '8px', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                          {isResolved ? <CheckCircle className="h-5 w-5 flex-shrink-0" style={{ color: '#16a34a' }} /> : getSeverityIcon(alert.severity)}
                           <h3 style={{ fontWeight: 600, fontSize: '14px', color: isResolved ? '#6b7280' : s.text, margin: 0, ...F }}>{alert.title}</h3>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
@@ -715,7 +715,7 @@ export function Analysis() {
                       <p style={{ fontSize: '13px', color: isResolved ? '#9ca3af' : s.text, opacity: 0.85, marginBottom: '10px', lineHeight: '1.5', ...F }}>{alert.description}</p>
 
                       {/* Location + timestamp */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px', fontSize: '12px', color: '#6b7280', ...F }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', fontSize: '12px', color: '#6b7280', flexWrap: 'wrap', ...F }}>
                         <span>📍 {alert.location}</span>
                         <span>⏱ {formatDate(alert.created_at)}</span>
                         {alert.assigned_to && <span>👤 {alert.assigned_to}</span>}
@@ -754,7 +754,7 @@ export function Analysis() {
                           {/* Primary action */}
                           <button
                             onClick={() => navigate(alert.action_href)}
-                            style={{ backgroundColor: s.border, color: 'white', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', ...F }}
+                            style={{ backgroundColor: s.border, color: 'white', padding: '6px 14px', borderRadius: '6px', fontSize: '13px', fontWeight: 500, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '44px', ...F }}
                           >
                             {alert.action_label}
                             <ArrowRight className="h-3.5 w-3.5" />
@@ -815,7 +815,7 @@ export function Analysis() {
             </div>
 
             {/* Score Projection */}
-            <div className="bg-white rounded-lg shadow p-6" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6" style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={scoreProjectionData}>
@@ -831,7 +831,7 @@ export function Analysis() {
                   <Line type="monotone" dataKey="recommended" stroke="#22c55e" strokeWidth={2} strokeDasharray="6 4" dot={{ r: 3 }} name="Recommended Actions" connectNulls={false} />
                 </LineChart>
               </ResponsiveContainer>
-              <div style={{ display: 'flex', gap: '24px', marginTop: '12px', fontSize: '13px', ...F }}>
+              <div style={{ display: 'flex', gap: '16px', marginTop: '12px', fontSize: '13px', flexWrap: 'wrap', ...F }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <TrendingDown className="h-4 w-4" style={{ color: '#ef4444' }} />
                   <span style={{ color: '#991b1b' }}>No action: score drops to ~65 in 4 weeks</span>
@@ -845,7 +845,7 @@ export function Analysis() {
 
             {/* Actions to Improve Score */}
             <div className="bg-white rounded-lg shadow overflow-hidden" style={{ marginBottom: '24px' }}>
-              <div className="p-6 pb-4">
+              <div className="p-4 sm:p-6 pb-4">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
                     <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', ...F }}>Actions to Improve Score</h2>
@@ -871,34 +871,34 @@ export function Analysis() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pillar</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Point Impact</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pillar</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Point Impact</th>
+                      <th className="hidden sm:table-cell px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                      <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {actionsToImproveScore.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-500">
+                        <td colSpan={6} className="px-4 sm:px-6 py-8 text-center text-sm text-gray-500">
                           No actions match the selected filters. Try adjusting the location or severity filter.
                         </td>
                       </tr>
                     ) : actionsToImproveScore.map((action, index) => (
                       <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">{action.action}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
+                        <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{action.action}</td>
+                        <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap">
                           <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Fire Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1e4d6b' : action.pillar === 'Fire Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1e4d6b' }}>+{action.pointImpact} pts</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{action.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <button onClick={() => navigate(action.link)} className="bg-[#1e4d6b] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#163a52] transition-colors duration-150 flex items-center gap-1">
+                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1e4d6b' }}>+{action.pointImpact} pts</td>
+                        <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-600">{action.location}</td>
+                        <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                          <button onClick={() => navigate(action.link)} className="bg-[#1e4d6b] text-white text-xs font-medium px-3 py-1 rounded-lg hover:bg-[#163a52] transition-colors duration-150 flex items-center gap-1 min-h-[44px]">
                             Take Action <ArrowRight className="h-3 w-3" />
                           </button>
                         </td>
@@ -913,7 +913,7 @@ export function Analysis() {
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-lg shadow p-4">
+                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety ({Math.round(getWeights().foodSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.foodSafety}>
@@ -929,7 +929,7 @@ export function Analysis() {
                     {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
                   </p>
                 </div>
-                <div className="bg-white rounded-lg shadow p-4">
+                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety ({Math.round(getWeights().fireSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.fireSafety}>
@@ -945,7 +945,7 @@ export function Analysis() {
                     {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
                   </p>
                 </div>
-                <div className="bg-white rounded-lg shadow p-4">
+                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.vendorCompliance}>
@@ -966,7 +966,7 @@ export function Analysis() {
           </div>
 
           {/* Right Sidebar */}
-          <div style={{ width: '280px', flexShrink: 0, display: showSidebar ? 'block' : 'none' }}>
+          <div className="w-full lg:w-[280px] flex-shrink-0" style={{ display: showSidebar ? 'block' : 'none' }}>
 
             {/* Alert Trends */}
             <div style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '16px', marginBottom: '16px' }}>

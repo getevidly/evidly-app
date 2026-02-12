@@ -550,7 +550,7 @@ export function AuditReport() {
 
         {/* Configuration Panel */}
         {!generated && (
-          <div className="bg-white rounded-xl shadow-sm p-6 space-y-6 no-print">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 space-y-6 no-print">
             <h2 className="text-lg font-bold text-gray-900">Report Configuration</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -623,7 +623,7 @@ export function AuditReport() {
             {reportType === 'custom' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Sections to Include</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                   {sections.map(s => {
                     const Icon = s.icon;
                     return (
@@ -645,7 +645,7 @@ export function AuditReport() {
 
             <button
               onClick={() => setGenerated(true)}
-              className="w-full md:w-auto px-8 py-3 bg-[#1e4d6b] text-white rounded-lg font-bold text-lg hover:bg-[#163a52] shadow-sm transition-colors"
+              className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg font-bold text-lg hover:bg-[#163a52] shadow-sm transition-colors"
             >
               Generate Report
             </button>
@@ -664,17 +664,17 @@ export function AuditReport() {
                 ← Back to Configuration
               </button>
               <div className="flex gap-2 flex-wrap">
-                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
+                <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
                   {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {pdfLoading ? 'Generating...' : 'Download PDF'}
                 </button>
-                <button onClick={handleEmail} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button onClick={handleEmail} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                   <Mail className="h-4 w-4" /> Email Report
                 </button>
-                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button onClick={handleShareLink} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                   <Share2 className="h-4 w-4" /> Share Link
                 </button>
-                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
                   <Printer className="h-4 w-4" /> Print
                 </button>
               </div>
@@ -683,7 +683,7 @@ export function AuditReport() {
             {/* Printable Report */}
             <div ref={reportRef} className="print-report space-y-6">
               {/* Report Header */}
-              <div className="bg-[#1e4d6b] rounded-xl p-6 text-white" style={{ pageBreakAfter: 'avoid' }}>
+              <div className="bg-[#1e4d6b] rounded-xl p-4 sm:p-6 text-white" style={{ pageBreakAfter: 'avoid' }}>
                 <div className="flex items-center gap-3 mb-4">
                   <ShieldCheck className="h-8 w-8 text-[#d4af37]" />
                   <span className="text-2xl font-bold">
@@ -692,7 +692,7 @@ export function AuditReport() {
                   </span>
                 </div>
                 <h2 className="text-2xl font-bold mb-1">{reportTitle}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm opacity-90">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm opacity-90">
                   <div>
                     <span className="block text-white/60 text-xs uppercase">Organization</span>
                     <span className="font-medium">Demo Restaurant Group</span>
@@ -713,9 +713,9 @@ export function AuditReport() {
               </div>
 
               {/* Table of Contents */}
-              <div className="bg-white rounded-xl shadow-sm p-5 no-print">
+              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 no-print">
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Table of Contents</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                   {sections.filter(s => s.enabled).map((s, idx) => {
                     const Icon = s.icon;
                     return (
@@ -735,7 +735,7 @@ export function AuditReport() {
 
               {/* ─── Section: Executive Summary ────────────────────────────── */}
               {sectionEnabled('summary') && (
-                <div id="section-summary" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-summary" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('summary')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.summary ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Shield className="h-5 w-5 text-[#1e4d6b]" />
@@ -764,7 +764,7 @@ export function AuditReport() {
                       </div>
 
                       {/* KPI grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="p-3 rounded-lg border border-gray-200">
                           <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalTemps.toLocaleString()}</div>
                           <div className="text-xs text-gray-500">Temperature Readings</div>
@@ -825,7 +825,7 @@ export function AuditReport() {
 
               {/* ─── Section: Temperature Logs ─────────────────────────────── */}
               {sectionEnabled('temp_logs') && (
-                <div id="section-temp_logs" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-temp_logs" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('temp_logs')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.temp_logs ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Thermometer className="h-5 w-5 text-[#1e4d6b]" />
@@ -843,26 +843,26 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>Date</th><th style={thStyle}>Time</th><th style={thStyle}>Equipment</th>
-                            <th style={thStyle}>Reading</th><th style={thStyle}>Range</th><th style={thStyle}>Result</th>
-                            <th style={thStyle}>User</th><th style={thStyle}>Location</th><th style={thStyle}>Corrective Action</th>
+                            <th style={thStyle}>Date</th><th style={thStyle} className="hidden sm:table-cell">Time</th><th style={thStyle}>Equipment</th>
+                            <th style={thStyle}>Reading</th><th style={thStyle} className="hidden sm:table-cell">Range</th><th style={thStyle}>Result</th>
+                            <th style={thStyle} className="hidden sm:table-cell">User</th><th style={thStyle} className="hidden sm:table-cell">Location</th><th style={thStyle} className="hidden sm:table-cell">Corrective Action</th>
                           </tr></thead>
                           <tbody>
                             {reportData.tempLogs.slice(0, 100).map((log: any) => (
                               <tr key={log.id}>
                                 <td style={tdStyle}>{log.date}</td>
-                                <td style={tdStyle}>{log.time}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{log.time}</td>
                                 <td style={tdStyle}>{log.equipment}</td>
                                 <td style={{ ...tdStyle, fontWeight: 600 }}>{log.reading}°F</td>
-                                <td style={tdStyle}>{log.range}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{log.range}</td>
                                 <td style={tdStyle}>
                                   <span style={badge(log.pass ? 'Pass' : 'Fail', log.pass ? '#16a34a' : '#dc2626', log.pass ? '#f0fdf4' : '#fef2f2')}>
                                     {log.pass ? 'Pass' : 'Fail'}
                                   </span>
                                 </td>
-                                <td style={tdStyle}>{log.user}</td>
-                                <td style={tdStyle}>{log.location}</td>
-                                <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }}>{log.correctiveAction || '—'}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{log.user}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{log.location}</td>
+                                <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }} className="hidden sm:table-cell">{log.correctiveAction || '—'}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -878,7 +878,7 @@ export function AuditReport() {
 
               {/* ─── Section: Checklists ────────────────────────────────────── */}
               {sectionEnabled('checklists') && (
-                <div id="section-checklists" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-checklists" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('checklists')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.checklists ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
@@ -895,26 +895,26 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>Date</th><th style={thStyle}>Checklist</th><th style={thStyle}>Completed By</th>
-                            <th style={thStyle}>Items</th><th style={thStyle}>Passed</th><th style={thStyle}>Failed</th>
-                            <th style={thStyle}>Score</th><th style={thStyle}>Location</th><th style={thStyle}>Corrective Actions</th>
+                            <th style={thStyle}>Date</th><th style={thStyle}>Checklist</th><th style={thStyle} className="hidden sm:table-cell">Completed By</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Items</th><th style={thStyle} className="hidden sm:table-cell">Passed</th><th style={thStyle} className="hidden sm:table-cell">Failed</th>
+                            <th style={thStyle}>Score</th><th style={thStyle} className="hidden sm:table-cell">Location</th><th style={thStyle} className="hidden sm:table-cell">Corrective Actions</th>
                           </tr></thead>
                           <tbody>
                             {reportData.checklists.map((cl: any) => (
                               <tr key={cl.id}>
                                 <td style={tdStyle}>{cl.date}</td>
                                 <td style={{ ...tdStyle, fontWeight: 500 }}>{cl.name}</td>
-                                <td style={tdStyle}>{cl.completedBy}</td>
-                                <td style={tdStyle}>{cl.totalItems}</td>
-                                <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }}>{cl.passed}</td>
-                                <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }}>{cl.failed}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{cl.completedBy}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{cl.totalItems}</td>
+                                <td style={{ ...tdStyle, color: '#16a34a', fontWeight: 600 }} className="hidden sm:table-cell">{cl.passed}</td>
+                                <td style={{ ...tdStyle, color: cl.failed > 0 ? '#dc2626' : '#6b7280', fontWeight: 600 }} className="hidden sm:table-cell">{cl.failed}</td>
                                 <td style={tdStyle}>
                                   <span style={badge(`${cl.score}%`, cl.score >= 90 ? '#22c55e' : cl.score >= 75 ? '#eab308' : cl.score >= 60 ? '#f59e0b' : '#ef4444', cl.score >= 90 ? '#f0fdf4' : cl.score >= 75 ? '#fefce8' : cl.score >= 60 ? '#fffbeb' : '#fef2f2')}>
                                     {cl.score}%
                                   </span>
                                 </td>
-                                <td style={tdStyle}>{cl.location}</td>
-                                <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }}>
+                                <td style={tdStyle} className="hidden sm:table-cell">{cl.location}</td>
+                                <td style={{ ...tdStyle, fontSize: '12px', color: '#6b7280', maxWidth: '200px', whiteSpace: 'normal' }} className="hidden sm:table-cell">
                                   {cl.correctiveActions.length > 0 ? cl.correctiveActions.join('; ') : '—'}
                                 </td>
                               </tr>
@@ -929,7 +929,7 @@ export function AuditReport() {
 
               {/* ─── Section: Incidents ──────────────────────────────────────── */}
               {sectionEnabled('incidents') && (
-                <div id="section-incidents" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-incidents" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('incidents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.incidents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <AlertTriangle className="h-5 w-5 text-[#1e4d6b]" />
@@ -948,26 +948,26 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>ID</th><th style={thStyle}>Type</th><th style={thStyle}>Severity</th>
-                            <th style={thStyle}>Title</th><th style={thStyle}>Status</th><th style={thStyle}>Location</th>
-                            <th style={thStyle}>Assigned To</th><th style={thStyle}>Reported</th><th style={thStyle}>Resolved</th>
-                            <th style={thStyle}>Resolution Time</th><th style={thStyle}>Root Cause</th><th style={thStyle}>Verified By</th>
+                            <th style={thStyle}>ID</th><th style={thStyle} className="hidden sm:table-cell">Type</th><th style={thStyle}>Severity</th>
+                            <th style={thStyle}>Title</th><th style={thStyle}>Status</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Assigned To</th><th style={thStyle} className="hidden sm:table-cell">Reported</th><th style={thStyle} className="hidden sm:table-cell">Resolved</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Resolution Time</th><th style={thStyle} className="hidden sm:table-cell">Root Cause</th><th style={thStyle} className="hidden sm:table-cell">Verified By</th>
                           </tr></thead>
                           <tbody>
                             {reportData.incidents.map((inc: any) => (
                               <tr key={inc.id}>
                                 <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{inc.id}</td>
-                                <td style={tdStyle}>{inc.type}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.type}</td>
                                 <td style={tdStyle}><span style={badge(inc.severity, sevColor(inc.severity), sevBg(inc.severity))}>{inc.severity}</span></td>
                                 <td style={{ ...tdStyle, maxWidth: '200px', whiteSpace: 'normal' }}>{inc.title}</td>
                                 <td style={tdStyle}><span style={badge(inc.status, statusColor(inc.status), statusBg(inc.status))}>{inc.status}</span></td>
-                                <td style={tdStyle}>{inc.location}</td>
-                                <td style={tdStyle}>{inc.assignedTo}</td>
-                                <td style={tdStyle}>{inc.createdAt}</td>
-                                <td style={tdStyle}>{inc.resolvedAt}</td>
-                                <td style={tdStyle}>{inc.resolutionTime}</td>
-                                <td style={tdStyle}>{inc.rootCause}</td>
-                                <td style={tdStyle}>{inc.verifiedBy}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.location}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.assignedTo}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.createdAt}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.resolvedAt}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.resolutionTime}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.rootCause}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{inc.verifiedBy}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -980,7 +980,7 @@ export function AuditReport() {
 
               {/* ─── Section: Vendor Services ───────────────────────────────── */}
               {sectionEnabled('vendors') && (
-                <div id="section-vendors" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-vendors" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('vendors')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.vendors ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Truck className="h-5 w-5 text-[#1e4d6b]" />
@@ -998,20 +998,20 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>Vendor</th><th style={thStyle}>Service Type</th><th style={thStyle}>Location</th>
-                            <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th>
-                            <th style={thStyle}>Certificate</th><th style={thStyle}>Cert Expiry</th><th style={thStyle}>Cert Status</th>
+                            <th style={thStyle}>Vendor</th><th style={thStyle}>Service Type</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Last Service</th><th style={thStyle} className="hidden sm:table-cell">Next Due</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Certificate</th><th style={thStyle} className="hidden sm:table-cell">Cert Expiry</th><th style={thStyle}>Cert Status</th>
                           </tr></thead>
                           <tbody>
                             {reportData.vendors.map((v: any) => (
                               <tr key={v.id}>
                                 <td style={{ ...tdStyle, fontWeight: 500 }}>{v.vendor}</td>
                                 <td style={tdStyle}>{v.serviceType}</td>
-                                <td style={tdStyle}>{v.location}</td>
-                                <td style={tdStyle}>{v.lastService}</td>
-                                <td style={tdStyle}>{v.nextDue}</td>
-                                <td style={tdStyle}>{v.certName}</td>
-                                <td style={tdStyle}>{v.certExpiry}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{v.location}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{v.lastService}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{v.nextDue}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{v.certName}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{v.certExpiry}</td>
                                 <td style={tdStyle}><span style={badge(v.certStatus, statusColor(v.certStatus), statusBg(v.certStatus))}>{v.certStatus}</span></td>
                               </tr>
                             ))}
@@ -1025,7 +1025,7 @@ export function AuditReport() {
 
               {/* ─── Section: Documents ──────────────────────────────────────── */}
               {sectionEnabled('documents') && (
-                <div id="section-documents" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-documents" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('documents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.documents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <FileText className="h-5 w-5 text-[#1e4d6b]" />
@@ -1042,19 +1042,19 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>Document</th><th style={thStyle}>Category</th><th style={thStyle}>Location</th>
-                            <th style={thStyle}>Uploaded</th><th style={thStyle}>Expiration</th><th style={thStyle}>Status</th><th style={thStyle}>Uploaded By</th>
+                            <th style={thStyle}>Document</th><th style={thStyle} className="hidden sm:table-cell">Category</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Uploaded</th><th style={thStyle}>Expiration</th><th style={thStyle}>Status</th><th style={thStyle} className="hidden sm:table-cell">Uploaded By</th>
                           </tr></thead>
                           <tbody>
                             {reportData.documents.map((doc: any) => (
                               <tr key={doc.id}>
                                 <td style={{ ...tdStyle, fontWeight: 500 }}>{doc.name}</td>
-                                <td style={tdStyle}>{doc.category}</td>
-                                <td style={tdStyle}>{doc.location}</td>
-                                <td style={tdStyle}>{doc.uploadDate}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{doc.category}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{doc.location}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{doc.uploadDate}</td>
                                 <td style={tdStyle}>{doc.expirationDate}</td>
                                 <td style={tdStyle}><span style={badge(doc.status, statusColor(doc.status), statusBg(doc.status))}>{doc.status}</span></td>
-                                <td style={tdStyle}>{doc.uploadedBy}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{doc.uploadedBy}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -1067,7 +1067,7 @@ export function AuditReport() {
 
               {/* ─── Section: Equipment Status ──────────────────────────────── */}
               {sectionEnabled('equipment') && (
-                <div id="section-equipment" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-equipment" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('equipment')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.equipment ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Wrench className="h-5 w-5 text-[#1e4d6b]" />
@@ -1084,15 +1084,15 @@ export function AuditReport() {
                       <div className="overflow-x-auto">
                         <table className="w-full">
                           <thead><tr>
-                            <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle}>Location</th>
+                            <th style={thStyle}>Equipment</th><th style={thStyle} className="hidden sm:table-cell">Type</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
                             <th style={thStyle}>Last Service</th><th style={thStyle}>Next Due</th><th style={thStyle}>Condition</th>
                           </tr></thead>
                           <tbody>
                             {reportData.equipment.map((eq: any) => (
                               <tr key={eq.id}>
                                 <td style={{ ...tdStyle, fontWeight: 500 }}>{eq.name}</td>
-                                <td style={tdStyle}>{eq.type}</td>
-                                <td style={tdStyle}>{eq.location}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{eq.type}</td>
+                                <td style={tdStyle} className="hidden sm:table-cell">{eq.location}</td>
                                 <td style={tdStyle}>{eq.lastService}</td>
                                 <td style={tdStyle}>{eq.nextDue}</td>
                                 <td style={tdStyle}><span style={badge(eq.condition, statusColor(eq.condition), statusBg(eq.condition))}>{eq.condition}</span></td>
@@ -1108,7 +1108,7 @@ export function AuditReport() {
 
               {/* ─── Section: Chain of Custody / Audit Log ──────────────────── */}
               {sectionEnabled('audit_log') && (
-                <div id="section-audit_log" className="bg-white rounded-xl shadow-sm p-5 report-section">
+                <div id="section-audit_log" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('audit_log')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.audit_log ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <ClipboardList className="h-5 w-5 text-[#1e4d6b]" />
@@ -1125,7 +1125,7 @@ export function AuditReport() {
                         <table className="w-full">
                           <thead><tr>
                             <th style={thStyle}>Timestamp</th><th style={thStyle}>User</th><th style={thStyle}>Action</th>
-                            <th style={thStyle}>Device</th><th style={thStyle}>IP Address</th>
+                            <th style={thStyle} className="hidden sm:table-cell">Device</th><th style={thStyle} className="hidden sm:table-cell">IP Address</th>
                           </tr></thead>
                           <tbody>
                             {reportData.auditLog.slice(0, 100).map((entry: any) => (
@@ -1133,8 +1133,8 @@ export function AuditReport() {
                                 <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{entry.timestamp}</td>
                                 <td style={tdStyle}>{entry.user}</td>
                                 <td style={{ ...tdStyle, maxWidth: '300px', whiteSpace: 'normal' }}>{entry.action}</td>
-                                <td style={{ ...tdStyle, fontSize: '12px' }}>{entry.device}</td>
-                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }}>{entry.ip}</td>
+                                <td style={{ ...tdStyle, fontSize: '12px' }} className="hidden sm:table-cell">{entry.device}</td>
+                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '12px' }} className="hidden sm:table-cell">{entry.ip}</td>
                               </tr>
                             ))}
                           </tbody>

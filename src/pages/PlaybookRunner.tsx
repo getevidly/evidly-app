@@ -433,7 +433,7 @@ export function PlaybookRunner() {
 
         <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
           {/* Report header */}
-          <div style={{ padding: '24px 28px', borderBottom: '1px solid #e5e7eb', background: '#f9fafb' }}>
+          <div style={{ padding: '16px 16px', borderBottom: '1px solid #e5e7eb', background: '#f9fafb' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <Icon size={24} color={template.color} />
               <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Incident Report</h1>
@@ -449,7 +449,7 @@ export function PlaybookRunner() {
           </div>
 
           {/* Steps summary */}
-          <div style={{ padding: '24px 28px' }}>
+          <div style={{ padding: '16px 16px' }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 16px' }}>Step-by-Step Summary</h3>
             {steps.map((s, idx) => {
               const isDone = completedSteps.has(idx);
@@ -487,6 +487,7 @@ export function PlaybookRunner() {
                 <h4 style={{ fontSize: 14, fontWeight: 700, color: '#92400e', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <DollarSign size={16} /> Food Disposition Summary
                 </h4>
+                <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', fontSize: 12, borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #fde68a' }}>
@@ -513,6 +514,7 @@ export function PlaybookRunner() {
                     </tr>
                   </tfoot>
                 </table>
+                </div>
               </div>
             )}
 
@@ -575,7 +577,7 @@ export function PlaybookRunner() {
       {/* Paused overlay */}
       {isPaused && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: 'white', borderRadius: 16, padding: '40px 48px', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+          <div style={{ background: 'white', borderRadius: 16, padding: '24px 20px', textAlign: 'center', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', maxWidth: '95vw' }}>
             <Pause size={48} color="#d97706" style={{ marginBottom: 16 }} />
             <h2 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 8px' }}>PAUSED</h2>
             <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px' }}>Timer is paused. Resume to continue.</p>
@@ -771,7 +773,7 @@ export function PlaybookRunner() {
         <div className="playbook-main" style={{ flex: 1, minWidth: 0 }}>
           <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
             {/* Step header */}
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ padding: '16px 16px', borderBottom: '1px solid #e5e7eb' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
                 <span style={{ fontSize: 12, fontWeight: 600, color: '#6b7280' }}>Step {step.stepNumber} of {steps.length}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -789,7 +791,7 @@ export function PlaybookRunner() {
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>{step.title}</h2>
             </div>
 
-            <div style={{ padding: '20px 24px' }}>
+            <div style={{ padding: '16px 16px' }}>
               {/* Critical warning */}
               {step.criticalWarning && (
                 <div style={{ padding: '12px 16px', borderRadius: 8, background: '#fef2f2', border: '1px solid #fca5a5', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'flex-start' }}>

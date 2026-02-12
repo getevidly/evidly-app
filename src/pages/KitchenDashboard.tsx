@@ -41,14 +41,14 @@ export function KitchenDashboard() {
   return (
     <>
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
           <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
           <p className="text-blue-100 text-sm mt-1">Shift: 6:00 AM - 2:00 PM</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <h2 className="text-xl font-bold text-gray-900">My Tasks Today</h2>
             <div className="text-sm font-medium text-gray-600">
               {completedCount} of {totalCount} complete ({progressPercentage}%)
@@ -101,7 +101,7 @@ export function KitchenDashboard() {
         </div>
 
         {overdueItems.length > 0 && (
-          <div className="bg-red-50 border-l-4 border-red-600 rounded-lg p-6">
+          <div className="bg-red-50 border-l-4 border-red-600 rounded-lg p-4 sm:p-6">
             <div className="flex items-start space-x-3">
               <AlertCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
@@ -115,7 +115,7 @@ export function KitchenDashboard() {
                       </div>
                       <button
                         onClick={() => navigate(item.link)}
-                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm min-h-[44px]"
                       >
                         Do It Now
                       </button>
@@ -130,7 +130,7 @@ export function KitchenDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <button
             onClick={() => navigate('/temp-logs')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Thermometer className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -139,7 +139,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/checklists')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <ClipboardCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -148,7 +148,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/temp-logs?tab=receiving')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Truck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -156,7 +156,7 @@ export function KitchenDashboard() {
           </button>
         </div>
 
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6">
+        <div className="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 sm:p-6">
           <h3 className="text-lg font-bold text-yellow-900 mb-3 flex items-center">
             <Clock className="h-5 w-5 mr-2" />
             Reminders

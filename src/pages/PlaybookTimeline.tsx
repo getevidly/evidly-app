@@ -117,7 +117,7 @@ export function PlaybookTimeline() {
 
   // ── Main render ──────────────────────────────────────────────────────────
   return (
-    <div style={{ ...font, maxWidth: 960, margin: '0 auto', padding: '24px 16px 64px' }}>
+    <div style={{ ...font, maxWidth: 960, margin: '0 auto', padding: '16px 12px 64px' }}>
 
       {/* ── Back Link ──────────────────────────────────────────────────────── */}
       <button
@@ -134,7 +134,7 @@ export function PlaybookTimeline() {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 8 }}>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, color: '#1e4d6b' }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#1e4d6b' }}>
             {incident.templateTitle}
           </h1>
           <span style={{
@@ -205,7 +205,7 @@ export function PlaybookTimeline() {
               {/* Step content */}
               <div style={{
                 background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10,
-                padding: '16px 20px',
+                padding: '12px 14px',
                 borderLeft: `3px solid ${circleColor}`,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -281,7 +281,7 @@ export function PlaybookTimeline() {
       {/* ── Food Disposition Summary ──────────────────────────────────────── */}
       <div style={{
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
-        borderTop: `4px solid #d4af37`, padding: '20px 24px', marginBottom: 28,
+        borderTop: `4px solid #d4af37`, padding: '16px 16px', marginBottom: 28,
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Thermometer size={18} color="#d4af37" /> Food Disposition Summary
@@ -360,7 +360,7 @@ export function PlaybookTimeline() {
       {/* ── Vendor Contact Log ────────────────────────────────────────────── */}
       <div style={{
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
-        padding: '20px 24px', marginBottom: 28,
+        padding: '16px 16px', marginBottom: 28,
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Phone size={18} color="#1e4d6b" /> Vendor Contact Log
@@ -400,7 +400,7 @@ export function PlaybookTimeline() {
       {/* ── Insurance Claim Card ──────────────────────────────────────────── */}
       <div style={{
         background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0',
-        padding: '20px 24px', marginBottom: 28,
+        padding: '16px 16px', marginBottom: 28,
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <DollarSign size={18} color="#d4af37" /> Insurance Claim
@@ -453,7 +453,7 @@ export function PlaybookTimeline() {
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#1e4d6b',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
           <Download size={15} /> Full PDF Report
@@ -463,7 +463,7 @@ export function PlaybookTimeline() {
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#d4af37',
             color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
           <FileText size={15} /> Insurance Claim Package
@@ -473,7 +473,7 @@ export function PlaybookTimeline() {
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
             color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
           <Printer size={15} /> Health Dept Report
@@ -483,7 +483,7 @@ export function PlaybookTimeline() {
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff',
             color: '#1e4d6b', border: '2px solid #1e4d6b', borderRadius: 8, padding: '10px 20px',
-            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer', minHeight: 44,
           }}
         >
           <FileText size={15} /> Legal Summary
@@ -497,7 +497,7 @@ export function PlaybookTimeline() {
           style={{
             ...font, display: 'inline-flex', alignItems: 'center', gap: 8, background: '#d4af37',
             color: '#fff', border: 'none', borderRadius: 8, padding: '12px 28px',
-            fontSize: 15, fontWeight: 700, cursor: 'pointer',
+            fontSize: 15, fontWeight: 700, cursor: 'pointer', minHeight: 44,
           }}
         >
           <Share2 size={17} /> Share with Insurance
@@ -507,7 +507,7 @@ export function PlaybookTimeline() {
       {/* ── Compliance Narrative ──────────────────────────────────────────── */}
       <div style={{
         background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 12,
-        padding: '20px 24px',
+        padding: '16px 16px',
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Shield size={18} color="#1e4d6b" /> Compliance Narrative

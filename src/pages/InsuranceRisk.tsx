@@ -447,10 +447,10 @@ export function InsuranceRisk() {
       </div>
 
       {/* Location Selector */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-2 mb-6 flex-wrap overflow-x-auto">
         <button
           onClick={() => handleLocationChange('all')}
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
           style={locationParam === 'all'
             ? { backgroundColor: '#1e4d6b', color: 'white' }
             : { backgroundColor: '#f3f4f6', color: '#374151' }}
@@ -461,7 +461,7 @@ export function InsuranceRisk() {
           <button
             key={loc.urlId}
             onClick={() => handleLocationChange(loc.urlId)}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px]"
             style={locationParam === loc.urlId
               ? { backgroundColor: '#1e4d6b', color: 'white' }
               : { backgroundColor: '#f3f4f6', color: '#374151' }}
@@ -472,7 +472,7 @@ export function InsuranceRisk() {
       </div>
 
       {/* Overall Score Hero */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
         <div className="flex flex-col md:flex-row items-center gap-8">
           {/* Score Circle */}
           <div className="flex-shrink-0 text-center">
@@ -481,7 +481,7 @@ export function InsuranceRisk() {
               style={{ borderColor: tierInfo.color, backgroundColor: tierInfo.bg }}
             >
               <div>
-                <div className="text-4xl font-bold" style={{ color: tierInfo.color }}>{riskResult.overall}</div>
+                <div className="text-2xl sm:text-4xl font-bold" style={{ color: tierInfo.color }}>{riskResult.overall}</div>
                 <div className="text-xs text-gray-500 font-medium">of 100</div>
               </div>
             </div>
@@ -513,7 +513,7 @@ export function InsuranceRisk() {
                 ? 'Several risk factors need attention. Prioritizing the critical items below can meaningfully improve your risk profile for insurance purposes.'
                 : 'Multiple high-risk factors identified. Immediate action on fire safety and documentation gaps is essential for maintaining adequate coverage.'}
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {riskResult.categories.map(cat => {
                 const catTier = getInsuranceRiskTier(cat.score);
                 return (
@@ -547,7 +547,7 @@ export function InsuranceRisk() {
             <div key={cat.key} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               {/* Card Header */}
               <div
-                className="p-5 cursor-pointer hover:bg-gray-50 transition-colors"
+                className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => setExpandedCategory(isExpanded ? null : cat.key)}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -579,14 +579,14 @@ export function InsuranceRisk() {
 
               {/* Expanded Sub-factors */}
               {isExpanded && (
-                <div className="border-t border-gray-100 px-5 py-3">
+                <div className="border-t border-gray-100 px-3 sm:px-5 py-3 overflow-x-auto">
                   <table className="w-full">
                     <thead>
                       <tr className="text-[11px] text-gray-400 uppercase tracking-wider">
                         <th className="text-left py-1.5 font-semibold">Factor</th>
                         <th className="text-center py-1.5 font-semibold w-12">Status</th>
                         <th className="text-right py-1.5 font-semibold w-14">Score</th>
-                        <th className="text-right py-1.5 font-semibold w-16">Weight</th>
+                        <th className="text-right py-1.5 font-semibold w-16 hidden sm:table-cell">Weight</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -601,7 +601,7 @@ export function InsuranceRisk() {
                           <td className="text-right py-2.5">
                             <span className="text-xs font-bold" style={{ color: getInsuranceRiskTier(factor.score).color }}>{factor.score}</span>
                           </td>
-                          <td className="text-right py-2.5">
+                          <td className="text-right py-2.5 hidden sm:table-cell">
                             <span className="text-[11px] text-gray-400">{Math.round(factor.weight * 100)}%</span>
                           </td>
                         </tr>
@@ -617,7 +617,7 @@ export function InsuranceRisk() {
 
       {/* Location Comparison Table (when All selected) */}
       {locationParam === 'all' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Location Risk Comparison</h3>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -627,8 +627,8 @@ export function InsuranceRisk() {
                   <th className="text-center py-2 font-semibold">Overall</th>
                   <th className="text-center py-2 font-semibold">Fire Risk</th>
                   <th className="text-center py-2 font-semibold">Food Safety</th>
-                  <th className="text-center py-2 font-semibold">Documentation</th>
-                  <th className="text-center py-2 font-semibold">Operational</th>
+                  <th className="text-center py-2 font-semibold hidden sm:table-cell">Documentation</th>
+                  <th className="text-center py-2 font-semibold hidden sm:table-cell">Operational</th>
                   <th className="text-center py-2 font-semibold">Tier</th>
                 </tr>
               </thead>
@@ -671,7 +671,7 @@ export function InsuranceRisk() {
       )}
 
       {/* What Carriers See */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
             <ShieldAlert className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -734,15 +734,15 @@ export function InsuranceRisk() {
 
       {/* Action Items */}
       {riskResult.actionItems.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Actions to Improve Your Score</h3>
               <p className="text-xs text-gray-500">Ranked by potential impact on your insurance risk score</p>
             </div>
             <button
               onClick={() => navigate(`/improve-score?location=${locationParam}`)}
-              className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors min-h-[44px]"
               style={{ color: '#1e4d6b', border: '1px solid #b8d4e8' }}
             >
               <TrendingUp className="h-4 w-4" /> View Full Improvement Plan <ArrowRight className="h-3.5 w-3.5" />
@@ -774,7 +774,7 @@ export function InsuranceRisk() {
       )}
 
       {/* API Access (Premium Gated) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
             <Code className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -825,8 +825,8 @@ export function InsuranceRisk() {
       </div>
 
       {/* Carrier Report Download (Premium Gated) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
               <Download className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -855,7 +855,7 @@ export function InsuranceRisk() {
               }
             }}
             disabled={pdfLoading}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 disabled:opacity-50 min-h-[44px]"
             style={{ backgroundColor: '#1e4d6b' }}
           >
             {pdfLoading ? (
@@ -868,9 +868,9 @@ export function InsuranceRisk() {
       </div>
 
       {/* Score Methodology */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Score Methodology</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: 'Fire Risk', weight: '40%', desc: '9 factors mapped to NFPA standards', color: '#ef4444' },
             { label: 'Food Safety', weight: '30%', desc: '9 factors mapped to FDA Food Code', color: '#3b82f6' },

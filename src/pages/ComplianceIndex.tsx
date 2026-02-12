@@ -166,7 +166,7 @@ function SeverityBadge({ severity }: { severity: string }) {
 
 function SectionHeader({ icon: Icon, title, number, children }: { icon: any; title: string; number: number; children?: React.ReactNode }) {
   return (
-    <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div className="px-4 sm:px-6 py-4 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
       <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
         <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ backgroundColor: '#1e4d6b' }}>{number}</span>
         <Icon className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -224,8 +224,8 @@ export function ComplianceIndex() {
 
       <div className="space-y-6">
         {/* Report Header */}
-        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-8 text-white">
-          <div className="flex items-start justify-between">
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-4 sm:p-8 text-white">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <Shield className="h-10 w-10" style={{ color: '#d4af37' }} />
@@ -261,7 +261,7 @@ export function ComplianceIndex() {
           {/* Key stats row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
-              <div className="text-3xl font-bold">{REPORT.overallScore}</div>
+              <div className="text-xl sm:text-3xl font-bold">{REPORT.overallScore}</div>
               <div className="text-xs text-gray-300">Industry Avg Score</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
@@ -286,7 +286,7 @@ export function ComplianceIndex() {
         {/* ── 1. Executive Summary ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={FileText} title="Executive Summary" number={1} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="prose prose-sm max-w-none">
               <p className="text-sm text-gray-700 leading-relaxed">
                 California's commercial kitchen compliance landscape continued its upward trajectory in Q4 2025,
@@ -314,10 +314,10 @@ export function ComplianceIndex() {
         {/* ── 2. Overall Industry Score ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={BarChart3} title="Overall Industry Score" number={2} />
-          <div className="p-6">
-            <div className="flex items-center gap-8 mb-6">
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center gap-4 sm:gap-8 mb-6 flex-wrap">
               <div className="text-center">
-                <div className="text-5xl font-bold" style={{ color: '#1e4d6b' }}>{REPORT.overallScore}</div>
+                <div className="text-3xl sm:text-5xl font-bold" style={{ color: '#1e4d6b' }}>{REPORT.overallScore}</div>
                 <div className="text-sm text-gray-500 mt-1">Q{REPORT.quarter} {REPORT.year}</div>
               </div>
               <div className="flex-1">
@@ -350,17 +350,17 @@ export function ComplianceIndex() {
         {/* ── 3. Score by Vertical ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={Building2} title="Score by Vertical" number={3} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-gray-200">
                     <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">Vertical</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Q4 Score</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Q3 Score</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Q3 Score</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Change</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Locations</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-48">Score</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Locations</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-48 hidden sm:table-cell">Score</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -368,10 +368,10 @@ export function ComplianceIndex() {
                     <tr key={v.vertical}>
                       <td className="py-3 text-sm font-medium text-gray-900">{v.vertical}</td>
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{v.score}</td>
-                      <td className="py-3 text-center text-sm text-gray-500">{v.prev}</td>
+                      <td className="py-3 text-center text-sm text-gray-500 hidden sm:table-cell">{v.prev}</td>
                       <td className="py-3 text-center"><ChangeIndicator change={v.change} /></td>
-                      <td className="py-3 text-center text-sm text-gray-500">{v.locations.toLocaleString()}</td>
-                      <td className="py-3 pl-4"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
+                      <td className="py-3 text-center text-sm text-gray-500 hidden sm:table-cell">{v.locations.toLocaleString()}</td>
+                      <td className="py-3 pl-4 hidden sm:table-cell"><ScoreBar value={v.score} color={v.score >= 80 ? '#22c55e' : v.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -390,7 +390,7 @@ export function ComplianceIndex() {
         {/* ── 4. Score by State & County ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={MapPin} title="Score by State — California County Breakdown" number={4} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <p className="text-sm text-gray-600 mb-4">
               EvidLY currently operates across {REPORT.counties} California counties. County-level data requires minimum 20 locations per county.
               Geographic expansion to additional states is planned for 2026.
@@ -402,8 +402,8 @@ export function ComplianceIndex() {
                     <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3">County</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Score</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">QoQ Change</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Locations</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-40">Score</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Locations</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 w-40 hidden sm:table-cell">Score</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -415,8 +415,8 @@ export function ComplianceIndex() {
                       </td>
                       <td className="py-2.5 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{c.score}</td>
                       <td className="py-2.5 text-center"><ChangeIndicator change={c.change} /></td>
-                      <td className="py-2.5 text-center text-xs text-gray-500">{c.locations}</td>
-                      <td className="py-2.5 pl-4"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
+                      <td className="py-2.5 text-center text-xs text-gray-500 hidden sm:table-cell">{c.locations}</td>
+                      <td className="py-2.5 pl-4 hidden sm:table-cell"><ScoreBar value={c.score} color={c.score >= 80 ? '#22c55e' : c.score >= 75 ? '#d4af37' : '#ef4444'} /></td>
                     </tr>
                   ))}
                 </tbody>
@@ -436,13 +436,13 @@ export function ComplianceIndex() {
         {/* ── 5. Score by Category ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={BarChart3} title="Score by Category" number={5} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {CATEGORY_SCORES.map((c) => (
                 <div key={c.category} className={`p-4 rounded-xl border ${c.weakest ? 'border-red-200 bg-red-50/50' : 'border-gray-200 bg-gray-50'}`}>
                   <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">{c.category}</div>
                   <div className="flex items-end gap-2">
-                    <span className="text-3xl font-bold" style={{ color: '#1e4d6b' }}>{c.score}</span>
+                    <span className="text-xl sm:text-3xl font-bold" style={{ color: '#1e4d6b' }}>{c.score}</span>
                     <ChangeIndicator change={c.change} />
                   </div>
                   <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -467,7 +467,7 @@ export function ComplianceIndex() {
         {/* ── 6. Trending Up/Down ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={TrendingUp} title="Trending Up / Down" number={6} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Improving */}
               <div>
@@ -510,7 +510,7 @@ export function ComplianceIndex() {
         {/* ── 7. Top Violations ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={AlertTriangle} title="Top 10 Compliance Gaps" number={7} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <p className="text-sm text-gray-600 mb-4">
               Most common compliance gaps across all {REPORT.totalLocations.toLocaleString()} sampled kitchens, ranked by prevalence.
             </p>
@@ -544,7 +544,7 @@ export function ComplianceIndex() {
         {/* ── 8. Seasonal Insights ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={Calendar} title="Seasonal Insights" number={8} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <QuarterlyTrendChart data={SEASONAL_DATA} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
               {SEASONAL_DATA.map((s) => (
@@ -575,8 +575,8 @@ export function ComplianceIndex() {
               How new and upcoming legislation is affecting compliance behavior and scores.
             </p>
             {REGULATORY_IMPACT.map((reg, i) => (
-              <div key={i} className="border border-gray-200 rounded-xl p-5">
-                <div className="flex items-start justify-between mb-3">
+              <div key={i} className="border border-gray-200 rounded-xl p-4 sm:p-5">
+                <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
                   <div>
                     <h3 className="text-sm font-bold text-gray-900">{reg.law}</h3>
                     <span className="text-xs font-medium text-amber-600">{reg.status}</span>
@@ -609,7 +609,7 @@ export function ComplianceIndex() {
         {/* ── 10. Predictions ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={Sparkles} title="Q1 2026 Predictions" number={10} />
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <p className="text-sm text-gray-600 mb-4">
               Projections based on current trajectories, regulatory calendar, and seasonal patterns.
             </p>
@@ -621,7 +621,7 @@ export function ComplianceIndex() {
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Current</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Predicted Q1</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Change</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4">Reasoning</th>
+                    <th className="text-left text-xs font-semibold text-gray-500 uppercase pb-3 pl-4 hidden sm:table-cell">Reasoning</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -635,7 +635,7 @@ export function ComplianceIndex() {
                           <TrendingUp className="h-3 w-3" /> +{p.predicted - p.current}
                         </span>
                       </td>
-                      <td className="py-3 pl-4 text-xs text-gray-600">{p.reason}</td>
+                      <td className="py-3 pl-4 text-xs text-gray-600 hidden sm:table-cell">{p.reason}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -655,14 +655,14 @@ export function ComplianceIndex() {
 
         {/* ── Blog Content Ideas ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#fdf8e8' }}>
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <BookOpen className="h-5 w-5" style={{ color: '#d4af37' }} />
               Content Ideas from This Report
             </h2>
             <p className="text-xs text-gray-600 mt-1">Auto-generated topics for blogs, press releases, and social campaigns</p>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {BLOG_IDEAS.map((idea, i) => (
                 <div key={i} className="p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
@@ -686,13 +686,13 @@ export function ComplianceIndex() {
 
         {/* ── Data Integrity & Anonymization ── */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
               <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
               Data Integrity & Anonymization
             </h2>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-gray-900">Anonymization Pipeline</h3>
@@ -734,9 +734,9 @@ export function ComplianceIndex() {
         </div>
 
         {/* ── Distribution & Network Effect ── */}
-        <div className="rounded-xl p-8 text-center" style={{ background: 'linear-gradient(135deg, #1e4d6b 0%, #2c5f7f 100%)' }}>
+        <div className="rounded-xl p-4 sm:p-8 text-center" style={{ background: 'linear-gradient(135deg, #1e4d6b 0%, #2c5f7f 100%)' }}>
           <Users className="h-10 w-10 mx-auto mb-3 text-white" />
-          <h3 className="text-xl font-bold text-white mb-2">
+          <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
             Based on data from {REPORT.totalLocations.toLocaleString()}+ commercial kitchens
           </h3>
           <p className="text-sm text-gray-300 max-w-lg mx-auto mb-4">

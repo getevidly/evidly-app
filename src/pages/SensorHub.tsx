@@ -154,23 +154,23 @@ export function SensorHub() {
   }, [activeAlerts]);
 
   return (
-    <div className="p-6 max-w-[1400px] mx-auto" style={F}>
+    <div className="px-3 sm:px-6 py-6 max-w-[1400px] mx-auto" style={F}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: PRIMARY }}>
               <Radio className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">IoT Sensor Hub</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">IoT Sensor Hub</h1>
               <p className="text-sm text-gray-500">Your sensors. Our intelligence. Zero manual logging.</p>
             </div>
           </div>
         </div>
         <button
           onClick={() => navigate('/sensors/add')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-colors min-h-[44px]"
           style={{ backgroundColor: PRIMARY }}
           onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
           onMouseLeave={e => (e.currentTarget.style.backgroundColor = PRIMARY)}
@@ -180,7 +180,7 @@ export function SensorHub() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Sensors', value: stats.total, icon: Radio, color: PRIMARY, sub: `${iotSensorProviders.filter(p => p.status === 'connected').length} providers connected` },
           { label: 'Online', value: `${stats.onlinePct}%`, icon: Wifi, color: '#22c55e', sub: `${stats.online} of ${stats.total} sensors online` },
@@ -224,7 +224,7 @@ export function SensorHub() {
       {/* Filters */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
@@ -264,12 +264,12 @@ export function SensorHub() {
             <thead>
               <tr className="border-b border-gray-100" style={{ backgroundColor: LIGHT_BG }}>
                 <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Device</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Brand</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Zone</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Brand</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Zone</th>
                 <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Last Reading</th>
                 <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Status</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Battery</th>
-                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3">Signal</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Battery</th>
+                <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">Signal</th>
                 <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 w-8"></th>
               </tr>
             </thead>
@@ -297,8 +297,8 @@ export function SensorHub() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">{providerLogo(sensor.providerSlug)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 hidden sm:table-cell">{providerLogo(sensor.providerSlug)}</td>
+                    <td className="px-4 py-3 hidden sm:table-cell">
                       <span className="text-sm text-gray-700">{sensor.zone}</span>
                     </td>
                     <td className="px-4 py-3">
@@ -330,13 +330,13 @@ export function SensorHub() {
                         {statusLabel(sensor.status)}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 hidden sm:table-cell">
                       <div className="flex items-center gap-1.5">
                         {batteryIcon(sensor.batteryPct)}
                         <span className="text-xs text-gray-600">{sensor.batteryPct}%</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">{signalBars(sensor.signalRssi)}</td>
+                    <td className="px-4 py-3 hidden sm:table-cell">{signalBars(sensor.signalRssi)}</td>
                     <td className="px-4 py-3">
                       <ChevronRight className="h-4 w-4 text-gray-300" />
                     </td>
@@ -360,7 +360,7 @@ export function SensorHub() {
         <h3 className="text-sm font-bold text-gray-900 mb-3">Recent Ingestion Activity</h3>
         <div className="space-y-2">
           {iotIngestionLog.slice(0, 5).map(log => (
-            <div key={log.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+            <div key={log.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0 flex-wrap gap-2">
               <div className="flex items-center gap-3">
                 <span className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-400' : log.status === 'partial' ? 'bg-yellow-400' : 'bg-red-400'}`} />
                 <span className="text-sm text-gray-700">{log.provider}</span>

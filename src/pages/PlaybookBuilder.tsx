@@ -164,7 +164,7 @@ export function PlaybookBuilder() {
         <ArrowLeft size={16} /> Back to Playbooks
       </button>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 8 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px', display: 'flex', alignItems: 'center', gap: 10 }}>
             <Siren size={24} color="#1e4d6b" /> Playbook Builder
@@ -174,14 +174,14 @@ export function PlaybookBuilder() {
       </div>
 
       {/* Step Progress */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 28 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 28, overflowX: 'auto' }}>
         {STEPS.map((s, i) => {
           const isCurrent = s.id === step;
           const isDone = i < stepIdx;
           return (
             <button key={s.id} onClick={() => setStep(s.id)}
               style={{
-                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 8px', minHeight: 48,
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 8px', minHeight: 48, whiteSpace: 'nowrap' as const,
                 borderRadius: 8, border: isCurrent ? '2px solid #1e4d6b' : '1px solid #e5e7eb',
                 background: isDone ? '#eef4f8' : isCurrent ? '#fff' : '#f9fafb',
                 color: isCurrent ? '#1e4d6b' : isDone ? '#1e4d6b' : '#9ca3af',
@@ -201,7 +201,7 @@ export function PlaybookBuilder() {
       </div>
 
       {/* Step Content */}
-      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 24, marginBottom: 20 }}>
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 16, marginBottom: 20 }}>
 
         {/* Step 1: Basics */}
         {step === 'basics' && (
@@ -219,7 +219,7 @@ export function PlaybookBuilder() {
                   placeholder="Describe the purpose of this playbook and when it should be activated..."
                   style={{ ...inputStyle, resize: 'vertical' }} />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label style={labelStyle}>Category</label>
                   <select value={category} onChange={e => setCategory(e.target.value as typeof category)} style={inputStyle}>
@@ -257,7 +257,7 @@ export function PlaybookBuilder() {
         {/* Step 2: Steps */}
         {step === 'steps' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>Playbook Steps ({steps.length})</h2>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -299,7 +299,7 @@ export function PlaybookBuilder() {
                   </div>
 
                   {/* Toggle switches */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, marginBottom: 14 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1" style={{ marginBottom: 14 }}>
                     {toggleSwitch(s.requirePhoto, () => updateStep(idx, { requirePhoto: !s.requirePhoto }), 'Require Photo', <Camera size={14} color="#6b7280" />)}
                     {toggleSwitch(s.requireTemp, () => updateStep(idx, { requireTemp: !s.requireTemp }), 'Require Temperature', <Thermometer size={14} color="#6b7280" />)}
                     {toggleSwitch(s.requireSignature, () => updateStep(idx, { requireSignature: !s.requireSignature }), 'Require Signature', <PenLine size={14} color="#6b7280" />)}
@@ -330,7 +330,7 @@ export function PlaybookBuilder() {
                   </div>
 
                   {/* Time limit & escalation */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label style={labelStyle}>Time Limit (min)</label>
                       <input type="number" value={s.timeLimitMinutes ?? ''} min={1}
@@ -486,7 +486,7 @@ export function PlaybookBuilder() {
             </div>
 
             {/* Publish buttons */}
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button onClick={() => toast.success(`Playbook published to ${assignLocations.length} location(s)`)}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: 'none', background: '#15803d', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <CheckCircle2 size={16} /> Publish Playbook
@@ -501,7 +501,7 @@ export function PlaybookBuilder() {
       </div>
 
       {/* Bottom Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
         <button onClick={goBack} disabled={stepIdx === 0}
           style={{
             display: 'flex', alignItems: 'center', gap: 6, padding: '10px 20px', borderRadius: 8, border: '1px solid #d1d5db',

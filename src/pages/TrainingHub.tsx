@@ -67,7 +67,7 @@ function CourseCatalogTab() {
   return (
     <div>
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Active Courses', value: trainingCourses.filter(c => c.isActive).length, icon: BookOpen, color: '#1e4d6b' },
           { label: 'Total Enrolled', value: trainingEnrollments.length, icon: Users, color: '#15803d' },
@@ -114,7 +114,7 @@ function CourseCatalogTab() {
       </div>
 
       {/* Course Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))', gap: 16 }}>
         {filtered.map(course => {
           const cat = CATEGORY_CONFIG[course.category];
           const modules = trainingModules.filter(m => m.courseId === course.id);
@@ -125,7 +125,7 @@ function CourseCatalogTab() {
               onMouseLeave={e => (e.currentTarget.style.boxShadow = 'none')}>
               {/* Color Banner */}
               <div style={{ height: 8, background: course.thumbnailColor }} />
-              <div style={{ padding: 20 }}>
+              <div style={{ padding: 16 }}>
                 {/* Category + Language */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: cat.bg, color: cat.color }}>
@@ -175,7 +175,7 @@ function CourseCatalogTab() {
                   <span style={{ fontSize: 12, color: '#9ca3af' }}>Pass: {course.passingScorePercent}%</span>
                   <button
                     onClick={e => { e.stopPropagation(); toast.success(`Enrolled in "${course.title}"`);; }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                     <Play size={14} /> Enroll
                   </button>
                 </div>
@@ -223,7 +223,7 @@ function MyLearningTab() {
       <AchievementBadges />
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'In Progress', value: trainingEnrollments.filter(e => e.status === 'in_progress').length, color: '#0369a1', bg: '#e0f2fe' },
           { label: 'Not Started', value: trainingEnrollments.filter(e => e.status === 'not_started').length, color: '#92400e', bg: '#fef3c7' },
@@ -267,8 +267,8 @@ function MyLearningTab() {
               return (
                 <div key={e.id} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb', cursor: 'pointer' }}
                   onClick={() => toast.info(`Resume "${e.courseTitle}" (demo)`)}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                    <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, flexWrap: 'wrap', gap: 4 }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{e.employeeName}</div>
                       <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>{e.courseTitle}</div>
                     </div>
@@ -282,13 +282,13 @@ function MyLearningTab() {
                     </div>
                   </div>
                   {/* Progress Bar */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ flex: 1, height: 8, background: '#f3f4f6', borderRadius: 4, overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: 100, height: 8, background: '#f3f4f6', borderRadius: 4, overflow: 'hidden' }}>
                       <div style={{ width: `${e.progressPercent}%`, height: '100%', background: isUrgent ? '#dc2626' : '#1e4d6b', borderRadius: 4, transition: 'width 0.3s' }} />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1e4d6b', minWidth: 36 }}>{e.progressPercent}%</span>
                     <button onClick={ev => { ev.stopPropagation(); toast.info('Resume learning (demo)'); }}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Resume
                     </button>
                   </div>
@@ -309,8 +309,8 @@ function MyLearningTab() {
             {notStarted.map(e => {
               const days = getDaysRemaining(e.expiresAt);
               return (
-                <div key={e.id} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
+                <div key={e.id} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{e.employeeName}</div>
                     <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>{e.courseTitle} &middot; {e.locationName}</div>
                     <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>
@@ -324,7 +324,7 @@ function MyLearningTab() {
                       </span>
                     )}
                     <button onClick={() => toast.info(`Start "${e.courseTitle}" (demo)`)}
-                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+                      style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Start
                     </button>
                   </div>
@@ -345,9 +345,11 @@ function MyLearningTab() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #e5e7eb' }}>
-                  {['Employee', 'Course', 'Location', 'Score', 'Completed'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>{h}</th>
-                  ))}
+                  <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>Employee</th>
+                  <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>Course</th>
+                  <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>Location</th>
+                  <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>Score</th>
+                  <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '8px 12px', color: '#6b7280', fontWeight: 600 }}>Completed</th>
                 </tr>
               </thead>
               <tbody>
@@ -355,11 +357,11 @@ function MyLearningTab() {
                   <tr key={e.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{e.employeeName}</td>
                     <td style={{ padding: '10px 12px', color: '#374151' }}>{e.courseTitle}</td>
-                    <td style={{ padding: '10px 12px', color: '#6b7280' }}>{e.locationName}</td>
+                    <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>{e.locationName}</td>
                     <td style={{ padding: '10px 12px' }}>
                       <span style={{ fontWeight: 600, color: (e.scorePercent || 0) >= 80 ? '#15803d' : '#92400e' }}>{e.scorePercent}%</span>
                     </td>
-                    <td style={{ padding: '10px 12px', color: '#6b7280' }}>{e.completedAt ? new Date(e.completedAt).toLocaleDateString() : '—'}</td>
+                    <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>{e.completedAt ? new Date(e.completedAt).toLocaleDateString() : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -403,7 +405,7 @@ function CertificationsTab() {
           <p style={{ margin: 0, fontSize: 13, color: '#78350f', lineHeight: 1.5 }}>
             2 of 3 locations lack a Certified Food Protection Manager. California requires at least one CFPM per food establishment during operating hours.
           </p>
-          <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
+          <div style={{ display: 'flex', gap: 12, marginTop: 10, flexWrap: 'wrap' }}>
             {cfpmLocations.map(loc => (
               <div key={loc.name} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
                 {loc.hasCFPM ? <CheckCircle2 size={14} color="#15803d" /> : <XCircle size={14} color="#dc2626" />}
@@ -415,7 +417,7 @@ function CertificationsTab() {
       </div>
 
       {/* Filter + Stats */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
           style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif" }}>
           <option value="all">All Types</option>
@@ -433,9 +435,13 @@ function CertificationsTab() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
-                {['Employee', 'Course', 'Certificate #', 'Score', 'Issued', 'Status', 'Actions'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-                ))}
+                <th style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Employee</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Course</th>
+                <th className="hidden md:table-cell" style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Certificate #</th>
+                <th style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Score</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Issued</th>
+                <th style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Status</th>
+                <th style={{ textAlign: 'left', padding: '10px 14px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -447,12 +453,12 @@ function CertificationsTab() {
                       <div style={{ fontWeight: 600, color: '#111827' }}>{cert.employeeName}</div>
                       <div style={{ fontSize: 12, color: '#9ca3af' }}>{cert.locationName}</div>
                     </td>
-                    <td style={{ padding: '12px 14px', color: '#374151' }}>{cert.courseTitle}</td>
-                    <td style={{ padding: '12px 14px' }}>
+                    <td className="hidden sm:table-cell" style={{ padding: '12px 14px', color: '#374151' }}>{cert.courseTitle}</td>
+                    <td className="hidden md:table-cell" style={{ padding: '12px 14px' }}>
                       <code style={{ fontSize: 12, background: '#f3f4f6', padding: '2px 6px', borderRadius: 4 }}>{cert.certificateNumber}</code>
                     </td>
                     <td style={{ padding: '12px 14px', fontWeight: 600, color: cert.scorePercent >= 80 ? '#15803d' : '#92400e' }}>{cert.scorePercent}%</td>
-                    <td style={{ padding: '12px 14px', color: '#6b7280' }}>{new Date(cert.issuedAt).toLocaleDateString()}</td>
+                    <td className="hidden sm:table-cell" style={{ padding: '12px 14px', color: '#6b7280' }}>{new Date(cert.issuedAt).toLocaleDateString()}</td>
                     <td style={{ padding: '12px 14px' }}>
                       <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: status.bg, color: status.color }}>{status.label}</span>
                     </td>
@@ -504,7 +510,7 @@ function SB476TrackerTab() {
       </div>
 
       {/* Compliance Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Total Training Costs', value: `$${cents(totalCost)}`, icon: DollarSign, color: '#1e4d6b' },
           { label: 'Total Compensation', value: `$${cents(totalCompensation)}`, icon: DollarSign, color: '#15803d' },
@@ -543,21 +549,27 @@ function SB476TrackerTab() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
-                {['Employee', 'Location', 'Hire Date', 'Training Cost', 'Comp. Hours', 'Total Comp.', 'During Work', '30-Day', 'Completed'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>{h}</th>
-                ))}
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Employee</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Location</th>
+                <th className="hidden md:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Hire Date</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Training Cost</th>
+                <th className="hidden md:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Comp. Hours</th>
+                <th className="hidden md:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Total Comp.</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>During Work</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>30-Day</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5, whiteSpace: 'nowrap' }}>Completed</th>
               </tr>
             </thead>
             <tbody>
               {trainingSB476Log.map(entry => (
                 <tr key={entry.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                   <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{entry.employeeName}</td>
-                  <td style={{ padding: '10px 12px', color: '#6b7280' }}>{entry.locationName}</td>
-                  <td style={{ padding: '10px 12px', color: '#6b7280' }}>{new Date(entry.hireDate).toLocaleDateString()}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>{entry.locationName}</td>
+                  <td className="hidden md:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>{new Date(entry.hireDate).toLocaleDateString()}</td>
                   <td style={{ padding: '10px 12px', color: '#374151' }}>${cents(entry.trainingCostCents)}</td>
-                  <td style={{ padding: '10px 12px', color: '#374151' }}>{entry.compensableHours > 0 ? entry.compensableHours + 'h' : '—'}</td>
-                  <td style={{ padding: '10px 12px', color: '#374151' }}>{entry.totalCompensationCents > 0 ? `$${cents(entry.totalCompensationCents)}` : '—'}</td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td className="hidden md:table-cell" style={{ padding: '10px 12px', color: '#374151' }}>{entry.compensableHours > 0 ? entry.compensableHours + 'h' : '—'}</td>
+                  <td className="hidden md:table-cell" style={{ padding: '10px 12px', color: '#374151' }}>{entry.totalCompensationCents > 0 ? `$${cents(entry.totalCompensationCents)}` : '—'}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px' }}>
                     {entry.trainingDuringWorkHours
                       ? <CheckCircle2 size={16} color="#15803d" />
                       : <XCircle size={16} color="#dc2626" />}
@@ -571,7 +583,7 @@ function SB476TrackerTab() {
                       {entry.completedWithin30Days ? 'Compliant' : 'Overdue'}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px', color: '#6b7280' }}>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>
                     {entry.trainingCompletedDate ? new Date(entry.trainingCompletedDate).toLocaleDateString() : <span style={{ color: '#dc2626', fontWeight: 600 }}>Pending</span>}
                   </td>
                 </tr>
@@ -584,7 +596,7 @@ function SB476TrackerTab() {
       {/* Export Button */}
       <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
         <button onClick={() => toast.info('Export SB 476 report as CSV (demo)')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Download size={14} /> Export Report
         </button>
       </div>
@@ -622,19 +634,19 @@ function AdminTab() {
       {/* Admin Actions */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
         <button onClick={() => setShowAssignModal(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Send size={16} /> Assign Training
         </button>
         <button onClick={() => toast.info('Bulk enroll employees (demo)')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Plus size={16} /> Bulk Enroll
         </button>
         <button onClick={() => navigate('/training/courses/builder')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <BookOpen size={16} /> Create Course
         </button>
         <button onClick={() => toast.info('Download all training records (demo)')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Download size={16} /> Export Records
         </button>
       </div>
@@ -645,7 +657,7 @@ function AdminTab() {
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Building2 size={16} color="#1e4d6b" /> Enrollment by Location
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: 12 }}>
           {enrollmentsByLocation.map(loc => (
             <div key={loc.name} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb' }}>
               <div style={{ fontWeight: 700, color: '#111827', fontSize: 14, marginBottom: 12 }}>{loc.name}</div>
@@ -681,17 +693,17 @@ function AdminTab() {
         <h3 style={{ fontSize: 15, fontWeight: 700, color: '#111827', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <BarChart3 size={16} color="#1e4d6b" /> Course Completion Rates
         </h3>
-        <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', padding: 16 }}>
+        <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', padding: 12 }}>
           {courseStats.map(c => (
-            <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: '1px solid #f3f4f6' }}>
+            <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 0', borderBottom: '1px solid #f3f4f6', flexWrap: 'wrap' }}>
               <div style={{ width: 8, height: 8, borderRadius: 4, background: c.thumbnailColor, flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</div>
               </div>
-              <div style={{ width: 160, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', flexShrink: 0 }}>
+              <div style={{ width: 100, height: 6, background: '#f3f4f6', borderRadius: 3, overflow: 'hidden', flexShrink: 0 }}>
                 <div style={{ width: `${c.rate}%`, height: '100%', background: c.rate >= 75 ? '#15803d' : c.rate >= 50 ? '#d4af37' : '#dc2626', borderRadius: 3 }} />
               </div>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', width: 80, textAlign: 'right' }}>{c.completedCount}/{c.enrolledCount} ({c.rate}%)</span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: '#374151', minWidth: 70, textAlign: 'right' }}>{c.completedCount}/{c.enrolledCount} ({c.rate}%)</span>
             </div>
           ))}
         </div>
@@ -703,20 +715,24 @@ function AdminTab() {
           <FileText size={16} color="#1e4d6b" /> Recent Quiz Activity
         </h3>
         <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
               <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
-                {['Employee', 'Module / Final', 'Attempt', 'Score', 'Result', 'Date'].map(h => (
-                  <th key={h} style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-                ))}
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Employee</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Module / Final</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Attempt</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Score</th>
+                <th style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Result</th>
+                <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '10px 12px', color: '#6b7280', fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>Date</th>
               </tr>
             </thead>
             <tbody>
               {recentQuizzes.map(q => (
                 <tr key={q.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                   <td style={{ padding: '10px 12px', fontWeight: 600, color: '#111827' }}>{q.employeeName}</td>
-                  <td style={{ padding: '10px 12px', color: '#374151' }}>{q.moduleTitle || 'Final Assessment'}</td>
-                  <td style={{ padding: '10px 12px', color: '#6b7280' }}>#{q.attemptNumber}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#374151' }}>{q.moduleTitle || 'Final Assessment'}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>#{q.attemptNumber}</td>
                   <td style={{ padding: '10px 12px', fontWeight: 600, color: q.scorePercent >= 70 ? '#15803d' : '#dc2626' }}>
                     {q.scorePercent}% ({q.questionsCorrect}/{q.questionsTotal})
                   </td>
@@ -729,11 +745,12 @@ function AdminTab() {
                       {q.passed ? 'Pass' : 'Fail'}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px', color: '#6b7280' }}>{new Date(q.completedAt).toLocaleDateString()}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '10px 12px', color: '#6b7280' }}>{new Date(q.completedAt).toLocaleDateString()}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>
@@ -804,7 +821,7 @@ function PricingTab() {
   return (
     <div>
       {/* Value Prop */}
-      <div style={{ background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 12, padding: 20, marginBottom: 28, textAlign: 'center' }}>
+      <div style={{ background: '#eef4f8', border: '1px solid #b8d4e8', borderRadius: 12, padding: 16, marginBottom: 28, textAlign: 'center' }}>
         <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px' }}>Training Bundled with Your EvidLY Subscription</h3>
         <p style={{ fontSize: 14, color: '#374151', margin: 0, lineHeight: 1.6 }}>
           Operators currently pay $10–20 per employee for food handler certification at third-party providers.
@@ -813,7 +830,7 @@ function PricingTab() {
       </div>
 
       {/* Pricing Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 16, marginBottom: 28 }}>
         {PRICING_TIERS.map(tier => (
           <div key={tier.name} style={{ background: '#fff', borderRadius: 12, border: tier.popular ? `2px solid ${tier.color}` : '1px solid #e5e7eb', overflow: 'hidden', position: 'relative' }}>
             {tier.popular && (
@@ -821,10 +838,10 @@ function PricingTab() {
                 MOST POPULAR
               </div>
             )}
-            <div style={{ padding: 24 }}>
+            <div style={{ padding: 16 }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: tier.color, marginBottom: 4 }}>{tier.name}</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 20 }}>
-                <span style={{ fontSize: 36, fontWeight: 700, color: '#111827' }}>{tier.price}</span>
+                <span style={{ fontSize: 30, fontWeight: 700, color: '#111827' }}>{tier.price}</span>
                 <span style={{ fontSize: 14, color: '#6b7280' }}>{tier.period}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -850,11 +867,11 @@ function PricingTab() {
       </div>
 
       {/* Revenue Impact */}
-      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 24 }}>
+      <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <TrendingUp size={18} color="#15803d" /> Why Bundle Training?
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 16 }}>
           {[
             { icon: DollarSign, title: 'Cost Savings', desc: 'Eliminates $10–20/employee third-party cert fees. ServSafe Manager prep alone costs $150–250 per person.' },
             { icon: Target, title: 'Better Compliance', desc: 'Training completion auto-updates compliance scores. Staff who train in EvidLY use EvidLY daily.' },
@@ -921,7 +938,7 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
       onClick={onClose}>
-      <div style={{ background: '#fff', borderRadius: 12, width: 520, maxHeight: '80vh', overflow: 'auto', padding: 24 }}
+      <div style={{ background: '#fff', borderRadius: 12, width: '95vw', maxWidth: 520, maxHeight: '80vh', overflow: 'auto', padding: 16 }}
         onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>Assign Training</h2>
@@ -1041,7 +1058,7 @@ export function TrainingHub() {
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 4px' }}>Training & Certification</h1>
             <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
@@ -1056,17 +1073,18 @@ export function TrainingHub() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, borderBottom: '2px solid #e5e7eb', marginBottom: 24 }}>
+      <div style={{ display: 'flex', gap: 4, borderBottom: '2px solid #e5e7eb', marginBottom: 24, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         {TABS.map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               style={{
-                display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px',
+                display: 'flex', alignItems: 'center', gap: 6, padding: '10px 14px',
                 background: 'none', border: 'none', borderBottom: isActive ? '2px solid #1e4d6b' : '2px solid transparent',
                 marginBottom: -2, color: isActive ? '#1e4d6b' : '#6b7280',
                 fontWeight: isActive ? 700 : 500, fontSize: 14, cursor: 'pointer',
                 fontFamily: "'DM Sans', sans-serif", transition: 'all 0.15s',
+                whiteSpace: 'nowrap', minHeight: 44,
               }}>
               <tab.icon size={16} /> {tab.label}
               {tab.id === 'learning' && (

@@ -959,7 +959,7 @@ export function IncidentLog() {
           <div>
             <button
               onClick={() => setSelectedIncident(null)}
-              className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline mb-3"
+              className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline mb-3 min-h-[44px]"
             >
               <ArrowLeft className="h-4 w-4" /> {t('incidents.backToIncidentLog')}
             </button>
@@ -981,7 +981,7 @@ export function IncidentLog() {
                 {(inc.status === 'assigned' || inc.status === 'reported') && (
                   <button
                     onClick={() => setShowActionForm(true)}
-                    className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                    className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                   >
                     {t('incidents.takeAction')}
                   </button>
@@ -989,7 +989,7 @@ export function IncidentLog() {
                 {inc.status === 'in_progress' && (
                   <button
                     onClick={() => setShowResolveForm(true)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                    className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
                   >
                     {t('incidents.resolve')}
                   </button>
@@ -998,13 +998,13 @@ export function IncidentLog() {
                   <>
                     <button
                       onClick={() => handleVerify(true)}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
+                      className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium"
                     >
                       <span className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4" /> {t('incidents.verify')}</span>
                     </button>
                     <button
                       onClick={() => handleVerify(false)}
-                      className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
+                      className="px-4 py-2 min-h-[44px] bg-red-100 text-red-700 rounded-lg hover:bg-red-200 text-sm font-medium"
                     >
                       <span className="flex items-center gap-1"><XCircle className="h-4 w-4" /> {t('incidents.reject')}</span>
                     </button>
@@ -1018,8 +1018,8 @@ export function IncidentLog() {
             {/* Left column — details & timeline */}
             <div className="lg:col-span-2 space-y-6">
               {/* Info card */}
-              <div className="bg-white rounded-xl shadow-sm p-5 space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500 block">{t('common.type')}</span>
                     <span className="font-medium text-gray-900">{typeLabels[INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label || ''] || INCIDENT_TYPES.find(tp => tp.value === inc.type)?.label}</span>
@@ -1088,7 +1088,7 @@ export function IncidentLog() {
               </div>
 
               {/* Timeline */}
-              <div className="bg-white rounded-xl shadow-sm p-5">
+              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.timeline')}</h3>
                 <div className="relative pl-6">
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
@@ -1125,7 +1125,7 @@ export function IncidentLog() {
               </div>
 
               {/* Comments */}
-              <div className="bg-white rounded-xl shadow-sm p-5">
+              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.comments')}</h3>
                 {inc.comments.length === 0 && (
                   <p className="text-sm text-gray-400">{t('incidents.noComments')}</p>
@@ -1152,7 +1152,7 @@ export function IncidentLog() {
                   <button
                     onClick={handleAddComment}
                     disabled={!commentText.trim()}
-                    className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-40"
+                    className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-40"
                   >
                     {t('common.post')}
                   </button>
@@ -1164,11 +1164,11 @@ export function IncidentLog() {
             <div className="space-y-6">
               {/* Before / After Photo Evidence — side by side */}
               {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
-                <div className="bg-white rounded-xl shadow-sm p-5">
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
                   <h3 className="text-lg font-bold text-gray-900 mb-3">{t('common.photoEvidence')}</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? '1fr 1fr' : '1fr', gap: '16px' }}>
+                  <div className={`grid gap-4 ${inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                     {inc.photos.length > 0 && (
-                      <div style={{ borderRight: inc.resolutionPhotos.length > 0 ? '1px solid #e5e7eb' : 'none', paddingRight: inc.resolutionPhotos.length > 0 ? '12px' : '0' }}>
+                      <div className={inc.resolutionPhotos.length > 0 ? 'sm:border-r sm:border-gray-200 sm:pr-3' : ''}>
                         <span className="text-xs font-semibold uppercase mb-2 block" style={{ color: '#ef4444' }}>{t('incidents.beforeIncident')}</span>
                         <PhotoGallery photos={inc.photos} title="Incident Photos" />
                       </div>
@@ -1184,7 +1184,7 @@ export function IncidentLog() {
               )}
 
               {/* Quick Stats */}
-              <div className="bg-white rounded-xl shadow-sm p-5">
+              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
                 <h3 className="font-semibold text-gray-900 mb-3">{t('incidents.details')}</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
@@ -1221,7 +1221,7 @@ export function IncidentLog() {
               {/* Export */}
               <button
                 onClick={() => showToast('PDF export generated for incident ' + inc.id)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
                 {t('incidents.exportToPdf')}
@@ -1233,7 +1233,7 @@ export function IncidentLog() {
         {/* Take Action Modal */}
         {showActionForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
               <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.takeCorrectiveAction')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1295,14 +1295,14 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowActionForm(false); setActionText(''); setActionChips([]); setActionPhotos([]); setEstimatedCompletion(''); }}
-                    className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     {t('common.cancel')}
                   </button>
                   <button
                     onClick={handleTakeAction}
                     disabled={!actionText.trim()}
-                    className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
                   >
                     {t('incidents.submitAction')}
                   </button>
@@ -1315,7 +1315,7 @@ export function IncidentLog() {
         {/* Resolve Modal */}
         {showResolveForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
               <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.resolveIncident')}</h3>
               <div className="space-y-4">
                 <div>
@@ -1364,14 +1364,14 @@ export function IncidentLog() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => { setShowResolveForm(false); setResolutionSummary(''); setRootCause('unknown'); setResolutionPhotos([]); setManagerPhotoOverride(false); }}
-                    className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
                     {t('common.cancel')}
                   </button>
                   <button
                     onClick={handleResolve}
                     disabled={!resolutionSummary.trim() || (resolutionPhotos.length === 0 && !managerPhotoOverride)}
-                    className="flex-1 px-4 py-2.5 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-40"
+                    className="flex-1 px-4 py-2.5 min-h-[44px] bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 disabled:opacity-40"
                   >
                     {t('incidents.markResolved')}
                   </button>
@@ -1383,7 +1383,7 @@ export function IncidentLog() {
 
         {/* Toast notification */}
         {toastMessage && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
             <CheckCircle className="h-4 w-4 flex-shrink-0" />
             {toastMessage}
           </div>
@@ -1395,8 +1395,8 @@ export function IncidentLog() {
   // ── Create Incident Modal ──────────────────────────────────────
   const CreateModal = showCreateForm ? (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-auto max-w-lg sm:w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <h3 className="text-xl font-bold text-gray-900">{t('incidents.reportNewIncident')}</h3>
           <button
             onClick={handleAiDraft}
@@ -1489,14 +1489,14 @@ export function IncidentLog() {
           <div className="flex gap-3">
             <button
               onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); }}
-              className="flex-1 px-4 py-2.5 border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               {t('common.cancel')}
             </button>
             <button
               onClick={handleCreateIncident}
               disabled={!newTitle.trim() || !newDescription.trim()}
-              className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
+              className="flex-1 px-4 py-2.5 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg text-sm font-bold hover:bg-[#163a52] disabled:opacity-40"
             >
               {t('incidents.reportIncident')}
             </button>
@@ -1519,14 +1519,14 @@ export function IncidentLog() {
           <div className="flex gap-2">
             <button
               onClick={() => showToast('PDF export of all incidents generated.')}
-              className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
               {t('common.export')}
             </button>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium shadow-sm"
             >
               <Plus className="h-4 w-4" />
               {t('incidents.reportIncident')}
@@ -1535,34 +1535,34 @@ export function IncidentLog() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #dc2626' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #dc2626' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
               <span className="text-sm text-gray-500 font-medium">{t('incidents.openIncidents')}</span>
             </div>
-            <div className="text-3xl font-bold text-red-600 text-center">{openIncidents}</div>
+            <div className="text-xl sm:text-3xl font-bold text-red-600 text-center">{openIncidents}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #d4af37' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-[#d4af37]" />
               <span className="text-sm text-gray-500 font-medium">{t('incidents.avgResolution')}</span>
             </div>
-            <div className="text-3xl font-bold text-[#d4af37] text-center">{avgResolutionHours}h</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">{avgResolutionHours}h</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #16a34a' }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
               <span className="text-sm text-gray-500 font-medium">{t('incidents.resolvedThisWeek')}</span>
             </div>
-            <div className="text-3xl font-bold text-green-600 text-center">{resolvedThisWeek}</div>
+            <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">{resolvedThisWeek}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${overdueCount > 0 ? '#dc2626' : '#6b7280'}` }}>
+          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overdueCount > 0 ? '#dc2626' : '#6b7280'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <XCircle className={`h-4 w-4 ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`} />
               <span className="text-sm text-gray-500 font-medium">{t('incidents.overdueMore24h')}</span>
             </div>
-            <div className={`text-3xl font-bold text-center ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>{overdueCount}</div>
+            <div className={`text-xl sm:text-3xl font-bold text-center ${overdueCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>{overdueCount}</div>
           </div>
         </div>
 
@@ -1625,7 +1625,7 @@ export function IncidentLog() {
               <div
                 key={inc.id}
                 onClick={() => setSelectedIncident(inc)}
-                className="bg-white rounded-xl shadow-sm p-5 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-xl shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
                 style={overdue ? { borderLeft: '4px solid #dc2626' } : { borderLeft: '4px solid transparent' }}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -1651,7 +1651,7 @@ export function IncidentLog() {
                         )}
                       </div>
                       <h3 className="font-semibold text-gray-900 mt-1 truncate">{inc.title}</h3>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-1 flex-wrap">
                         <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{inc.location}</span>
                         <span className="flex items-center gap-1"><User className="h-3 w-3" />{inc.assignedTo}</span>
                         <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{formatDistanceToNow(new Date(inc.createdAt), { addSuffix: true })}</span>
@@ -1680,7 +1680,7 @@ export function IncidentLog() {
 
       {/* Toast notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
           <CheckCircle className="h-4 w-4 flex-shrink-0" />
           {toastMessage}
         </div>

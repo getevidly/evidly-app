@@ -143,7 +143,7 @@ export function VendorProfile() {
         { label: vendor.companyName },
       ]} />
 
-      <div className="p-6 max-w-5xl mx-auto">
+      <div className="p-4 sm:p-6 max-w-5xl mx-auto">
         {/* Back link */}
         <button
           onClick={() => navigate('/marketplace')}
@@ -154,7 +154,7 @@ export function VendorProfile() {
         </button>
 
         {/* ─── Profile Header ──────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           {/* Top row */}
           <div className="flex items-start justify-between flex-wrap gap-4">
             {/* Left */}
@@ -178,7 +178,7 @@ export function VendorProfile() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowRequestModal(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors min-h-[44px]"
                 style={{ backgroundColor: '#1e4d6b' }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
@@ -187,7 +187,7 @@ export function VendorProfile() {
               </button>
               <button
                 onClick={() => toast.info("Messaging feature coming soon")}
-                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor
               </button>
@@ -211,12 +211,12 @@ export function VendorProfile() {
         </div>
 
         {/* ─── Tab Navigation ──────────────────────────────── */}
-        <div className="flex border-b border-gray-200 mb-6">
+        <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 text-sm cursor-pointer transition-colors ${
+              className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
                 activeTab === tab.id
                   ? 'border-b-2 font-semibold'
                   : 'text-gray-500 hover:text-gray-700'
@@ -394,13 +394,13 @@ export function VendorProfile() {
             <div className="flex items-center gap-8 mb-6 flex-wrap">
               {/* Left — overall */}
               <div className="text-center">
-                <div className="text-4xl font-bold text-gray-900">{vendor.rating.toFixed(1)}</div>
+                <div className="text-2xl sm:text-4xl font-bold text-gray-900">{vendor.rating.toFixed(1)}</div>
                 <StarRating rating={vendor.rating} size="lg" />
                 <p className="text-sm text-gray-500 mt-1">based on {vendorReviews.length} reviews</p>
               </div>
 
               {/* Right — star breakdown bars */}
-              <div className="flex-1 min-w-[200px] space-y-1">
+              <div className="flex-1 min-w-0 sm:min-w-[200px] space-y-1">
                 {[5, 4, 3, 2, 1].map(starLevel => {
                   const count = starBreakdown[starLevel] || 0;
                   const pct = vendorReviews.length > 0 ? (count / vendorReviews.length) * 100 : 0;
@@ -422,7 +422,7 @@ export function VendorProfile() {
             <div className="mb-6">
               <button
                 onClick={() => toast.info("Reviews require a completed service")}
-                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Write a Review
               </button>
@@ -431,9 +431,9 @@ export function VendorProfile() {
             {/* Review cards */}
             <div className="space-y-4">
               {vendorReviews.map(review => (
-                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-5">
+                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
                   {/* Header */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <span className="font-semibold text-gray-900">{review.reviewerName}</span>
                       <span className="text-gray-500 text-sm ml-2">{review.reviewerOrg}</span>
@@ -473,7 +473,7 @@ export function VendorProfile() {
         {activeTab === 'services' && (
           <div className="space-y-4">
             {vendor.serviceOfferings.map((offering, idx) => (
-              <div key={idx} className="bg-white rounded-xl border border-gray-200 p-5">
+              <div key={idx} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
                 <h3 className="font-semibold text-gray-900">{offering.name}</h3>
                 <p className="text-sm text-gray-600 mt-1">{offering.description}</p>
 
@@ -498,7 +498,7 @@ export function VendorProfile() {
                 {/* Request Quote button */}
                 <button
                   onClick={() => setShowRequestModal(true)}
-                  className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                  className="mt-3 flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors min-h-[44px]"
                   style={{ backgroundColor: '#1e4d6b' }}
                   onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
                   onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
@@ -516,7 +516,7 @@ export function VendorProfile() {
       {/* ═══════════════════════════════════════════════════════ */}
       {showRequestModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
+          <div className="bg-white rounded-2xl shadow-xl w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               Request Quote from {vendor.companyName}
             </h2>
@@ -584,13 +584,13 @@ export function VendorProfile() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setShowRequestModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitRequest}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors min-h-[44px]"
                 style={{ backgroundColor: '#1e4d6b' }}
                 onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#163a52')}
                 onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#1e4d6b')}

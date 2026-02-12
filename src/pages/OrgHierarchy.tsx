@@ -167,14 +167,14 @@ export function OrgHierarchy() {
   return (
     <div className="space-y-4">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Organization Hierarchy</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Organization Hierarchy</h1>
           <p className="text-sm text-gray-500 mt-1">Navigate your org structure and see compliance roll-ups at every level</p>
         </div>
         <button
           onClick={() => setShowConfig(!showConfig)}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-colors ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium cursor-pointer transition-colors min-h-[44px] ${
             showConfig ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
           }`}
         >
@@ -184,7 +184,7 @@ export function OrgHierarchy() {
       </div>
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm bg-white rounded-lg border border-gray-200 px-4 py-2.5">
+      <div className="flex items-center gap-2 text-sm bg-white rounded-lg border border-gray-200 px-4 py-2.5 overflow-x-auto">
         <Building2 className="h-4 w-4 text-gray-400 flex-shrink-0" />
         {breadcrumb.map((node, i) => (
           <span key={node.id} className="flex items-center gap-2">
@@ -213,7 +213,7 @@ export function OrgHierarchy() {
 
       {/* Hierarchy Configuration Panel */}
       {showConfig && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 space-y-4">
           <div className="flex items-center gap-2 mb-1">
             <Network className="h-4 w-4" style={{ color: '#1e4d6b' }} />
             <h3 className="text-sm font-semibold text-gray-900">Hierarchy Configuration — {demoHierarchyConfig.tenantName}</h3>
@@ -280,10 +280,10 @@ export function OrgHierarchy() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button onClick={() => toast.success('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
-            <button onClick={() => toast.info('Add hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">+ Add Level</button>
-            <button onClick={() => toast.info('Remove hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer">- Remove Level</button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button onClick={() => toast.success('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
+            <button onClick={() => toast.info('Add hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">+ Add Level</button>
+            <button onClick={() => toast.info('Remove hierarchy level coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">- Remove Level</button>
           </div>
         </div>
       )}
@@ -292,9 +292,9 @@ export function OrgHierarchy() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
         {/* Tree View */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">Organization Tree</h3>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {demoHierarchyConfig.levels.map(l => (
                 <span key={l.key} className="flex items-center gap-1">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS[l.key] }} />
@@ -303,7 +303,7 @@ export function OrgHierarchy() {
               ))}
             </div>
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-0.5 overflow-x-auto">
             <TreeNode node={demoHierarchyTree} selectedId={currentNodeId} onSelect={handleSelectNode} />
           </div>
         </div>
@@ -431,7 +431,7 @@ export function OrgHierarchy() {
           {selectedNode.children && selectedNode.children.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <h4 className="text-xs font-semibold text-gray-700 mb-3">Compliance Heat Map</h4>
-              <div className={`grid gap-2 ${selectedNode.children.length <= 3 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              <div className={`grid gap-2 ${selectedNode.children.length <= 3 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
                 {[...selectedNode.children].sort((a, b) => b.complianceScore - a.complianceScore).map(c => (
                   <HeatMapCell key={c.id} score={c.complianceScore} label={c.name} onClick={() => handleSelectNode(c.id)} />
                 ))}

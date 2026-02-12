@@ -183,12 +183,12 @@ export function FacilitiesDashboard() {
   return (
     <>
       <div className="space-y-6">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-4 sm:p-6 text-white">
           <h1 className="text-2xl font-bold mb-1">{greeting}, {firstName}!</h1>
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Equipment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {equipmentSystems.map((equipment) => {
@@ -196,7 +196,7 @@ export function FacilitiesDashboard() {
               return (
                 <div
                   key={equipment.id}
-                  className={`rounded-lg border-2 p-5 transition-all ${getStatusBg(equipment.status)}`}
+                  className={`rounded-lg border-2 p-4 sm:p-5 transition-all ${getStatusBg(equipment.status)}`}
                 >
                   <div className="flex items-start space-x-3 mb-4">
                     <div className={`p-2 rounded-lg bg-white ${getStatusColor(equipment.status)}`}>
@@ -226,7 +226,7 @@ export function FacilitiesDashboard() {
                     {equipment.status !== 'on_track' && (
                       <button
                         onClick={() => navigate('/vendors')}
-                        className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                        className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-h-[44px]"
                       >
                         {equipment.status === 'overdue' ? 'Schedule Now' : 'Schedule Service'}
                       </button>
@@ -239,7 +239,7 @@ export function FacilitiesDashboard() {
         </div>
 
         {vendorActions.length > 0 && (
-          <div className={`rounded-lg p-6 ${overdueCount > 0 ? 'bg-red-50 border-l-4 border-red-600' : 'bg-yellow-50 border-l-4 border-yellow-500'}`}>
+          <div className={`rounded-lg p-4 sm:p-6 ${overdueCount > 0 ? 'bg-red-50 border-l-4 border-red-600' : 'bg-yellow-50 border-l-4 border-yellow-500'}`}>
             <div className="flex items-start space-x-3">
               <AlertTriangle className={`h-6 w-6 flex-shrink-0 mt-0.5 ${overdueCount > 0 ? 'text-red-600' : 'text-yellow-600'}`} />
               <div className="flex-1">
@@ -250,7 +250,7 @@ export function FacilitiesDashboard() {
                   {vendorActions.map((action) => (
                     <div
                       key={action.id}
-                      className="flex items-center justify-between bg-white rounded-lg p-4 shadow-sm border border-gray-200"
+                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-lg p-4 shadow-sm border border-gray-200"
                     >
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">{action.vendor}</div>
@@ -258,7 +258,7 @@ export function FacilitiesDashboard() {
                       </div>
                       <button
                         onClick={() => navigate(action.link)}
-                        className={`ml-4 px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        className={`ml-4 px-4 py-2 rounded-lg font-medium text-sm transition-colors min-h-[44px] ${
                           action.priority === 'high'
                             ? 'bg-red-600 text-white hover:bg-red-700'
                             : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -274,7 +274,7 @@ export function FacilitiesDashboard() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Documents to Review</h3>
           <div className="space-y-3">
             {documents.map((doc) => (
@@ -301,7 +301,7 @@ export function FacilitiesDashboard() {
           </div>
           <button
             onClick={() => navigate('/documents')}
-            className="w-full mt-4 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="w-full mt-4 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium min-h-[44px]"
           >
             Upload Document
           </button>
@@ -310,7 +310,7 @@ export function FacilitiesDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <button
             onClick={() => navigate('/vendors')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -319,7 +319,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/documents')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileText className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -328,7 +328,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/alerts')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group"
+            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <AlertTriangle className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />

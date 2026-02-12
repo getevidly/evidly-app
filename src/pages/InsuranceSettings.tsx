@@ -97,8 +97,8 @@ export function InsuranceSettings() {
       </div>
 
       {/* Master Toggle Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <div className="flex items-center gap-3">
             {sharingEnabled
               ? <ShieldCheck className="h-6 w-6 text-green-500" />
@@ -135,7 +135,7 @@ export function InsuranceSettings() {
       {/* Data Sharing Details — Two Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {/* What We Share */}
-        <div className="bg-white rounded-xl shadow-sm border border-green-200 p-5">
+        <div className="bg-white rounded-xl shadow-sm border border-green-200 p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Eye className="h-5 w-5 text-green-600" />
             <h3 className="text-sm font-semibold text-gray-900">Data We Share (When Consent is Granted)</h3>
@@ -151,7 +151,7 @@ export function InsuranceSettings() {
         </div>
 
         {/* What We Never Share */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <EyeOff className="h-5 w-5 text-gray-500" />
             <h3 className="text-sm font-semibold text-gray-900">Data We Never Share</h3>
@@ -168,8 +168,8 @@ export function InsuranceSettings() {
       </div>
 
       {/* Connected Carriers */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Connected Insurance Carriers</h3>
             <p className="text-xs text-gray-500">Carriers you have authorized to access your risk score data</p>
@@ -191,7 +191,7 @@ export function InsuranceSettings() {
               </div>
               <button
                 onClick={() => toast.info(`${carrier.name} integration coming soon`)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-100 transition-colors min-h-[44px]"
               >
                 Connect
               </button>
@@ -211,7 +211,7 @@ export function InsuranceSettings() {
       </div>
 
       {/* API Key Management (Premium Gated) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
             <Key className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -281,7 +281,7 @@ export function InsuranceSettings() {
       </div>
 
       {/* API Documentation Preview */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Available API Endpoints</h3>
         <div className="space-y-2">
           {[
@@ -291,12 +291,12 @@ export function InsuranceSettings() {
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/fire-safety', desc: 'Fire safety compliance and NFPA status' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/incidents', desc: 'Anonymized incident metrics (no PII)' },
           ].map(ep => (
-            <div key={ep.path} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50">
+            <div key={ep.path} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 flex-wrap">
               <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${ep.method === 'POST' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                 {ep.method}
               </span>
-              <code className="text-xs text-gray-800 font-mono flex-1">{ep.path}</code>
-              <span className="text-[11px] text-gray-400">{ep.desc}</span>
+              <code className="text-xs text-gray-800 font-mono flex-1 min-w-0 break-all">{ep.path}</code>
+              <span className="text-[11px] text-gray-400 hidden sm:inline">{ep.desc}</span>
             </div>
           ))}
         </div>
@@ -307,7 +307,7 @@ export function InsuranceSettings() {
       </div>
 
       {/* Disclaimer */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
         <div className="flex items-start gap-3">
           <Info className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
           <div>
@@ -324,7 +324,7 @@ export function InsuranceSettings() {
       </div>
 
       {/* Back to Settings */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center flex-wrap gap-2 mb-6">
         <button
           onClick={() => navigate('/settings')}
           className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
@@ -333,7 +333,7 @@ export function InsuranceSettings() {
         </button>
         <button
           onClick={() => navigate('/insurance-risk')}
-          className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2"
+          className="px-4 py-2 rounded-lg text-sm font-medium text-white flex items-center gap-2 min-h-[44px]"
           style={{ backgroundColor: '#1e4d6b' }}
         >
           View Insurance Risk Score <ArrowRight className="h-4 w-4" />
@@ -343,7 +343,7 @@ export function InsuranceSettings() {
       {/* Consent Confirmation Modal */}
       {showConsentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6" style={F}>
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-[95vw] sm:w-full p-4 sm:p-6" style={F}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                 <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
@@ -386,13 +386,13 @@ export function InsuranceSettings() {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowConsentModal(false)}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConsentConfirm}
-                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors"
+                className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors min-h-[44px]"
                 style={{ backgroundColor: '#1e4d6b' }}
               >
                 Enable Data Sharing

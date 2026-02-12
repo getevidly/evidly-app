@@ -558,11 +558,11 @@ export function Equipment() {
             <h1 className="text-2xl font-bold text-gray-900">Equipment Lifecycle</h1>
             <p className="text-sm text-gray-600 mt-1">Track warranties, maintenance schedules, and replacement timelines</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <select
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">All Locations</option>
               {LOCATIONS.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
@@ -580,22 +580,22 @@ export function Equipment() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Total Equipment</span></div>
-            <div className="text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
             <div className="text-xs text-gray-400 mt-1">across {locationFilter === 'all' ? '3 locations' : '1 location'}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2"><Shield className="h-5 w-5 text-[#d97706]" /><span className="text-xs text-gray-500 uppercase font-semibold">Warranty Expiring</span></div>
-            <div className="text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">within 90 days</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">Maintenance Overdue</span></div>
-            <div className="text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
             <div className="text-xs text-gray-400 mt-1">needs immediate attention</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4">
             <div className="flex items-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Avg Equipment Age</span></div>
-            <div className="text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
+            <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
             <div className="text-xs text-gray-400 mt-1">years</div>
           </div>
         </div>
@@ -670,9 +670,9 @@ export function Equipment() {
           <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
             <table className="w-full">
               <thead><tr>
-                <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle}>Location</th>
-                <th style={thStyle}>Age</th><th style={thStyle}>Condition</th><th style={thStyle}>Warranty</th>
-                <th style={thStyle}>Next Maintenance</th><th style={thStyle}>Vendor</th>
+                <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
+                <th style={thStyle} className="hidden md:table-cell">Age</th><th style={thStyle}>Condition</th><th style={thStyle} className="hidden sm:table-cell">Warranty</th>
+                <th style={thStyle} className="hidden md:table-cell">Next Maintenance</th><th style={thStyle} className="hidden lg:table-cell">Vendor</th>
               </tr></thead>
               <tbody>
                 {filtered.map(eq => {
@@ -686,12 +686,12 @@ export function Equipment() {
                         <div className="text-xs text-gray-400">{eq.make} {eq.model}</div>
                       </td>
                       <td style={tdStyle}>{eq.type}</td>
-                      <td style={tdStyle}>{eq.location}</td>
-                      <td style={tdStyle}>{ageLabel(eq.installDate)}</td>
+                      <td style={tdStyle} className="hidden sm:table-cell">{eq.location}</td>
+                      <td style={tdStyle} className="hidden md:table-cell">{ageLabel(eq.installDate)}</td>
                       <td style={tdStyle}><span style={badge(eq.condition, c.color, c.bg)}>{eq.condition}</span></td>
-                      <td style={tdStyle}><span style={badge(w.label, w.color, w.bg)}>{w.label}</span></td>
-                      <td style={tdStyle}><span style={badge(m.label, m.color, m.bg)}>{m.label}</span></td>
-                      <td style={tdStyle}>{eq.linkedVendor}</td>
+                      <td style={tdStyle} className="hidden sm:table-cell"><span style={badge(w.label, w.color, w.bg)}>{w.label}</span></td>
+                      <td style={tdStyle} className="hidden md:table-cell"><span style={badge(m.label, m.color, m.bg)}>{m.label}</span></td>
+                      <td style={tdStyle} className="hidden lg:table-cell">{eq.linkedVendor}</td>
                     </tr>
                   );
                 })}
@@ -710,7 +710,7 @@ export function Equipment() {
         {selected && (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
             {/* Detail header */}
-            <div className="p-5 border-b border-gray-200 flex items-start justify-between" style={{ backgroundColor: '#eef4f8' }}>
+            <div className="p-4 sm:p-5 border-b border-gray-200 flex items-start justify-between gap-2" style={{ backgroundColor: '#eef4f8' }}>
               <div>
                 <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
@@ -742,13 +742,13 @@ export function Equipment() {
               ))}
             </div>
 
-            <div className="p-5">
+            <div className="p-3 sm:p-5">
               {/* ── Tab: Overview ─── */}
               {detailTab === 'overview' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Specifications</h4>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                       <div><span className="text-gray-400 block text-xs">Type</span><span className="font-medium">{selected.type}</span></div>
                       <div><span className="text-gray-400 block text-xs">Make</span><span className="font-medium">{selected.make}</span></div>
                       <div><span className="text-gray-400 block text-xs">Model</span><span className="font-medium">{selected.model}</span></div>
@@ -770,7 +770,7 @@ export function Equipment() {
                           {warrantyInfo(selected.warrantyExpiry).label}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div><span className="text-gray-400 block text-xs">Provider</span><span className="font-medium">{selected.warrantyProvider}</span></div>
                         <div><span className="text-gray-400 block text-xs">Expiry Date</span><span className="font-medium">{format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span></div>
                         <div className="col-span-2"><span className="text-gray-400 block text-xs">Terms</span><span className="font-medium">{selected.warrantyTerms}</span></div>
@@ -800,8 +800,8 @@ export function Equipment() {
                           <div className="w-3 h-3 rounded-full bg-[#1e4d6b] mt-1" />
                           {i < selected.serviceHistory.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 mt-1" />}
                         </div>
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-start justify-between gap-1">
                             <div>
                               <div className="font-medium text-sm text-gray-900">{rec.type}</div>
                               <div className="text-xs text-gray-500">{rec.vendor} · {format(new Date(rec.date), 'MMM d, yyyy')}</div>
@@ -820,7 +820,7 @@ export function Equipment() {
 
               {/* ── Tab: Maintenance Schedule ─── */}
               {detailTab === 'schedule' && (
-                <div>
+                <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead><tr>
                       <th style={thStyle}>Task</th><th style={thStyle}>Interval</th>
@@ -857,7 +857,7 @@ export function Equipment() {
                 return (
                   <div className="space-y-6">
                     <div className="p-4 rounded-lg border border-gray-200">
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <span className="text-sm font-bold text-gray-700">Lifecycle Progress</span>
                         <span className="text-sm font-bold" style={{ color: statusColor }}>{statusLabel}</span>
                       </div>
@@ -867,7 +867,7 @@ export function Equipment() {
                           style={{ width: `${pct}%`, backgroundColor: statusColor }}
                         />
                       </div>
-                      <div className="flex justify-between text-xs text-gray-400 mt-1">
+                      <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400 mt-1">
                         <span>Installed {format(new Date(selected.installDate), 'yyyy')}</span>
                         <span>{age.toFixed(1)} of {selected.usefulLifeYears} years ({pct.toFixed(0)}%)</span>
                         <span>Expected {format(replacementDate, 'yyyy')}</span>
@@ -932,6 +932,7 @@ export function Equipment() {
                       </div>
                     </div>
                     <h4 className="text-sm font-bold text-gray-700">Service Cost Breakdown</h4>
+                    <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead><tr>
                         <th style={thStyle}>Date</th><th style={thStyle}>Service</th><th style={thStyle}>Vendor</th><th style={thStyle}>Cost</th>
@@ -949,6 +950,7 @@ export function Equipment() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 );
               })()}
@@ -959,7 +961,7 @@ export function Equipment() {
         {/* ── Add / Edit Equipment Modal ─────────────────────────── */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl shadow-xl w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
               <div className="p-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-gray-900">Add Equipment</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>

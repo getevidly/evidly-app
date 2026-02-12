@@ -148,7 +148,7 @@ export function HelpSupport() {
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Help & Support' }]} />
 
-      <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', ...F }}>
+      <div className="p-4 sm:p-6" style={{ maxWidth: '1200px', margin: '0 auto', ...F }}>
         {/* Header */}
         <div style={{ marginBottom: '24px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1b4965', margin: '0 0 4px 0', ...F }}>Help & Support</h1>
@@ -163,7 +163,7 @@ export function HelpSupport() {
               onClick={() => { setActiveTab(tab.id); setSelectedArticle(null); }}
               style={{
                 padding: '12px 20px', fontSize: '14px', fontWeight: 600, border: 'none',
-                backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap',
+                backgroundColor: 'transparent', cursor: 'pointer', ...F, whiteSpace: 'nowrap', minHeight: '44px',
                 color: activeTab === tab.id ? '#1b4965' : '#6b7280',
                 borderBottom: activeTab === tab.id ? '2px solid #d4af37' : '2px solid transparent',
                 marginBottom: '-2px', display: 'flex', alignItems: 'center', gap: '6px',
@@ -211,9 +211,9 @@ export function HelpSupport() {
             <p style={{ fontSize: '14px', color: '#374151', lineHeight: 1.7, margin: 0, ...F }}>{selectedArticle.body}</p>
             <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', textAlign: 'center' }}>
               <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px', ...F }}>Was this article helpful?</div>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                <button onClick={() => toast.success('Thanks for your feedback')} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F }}>👍 Yes</button>
-                <button onClick={() => { setActiveTab('ticket'); setSelectedArticle(null); }} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F }}>👎 No — Contact Support</button>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button onClick={() => toast.success('Thanks for your feedback')} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F, minHeight: '44px' }}>👍 Yes</button>
+                <button onClick={() => { setActiveTab('ticket'); setSelectedArticle(null); }} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F, minHeight: '44px' }}>👎 No — Contact Support</button>
               </div>
             </div>
           </div>
@@ -246,7 +246,7 @@ export function HelpSupport() {
         </div>
 
         {/* Quick Help */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
           {QUICK_HELP.map(qh => (
             <div key={qh.id} onClick={() => {
               const article = allArticles.find(a => a.title.toLowerCase().includes(qh.title.toLowerCase().split(' ')[0]));
@@ -313,9 +313,9 @@ export function HelpSupport() {
           <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 4px 0', ...F }}>Your ticket number is</p>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#d4af37', marginBottom: '24px', ...F }}>{ticketNumber}</div>
           <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '24px', ...F }}>We typically respond within 4 business hours. Check the "My Tickets" tab for updates.</p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <button onClick={resetTicketForm} style={btnPrimary}>Submit Another</button>
-            <button onClick={() => setActiveTab('my-tickets')} style={{ ...btnPrimary, backgroundColor: 'white', color: '#1b4965', border: '2px solid #e5e7eb' }}>View My Tickets</button>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button onClick={resetTicketForm} style={{ ...btnPrimary, minHeight: '44px' }}>Submit Another</button>
+            <button onClick={() => setActiveTab('my-tickets')} style={{ ...btnPrimary, backgroundColor: 'white', color: '#1b4965', border: '2px solid #e5e7eb', minHeight: '44px' }}>View My Tickets</button>
           </div>
         </div>
       );
@@ -381,7 +381,7 @@ export function HelpSupport() {
           </div>
         </div>
 
-        <button onClick={handleSubmitTicket} style={{ ...btnPrimary, width: '100%', padding: '12px' }}>Submit Ticket</button>
+        <button onClick={handleSubmitTicket} style={{ ...btnPrimary, width: '100%', padding: '12px', minHeight: '44px' }}>Submit Ticket</button>
       </div>
     );
   }
@@ -390,13 +390,13 @@ export function HelpSupport() {
   function renderMyTickets() {
     return (
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
           <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1b4965', margin: 0, ...F }}>My Support Tickets</h2>
-          <button onClick={() => { setActiveTab('ticket'); resetTicketForm(); }} style={btnPrimary}>+ New Ticket</button>
+          <button onClick={() => { setActiveTab('ticket'); resetTicketForm(); }} style={{ ...btnPrimary, minHeight: '44px' }}>+ New Ticket</button>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', minWidth: '700px', ...F }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: 'white', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e5e7eb', minWidth: '600px', ...F }}>
             <thead>
               <tr style={{ backgroundColor: '#f9fafb' }}>
                 {['Ticket ID', 'Subject', 'Category', 'Status', 'Priority', 'Created'].map(h => (
@@ -435,13 +435,13 @@ export function HelpSupport() {
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
           {/* Live Chat */}
           <div style={cardStyle}>
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>💬</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Live Chat</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Chat with our support team in real-time during business hours.</div>
-            <button onClick={openChat} style={{ ...btnPrimary, width: '100%' }}>Start Chat</button>
+            <button onClick={openChat} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Start Chat</button>
           </div>
 
           {/* Email */}
@@ -449,7 +449,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>📧</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Email Support</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Send us an email and we will respond within 4 business hours.</div>
-            <a href="mailto:support@getevidly.com" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box' }}>support@getevidly.com</a>
+            <a href="mailto:support@getevidly.com" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box', minHeight: '44px' }}>support@getevidly.com</a>
           </div>
 
           {/* Phone */}
@@ -458,7 +458,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Phone Support</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '4px', ...F }}>(559) 555-0142</div>
             <div style={{ fontSize: '12px', color: '#9ca3af', marginBottom: '16px', ...F }}>Mon — Fri, 9:00 AM — 5:00 PM PST</div>
-            <a href="tel:+15595550142" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box' }}>Call Now</a>
+            <a href="tel:+15595550142" style={{ ...btnPrimary, display: 'block', textAlign: 'center', textDecoration: 'none', width: '100%', boxSizing: 'border-box', minHeight: '44px' }}>Call Now</a>
           </div>
 
           {/* Schedule */}
@@ -466,7 +466,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>📅</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Schedule a Call</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Book a 15-minute call with our support team at your convenience.</div>
-            <button onClick={() => toast.info('Booking link coming soon')} style={{ ...btnPrimary, width: '100%' }}>Book Time</button>
+            <button onClick={() => toast.info('Booking link coming soon')} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
           </div>
         </div>
 
@@ -479,7 +479,7 @@ export function HelpSupport() {
               <div style={{ fontSize: '12px', color: '#b91c1c', ...F }}>If you have an active food safety emergency requiring immediate assistance, call our emergency line now.</div>
             </div>
           </div>
-          <a href="tel:+15595550142" style={{ ...btnPrimary, backgroundColor: '#dc2626', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>📞 Call Now</a>
+          <a href="tel:+15595550142" style={{ ...btnPrimary, backgroundColor: '#dc2626', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', minHeight: '44px' }}>📞 Call Now</a>
         </div>
       </div>
     );

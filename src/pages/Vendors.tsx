@@ -378,7 +378,7 @@ export function Vendors() {
           </button>
 
           {/* Header */}
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100 rounded-lg">
@@ -462,7 +462,7 @@ export function Vendors() {
           {/* Overview Tab */}
           {detailTab === 'overview' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
                 <div className="space-y-3">
                   <div className="flex items-center text-gray-700">
@@ -488,7 +488,7 @@ export function Vendors() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Service Schedule by Location</h2>
                 <div className="space-y-3">
                   {selectedVendor.locations.map((loc) => (
@@ -516,29 +516,29 @@ export function Vendors() {
 
               {/* Performance */}
               {selectedPerf && (
-                <div className="bg-white rounded-lg shadow p-6 lg:col-span-2">
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6 lg:col-span-2">
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <Shield className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.reliabilityScore) }} />
                         <span className="text-sm text-gray-500 font-medium">Reliability Score</span>
                       </div>
-                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
+                      <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
                     </div>
-                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.onTimeRate)}` }}>
+                    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.onTimeRate)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <Clock className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.onTimeRate) }} />
                         <span className="text-sm text-gray-500 font-medium">On-Time Rate</span>
                       </div>
-                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</p>
+                      <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</p>
                     </div>
-                    <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.docComplianceRate)}` }}>
+                    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.docComplianceRate)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <FileText className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.docComplianceRate) }} />
                         <span className="text-sm text-gray-500 font-medium">Doc Compliance</span>
                       </div>
-                      <p className={`text-3xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</p>
+                      <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</p>
                     </div>
                   </div>
                 </div>
@@ -548,7 +548,7 @@ export function Vendors() {
 
           {/* Documents Tab */}
           {detailTab === 'documents' && (
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold">Required Documents</h2>
@@ -570,14 +570,14 @@ export function Vendors() {
                       }
                       showToast('Document request sent to ' + selectedVendor.email);
                     }}
-                    className="flex items-center px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
+                    className="flex items-center px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm"
                   >
                     <Send className="h-4 w-4 mr-2" />
                     Request Document
                   </button>
                   <button
                     onClick={() => setShowPhotoUpload(!showPhotoUpload)}
-                    className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
+                    className="flex items-center px-4 py-2 min-h-[44px] bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm"
                   >
                     <Upload className="h-4 w-4 mr-2" />
                     Upload / Photo
@@ -674,8 +674,8 @@ export function Vendors() {
           {detailTab === 'automation' && (
             <div className="space-y-6">
               {/* Auto-Request Settings */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                   <div>
                     <h2 className="text-lg font-semibold">Document Automation Settings</h2>
                     <p className="text-sm text-gray-600 mt-1">Automatic document requests when items expire or after service completion</p>
@@ -719,8 +719,8 @@ export function Vendors() {
 
               {/* Timeline (show for Valley Fire) */}
               {isValleyFire && (
-                <div className="bg-white rounded-lg shadow p-6">
-                  <div className="flex items-center justify-between mb-4">
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                  <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                     <div>
                       <h2 className="text-lg font-semibold">Post-Service Document Request — Airport Cafe</h2>
                       <p className="text-sm text-gray-600 mt-1">Fire suppression inspection on Jan 20, 2026 — awaiting documentation upload</p>
@@ -774,7 +774,7 @@ export function Vendors() {
               )}
 
               {!isValleyFire && (
-                <div className="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+                <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center text-gray-500">
                   <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                   <p className="font-medium">No active automation workflows</p>
                   <p className="text-sm mt-1">Workflows will appear here when documents are requested or services are completed.</p>
@@ -786,17 +786,17 @@ export function Vendors() {
           {/* Secure Upload Link Tab */}
           {detailTab === 'upload-link' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-2">Secure Upload Link</h2>
                 <p className="text-sm text-gray-600 mb-4">
                   Each vendor gets a unique, secure link to upload documents without needing an EvidLY account.
                 </p>
 
                 <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Link2 className="h-5 w-5 text-[#1e4d6b]" />
-                      <code className="text-sm text-gray-700 bg-white px-3 py-1 rounded border">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <Link2 className="h-5 w-5 text-[#1e4d6b] flex-shrink-0" />
+                      <code className="text-sm text-gray-700 bg-white px-3 py-1 rounded border break-all">
                         https://evidly-app.vercel.app/vendor/upload/{selectedVendor.id}-{selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-')}-abc123
                       </code>
                     </div>
@@ -842,7 +842,7 @@ export function Vendors() {
               </div>
 
               {/* Upload page preview */}
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                 <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Upload Page Preview</h3>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                   <div className="max-w-md mx-auto text-center">
@@ -882,7 +882,7 @@ export function Vendors() {
 
           {/* Contact Tab */}
           {detailTab === 'contact' && (
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4">Contact {selectedVendor.contactName}</h2>
               <div className="space-y-4 mb-6">
                 <div>
@@ -935,10 +935,10 @@ export function Vendors() {
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Vendors' }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-gray-200 overflow-x-auto">
             <button
               onClick={() => setActiveTab('list')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'list' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -946,7 +946,7 @@ export function Vendors() {
             </button>
             <button
               onClick={() => setActiveTab('scorecard')}
-              className={`px-6 py-3 font-medium transition-colors ${
+              className={`px-6 py-3 font-medium whitespace-nowrap transition-colors ${
                 activeTab === 'scorecard' ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]' : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -1038,7 +1038,7 @@ export function Vendors() {
                 <div
                   key={vendor.id}
                   onClick={() => handleSelectVendor(vendor)}
-                  className="bg-white rounded-lg shadow p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
+                  className="bg-white rounded-lg shadow p-4 sm:p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
                   style={{
                     borderLeftColor: displayStatus === 'overdue' ? '#dc2626' : displayStatus === 'upcoming' ? '#d97706' : '#16a34a',
                   }}
@@ -1118,7 +1118,7 @@ export function Vendors() {
                   <div className="flex gap-2 pt-3 border-t border-gray-100">
                     <button
                       onClick={(e) => { e.stopPropagation(); showToast('Schedule service for ' + vendor.companyName); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1142,7 +1142,7 @@ export function Vendors() {
                         }
                         showToast('COI request sent to ' + vendor.email);
                       }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1152,7 +1152,7 @@ export function Vendors() {
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleSelectVendor(vendor); setDetailTab('documents'); }}
-                      className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-medium text-[#1e4d6b] rounded transition-colors"
+                      className="flex-1 flex items-center justify-center px-2 py-1.5 min-h-[44px] text-xs font-medium text-[#1e4d6b] rounded transition-colors"
                       style={{ backgroundColor: '#eef4f8' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#dde9f0')}
                       onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#eef4f8')}
@@ -1183,10 +1183,10 @@ export function Vendors() {
 
         {activeTab === 'scorecard' && (
           <>
-            <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-6 text-white">
-              <h3 className="text-2xl font-bold mb-2">Vendor Performance Overview</h3>
+            <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2">Vendor Performance Overview</h3>
               <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 flex-wrap gap-2">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-6 w-6 text-green-400" />
                   <div>
@@ -1202,7 +1202,7 @@ export function Vendors() {
                 const perf = VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
                 if (!perf) return null;
                 return (
-                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-lg shadow p-4 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{vendor.companyName}</h3>
@@ -1265,8 +1265,8 @@ export function Vendors() {
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowInviteModal(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6 border-b border-gray-200">
+            <div className="bg-white rounded-xl shadow-2xl w-[95vw] sm:w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-4 sm:p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-[#eef4f8] rounded-lg">
@@ -1282,7 +1282,7 @@ export function Vendors() {
                   </button>
                 </div>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
                   <input
@@ -1321,7 +1321,7 @@ export function Vendors() {
                   </p>
                 </div>
               </div>
-              <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+              <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end gap-3">
                 <button
                   onClick={() => setShowInviteModal(false)}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"

@@ -73,7 +73,7 @@ function MarketplaceTab() {
     <div>
       {/* Search & Filter */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -136,8 +136,8 @@ function MarketplaceTab() {
 function IntegrationCard({ platform }: { platform: IntegrationPlatform }) {
   const badge = STATUS_BADGE[platform.status];
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-3">
+    <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm" style={{ backgroundColor: platform.color }}>
             {platform.name.charAt(0)}
@@ -170,7 +170,7 @@ function IntegrationCard({ platform }: { platform: IntegrationPlatform }) {
               toast.info(`OAuth flow for ${platform.name} (demo)`);
             }
           }}
-          className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors min-h-[44px]"
           style={{
             backgroundColor: platform.status === 'connected' ? '#dcfce7' : platform.status === 'coming_soon' ? '#f3f4f6' : '#1e4d6b',
             color: platform.status === 'connected' ? '#15803d' : platform.status === 'coming_soon' ? '#9ca3af' : 'white',
@@ -213,10 +213,10 @@ function ConnectedTab() {
               <tr className="bg-gray-50 text-gray-600 text-xs uppercase">
                 <th className="text-left px-4 py-3 font-semibold">Platform</th>
                 <th className="text-left px-4 py-3 font-semibold">Status</th>
-                <th className="text-left px-4 py-3 font-semibold">Last Sync</th>
-                <th className="text-center px-4 py-3 font-semibold">Employees</th>
-                <th className="text-center px-4 py-3 font-semibold">Vendors</th>
-                <th className="text-center px-4 py-3 font-semibold">Docs</th>
+                <th className="text-left px-4 py-3 font-semibold hidden sm:table-cell">Last Sync</th>
+                <th className="text-center px-4 py-3 font-semibold hidden md:table-cell">Employees</th>
+                <th className="text-center px-4 py-3 font-semibold hidden md:table-cell">Vendors</th>
+                <th className="text-center px-4 py-3 font-semibold hidden lg:table-cell">Docs</th>
                 <th className="text-right px-4 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
@@ -258,15 +258,15 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
           <div className="text-[10px] text-red-500 mt-1 max-w-[200px] truncate">{connection.lastError}</div>
         )}
       </td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-3 hidden sm:table-cell">
         <div className="text-xs text-gray-700">{timeSince}</div>
         <div className="text-[10px] text-gray-400">
           {connection.lastSyncStatus === 'success' ? '✓ Success' : connection.lastSyncStatus === 'partial' ? '⚠ Partial' : '✕ Failed'}
         </div>
       </td>
-      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.employeesSynced || '—'}</td>
-      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.vendorsSynced || '—'}</td>
-      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700">{connection.documentsSynced || '—'}</td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700 hidden md:table-cell">{connection.employeesSynced || '—'}</td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700 hidden md:table-cell">{connection.vendorsSynced || '—'}</td>
+      <td className="px-4 py-3 text-center text-xs font-medium text-gray-700 hidden lg:table-cell">{connection.documentsSynced || '—'}</td>
       <td className="px-4 py-3">
         <div className="flex items-center justify-end gap-1">
           <button onClick={() => toast.info(`Syncing ${connection.platformDisplayName} (demo)`)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#1e4d6b]" title="Sync Now">
@@ -295,25 +295,25 @@ function ApiManagementTab() {
   return (
     <div className="space-y-6">
       {/* API Keys */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
             <h3 className="font-semibold text-gray-900">API Keys</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys</p>
           </div>
-          <button onClick={() => toast.info('Generate new API key (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
+          <button onClick={() => toast.info('Generate new API key (demo)')} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
             <Plus className="h-3.5 w-3.5" /> New Key
           </button>
         </div>
 
         <div className="space-y-3">
           {/* Live key */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
-              <div>
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg flex-wrap gap-2">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+              <div className="min-w-0">
                 <div className="text-xs font-medium text-gray-900">Production Key</div>
-                <div className="font-mono text-[11px] text-gray-500 mt-0.5">
+                <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">
                   {showKey ? demoApiKey : 'evd_live_sk_••••••••••••••••••••••••••••'}
                 </div>
               </div>
@@ -329,12 +329,12 @@ function ApiManagementTab() {
           </div>
 
           {/* Sandbox key */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-yellow-500" />
-              <div>
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg flex-wrap gap-2">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-2 h-2 rounded-full bg-yellow-500 flex-shrink-0" />
+              <div className="min-w-0">
                 <div className="text-xs font-medium text-gray-900">Sandbox Key</div>
-                <div className="font-mono text-[11px] text-gray-500 mt-0.5">
+                <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">
                   evd_sandbox_sk_••••••••••••••••••••••••••••
                 </div>
               </div>
@@ -349,7 +349,7 @@ function ApiManagementTab() {
       </div>
 
       {/* Usage Stats */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
         <h3 className="font-semibold text-gray-900 mb-4">API Usage ({apiUsageStats.period})</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
           <div className="text-center">
@@ -389,8 +389,8 @@ function ApiManagementTab() {
       </div>
 
       {/* Webhook Subscriptions */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
             <h3 className="font-semibold text-gray-900">Webhook Subscriptions</h3>
             <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery</p>
@@ -437,8 +437,8 @@ function ApiManagementTab() {
       </div>
 
       {/* Developer Portal Link */}
-      <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2a6a8f] rounded-xl p-6 text-white">
-        <div className="flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2a6a8f] rounded-xl p-4 sm:p-6 text-white">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h3 className="font-semibold text-lg">Developer Portal</h3>
             <p className="text-white/70 text-sm mt-1">Full API documentation, SDKs, sandbox environment, and integration guides.</p>
@@ -482,10 +482,10 @@ function ActivityTab() {
               <tr className="bg-gray-50 text-gray-600 text-xs uppercase">
                 <th className="text-left px-4 py-3 font-semibold">Time</th>
                 <th className="text-left px-4 py-3 font-semibold">Platform</th>
-                <th className="text-left px-4 py-3 font-semibold">Type</th>
-                <th className="text-left px-4 py-3 font-semibold">Entity</th>
-                <th className="text-center px-4 py-3 font-semibold">Records</th>
-                <th className="text-center px-4 py-3 font-semibold">Duration</th>
+                <th className="text-left px-4 py-3 font-semibold hidden sm:table-cell">Type</th>
+                <th className="text-left px-4 py-3 font-semibold hidden md:table-cell">Entity</th>
+                <th className="text-center px-4 py-3 font-semibold hidden sm:table-cell">Records</th>
+                <th className="text-center px-4 py-3 font-semibold hidden lg:table-cell">Duration</th>
                 <th className="text-left px-4 py-3 font-semibold">Status</th>
               </tr>
             </thead>
@@ -517,14 +517,14 @@ function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
           <span className="text-xs font-medium text-gray-900">{log.platformDisplayName}</span>
         </div>
       </td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-3 hidden sm:table-cell">
         <div className="flex items-center gap-1">
           {log.direction === 'inbound' ? <ArrowDownLeft className="h-3 w-3 text-blue-500" /> : <ArrowUpRight className="h-3 w-3 text-green-500" />}
           <span className="text-xs text-gray-600 capitalize">{log.syncType}</span>
         </div>
       </td>
-      <td className="px-4 py-3 text-xs text-gray-700">{log.entityType}</td>
-      <td className="px-4 py-3 text-center">
+      <td className="px-4 py-3 text-xs text-gray-700 hidden md:table-cell">{log.entityType}</td>
+      <td className="px-4 py-3 text-center hidden sm:table-cell">
         <div className="text-xs text-gray-700">{log.recordsProcessed}</div>
         <div className="text-[10px] text-gray-400">
           {log.recordsCreated > 0 && <span className="text-green-600">+{log.recordsCreated}</span>}
@@ -532,7 +532,7 @@ function SyncLogRow({ log }: { log: IntegrationSyncLog }) {
           {log.recordsFailed > 0 && <span className="text-red-500 ml-1">✕{log.recordsFailed}</span>}
         </div>
       </td>
-      <td className="px-4 py-3 text-center text-xs text-gray-500">{log.completedAt ? `${((new Date(log.completedAt).getTime() - new Date(log.startedAt).getTime()) / 1000).toFixed(1)}s` : '—'}</td>
+      <td className="px-4 py-3 text-center text-xs text-gray-500 hidden lg:table-cell">{log.completedAt ? `${((new Date(log.completedAt).getTime() - new Date(log.startedAt).getTime()) / 1000).toFixed(1)}s` : '—'}</td>
       <td className="px-4 py-3">
         <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${log.status === 'completed' ? 'bg-green-50 text-green-700' : log.status === 'partial' ? 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-600'}`}>
           {log.status}
@@ -556,7 +556,7 @@ function HealthTab() {
   return (
     <div className="space-y-6">
       {/* Overview cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {[
           { label: 'Active', value: activeConnections, color: '#15803d', icon: CheckCircle2 },
           { label: 'Errors', value: errorConnections, color: '#dc2626', icon: XCircle },
@@ -575,7 +575,7 @@ function HealthTab() {
       </div>
 
       {/* Per-integration health */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
         <h3 className="font-semibold text-gray-900 mb-4">Integration Health Status</h3>
         <div className="space-y-3">
           {connectedIntegrations.map(ci => {
@@ -584,7 +584,7 @@ function HealthTab() {
             const lastLog = logs.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime())[0];
 
             return (
-              <div key={ci.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50">
+              <div key={ci.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 flex-wrap gap-2">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs" style={{ backgroundColor: platform?.color || '#6b7280' }}>
                     {ci.platformDisplayName.charAt(0)}
@@ -616,7 +616,7 @@ function HealthTab() {
       </div>
 
       {/* API Health */}
-      <div className="bg-white rounded-xl border border-gray-100 p-6">
+      <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
         <h3 className="font-semibold text-gray-900 mb-4">API Performance</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -687,7 +687,7 @@ export function IntegrationHub() {
             <Globe className="h-5 w-5 text-[#d4af37]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">API & Integration Hub</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">API & Integration Hub</h1>
             <p className="text-sm text-gray-500">Connect EvidLY with your restaurant tech stack</p>
           </div>
         </div>
@@ -699,7 +699,7 @@ export function IntegrationHub() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] ${
               activeTab === tab.id
                 ? 'bg-[#1e4d6b] text-white'
                 : 'text-gray-600 hover:bg-gray-50'

@@ -1121,10 +1121,10 @@ export function TempLogs() {
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-2 border-b border-gray-200">
+        <div className="flex overflow-x-auto -mx-1 border-b border-gray-200">
           <button
             onClick={() => setActiveTab('equipment')}
-            className={`px-4 py-2 font-medium ${
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'equipment'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -1134,7 +1134,7 @@ export function TempLogs() {
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-4 py-2 font-medium ${
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'history'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -1144,7 +1144,7 @@ export function TempLogs() {
           </button>
           <button
             onClick={() => setActiveTab('receiving')}
-            className={`px-4 py-2 font-medium ${
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'receiving'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -1154,7 +1154,7 @@ export function TempLogs() {
           </button>
           <button
             onClick={() => setActiveTab('cooldown')}
-            className={`px-4 py-2 font-medium ${
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'cooldown'
                 ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -1170,7 +1170,7 @@ export function TempLogs() {
             {/* Filters Section */}
             <div className="bg-white rounded-lg shadow p-4">
               <div className="flex flex-wrap gap-4 items-end">
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.location')}</label>
                   <select
                     value={locationFilter}
@@ -1184,7 +1184,7 @@ export function TempLogs() {
                   </select>
                 </div>
 
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.sortBy')}</label>
                   <select
                     value={sortBy}
@@ -1199,7 +1199,7 @@ export function TempLogs() {
 
                 <button
                   onClick={handleOpenBatchLog}
-                  className="px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                  className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
                   <Plus className="h-5 w-5" />
                   <span>{t('tempLogs.batchLog')}</span>
@@ -1247,7 +1247,7 @@ export function TempLogs() {
 
                   <button
                     onClick={() => handleLogTemp(eq)}
-                    className={`w-full px-4 py-2 text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#163a52]'}`}
+                    className={`w-full px-4 py-2 min-h-[44px] text-white rounded-lg transition-colors font-medium shadow-sm ${isEquipmentOutOfRange(eq) ? 'bg-red-600 hover:bg-red-700' : 'bg-[#1e4d6b] hover:bg-[#163a52]'}`}
                   >
                     {isEquipmentOutOfRange(eq) ? t('tempLogs.logTempNowWarning') : t('tempLogs.logTemp')}
                   </button>
@@ -1266,7 +1266,7 @@ export function TempLogs() {
 
         {/* Receiving Tab */}
         {activeTab === 'receiving' && (
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-8">
+          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow p-4 sm:p-8">
             <div className="flex items-center space-x-3 mb-6">
               <div className="p-3 bg-green-100 rounded-lg">
                 <Package className="h-6 w-6 text-green-600" />
@@ -1472,7 +1472,7 @@ export function TempLogs() {
             {/* Filters Bar */}
             <div className="bg-white rounded-lg shadow p-4">
               <div className="flex flex-wrap gap-4 items-end">
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.dateRange')}</label>
                   <select
                     value={historyDateRange}
@@ -1489,7 +1489,7 @@ export function TempLogs() {
 
                 {historyDateRange === 'custom' && (
                   <>
-                    <div className="flex-1 min-w-[150px]">
+                    <div className="flex-1 min-w-0 sm:min-w-[150px]">
                       <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.from')}</label>
                       <input
                         type="date"
@@ -1498,7 +1498,7 @@ export function TempLogs() {
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                       />
                     </div>
-                    <div className="flex-1 min-w-[150px]">
+                    <div className="flex-1 min-w-0 sm:min-w-[150px]">
                       <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.to')}</label>
                       <input
                         type="date"
@@ -1510,7 +1510,7 @@ export function TempLogs() {
                   </>
                 )}
 
-                <div className="flex-1 min-w-[200px]">
+                <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.equipmentName')}</label>
                   <select
                     value={historyEquipment}
@@ -1524,7 +1524,7 @@ export function TempLogs() {
                   </select>
                 </div>
 
-                <div className="flex-1 min-w-[150px]">
+                <div className="flex-1 min-w-0 sm:min-w-[150px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.status')}</label>
                   <select
                     value={historyStatus}
@@ -1540,7 +1540,7 @@ export function TempLogs() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setHistoryView('table')}
-                    className={`px-4 py-2 rounded-lg font-medium ${
+                    className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'table'
                         ? 'bg-[#1e4d6b] text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -1550,7 +1550,7 @@ export function TempLogs() {
                   </button>
                   <button
                     onClick={() => setHistoryView('chart')}
-                    className={`px-4 py-2 rounded-lg font-medium ${
+                    className={`px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                       historyView === 'chart'
                         ? 'bg-[#1e4d6b] text-white'
                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -1562,7 +1562,7 @@ export function TempLogs() {
 
                 <button
                   onClick={exportToCSV}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium flex items-center space-x-2"
+                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium flex items-center space-x-2"
                 >
                   <Download className="h-4 w-4" />
                   <span>{t('tempLogs.exportCsv')}</span>
@@ -1584,6 +1584,7 @@ export function TempLogs() {
                   </button>
                 </div>
 
+                <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
@@ -1692,6 +1693,7 @@ export function TempLogs() {
                     ))}
                   </tbody>
                 </table>
+                </div>
 
                 {getFilteredHistory().length === 0 && (
                   <div className="text-center py-12">
@@ -1712,7 +1714,7 @@ export function TempLogs() {
                 <div className="bg-white shadow rounded-lg p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Temperature Trends</h2>
                   {chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={400}>
+                    <ResponsiveContainer width="100%" height={300}>
                       <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="time" angle={-45} textAnchor="end" height={60} tick={{ fontSize: 11 }} interval="preserveStartEnd" />
@@ -1754,11 +1756,11 @@ export function TempLogs() {
         {/* Cooldown Tab */}
         {activeTab === 'cooldown' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3">
               <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.cooldownTracker')}</h2>
               <button
                 onClick={() => setShowStartCooldown(true)}
-                className="px-6 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                className="px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
               >
                 <Play className="h-5 w-5" />
                 <span>{t('tempLogs.startCooldown')}</span>
@@ -1905,13 +1907,13 @@ export function TempLogs() {
                               setShowCooldownCheckModal(true);
                               setCooldownCheckTime(format(new Date(), "yyyy-MM-dd'T'HH:mm"));
                             }}
-                            className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 font-medium"
+                            className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 font-medium"
                           >
                             {t('tempLogs.logCheck')}
                           </button>
                           <button
                             onClick={() => handleCompleteCooldown(cooldown.id)}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                            className="px-4 py-2 min-h-[44px] bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                           >
                             {t('tempLogs.complete')}
                           </button>
@@ -1932,6 +1934,7 @@ export function TempLogs() {
             <div>
               <h3 className="text-xl font-bold text-gray-900 mb-4">{t('tempLogs.completedCooldowns')}</h3>
               <div className="bg-white shadow rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
@@ -1977,6 +1980,7 @@ export function TempLogs() {
                     })}
                   </tbody>
                 </table>
+                </div>
 
                 {completedCooldowns.length === 0 && (
                   <div className="text-center py-12">
@@ -1992,8 +1996,8 @@ export function TempLogs() {
 
       {/* Log Temperature Modal */}
       {showLogModal && selectedEquipment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-2 text-center">{selectedEquipment.name}</h3>
             <p className="text-center text-gray-600 mb-6">
               {t('tempLogs.range')} {selectedEquipment.min_temp}°{selectedEquipment.unit} - {selectedEquipment.max_temp}°
@@ -2100,8 +2104,8 @@ export function TempLogs() {
 
       {/* Batch Log Modal */}
       {showBatchModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg p-4 sm:p-6 w-[95vw] sm:w-auto max-w-4xl sm:max-w-4xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-6">Batch Temperature Logging</h3>
 
             <div className="mb-4">
@@ -2133,8 +2137,8 @@ export function TempLogs() {
                     entry.temperature && isValid ? 'bg-green-50 border-green-300' :
                     'border-gray-300'
                   }`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-gray-900">{entry.equipment_name}</h4>
                         <p className="text-sm text-gray-600">
                           {t('tempLogs.range')} {entry.min_temp}°F - {entry.max_temp}°F
@@ -2149,7 +2153,7 @@ export function TempLogs() {
                             value={entry.temperature}
                             onChange={(e) => handleBatchTempChange(entry.equipment_id, e.target.value)}
                             placeholder="Temp"
-                            className="w-32 px-4 py-2 text-2xl font-bold text-center border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                            className="w-28 sm:w-32 px-3 sm:px-4 py-2 min-h-[44px] text-2xl font-bold text-center border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                           />
                           {entry.temperature && (
                             <span className={`font-bold text-lg ${isValid ? 'text-green-600' : 'text-red-600'}`}>
@@ -2162,7 +2166,7 @@ export function TempLogs() {
                       <button
                         type="button"
                         onClick={() => handleBatchSkip(entry.equipment_id)}
-                        className={`ml-4 px-4 py-2 rounded-lg font-medium ${
+                        className={`ml-0 sm:ml-4 px-4 py-2 min-h-[44px] rounded-lg font-medium ${
                           entry.skipped
                             ? 'bg-[#1e4d6b] text-white hover:bg-[#163a52]'
                             : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -2198,8 +2202,8 @@ export function TempLogs() {
 
       {/* Start Cooldown Modal */}
       {showStartCooldown && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-6">Start New Cooldown</h3>
 
             <form onSubmit={handleStartCooldown} className="space-y-4">
@@ -2293,8 +2297,8 @@ export function TempLogs() {
 
       {/* Cooldown Check Modal */}
       {showCooldownCheckModal && selectedCooldown && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg p-6 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-2">{selectedCooldown.itemName}</h3>
             <p className="text-gray-600 mb-6">Log Temperature Check</p>
 
