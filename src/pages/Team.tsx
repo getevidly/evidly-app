@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar } from 'lucide-react';
+import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
@@ -160,6 +160,10 @@ export function Team() {
   const { userRole, canAssignTempCoverage, canManageTeam, getAccessibleLocations, tempCoverageAssignments, addTempCoverage, removeTempCoverage } = useRole();
   const accessibleLocations = getAccessibleLocations();
   const [tempForm, setTempForm] = useState({ userId: '', userName: '', locationId: '', locationName: '', startDate: '', endDate: '' });
+  const [openActionMenu, setOpenActionMenu] = useState<string | null>(null);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetMember, setResetMember] = useState<TeamMember | null>(null);
+  const [resetLoading, setResetLoading] = useState(false);
 
   const isDemoMode = !profile?.organization_id;
 
@@ -293,6 +297,29 @@ export function Team() {
       await fetchMemberCertifications(member.id);
     }
     setShowDetailsModal(true);
+  };
+
+  const handleResetPassword = async (member: TeamMember) => {
+    setResetLoading(true);
+    if (isDemoMode) {
+      await new Promise(r => setTimeout(r, 800));
+      setResetLoading(false);
+      setShowResetModal(false);
+      setResetMember(null);
+      toast.success(`Password reset email sent to ${member.email}`);
+      return;
+    }
+    const { error } = await supabase.auth.resetPasswordForEmail(member.email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setResetLoading(false);
+    if (error) {
+      toast.error('Failed to send reset email. Please try again.');
+    } else {
+      toast.success(`Password reset email sent to ${member.email}`);
+    }
+    setShowResetModal(false);
+    setResetMember(null);
   };
 
   const getRoleBadge = (role: string) => {
@@ -732,12 +759,37 @@ export function Team() {
                         ) : '—'}
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => viewMemberDetails(member)}
-                          className="text-[#1e4d6b] hover:text-[#163a52] font-medium min-h-[44px]"
-                        >
-                          View Details
-                        </button>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpenActionMenu(openActionMenu === member.id ? null : member.id)}
+                            onBlur={() => setTimeout(() => setOpenActionMenu(null), 150)}
+                            className="p-2 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          >
+                            <MoreVertical className="h-5 w-5 text-gray-500" />
+                          </button>
+                          {openActionMenu === member.id && (
+                            <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                              <button
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => { setOpenActionMenu(null); viewMemberDetails(member); }}
+                                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                              >
+                                <Users className="h-4 w-4 text-gray-400" />
+                                View Details
+                              </button>
+                              {canManageTeam() && (
+                                <button
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  onClick={() => { setOpenActionMenu(null); setResetMember(member); setShowResetModal(true); }}
+                                  className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                >
+                                  <KeyRound className="h-4 w-4 text-gray-400" />
+                                  Reset Password
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -805,6 +857,19 @@ export function Team() {
                 )}
               </div>
             </div>
+
+            {/* Admin Actions */}
+            {canManageTeam() && (
+              <div className="mb-6 flex gap-2">
+                <button
+                  onClick={() => { setShowDetailsModal(false); setResetMember(selectedMember); setShowResetModal(true); }}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-[#eef4f8] hover:bg-[#dce8f0] rounded-lg transition-colors"
+                >
+                  <KeyRound className="h-4 w-4" />
+                  Reset Password
+                </button>
+              </div>
+            )}
 
             {/* Performance Metrics */}
             {selectedMember.compliance_score !== undefined && (
@@ -923,6 +988,46 @@ export function Team() {
                   Activity log coming soon
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Confirmation Modal */}
+      {showResetModal && resetMember && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <KeyRound className="h-5 w-5 text-amber-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Reset Password</h3>
+            </div>
+            <p className="text-sm text-gray-600 mb-1">
+              Send a password reset email to:
+            </p>
+            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+              <p className="font-medium text-gray-900">{resetMember.full_name}</p>
+              <p className="text-sm text-gray-500">{resetMember.email}</p>
+            </div>
+            <p className="text-xs text-gray-500 mb-6">
+              They will receive an email with a link to set a new password. The link expires in 24 hours.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => { setShowResetModal(false); setResetMember(null); }}
+                disabled={resetLoading}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleResetPassword(resetMember)}
+                disabled={resetLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] rounded-lg transition-colors disabled:opacity-50"
+              >
+                {resetLoading ? 'Sending...' : 'Send Reset Email'}
+              </button>
             </div>
           </div>
         </div>
