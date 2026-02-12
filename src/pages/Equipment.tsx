@@ -1,12 +1,15 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, Shield, AlertTriangle, Clock,
-  MapPin, X, Calendar, TrendingUp, Edit3, Truck, Package,
+  MapPin, X, Calendar, TrendingUp, Edit3, Truck, Package, Loader2, CheckCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
+import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -407,9 +410,93 @@ export function Equipment() {
   const [showForm, setShowForm] = useState(false);
   const [detailTab, setDetailTab] = useState<'overview' | 'service' | 'schedule' | 'forecast' | 'costs'>('overview');
 
+  const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
+  const [loading, setLoading] = useState(false);
+  const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = useCallback((msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  }, []);
+
+  // Fetch equipment from Supabase in live mode
+  useEffect(() => {
+    if (isDemoMode || !profile?.organization_id) return;
+
+    async function fetchEquipment() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('equipment')
+        .select('*, equipment_service_records(*), equipment_maintenance_schedule(*)')
+        .eq('organization_id', profile!.organization_id)
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching equipment:', error);
+        setLoading(false);
+        return;
+      }
+
+      // Map location IDs to names
+      const { data: locData } = await supabase
+        .from('locations')
+        .select('id, name')
+        .eq('organization_id', profile!.organization_id);
+      const locMap: Record<string, string> = {};
+      (locData || []).forEach((l: any) => { locMap[l.id] = l.name; });
+
+      const mapped: EquipmentItem[] = (data || []).map((e: any) => ({
+        id: e.id,
+        name: e.name,
+        type: e.equipment_type,
+        make: e.make || '',
+        model: e.model || '',
+        serial: e.serial_number || '',
+        locationId: e.location_id,
+        location: locMap[e.location_id] || 'Unknown',
+        installDate: e.install_date || '',
+        purchasePrice: e.purchase_price || 0,
+        warrantyExpiry: e.warranty_expiry || '',
+        warrantyProvider: e.warranty_provider || '',
+        warrantyTerms: e.warranty_terms || '',
+        condition: (e.condition || 'Good') as Condition,
+        nextMaintenanceDue: e.next_maintenance_due || '',
+        maintenanceInterval: e.maintenance_interval || '',
+        linkedVendor: e.linked_vendor || '',
+        usefulLifeYears: e.useful_life_years || 10,
+        replacementCost: e.replacement_cost || 0,
+        notes: e.notes || '',
+        serviceHistory: (e.equipment_service_records || []).map((s: any) => ({
+          date: s.service_date,
+          vendor: s.vendor,
+          type: s.service_type,
+          cost: s.cost || 0,
+          notes: s.notes || '',
+        })),
+        schedule: (e.equipment_maintenance_schedule || []).map((s: any) => ({
+          task: s.task,
+          interval: s.interval,
+          lastDone: s.last_done || '',
+          nextDue: s.next_due || '',
+        })),
+      }));
+
+      setLiveEquipment(mapped);
+      setLoading(false);
+    }
+
+    fetchEquipment();
+  }, [isDemoMode, profile?.organization_id]);
+
+  // Use live data or demo data
+  const allEquipment = isDemoMode ? DEMO_EQUIPMENT : liveEquipment.length > 0 ? liveEquipment : DEMO_EQUIPMENT;
+
   // Filtered equipment
   const filtered = useMemo(() => {
-    let items = DEMO_EQUIPMENT;
+    let items = allEquipment;
     if (locationFilter !== 'all') items = items.filter(e => e.location === locationFilter);
     if (search) {
       const q = search.toLowerCase();
@@ -420,7 +507,7 @@ export function Equipment() {
       );
     }
     return items;
-  }, [locationFilter, search]);
+  }, [allEquipment, locationFilter, search]);
 
   // KPIs
   const kpis = useMemo(() => {
@@ -431,7 +518,7 @@ export function Equipment() {
     return { total, warrantyExpiring, maintenanceOverdue, avgAge: avgAge.toFixed(1) };
   }, [filtered]);
 
-  const selected = selectedId ? DEMO_EQUIPMENT.find(e => e.id === selectedId) ?? null : null;
+  const selected = selectedId ? allEquipment.find(e => e.id === selectedId) ?? null : null;
 
   // TODO: Scoring integration — Equipment condition and maintenance compliance
   // feed into calculateEquipmentScore() in src/lib/complianceScoring.ts.
@@ -530,8 +617,15 @@ export function Equipment() {
           </div>
         </div>
 
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+          </div>
+        )}
+
         {/* Equipment List — Card View */}
-        {viewMode === 'card' && (
+        {!loading && viewMode === 'card' && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map(eq => {
               const w = warrantyInfo(eq.warrantyExpiry);
@@ -572,7 +666,7 @@ export function Equipment() {
         )}
 
         {/* Equipment List — Table View */}
-        {viewMode === 'table' && (
+        {!loading && viewMode === 'table' && (
           <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
             <table className="w-full">
               <thead><tr>
@@ -870,58 +964,58 @@ export function Equipment() {
                 <h2 className="text-lg font-bold text-gray-900">Add Equipment</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>
               </div>
-              <div className="p-5 space-y-4">
+              <form id="equipment-form" className="p-5 space-y-4" onSubmit={e => e.preventDefault()}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Equipment Type</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <select name="equipment_type" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       <option value="">Select type...</option>
                       {EQUIPMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <select name="location" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       {LOCATIONS.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Make</label>
-                    <input type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
-                    <input type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
-                    <input type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Installation Date</label>
-                    <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="install_date" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Price</label>
-                    <input type="number" placeholder="0.00" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Expiration</label>
-                    <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Provider</label>
-                    <input type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                    <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Maintenance Interval</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <select name="maintenance_interval" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       {MAINTENANCE_INTERVALS.map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Vendor</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                    <select name="linked_vendor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       <option value="">Select vendor...</option>
                       <option value="CleanAir HVAC">CleanAir HVAC</option>
                       <option value="ABC Fire Protection">ABC Fire Protection</option>
@@ -933,7 +1027,7 @@ export function Equipment() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
                     <button
-                      onClick={() => alert('Photo capture would open here. In production, uses PhotoEvidence component.')}
+                      onClick={() => showToast('Photo capture would open here. In production, uses PhotoEvidence component.')}
                       className="w-full flex items-center justify-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-[#1e4d6b] hover:text-[#1e4d6b] transition-colors"
                     >
                       <Edit3 className="h-4 w-4" /> Upload Photo
@@ -942,15 +1036,47 @@ export function Equipment() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Terms</label>
-                  <input type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                  <textarea rows={3} placeholder="Additional notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
+                  <textarea name="notes" rows={3} placeholder="Additional notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button
-                    onClick={() => { alert('Equipment saved (demo).'); setShowForm(false); }}
+                    onClick={async () => {
+                      if (!isDemoMode && profile?.organization_id) {
+                        const form = document.querySelector('#equipment-form') as HTMLFormElement | null;
+                        const formData = form ? new FormData(form) : null;
+                        if (formData) {
+                          const { error } = await supabase.from('equipment').insert({
+                            organization_id: profile.organization_id,
+                            location_id: formData.get('location') || LOCATIONS[0].id,
+                            name: `${formData.get('equipment_type') || 'Equipment'} - New`,
+                            equipment_type: formData.get('equipment_type') || 'Other',
+                            make: formData.get('make') || '',
+                            model: formData.get('model') || '',
+                            serial_number: formData.get('serial_number') || '',
+                            install_date: formData.get('install_date') || null,
+                            purchase_price: parseFloat(formData.get('purchase_price') as string) || 0,
+                            warranty_expiry: formData.get('warranty_expiry') || null,
+                            warranty_provider: formData.get('warranty_provider') || '',
+                            warranty_terms: formData.get('warranty_terms') || '',
+                            maintenance_interval: formData.get('maintenance_interval') || 'Quarterly',
+                            linked_vendor: formData.get('linked_vendor') || '',
+                            notes: formData.get('notes') || '',
+                            compliance_pillar: 'fire_safety',
+                          });
+                          if (error) {
+                            console.error('Error saving equipment:', error);
+                            showToast('Failed to save equipment.');
+                            return;
+                          }
+                        }
+                      }
+                      showToast('Equipment saved successfully.');
+                      setShowForm(false);
+                    }}
                     className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg font-medium hover:bg-[#163a52] text-sm"
                   >
                     Save Equipment
@@ -962,8 +1088,16 @@ export function Equipment() {
                     Cancel
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
+          </div>
+        )}
+
+        {/* Toast notification */}
+        {toastMessage && (
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+            <CheckCircle className="h-4 w-4 flex-shrink-0" />
+            {toastMessage}
           </div>
         )}
       </div>
