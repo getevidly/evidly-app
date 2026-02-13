@@ -5,6 +5,7 @@ import { Eye, EyeOff, Play } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { LeadCaptureModal } from '../components/LeadCaptureModal';
+import { SocialLoginButtons } from '../components/SocialLoginButtons';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -91,6 +92,8 @@ export function Login() {
               {error}
             </div>
           )}
+
+          <SocialLoginButtons mode="login" />
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

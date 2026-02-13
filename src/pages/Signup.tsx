@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
+import { SocialLoginButtons } from '../components/SocialLoginButtons';
 
 const INDUSTRY_TYPES = {
   RESTAURANT: {
@@ -195,6 +196,8 @@ export function Signup() {
               {error}
             </div>
           )}
+
+          <SocialLoginButtons mode="signup" />
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
