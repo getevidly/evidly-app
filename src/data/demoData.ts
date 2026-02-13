@@ -366,6 +366,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
   { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/team', roles: ['management', 'kitchen'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
+  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 §7.8)', color: 'amber', url: '/equipment', roles: ['management', 'facilities'], locationId: '2' },
 ];
 
 export interface ScoreImpactItem {
@@ -380,7 +381,7 @@ export interface ScoreImpactItem {
 
 // Sub-component weights (of 100-point pillar):
 // Operational: Temp checks 35, Checklists 30, Incidents 20, HACCP 15
-// Equipment: Hood cleaning 30, Fire suppression 25, Fire extinguisher 20, Equip maintenance 15, Equip condition 10
+// Equipment: Hood cleaning 30, Fire suppression 25, Fire extinguisher 20, Equip maintenance (incl. exhaust fan) 15, Equip condition 10
 // Documentation: Vendor certs 25, Health permit 25, Business license 15, Food handler certs 20, Insurance 15
 
 export const scoreImpactData: ScoreImpactItem[] = [
