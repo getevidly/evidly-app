@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import {
   Thermometer, Users, Package, Wrench, Flame, Building2, FileText, Truck,
-  CheckCircle2, XCircle, MinusCircle, Camera, ChevronLeft, ChevronRight,
+  CheckCircle2, XCircle, MinusCircle, ChevronLeft, ChevronRight,
   Play, RotateCcw, Printer, Share2, Trash2, TrendingUp, AlertTriangle,
   ClipboardList, ArrowLeft, History,
 } from 'lucide-react';
@@ -11,6 +11,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { getStateLabel } from '../lib/stateCodes';
+import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -350,6 +352,9 @@ export function SelfAudit() {
 
   // Saved state detection
   const [hasSavedState, setHasSavedState] = useState(false);
+
+  // Photo evidence
+  const [auditPhotos, setAuditPhotos] = useState<PhotoRecord[]>([]);
 
   // Check for saved state on mount
   useEffect(() => {
@@ -714,13 +719,13 @@ export function SelfAudit() {
                       })}
                     </div>
                   </div>
-                  <button
-                    onClick={() => toast.info('Photo capture available in production')}
-                    className="flex items-center gap-1.5 text-xs text-[#1e4d6b] hover:text-[#2a6a8f] transition-colors"
-                  >
-                    <Camera className="h-4 w-4" />
-                    Attach Photo
-                  </button>
+                  <PhotoButton
+                    photos={auditPhotos}
+                    onChange={setAuditPhotos}
+                    maxPhotos={3}
+                    compact
+                    label="Attach Photo"
+                  />
                 </div>
               )}
             </div>
@@ -908,6 +913,11 @@ export function SelfAudit() {
               ))}
             </div>
           </div>
+        )}
+
+        {/* Audit Photos */}
+        {auditPhotos.length > 0 && (
+          <PhotoGallery photos={auditPhotos} title="Audit Photos" />
         )}
 
         {/* Actions */}

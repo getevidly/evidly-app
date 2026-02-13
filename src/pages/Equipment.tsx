@@ -12,6 +12,8 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
+import { PhotoGallery } from '../components/PhotoGallery';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -445,6 +447,7 @@ export function Equipment() {
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [equipmentPhotos, setEquipmentPhotos] = useState<PhotoRecord[]>([]);
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -812,6 +815,9 @@ export function Equipment() {
                         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">{selected.notes}</p>
                       </div>
                     )}
+                    {equipmentPhotos.length > 0 && (
+                      <PhotoGallery photos={equipmentPhotos} title="Equipment Photos" />
+                    )}
                   </div>
                 </div>
               )}
@@ -1057,13 +1063,14 @@ export function Equipment() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
-                    <button
-                      onClick={() => guardAction('edit', 'equipment records', () => showToast('Photo capture would open here. In production, uses PhotoEvidence component.'))}
-                      className="w-full flex items-center justify-center gap-2 px-3 py-2 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-[#1e4d6b] hover:text-[#1e4d6b] transition-colors"
-                    >
-                      <Edit3 className="h-4 w-4" /> Upload Photo
-                    </button>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Photo Evidence</label>
+                    <PhotoEvidence
+                      photos={equipmentPhotos}
+                      onChange={setEquipmentPhotos}
+                      maxPhotos={5}
+                      compact
+                      label="Equipment Photo"
+                    />
                   </div>
                 </div>
                 <div>

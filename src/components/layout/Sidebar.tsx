@@ -30,6 +30,7 @@ import {
   ChevronDown,
   ChevronRight,
   Upload,
+  Camera,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -84,6 +85,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.foodSafety', href: '/haccp', icon: ClipboardList, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, roles: allRoles },
       { i18nKey: 'nav.selfAudit', href: '/self-audit', icon: ClipboardCheck, roles: mgmtRoles },
+      { i18nKey: 'nav.photoEvidence', href: '/photo-evidence', icon: Camera, roles: allRoles },
     ],
   },
   {

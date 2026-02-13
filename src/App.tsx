@@ -87,6 +87,7 @@ const PlaybookTimeline = lazy(() => import('./pages/PlaybookTimeline').then(m =>
 const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default: m.ImportData })));
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
+const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -296,6 +297,7 @@ function AppRoutes() {
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/self-audit" element={<SelfAudit />} />
+          <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
         </Route>
       </Routes>
     </>
