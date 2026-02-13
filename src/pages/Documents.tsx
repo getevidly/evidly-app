@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
 import { DemoModeBanner } from '../components/DemoModeBanner';
 import { EmptyState } from '../components/EmptyState';
-import { DocumentScanAnimation } from '../components/DocumentScanAnimation';
+import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ShareModal } from '../components/ShareModal';
 import { useRole } from '../contexts/RoleContext';
@@ -103,6 +103,16 @@ const FACILITIES_DOC_INSURANCE_KEYWORDS = ['vendor coi', 'coi -'];
 // License, Permit (health dept), Certificate (ServSafe), Training, general Insurance
 // Anything NOT flagged as facilities-type
 
+function mapPillarToCategory(pillar: string): string {
+  switch (pillar) {
+    case 'fire_safety': return 'Certificate';
+    case 'food_safety': return 'Permit';
+    case 'vendor': return 'Insurance';
+    case 'facility': return 'License';
+    default: return 'Other';
+  }
+}
+
 function isFacilitiesDoc(doc: Document): boolean {
   if (FACILITIES_DOC_CATEGORIES.has(doc.category)) return true;
   if (FACILITIES_DOC_TITLES.has(doc.title)) return true;
@@ -142,7 +152,7 @@ export function Documents() {
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
   const [demoMode, setDemoMode] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [showScanAnimation, setShowScanAnimation] = useState(false);
+  const [showSmartUpload, setShowSmartUpload] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedDocForShare, setSelectedDocForShare] = useState<string | null>(null);
   const [selectedDocs, setSelectedDocs] = useState<string[]>([]);
@@ -309,7 +319,7 @@ export function Documents() {
               </button>
             )}
             <button
-              onClick={() => setShowScanAnimation(true)}
+              onClick={() => setShowSmartUpload(true)}
               className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
@@ -524,7 +534,7 @@ export function Documents() {
                     : `No documents found in the "${selectedCategory}" category. Upload one or select a different filter.`}
                   action={{
                     label: 'Upload Document',
-                    onClick: () => setShowScanAnimation(true),
+                    onClick: () => setShowSmartUpload(true),
                   }}
                 />
               ) : (
@@ -717,9 +727,26 @@ export function Documents() {
           </div>
         )}
 
-        {showScanAnimation && (
-          <DocumentScanAnimation onComplete={() => setShowScanAnimation(false)} />
-        )}
+        <SmartUploadModal
+          isOpen={showSmartUpload}
+          onClose={() => setShowSmartUpload(false)}
+          onSave={(classifiedFiles: ClassifiedFile[]) => {
+            // Add classified files as new documents in the local list
+            const newDocs: Document[] = classifiedFiles.map((cf, i) => ({
+              id: `ai-${Date.now()}-${i}`,
+              title: cf.overrides.documentLabel || cf.file.name,
+              category: mapPillarToCategory(cf.overrides.pillar),
+              expiration_date: cf.overrides.expiryDate || null,
+              created_at: new Date().toISOString(),
+              status: 'active',
+              location: selectedLocation === 'All Locations' ? 'Downtown Kitchen' : selectedLocation,
+              provided_by: cf.overrides.vendorName || undefined,
+            }));
+            setDocuments((prev) => [...newDocs, ...prev]);
+            setShowSmartUpload(false);
+          }}
+          batchMode
+        />
 
         <ShareModal
           isOpen={showShareModal}

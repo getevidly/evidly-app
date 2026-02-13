@@ -1,8 +1,8 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import {
   CheckCircle, Circle, ChevronDown, ChevronRight,
-  Upload, FileText, X, Star,
+  Upload, X, Star,
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,7 @@ import {
   BASE_DOCUMENTS, PILLAR_META, DEMO_CHECKLIST_STATUS, getDocumentsForState,
   type OnboardingDocument,
 } from '../data/onboardingDocuments';
+import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -22,14 +23,9 @@ interface ChecklistEntry {
   reason?: string;
 }
 
-interface UploadModalState {
+interface UploadTarget {
   docId: string;
   docName: string;
-  vendorName: string;
-  serviceDate: string;
-  expiryDate: string;
-  notes: string;
-  file: File | null;
 }
 
 interface NaModalState {
@@ -74,9 +70,8 @@ export function DocumentChecklist() {
     for (const key of Object.keys(PILLAR_META)) init[key] = true;
     return init;
   });
-  const [uploadModal, setUploadModal] = useState<UploadModalState | null>(null);
+  const [uploadTarget, setUploadTarget] = useState<UploadTarget | null>(null);
   const [naModal, setNaModal] = useState<NaModalState | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // -- helpers --
   const getEntry = (id: string): ChecklistEntry =>
@@ -134,42 +129,31 @@ export function DocumentChecklist() {
     setExpandedPillars((prev) => ({ ...prev, [pillar]: !prev[pillar] }));
 
   // -----------------------------------------------------------------------
-  // Upload modal handlers
+  // Upload handlers (via SmartUploadModal)
   // -----------------------------------------------------------------------
   const openUpload = (doc: OnboardingDocument) => {
-    setUploadModal({
-      docId: doc.id,
-      docName: doc.name,
-      vendorName: '',
-      serviceDate: '',
-      expiryDate: '',
-      notes: '',
-      file: null,
-    });
+    setUploadTarget({ docId: doc.id, docName: doc.name });
   };
 
-  const handleUploadSave = () => {
-    if (!uploadModal) return;
+  const handleSmartUploadSave = (classifiedFiles: ClassifiedFile[]) => {
+    if (!uploadTarget || classifiedFiles.length === 0) return;
+    const first = classifiedFiles[0];
     const now = new Date().toISOString().slice(0, 10);
     setChecklist((prev) => ({
       ...prev,
-      [uploadModal.docId]: {
+      [uploadTarget.docId]: {
         status: 'uploaded',
         uploadedAt: now,
-        expiresAt: uploadModal.expiryDate || undefined,
+        expiresAt: first.overrides.expiryDate || undefined,
       },
     }));
-    // Recount after state update
     const newComplete = requiredDocs.filter((d) =>
-      d.id === uploadModal.docId ? true : isComplete(d.id),
+      d.id === uploadTarget.docId ? true : isComplete(d.id),
     ).length;
-    toast.success(`Document uploaded! ${newComplete} of ${requiredDocs.length} complete.`);
-    setUploadModal(null);
-  };
-
-  const handleFilePick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    if (uploadModal) setUploadModal({ ...uploadModal, file });
+    toast.success(
+      `AI-classified and saved! ${newComplete} of ${requiredDocs.length} required documents complete.`,
+    );
+    setUploadTarget(null);
   };
 
   // -----------------------------------------------------------------------
@@ -416,124 +400,15 @@ export function DocumentChecklist() {
         );
       })}
 
-      {/* ----------------------------------------------------------------- */}
-      {/* Upload Modal */}
-      {/* ----------------------------------------------------------------- */}
-      {uploadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold" style={{ color: '#1e4d6b' }}>
-                Upload: {uploadModal.docName}
-              </h2>
-              <button
-                className="p-1 rounded hover:bg-gray-100"
-                onClick={() => setUploadModal(null)}
-              >
-                <X size={18} className="text-gray-500" />
-              </button>
-            </div>
-
-            {/* Drop zone */}
-            <div
-              className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors hover:border-gray-400"
-              style={{ borderColor: '#b8d4e8' }}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <FileText size={32} className="mx-auto mb-2 text-gray-400" />
-              {uploadModal.file ? (
-                <p className="text-sm font-medium text-gray-700">{uploadModal.file.name}</p>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-600 font-medium">
-                    Drag &amp; drop or click to browse
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">PDF, JPG, or PNG &middot; Max 10 MB</p>
-                </>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                className="hidden"
-                onChange={handleFilePick}
-              />
-            </div>
-
-            {/* Fields */}
-            <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Name</label>
-                <input
-                  type="text"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
-                  style={{ focusRingColor: '#1e4d6b' } as React.CSSProperties}
-                  placeholder="e.g. Valley Fire Systems"
-                  value={uploadModal.vendorName}
-                  onChange={(e) => setUploadModal({ ...uploadModal, vendorName: e.target.value })}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Service Date
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
-                    value={uploadModal.serviceDate}
-                    onChange={(e) =>
-                      setUploadModal({ ...uploadModal, serviceDate: e.target.value })
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Expiry Date
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2"
-                    value={uploadModal.expiryDate}
-                    onChange={(e) =>
-                      setUploadModal({ ...uploadModal, expiryDate: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 resize-none"
-                  rows={3}
-                  placeholder="Optional notes..."
-                  value={uploadModal.notes}
-                  onChange={(e) => setUploadModal({ ...uploadModal, notes: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                className="px-4 py-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
-                onClick={() => setUploadModal(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 rounded-md text-sm font-medium text-white transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
-                onClick={handleUploadSave}
-              >
-                Upload &amp; Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* AI-powered Upload Modal */}
+      <SmartUploadModal
+        isOpen={!!uploadTarget}
+        onClose={() => setUploadTarget(null)}
+        onSave={handleSmartUploadSave}
+        presetDocType={uploadTarget?.docId}
+        presetDocLabel={uploadTarget?.docName}
+        batchMode={false}
+      />
 
       {/* ----------------------------------------------------------------- */}
       {/* Not Applicable Modal */}
