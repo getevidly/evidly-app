@@ -43,6 +43,9 @@ import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { FeatureGate } from '../components/FeatureGate';
 import { Gift } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
+import { WelcomeModal } from '../components/WelcomeModal';
+import { WelcomeBack } from '../components/WelcomeBack';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -66,6 +69,15 @@ export function Dashboard() {
   const [inspectorVisit, setInspectorVisit] = useState<InspectorVisit | null>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
+  const { isDemoMode, userName: demoUserName } = useDemo();
+
+  // Welcome experience — first login vs returning user
+  const isFirstLogin = !profile?.onboarding_completed && !localStorage.getItem('evidly_welcome_seen');
+  const [showWelcome, setShowWelcome] = useState(isFirstLogin);
+  const welcomeName = isDemoMode
+    ? (demoUserName?.split(' ')[0] || 'there')
+    : (profile?.full_name?.split(' ')[0] || 'there');
+  const lastLoginAt = isDemoMode ? null : (profile as any)?.last_login_at;
 
   // Load real Supabase data with demo fallback
   useEffect(() => {
@@ -318,6 +330,23 @@ export function Dashboard() {
           </button>
         </div>
       </div>
+
+      {/* First Login Welcome Modal */}
+      {showWelcome && (
+        <WelcomeModal
+          firstName={welcomeName}
+          onDismiss={() => setShowWelcome(false)}
+        />
+      )}
+
+      {/* Welcome Back Greeting (shown when not first login) */}
+      {!showWelcome && (
+        <WelcomeBack
+          userName={isDemoMode ? demoUserName : profile?.full_name || null}
+          lastLoginAt={lastLoginAt}
+          isDemoMode={isDemoMode}
+        />
+      )}
 
       {/* Inspector Mode Panel */}
       {inspectorMode && inspectorVisit && (
