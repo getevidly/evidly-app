@@ -42,6 +42,7 @@ import { getStateLabel } from '../lib/stateCodes';
 import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { FeatureGate } from '../components/FeatureGate';
+import { Gift } from 'lucide-react';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -297,6 +298,25 @@ export function Dashboard() {
       <div className="bg-[#1e4d6b] text-white px-3 sm:px-6 py-2 sm:py-3 flex items-center space-x-2 rounded-lg mb-6">
         <Info className="h-5 w-5" />
         <span className="font-medium">{t('dashboard.demoMode')}</span>
+      </div>
+
+      {/* Trial Status Banner */}
+      <div className="bg-gradient-to-r from-[#16a34a] to-[#15803d] text-white px-3 sm:px-6 py-3 sm:py-4 rounded-lg mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <Gift className="h-5 w-5 flex-shrink-0" />
+            <div>
+              <span className="font-semibold">Free Trial — 18 days remaining</span>
+              <span className="hidden sm:inline text-white/80 ml-2 text-sm">Full access to all features, no charge until trial ends</span>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/settings?tab=billing')}
+            className="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition-colors"
+          >
+            View Billing
+          </button>
+        </div>
       </div>
 
       {/* Inspector Mode Panel */}

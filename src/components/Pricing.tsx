@@ -1,4 +1,4 @@
-import { Check, Mail, Phone, Shield } from 'lucide-react';
+import { Check, Mail, Phone, Shield, Gift, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,7 +44,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-white to-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <span className="inline-block text-sm font-bold text-[#d4af37] uppercase tracking-wider mb-4">
             Pricing
           </span>
@@ -53,12 +53,34 @@ export default function Pricing() {
           </h2>
         </div>
 
+        {/* Risk-Free Guarantee Banner */}
+        <div className="max-w-3xl mx-auto mb-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <Shield className="w-7 h-7" style={{ color: '#1e4d6b' }} />
+            <h3 className="text-xl font-bold" style={{ color: '#1e4d6b' }}>Risk-Free Guarantee</h3>
+          </div>
+          <p className="text-gray-700 max-w-xl mx-auto leading-relaxed">
+            Try EvidLY <strong>free for 30 days</strong> with full access to every feature.
+            Not convinced? Get a <strong>full refund within 45 days</strong> of your first payment. No questions asked.
+          </p>
+          <div className="flex items-center justify-center gap-6 mt-4 text-sm text-gray-600">
+            <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#d4af37]" />30-day free trial</span>
+            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-[#d4af37]" />45-day money-back</span>
+            <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#d4af37]" />Cancel anytime</span>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
           {/* Founder Pricing Card */}
           <div className="relative">
             <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-sm shadow-[#d4af37]/20 h-full flex flex-col">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
-                Best Value
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex gap-2">
+                <span className="px-4 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
+                  Best Value
+                </span>
+                <span className="px-4 py-2 bg-[#16a34a] text-white text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
+                  30 Days Free
+                </span>
               </div>
 
               {/* Founder Urgency Banner */}
@@ -134,9 +156,9 @@ export default function Pricing() {
                     <div className="flex items-center gap-3">
                       <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
                       <div>
-                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>60-Day Money-Back Guarantee</p>
+                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
                         <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>
-                          Try EvidLY risk-free. If you're not satisfied within 60 days, get a full refund — no questions asked.
+                          Try EvidLY risk-free. If you're not satisfied within 45 days of your first payment, get a full refund — no questions asked.
                         </p>
                       </div>
                     </div>
@@ -171,9 +193,9 @@ export default function Pricing() {
                     <div className="flex items-center gap-3">
                       <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
                       <div>
-                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>60-Day Money-Back Guarantee</p>
+                        <p className="font-semibold" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
                         <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>
-                          Try EvidLY risk-free. If you're not satisfied within 60 days, get a full refund — no questions asked.
+                          Try EvidLY risk-free. If you're not satisfied within 45 days of your first payment, get a full refund — no questions asked.
                         </p>
                       </div>
                     </div>
@@ -205,8 +227,9 @@ export default function Pricing() {
                   onClick={() => navigate('/signup')}
                   className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                  Get Started
+                  Start Free Trial
                 </button>
+                <p className="text-xs text-center text-gray-500 mt-2">30 days free, then {billingCycle === 'monthly' ? `$${founderTier.monthlyPrice}/mo` : `$${founderTier.annualPrice}/yr`}. Cancel anytime.</p>
               </div>
             </div>
           </div>
@@ -266,7 +289,7 @@ export default function Pricing() {
         {/* Trust Statement */}
         <div className="text-center mt-12">
           <p className="text-sm text-gray-500">
-            All plans include a 60-day money-back guarantee &bull; No setup fees &bull; Cancel anytime
+            30-day free trial &bull; 45-day money-back guarantee &bull; No setup fees &bull; Cancel anytime
           </p>
         </div>
       </div>

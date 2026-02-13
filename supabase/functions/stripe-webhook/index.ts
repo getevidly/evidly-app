@@ -184,6 +184,79 @@ Deno.serve(async (req: Request) => {
         break;
       }
 
+      case "customer.subscription.trial_will_end": {
+        // Trial ending in 3 days — Stripe sends this automatically
+        const subscription = event.data.object;
+        const userId = subscription.metadata?.supabase_user_id;
+
+        if (userId) {
+          // Record trial ending notification for in-app display
+          await supabase.from("notifications").insert({
+            user_id: userId,
+            type: "trial_ending",
+            title: "Your free trial ends in 3 days",
+            message: "Your 30-day free trial is ending soon. Your card will be charged automatically. You can cancel anytime from Settings > Billing.",
+            read: false,
+            created_at: new Date().toISOString(),
+          });
+          console.log(`Trial ending notification created for user ${userId}`);
+        }
+        break;
+      }
+
+      case "invoice.paid": {
+        // First payment after trial — start 45-day guarantee window
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
+
+        if (subscriptionId && invoice.billing_reason === "subscription_cycle") {
+          const { error } = await supabase
+            .from("subscriptions")
+            .update({
+              status: "active",
+              guarantee_start: new Date().toISOString(),
+              guarantee_end: new Date(Date.now() + 45 * 86400000).toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq("stripe_subscription_id", subscriptionId);
+
+          if (error) {
+            console.error("Error updating guarantee dates:", error);
+          } else {
+            console.log(`Guarantee window started for subscription ${subscriptionId}`);
+          }
+        }
+        break;
+      }
+
+      case "invoice.payment_failed": {
+        // Payment failed — notify user
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription;
+
+        if (subscriptionId) {
+          // Look up user from subscription
+          const { data: sub } = await supabase
+            .from("subscriptions")
+            .select("user_id")
+            .eq("stripe_subscription_id", subscriptionId)
+            .maybeSingle();
+
+          if (sub?.user_id) {
+            await supabase.from("notifications").insert({
+              user_id: sub.user_id,
+              type: "payment_failed",
+              title: "Payment failed",
+              message: "We couldn't process your payment. Please update your payment method in Settings > Billing to avoid service interruption.",
+              read: false,
+              created_at: new Date().toISOString(),
+            });
+            console.log(`Payment failed notification created for user ${sub.user_id}`);
+          }
+        }
+        break;
+      }
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }

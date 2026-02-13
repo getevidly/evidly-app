@@ -99,6 +99,8 @@ Deno.serve(async (req: Request) => {
         mode: "subscription",
         "line_items[0][price]": priceId,
         "line_items[0][quantity]": "1",
+        "subscription_data[trial_period_days]": "30",
+        "subscription_data[metadata][supabase_user_id]": user.id,
         success_url: `${appUrl}/settings?tab=billing&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${appUrl}/settings?tab=billing`,
         "metadata[supabase_user_id]": user.id,

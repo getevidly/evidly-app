@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, Crown, ExternalLink, Loader2 } from 'lucide-react';
+import { CheckCircle2, Crown, ExternalLink, Loader2, Gift, Shield, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -59,10 +59,16 @@ export function BillingPanel() {
     }
   };
 
+  // Demo trial state — simulates a user on day 12 of their 30-day trial
+  const demoTrialActive = isDemoMode;
+  const demoTrialDaysLeft = 18;
+  const demoGuaranteeDaysLeft = 33;
+  const demoTrialEndDate = new Date(Date.now() + demoTrialDaysLeft * 86400000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
   const getButtonLabel = (plan: Plan) => {
     if (plan.id === currentPlan) return 'Current Plan';
     if (plan.id === 'enterprise') return 'Contact Sales';
-    return 'Subscribe';
+    return 'Start Free Trial';
   };
 
   const isCurrentPlan = (plan: Plan) => plan.id === currentPlan;
@@ -101,6 +107,47 @@ export function BillingPanel() {
               Manage Subscription
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Trial Status Banner */}
+      {demoTrialActive && (
+        <div className="rounded-lg border-2 border-[#16a34a] bg-[#f0fdf4] p-5">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-[#16a34a] flex items-center justify-center flex-shrink-0">
+              <Gift className="h-5 w-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-lg font-bold text-[#166534]">Free Trial Active</h4>
+              <p className="text-sm text-[#166534] mt-1">
+                You have <strong>{demoTrialDaysLeft} days remaining</strong> in your free trial (ends {demoTrialEndDate}).
+                Full access to all features — no charge until your trial ends.
+              </p>
+              <div className="flex flex-wrap items-center gap-4 mt-3">
+                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
+                  <Clock className="h-4 w-4" />
+                  <span>{demoTrialDaysLeft} days left in trial</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-sm text-[#166534]">
+                  <Shield className="h-4 w-4" />
+                  <span>{demoGuaranteeDaysLeft} days left on money-back guarantee</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 45-Day Guarantee Info */}
+      <div className="rounded-lg p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
+        <div className="flex items-center gap-3">
+          <Shield className="w-5 h-5 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+          <div>
+            <p className="font-semibold text-sm" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
+            <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>
+              Not satisfied within 45 days of your first payment? Get a full refund — no questions asked.
+            </p>
+          </div>
         </div>
       </div>
 
