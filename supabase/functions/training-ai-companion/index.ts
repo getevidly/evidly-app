@@ -96,7 +96,8 @@ Guidelines:
 - Be encouraging and supportive — this person works in a kitchen and is learning on break
 - If asked to generate quiz questions, create 3-5 multiple choice questions with answers
 - If asked about weak areas, identify specific topics from failed quizzes to review
-- Never make up food safety regulations — if unsure, say so`;
+- Never make up food safety regulations — if unsure, say so
+- This is training guidance only — not legal or regulatory advice`;
 
   let aiResponse = '';
   let tokensUsed = 0;

@@ -109,6 +109,8 @@ Deno.serve(async (req: Request) => {
       `Provide concise, actionable guidance for food safety emergency response.`,
       `Always reference relevant FDA Food Code, state regulations, or HACCP guidelines when applicable.`,
       `Prioritize food safety, employee safety, and regulatory compliance.`,
+      `If you are unsure about a specific regulation or code section, say so clearly rather than guessing.`,
+      `This is emergency guidance only — not a substitute for professional advice. Always recommend contacting the local health department when in doubt.`,
     ].filter(Boolean).join("\n");
 
     // -- Claude API call would go here --
@@ -121,7 +123,7 @@ Deno.serve(async (req: Request) => {
     //     "anthropic-version": "2023-06-01",
     //   },
     //   body: JSON.stringify({
-    //     model: "claude-sonnet-4-20250514",
+    //     model: "claude-sonnet-4-5-20250929",
     //     max_tokens: 1024,
     //     system: _systemPrompt,
     //     messages: [{ role: "user", content: payload.question }],

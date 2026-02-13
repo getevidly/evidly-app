@@ -59,7 +59,7 @@ Deno.serve(async (req: Request) => {
     ? `Generate all questions and answers in ${language === 'es' ? 'Spanish' : language}.`
     : '';
 
-  const prompt = `Generate ${count} ${difficulty} multiple-choice questions about the following food safety training content. Each question must have exactly 4 options with exactly 1 correct answer. Include a brief explanation for the correct answer.
+  const prompt = `Generate ${count} ${difficulty} multiple-choice questions about the following food safety training content. Each question must have exactly 4 options with exactly 1 correct answer. Include a brief explanation for the correct answer. Only generate questions based on the provided training content — do not reference regulations or facts not present in the material.
 
 ${languageInstruction}
 
