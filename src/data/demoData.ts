@@ -3180,7 +3180,7 @@ export type CopilotInsightType = 'pattern' | 'prediction' | 'recommendation' | '
 export type CopilotSeverity = 'critical' | 'warning' | 'info';
 export type CopilotStatus = 'new' | 'viewed' | 'acted' | 'dismissed';
 export type CopilotActionType = 'auto_incident' | 'draft_action' | 'suggest_checklist' | 'notify_vendor' | 'weekly_summary' | 'view_report';
-export type CopilotSourceModule = 'temperature' | 'checklist' | 'equipment' | 'vendor' | 'incident' | 'compliance';
+export type CopilotSourceModule = 'temperature' | 'checklist' | 'equipment' | 'vendor' | 'incident' | 'compliance' | 'regulatory';
 
 export interface CopilotInsight {
   id: string;
@@ -3364,6 +3364,39 @@ export const copilotInsights: CopilotInsight[] = [
     message: 'Spring season typically sees a 40% increase in pest activity for commercial kitchens. Schedule a preventive pest inspection before March, verify door sweeps and screen integrity, and ensure outdoor waste areas are properly sealed. Your last pest service was 28 days ago.',
     sourceModule: 'vendor',
     status: 'viewed',
+    createdAt: daysAgo(5),
+    expiresAt: daysAgo(-30),
+  },
+
+  // ── Regulatory Change Insights (from Task #48) ──
+  {
+    id: 'ci-011',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    insightType: 'alert',
+    severity: 'warning',
+    title: 'Regulatory Update: NFPA 96 §11.4 — Exhaust fan inspection clarified',
+    message: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately. Effective July 1, 2026.\n\nWhat you need to do:\nEnsure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
+    sourceModule: 'regulatory',
+    actionType: 'view_report',
+    actionLabel: 'View Details',
+    actionData: { changeType: 'regulatory', sourceUrl: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96' },
+    status: 'new',
+    createdAt: daysAgo(3),
+    expiresAt: '2026-07-01T00:00:00.000Z',
+  },
+  {
+    id: 'ci-012',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    insightType: 'recommendation',
+    severity: 'info',
+    title: 'Regulatory Update: FDA cold holding guidance updated',
+    message: 'The FDA released updated guidance recommending cold holding temperature checks every 2 hours (instead of 4) for high-risk items like cut leafy greens, sliced deli meats, and prepared salads. No action required, but review recommended.',
+    sourceModule: 'regulatory',
+    actionType: 'view_report',
+    actionLabel: 'View Details',
+    status: 'new',
     createdAt: daysAgo(5),
     expiresAt: daysAgo(-30),
   },

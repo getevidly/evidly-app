@@ -91,6 +91,7 @@ const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m 
 const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
 const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
 const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
+const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 
 import Navigation from './components/Navigation';
@@ -306,6 +307,7 @@ function AppRoutes() {
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />
+          <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
         </Route>
       </Routes>
     </>

@@ -20,6 +20,7 @@ import {
   Sparkles,
   Mail,
   ClipboardList,
+  Scale,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -92,6 +93,7 @@ const sourceIcons: Record<string, typeof Thermometer> = {
   vendor: Truck,
   incident: ShieldAlert,
   compliance: ClipboardList,
+  regulatory: Scale,
 };
 
 // ── Main Component ────────────────────────────────────────

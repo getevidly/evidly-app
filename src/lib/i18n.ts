@@ -93,6 +93,8 @@ const en = {
     auditTrail: 'Audit Trail',
     photoEvidence: 'Photo Evidence',
     copilot: 'Compliance Copilot',
+    regulatoryUpdates: 'Regulatory Updates',
+    regulatoryChanges: 'Regulatory Changes',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -705,6 +707,8 @@ const es: typeof en = {
     auditTrail: 'Pista de Auditoría',
     photoEvidence: 'Evidencia Fotográfica',
     copilot: 'Copiloto de Cumplimiento',
+    regulatoryUpdates: 'Actualizaciones Regulatorias',
+    regulatoryChanges: 'Cambios Regulatorios',
   },
 
   common: {

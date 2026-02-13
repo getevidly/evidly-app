@@ -33,6 +33,7 @@ import {
   Camera,
   ListChecks,
   Bot,
+  Scale,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -110,6 +111,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4, featureId: 'ai-predictive-insights' },
       { i18nKey: 'nav.inspectorView', href: '/inspector-view', icon: ClipboardCheck, roles: mgmtRoles },
       { i18nKey: 'nav.auditTrail', href: '/audit-trail', icon: Shield, roles: mgmtRoles },
+      { i18nKey: 'nav.regulatoryUpdates', href: '/regulatory-alerts', icon: Scale, roles: mgmtRoles },
     ],
   },
   {
@@ -146,6 +148,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.admin',
     items: [
       { i18nKey: 'nav.usageAnalytics', href: '/admin/usage-analytics', icon: BarChart3, roles: allRoles },
+      { i18nKey: 'nav.regulatoryChanges', href: '/admin/regulatory-changes', icon: Scale, roles: allRoles },
       { i18nKey: 'nav.systemAdmin', href: '/enterprise/dashboard', icon: Building2, roles: allRoles, featureId: 'enterprise-dashboard' },
     ],
     adminOnly: true,
