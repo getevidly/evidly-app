@@ -684,7 +684,7 @@ const es: typeof en = {
     dailyChecklists: 'Listas Diarias',
     foodSafety: 'Seguridad Alimentaria (HACCP)',
     fireSafetyDocs: 'Documentos de Seguridad',
-    selfAudit: 'Auto-Auditoría',
+    selfAudit: 'Autoauditoría',
     vendorManagement: 'Gestión de Proveedores',
     vendorPortal: 'Portal de Proveedores',
     complianceScore: 'Puntuación de Cumplimiento',

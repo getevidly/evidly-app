@@ -80,7 +80,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.dailyChecklists', href: '/checklists', icon: CheckSquare, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.foodSafety', href: '/haccp', icon: ClipboardList, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, roles: allRoles },
-      { i18nKey: 'nav.selfAudit', href: '/audit-report', icon: ClipboardCheck, roles: mgmtRoles },
+      { i18nKey: 'nav.selfAudit', href: '/self-audit', icon: ClipboardCheck, roles: mgmtRoles },
     ],
   },
   {
