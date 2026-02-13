@@ -47,6 +47,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { WelcomeBack } from '../components/WelcomeBack';
 import { OnboardingProgressWidget } from '../components/OnboardingProgressWidget';
+import { CopilotCard } from '../components/CopilotCard';
 import { DEMO_CHECKLIST_STATUS, getDocumentsForState } from '../data/onboardingDocuments';
 
 export function Dashboard() {
@@ -1116,6 +1117,15 @@ export function Dashboard() {
             </div>
           </div>
           </FeatureGate>
+          </ErrorBoundary>
+        )}
+
+        {/* Compliance Copilot Card */}
+        {['executive', 'management'].includes(userRole) && (
+          <ErrorBoundary level="section">
+            <div className="mt-4">
+              <CopilotCard locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+            </div>
           </ErrorBoundary>
         )}
 

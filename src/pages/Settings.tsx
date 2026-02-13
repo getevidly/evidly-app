@@ -488,6 +488,77 @@ export function Settings() {
                     <li>• {t('settings.dayOfExpiration')}</li>
                   </ul>
                 </div>
+
+                {/* Copilot Notification Preferences */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-lg">🤖</span>
+                    <h4 className="font-semibold text-gray-900">Copilot Notification Settings</h4>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Control how the AI Compliance Copilot notifies you about proactive insights, predictions, and recommendations.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-800 mb-2">In-App Notifications</h5>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked disabled className="h-4 w-4 text-[#d4af37] border-gray-300 rounded opacity-60" />
+                          <span className="text-sm text-gray-700">Critical alerts <span className="text-xs text-gray-400">(always on)</span></span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Warnings</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Recommendations &amp; patterns</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Weekly summary</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-800 mb-2">Email Notifications</h5>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Critical alerts — immediate</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Warnings — daily digest</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Recommendations</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Weekly summary — Monday 6 AM</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h5 className="text-sm font-medium text-gray-800 mb-2">SMS Notifications</h5>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" defaultChecked className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">Critical alerts only</span>
+                        </label>
+                        <label className="flex items-center space-x-3">
+                          <input type="checkbox" className="h-4 w-4 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded" />
+                          <span className="text-sm text-gray-700">All copilot notifications</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <button

@@ -3173,3 +3173,198 @@ export const commonTCSFoods: { name: string; category: string; avgCostPerUnit: n
   { name: 'Cream Sauce (house)', category: 'prepared', avgCostPerUnit: 10.00, unit: 'gallons' },
   { name: 'Chicken Stock (house)', category: 'prepared', avgCostPerUnit: 8.00, unit: 'gallons' },
 ];
+
+// ── Copilot Insights (AI Compliance Copilot — Task #47) ────────
+
+export type CopilotInsightType = 'pattern' | 'prediction' | 'recommendation' | 'alert' | 'summary';
+export type CopilotSeverity = 'critical' | 'warning' | 'info';
+export type CopilotStatus = 'new' | 'viewed' | 'acted' | 'dismissed';
+export type CopilotActionType = 'auto_incident' | 'draft_action' | 'suggest_checklist' | 'notify_vendor' | 'weekly_summary' | 'view_report';
+export type CopilotSourceModule = 'temperature' | 'checklist' | 'equipment' | 'vendor' | 'incident' | 'compliance';
+
+export interface CopilotInsight {
+  id: string;
+  locationId: string;
+  locationName: string;
+  insightType: CopilotInsightType;
+  severity: CopilotSeverity;
+  title: string;
+  message: string;
+  sourceModule: CopilotSourceModule;
+  actionType?: CopilotActionType;
+  actionLabel?: string;
+  actionData?: Record<string, unknown>;
+  status: CopilotStatus;
+  createdAt: string;
+  expiresAt?: string;
+}
+
+const now = new Date();
+const daysAgo = (d: number) => new Date(now.getTime() - d * 86400000).toISOString();
+const hoursAgo = (h: number) => new Date(now.getTime() - h * 3600000).toISOString();
+
+export const copilotInsights: CopilotInsight[] = [
+  // ── Critical ──
+  {
+    id: 'ci-001',
+    locationId: '2',
+    locationName: 'Airport Cafe',
+    insightType: 'alert',
+    severity: 'critical',
+    title: 'Walk-in Cooler #2 — repeated temperature excursions',
+    message: 'Walk-in Cooler #2 has had 3 out-of-range readings in the past 7 days (39.2°F, 39.8°F, 40.1°F). This is a food safety risk. Most common causes: failing compressor, damaged door seal, overloading, or thermostat malfunction. Immediate inspection recommended.',
+    sourceModule: 'temperature',
+    actionType: 'auto_incident',
+    actionLabel: 'Create Incident',
+    actionData: { incidentType: 'temperature_excursion', equipmentName: 'Walk-in Cooler #2', readingCount: 3 },
+    status: 'new',
+    createdAt: hoursAgo(2),
+    expiresAt: daysAgo(-7),
+  },
+  {
+    id: 'ci-002',
+    locationId: '3',
+    locationName: 'University Dining',
+    insightType: 'alert',
+    severity: 'critical',
+    title: 'Health permit expired — renewal overdue',
+    message: 'Your health department operating permit expired 12 days ago. Operating without a valid permit may result in fines up to $1,000/day and potential forced closure. Contact your local health department immediately to schedule renewal.',
+    sourceModule: 'vendor',
+    actionType: 'view_report',
+    actionLabel: 'View Documents',
+    status: 'new',
+    createdAt: hoursAgo(6),
+    expiresAt: daysAgo(-7),
+  },
+
+  // ── Warnings ──
+  {
+    id: 'ci-003',
+    locationId: '2',
+    locationName: 'Airport Cafe',
+    insightType: 'prediction',
+    severity: 'warning',
+    title: 'Prep Line Fridge — temperature trending up',
+    message: 'Prep Line Fridge has been slowly warming over the past 10 days. Current average: 37.8°F (threshold: 41°F). At this rate, it will exceed the threshold in approximately 12 days. This pattern often indicates a compressor issue, dirty coils, or a failing door gasket.',
+    sourceModule: 'temperature',
+    actionType: 'notify_vendor',
+    actionLabel: 'Contact Vendor',
+    actionData: {
+      suggestedAction: 'Schedule maintenance inspection',
+      equipmentName: 'Prep Line Fridge',
+      draftMessage: 'Hi, we\'re seeing a gradual temperature increase in our Prep Line Fridge. Average has risen from 35.2°F to 37.8°F over 10 days. Can you schedule a service call to inspect?',
+    },
+    status: 'new',
+    createdAt: hoursAgo(18),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-004',
+    locationId: '2',
+    locationName: 'Airport Cafe',
+    insightType: 'alert',
+    severity: 'warning',
+    title: 'Hood cleaning overdue by 5 days',
+    message: 'Commercial kitchen hood exhaust cleaning was due on Feb 8, 2026. Per NFPA 96, grease-laden hoods must be cleaned on a regular schedule based on cooking volume. This affects your fire safety score and may void your fire suppression warranty.',
+    sourceModule: 'equipment',
+    actionType: 'notify_vendor',
+    actionLabel: 'Contact Vendor',
+    actionData: {
+      suggestedAction: 'Schedule hood cleaning',
+      vendorName: 'CleanPros Plus',
+      draftMessage: 'Hi CleanPros Plus, our kitchen hood exhaust cleaning is overdue (was due Feb 8). Can you schedule a visit this week?',
+    },
+    status: 'new',
+    createdAt: daysAgo(1),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-005',
+    locationId: '3',
+    locationName: 'University Dining',
+    insightType: 'pattern',
+    severity: 'warning',
+    title: 'Checklist completion gaps detected',
+    message: 'Daily checklists were missed on 5 days in the past 30 days. Most gaps occurred on Saturday (3 times). Consider assigning a backup completer for weekend shifts or adjusting the schedule.',
+    sourceModule: 'checklist',
+    actionType: 'suggest_checklist',
+    actionLabel: 'View Schedule',
+    actionData: { missedDays: ['Sat Feb 1', 'Sat Feb 8', 'Sat Jan 25', 'Wed Jan 29', 'Sun Feb 9'], suggestion: 'Add backup assignee for weekends' },
+    status: 'new',
+    createdAt: daysAgo(1),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-006',
+    locationId: '3',
+    locationName: 'University Dining',
+    insightType: 'pattern',
+    severity: 'warning',
+    title: '"Hand sink soap stocked" fails frequently',
+    message: 'The checklist item "Hand sink soap stocked" has failed 4 times in the past 14 days. This suggests a systemic issue rather than an isolated event. Consider installing wall-mounted auto-dispensers or assigning daily restocking duty to the opening shift.',
+    sourceModule: 'checklist',
+    status: 'viewed',
+    createdAt: daysAgo(2),
+    expiresAt: daysAgo(-30),
+  },
+
+  // ── Info ──
+  {
+    id: 'ci-007',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    insightType: 'recommendation',
+    severity: 'info',
+    title: 'Fire suppression system warranty expires in 45 days',
+    message: 'Consider scheduling a full inspection before warranty expires on Mar 30, 2026. Any issues found during warranty can be covered by the manufacturer. Also evaluate extended warranty options for commercial kitchen fire suppression.',
+    sourceModule: 'equipment',
+    status: 'new',
+    createdAt: daysAgo(2),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-008',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    insightType: 'summary',
+    severity: 'info',
+    title: 'Weekly Compliance Summary — Feb 3–9',
+    message: 'Overall Score: 91% (+3% vs last week). Highlights: 168 temperature readings logged, all in range. 7/7 daily checklists completed. 0 incidents this week. Hood cleaning completed on schedule. Fire suppression inspection coming up in 15 days. Great week — your Downtown Kitchen is in the top 5% of similar operations.',
+    sourceModule: 'compliance',
+    actionType: 'weekly_summary',
+    actionLabel: 'View Full Report',
+    actionData: { avgScore: 91, scoreChange: 3, tempReadings: 168, tempOutOfRange: 0, checklistsCompleted: 7, checklistsExpected: 7, incidentsOpened: 0, incidentsResolved: 0 },
+    status: 'new',
+    createdAt: daysAgo(3),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-009',
+    locationId: '2',
+    locationName: 'Airport Cafe',
+    insightType: 'summary',
+    severity: 'info',
+    title: 'Weekly Compliance Summary — Feb 3–9',
+    message: 'Overall Score: 69% (-6% vs last week). Action needed: 3 temperature excursions, hood cleaning overdue, 2 checklist items failed repeatedly. Checklist completion rate dropped to 78% (was 90%). 1 incident opened, 0 resolved. This location needs immediate attention on temperature monitoring and equipment maintenance.',
+    sourceModule: 'compliance',
+    actionType: 'weekly_summary',
+    actionLabel: 'View Full Report',
+    actionData: { avgScore: 69, scoreChange: -6, tempReadings: 142, tempOutOfRange: 3, checklistsCompleted: 5, checklistsExpected: 7, incidentsOpened: 1, incidentsResolved: 0 },
+    status: 'new',
+    createdAt: daysAgo(3),
+    expiresAt: daysAgo(-30),
+  },
+  {
+    id: 'ci-010',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    insightType: 'recommendation',
+    severity: 'info',
+    title: 'Seasonal tip: Spring pest prevention',
+    message: 'Spring season typically sees a 40% increase in pest activity for commercial kitchens. Schedule a preventive pest inspection before March, verify door sweeps and screen integrity, and ensure outdoor waste areas are properly sealed. Your last pest service was 28 days ago.',
+    sourceModule: 'vendor',
+    status: 'viewed',
+    createdAt: daysAgo(5),
+    expiresAt: daysAgo(-30),
+  },
+];

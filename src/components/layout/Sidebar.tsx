@@ -32,6 +32,7 @@ import {
   Upload,
   Camera,
   ListChecks,
+  Bot,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -116,6 +117,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.sectionAiTools',
     items: [
       { i18nKey: 'nav.aiAdvisor', href: '/ai-advisor', icon: Brain, roles: allRoles },
+      { i18nKey: 'nav.copilot', href: '/copilot', icon: Bot, roles: allRoles },
       { i18nKey: 'nav.incidentPlaybooks', href: '/playbooks', icon: Siren, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.training', href: '/training', icon: GraduationCap, roles: ['executive', 'management', 'kitchen'] },
     ],

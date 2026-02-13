@@ -92,6 +92,7 @@ const en = {
     inspectorView: 'Inspector View',
     auditTrail: 'Audit Trail',
     photoEvidence: 'Photo Evidence',
+    copilot: 'Compliance Copilot',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -703,6 +704,7 @@ const es: typeof en = {
     inspectorView: 'Vista del Inspector',
     auditTrail: 'Pista de Auditoría',
     photoEvidence: 'Evidencia Fotográfica',
+    copilot: 'Copiloto de Cumplimiento',
   },
 
   common: {

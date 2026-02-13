@@ -24,6 +24,7 @@ export interface ComplianceContext {
   recentAlerts: string[];
   overdueItems: string[];
   upcomingDeadlines: string[];
+  copilotInsights?: string[];
 }
 
 const DEMO_CONTEXT: ComplianceContext = {
@@ -49,6 +50,15 @@ const DEMO_CONTEXT: ComplianceContext = {
     'Hood cleaning — University Dining (Feb 15)',
     'Pest Control — Airport Cafe (Feb 28)',
     'Michael Torres Food Handler cert expires Feb 26',
+  ],
+  copilotInsights: [
+    '[CRITICAL] Airport Cafe: Walk-in Cooler #2 had 3 out-of-range readings this week (39.2°F, 39.8°F, 40.1°F) — likely compressor issue',
+    '[CRITICAL] University Dining: Health permit expired 12 days ago — renewal overdue',
+    '[WARNING] Airport Cafe: Prep Line Fridge temperature trending up — projected to exceed threshold in 12 days',
+    '[WARNING] Airport Cafe: Hood cleaning overdue by 5 days (NFPA 96)',
+    '[WARNING] University Dining: Checklist completion gaps — 5 missed days in 30 days, mostly Saturdays',
+    '[INFO] Downtown Kitchen: Fire suppression warranty expires in 45 days — schedule pre-warranty inspection',
+    '[INFO] Downtown Kitchen: Weekly summary — 91% score (+3%), all temps in range, 7/7 checklists done',
   ],
 };
 
@@ -95,6 +105,9 @@ ${context.overdueItems.map((o) => `  - ${o}`).join('\n')}
 
 Upcoming Deadlines:
 ${context.upcomingDeadlines.map((d) => `  - ${d}`).join('\n')}
+${context.copilotInsights?.length ? `
+Recent Copilot Insights (AI-detected patterns — reference these when relevant to the user's question):
+${context.copilotInsights.map((i) => `  - ${i}`).join('\n')}` : ''}
 
 IMPORTANT GUARDRAILS:
 - If you are unsure about a specific regulation, code section, or compliance requirement, say so clearly rather than guessing. Only cite code sections and regulatory standards you are certain about.
