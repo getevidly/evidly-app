@@ -42,7 +42,7 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
               console.log('[CTA] Upgrade clicked from: dashboard-card-demo');
               navigate('/enterprise');
             }}
-            className="px-5 py-2.5 rounded-lg font-medium text-sm transition-colors text-white border border-white/30 hover:bg-white/10"
+            className="px-5 py-2.5 rounded-xl font-medium text-sm transition-colors text-white border border-white/30 hover:bg-white/10"
           >
             Schedule a Demo Call
           </button>

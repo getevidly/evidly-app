@@ -561,7 +561,7 @@ export function AuditReport() {
 
         {/* Configuration Panel */}
         {!generated && (
-          <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 space-y-6 no-print">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
             <h2 className="text-lg font-bold text-gray-900">Report Configuration</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -667,7 +667,7 @@ export function AuditReport() {
         {generated && reportData && summary && (
           <>
             {/* Action bar */}
-            <div className="bg-white rounded-xl shadow-sm p-4 flex flex-wrap gap-3 items-center justify-between no-print">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 flex flex-wrap gap-3 items-center justify-between no-print">
               <button
                 onClick={() => setGenerated(false)}
                 className="flex items-center gap-1 text-sm text-[#1e4d6b] hover:underline font-medium"
@@ -724,7 +724,7 @@ export function AuditReport() {
               </div>
 
               {/* Table of Contents */}
-              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 no-print">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 no-print">
                 <h3 className="text-lg font-bold text-gray-900 mb-3">Table of Contents</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                   {sections.filter(s => s.enabled).map((s, idx) => {
@@ -746,7 +746,7 @@ export function AuditReport() {
 
               {/* ─── Section: Executive Summary ────────────────────────────── */}
               {sectionEnabled('summary') && (
-                <div id="section-summary" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-summary" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('summary')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.summary ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Shield className="h-5 w-5 text-[#1e4d6b]" />
@@ -836,7 +836,7 @@ export function AuditReport() {
 
               {/* ─── Section: Temperature Logs ─────────────────────────────── */}
               {sectionEnabled('temp_logs') && (
-                <div id="section-temp_logs" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-temp_logs" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('temp_logs')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.temp_logs ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Thermometer className="h-5 w-5 text-[#1e4d6b]" />
@@ -889,7 +889,7 @@ export function AuditReport() {
 
               {/* ─── Section: Checklists ────────────────────────────────────── */}
               {sectionEnabled('checklists') && (
-                <div id="section-checklists" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-checklists" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('checklists')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.checklists ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <CheckSquare className="h-5 w-5 text-[#1e4d6b]" />
@@ -940,7 +940,7 @@ export function AuditReport() {
 
               {/* ─── Section: Incidents ──────────────────────────────────────── */}
               {sectionEnabled('incidents') && (
-                <div id="section-incidents" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-incidents" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('incidents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.incidents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <AlertTriangle className="h-5 w-5 text-[#1e4d6b]" />
@@ -991,7 +991,7 @@ export function AuditReport() {
 
               {/* ─── Section: Vendor Services ───────────────────────────────── */}
               {sectionEnabled('vendors') && (
-                <div id="section-vendors" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-vendors" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('vendors')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.vendors ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Truck className="h-5 w-5 text-[#1e4d6b]" />
@@ -1036,7 +1036,7 @@ export function AuditReport() {
 
               {/* ─── Section: Documents ──────────────────────────────────────── */}
               {sectionEnabled('documents') && (
-                <div id="section-documents" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-documents" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('documents')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.documents ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <FileText className="h-5 w-5 text-[#1e4d6b]" />
@@ -1078,7 +1078,7 @@ export function AuditReport() {
 
               {/* ─── Section: Equipment Status ──────────────────────────────── */}
               {sectionEnabled('equipment') && (
-                <div id="section-equipment" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-equipment" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('equipment')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.equipment ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <Wrench className="h-5 w-5 text-[#1e4d6b]" />
@@ -1119,7 +1119,7 @@ export function AuditReport() {
 
               {/* ─── Section: Chain of Custody / Audit Log ──────────────────── */}
               {sectionEnabled('audit_log') && (
-                <div id="section-audit_log" className="bg-white rounded-xl shadow-sm p-4 sm:p-5 report-section">
+                <div id="section-audit_log" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('audit_log')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.audit_log ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <ClipboardList className="h-5 w-5 text-[#1e4d6b]" />

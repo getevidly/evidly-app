@@ -91,7 +91,7 @@ export function BillingPanel() {
             <button
               onClick={handleManageSubscription}
               disabled={portalLoading}
-              className="px-4 py-2 rounded-lg bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               {portalLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

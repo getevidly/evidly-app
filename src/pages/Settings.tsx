@@ -186,7 +186,7 @@ export function Settings() {
       </div>
       <div className="flex flex-col lg:flex-row gap-6 mt-6">
         <div className="lg:w-64 flex-shrink-0">
-          <nav className="bg-white rounded-lg shadow overflow-x-auto lg:overflow-visible">
+          <nav className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto lg:overflow-visible">
             <div className="flex lg:flex-col">
               {tabs.map((tab) => (
                 <button
@@ -206,7 +206,7 @@ export function Settings() {
           </nav>
         </div>
 
-        <div className="flex-1 bg-white rounded-lg shadow p-4 sm:p-6">
+        <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">{t('settings.profileSettings')}</h3>
@@ -600,7 +600,7 @@ export function Settings() {
                     { name: 'California (State)', type: 'State' },
                     { name: 'Federal (FDA, OSHA)', type: 'Federal' },
                   ].map((j) => (
-                    <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-lg bg-white">
+                    <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-xl bg-white">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-[#1e4d6b]" />
                         <span className="text-sm text-gray-700">{j.name}</span>
@@ -652,7 +652,7 @@ export function Settings() {
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Detected Jurisdictions</h4>
                 {locationJurisdictions.map((loc) => (
-                  <div key={loc.name} className="border border-gray-200 rounded-lg p-4 bg-white">
+                  <div key={loc.name} className="border border-gray-200 rounded-xl p-4 bg-white">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                       <div>
                         <h4 className="font-semibold text-gray-900">{loc.name}</h4>
@@ -668,7 +668,7 @@ export function Settings() {
                       <select
                         defaultValue={loc.detectedSlug}
                         onChange={() => toast.success(`Jurisdiction override saved for ${loc.name}`)}
-                        className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                        className="text-sm border border-gray-300 rounded-xl px-3 py-1.5 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
                       >
                         {availableCounties.map(c => (
                           <option key={c.slug} value={c.slug}>{c.name} ({c.systemType.replace('_', ' ')})</option>
@@ -680,7 +680,7 @@ export function Settings() {
               </div>
 
               {/* Dashboard & Reporting Toggles */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5 bg-white space-y-4">
+              <div className="border border-gray-200 rounded-xl p-4 sm:p-5 bg-white space-y-4">
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Display Preferences</h4>
 
                 <label className="flex items-center justify-between cursor-pointer">
@@ -713,7 +713,7 @@ export function Settings() {
               </div>
 
               {/* Manual jurisdiction selection */}
-              <div className="border border-gray-200 rounded-lg p-4 sm:p-5 bg-white">
+              <div className="border border-gray-200 rounded-xl p-4 sm:p-5 bg-white">
                 <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Manual Jurisdiction Override</h4>
                 <p className="text-xs text-gray-500 mb-3">If auto-detection is incorrect for a location, select the correct county scoring system manually.</p>
                 <select
@@ -721,7 +721,7 @@ export function Settings() {
                   onChange={(e) => {
                     if (e.target.value) toast.success(`Manual jurisdiction set to ${e.target.value}`);
                   }}
-                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+                  className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
                 >
                   <option value="">Select a county scoring system...</option>
                   {availableCounties.map(c => (
@@ -967,7 +967,7 @@ export function Settings() {
           )}
 
           {activeTab === 'operating-hours' && (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">{t('settings.hoursAndShifts')}</h3>
                 <p className="text-sm text-gray-600 mt-1">{t('settings.hoursShiftsDesc')}</p>
@@ -1147,7 +1147,7 @@ export function Settings() {
               <h3 className="text-xl font-bold text-gray-900">Privacy & Benchmarking</h3>
               <p className="text-sm text-gray-600">Control how your anonymized data is used in the EvidLY Compliance Index.</p>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <h4 className="font-semibold text-gray-900 mb-1">Include my anonymized data in EvidLY Compliance Index</h4>
@@ -1298,7 +1298,7 @@ export function Settings() {
               <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
                 <h4 className="text-lg font-semibold mb-2">Enterprise Admin Portal</h4>
                 <p className="text-gray-200 text-sm mb-4">Full enterprise management — tenants, hierarchy, SSO, SCIM provisioning, branding, user directory, and reports.</p>
-                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-lg bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
+                <button onClick={() => navigate('/enterprise/admin')} className="px-4 py-2 rounded-xl bg-white text-[#1e4d6b] text-sm font-semibold hover:bg-gray-100 cursor-pointer transition-colors">
                   Open Enterprise Admin
                 </button>
               </div>

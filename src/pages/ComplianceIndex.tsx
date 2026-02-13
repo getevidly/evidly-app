@@ -254,7 +254,7 @@ export function ComplianceIndex() {
               </button>
               <button
                 onClick={() => guardAction('export', 'compliance reports', () => toast.success('Report link copied'))}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-white/30 text-white hover:bg-white/10"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border border-white/30 text-white hover:bg-white/10"
               >
                 <Share2 className="h-4 w-4" /> Share Report
               </button>
@@ -471,7 +471,7 @@ export function ComplianceIndex() {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <SectionHeader icon={TrendingUp} title="Trending Up / Down" number={6} />
           <div className="p-4 sm:p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Improving */}
               <div>
                 <h3 className="text-sm font-bold text-green-700 mb-3 flex items-center gap-1.5">
@@ -771,7 +771,7 @@ export function ComplianceIndex() {
             </button>
             <button
               onClick={() => navigate('/benchmarks')}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border border-white/30 text-white hover:bg-white/10"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium border border-white/30 text-white hover:bg-white/10"
             >
               See Your Benchmarks <ArrowRight className="h-4 w-4" />
             </button>

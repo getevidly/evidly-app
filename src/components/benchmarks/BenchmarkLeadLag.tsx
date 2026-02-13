@@ -11,7 +11,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Where You Lead */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="h-5 w-5 text-green-500" />
           <h3 className="text-lg font-semibold text-gray-900">Where You Lead</h3>
@@ -39,7 +39,7 @@ export function BenchmarkLeadLag({ locationId }: Props) {
       </div>
 
       {/* Where You Lag */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingDown className="h-5 w-5 text-red-500" />
           <h3 className="text-lg font-semibold text-gray-900">Where You Lag</h3>

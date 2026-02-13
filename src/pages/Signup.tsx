@@ -140,7 +140,7 @@ export function Signup() {
   if (emailSent) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="flex justify-center mb-4">
             <div className="flex items-center">
               <span className="text-3xl font-bold">
@@ -170,7 +170,7 @@ export function Signup() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="flex justify-center mb-6">
             <div className="flex items-center">
               <div className="w-12 h-14">

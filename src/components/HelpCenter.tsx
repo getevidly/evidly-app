@@ -50,7 +50,7 @@ export function HelpCenter({ inline = false }: HelpCenterProps) {
         >
           ← Back to Help Center
         </button>
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <span className="inline-block px-2.5 py-1 bg-blue-50 text-[#1e4d6b] text-xs font-medium rounded-full mb-3">{selectedArticle.category}</span>
           <h2 className="text-xl font-bold text-gray-900 mb-4">{selectedArticle.title}</h2>
           <p className="text-gray-600 leading-relaxed">{selectedArticle.summary}</p>

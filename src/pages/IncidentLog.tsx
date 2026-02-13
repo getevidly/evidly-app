@@ -1017,11 +1017,11 @@ export function IncidentLog() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Left column — details & timeline */}
             <div className="lg:col-span-2 space-y-6">
               {/* Info card */}
-              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500 block">{t('common.type')}</span>
@@ -1091,7 +1091,7 @@ export function IncidentLog() {
               </div>
 
               {/* Timeline */}
-              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.timeline')}</h3>
                 <div className="relative pl-6">
                   <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-200" />
@@ -1128,7 +1128,7 @@ export function IncidentLog() {
               </div>
 
               {/* Comments */}
-              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">{t('incidents.comments')}</h3>
                 {inc.comments.length === 0 && (
                   <p className="text-sm text-gray-400">{t('incidents.noComments')}</p>
@@ -1167,7 +1167,7 @@ export function IncidentLog() {
             <div className="space-y-6">
               {/* Before / After Photo Evidence — side by side */}
               {(inc.photos.length > 0 || inc.resolutionPhotos.length > 0) && (
-                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
                   <h3 className="text-lg font-bold text-gray-900 mb-3">{t('common.photoEvidence')}</h3>
                   <div className={`grid gap-4 ${inc.photos.length > 0 && inc.resolutionPhotos.length > 0 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
                     {inc.photos.length > 0 && (
@@ -1187,7 +1187,7 @@ export function IncidentLog() {
               )}
 
               {/* Quick Stats */}
-              <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
                 <h3 className="font-semibold text-gray-900 mb-3">{t('incidents.details')}</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
@@ -1386,7 +1386,7 @@ export function IncidentLog() {
 
         {/* Toast notification */}
         {toastMessage && (
-          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-sm text-sm font-medium">
             <CheckCircle className="h-4 w-4 flex-shrink-0" />
             {toastMessage}
           </div>
@@ -1570,7 +1570,7 @@ export function IncidentLog() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-gray-400" />
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
@@ -1628,7 +1628,7 @@ export function IncidentLog() {
               <div
                 key={inc.id}
                 onClick={() => setSelectedIncident(inc)}
-                className="bg-white rounded-xl shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer"
                 style={overdue ? { borderLeft: '4px solid #dc2626' } : { borderLeft: '4px solid transparent' }}
               >
                 <div className="flex flex-col md:flex-row md:items-center gap-3">
@@ -1683,7 +1683,7 @@ export function IncidentLog() {
 
       {/* Toast notification */}
       {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-sm text-sm font-medium">
           <CheckCircle className="h-4 w-4 flex-shrink-0" />
           {toastMessage}
         </div>

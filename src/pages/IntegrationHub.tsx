@@ -626,7 +626,7 @@ function HealthTab() {
       {/* API Health */}
       <div className="bg-white rounded-xl border border-gray-100 p-4 sm:p-6">
         <h3 className="font-semibold text-gray-900 mb-4">API Performance</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <div className="text-xs text-gray-500 mb-2">Request Volume (30d)</div>
             <div className="h-20 flex items-end gap-1">

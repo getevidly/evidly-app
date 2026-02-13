@@ -53,11 +53,11 @@ export default function Pricing() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto">
           {/* Founder Pricing Card */}
           <div className="relative">
-            <div className="bg-white rounded-2xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-2xl shadow-[#d4af37]/20 h-full flex flex-col">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-lg">
+            <div className="bg-white rounded-xl p-5 sm:p-8 relative border-4 border-[#d4af37] shadow-sm shadow-[#d4af37]/20 h-full flex flex-col">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#d4af37] text-[#1e4d6b] text-sm font-bold rounded-full uppercase tracking-wider shadow-sm">
                 Best Value
               </div>
 
@@ -203,7 +203,7 @@ export default function Pricing() {
               <div>
                 <button
                   onClick={() => navigate('/signup')}
-                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Get Started
                 </button>
@@ -212,7 +212,7 @@ export default function Pricing() {
           </div>
 
           {/* Enterprise Card */}
-          <div id="contact" className="bg-white rounded-2xl p-5 sm:p-8 border-2 border-gray-200 shadow-lg h-full flex flex-col">
+          <div id="contact" className="bg-white rounded-xl p-5 sm:p-8 border-2 border-gray-200 shadow-sm h-full flex flex-col">
             <div className="mb-6">
               <div className="text-xl font-bold text-[#1e4d6b] mb-1">
                 {enterpriseTier.name}
@@ -239,7 +239,7 @@ export default function Pricing() {
                 href="mailto:founders@getevidly.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-md hover:shadow-lg text-center"
+                className="block w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] hover:bg-[#1e4d6b] hover:text-white shadow-sm hover:shadow-md text-center"
               >
                 Contact Sales
               </a>

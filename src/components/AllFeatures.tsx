@@ -56,11 +56,11 @@ export default function AllFeatures() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {featureCategories.map((category, idx) => (
             <div
               key={idx}
-              className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#d4af37] transition-all hover:shadow-lg"
+              className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-[#d4af37] transition-all hover:shadow-md"
             >
               <div className="flex items-center gap-3 mb-5">
                 <h3 className="text-[1.3rem] font-bold text-[#1e4d6b]">{category.title}</h3>
@@ -94,7 +94,7 @@ export default function AllFeatures() {
           </p>
           <button
             onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-            className="inline-block px-8 py-4 bg-[#1e4d6b] text-white rounded-xl font-semibold hover:bg-[#2a6a8f] shadow-lg hover:shadow-xl transition-all min-h-[44px]"
+            className="inline-block px-8 py-4 bg-[#1e4d6b] text-white rounded-xl font-semibold hover:bg-[#2a6a8f] shadow-sm hover:shadow-xl transition-all min-h-[44px]"
           >
             See Pricing
           </button>

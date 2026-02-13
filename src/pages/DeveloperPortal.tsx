@@ -163,7 +163,7 @@ function AuthenticationSection() {
 
       {/* Auth flows */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Lock className="h-4 w-4 text-[#1e4d6b]" />
             <h3 className="font-semibold text-gray-900 text-sm">Authorization Code Flow</h3>
@@ -176,7 +176,7 @@ function AuthenticationSection() {
             <div>4. Use access token in API requests</div>
           </div>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <div className="flex items-center gap-2 mb-3">
             <Server className="h-4 w-4 text-[#1e4d6b]" />
             <h3 className="font-semibold text-gray-900 text-sm">Client Credentials Flow</h3>
@@ -240,7 +240,7 @@ function ApiReferenceSection() {
         <p className="text-sm text-gray-600">{API_ENDPOINTS.length} endpoints across compliance, temperature, document, and sensor domains. All responses use JSON.</p>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
         {API_ENDPOINTS.map((ep, i) => {
           const mc = methodColors[ep.method];
           const isExpanded = expandedIdx === i;
@@ -297,7 +297,7 @@ function verifyWebhook(payload, signature, secret) {
 
       <div>
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Available Events ({WEBHOOK_EVENTS.length})</h3>
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
           {WEBHOOK_EVENTS.map(we => (
             <div key={we.event} className="flex items-start gap-3 px-4 py-2.5 border-b border-gray-50 last:border-b-0 flex-wrap">
               <code className="text-[10px] font-mono bg-gray-50 px-2 py-0.5 rounded text-gray-700 break-all sm:whitespace-nowrap">{we.event}</code>
@@ -338,7 +338,7 @@ function SandboxSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <h3 className="font-semibold text-gray-900 text-sm mb-2">Sandbox Features</h3>
           <ul className="space-y-2 text-xs text-gray-600">
             {[
@@ -353,7 +353,7 @@ function SandboxSection() {
             ))}
           </ul>
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
           <h3 className="font-semibold text-gray-900 text-sm mb-2">Test Credentials</h3>
           <div className="space-y-3">
             <div>
@@ -404,7 +404,7 @@ function SdksSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sdks.map(sdk => (
-          <div key={sdk.lang} className="bg-white border border-gray-200 rounded-lg p-4">
+          <div key={sdk.lang} className="bg-white border border-gray-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-lg">{sdk.icon}</span>
@@ -449,7 +449,7 @@ function RateLimitsSection() {
         <p className="text-sm text-gray-600">Rate limits protect the API and ensure fair usage. Limits are applied per API key.</p>
       </div>
 
-      <div className="overflow-x-auto bg-white border border-gray-200 rounded-lg">
+      <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 text-gray-600 text-xs uppercase">

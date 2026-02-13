@@ -136,7 +136,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
     return (
       <button
         onClick={startTour}
-        className="fixed bottom-24 right-6 md:bottom-6 z-50 flex items-center gap-2 px-4 py-3 bg-[#1e4d6b] text-white rounded-full shadow-lg hover:bg-[#163a52] transition-all hover:scale-105"
+        className="fixed bottom-24 right-6 md:bottom-6 z-50 flex items-center gap-2 px-4 py-3 bg-[#1e4d6b] text-white rounded-full shadow-sm hover:bg-[#163a52] transition-all hover:scale-105"
         title="Start guided tour"
       >
         <HelpCircle className="w-5 h-5" />
@@ -168,7 +168,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[340px] bg-white rounded-xl shadow-2xl border border-gray-200 animate-slide-up"
+        className="fixed z-[99999] w-[340px] bg-white rounded-xl shadow-sm border border-gray-200 animate-slide-up"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >

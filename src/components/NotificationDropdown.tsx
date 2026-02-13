@@ -228,7 +228,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
   return (
     <div
       ref={dropdownRef}
-      className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 animate-slide-down"
+      className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-sm border border-gray-200 z-50 animate-slide-down"
     >
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h3 className="font-semibold text-gray-900">Notifications</h3>

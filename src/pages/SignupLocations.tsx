@@ -85,10 +85,10 @@ export function SignupLocations() {
           <p className="text-lg text-gray-600">Choose the option that best fits your business</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <button
             onClick={() => setSelectedType('single')}
-            className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
+            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
               selectedType === 'single' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'single' ? 'opacity-40' : ''}`}
           >
@@ -110,7 +110,7 @@ export function SignupLocations() {
 
           <button
             onClick={() => setSelectedType('multiple')}
-            className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
+            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
               selectedType === 'multiple' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'multiple' ? 'opacity-40' : ''}`}
           >
@@ -132,7 +132,7 @@ export function SignupLocations() {
 
           <button
             onClick={() => setSelectedType('enterprise')}
-            className={`relative bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-all cursor-pointer ${
+            className={`relative bg-white rounded-xl p-8 shadow-sm border border-gray-200 hover:shadow-xl transition-all cursor-pointer ${
               selectedType === 'enterprise' ? 'ring-4 ring-[#1e4d6b] ring-opacity-50' : ''
             } ${selectedType && selectedType !== 'enterprise' ? 'opacity-40' : ''}`}
           >
@@ -154,7 +154,7 @@ export function SignupLocations() {
         </div>
 
         {selectedType === 'multiple' && (
-          <div className="mb-8 bg-white rounded-xl p-6 shadow-lg">
+          <div className="mb-8 bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <label className="block text-center text-lg font-medium text-gray-900 mb-4">
               Number of Locations
             </label>
@@ -179,7 +179,7 @@ export function SignupLocations() {
         )}
 
         {selectedType === 'enterprise' && (
-          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-8 text-white shadow-xl">
+          <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-8 text-white shadow-sm">
             <h3 className="text-2xl font-bold mb-4">Enterprise Plan (11+ Locations)</h3>
             <p className="text-lg mb-6">
               For 11+ locations, we offer custom pricing with dedicated onboarding and a success manager.
@@ -200,14 +200,14 @@ export function SignupLocations() {
                 </div>
               </div>
             </div>
-            <button className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-lg">
+            <button className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-sm">
               Schedule a Demo
             </button>
           </div>
         )}
 
         {selectedType && selectedType !== 'enterprise' && (
-          <div className="bg-white rounded-xl shadow-xl p-8 mb-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-8">
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-2xl font-bold text-gray-900">Your Plan</h2>
@@ -333,7 +333,7 @@ export function SignupLocations() {
 
             <button
               onClick={handleContinue}
-              className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-lg"
+              className="w-full py-4 bg-[#1e4d6b] text-white rounded-lg text-lg font-bold hover:bg-[#2a6a8f] active:bg-[#1e4d6b] transition-colors shadow-sm"
             >
               Continue to Checkout
             </button>

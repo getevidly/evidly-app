@@ -382,7 +382,7 @@ export function ImportData() {
         </div>
         <button
           onClick={downloadTemplate}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-[#b8d4e8] rounded-xl hover:bg-[#eef4f8] transition-colors"
         >
           <Download className="w-4 h-4" />
           Download Template
@@ -559,7 +559,7 @@ export function ImportData() {
           .map((r) => (
             <div
               key={r.row}
-              className="mb-2 px-4 py-2 rounded-lg border border-gray-100 bg-white text-xs"
+              className="mb-2 px-4 py-2 rounded-xl border border-gray-100 bg-white text-xs"
             >
               <span className="font-medium text-gray-600">Row {r.row}:</span>
               {r.errors.map((err, i) => (
@@ -590,7 +590,7 @@ export function ImportData() {
           <div className="flex items-center gap-3">
             <button
               onClick={goBack}
-              className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               Back
             </button>
@@ -668,7 +668,7 @@ export function ImportData() {
                   setImportResult(null);
                   setImportProgress(0);
                 }}
-                className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
               >
                 Import More Data
               </button>

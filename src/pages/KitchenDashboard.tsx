@@ -47,7 +47,7 @@ export function KitchenDashboard() {
           <p className="text-blue-100 text-sm mt-1">Shift: 6:00 AM - 2:00 PM</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
             <h2 className="text-xl font-bold text-gray-900">My Tasks Today</h2>
             <div className="text-sm font-medium text-gray-600">
@@ -108,7 +108,7 @@ export function KitchenDashboard() {
                 <h3 className="text-lg font-bold text-red-900 mb-3">Missed / Overdue</h3>
                 <div className="space-y-2">
                   {overdueItems.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between bg-white rounded-lg p-3">
+                    <div key={item.id} className="flex items-center justify-between bg-white rounded-xl p-3">
                       <div>
                         <div className="font-medium text-gray-900">{item.label}</div>
                         <div className="text-sm text-gray-600">Scheduled: {item.time} • {item.minutesLate || 120} minutes late</div>
@@ -127,10 +127,10 @@ export function KitchenDashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/temp-logs')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Thermometer className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -139,7 +139,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/checklists')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <ClipboardCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -148,7 +148,7 @@ export function KitchenDashboard() {
 
           <button
             onClick={() => navigate('/temp-logs?tab=receiving')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <Truck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />

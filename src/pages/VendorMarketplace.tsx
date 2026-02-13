@@ -286,7 +286,7 @@ export function VendorMarketplace() {
               {recommendations.map(({ vendor, reason }) => (
                 <div
                   key={vendor.slug}
-                  className="bg-white rounded-lg p-3 cursor-pointer hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl p-3 cursor-pointer hover:shadow-md transition-shadow"
                   onClick={() => navigate(`/marketplace/${vendor.slug}`)}
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -331,7 +331,7 @@ export function VendorMarketplace() {
                 }}
                 className={`bg-white rounded-xl p-5 cursor-pointer hover:shadow-md transition ${
                   isActive
-                    ? 'border-2 border-[#d4af37] shadow-md'
+                    ? 'border-2 border-[#d4af37] shadow-sm'
                     : 'border border-gray-200'
                 }`}
               >
@@ -365,7 +365,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setSelectedSubcategory(e.target.value || null)
               }
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
             >
               <option value="">All Subcategories</option>
               {availableSubcategories.map((sub) => (
@@ -381,7 +381,7 @@ export function VendorMarketplace() {
               onChange={(e) =>
                 setTierFilter(e.target.value as MarketplaceTier | 'all')
               }
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
             >
               <option value="all">All Tiers</option>
               <option value="verified">Verified</option>
@@ -393,7 +393,7 @@ export function VendorMarketplace() {
             <select
               value={ratingFilter}
               onChange={(e) => setRatingFilter(Number(e.target.value))}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
             >
               <option value={0}>Any Rating</option>
               <option value={4}>4+ Stars</option>
@@ -408,7 +408,7 @@ export function VendorMarketplace() {
                   e.target.value as 'rating' | 'response-time' | 'reviews',
                 )
               }
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
+              className="rounded-xl border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20"
             >
               <option value="rating">Highest Rated</option>
               <option value="response-time">Fastest Response</option>
@@ -445,7 +445,7 @@ export function VendorMarketplace() {
               <div
                 key={vendor.id}
                 onClick={() => navigate(`/marketplace/${vendor.slug}`)}
-                className="bg-white rounded-xl border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer overflow-hidden border-l-4"
+                className="bg-white rounded-xl border border-gray-200 hover:shadow-md transition-shadow cursor-pointer overflow-hidden border-l-4"
                 style={{ borderLeftColor: tierBorderColor[vendor.tier] }}
               >
                 <div className="p-5">

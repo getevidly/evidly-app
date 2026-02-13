@@ -66,7 +66,7 @@ export function BenchmarkSubcategoryDeepDive({ locationId }: Props) {
   const locScores = LOCATION_SUBCATEGORY_SCORES[locationId] || LOCATION_SUBCATEGORY_SCORES['downtown'];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <h3 className="text-lg font-semibold text-gray-900 mb-1">Subcategory Deep Dive</h3>
       <p className="text-sm text-gray-500 mb-2">Your performance in 8 specific compliance areas vs vertical average</p>
       <div className="flex items-center gap-4 mb-4 text-[10px] text-gray-400">

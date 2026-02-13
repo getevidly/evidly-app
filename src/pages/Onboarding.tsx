@@ -410,7 +410,7 @@ export function Onboarding() {
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Print QR Codes</h2>
             <p className="text-gray-600 mb-6">Generate QR codes for equipment and locations for easy mobile access.</p>
-            <div className="bg-white p-8 rounded-lg border border-gray-300 text-center">
+            <div className="bg-white p-4 sm:p-5 rounded-xl border border-gray-300 text-center">
               <QrCode className="h-32 w-32 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-4">Your QR codes will be generated after setup</p>
               <button onClick={() => toast.info('QR codes generated after setup is complete')} className="px-6 py-2 bg-[#1e4d6b] text-white rounded-md hover:bg-[#2a6a8f]">
@@ -473,7 +473,7 @@ export function Onboarding() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8 mb-6">{renderStepContent()}</div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">{renderStepContent()}</div>
 
         <div className="flex justify-between">
           <button

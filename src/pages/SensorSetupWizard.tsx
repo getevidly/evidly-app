@@ -169,7 +169,7 @@ export function SensorSetupWizard() {
   if (complete) {
     return (
       <div className="p-6 max-w-2xl mx-auto" style={F}>
-        <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#ecfdf5' }}>
             <Check className="h-8 w-8 text-green-600" />
           </div>
@@ -216,7 +216,7 @@ export function SensorSetupWizard() {
         })}
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
         {/* Step 1: Select Brand */}
         {step === 1 && (
           <div>

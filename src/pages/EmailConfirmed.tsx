@@ -37,7 +37,7 @@ export function EmailConfirmed() {
 
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
         <div className="flex justify-center mb-4">
           <span className="text-3xl font-bold">
             <span className="text-[#1e4d6b]">Evid</span>

@@ -18,7 +18,7 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
   const quarterlyDelta = currentQAvg - prevQAvg;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Trend Analysis</h3>

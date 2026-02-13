@@ -53,7 +53,7 @@ export function LockScreen({ userEmail, userName, onUnlock, onSwitchUser, onMaxA
   return (
     <div className="fixed inset-0 z-[100000] bg-[#faf8f3] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-xl shadow-2xl p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           {/* EvidLY Logo */}
           <div className="flex justify-center mb-2">
             <div className="flex items-center">

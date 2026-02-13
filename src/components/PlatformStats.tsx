@@ -114,7 +114,7 @@ export default function PlatformStats() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {statItems.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="font-['Outfit'] text-5xl font-bold text-[#d4af37] mb-2">

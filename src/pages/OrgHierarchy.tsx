@@ -184,7 +184,7 @@ export function OrgHierarchy() {
       </div>
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm bg-white rounded-lg border border-gray-200 px-4 py-2.5 overflow-x-auto">
+      <div className="flex items-center gap-2 text-sm bg-white rounded-xl border border-gray-200 px-4 py-2.5 overflow-x-auto">
         <Building2 className="h-4 w-4 text-gray-400 flex-shrink-0" />
         {breadcrumb.map((node, i) => (
           <span key={node.id} className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export function OrgHierarchy() {
             <div className="flex items-center gap-1 mb-2 flex-wrap">
               {demoHierarchyConfig.levels.map((h, i) => (
                 <span key={h.key} className="flex items-center gap-1">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-gray-200 bg-white">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl border border-gray-200 bg-white">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS[h.key] || '#6b7280' }} />
                     <span className="text-xs font-medium text-gray-900">{h.label}</span>
                     {h.canAttachLocations && (

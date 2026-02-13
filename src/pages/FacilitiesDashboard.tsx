@@ -188,7 +188,7 @@ export function FacilitiesDashboard() {
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Equipment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {equipmentSystems.map((equipment) => {
@@ -199,7 +199,7 @@ export function FacilitiesDashboard() {
                   className={`rounded-lg border-2 p-4 sm:p-5 transition-all ${getStatusBg(equipment.status)}`}
                 >
                   <div className="flex items-start space-x-3 mb-4">
-                    <div className={`p-2 rounded-lg bg-white ${getStatusColor(equipment.status)}`}>
+                    <div className={`p-2 rounded-xl bg-white ${getStatusColor(equipment.status)}`}>
                       <Icon className="h-6 w-6" />
                     </div>
                     <div className="flex-1">
@@ -250,7 +250,7 @@ export function FacilitiesDashboard() {
                   {vendorActions.map((action) => (
                     <div
                       key={action.id}
-                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-lg p-4 shadow-sm border border-gray-200"
+                      className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl p-4 shadow-sm border border-gray-200"
                     >
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">{action.vendor}</div>
@@ -274,7 +274,7 @@ export function FacilitiesDashboard() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Documents to Review</h3>
           <div className="space-y-3">
             {documents.map((doc) => (
@@ -307,10 +307,10 @@ export function FacilitiesDashboard() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/vendors')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileCheck className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -319,7 +319,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/documents')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <FileText className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />
@@ -328,7 +328,7 @@ export function FacilitiesDashboard() {
 
           <button
             onClick={() => navigate('/alerts')}
-            className="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
+            className="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 sm:p-8 hover:border-blue-500 hover:shadow-md transition-all text-center group min-h-[44px]"
             style={{ minHeight: '120px' }}
           >
             <AlertTriangle className="h-12 w-12 text-blue-600 mx-auto mb-3 group-hover:scale-110 transition-transform" />

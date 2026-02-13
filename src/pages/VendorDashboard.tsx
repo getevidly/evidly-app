@@ -158,7 +158,7 @@ export function VendorDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Certification Status */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4">
@@ -239,7 +239,7 @@ export function VendorDashboard() {
       </div>
 
       {/* Recent Leads + Upcoming Services */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900">Recent Leads</h3>
@@ -704,7 +704,7 @@ export function VendorDashboard() {
     if (!showSubscriptionModal) return null;
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowSubscriptionModal(false)}>
-        <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-4xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6" onClick={e => e.stopPropagation()}>
           <div className="flex items-center justify-between flex-wrap gap-2 mb-6">
             <h2 className="text-xl font-bold text-gray-900">Choose Your Plan</h2>
             <button onClick={() => setShowSubscriptionModal(false)} className="p-2 hover:bg-gray-100 rounded-full">
@@ -715,7 +715,7 @@ export function VendorDashboard() {
             {vendorSubscriptionPlans.map(plan => {
               const isCurrent = vendorCurrentSubscription.plan === plan.id.replace('plan-', '');
               return (
-                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-lg' : isCurrent ? 'border-[#1e4d6b]' : 'border-gray-200'}`}>
+                <div key={plan.id} className={`rounded-xl border-2 p-4 sm:p-5 ${plan.highlighted ? 'border-[#d4af37] shadow-sm' : isCurrent ? 'border-[#1e4d6b]' : 'border-gray-200'}`}>
                   {plan.highlighted && (
                     <div className="text-xs font-bold text-[#d4af37] uppercase mb-2">Most Popular</div>
                   )}
@@ -777,7 +777,7 @@ export function VendorDashboard() {
   return (
     <div className="min-h-screen bg-[#faf8f3]">
       {/* Portal Header */}
-      <div className="bg-white shadow">
+      <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">

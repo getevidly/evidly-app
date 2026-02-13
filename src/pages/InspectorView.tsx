@@ -385,7 +385,7 @@ export function InspectorView() {
           />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           {/* ---------------------------------------------------------------- */}
           {/* Header                                                          */}
           {/* ---------------------------------------------------------------- */}
@@ -411,21 +411,21 @@ export function InspectorView() {
               <div className="flex items-center gap-2 print:hidden">
                 <button
                   onClick={handlePrint}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-lg hover:bg-[#eef4f8] transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors"
                 >
                   <Printer className="h-4 w-4" />
                   Print
                 </button>
                 <button
                   onClick={handleExportPdf}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-lg hover:bg-[#eef4f8] transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors"
                 >
                   <Download className="h-4 w-4" />
                   Export PDF
                 </button>
                 <button
                   onClick={handleShare}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-lg hover:bg-[#eef4f8] transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-[#1e4d6b] bg-white border border-gray-200 rounded-xl hover:bg-[#eef4f8] transition-colors"
                 >
                   <Share2 className="h-4 w-4" />
                   Share

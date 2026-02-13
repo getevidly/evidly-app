@@ -60,7 +60,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
     <>
       <div className="fixed inset-0 bg-black/50 z-[80]" onClick={onClose} />
       <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
           {/* Header */}
           <div className="bg-[#1e4d6b] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">

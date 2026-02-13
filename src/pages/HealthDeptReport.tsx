@@ -54,7 +54,7 @@ function CollapsibleSection({ title, icon, children, defaultOpen = false, badge 
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between px-4 sm:px-6 py-4 hover:bg-gray-50 transition-colors"
@@ -201,11 +201,11 @@ export function HealthDeptReport() {
 
         {/* ── Generate Report Tab ─────────────────────── */}
         {activeView === 'generate' && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Left: Config */}
             <div className="lg:col-span-2 space-y-6">
               {/* Location & Template */}
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
                 <h3 className="font-semibold text-gray-900">Report Configuration</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -258,7 +258,7 @@ export function HealthDeptReport() {
               </div>
 
               {/* Section Toggles */}
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
                 <h3 className="font-semibold text-gray-900">Report Sections</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <SectionToggle label="Facility Information" enabled={sections.facilityInfo} onChange={() => toggleSection('facilityInfo')} />
@@ -289,7 +289,7 @@ export function HealthDeptReport() {
 
               {/* Missing Document Alerts */}
               {missingDocs.length > 0 && (
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6 space-y-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-[#d4af37]" />
                     <h3 className="font-semibold text-gray-900">Missing Documentation Alerts</h3>
@@ -327,7 +327,7 @@ export function HealthDeptReport() {
             {/* Right: Preview Card + Actions */}
             <div className="space-y-6">
               {/* Score Preview */}
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 text-center">
                 <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Current Score — {template.name}</div>
                 <div style={{ fontSize: 48, fontWeight: 800, color: template.getGradeColor(scores.overall), lineHeight: 1 }}>
                   {scores.overall}
@@ -363,7 +363,7 @@ export function HealthDeptReport() {
               </button>
 
               {/* Tier Toggle (for demo) */}
-              <div className="bg-white rounded-lg shadow p-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -383,7 +383,7 @@ export function HealthDeptReport() {
               </div>
 
               {/* Auto Schedule Info */}
-              <div className="bg-white rounded-lg shadow p-4 space-y-2">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-[#1e4d6b]" />
                   <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>Auto-Scheduled Reports</span>
@@ -414,7 +414,7 @@ export function HealthDeptReport() {
         {activeView === 'preview' && (
           <>
             {!generatedReport ? (
-              <div className="bg-white rounded-lg shadow p-6 sm:p-12 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-12 text-center">
                 <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Report Generated</h3>
                 <p className="text-gray-600 mb-4">Generate a report from the configuration tab first.</p>
@@ -428,7 +428,7 @@ export function HealthDeptReport() {
             ) : (
               <div className="space-y-4">
                 {/* Action Bar */}
-                <div className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-lg shadow px-4 sm:px-6 py-3">
+                <div className="flex items-center justify-between flex-wrap gap-2 bg-white rounded-xl shadow-sm border border-gray-200 px-4 sm:px-6 py-3">
                   <div className="flex items-center gap-3">
                     <span style={{ fontSize: 14, color: '#6b7280' }}>
                       Generated {new Date(generatedReport.generatedAt).toLocaleString()} for{' '}
@@ -440,7 +440,7 @@ export function HealthDeptReport() {
                       <Download className="h-4 w-4" />
                       Download PDF
                     </button>
-                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border border-[#1e4d6b] rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                    <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border border-[#1e4d6b] rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
                       <Share2 className="h-4 w-4" />
                       Share
                     </button>
@@ -451,7 +451,7 @@ export function HealthDeptReport() {
                 </div>
 
                 {/* Report Header */}
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.overall)}` }}>
+                <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.overall)}` }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
                   <div style={{ fontSize: 14, color: '#6b7280' }}>{template.name} — {template.gradingSystem}</div>
                   <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 16, padding: '12px 24px', borderRadius: 12, backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}>
@@ -797,7 +797,7 @@ export function HealthDeptReport() {
                 )}
 
                 {/* County-Specific Requirements */}
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                   <h3 className="font-semibold text-gray-900 mb-3">County-Specific Requirements — {template.name}</h3>
                   <ul className="space-y-2">
                     {template.specialRequirements.map((req, i) => (
@@ -816,7 +816,7 @@ export function HealthDeptReport() {
         {/* ── Self-Audit Checklist Tab ────────────────── */}
         {activeView === 'self-audit' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                 <div>
                   <h3 className="font-semibold text-gray-900">Pre-Inspection Self-Audit Checklist</h3>
@@ -913,7 +913,7 @@ export function HealthDeptReport() {
         {/* ── Report History Tab ──────────────────────── */}
         {activeView === 'history' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="font-semibold text-gray-900">Report History</h3>
                 <p className="text-sm text-gray-600 mt-1">Previously generated reports and their status</p>

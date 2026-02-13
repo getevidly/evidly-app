@@ -212,7 +212,7 @@ export function DemoWizard() {
           ))}
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           {step === 0 && (
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Let's personalize your demo</h2>
@@ -522,7 +522,7 @@ export function DemoWizard() {
                   </div>
                 </div>
               </div>
-              <button onClick={handleFinish} className="inline-flex items-center gap-2 px-8 py-4 bg-[#1e4d6b] text-white font-bold rounded-xl hover:bg-[#2a6a8f] transition-all hover:-translate-y-0.5 hover:shadow-lg text-lg">
+              <button onClick={handleFinish} className="inline-flex items-center gap-2 px-8 py-4 bg-[#1e4d6b] text-white font-bold rounded-xl hover:bg-[#2a6a8f] transition-all hover:-translate-y-0.5 hover:shadow-md text-lg">
                 Launch My Dashboard
                 <ArrowRight className="h-5 w-5" />
               </button>

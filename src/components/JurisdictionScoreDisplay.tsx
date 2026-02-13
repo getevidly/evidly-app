@@ -26,7 +26,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           {result.countyName}
         </div>
         <div
-          className="relative w-[120px] h-[120px] rounded-2xl flex items-center justify-center shadow-lg"
+          className="relative w-[120px] h-[120px] rounded-2xl flex items-center justify-center shadow-sm"
           style={{ backgroundColor: result.grade.color }}
         >
           <span className="text-6xl font-black text-white">{result.grade.label}</span>
@@ -65,7 +65,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           {result.countyName}
         </div>
         <div
-          className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-lg"
+          className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-sm"
           style={{ backgroundColor: result.grade.color }}
         >
           <span className="text-xl font-black text-white uppercase">{result.grade.label}</span>
@@ -98,7 +98,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           {result.countyName}
         </div>
         <div
-          className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-lg"
+          className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-sm"
           style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }}
         >
           {isPassing ? (
@@ -132,7 +132,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
         {result.countyName}
       </div>
       <div
-        className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-lg"
+        className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-sm"
         style={{ backgroundColor: result.grade.color }}
       >
         <ShieldCheck className="w-8 h-8 text-white mb-1" />

@@ -48,9 +48,9 @@ export function IoTSensorLanding() {
         </div>
 
         {/* How It Works */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6 text-center">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { step: '1', icon: Wifi, title: 'Connect Your Sensors', desc: 'Link your existing WiFi and Bluetooth temperature sensors — SensorPush, Temp Stick, Monnit, and more.' },
               { step: '2', icon: Database, title: 'Auto-Ingest Data', desc: 'EvidLY pulls readings automatically via cloud APIs, receives webhooks, or captures Bluetooth data through the mobile app.' },
@@ -69,7 +69,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* Supported Sensors */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Supported Sensor Ecosystem</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {PROVIDERS.map(p => (
@@ -86,7 +86,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* Three Ingestion Methods */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Three Ways to Ingest Data</h2>
           <div className="space-y-4">
             {METHODS.map(m => (
@@ -110,7 +110,7 @@ export function IoTSensorLanding() {
             { value: '2 min', label: 'Alert Response', desc: 'Real-time threshold monitoring with instant notifications' },
             { value: '100%', label: 'Reading Capture', desc: 'Every data point logged — no gaps, no missed checks' },
           ].map(item => (
-            <div key={item.label} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 text-center">
+            <div key={item.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
               <div className="text-3xl font-bold mb-1" style={{ color: '#1e4d6b' }}>{item.value}</div>
               <div className="text-sm font-semibold text-gray-900">{item.label}</div>
               <div className="text-xs text-gray-500 mt-1">{item.desc}</div>
@@ -119,7 +119,7 @@ export function IoTSensorLanding() {
         </div>
 
         {/* Integration Preview */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Webhook API Preview</h2>
           <p className="text-sm text-gray-600 mb-4">Point any sensor platform to your EvidLY webhook endpoint. We normalize everything.</p>
           <div className="rounded-xl bg-gray-900 p-5 overflow-x-auto">
@@ -152,7 +152,7 @@ Content-Type: application/json
 
         {/* CTA */}
         <div className="text-center mb-12">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <Radio className="h-8 w-8 mx-auto mb-3" style={{ color: '#1e4d6b' }} />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Get Early Access</h2>
             <p className="text-sm text-gray-600 mb-4">Already using temperature sensors? Let us connect them to your compliance system.</p>

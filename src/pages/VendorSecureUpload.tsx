@@ -64,7 +64,7 @@ export function VendorSecureUpload() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md w-full text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Link Not Valid</h1>
           <p className="text-gray-600">{error}</p>
@@ -76,7 +76,7 @@ export function VendorSecureUpload() {
   if (success) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-8 h-8 text-green-600" />
           </div>
@@ -108,7 +108,7 @@ export function VendorSecureUpload() {
           </p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
           {/* What's needed */}
           <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm font-semibold text-blue-900 mb-1">Document Requested</p>

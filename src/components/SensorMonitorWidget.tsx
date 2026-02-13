@@ -66,7 +66,7 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
   const activeAlerts = iotSensorAlerts.filter(a => !a.acknowledged).length;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-4 pb-3">
         <div className="flex items-center gap-2">

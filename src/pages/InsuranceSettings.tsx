@@ -119,7 +119,7 @@ export function InsuranceSettings() {
             onClick={handleToggle}
             className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${sharingEnabled ? 'bg-green-500' : 'bg-gray-300'}`}
           >
-            <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${sharingEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
+            <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${sharingEnabled ? 'translate-x-6' : 'translate-x-1'}`} />
           </button>
         </div>
 
@@ -346,7 +346,7 @@ export function InsuranceSettings() {
       {/* Consent Confirmation Modal */}
       {showConsentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-[95vw] sm:w-full p-4 sm:p-6" style={F}>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-lg w-[95vw] sm:w-full p-4 sm:p-6" style={F}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
                 <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />

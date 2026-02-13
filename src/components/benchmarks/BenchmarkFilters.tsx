@@ -31,7 +31,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         <select
           value={filters.vertical}
           onChange={e => onChange({ ...filters, vertical: e.target.value as BenchmarkVertical })}
-          className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
         >
           {VERTICAL_BENCHMARKS.map(v => (
             <option key={v.vertical} value={v.vertical}>{v.vertical}</option>
@@ -41,7 +41,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         <select
           value={filters.size}
           onChange={e => onChange({ ...filters, size: e.target.value as BenchmarkSize | '' })}
-          className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
         >
           <option value="">All Sizes</option>
           {SIZE_BENCHMARKS.map(s => (
@@ -52,7 +52,7 @@ export function BenchmarkFilters({ filters, onChange }: BenchmarkFiltersProps) {
         <select
           value={filters.county}
           onChange={e => onChange({ ...filters, county: e.target.value })}
-          className="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
+          className="text-sm border border-gray-300 rounded-xl px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
         >
           <option value="">All Counties (CA)</option>
           {counties.map(c => (

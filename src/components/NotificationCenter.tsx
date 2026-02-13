@@ -219,7 +219,7 @@ export function NotificationCenter() {
       {/* Dropdown Panel */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden"
+          className="absolute right-0 mt-2 bg-white rounded-xl shadow-sm border border-gray-200 z-50 overflow-hidden"
           style={{ width: '400px', maxHeight: '520px' }}
         >
           {/* Header */}

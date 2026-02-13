@@ -143,7 +143,7 @@ export function BenchmarkBadge({ qualification, locationName }: BenchmarkBadgePr
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-5">
         <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
         <div>

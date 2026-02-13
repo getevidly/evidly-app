@@ -424,7 +424,7 @@ export function SensorDetail() {
       </div>
 
       {/* Bottom grid: Device Info + Maintenance Log */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Device Info */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Device Information</h3>

@@ -173,7 +173,7 @@ export function InviteAccept() {
   if (error && !invitation) {
     return (
       <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center px-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <X className="w-8 h-8 text-red-600" />
           </div>
@@ -193,7 +193,7 @@ export function InviteAccept() {
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">
               <div className="p-3 bg-[#d4af37]/10 rounded-full">

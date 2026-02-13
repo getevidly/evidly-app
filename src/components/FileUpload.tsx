@@ -160,7 +160,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleCameraClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Camera className="w-5 h-5" />
               <span className="hidden sm:inline">Camera</span>
@@ -169,7 +169,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={handleComputerClick}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <Upload className="w-5 h-5" />
               <span className="hidden sm:inline">Computer</span>
@@ -178,7 +178,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Google Drive integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.01 1.485L21.77 17.5H2.23L12.01 1.485zM3.625 18.25h16.74L12 21.515l-8.375-3.265z"/>
@@ -189,7 +189,7 @@ export function FileUpload({
             <button
               type="button"
               onClick={() => toast.info('Dropbox integration coming soon')}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 1.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5zm-12 13.5l-6 4.5 6 4.5 6-4.5-6-4.5zm12 0l-6 4.5 6 4.5 6-4.5-6-4.5z"/>
@@ -232,7 +232,7 @@ export function FileUpload({
             {files.map((uploadedFile, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-lg"
+                className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl"
               >
                 <div className="flex-shrink-0">
                   {uploadedFile.preview ? (

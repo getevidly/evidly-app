@@ -31,7 +31,7 @@ export default function Problem() {
           </h2>
           <p className="text-[1.125rem] text-[var(--color-text-light)]">Sound familiar?</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {problems.map((problem, index) => (
             <div key={index} className="bg-white rounded-[20px] p-10 text-center border border-[var(--color-gray-200)]">
               <div className="text-[3rem] mb-5">{problem.icon}</div>

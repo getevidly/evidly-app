@@ -37,7 +37,7 @@ export function BenchmarkOverallRanking({ locationId }: Props) {
   const geo = GEO_BENCHMARKS.find(g => g.level === 'county' && g.name === 'Fresno County') || GEO_BENCHMARKS[0];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <h3 className="text-lg font-semibold text-gray-900 mb-1">Overall Ranking</h3>
       <p className="text-sm text-gray-500 mb-5">Your score of <span className="font-bold text-gray-900">{p.score}</span> across different comparison groups</p>
 

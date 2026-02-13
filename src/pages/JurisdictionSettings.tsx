@@ -224,7 +224,7 @@ function AddLocationDialog({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="p-4 sm:p-6 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-900">Add Location</h2>
           <p className="text-sm text-gray-500 mt-1">
@@ -269,7 +269,7 @@ function AddLocationDialog({
               <select
                 value={state}
                 onChange={e => setState(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b] bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b] bg-white"
               >
                 <option value="">Select State...</option>
                 <option value="CA">California</option>
@@ -575,7 +575,7 @@ export function JurisdictionSettings() {
       </div>
 
       {/* Key California Regulations Summary */}
-      <div className="bg-white rounded-lg shadow border border-gray-100 mb-6 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-[#1e4d6b]" />
@@ -669,7 +669,7 @@ export function JurisdictionSettings() {
 
       {/* Added Locations (from Add Location dialog) */}
       {addedLocations.map(config => (
-        <div key={config.locationId} className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden mb-4">
+        <div key={config.locationId} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4">
           <div className="p-4 sm:p-6">
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="w-5 h-5 text-[#1e4d6b]" />
@@ -736,7 +736,7 @@ export function JurisdictionSettings() {
         return (
           <div
             key={location.locationName}
-            className="bg-white rounded-lg shadow border border-gray-100 overflow-hidden mb-4"
+            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-4"
           >
             {/* Card Header */}
             <div className="p-4 sm:p-6 flex items-center justify-between">
@@ -1345,7 +1345,7 @@ export function JurisdictionSettings() {
           return (
             <div
               key={locationGap.locationName}
-              className="bg-white rounded-lg shadow border border-gray-100 p-4 sm:p-6 mb-4"
+              className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 mb-4"
             >
               {/* Summary */}
               <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -1413,7 +1413,7 @@ export function JurisdictionSettings() {
               return (
                 <div
                   key={law.id}
-                  className={`bg-white rounded-lg shadow border-l-4 ${urgencyBorder} p-4 sm:p-5`}
+                  className={`bg-white rounded-xl shadow-sm border-l-4 ${urgencyBorder} p-4 sm:p-5`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -1451,7 +1451,7 @@ export function JurisdictionSettings() {
           </div>
 
           {/* Key Upcoming Dates Summary */}
-          <div className="mt-4 p-4 bg-white rounded-lg shadow border border-gray-100">
+          <div className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Key Upcoming Dates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-lg border border-red-200 bg-red-50">

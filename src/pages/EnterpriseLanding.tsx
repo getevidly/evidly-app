@@ -44,7 +44,7 @@ export function EnterpriseLanding() {
         </div>
 
         {/* Feature Grid */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Enterprise Capabilities</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -69,7 +69,7 @@ export function EnterpriseLanding() {
         </div>
 
         {/* Pricing */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8 text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8 text-center">
           <h2 className="text-xl font-bold text-gray-900 mb-2">Custom Pricing for 500+ Locations</h2>
           <p className="text-sm text-gray-500 mb-6">Volume-based pricing tailored to your organization's needs</p>
           <div className="space-y-2 text-left max-w-md mx-auto">
@@ -96,7 +96,7 @@ export function EnterpriseLanding() {
             { value: '4.2 hrs', label: 'Saved per Week per Location', sub: 'Reduced manual compliance tasks' },
             { value: '$18K', label: 'Annual Savings per 100 Locations', sub: 'Reduced audit and remediation costs' },
           ].map(item => (
-            <div key={item.label} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 text-center">
+            <div key={item.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 text-center">
               <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{item.value}</p>
               <p className="text-xs font-semibold text-gray-900 mt-1">{item.label}</p>
               <p className="text-[10px] text-gray-400 mt-0.5">{item.sub}</p>

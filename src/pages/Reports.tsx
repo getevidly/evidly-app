@@ -536,7 +536,7 @@ export function Reports() {
 
         {activeTab === 'executive' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Overall Compliance Score{selectedLocName ? ` — ${selectedLocName}` : ''}
               </h3>
@@ -570,21 +570,21 @@ export function Reports() {
                   const docColor = getScoreColor(docScore);
                   return (
                     <>
-                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Activity className="h-3.5 w-3.5" style={{ color: opColor }} />
                           <span className="text-sm text-gray-500 font-medium">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: opColor }}>{opScore}</p>
                       </div>
-                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Thermometer className="h-3.5 w-3.5" style={{ color: eqColor }} />
                           <span className="text-sm text-gray-500 font-medium">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
                       </div>
-                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${docColor}` }}>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${docColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <FileText className="h-3.5 w-3.5" style={{ color: docColor }} />
                           <span className="text-sm text-gray-500 font-medium">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}%)</span>
@@ -606,7 +606,7 @@ export function Reports() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Location Comparison</h3>
               </div>
@@ -640,7 +640,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Top 5 Issues Requiring Attention</h3>
               <div className="space-y-3">
                 {topIssues.map((issue, idx) => (
@@ -659,7 +659,7 @@ export function Reports() {
 
         {activeTab === 'operational' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Temperature Compliance Rate</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={tempComplianceData}>
@@ -672,7 +672,7 @@ export function Reports() {
               </ResponsiveContainer>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Checklist Completion Rates</h3>
               </div>
@@ -702,7 +702,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Missed Tasks Summary</h3>
               </div>
@@ -735,7 +735,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Corrective Actions</h3>
                 <p className="text-sm text-gray-600">Average resolution time: 4.5 days</p>
@@ -766,7 +766,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">HACCP Monitoring Compliance</h3>
               </div>
@@ -798,7 +798,7 @@ export function Reports() {
 
         {activeTab === 'equipment' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Vendor Service History</h3>
               </div>
@@ -830,7 +830,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Equipment Certification Status</h3>
               </div>
@@ -860,7 +860,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Maintenance Schedule Adherence</h3>
               </div>
@@ -890,7 +890,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Cost Tracking: Vendor Spend by Category</h3>
                 <p className="text-sm text-gray-600">Total spend this month: $2,200</p>
@@ -921,7 +921,7 @@ export function Reports() {
 
         {activeTab === 'vendorCompliance' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Document Inventory</h3>
               </div>
@@ -958,7 +958,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Expiration Timeline</h3>
               </div>
@@ -995,7 +995,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Missing Required Documents</h3>
               </div>
@@ -1023,7 +1023,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Vendor Document Compliance</h3>
               </div>
@@ -1057,7 +1057,7 @@ export function Reports() {
 
         {activeTab === 'team' && (
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Staff Certification Status</h3>
               </div>
@@ -1096,7 +1096,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Task Completion by Employee</h3>
               </div>
@@ -1126,7 +1126,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Training Records Summary</h3>
               </div>
@@ -1156,7 +1156,7 @@ export function Reports() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Login Activity</h3>
               </div>

@@ -154,7 +154,7 @@ export function VendorProfile() {
         </button>
 
         {/* ─── Profile Header ──────────────────────────────── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           {/* Top row */}
           <div className="flex items-start justify-between flex-wrap gap-4">
             {/* Left */}
@@ -516,7 +516,7 @@ export function VendorProfile() {
       {/* ═══════════════════════════════════════════════════════ */}
       {showRequestModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">
               Request Quote from {vendor.companyName}
             </h2>

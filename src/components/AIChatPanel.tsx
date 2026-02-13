@@ -94,7 +94,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed z-50 flex items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110"
+          className="fixed z-50 flex items-center justify-center rounded-full shadow-sm transition-transform hover:scale-110"
           style={{
             bottom: '24px',
             right: '24px',
@@ -111,7 +111,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
 
       {/* Slide-out Panel */}
       <div
-        className="fixed top-0 right-0 h-full z-50 flex flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out"
+        className="fixed top-0 right-0 h-full z-50 flex flex-col bg-white shadow-sm transition-transform duration-300 ease-in-out"
         style={{
           width: '420px',
           maxWidth: '100vw',

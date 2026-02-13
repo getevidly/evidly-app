@@ -318,7 +318,7 @@ export function Documents() {
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
-              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-lg hover:bg-gray-50 shadow-sm transition-colors duration-150"
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
               <span className="hidden sm:inline">Take Photo</span>
@@ -504,7 +504,7 @@ export function Documents() {
               })}
             </div>
 
-            <div className="bg-white shadow rounded-lg overflow-hidden">
+            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
               {loading ? (
                 <div className="p-12">
                   <div className="animate-pulse space-y-4">
@@ -652,7 +652,7 @@ export function Documents() {
         )}
 
         {activeTab === 'shared' && (
-          <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
             {sharedItems.length === 0 ? (
               <EmptyState
                 icon={Share2}

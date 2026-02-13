@@ -685,7 +685,7 @@ function TrendsTab() {
       </div>
 
       {/* Rate of Change */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-green-700 mb-3">🚀 Fastest Improving</h3>
           <div className="space-y-2">
@@ -877,7 +877,7 @@ const CustomScatterTooltip = ({ active, payload }: any) => {
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload;
   return (
-    <div className="bg-white p-2 rounded-lg shadow-lg border border-gray-200 text-[11px]">
+    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-200 text-[11px]">
       <p className="font-semibold text-gray-900">{d?.name}</p>
       <p className="text-gray-500">X: {d?.x} · Y: {d?.y}</p>
     </div>
@@ -908,7 +908,7 @@ function StaffingTab() {
       </div>
 
       {/* Chart Grid — 2x2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Chart 1 — Turnover vs Compliance */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">Turnover Rate vs Compliance Score</h3>
@@ -1128,7 +1128,7 @@ function FinancialTab() {
           <h3 className="text-base font-bold text-gray-900">Executive ROI Summary</h3>
           <span className="text-[10px] text-gray-400 ml-auto">Board-ready view</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Left — Investment */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Annual Compliance Investment</h4>
@@ -1776,7 +1776,7 @@ function PlatformTab() {
               key={tier.id}
               className={`rounded-xl p-4 sm:p-5 border-2 ${
                 tier.highlighted
-                  ? 'border-[#d4af37] shadow-lg relative'
+                  ? 'border-[#d4af37] shadow-sm relative'
                   : 'border-gray-200'
               }`}
             >

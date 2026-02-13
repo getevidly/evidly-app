@@ -74,7 +74,7 @@ export function AutoDocumentRequest() {
         </div>
         <button
           onClick={() => setShowSettings(true)}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50"
         >
           <Settings className="w-4 h-4" />
           Settings
@@ -149,7 +149,7 @@ export function AutoDocumentRequest() {
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-2xl animate-slide-up">
+          <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-sm border border-gray-200 animate-slide-up">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Auto-Request Settings</h3>
               <button onClick={() => setShowSettings(false)} className="p-1 hover:bg-gray-100 rounded-full">
@@ -167,7 +167,7 @@ export function AutoDocumentRequest() {
                   onClick={() => setSettings({ ...settings, autoRequestEnabled: !settings.autoRequestEnabled })}
                   className={`relative w-12 h-6 rounded-full transition-colors ${settings.autoRequestEnabled ? 'bg-[#1e4d6b]' : 'bg-gray-300'}`}
                 >
-                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${settings.autoRequestEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${settings.autoRequestEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
               </div>
 

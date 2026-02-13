@@ -34,7 +34,7 @@ export default function QRFeature() {
         <div className="bg-[rgba(255,255,255,0.08)] rounded-[24px] p-6 sm:p-12 text-center">
           <Link
             to="/passport/demo"
-            className="block w-[240px] h-[240px] bg-white rounded-2xl mx-auto mb-6 p-5 hover:scale-105 transition-transform cursor-pointer"
+            className="block w-[240px] h-[240px] bg-white rounded-xl mx-auto mb-6 p-5 hover:scale-105 transition-transform cursor-pointer"
           >
             <QRCodeSVG
               value={demoUrl}

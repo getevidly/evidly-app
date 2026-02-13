@@ -289,7 +289,7 @@ export function ImproveScore() {
       {/* Action Items List */}
       <div className="space-y-3 mb-6">
         {filteredItems.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
             <CheckCircle className="h-10 w-10 text-green-500 mx-auto mb-3" />
             <p className="text-sm font-semibold text-gray-900">No actions match this filter</p>
             <p className="text-xs text-gray-500 mt-1">Try adjusting your filters or selecting a different location</p>

@@ -479,15 +479,15 @@ function SensorFleetTab({ sensors, search, setSearch, locationFilter, setLocatio
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search sensors..." className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
         </div>
-        <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
           <option value="all">All Locations</option>
           {locations.map(l => <option key={l} value={l}>{l}</option>)}
         </select>
-        <select value={providerFilter} onChange={e => setProviderFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={providerFilter} onChange={e => setProviderFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
           <option value="all">All Providers</option>
           {providerSlugs.map(s => <option key={s} value={s}>{iotSensorProviders.find(p => p.slug === s)?.name || s}</option>)}
         </select>
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white">
           <option value="all">All Status</option>
           <option value="online">Online</option>
           <option value="warning">Warning</option>
@@ -813,7 +813,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Temperature trend chart */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-bold text-gray-900 mb-4">Cold Storage Temperature Trend</h3>
@@ -1088,7 +1088,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="bg-white rounded-2xl shadow-2xl w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col" style={F}>
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
@@ -1225,7 +1225,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                   {selectedProv.authType === 'webhook' && (
                     <div className="mt-3">
                       <label className="text-xs font-medium text-gray-600 mb-1 block">Your Webhook URL</label>
-                      <code className="block px-3 py-2 rounded-lg bg-white border border-gray-200 text-xs font-mono text-gray-700">https://api.evidly.com/v1/iot/webhook/{selectedProv.slug}/ingest</code>
+                      <code className="block px-3 py-2 rounded-xl bg-white border border-gray-200 text-xs font-mono text-gray-700">https://api.evidly.com/v1/iot/webhook/{selectedProv.slug}/ingest</code>
                     </div>
                   )}
                 </div>
@@ -1520,7 +1520,7 @@ function DeviceDetailView({ sensorId, onBack }: { sensorId: string; onBack: () =
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* LEFT: Current reading + chart */}
         <div className="lg:col-span-2 space-y-6">
           {/* Current reading */}

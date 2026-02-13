@@ -50,7 +50,7 @@ export function DocumentScanAnimation({ onComplete }: DocumentScanAnimationProps
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 animate-slide-up">
+      <div className="bg-white rounded-xl p-4 sm:p-5 max-w-md w-full mx-4 animate-slide-up">
         <div className="mb-6">
           <div className="relative bg-gray-100 rounded-lg p-8 h-64 flex items-center justify-center overflow-hidden">
             <FileText className="w-24 h-24 text-gray-300" />

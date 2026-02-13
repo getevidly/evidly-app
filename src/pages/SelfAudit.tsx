@@ -509,7 +509,7 @@ export function SelfAudit() {
 
   const renderOverview = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-[#b8d4e8] p-6">
+      <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-2">
           <ClipboardList className="h-6 w-6 text-[#1e4d6b]" />
           <h2 className="text-xl font-bold text-[#1e4d6b]">Self-Audit Checklist</h2>
@@ -790,7 +790,7 @@ export function SelfAudit() {
     return (
       <div className="space-y-6">
         {/* Score overview */}
-        <div className="bg-white rounded-xl border border-[#b8d4e8] p-6 text-center">
+        <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5 text-center">
           <h2 className="text-lg font-bold text-[#1e4d6b] mb-4">Audit Results</h2>
           <div className="flex justify-center mb-4">
             <svg width={circleSize} height={circleSize} className="-rotate-90">

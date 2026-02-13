@@ -18,7 +18,7 @@ export function BenchmarkWidget({ locationId }: BenchmarkWidgetProps) {
   const qChange = comparison.quarterlyChange;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-4">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mt-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">

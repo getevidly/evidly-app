@@ -102,7 +102,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         />
       )}
 
-      <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-white shadow">
+      <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-white shadow-sm">
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center flex-shrink-0">
@@ -137,7 +137,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   <ChevronDown className="h-4 w-4 text-gray-500" />
                 </button>
                 {showLocationMenu && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
                       <button
                         onClick={() => {
@@ -190,7 +190,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 <span className="text-xs font-semibold text-gray-600 uppercase">{locale}</span>
               </button>
               {showLangMenu && (
-                <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     {SUPPORTED_LOCALES.map((loc) => (
                       <button
@@ -232,7 +232,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
               {showRoleMenu && (
-                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     {([
                       { role: 'executive' as const, key: 'topBar.executiveView' },
@@ -280,7 +280,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
               {showUserMenu && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     <button
                       onClick={() => {
@@ -361,7 +361,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         <>
           <div className="fixed inset-0 bg-black bg-opacity-50 z-[60]" onClick={() => setShowChangePassword(false)} />
           <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
@@ -424,7 +424,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
                 <button
                   onClick={() => setShowChangePassword(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50"
                 >
                   {t('common.cancel')}
                 </button>

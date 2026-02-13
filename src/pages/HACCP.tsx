@@ -620,7 +620,7 @@ export function HACCP() {
                 <div
                   key={plan.id}
                   onClick={() => setSelectedPlan(plan)}
-                  className="bg-white rounded-lg shadow p-4 sm:p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
+                  className="bg-white rounded-xl shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer border-l-4"
                   style={{
                     borderLeftColor: planStatus === 'critical' ? '#dc2626' : planStatus === 'review' ? '#d97706' : '#16a34a',
                   }}
@@ -704,7 +704,7 @@ export function HACCP() {
               <span className="text-gray-600">{selectedPlan.name}</span>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6 mb-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
               <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{selectedPlan.name}</h2>
@@ -725,7 +725,7 @@ export function HACCP() {
               {selectedPlan.ccps.map((ccp) => (
                 <div
                   key={ccp.id}
-                  className={`bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 ${ccp.isWithinLimit ? 'border-l-green-500' : 'border-l-red-500'}`}
+                  className={`bg-white rounded-xl shadow-sm p-4 sm:p-5 border-l-4 ${ccp.isWithinLimit ? 'border-l-green-500' : 'border-l-red-500'}`}
                 >
                   <div className="flex items-start justify-between flex-wrap gap-2 mb-4">
                     <div className="flex items-center space-x-3">
@@ -802,7 +802,7 @@ export function HACCP() {
                 plan.ccps.map((ccp) => (
                   <div
                     key={ccp.id}
-                    className={`bg-white rounded-lg shadow p-4 border-t-4 ${ccp.isWithinLimit ? 'border-t-green-500' : 'border-t-red-500'}`}
+                    className={`bg-white rounded-xl shadow-sm p-4 border-t-4 ${ccp.isWithinLimit ? 'border-t-green-500' : 'border-t-red-500'}`}
                   >
                     <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div>
@@ -888,7 +888,7 @@ export function HACCP() {
                     const workflowSteps = ['Identified', 'Assigned', 'In Progress', 'Resolved'];
                     const currentStep = action.status === 'open' ? 0 : action.status === 'in_progress' ? 2 : 3;
                     return (
-                    <div key={action.id} className="bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 border-l-red-500">
+                    <div key={action.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border-l-4 border-l-red-500">
                       <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                         <div className="flex items-start space-x-3">
                           <AlertTriangle className="h-6 w-6 text-red-600 mt-0.5 flex-shrink-0" />
@@ -962,7 +962,7 @@ export function HACCP() {
               </h3>
               <div className="space-y-4">
                 {filteredCorrectiveActions.filter((a) => a.status === 'resolved').map((action) => (
-                  <div key={action.id} className="bg-white rounded-lg shadow p-4 sm:p-5 border-l-4 border-l-green-500">
+                  <div key={action.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border-l-4 border-l-green-500">
                     <div className="flex items-start justify-between flex-wrap gap-2 mb-3">
                       <div className="flex items-start space-x-3">
                         <CheckCircle className="h-6 w-6 text-green-600 mt-0.5 flex-shrink-0" />
@@ -1010,7 +1010,7 @@ export function HACCP() {
 
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium text-sm">{toastMessage}</span>
         </div>

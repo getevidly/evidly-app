@@ -46,7 +46,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/50" />
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+        className="relative bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

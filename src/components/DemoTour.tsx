@@ -168,7 +168,7 @@ export function DemoTour() {
       <>
         <div className="fixed inset-0 z-[99990] bg-black/60 flex items-center justify-center">
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 w-full max-w-md mx-4 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-8 text-center">
@@ -234,7 +234,7 @@ export function DemoTour() {
 
               <button
                 onClick={completeTour}
-                className="px-8 py-3 text-sm font-bold text-white rounded-xl hover:opacity-90 transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                className="px-8 py-3 text-sm font-bold text-white rounded-xl hover:opacity-90 transition-all hover:-translate-y-0.5 hover:shadow-md"
                 style={{ backgroundColor: '#1e4d6b' }}
               >
                 Start Exploring
@@ -287,7 +287,7 @@ export function DemoTour() {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[360px] bg-white rounded-xl shadow-2xl border border-gray-200"
+        className="fixed z-[99999] w-[360px] bg-white rounded-xl shadow-sm border border-gray-200"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >

@@ -20,7 +20,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
   const tierInfo = getInsuranceRiskTier(riskData.overall);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">

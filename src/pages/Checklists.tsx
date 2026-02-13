@@ -1069,7 +1069,7 @@ export function Checklists() {
               <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {todayChecklists.map((cl) => {
                 const pct = cl.total > 0 ? Math.round((cl.completed / cl.total) * 100) : 0;
                 const statusColor = cl.status === 'complete' ? 'green' : cl.status === 'in_progress' ? 'yellow' : 'gray';
@@ -1080,7 +1080,7 @@ export function Checklists() {
                 const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-gray-400';
 
                 return (
-                  <div key={cl.id} className="bg-white rounded-lg shadow p-6">
+                  <div key={cl.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-3">
                         <div className={`p-3 rounded-lg ${iconBg}`}>
@@ -1144,7 +1144,7 @@ export function Checklists() {
 
         {/* Templates View */}
         {activeView === 'templates' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div className="flex justify-between items-center flex-wrap gap-2">
               <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistTemplates')}</h2>
               <button
@@ -1166,7 +1166,7 @@ export function Checklists() {
                   {cat.templates.map((tmpl) => {
                     const roleBg = tmpl.role === 'Manager' ? 'bg-purple-100 text-purple-700' : tmpl.role === 'Facilities' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700';
                     return (
-                      <div key={tmpl.key} className="bg-white rounded-lg shadow p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
+                      <div key={tmpl.key} className="bg-white rounded-xl shadow-sm p-5 border border-gray-200 hover:border-[#1e4d6b] transition-colors">
                         <div className="flex items-start justify-between mb-3">
                           <h4 className="font-semibold text-gray-900 text-base">{templateNameMap[tmpl.name] || tmpl.name}</h4>
                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${roleBg}`}>{roleMap[tmpl.role] || tmpl.role}</span>
@@ -1207,7 +1207,7 @@ export function Checklists() {
             {templates.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Templates</h3>
-                <div className="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -1310,7 +1310,7 @@ export function Checklists() {
 
             <div className="text-sm text-gray-500">{filteredEntries.length} {t('checklists.entries')}</div>
 
-            <div className="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
+            <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -1383,7 +1383,7 @@ export function Checklists() {
       {/* Create Template Modal */}
       {showTemplateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-6">{t('checklists.createTemplate')}</h3>
 
             <form onSubmit={handleCreateTemplate} className="space-y-6">
@@ -1485,7 +1485,7 @@ export function Checklists() {
                 <button
                   type="button"
                   onClick={() => setShowTemplateModal(false)}
-                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-lg text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                  className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
                 >
                   Cancel
                 </button>
@@ -1505,7 +1505,7 @@ export function Checklists() {
       {/* Complete Checklist Modal */}
       {showCompleteModal && selectedTemplate && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-          <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-900">{templateNameMap[selectedTemplate.name] || selectedTemplate.name}</h3>
               <div className="mt-2">
@@ -1539,7 +1539,7 @@ export function Checklists() {
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(false)}
-                className="px-6 py-3 border-2 border-[#1e4d6b] rounded-lg text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
+                className="px-6 py-3 border-2 border-[#1e4d6b] rounded-xl text-lg font-medium text-[#1e4d6b] hover:bg-gray-50 transition-colors bg-white min-h-[44px]"
               >
                 Cancel
               </button>

@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="py-12 sm:py-16 px-4 sm:px-6 pb-20 sm:pb-16 bg-[var(--color-blue)] border-t border-[rgba(255,255,255,0.1)]">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-3 mb-4">

@@ -42,7 +42,7 @@ export function AiUpgradePrompt({ feature, description, variant = 'inline', onCl
   if (variant === 'modal') {
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-md w-full p-6 text-center">
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#fdf8e8' }}>
             <Sparkles className="h-7 w-7" style={{ color: '#d4af37' }} />
           </div>

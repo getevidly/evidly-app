@@ -49,7 +49,7 @@ export function MarketplaceLanding() {
               { step: 2, icon: ShieldCheck, title: 'Get EvidLY Verified', desc: 'Upload your credentials. Our team verifies your insurance, licenses, and certifications within 24 hours.' },
               { step: 3, icon: TrendingUp, title: 'Receive Qualified Leads', desc: 'Operators in your area find you through our marketplace. Accept quotes, schedule services, grow your business.' },
             ].map(item => (
-              <div key={item.step} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 text-center">
+              <div key={item.step} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-3 text-white text-sm font-bold" style={{ backgroundColor: '#1e4d6b' }}>
                   {item.step}
                 </div>
@@ -64,7 +64,7 @@ export function MarketplaceLanding() {
         </div>
 
         {/* Service Categories */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Categories We Serve</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -119,7 +119,7 @@ export function MarketplaceLanding() {
                 features: ['Top 10% vendors for 6+ months', 'Top search placement', 'Featured in AI recommendations', 'EvidLY Preferred badge', 'Co-marketing opportunities'],
               },
             ].map(t => (
-              <div key={t.tier} className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+              <div key={t.tier} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="h-1.5" style={{ backgroundColor: t.accent }} />
                 <div className="p-6 text-center">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: '#eef4f8' }}>
@@ -141,7 +141,7 @@ export function MarketplaceLanding() {
         </div>
 
         {/* Benefits Grid */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Why Vendors Choose EvidLY</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[

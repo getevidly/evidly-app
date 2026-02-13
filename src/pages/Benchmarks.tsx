@@ -274,7 +274,7 @@ export function Benchmarks() {
             {/* Always show summary row */}
           </div>
           <div className="p-4 sm:p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               {/* vs Industry */}
               <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#f8fafc' }}>
                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">vs Industry Average</div>
@@ -433,7 +433,7 @@ export function Benchmarks() {
         )}
 
         {/* ── Section 4: Where You Lead / Where You Lag ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Lead */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100" style={{ backgroundColor: '#f0fdf4' }}>

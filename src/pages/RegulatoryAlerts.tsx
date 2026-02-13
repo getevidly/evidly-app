@@ -234,7 +234,7 @@ export function RegulatoryAlerts() {
           {/* Left: Alert Feed */}
           <div className="flex-1 space-y-4">
             {filteredAlerts.length === 0 && (
-              <div className="bg-white rounded-lg shadow border border-gray-100 p-8 text-center">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 text-center">
                 <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
                 <p className="text-sm text-gray-500">No alerts match your current filters.</p>
               </div>
@@ -245,7 +245,7 @@ export function RegulatoryAlerts() {
               const isExpanded = expandedId === alert.id;
 
               return (
-                <div key={alert.id} className="bg-white rounded-lg shadow border border-gray-100 p-4 sm:p-6 space-y-4">
+                <div key={alert.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-4">
                   {/* Top row: badges */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getSourceBadgeClasses(alert.source)}`}>
@@ -412,7 +412,7 @@ export function RegulatoryAlerts() {
           {/* Right Sidebar */}
           <div className="w-full lg:w-[280px] flex-shrink-0">
             {/* Your Jurisdictions */}
-            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Your Jurisdictions</h3>
@@ -429,7 +429,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Monitoring Sources */}
-            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 mt-4">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Monitoring Sources</h3>
@@ -448,7 +448,7 @@ export function RegulatoryAlerts() {
             </div>
 
             {/* Compliance Calendar mini card */}
-            <div className="bg-white rounded-lg shadow p-4 sm:p-5 border border-gray-100 mt-4">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 mt-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#1e4d6b]" />
                 <h3 className="font-semibold text-gray-900">Upcoming Effective Dates</h3>

@@ -244,7 +244,7 @@ export function EnterpriseExecutive() {
 
         {/* ── B. Drill-Down Breadcrumb ──────────────────────── */}
         {drillDownNodeId && breadcrumb.length > 0 && (
-          <div className="flex items-center gap-1.5 text-xs bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-100 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs bg-white rounded-xl px-4 py-2 shadow-sm border border-gray-100 flex-wrap">
             <button onClick={() => setDrillDownNodeId(null)} className="text-gray-400 hover:text-gray-700 font-medium cursor-pointer">Corporate</button>
             {breadcrumb.slice(1).map((node, i) => (
               <span key={node.id} className="flex items-center gap-1.5">
@@ -322,7 +322,7 @@ export function EnterpriseExecutive() {
         </div>
 
         {/* ── D. Heat Map + Critical Alerts ─────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Organization Heat Map */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-2">

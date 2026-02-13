@@ -454,7 +454,7 @@ export function Team() {
             </h3>
             <div className="space-y-3">
               {invitations.map((invitation) => (
-                <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-lg">
+                <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-xl">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex gap-1">
                       {(invitation.invitation_method === 'email' || invitation.invitation_method === 'both') && (
@@ -540,7 +540,7 @@ export function Team() {
 
         {/* Temporary Coverage Assignments */}
         {canAssignTempCoverage() && (
-          <div className="bg-white shadow rounded-lg p-4 sm:p-6">
+          <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-4 sm:p-6">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[#1e4d6b]" />
@@ -674,7 +674,7 @@ export function Team() {
         )}
 
         {/* Team Members Table */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow-sm border border-gray-200 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -772,7 +772,7 @@ export function Team() {
                             <MoreVertical className="h-5 w-5 text-gray-500" />
                           </button>
                           {openActionMenu === member.id && (
-                            <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                            <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-sm border border-gray-200 py-1 z-20">
                               <button
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => { setOpenActionMenu(null); viewMemberDetails(member); }}
@@ -814,7 +814,7 @@ export function Team() {
       {/* Member Details Modal */}
       {showDetailsModal && selectedMember && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6 flex-wrap gap-2">
               <div className="flex items-center gap-3 sm:gap-4">
                 <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-[#1e4d6b] flex items-center justify-center text-white text-xl sm:text-2xl font-medium flex-shrink-0">
@@ -1000,7 +1000,7 @@ export function Team() {
       {/* Reset Password Confirmation Modal */}
       {showResetModal && resetMember && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white rounded-xl p-4 sm:p-5 w-full max-w-md">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-10 w-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <KeyRound className="h-5 w-5 text-amber-600" />

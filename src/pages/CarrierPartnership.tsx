@@ -35,7 +35,7 @@ export function CarrierPartnership() {
         </div>
 
         {/* What This Portal Will Offer */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6">What This Portal Will Offer</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
@@ -58,7 +58,7 @@ export function CarrierPartnership() {
         </div>
 
         {/* Data Privacy */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Data Privacy & Consent</h2>
           <div className="space-y-3">
             {[
@@ -78,7 +78,7 @@ export function CarrierPartnership() {
         </div>
 
         {/* API Endpoints Preview */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-8">
           <h2 className="text-lg font-bold text-gray-900 mb-4">API Endpoints</h2>
           <div className="space-y-2">
             {[

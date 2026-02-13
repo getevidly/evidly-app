@@ -268,7 +268,7 @@ export function Dashboard() {
           <Info className="h-5 w-5" />
           <span className="font-medium">{t('dashboard.demoMode')}</span>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
           <div className="flex justify-center mb-6">
             <div className="w-32 h-32 bg-gray-200 rounded-full"></div>
@@ -279,7 +279,7 @@ export function Dashboard() {
             <div className="flex-1 h-24 bg-gray-100 rounded-lg"></div>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-200">
           <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
             <div className="h-12 bg-gray-100 rounded"></div>
@@ -315,7 +315,7 @@ export function Dashboard() {
             </div>
             <button
               onClick={() => { setInspectorMode(false); setInspectorVisit(null); }}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 bg-white text-red-600 border border-red-300 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors"
             >
               <X className="h-4 w-4" />
               End Visit
@@ -969,7 +969,7 @@ export function Dashboard() {
                     <div style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '14px', fontWeight: '700', color: loc.color, border: '2px solid ' + loc.color }}>{loc.score}</div>
                     <div style={{ display: 'flex', gap: '8px', marginTop: '16px', justifyContent: 'center' }}>
                       <button onClick={() => window.print()} className="bg-[#1e4d6b] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#163a52] transition-colors duration-150">{t('common.print')}</button>
-                      <button onClick={() => navigate(`/passport/${loc.id}`)} className="bg-white text-[#1e4d6b] border border-[#1e4d6b] px-4 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors duration-150">{t('dashboard.viewPassport')}</button>
+                      <button onClick={() => navigate(`/passport/${loc.id}`)} className="bg-white text-[#1e4d6b] border border-[#1e4d6b] px-4 py-2 rounded-xl text-sm hover:bg-gray-50 transition-colors duration-150">{t('dashboard.viewPassport')}</button>
                     </div>
                   </div>
                 ))}

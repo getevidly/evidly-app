@@ -70,7 +70,7 @@ export default function PublicVerification() {
   if (!data) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-md w-full p-8 text-center">
           <ShieldCheck className="h-12 w-12 mx-auto mb-4 text-gray-300" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Verification Not Found</h1>
           <p className="text-sm text-gray-500 mb-6">This verification code is invalid or has expired. Please check the URL and try again.</p>
@@ -102,7 +102,7 @@ export default function PublicVerification() {
       </div>
 
       <div className="max-w-2xl mx-auto p-4 -mt-6">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           {/* Badge hero */}
           <div className="p-8 text-center" style={{ backgroundColor: badge.bg }}>
             <BadgeIcon className="h-16 w-16 mx-auto mb-4" style={{ color: badge.color }} />

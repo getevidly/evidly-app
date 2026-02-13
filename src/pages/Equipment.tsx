@@ -608,22 +608,22 @@ export function Equipment() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Total Equipment</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
             <div className="text-xs text-gray-400 mt-1">across {locationFilter === 'all' ? '3 locations' : '1 location'}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><Shield className="h-5 w-5 text-[#d97706]" /><span className="text-xs text-gray-500 uppercase font-semibold">Warranty Expiring</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">within 90 days</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">Maintenance Overdue</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
             <div className="text-xs text-gray-400 mt-1">needs immediate attention</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Avg Equipment Age</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
             <div className="text-xs text-gray-400 mt-1">years</div>
@@ -666,7 +666,7 @@ export function Equipment() {
                 <div
                   key={eq.id}
                   onClick={() => handleSelectEquipment(eq.id)}
-                  className={`bg-white rounded-xl shadow-sm p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1e4d6b]' : ''}`}
+                  className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-[#1e4d6b]' : ''}`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -697,7 +697,7 @@ export function Equipment() {
 
         {/* Equipment List — Table View */}
         {!loading && viewMode === 'table' && (
-          <div className="bg-white rounded-xl shadow-sm overflow-x-auto">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
             <table className="w-full">
               <thead><tr>
                 <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
@@ -731,14 +731,14 @@ export function Equipment() {
         )}
 
         {filtered.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center text-gray-400">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center text-gray-400">
             No equipment matches your filters.
           </div>
         )}
 
         {/* ── Detail Panel ─────────────────────────────────────────── */}
         {selected && (
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             {/* Detail header */}
             <div className="p-4 sm:p-5 border-b border-gray-200 flex items-start justify-between gap-2" style={{ backgroundColor: '#eef4f8' }}>
               <div>
@@ -775,7 +775,7 @@ export function Equipment() {
             <div className="p-3 sm:p-5">
               {/* ── Tab: Overview ─── */}
               {detailTab === 'overview' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-4">
                     <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Specifications</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
@@ -991,7 +991,7 @@ export function Equipment() {
         {/* ── Add / Edit Equipment Modal ─────────────────────────── */}
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
-            <div className="bg-white rounded-2xl shadow-xl w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
               <div className="p-5 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-bold text-gray-900">Add Equipment</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>
@@ -1127,7 +1127,7 @@ export function Equipment() {
 
         {/* Toast notification */}
         {toastMessage && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2 bg-green-600 text-white px-5 py-3 rounded-xl shadow-sm text-sm font-medium">
             <CheckCircle className="h-4 w-4 flex-shrink-0" />
             {toastMessage}
           </div>

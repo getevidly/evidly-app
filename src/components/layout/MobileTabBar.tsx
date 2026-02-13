@@ -136,7 +136,7 @@ export function MobileTabBar() {
       )}
 
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-lg transition-transform duration-300 ease-out z-40 md:hidden ${
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-sm transition-transform duration-300 ease-out z-40 md:hidden ${
           showMoreMenu ? 'translate-y-0' : 'translate-y-full'
         }`}
         style={{ maxHeight: '70vh' }}

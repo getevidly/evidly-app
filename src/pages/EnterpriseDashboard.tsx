@@ -271,7 +271,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Hierarchy Scorecard Table */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Organization Scorecard — Aramark</h3>
@@ -367,7 +367,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
       </div>
 
       {/* Trend Analytics + Tenant Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* 12-Month Trend */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
@@ -729,7 +729,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => { setSelectedTenant(t.id); setSelectedNode(null); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
             >
               <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
@@ -740,7 +740,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
         <button
           onClick={() => setShowConfig(!showConfig)}
-          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${showConfig ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}
+          className={`ml-auto flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${showConfig ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'}`}
         >
           <Settings className="h-3.5 w-3.5" />
           Hierarchy Config
@@ -761,7 +761,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
             <div className="flex items-center gap-1 mb-2 flex-wrap">
               {tenant.hierarchy.map((h, i) => (
                 <span key={h.key} className="flex items-center gap-1">
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-gray-200 bg-white">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl border border-gray-200 bg-white">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS[h.key] || '#6b7280' }} />
                     <span className="text-xs font-medium text-gray-900">{h.label}</span>
                     {h.key === 'location' && (
@@ -1004,7 +1004,7 @@ function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => { setSelectedTenant(t.id); setSsoType(t.ssoConfig.providerType === 'oidc' ? 'oidc' : 'saml'); }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
             >
               <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
@@ -1181,7 +1181,7 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
           <select
             value={tenantFilter}
             onChange={e => setTenantFilter(e.target.value)}
-            className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer"
+            className="px-3 py-1.5 text-xs border border-gray-200 rounded-xl bg-white cursor-pointer"
           >
             <option value="all">All Tenants</option>
             {enterpriseTenants.map(t => (
@@ -1294,7 +1294,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => handleTenantChange(t.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
             >
               <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
@@ -1398,13 +1398,13 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
                 <div className="h-3 w-24 rounded mb-3" style={{ backgroundColor: colors.primaryColor }} />
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="bg-white rounded-lg border border-gray-200 p-2">
+                    <div key={i} className="bg-white rounded-xl border border-gray-200 p-2">
                       <div className="h-2 w-10 rounded mb-1" style={{ backgroundColor: colors.accentColor }} />
                       <div className="h-2 w-14 rounded bg-gray-200" />
                     </div>
                   ))}
                 </div>
-                <div className="bg-white rounded-lg border border-gray-200 p-2">
+                <div className="bg-white rounded-xl border border-gray-200 p-2">
                   <div className="h-2 w-20 rounded mb-2" style={{ backgroundColor: colors.secondaryColor }} />
                   <div className="space-y-1">
                     {[1, 2, 3].map(i => <div key={i} className="h-1.5 rounded bg-gray-100" style={{ width: `${90 - i * 15}%` }} />)}
@@ -1421,8 +1421,8 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
             </div>
             <p className="text-sm font-bold mb-3" style={{ color: colors.sidebarText }}>{platformName}</p>
             <div className="max-w-xs mx-auto space-y-2">
-              <div className="h-8 rounded-lg bg-white/10 border" style={{ borderColor: colors.sidebarText + '33' }} />
-              <div className="h-8 rounded-lg bg-white/10 border" style={{ borderColor: colors.sidebarText + '33' }} />
+              <div className="h-8 rounded-xl bg-white/10 border" style={{ borderColor: colors.sidebarText + '33' }} />
+              <div className="h-8 rounded-xl bg-white/10 border" style={{ borderColor: colors.sidebarText + '33' }} />
               <div className="h-8 rounded-lg" style={{ backgroundColor: colors.primaryColor }}>
                 <span className="text-xs font-medium leading-8" style={{ color: colors.sidebarText }}>Sign In</span>
               </div>
@@ -1522,7 +1522,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
               <p className="text-xs font-medium text-gray-600 mb-2">Report Sections (drag to reorder)</p>
               <div className="space-y-1.5 min-h-[120px] p-3 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50">
                 {builderSections.map((s, i) => (
-                  <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-white border border-gray-200">
+                  <div key={s} className="flex items-center gap-2 p-2 rounded-xl bg-white border border-gray-200">
                     <span className="w-5 h-5 rounded flex items-center justify-center text-[10px] font-bold text-gray-400 bg-gray-50">{i + 1}</span>
                     <span className="text-xs text-gray-700 flex-1">{s}</span>
                     <button onClick={() => setBuilderSections(builderSections.filter((_, j) => j !== i))} className="text-gray-300 hover:text-red-400 cursor-pointer">
@@ -1688,7 +1688,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium text-gray-600">Tenant:</span>
-          <select value={tenantFilter} onChange={e => setTenantFilter(e.target.value)} className="px-3 py-1.5 text-xs border border-gray-200 rounded-lg bg-white cursor-pointer">
+          <select value={tenantFilter} onChange={e => setTenantFilter(e.target.value)} className="px-3 py-1.5 text-xs border border-gray-200 rounded-xl bg-white cursor-pointer">
             <option value="all">All Tenants</option>
             {enterpriseTenants.map(t => <option key={t.id} value={t.id}>{t.displayName.split(' ')[0]}</option>)}
           </select>
@@ -1899,7 +1899,7 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
             <button
               key={t.id}
               onClick={() => setSelectedTenant(t.id)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${selectedTenant === t.id ? 'border-blue-300 bg-blue-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}
             >
               <div className="w-5 h-5 rounded flex items-center justify-center text-white text-[9px] font-bold" style={{ backgroundColor: t.branding.primaryColor }}>
                 {t.logoPlaceholder}
@@ -1994,7 +1994,7 @@ function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
         <h3 className="text-sm font-semibold text-gray-900 mb-4">Enterprise Pricing Tiers</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {enterprisePricingTiers.map(tier => (
-            <div key={tier.name} className={`rounded-xl border p-4 sm:p-5 ${tier.highlighted ? 'border-2 shadow-lg' : 'border-gray-200'}`} style={tier.highlighted ? { borderColor: '#1e4d6b' } : {}}>
+            <div key={tier.name} className={`rounded-xl border p-4 sm:p-5 ${tier.highlighted ? 'border-2 shadow-sm' : 'border-gray-200'}`} style={tier.highlighted ? { borderColor: '#1e4d6b' } : {}}>
               {tier.highlighted && (
                 <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-semibold rounded-full text-white mb-3" style={{ backgroundColor: '#1e4d6b' }}>
                   Most Popular

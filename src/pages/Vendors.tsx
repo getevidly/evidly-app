@@ -381,7 +381,7 @@ export function Vendors() {
           </button>
 
           {/* Header */}
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               <div className="flex items-start space-x-4">
                 <div className="p-3 bg-blue-100 rounded-lg">
@@ -464,8 +464,8 @@ export function Vendors() {
 
           {/* Overview Tab */}
           {detailTab === 'overview' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
                 <div className="space-y-3">
                   <div className="flex items-center text-gray-700">
@@ -491,7 +491,7 @@ export function Vendors() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-4">Service Schedule by Location</h2>
                 <div className="space-y-3">
                   {selectedVendor.locations.map((loc) => (
@@ -519,7 +519,7 @@ export function Vendors() {
 
               {/* Performance */}
               {selectedPerf && (
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6 lg:col-span-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:col-span-2">
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
@@ -551,7 +551,7 @@ export function Vendors() {
 
           {/* Documents Tab */}
           {detailTab === 'documents' && (
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                 <div>
                   <h2 className="text-lg font-semibold">Required Documents</h2>
@@ -616,7 +616,7 @@ export function Vendors() {
 
               <div className="space-y-3">
                 {selectedDocs.map((doc, idx) => (
-                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-sm transition-shadow">
+                  <div key={idx} className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
                     <div className="flex items-start space-x-3 flex-1">
                       <FileText className="h-5 w-5 text-gray-400 mt-0.5" />
                       <div>
@@ -677,7 +677,7 @@ export function Vendors() {
           {detailTab === 'automation' && (
             <div className="space-y-6">
               {/* Auto-Request Settings */}
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                   <div>
                     <h2 className="text-lg font-semibold">Document Automation Settings</h2>
@@ -722,7 +722,7 @@ export function Vendors() {
 
               {/* Timeline (show for Valley Fire) */}
               {isValleyFire && (
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                     <div>
                       <h2 className="text-lg font-semibold">Post-Service Document Request — Airport Cafe</h2>
@@ -777,7 +777,7 @@ export function Vendors() {
               )}
 
               {!isValleyFire && (
-                <div className="bg-white rounded-lg shadow p-4 sm:p-6 text-center text-gray-500">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 text-center text-gray-500">
                   <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
                   <p className="font-medium">No active automation workflows</p>
                   <p className="text-sm mt-1">Workflows will appear here when documents are requested or services are completed.</p>
@@ -789,7 +789,7 @@ export function Vendors() {
           {/* Secure Upload Link Tab */}
           {detailTab === 'upload-link' && (
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h2 className="text-lg font-semibold mb-2">Secure Upload Link</h2>
                 <p className="text-sm text-gray-600 mb-4">
                   Each vendor gets a unique, secure link to upload documents without needing an EvidLY account.
@@ -845,7 +845,7 @@ export function Vendors() {
               </div>
 
               {/* Upload page preview */}
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                 <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Upload Page Preview</h3>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                   <div className="max-w-md mx-auto text-center">
@@ -885,7 +885,7 @@ export function Vendors() {
 
           {/* Contact Tab */}
           {detailTab === 'contact' && (
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4">Contact {selectedVendor.contactName}</h2>
               <div className="space-y-4 mb-6">
                 <div>
@@ -920,7 +920,7 @@ export function Vendors() {
 
         {/* Toast */}
         {toastMessage && (
-          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+          <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
             <CheckCircle className="h-4 w-4" />
             <span className="font-medium text-sm">{toastMessage}</span>
           </div>
@@ -977,7 +977,7 @@ export function Vendors() {
         {activeTab === 'list' && (
           <>
             {/* Filter Bar */}
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               <div className="flex items-center space-x-2 mb-3">
                 <Filter className="h-4 w-4 text-gray-500" />
                 <span className="text-sm font-medium text-gray-700">Filters</span>
@@ -1041,7 +1041,7 @@ export function Vendors() {
                 <div
                   key={vendor.id}
                   onClick={() => handleSelectVendor(vendor)}
-                  className="bg-white rounded-lg shadow p-4 sm:p-5 hover:shadow-lg transition-shadow cursor-pointer border-l-4"
+                  className="bg-white rounded-xl shadow-sm p-4 sm:p-5 hover:shadow-md transition-shadow cursor-pointer border-l-4"
                   style={{
                     borderLeftColor: displayStatus === 'overdue' ? '#dc2626' : displayStatus === 'upcoming' ? '#d97706' : '#16a34a',
                   }}
@@ -1200,12 +1200,12 @@ export function Vendors() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {consolidatedVendors.map((vendor) => {
                 const perf = VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
                 if (!perf) return null;
                 return (
-                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-lg shadow p-4 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer">
+                  <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">{vendor.companyName}</h3>
@@ -1230,14 +1230,14 @@ export function Vendors() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.onTimeRate)}` }}>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.onTimeRate)}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Clock className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.onTimeRate) }} />
                           <span className="text-xs text-gray-500 font-medium">On-time Service</span>
                         </div>
                         <p className={`text-xl font-bold text-center ${getScoreColor(perf.onTimeRate)}`}>{perf.onTimeRate}%</p>
                       </div>
-                      <div className="bg-white rounded-lg shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.docComplianceRate)}` }}>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${getScoreBorder(perf.docComplianceRate)}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <FileText className="h-3.5 w-3.5" style={{ color: getScoreBorder(perf.docComplianceRate) }} />
                           <span className="text-xs text-gray-500 font-medium">Doc Compliance</span>
@@ -1268,7 +1268,7 @@ export function Vendors() {
         <>
           <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowInviteModal(false)} />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-2xl w-[95vw] sm:w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-md" onClick={(e) => e.stopPropagation()}>
               <div className="p-4 sm:p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -1373,7 +1373,7 @@ export function Vendors() {
 
       {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium text-sm">{toastMessage}</span>
         </div>

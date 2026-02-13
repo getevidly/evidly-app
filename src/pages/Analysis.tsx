@@ -815,7 +815,7 @@ export function Analysis() {
             </div>
 
             {/* Score Projection */}
-            <div className="bg-white rounded-lg shadow p-4 sm:p-6" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6" style={{ marginBottom: '24px' }}>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Score Projection</h2>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={scoreProjectionData}>
@@ -844,7 +844,7 @@ export function Analysis() {
             </div>
 
             {/* Actions to Improve Score */}
-            <div className="bg-white rounded-lg shadow overflow-hidden" style={{ marginBottom: '24px' }}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" style={{ marginBottom: '24px' }}>
               <div className="p-4 sm:p-6 pb-4">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div>
@@ -913,7 +913,7 @@ export function Analysis() {
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety ({Math.round(getWeights().foodSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.foodSafety}>
@@ -929,7 +929,7 @@ export function Analysis() {
                     {opEnd >= opStart ? '+' : ''}{opEnd - opStart} points over 12 weeks
                   </p>
                 </div>
-                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety ({Math.round(getWeights().fireSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.fireSafety}>
@@ -945,7 +945,7 @@ export function Analysis() {
                     {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
                   </p>
                 </div>
-                <div className="bg-white rounded-lg shadow p-3 sm:p-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.vendorCompliance}>
