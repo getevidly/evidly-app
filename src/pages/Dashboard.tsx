@@ -40,6 +40,7 @@ import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
 import { getStateLabel } from '../lib/stateCodes';
 import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { FeatureGate } from '../components/FeatureGate';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -983,6 +984,7 @@ export function Dashboard() {
         {/* AI Insights Widget */}
         {['executive', 'management'].includes(userRole) && (
           <ErrorBoundary level="section">
+          <FeatureGate featureId="ai-predictive-insights">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mt-4">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-3">
@@ -1034,24 +1036,29 @@ export function Dashboard() {
               })}
             </div>
           </div>
+          </FeatureGate>
           </ErrorBoundary>
         )}
 
         {/* Industry Benchmark Widget */}
         {['executive', 'management'].includes(userRole) && (
           <ErrorBoundary level="section">
-            <div className="mt-4">
-              <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
-            </div>
+            <FeatureGate featureId="industry-benchmarks">
+              <div className="mt-4">
+                <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+              </div>
+            </FeatureGate>
           </ErrorBoundary>
         )}
 
         {/* Insurance Risk Score Widget */}
         {['executive', 'management'].includes(userRole) && (
           <ErrorBoundary level="section">
-            <div className="mt-4">
-              <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
-            </div>
+            <FeatureGate featureId="insurance-risk-score">
+              <div className="mt-4">
+                <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+              </div>
+            </FeatureGate>
           </ErrorBoundary>
         )}
 

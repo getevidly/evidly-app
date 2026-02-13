@@ -37,6 +37,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
+import { useSubscription } from '../../hooks/useSubscription';
+import { getFeatureBadge } from '../../lib/featureGating';
 
 // ── Types ───────────────────────────────────────────────
 
@@ -48,6 +50,7 @@ interface NavItem {
   icon: LucideIcon;
   roles: UserRole[];
   badge?: number;
+  featureId?: string;
 }
 
 interface NavSection {
@@ -98,8 +101,8 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.complianceScore', href: '/scoring-breakdown', icon: ShieldCheck, roles: mgmtRoles },
       { i18nKey: 'nav.healthDeptReports', href: '/health-dept-report', icon: Building2, roles: mgmtRoles },
       { i18nKey: 'nav.weeklyDigest', href: '/weekly-digest', icon: MailOpen, roles: mgmtRoles },
-      { i18nKey: 'nav.complianceIntelligence', href: '/compliance-index', icon: Shield, roles: mgmtRoles },
-      { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4 },
+      { i18nKey: 'nav.complianceIntelligence', href: '/compliance-index', icon: Shield, roles: mgmtRoles, featureId: 'advanced-analytics' },
+      { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4, featureId: 'ai-predictive-insights' },
       { i18nKey: 'nav.inspectorView', href: '/inspector-view', icon: ClipboardCheck, roles: mgmtRoles },
     ],
   },
@@ -136,7 +139,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.admin',
     items: [
       { i18nKey: 'nav.usageAnalytics', href: '/admin/usage-analytics', icon: BarChart3, roles: allRoles },
-      { i18nKey: 'nav.systemAdmin', href: '/enterprise/dashboard', icon: Building2, roles: allRoles },
+      { i18nKey: 'nav.systemAdmin', href: '/enterprise/dashboard', icon: Building2, roles: allRoles, featureId: 'enterprise-dashboard' },
     ],
     adminOnly: true,
   },
@@ -168,6 +171,7 @@ export function Sidebar() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
+  const { currentTier } = useSubscription();
   const showAdmin = isEvidlyAdmin || isDemoMode;
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>(loadExpandedState);
@@ -278,6 +282,15 @@ export function Sidebar() {
                               {item.badge}
                             </span>
                           )}
+                          {!isDemoMode && item.featureId && (() => {
+                            const tierBadge = getFeatureBadge(item.featureId, currentTier);
+                            if (!tierBadge) return null;
+                            return (
+                              <span className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded ${tierBadge === 'PRO' ? 'bg-[#d4af37]/20 text-[#d4af37]' : 'bg-blue-500/20 text-blue-300'}`}>
+                                {tierBadge}
+                              </span>
+                            );
+                          })()}
                         </div>
                       );
                     })}
