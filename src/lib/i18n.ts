@@ -90,6 +90,7 @@ const en = {
     systemAdmin: 'System Admin',
     inspectorView: 'Inspector View',
     auditTrail: 'Audit Trail',
+    photoEvidence: 'Photo Evidence',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -699,6 +700,7 @@ const es: typeof en = {
     systemAdmin: 'Admin del Sistema',
     inspectorView: 'Vista del Inspector',
     auditTrail: 'Pista de Auditoría',
+    photoEvidence: 'Evidencia Fotográfica',
   },
 
   common: {
