@@ -89,6 +89,7 @@ const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ de
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
 const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
+const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 
 import Navigation from './components/Navigation';
@@ -252,6 +253,7 @@ function AppRoutes() {
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/checklists" element={<Checklists />} />
           <Route path="/documents" element={<Documents />} />
+          <Route path="/document-checklist" element={<DocumentChecklist />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
           <Route path="/marketplace" element={<VendorMarketplace />} />

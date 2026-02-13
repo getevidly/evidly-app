@@ -31,6 +31,7 @@ import {
   ChevronRight,
   Upload,
   Camera,
+  ListChecks,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -80,6 +81,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.sectionCompliance',
     items: [
       { i18nKey: 'nav.fireSafetyDocs', href: '/documents', icon: FileText, roles: allRoles },
+      { i18nKey: 'nav.documentChecklist', href: '/document-checklist', icon: ListChecks, roles: mgmtRoles },
       { i18nKey: 'nav.temperatureLogs', href: '/temp-logs', icon: Thermometer, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.dailyChecklists', href: '/checklists', icon: CheckSquare, roles: ['executive', 'management', 'kitchen'] },
       { i18nKey: 'nav.foodSafety', href: '/haccp', icon: ClipboardList, roles: ['executive', 'management', 'kitchen'] },

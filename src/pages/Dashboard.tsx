@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   Activity,
   ArrowLeft,
@@ -46,6 +46,8 @@ import { Gift } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import { WelcomeModal } from '../components/WelcomeModal';
 import { WelcomeBack } from '../components/WelcomeBack';
+import { OnboardingProgressWidget } from '../components/OnboardingProgressWidget';
+import { DEMO_CHECKLIST_STATUS, getDocumentsForState } from '../data/onboardingDocuments';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -78,6 +80,22 @@ export function Dashboard() {
     ? (demoUserName?.split(' ')[0] || 'there')
     : (profile?.full_name?.split(' ')[0] || 'there');
   const lastLoginAt = isDemoMode ? null : (profile as any)?.last_login_at;
+
+  // Onboarding document progress (for dashboard widget)
+  const onboardingDocs = useMemo(() => getDocumentsForState(), []);
+  const onboardingRequired = useMemo(() => onboardingDocs.filter(d => d.required), [onboardingDocs]);
+  const onboardingComplete = useMemo(() =>
+    onboardingRequired.filter(d => {
+      const entry = DEMO_CHECKLIST_STATUS[d.id];
+      return entry && (entry.status === 'uploaded' || entry.status === 'not_applicable');
+    }).length,
+  [onboardingRequired]);
+  const nextOnboardingDoc = useMemo(() =>
+    onboardingRequired.find(d => {
+      const entry = DEMO_CHECKLIST_STATUS[d.id];
+      return !entry || entry.status === 'pending';
+    }),
+  [onboardingRequired]);
 
   // Load real Supabase data with demo fallback
   useEffect(() => {
@@ -346,6 +364,17 @@ export function Dashboard() {
           lastLoginAt={lastLoginAt}
           isDemoMode={isDemoMode}
         />
+      )}
+
+      {/* Onboarding Document Progress Widget */}
+      {onboardingComplete < onboardingRequired.length && (
+        <div className="mb-6">
+          <OnboardingProgressWidget
+            totalRequired={onboardingRequired.length}
+            completedRequired={onboardingComplete}
+            nextDocumentName={nextOnboardingDoc?.name}
+          />
+        </div>
       )}
 
       {/* Inspector Mode Panel */}
