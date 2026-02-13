@@ -32,6 +32,7 @@ import { FacilitiesDashboard } from './FacilitiesDashboard';
 import { BenchmarkWidget } from '../components/BenchmarkWidget';
 import { InsuranceReadinessWidget } from '../components/InsuranceReadinessWidget';
 import { SensorMonitorWidget } from '../components/SensorMonitorWidget';
+import { EquipmentHealthWidget } from '../components/EquipmentHealthWidget';
 import { useTranslation } from '../contexts/LanguageContext';
 import { startInspectorVisit, type InspectorVisit } from '../lib/reportGenerator';
 import { calculateJurisdictionScore, extractCountySlug } from '../lib/jurisdictionScoring';
@@ -1059,6 +1060,15 @@ export function Dashboard() {
                 <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
               </div>
             </FeatureGate>
+          </ErrorBoundary>
+        )}
+
+        {/* Equipment Health Widget */}
+        {['executive', 'management', 'facilities'].includes(userRole) && (
+          <ErrorBoundary level="section">
+            <div className="mt-4">
+              <EquipmentHealthWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+            </div>
           </ErrorBoundary>
         )}
 

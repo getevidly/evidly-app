@@ -4,7 +4,7 @@ import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
   ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download, Shield,
   Bell, BellOff, ExternalLink, XCircle, Filter, CheckCircle2, TrendingUp,
-  TrendingDown, Minus, Link2, Loader2,
+  TrendingDown, Minus, Link2, Loader2, Wrench,
 } from 'lucide-react';
 import { vendors as demoVendors, locations as demoLocations } from '../data/demoData';
 import { format } from 'date-fns';
@@ -516,6 +516,62 @@ export function Vendors() {
                   ))}
                 </div>
               </div>
+
+              {/* Linked Equipment */}
+              {(() => {
+                const VENDOR_EQUIPMENT_MAP: Record<string, { name: string; type: string; location: string; serviceType: string }[]> = {
+                  'abc-fire-protection': [
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Hood Cleaning' },
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Hood Cleaning' },
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'University Dining', serviceType: 'Hood Cleaning' },
+                    { name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan', location: 'Downtown Kitchen', serviceType: 'Cleaning (with hood)' },
+                    { name: 'Upblast Exhaust Fan', type: 'Exhaust Fan', location: 'Airport Cafe', serviceType: 'Cleaning (with hood)' },
+                    { name: 'Upblast Exhaust Fan — Main Line', type: 'Exhaust Fan', location: 'University Dining', serviceType: 'Cleaning (with hood)' },
+                  ],
+                  'cleanair-hvac': [
+                    { name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' },
+                    { name: 'Walk-in Freezer', type: 'Walk-in Freezer', location: 'Downtown Kitchen', serviceType: 'Maintenance' },
+                    { name: 'Commercial Dishwasher', type: 'Commercial Dishwasher', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' },
+                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Downtown Kitchen', serviceType: 'Cleaning & Service' },
+                    { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Airport Cafe', serviceType: 'Maintenance' },
+                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Airport Cafe', serviceType: 'Cleaning & Service' },
+                  ],
+                  'valley-fire-systems': [
+                    { name: 'Fire Suppression System', type: 'Fire Suppression System', location: 'Downtown Kitchen', serviceType: 'Semi-Annual Inspection' },
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Fire Suppression Inspection' },
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Fire Suppression Inspection' },
+                  ],
+                };
+                const vendorSlug = selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-');
+                const linkedEquipment = VENDOR_EQUIPMENT_MAP[vendorSlug] || [];
+                if (linkedEquipment.length === 0) return null;
+                return (
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold">Linked Equipment ({linkedEquipment.length})</h2>
+                      <button onClick={() => navigate('/equipment')} className="text-xs text-[#1e4d6b] hover:underline flex items-center gap-1">
+                        <Wrench className="h-3.5 w-3.5" /> View All Equipment
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {linkedEquipment.map((eq, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer" onClick={() => navigate('/equipment')}>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
+                              <Wrench className="h-4 w-4 text-[#1e4d6b]" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-sm text-gray-900">{eq.name}</div>
+                              <div className="text-xs text-gray-500">{eq.location} · {eq.serviceType}</div>
+                            </div>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-gray-400" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Performance */}
               {selectedPerf && (

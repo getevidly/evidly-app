@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, Shield, AlertTriangle, Clock,
-  MapPin, X, Calendar, TrendingUp, Edit3, Truck, Package, Loader2, CheckCircle,
+  MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -18,6 +18,7 @@ import { PhotoGallery } from '../components/PhotoGallery';
 // ── Types ──────────────────────────────────────────────────────────
 
 type Condition = 'Excellent' | 'Good' | 'Fair' | 'Poor' | 'Critical';
+type EquipmentStatus = 'operational' | 'needs_repair' | 'out_of_service' | 'decommissioned';
 
 interface ServiceRecord {
   date: string;
@@ -34,6 +35,12 @@ interface ScheduleItem {
   nextDue: string;
 }
 
+interface VendorLink {
+  vendor: string;
+  serviceType: string;
+  isPrimary: boolean;
+}
+
 interface EquipmentItem {
   id: string;
   name: string;
@@ -48,12 +55,15 @@ interface EquipmentItem {
   warrantyExpiry: string;
   warrantyProvider: string;
   warrantyTerms: string;
+  warrantyContact?: string;
   condition: Condition;
   nextMaintenanceDue: string;
   maintenanceInterval: string;
   linkedVendor: string;
+  linkedVendors?: VendorLink[];
   usefulLifeYears: number;
   replacementCost: number;
+  status?: EquipmentStatus;
   notes: string;
   serviceHistory: ServiceRecord[];
   schedule: ScheduleItem[];
@@ -128,6 +138,50 @@ const badge = (text: string, color: string, bg: string): React.CSSProperties => 
   color, backgroundColor: bg, display: 'inline-block', whiteSpace: 'nowrap',
 });
 
+function statusStyle(s?: EquipmentStatus) {
+  switch (s) {
+    case 'needs_repair': return { label: 'Needs Repair', color: '#d97706', bg: '#fffbeb' };
+    case 'out_of_service': return { label: 'Out of Service', color: '#dc2626', bg: '#fef2f2' };
+    case 'decommissioned': return { label: 'Decommissioned', color: '#6b7280', bg: '#f3f4f6' };
+    default: return { label: 'Operational', color: '#16a34a', bg: '#f0fdf4' };
+  }
+}
+
+function bookValue(purchasePrice: number, installDate: string, usefulLife: number): number {
+  const age = ageYears(installDate);
+  const annualDep = purchasePrice / usefulLife;
+  return Math.max(0, Math.round(purchasePrice - annualDep * age));
+}
+
+function annualCosts(history: ServiceRecord[]): { year: number; cost: number }[] {
+  const grouped: Record<number, number> = {};
+  history.forEach(r => {
+    const yr = new Date(r.date).getFullYear();
+    grouped[yr] = (grouped[yr] || 0) + r.cost;
+  });
+  return Object.entries(grouped)
+    .map(([y, c]) => ({ year: parseInt(y), cost: c }))
+    .sort((a, b) => a.year - b.year);
+}
+
+function maintenanceTrend(history: ServiceRecord[]): 'increasing' | 'stable' | 'decreasing' {
+  const ac = annualCosts(history);
+  if (ac.length < 2) return 'stable';
+  const recent = ac.slice(-2);
+  const diff = recent[1].cost - recent[0].cost;
+  const pct = recent[0].cost > 0 ? diff / recent[0].cost : 0;
+  if (pct > 0.15) return 'increasing';
+  if (pct < -0.15) return 'decreasing';
+  return 'stable';
+}
+
+const DEFAULT_LIFESPANS: Record<string, number> = {
+  'Walk-in Cooler': 15, 'Walk-in Freezer': 15, 'Prep Cooler': 10,
+  'Ice Machine': 8, 'Hood System': 20, 'Exhaust Fan': 15,
+  'Fire Suppression System': 12, 'Grease Trap': 20, 'Commercial Fryer': 10,
+  'Commercial Oven': 12, 'Commercial Dishwasher': 8,
+};
+
 // ── Demo Data ──────────────────────────────────────────────────────
 
 const DEMO_EQUIPMENT: EquipmentItem[] = [
@@ -138,8 +192,13 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     locationId: '1', location: 'Downtown Kitchen',
     installDate: '2019-01-15', purchasePrice: 9500,
     warrantyExpiry: '2024-01-15', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
+    warrantyContact: '1-800-878-3633 / warranty@truemfg.com',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Quarterly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 11000,
+    status: 'operational' as EquipmentStatus,
+    linkedVendors: [
+      { vendor: 'CleanAir HVAC', serviceType: 'Repair & Maintenance', isPrimary: true },
+    ],
     notes: 'Replaced door gaskets Oct 2025. Running well.',
     serviceHistory: [
       { date: '2025-10-12', vendor: 'CleanAir HVAC', type: 'Door Gasket Replacement', cost: 450, notes: 'Replaced both door gaskets, checked refrigerant levels' },
@@ -158,8 +217,13 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     locationId: '1', location: 'Downtown Kitchen',
     installDate: '2021-03-10', purchasePrice: 12500,
     warrantyExpiry: '2027-03-10', warrantyProvider: 'Kolpak', warrantyTerms: '6-year compressor, 3-year parts',
+    warrantyContact: '1-800-965-5727 / support@kolpak.com',
     condition: 'Excellent', nextMaintenanceDue: '2026-03-15', maintenanceInterval: 'Quarterly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 14000,
+    status: 'operational' as EquipmentStatus,
+    linkedVendors: [
+      { vendor: 'CleanAir HVAC', serviceType: 'Maintenance', isPrimary: true },
+    ],
     notes: 'Under warranty. No issues.',
     serviceHistory: [
       { date: '2025-12-15', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 0, notes: 'Covered under warranty. Coils cleaned, defrost cycle tested.' },
@@ -176,8 +240,14 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     locationId: '1', location: 'Downtown Kitchen',
     installDate: '2018-08-20', purchasePrice: 18000,
     warrantyExpiry: '2023-08-20', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
+    warrantyContact: '1-800-334-9256',
     condition: 'Fair', nextMaintenanceDue: '2026-01-20', maintenanceInterval: 'Quarterly',
     linkedVendor: 'ABC Fire Protection', usefulLifeYears: 20, replacementCost: 22000,
+    status: 'operational' as EquipmentStatus,
+    linkedVendors: [
+      { vendor: 'ABC Fire Protection', serviceType: 'Hood Cleaning', isPrimary: true },
+      { vendor: 'Valley Fire Systems', serviceType: 'Fire Suppression Inspection', isPrimary: false },
+    ],
     notes: 'Fan belt showing wear. Schedule replacement next service.',
     serviceHistory: [
       { date: '2025-10-20', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 850, notes: 'Full hood and duct cleaning. Fan belt showing wear.' },
@@ -247,13 +317,21 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     locationId: '1', location: 'Downtown Kitchen',
     installDate: '2017-09-01', purchasePrice: 12000,
     warrantyExpiry: '2022-09-01', warrantyProvider: 'Hobart', warrantyTerms: '5-year parts and labor',
+    warrantyContact: '1-888-446-2278 / hobart.service@itw.com',
     condition: 'Poor', nextMaintenanceDue: '2026-01-01', maintenanceInterval: 'Quarterly',
-    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 14500,
-    notes: 'Past useful life. Frequent repairs. Replacement recommended for Q2 2026.',
+    linkedVendor: 'CleanAir HVAC', usefulLifeYears: 8, replacementCost: 14500,
+    status: 'needs_repair' as EquipmentStatus,
+    linkedVendors: [
+      { vendor: 'CleanAir HVAC', serviceType: 'Repair & Maintenance', isPrimary: true },
+    ],
+    notes: 'Past useful life. Frequent repairs. Replacement recommended for Q2 2026. Rising maintenance costs — $1,200 emergency repair Dec 2025.',
     serviceHistory: [
       { date: '2025-12-18', vendor: 'CleanAir HVAC', type: 'Emergency Repair', cost: 1200, notes: 'Replaced wash pump motor. Unit struggling.' },
       { date: '2025-10-01', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 375, notes: 'Cleaned spray arms, descaled booster heater.' },
       { date: '2025-07-14', vendor: 'CleanAir HVAC', type: 'Emergency Repair', cost: 850, notes: 'Replaced rinse solenoid valve. Leaking.' },
+      { date: '2025-03-10', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 375, notes: 'Standard quarterly. Booster heater descaled.' },
+      { date: '2024-12-15', vendor: 'CleanAir HVAC', type: 'Quarterly Service', cost: 350, notes: 'Routine maintenance. Spray arm gaskets worn.' },
+      { date: '2024-06-20', vendor: 'CleanAir HVAC', type: 'Annual Inspection', cost: 425, notes: 'Full inspection. Pump showing age.' },
     ],
     schedule: [
       { task: 'Spray arm cleaning & descale', interval: 'Quarterly', lastDone: '2025-10-01', nextDue: '2026-01-01' },
@@ -287,6 +365,10 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
     linkedVendor: 'ABC Fire Protection', usefulLifeYears: 20, replacementCost: 18000,
+    linkedVendors: [
+      { vendor: 'ABC Fire Protection', serviceType: 'Hood Cleaning', isPrimary: true },
+      { vendor: 'Valley Fire Systems', serviceType: 'Fire Suppression Inspection', isPrimary: false },
+    ],
     notes: 'Warranty recently expired. Good shape.',
     serviceHistory: [
       { date: '2025-11-22', vendor: 'ABC Fire Protection', type: 'Hood Cleaning', cost: 750, notes: 'Full cleaning. Good condition.' },
@@ -396,10 +478,13 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     locationId: '3', location: 'University Dining',
     installDate: '2021-08-10', purchasePrice: 8200,
     warrantyExpiry: '2026-08-10', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
-    condition: 'Good', nextMaintenanceDue: '2026-08-10', maintenanceInterval: 'Annual',
+    warrantyContact: '1-800-814-2028 / vulcan.service@itw.com',
+    condition: 'Poor', nextMaintenanceDue: '2026-02-10', maintenanceInterval: 'Annual',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 9000,
-    notes: 'Under warranty.',
+    status: 'out_of_service' as EquipmentStatus,
+    notes: 'Gas valve failure Jan 2026. Pulled from service pending warranty repair. Vulcan warranty claim #WC-2026-0142 filed.',
     serviceHistory: [
+      { date: '2026-01-22', vendor: 'CleanAir HVAC', type: 'Emergency Diagnostic', cost: 0, notes: 'Gas valve stuck closed. Unit cannot heat. Warranty claim initiated with Vulcan.' },
       { date: '2025-08-10', vendor: 'CleanAir HVAC', type: 'Annual Inspection', cost: 0, notes: 'Warranty service. All good.' },
     ],
     schedule: [
@@ -501,7 +586,7 @@ export function Equipment() {
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [detailTab, setDetailTab] = useState<'overview' | 'service' | 'schedule' | 'forecast' | 'costs'>('overview');
+  const [detailTab, setDetailTab] = useState<'overview' | 'warranty' | 'service' | 'schedule' | 'forecast' | 'costs' | 'vendors'>('overview');
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -810,6 +895,7 @@ export function Equipment() {
                 <h2 className="text-lg font-bold text-gray-900">{selected.name}</h2>
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
+                  {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
                   <span style={badge(selected.condition, conditionStyle(selected.condition).color, conditionStyle(selected.condition).bg)}>{selected.condition}</span>
                   <span style={badge(warrantyInfo(selected.warrantyExpiry).label, warrantyInfo(selected.warrantyExpiry).color, warrantyInfo(selected.warrantyExpiry).bg)}>
                     Warranty: {warrantyInfo(selected.warrantyExpiry).label}
@@ -824,15 +910,18 @@ export function Equipment() {
 
             {/* Tabs */}
             <div className="flex border-b border-gray-200 overflow-x-auto">
-              {(['overview', 'service', 'schedule', 'forecast', 'costs'] as const).map(tab => (
+              {([
+                ['overview', 'Overview'], ['warranty', 'Warranty'], ['service', 'Service History'],
+                ['schedule', 'Schedule'], ['forecast', 'Lifecycle & Cost'], ['costs', 'Cost Breakdown'], ['vendors', 'Vendors'],
+              ] as const).map(([tab, label]) => (
                 <button
                   key={tab}
-                  onClick={() => setDetailTab(tab)}
-                  className={`px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                  onClick={() => setDetailTab(tab as typeof detailTab)}
+                  className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                     detailTab === tab ? 'border-[#1e4d6b] text-[#1e4d6b]' : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  {tab === 'overview' ? 'Overview' : tab === 'service' ? 'Service History' : tab === 'schedule' ? 'Maintenance Schedule' : tab === 'forecast' ? 'Replacement Forecast' : 'Cost History'}
+                  {label}
                 </button>
               ))}
             </div>
@@ -883,6 +972,92 @@ export function Equipment() {
                   </div>
                 </div>
               )}
+
+              {/* ── Tab: Warranty ─── */}
+              {detailTab === 'warranty' && (() => {
+                const wi = warrantyInfo(selected.warrantyExpiry);
+                const installMs = new Date(selected.installDate).getTime();
+                const expiryMs = new Date(selected.warrantyExpiry).getTime();
+                const nowMs = NOW.getTime();
+                const totalWarrantyDays = Math.max(1, (expiryMs - installMs) / 86400000);
+                const elapsedDays = Math.max(0, (nowMs - installMs) / 86400000);
+                const warPct = Math.min(100, Math.round((elapsedDays / totalWarrantyDays) * 100));
+                const warrantyClaims = selected.serviceHistory.filter(r => r.cost === 0);
+                return (
+                  <div className="space-y-6">
+                    <div className="p-4 rounded-lg border border-gray-200">
+                      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-5 w-5" style={{ color: wi.color }} />
+                          <span className="font-bold text-sm" style={{ color: wi.color }}>{wi.label}</span>
+                        </div>
+                        {wi.days > 0 && <span className="text-xs text-gray-500">{wi.days} days remaining</span>}
+                        {wi.days < 0 && <span className="text-xs text-red-500">Expired {Math.abs(wi.days)} days ago</span>}
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-2">
+                        <div className="h-3 rounded-full transition-all" style={{ width: `${warPct}%`, backgroundColor: wi.color }} />
+                      </div>
+                      <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400">
+                        <span>Start: {format(new Date(selected.installDate), 'MMM d, yyyy')}</span>
+                        <span>{warPct}% through warranty period</span>
+                        <span>Expires: {format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-lg border border-gray-200">
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">Warranty Details</h4>
+                        <div className="space-y-2 text-sm">
+                          <div><span className="text-gray-400 text-xs block">Provider</span><span className="font-medium">{selected.warrantyProvider}</span></div>
+                          <div><span className="text-gray-400 text-xs block">Terms</span><span className="font-medium">{selected.warrantyTerms}</span></div>
+                          {selected.warrantyContact && (
+                            <div><span className="text-gray-400 text-xs block">Contact</span><span className="font-medium text-[#1e4d6b]">{selected.warrantyContact}</span></div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-lg border border-gray-200">
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">Warranty Claims ({warrantyClaims.length})</h4>
+                        {warrantyClaims.length === 0 ? (
+                          <p className="text-sm text-gray-400">No warranty claims on record.</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {warrantyClaims.slice(0, 5).map((c, i) => (
+                              <div key={i} className="text-sm flex items-start gap-2">
+                                <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="font-medium text-gray-800">{c.type}</div>
+                                  <div className="text-xs text-gray-500">{format(new Date(c.date), 'MMM d, yyyy')} · {c.vendor}</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {wi.label === 'Expiring Soon' && (
+                      <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-3">
+                        <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-bold text-sm text-amber-700">Warranty Expiring Soon</h4>
+                          <p className="text-xs text-amber-600 mt-1">
+                            Only {wi.days} days remaining. Consider scheduling any pending warranty service and evaluate extended warranty options from {selected.warrantyProvider}.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {wi.label === 'Expired' && (
+                      <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
+                        <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-bold text-sm text-red-700">Warranty Expired</h4>
+                          <p className="text-xs text-red-600 mt-1">
+                            This equipment is no longer under warranty. All future repairs will be at full cost. Ensure maintenance schedule is current to maximize lifespan.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* ── Tab: Service History ─── */}
               {detailTab === 'service' && (
@@ -942,7 +1117,7 @@ export function Equipment() {
                 </div>
               )}
 
-              {/* ── Tab: Replacement Forecast ─── */}
+              {/* ── Tab: Lifecycle & Cost ─── */}
               {detailTab === 'forecast' && (() => {
                 const age = ageYears(selected.installDate);
                 const pct = Math.min((age / selected.usefulLifeYears) * 100, 100);
@@ -952,18 +1127,22 @@ export function Equipment() {
                 const pastLife = age >= selected.usefulLifeYears;
                 const statusLabel = pastLife ? 'Past Expected Life' : pct > 75 ? 'Approaching End of Life' : 'On Track';
                 const statusColor = pastLife ? '#dc2626' : pct > 75 ? '#d97706' : '#16a34a';
+                const bv = bookValue(selected.purchasePrice, selected.installDate, selected.usefulLifeYears);
+                const totalSpend = selected.serviceHistory.reduce((s, r) => s + r.cost, 0);
+                const trend = maintenanceTrend(selected.serviceHistory);
+                const ac = annualCosts(selected.serviceHistory);
+                const trendColor = trend === 'increasing' ? '#dc2626' : trend === 'decreasing' ? '#16a34a' : '#6b7280';
+                const trendLabel = trend === 'increasing' ? 'Rising' : trend === 'decreasing' ? 'Declining' : 'Stable';
                 return (
                   <div className="space-y-6">
+                    {/* Lifecycle Progress Bar */}
                     <div className="p-4 rounded-lg border border-gray-200">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <span className="text-sm font-bold text-gray-700">Lifecycle Progress</span>
                         <span className="text-sm font-bold" style={{ color: statusColor }}>{statusLabel}</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                        <div
-                          className="h-4 rounded-full transition-all"
-                          style={{ width: `${pct}%`, backgroundColor: statusColor }}
-                        />
+                        <div className="h-4 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: statusColor }} />
                       </div>
                       <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400 mt-1">
                         <span>Installed {format(new Date(selected.installDate), 'yyyy')}</span>
@@ -971,14 +1150,33 @@ export function Equipment() {
                         <span>Expected {format(replacementDate, 'yyyy')}</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                    {/* KPI Cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="text-xs text-gray-400">Purchase Price</div>
+                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="text-xs text-gray-400">Book Value</div>
+                        <div className="text-lg font-bold text-[#1e4d6b]">{currency(bv)}</div>
+                        <div className="text-[10px] text-gray-400">Straight-line depreciation</div>
+                      </div>
+                      <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="text-xs text-gray-400">Total Maintenance</div>
+                        <div className="text-lg font-bold text-gray-900">{currency(totalSpend)}</div>
+                      </div>
+                      <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="text-xs text-gray-400">Total Cost of Ownership</div>
+                        <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice + totalSpend)}</div>
+                      </div>
+                    </div>
+
+                    {/* Second row KPIs */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">Current Age</div>
                         <div className="text-lg font-bold text-gray-900">{ageLabel(selected.installDate)}</div>
-                      </div>
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Useful Life</div>
-                        <div className="text-lg font-bold text-gray-900">{selected.usefulLifeYears} years</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
                         <div className="text-xs text-gray-400">Remaining Life</div>
@@ -988,7 +1186,37 @@ export function Equipment() {
                         <div className="text-xs text-gray-400">Replacement Cost</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.replacementCost)}</div>
                       </div>
+                      <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="text-xs text-gray-400">Maintenance Trend</div>
+                        <div className="flex items-center gap-1">
+                          {trend === 'increasing' && <TrendingUp className="h-4 w-4" style={{ color: trendColor }} />}
+                          {trend === 'decreasing' && <TrendingDown className="h-4 w-4" style={{ color: trendColor }} />}
+                          <span className="text-lg font-bold" style={{ color: trendColor }}>{trendLabel}</span>
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Annual Maintenance Cost Trend */}
+                    {ac.length > 1 && (
+                      <div className="p-4 rounded-lg border border-gray-200">
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">Annual Maintenance Cost Trend</h4>
+                        <div className="flex items-end gap-3 h-24">
+                          {ac.map((y, i) => {
+                            const maxCost = Math.max(...ac.map(a => a.cost), 1);
+                            const h = Math.max(4, (y.cost / maxCost) * 80);
+                            return (
+                              <div key={i} className="flex flex-col items-center flex-1">
+                                <span className="text-[10px] font-bold text-gray-600 mb-1">{currency(y.cost)}</span>
+                                <div className="w-full rounded-t" style={{ height: `${h}px`, backgroundColor: y.cost === Math.max(...ac.map(a => a.cost)) && trend === 'increasing' ? '#dc2626' : '#1e4d6b' }} />
+                                <span className="text-[10px] text-gray-400 mt-1">{y.year}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Alerts */}
                     {pastLife && (
                       <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
                         <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
@@ -997,6 +1225,18 @@ export function Equipment() {
                           <p className="text-xs text-red-600 mt-1">
                             This equipment has exceeded its expected useful life of {selected.usefulLifeYears} years.
                             Current condition: {selected.condition}. Budget {currency(selected.replacementCost)} for replacement.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {trend === 'increasing' && !pastLife && pct > 50 && (
+                      <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-3">
+                        <TrendingUp className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <h4 className="font-bold text-sm text-amber-700">Rising Maintenance Costs</h4>
+                          <p className="text-xs text-amber-600 mt-1">
+                            Maintenance costs are increasing year-over-year. This equipment is {pct.toFixed(0)}% through its expected lifespan.
+                            Consider scheduling a replacement evaluation before costs exceed repair-vs-replace threshold.
                           </p>
                         </div>
                       </div>
@@ -1049,6 +1289,65 @@ export function Equipment() {
                       </tbody>
                     </table>
                     </div>
+                  </div>
+                );
+              })()}
+
+              {/* ── Tab: Linked Vendors ─── */}
+              {detailTab === 'vendors' && (() => {
+                const vendors = selected.linkedVendors || [{ vendor: selected.linkedVendor, serviceType: 'Primary Service', isPrimary: true }];
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-gray-700">{vendors.length} Linked Vendor{vendors.length !== 1 ? 's' : ''}</h4>
+                      <button
+                        onClick={() => guardAction('edit', 'vendor links', () => showToast('Vendor link saved.'))}
+                        className="flex items-center gap-1 text-xs font-medium text-[#1e4d6b] hover:text-[#163a52]"
+                      >
+                        <Plus className="h-3.5 w-3.5" /> Link Vendor
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      {vendors.map((v, i) => (
+                        <div key={i} className="p-4 rounded-lg border border-gray-200 flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
+                              <Wrench className="h-5 w-5 text-[#1e4d6b]" />
+                            </div>
+                            <div>
+                              <div className="font-medium text-sm text-gray-900">{v.vendor}</div>
+                              <div className="text-xs text-gray-500">{v.serviceType}</div>
+                              {v.isPrimary && <span style={badge('Primary', '#1e4d6b', '#eef4f8')}>Primary</span>}
+                              {(() => {
+                                const lastSvc = selected.serviceHistory.find(s => s.vendor === v.vendor);
+                                return lastSvc ? (
+                                  <div className="text-xs text-gray-400 mt-1">Last service: {format(new Date(lastSvc.date), 'MMM d, yyyy')}</div>
+                                ) : null;
+                              })()}
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => { window.location.href = `/vendors?id=${encodeURIComponent(v.vendor.toLowerCase().replace(/\s+/g, '-'))}`; }}
+                              className="text-xs text-[#1e4d6b] hover:underline"
+                            >
+                              View Vendor
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {selected.warrantyProvider && !vendors.some(v => v.vendor === selected.warrantyProvider) && (
+                      <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                        <div className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-[#1e4d6b]" />
+                          <span className="text-sm font-medium text-[#1e4d6b]">Warranty Provider: {selected.warrantyProvider}</span>
+                        </div>
+                        {selected.warrantyContact && (
+                          <div className="text-xs text-gray-500 mt-1 ml-6">{selected.warrantyContact}</div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })()}
@@ -1135,9 +1434,23 @@ export function Equipment() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Terms</label>
-                  <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Terms</label>
+                    <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Contact</label>
+                    <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Expected Useful Life (years)</label>
+                    <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Replacement Cost ($)</label>
+                    <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
