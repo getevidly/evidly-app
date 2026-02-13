@@ -39,6 +39,7 @@ import { JurisdictionScoreDisplay } from '../components/JurisdictionScoreDisplay
 import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
 import { getStateLabel } from '../lib/stateCodes';
 import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -981,6 +982,7 @@ export function Dashboard() {
 
         {/* AI Insights Widget */}
         {['executive', 'management'].includes(userRole) && (
+          <ErrorBoundary level="section">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mt-4">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-3">
@@ -1032,27 +1034,34 @@ export function Dashboard() {
               })}
             </div>
           </div>
+          </ErrorBoundary>
         )}
 
         {/* Industry Benchmark Widget */}
         {['executive', 'management'].includes(userRole) && (
-          <div className="mt-4">
-            <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
-          </div>
+          <ErrorBoundary level="section">
+            <div className="mt-4">
+              <BenchmarkWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+            </div>
+          </ErrorBoundary>
         )}
 
         {/* Insurance Risk Score Widget */}
         {['executive', 'management'].includes(userRole) && (
-          <div className="mt-4">
-            <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
-          </div>
+          <ErrorBoundary level="section">
+            <div className="mt-4">
+              <InsuranceReadinessWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
+            </div>
+          </ErrorBoundary>
         )}
 
         {/* Live Sensor Monitor Widget */}
         {['executive', 'management', 'kitchen'].includes(userRole) && (
-          <div className="mt-4">
-            <SensorMonitorWidget locationFilter={selectedLocation === 'all' ? 'all' : selectedLocation} />
-          </div>
+          <ErrorBoundary level="section">
+            <div className="mt-4">
+              <SensorMonitorWidget locationFilter={selectedLocation === 'all' ? 'all' : selectedLocation} />
+            </div>
+          </ErrorBoundary>
         )}
 
         <ShareModal

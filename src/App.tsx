@@ -1,5 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
 import { OperatingHoursProvider } from './contexts/OperatingHoursContext';
@@ -8,6 +8,8 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { OfflineProvider } from './contexts/OfflineContext';
 import { InactivityProvider } from './contexts/InactivityContext';
 import { Toaster } from 'sonner';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { reportError } from './lib/errorReporting';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
 const Signup = lazy(() => import('./pages/Signup').then(m => ({ default: m.Signup })));
@@ -170,6 +172,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function ProtectedLayout() {
   const { user, loading } = useAuth();
   const { isDemoMode } = useDemo();
+  const location = useLocation();
 
   if (!isDemoMode) {
     if (loading) {
@@ -189,16 +192,18 @@ function ProtectedLayout() {
 
   return (
     <Layout>
-      <Suspense fallback={
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
-            <p className="mt-3 text-sm text-gray-500">Loading...</p>
+      <ErrorBoundary level="page" resetKey={location.pathname}>
+        <Suspense fallback={
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
+              <p className="mt-3 text-sm text-gray-500">Loading...</p>
+            </div>
           </div>
-        </div>
-      }>
-        <Outlet />
-      </Suspense>
+        }>
+          <Outlet />
+        </Suspense>
+      </ErrorBoundary>
     </Layout>
   );
 }
@@ -230,12 +235,12 @@ function AppRoutes() {
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
 
         {/* Protected routes without shared layout */}
-        <Route path="/vendor/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ProtectedRoute>} />
-        <Route path="/enterprise/admin" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ProtectedRoute>} />
-        <Route path="/enterprise/dashboard" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ProtectedRoute>} />
-        <Route path="/enterprise/intelligence" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ProtectedRoute>} />
-        <Route path="/iot/hub" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ProtectedRoute>} />
-        <Route path="/onboarding" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ProtectedRoute>} />
+        <Route path="/vendor/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/enterprise/admin" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
@@ -297,26 +302,49 @@ function AppRoutes() {
   );
 }
 
+function GlobalErrorHandlers({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      reportError(event.error ?? new Error(event.message), { source: 'window.onerror', filename: event.filename, lineno: event.lineno });
+    };
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
+      reportError(error, { source: 'unhandledrejection' });
+    };
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleRejection);
+    return () => {
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleRejection);
+    };
+  }, []);
+  return <>{children}</>;
+}
+
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <DemoProvider>
-          <LanguageProvider>
-            <RoleProvider>
-              <OperatingHoursProvider>
-                <OfflineProvider>
-                  <InactivityProvider>
-                    <AppRoutes />
-                    <Toaster position="top-right" richColors closeButton duration={3000} />
-                  </InactivityProvider>
-                </OfflineProvider>
-              </OperatingHoursProvider>
-            </RoleProvider>
-          </LanguageProvider>
-        </DemoProvider>
-      </AuthProvider>
-    </Router>
+    <ErrorBoundary level="page">
+      <Router>
+        <AuthProvider>
+          <DemoProvider>
+            <LanguageProvider>
+              <RoleProvider>
+                <OperatingHoursProvider>
+                  <OfflineProvider>
+                    <InactivityProvider>
+                      <GlobalErrorHandlers>
+                        <AppRoutes />
+                      </GlobalErrorHandlers>
+                      <Toaster position="top-right" richColors closeButton duration={3000} />
+                    </InactivityProvider>
+                  </OfflineProvider>
+                </OperatingHoursProvider>
+              </RoleProvider>
+            </LanguageProvider>
+          </DemoProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
 }
 
