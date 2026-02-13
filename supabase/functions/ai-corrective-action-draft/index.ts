@@ -120,7 +120,7 @@ Deno.serve(async (req: Request) => {
   "training_needed": "Any staff training recommended",
   "documentation": "What should be documented"
 }
-Return ONLY valid JSON.`,
+Return ONLY valid JSON. If you are unsure about a specific regulation or code section, say so clearly in the relevant field rather than guessing. Only cite code sections and regulatory standards you are certain about. This is compliance guidance only — not legal advice.`,
         messages: [
           {
             role: "user",

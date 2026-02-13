@@ -75,7 +75,7 @@ Deno.serve(async (req: Request) => {
   "confidence": 0.95
 }
 
-Return ONLY valid JSON, no markdown, no explanation. If a field is not found, use null.`;
+Return ONLY valid JSON, no markdown, no explanation. If a field is not found, use null. If you cannot confidently determine a value, use null rather than guessing. Set confidence to a lower value (0.5-0.7) when extraction is uncertain.`;
 
     const content: any[] = [
       {
@@ -100,7 +100,7 @@ Return ONLY valid JSON, no markdown, no explanation. If a field is not found, us
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-4-5-20250929",
         max_tokens: 1500,
         messages: [
           {

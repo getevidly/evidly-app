@@ -174,7 +174,7 @@ ${(insights.data || []).slice(0, 5).map((i: any) => `  - [${i.severity}] ${i.tit
   "score_trend": "Brief score trend description",
   "recommendation": "One key recommendation for the week"
 }
-Return ONLY valid JSON.`,
+Return ONLY valid JSON. Only cite specific regulations or code sections you are certain about. This digest is compliance guidance only — not legal advice.`,
                   messages: [
                     {
                       role: "user",
