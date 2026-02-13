@@ -88,6 +88,7 @@ const ImportData = lazy(() => import('./pages/ImportData').then(m => ({ default:
 const InspectorView = lazy(() => import('./pages/InspectorView').then(m => ({ default: m.InspectorView })));
 const SelfAudit = lazy(() => import('./pages/SelfAudit').then(m => ({ default: m.SelfAudit })));
 const PhotoEvidencePage = lazy(() => import('./pages/PhotoEvidencePage').then(m => ({ default: m.PhotoEvidencePage })));
+const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default: m.AuditTrail })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -298,6 +299,7 @@ function AppRoutes() {
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/self-audit" element={<SelfAudit />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
+          <Route path="/audit-trail" element={<AuditTrail />} />
         </Route>
       </Routes>
     </>

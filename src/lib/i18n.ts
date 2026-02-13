@@ -89,6 +89,7 @@ const en = {
     importData: 'Import Data',
     systemAdmin: 'System Admin',
     inspectorView: 'Inspector View',
+    auditTrail: 'Audit Trail',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -697,6 +698,7 @@ const es: typeof en = {
     importData: 'Importar Datos',
     systemAdmin: 'Admin del Sistema',
     inspectorView: 'Vista del Inspector',
+    auditTrail: 'Pista de Auditoría',
   },
 
   common: {
