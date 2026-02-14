@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Play } from 'lucide-react';
+import { Eye, EyeOff, Play, ShieldCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { LeadCaptureModal } from '../components/LeadCaptureModal';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
+import { useBranding } from '../contexts/BrandingContext';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -19,6 +20,7 @@ export function Login() {
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const { branding } = useBranding();
 
   useEffect(() => {
     if (user) {
@@ -72,20 +74,26 @@ export function Login() {
             <div className="flex items-center">
               <div className="w-12 h-14">
                 <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
-                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
-                  <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill={branding.colors.accent}/>
+                  <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill={branding.colors.primary}/>
+                  <path d="M22 32L26 36L34 26" stroke={branding.colors.accent} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="ml-3 text-3xl font-bold">
-                <span className="text-[#1e4d6b]">Evid</span>
-                <span className="text-[#d4af37]">LY</span>
-              </span>
+              {branding.brandName === 'EvidLY' ? (
+                <span className="ml-3 text-3xl font-bold">
+                  <span style={{ color: branding.colors.primary }}>Evid</span>
+                  <span style={{ color: branding.colors.accent }}>LY</span>
+                </span>
+              ) : (
+                <span className="ml-3 text-2xl font-bold" style={{ color: branding.colors.primary }}>
+                  {branding.brandName}
+                </span>
+              )}
             </div>
           </div>
 
-          <p className="text-center text-lg font-semibold text-[#1e4d6b] mb-2">Compliance Simplified</p>
-          <h2 className="text-center text-xl font-bold text-gray-900 mb-6">Sign in to your account</h2>
+          <p className="text-center text-lg font-semibold mb-2" style={{ color: branding.colors.primary }}>{branding.tagline}</p>
+          <h2 className="text-center text-xl font-bold text-gray-900 mb-6">{branding.loginWelcomeText ? 'Sign in to your account' : 'Sign in to your account'}</h2>
 
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
@@ -157,7 +165,7 @@ export function Login() {
               </div>
 
               <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
+                <Link to="/forgot-password" className="font-medium" style={{ color: branding.colors.primary }}>
                   Forgot password?
                 </Link>
               </div>
@@ -177,22 +185,48 @@ export function Login() {
             <button
               type="submit"
               disabled={loading || (captchaEnabled && !captchaToken)}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1e4d6b] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2"
+              style={{ backgroundColor: branding.colors.primary, '--tw-ring-color': branding.colors.primary } as React.CSSProperties}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primaryLight)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = branding.colors.primary)}
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
 
+          {/* SSO / SAML login button (enterprise white-label) */}
+          {branding.sso.enabled && (
+            <div className="mt-4">
+              <div className="relative mb-4">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
+                <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-gray-500">or</span></div>
+              </div>
+              <button
+                onClick={() => alert(`SSO login via ${branding.sso.provider?.toUpperCase()} → ${branding.sso.ssoUrl}\n\nThis is a demo placeholder. In production this would redirect to your identity provider.`)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-md text-sm font-semibold transition-colors"
+                style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Sign in with {branding.sso.provider === 'saml' ? 'SAML SSO' : branding.sso.provider === 'oidc' ? 'OpenID Connect' : 'SSO'}
+              </button>
+              {branding.sso.enforce && (
+                <p className="text-xs text-center text-gray-500 mt-2">
+                  Your organization requires SSO sign-in
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
+              <Link to="/signup" className="font-medium" style={{ color: branding.colors.primary }}>
                 Sign up
               </Link>
             </p>
             <p className="text-sm text-gray-600 mt-2">
               Are you a vendor?{' '}
-              <Link to="/vendor/login" className="font-medium text-[#1e4d6b] hover:text-[#1e4d6b]">
+              <Link to="/vendor/login" className="font-medium" style={{ color: branding.colors.primary }}>
                 Sign in here →
               </Link>
             </p>
@@ -211,6 +245,21 @@ export function Login() {
             </p>
           </div>
         </div>
+
+        {/* Powered by EvidLY badge for white-label */}
+        {branding.poweredByVisible && (
+          <div className="mt-4 flex justify-center">
+            <a
+              href="https://evidly.com?ref=powered-by"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37]" />
+              <span>Powered by <span className="font-semibold text-gray-500">EvidLY</span></span>
+            </a>
+          </div>
+        )}
       </div>
       <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
     </div>

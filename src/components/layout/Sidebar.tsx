@@ -36,6 +36,7 @@ import {
   Scale,
   MapPin,
   ShieldAlert,
+  Palette,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -45,6 +46,7 @@ import { useTranslation } from '../../contexts/LanguageContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useSubscription } from '../../hooks/useSubscription';
 import { getFeatureBadge } from '../../lib/featureGating';
+import { useBranding } from '../../contexts/BrandingContext';
 import { locations as demoLocations, locationScores, getGrade } from '../../data/demoData';
 
 // ── Types ───────────────────────────────────────────────
@@ -144,6 +146,7 @@ const sections: NavSection[] = [
     i18nKey: 'nav.sectionSettings',
     items: [
       { i18nKey: 'nav.settings', href: '/settings', icon: Settings, roles: mgmtRoles },
+      { i18nKey: 'nav.branding', href: '/settings/branding', icon: Palette, roles: mgmtRoles },
       { i18nKey: 'nav.importData', href: '/import', icon: Upload, roles: mgmtRoles },
       { i18nKey: 'nav.billing', href: '/settings', icon: CreditCard, roles: mgmtRoles },
       { i18nKey: 'nav.helpSupport', href: '/help', icon: HelpCircle, roles: allRoles },
@@ -188,6 +191,7 @@ export function Sidebar() {
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
   const { currentTier } = useSubscription();
+  const { branding } = useBranding();
   const showAdmin = isEvidlyAdmin || isDemoMode;
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>(loadExpandedState);
@@ -227,16 +231,22 @@ export function Sidebar() {
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
-      <div className="flex flex-col h-full bg-[#1e4d6b]">
+      <div className="flex flex-col h-full" style={{ backgroundColor: branding.colors.sidebarBg }}>
         {/* Logo — sticky top */}
         <div className="flex items-center flex-shrink-0 px-6 py-5">
-          <ShieldCheck className="h-8 w-8" style={{ color: '#d4af37' }} />
+          <ShieldCheck className="h-8 w-8" style={{ color: branding.colors.accent }} />
           <div className="ml-3">
-            <span className="text-xl font-bold">
-              <span className="text-white">Evid</span>
-              <span className="text-[#d4af37]">LY</span>
-            </span>
-            <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">Compliance Simplified</p>
+            {branding.brandName === 'EvidLY' ? (
+              <span className="text-xl font-bold">
+                <span style={{ color: branding.colors.sidebarText }}>Evid</span>
+                <span style={{ color: branding.colors.accent }}>LY</span>
+              </span>
+            ) : (
+              <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
+                {branding.brandName}
+              </span>
+            )}
+            <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
           </div>
         </div>
 
@@ -354,6 +364,21 @@ export function Sidebar() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Powered by EvidLY badge (white-label only) */}
+        {branding.poweredByVisible && (
+          <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">
+            <a
+              href="https://evidly.com?ref=powered-by"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-gray-300 transition-colors"
+            >
+              <ShieldCheck className="h-3 w-3" style={{ color: '#d4af37' }} />
+              <span>Powered by <span className="font-semibold text-gray-300">EvidLY</span></span>
+            </a>
           </div>
         )}
 

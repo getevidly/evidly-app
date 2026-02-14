@@ -7,6 +7,7 @@ import { DemoProvider, useDemo } from './contexts/DemoContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { OfflineProvider } from './contexts/OfflineContext';
 import { InactivityProvider } from './contexts/InactivityContext';
+import { BrandingProvider } from './contexts/BrandingContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { reportError } from './lib/errorReporting';
@@ -75,6 +76,7 @@ const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m 
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
+const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
 const TrainingHub = lazy(() => import('./pages/TrainingHub').then(m => ({ default: m.TrainingHub })));
 const TrainingCourse = lazy(() => import('./pages/TrainingCourse').then(m => ({ default: m.TrainingCourse })));
@@ -271,6 +273,7 @@ function AppRoutes() {
           <Route path="/team" element={<Team />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/branding" element={<BrandingSettings />} />
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />
@@ -338,6 +341,7 @@ function GlobalErrorHandlers({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <ErrorBoundary level="page">
+      <BrandingProvider>
       <Router>
         <AuthProvider>
           <DemoProvider>
@@ -358,6 +362,7 @@ function App() {
           </DemoProvider>
         </AuthProvider>
       </Router>
+      </BrandingProvider>
     </ErrorBoundary>
   );
 }
