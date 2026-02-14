@@ -45,6 +45,7 @@ import { useTranslation } from '../../contexts/LanguageContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useSubscription } from '../../hooks/useSubscription';
 import { getFeatureBadge } from '../../lib/featureGating';
+import { locations as demoLocations, locationScores, getGrade } from '../../data/demoData';
 
 // ── Types ───────────────────────────────────────────────
 
@@ -315,6 +316,46 @@ export function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Location Quick-Switch */}
+        {demoLocations.length >= 2 && (
+          <div className="flex-shrink-0 border-t border-white/10 px-3 py-3">
+            <div className="flex items-center justify-between px-2 mb-2">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Locations</span>
+              <kbd className="text-[9px] text-gray-500 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">Ctrl+K</kbd>
+            </div>
+            {demoLocations.map(loc => {
+              const score = locationScores[loc.urlId]?.overall ?? 0;
+              const grade = getGrade(score);
+              const params = new URLSearchParams(window.location.search);
+              const currentLoc = params.get('location');
+              const isActive = currentLoc === loc.urlId;
+              return (
+                <div
+                  key={loc.id}
+                  onClick={() => navigate(`/dashboard?location=${loc.urlId}`)}
+                  className={`flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer transition-colors duration-150 ${
+                    isActive ? 'bg-[#163a52] text-white' : 'text-gray-300 hover:bg-[#163a52] hover:text-white'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <MapPin className="h-3 w-3 flex-shrink-0 text-gray-400" />
+                    <span className="text-xs font-medium truncate">{loc.name}</span>
+                  </div>
+                  <span
+                    className="text-[10px] font-bold px-1.5 rounded-full flex-shrink-0"
+                    style={{
+                      color: grade.hex,
+                      backgroundColor: grade.hex + '25',
+                    }}
+                  >
+                    {score}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Demo upgrade badge at bottom of sidebar */}
         <SidebarUpgradeBadge />

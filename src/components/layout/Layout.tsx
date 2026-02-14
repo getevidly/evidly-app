@@ -9,6 +9,7 @@ import { AIChatPanel } from '../AIChatPanel';
 import { OfflineBanner } from '../OfflineBanner';
 import { DemoBanner } from '../DemoBanner';
 import MobileStickyBar from '../MobileStickyBar';
+import { QuickSwitcher } from '../QuickSwitcher';
 import { useDemo } from '../../contexts/DemoContext';
 
 interface LocationOption {
@@ -81,6 +82,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       {isDemoMode && <MobileStickyBar demoMode />}
       {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
       <AIChatPanel hidden={anyTourActive} />
+      <QuickSwitcher />
     </div>
   );
 }

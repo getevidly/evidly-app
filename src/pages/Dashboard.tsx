@@ -13,6 +13,12 @@ import {
   Brain,
   AlertTriangle,
   ArrowRight,
+  Building2,
+  Flame,
+  UtensilsCrossed,
+  Truck,
+  TrendingDown,
+  Wrench,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
@@ -696,11 +702,196 @@ export function Dashboard() {
         {/* Tab Content — only this section changes when switching tabs */}
         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-200 mt-4" style={{ minHeight: '300px' }}>
 
-          {/* Overview — All Locations */}
+          {/* Overview — All Locations (Enterprise Command Center) */}
           {activeTab === 'overview' && selectedLocation === 'all' && (
             <div className="mt-6 space-y-6">
               <h3 style={{ fontSize: '20px', fontWeight: '600' }}>{t('dashboard.overview')}</h3>
               <OnboardingChecklist />
+
+              {/* ── Enterprise KPI Cards ── */}
+              {resolvedLocations.length >= 2 && (() => {
+                const avgScore = Math.round(resolvedLocations.reduce((sum, loc) => sum + (resolvedLocationScores[loc.urlId]?.overall ?? 0), 0) / resolvedLocations.length);
+                const openIncidents = resolvedNeedsAttention.filter(item => item.color === 'red').length;
+                const overdueVendors = resolvedVendors.filter(v => v.status === 'overdue').length;
+                const avgGrade = getGrade(avgScore);
+                const lowestLoc = resolvedLocations.reduce((min, loc) => {
+                  const s = resolvedLocationScores[loc.urlId]?.overall ?? 100;
+                  return s < (resolvedLocationScores[min.urlId]?.overall ?? 100) ? loc : min;
+                }, resolvedLocations[0]);
+                const lowestScore = resolvedLocationScores[lowestLoc.urlId]?.overall ?? 0;
+                return (
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                          <ShieldAlert className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+                        </div>
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Avg Score</span>
+                      </div>
+                      <div className="text-2xl font-bold" style={{ color: avgGrade.hex }}>{avgScore}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{avgGrade.label}</div>
+                    </div>
+                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                          <Building2 className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+                        </div>
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Locations</span>
+                      </div>
+                      <div className="text-2xl font-bold text-gray-900">{resolvedLocations.length}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{resolvedLocations.filter(l => (resolvedLocationScores[l.urlId]?.overall ?? 0) >= 75).length} on track</div>
+                    </div>
+                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: openIncidents > 0 ? '#fef2f2' : '#f0fdf4' }}>
+                          <AlertTriangle className="h-4 w-4" style={{ color: openIncidents > 0 ? '#ef4444' : '#22c55e' }} />
+                        </div>
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Open Incidents</span>
+                      </div>
+                      <div className="text-2xl font-bold" style={{ color: openIncidents > 0 ? '#ef4444' : '#22c55e' }}>{openIncidents}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{openIncidents > 0 ? 'Requires attention' : 'All clear'}</div>
+                    </div>
+                    <div className="bg-white rounded-xl border border-gray-200 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: overdueVendors > 0 ? '#fffbeb' : '#f0fdf4' }}>
+                          <Wrench className="h-4 w-4" style={{ color: overdueVendors > 0 ? '#d97706' : '#22c55e' }} />
+                        </div>
+                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Overdue Services</span>
+                      </div>
+                      <div className="text-2xl font-bold" style={{ color: overdueVendors > 0 ? '#d97706' : '#22c55e' }}>{overdueVendors}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{overdueVendors > 0 ? `Lowest: ${lowestLoc.name} (${lowestScore})` : 'All current'}</div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ── Pillar Heatmap ── */}
+              {resolvedLocations.length >= 2 && (
+                <div>
+                  <h3 className="text-md font-semibold text-gray-900 mb-3">Compliance Heatmap</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center justify-center gap-1"><UtensilsCrossed className="h-3 w-3" /> Food Safety</div>
+                          </th>
+                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center justify-center gap-1"><Flame className="h-3 w-3" /> Fire Safety</div>
+                          </th>
+                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div className="flex items-center justify-center gap-1"><Truck className="h-3 w-3" /> Vendors</div>
+                          </th>
+                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {resolvedLocations.map((loc) => {
+                          const locScores = resolvedLocationScores[loc.urlId];
+                          const cellStyle = (score: number) => ({
+                            backgroundColor: score >= 90 ? '#dcfce7' : score >= 75 ? '#fef9c3' : score >= 60 ? '#ffedd5' : '#fee2e2',
+                            color: score >= 90 ? '#166534' : score >= 75 ? '#854d0e' : score >= 60 ? '#9a3412' : '#991b1b',
+                          });
+                          return (
+                            <tr
+                              key={loc.id}
+                              onClick={() => navigate(`/dashboard?location=${loc.urlId}`)}
+                              className="hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                            >
+                              <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{loc.name}</td>
+                              <td className="px-3 py-2.5 text-center">
+                                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold" style={cellStyle(locScores.foodSafety)}>{locScores.foodSafety}</span>
+                              </td>
+                              <td className="px-3 py-2.5 text-center">
+                                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold" style={cellStyle(locScores.fireSafety)}>{locScores.fireSafety}</span>
+                              </td>
+                              <td className="px-3 py-2.5 text-center">
+                                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold" style={cellStyle(locScores.vendorCompliance)}>{locScores.vendorCompliance}</span>
+                              </td>
+                              <td className="px-3 py-2.5 text-center">
+                                <span className="inline-block px-2.5 py-0.5 rounded text-sm font-bold" style={cellStyle(locScores.overall)}>{locScores.overall}</span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Cross-Location Copilot Alerts ── */}
+              {resolvedLocations.length >= 2 && (() => {
+                const crossLocationAlerts = [
+                  {
+                    severity: 'high' as const,
+                    title: 'University Dining score dropped below 60',
+                    desc: 'Overall compliance fell to 56 — 3 critical items overdue across food safety and vendor compliance.',
+                    location: 'University Dining',
+                    link: '/dashboard?location=university',
+                  },
+                  {
+                    severity: 'high' as const,
+                    title: 'Hood cleaning overdue at Airport Cafe',
+                    desc: '95 days since last cleaning. Fire code requires 90-day maximum cycle.',
+                    location: 'Airport Cafe',
+                    link: '/dashboard?location=airport',
+                  },
+                  {
+                    severity: 'medium' as const,
+                    title: 'Vendor compliance gap widening',
+                    desc: '2 of 3 locations have overdue vendor services. Average vendor score: 71.',
+                    location: 'All Locations',
+                    link: '/vendors',
+                  },
+                ];
+                return (
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <Brain className="h-4 w-4" style={{ color: '#d4af37' }} />
+                        <h3 className="text-md font-semibold text-gray-900">Copilot Alerts</h3>
+                      </div>
+                      <button
+                        onClick={() => navigate('/copilot')}
+                        className="text-xs font-medium flex items-center gap-1 hover:underline"
+                        style={{ color: '#1e4d6b' }}
+                      >
+                        Open Copilot <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {crossLocationAlerts.map((alert, i) => {
+                        const sev = alert.severity === 'high'
+                          ? { dot: '#ef4444', bg: '#fef2f2', border: '#fecaca', label: 'Critical' }
+                          : { dot: '#d97706', bg: '#fffbeb', border: '#fde68a', label: 'Warning' };
+                        return (
+                          <div
+                            key={i}
+                            onClick={() => navigate(alert.link)}
+                            className="flex items-start gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                            style={{ border: `1px solid ${sev.border}`, backgroundColor: sev.bg }}
+                          >
+                            <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: sev.dot }} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                <span className="text-sm font-semibold text-gray-900">{alert.title}</span>
+                                <span style={{ fontSize: '10px', fontWeight: 600, padding: '1px 6px', borderRadius: '6px', backgroundColor: sev.bg, color: sev.dot, border: `1px solid ${sev.border}` }}>
+                                  {sev.label}
+                                </span>
+                                <span className="text-[10px] font-medium text-gray-400">{alert.location}</span>
+                              </div>
+                              <p className="text-xs text-gray-600">{alert.desc}</p>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
 
               <h3 className="text-md font-semibold text-gray-900 mb-3">{t('common.location')}</h3>
               <div className="overflow-x-auto">
