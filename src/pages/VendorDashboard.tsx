@@ -791,7 +791,7 @@ export function VendorDashboard() {
               <span className="ml-3 text-xl sm:text-2xl font-bold">
                 <span className="text-[#1e4d6b]">Evid</span>
                 <span className="text-[#d4af37]">LY</span>
-                <span className="ml-2 text-sm text-gray-600 hidden sm:inline">Vendor Portal</span>
+                <span className="ml-2 text-sm text-gray-600 hidden sm:inline">Vendor Marketplace</span>
               </span>
             </div>
             <div className="flex items-center gap-3">

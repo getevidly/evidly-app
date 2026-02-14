@@ -16,7 +16,7 @@ const helpArticles: HelpArticle[] = [
   { id: '4', title: 'Setting Up Auto Document Requests', category: 'Vendors', summary: 'Configure automatic vendor document requests with secure upload links and reminders.', icon: FileText },
   { id: '5', title: 'Creating & Managing Checklists', category: 'Operations', summary: 'Build opening/closing checklists, customize templates, and track completion rates.', icon: FileText },
   { id: '6', title: 'HACCP Plan Management', category: 'Food Safety', summary: 'Create HACCP plans, define CCPs, set critical limits, and log monitoring activities.', icon: FileText },
-  { id: '7', title: 'Vendor Portal & Secure Upload Links', category: 'Vendors', summary: 'How vendors use their portal to upload documents via secure links.', icon: FileText },
+  { id: '7', title: 'Vendor Marketplace & Secure Upload Links', category: 'Vendors', summary: 'How vendors use the marketplace to upload documents via secure links.', icon: FileText },
   { id: '8', title: 'Preparing for a Health Inspection', category: 'Compliance', summary: 'Use the Compliance Package builder to generate inspection-ready documentation.', icon: FileText },
   { id: '9', title: 'Team Management & Permissions', category: 'Admin', summary: 'Invite team members, assign roles (Management, Kitchen, Facilities), manage access.', icon: FileText },
   { id: '10', title: 'QR Compliance Passport', category: 'Features', summary: 'Generate QR codes for instant compliance verification. Print, share, or display.', icon: FileText },

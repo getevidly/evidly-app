@@ -84,7 +84,7 @@ export function VendorLogin() {
           </div>
 
           <p className="text-center text-lg font-semibold text-[#1e4d6b] mb-2">Compliance Simplified</p>
-          <h2 className="text-center text-xl font-bold text-gray-900 mb-6">Vendor Portal - Sign in</h2>
+          <h2 className="text-center text-xl font-bold text-gray-900 mb-6">Vendor Marketplace - Sign in</h2>
 
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">

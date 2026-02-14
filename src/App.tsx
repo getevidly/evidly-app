@@ -98,6 +98,9 @@ const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ default: m.TermsOfService })));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -122,6 +125,7 @@ const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBan
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
 import { PageTransition } from './components/PageTransition';
+import { PageExplanation } from './components/PageExplanation';
 
 function LandingPage() {
   return (
@@ -226,6 +230,7 @@ function ProtectedLayout() {
           </div>
         }>
           <PageTransition key={location.pathname}>
+            <PageExplanation />
             <Outlet />
           </PageTransition>
         </Suspense>
@@ -257,6 +262,9 @@ function AppRoutes() {
         <Route path="/providers" element={<Suspense fallback={<PageSkeleton />}><MarketplaceLanding /></Suspense>} />
         <Route path="/enterprise" element={<Suspense fallback={<PageSkeleton />}><EnterpriseLanding /></Suspense>} />
         <Route path="/iot" element={<Suspense fallback={<PageSkeleton />}><IoTSensorLanding /></Suspense>} />
+        <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><TermsOfService /></Suspense>} />
+        <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><PrivacyPolicy /></Suspense>} />
+        <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Signup /></Suspense></PublicRoute>} />
         <Route path="/signup/locations" element={<ProtectedRoute><Suspense fallback={<PageSkeleton />}><SignupLocations /></Suspense></ProtectedRoute>} />

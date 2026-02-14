@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2 } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -343,7 +343,7 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
 // ── Component ──────────────────────────────────────────────────────
 
 export function HACCP() {
-  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective'>('plans');
+  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
   const { getAccessibleLocations } = useRole();
@@ -360,6 +360,70 @@ export function HACCP() {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   }, []);
+
+  // ── Template form state ──────────────────────────────────────────
+  const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 1: true });
+  const toggleSection = (num: number) => setExpandedSections(prev => ({ ...prev, [num]: !prev[num] }));
+
+  // Section 1: Food Product
+  const [tplProductName, setTplProductName] = useState('');
+  const [tplProductDesc, setTplProductDesc] = useState('');
+  const [tplIntendedUse, setTplIntendedUse] = useState('');
+  const [tplDistribution, setTplDistribution] = useState('');
+  const [tplTargetConsumer, setTplTargetConsumer] = useState('');
+
+  // Section 2: Ingredients & Materials
+  const [tplRawMaterials, setTplRawMaterials] = useState('');
+  const [tplProcessingAids, setTplProcessingAids] = useState('');
+  const [tplPackagingMaterials, setTplPackagingMaterials] = useState('');
+
+  // Section 3: Intended Use & Consumers
+  const [tplUseDescription, setTplUseDescription] = useState('');
+  const [tplTargetPopulation, setTplTargetPopulation] = useState('');
+  const [tplSpecialConsiderations, setTplSpecialConsiderations] = useState('');
+
+  // Section 4: Flow Diagram steps
+  const [tplFlowSteps, setTplFlowSteps] = useState<string[]>(['Receiving', 'Storage', 'Preparation', 'Cooking', 'Cooling', 'Reheating', 'Serving']);
+  const addFlowStep = () => setTplFlowSteps(prev => [...prev, '']);
+  const removeFlowStep = (idx: number) => setTplFlowSteps(prev => prev.filter((_, i) => i !== idx));
+  const updateFlowStep = (idx: number, val: string) => setTplFlowSteps(prev => prev.map((s, i) => i === idx ? val : s));
+
+  // Section 5: Hazard Analysis rows
+  const [tplHazards, setTplHazards] = useState<{ type: string; description: string; significance: string; preventive: string }[]>([
+    { type: 'Biological', description: '', significance: '', preventive: '' },
+    { type: 'Chemical', description: '', significance: '', preventive: '' },
+    { type: 'Physical', description: '', significance: '', preventive: '' },
+  ]);
+  const addHazardRow = () => setTplHazards(prev => [...prev, { type: '', description: '', significance: '', preventive: '' }]);
+  const removeHazardRow = (idx: number) => setTplHazards(prev => prev.filter((_, i) => i !== idx));
+  const updateHazard = (idx: number, field: string, val: string) =>
+    setTplHazards(prev => prev.map((h, i) => i === idx ? { ...h, [field]: val } : h));
+
+  // Section 6: CCP determination rows
+  const [tplCCPs, setTplCCPs] = useState<{ ccpNum: string; step: string; hazard: string; criticalLimit: string; monitoring: string; corrective: string; verification: string; records: string }[]>([
+    { ccpNum: 'CCP-1', step: '', hazard: '', criticalLimit: '', monitoring: '', corrective: '', verification: '', records: '' },
+  ]);
+  const addCCPRow = () => setTplCCPs(prev => [...prev, { ccpNum: `CCP-${prev.length + 1}`, step: '', hazard: '', criticalLimit: '', monitoring: '', corrective: '', verification: '', records: '' }]);
+  const removeCCPRow = (idx: number) => setTplCCPs(prev => prev.filter((_, i) => i !== idx));
+  const updateCCP = (idx: number, field: string, val: string) =>
+    setTplCCPs(prev => prev.map((c, i) => i === idx ? { ...c, [field]: val } : c));
+
+  // Section 7: Critical Limits rows
+  const [tplCriticalLimits, setTplCriticalLimits] = useState<{ ccpNum: string; limitDesc: string }[]>([
+    { ccpNum: 'CCP-1', limitDesc: '' },
+  ]);
+  const addLimitRow = () => setTplCriticalLimits(prev => [...prev, { ccpNum: `CCP-${prev.length + 1}`, limitDesc: '' }]);
+  const removeLimitRow = (idx: number) => setTplCriticalLimits(prev => prev.filter((_, i) => i !== idx));
+  const updateLimit = (idx: number, field: string, val: string) =>
+    setTplCriticalLimits(prev => prev.map((l, i) => i === idx ? { ...l, [field]: val } : l));
+
+  const handleTemplateSave = () => {
+    if (isDemoMode) {
+      showToast('Demo mode — template data is not saved');
+    } else {
+      showToast('HACCP plan template saved');
+    }
+  };
 
   // Fetch HACCP data from Supabase in live mode
   useEffect(() => {
@@ -594,6 +658,17 @@ export function HACCP() {
             {openActions > 0 && (
               <span className="bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{openActions}</span>
             )}
+          </button>
+          <button
+            onClick={() => setActiveTab('template')}
+            className={`px-6 py-3 font-medium flex items-center space-x-2 whitespace-nowrap ${
+              activeTab === 'template'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <FileText className="h-4 w-4" />
+            <span>Template</span>
           </button>
         </div>
 
@@ -1003,6 +1078,385 @@ export function HACCP() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Template Tab (HACCP Plan Template Form) ──────── */}
+        {!loading && activeTab === 'template' && (
+          <div>
+            <div className="mb-4 flex items-start justify-between flex-wrap gap-2">
+              <div>
+                <p className="text-sm text-gray-600">
+                  Fill out this HACCP plan template to document hazard analysis and critical control points for your food products.
+                  Expand each section to complete the required fields.
+                </p>
+              </div>
+              <button
+                onClick={handleTemplateSave}
+                className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save Template
+              </button>
+            </div>
+
+            <div className="space-y-3">
+
+              {/* ── Section 1: Describe the Food Product ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(1)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>1</span>
+                    <span className="font-semibold text-gray-900">Describe the Food Product</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[1] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[1] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                      <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Description</label>
+                      <textarea value={tplProductDesc} onChange={(e) => setTplProductDesc(e.target.value)} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
+                      <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Distribution Method</label>
+                      <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Consumer</label>
+                      <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 2: Ingredients and Materials ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(2)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>2</span>
+                    <span className="font-semibold text-gray-900">List All Ingredients and Materials</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[2] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[2] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Raw Materials</label>
+                      <textarea value={tplRawMaterials} onChange={(e) => setTplRawMaterials(e.target.value)} placeholder="List all raw materials and ingredients (one per line)&#10;e.g.,&#10;Chicken breast (fresh, boneless)&#10;Lettuce (iceberg)&#10;Tomatoes (sliced)&#10;Bread rolls (sesame)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Processing Aids</label>
+                      <textarea value={tplProcessingAids} onChange={(e) => setTplProcessingAids(e.target.value)} placeholder="List any processing aids used (e.g., cooking oil, marinade, sanitizer for produce wash)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Packaging Materials</label>
+                      <textarea value={tplPackagingMaterials} onChange={(e) => setTplPackagingMaterials(e.target.value)} placeholder="List packaging materials (e.g., food-grade cling wrap, takeout containers, paper bags)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 3: Intended Use and Consumers ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(3)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>3</span>
+                    <span className="font-semibold text-gray-900">Identify Intended Use and Consumers</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[3] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[3] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
+                      <textarea value={tplUseDescription} onChange={(e) => setTplUseDescription(e.target.value)} placeholder="Describe how the product is intended to be used by the end consumer (e.g., consumed immediately after purchase, reheated before serving)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Population</label>
+                      <textarea value={tplTargetPopulation} onChange={(e) => setTplTargetPopulation(e.target.value)} placeholder="Identify the target population (e.g., general public, hospital patients, school children, elderly care facility residents)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Special Considerations</label>
+                      <textarea value={tplSpecialConsiderations} onChange={(e) => setTplSpecialConsiderations(e.target.value)} placeholder="Note any special considerations (e.g., allergen concerns, vulnerable populations such as immunocompromised individuals, religious dietary requirements)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 4: Construct Flow Diagram ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(4)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>4</span>
+                    <span className="font-semibold text-gray-900">Construct Flow Diagram</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[4] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[4] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
+                    <p className="text-sm text-gray-600 mb-4">Define the process steps from receiving raw materials through to serving the final product. Steps are displayed in order.</p>
+                    <div className="space-y-2">
+                      {tplFlowSteps.map((step, idx) => (
+                        <div key={idx} className="flex items-center space-x-2">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#d4af37' }}>{idx + 1}</div>
+                          {idx > 0 && <div className="absolute ml-4 -mt-4 w-0.5 h-3 bg-gray-300" />}
+                          <input
+                            type="text"
+                            value={step}
+                            onChange={(e) => updateFlowStep(idx, e.target.value)}
+                            placeholder={`Step ${idx + 1}`}
+                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
+                          />
+                          {tplFlowSteps.length > 1 && (
+                            <button onClick={() => removeFlowStep(idx)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Remove step">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={addFlowStep}
+                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
+                      style={{ color: '#1e4d6b' }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Step
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 5: Hazard Analysis ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(5)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>5</span>
+                    <span className="font-semibold text-gray-900">Hazard Analysis</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[5] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[5] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
+                    <p className="text-sm text-gray-600 mb-4">Identify all potential biological, chemical, and physical hazards. Assess their significance and list preventive measures.</p>
+                    <div className="space-y-4">
+                      {tplHazards.map((hazard, idx) => (
+                        <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-sm font-semibold text-gray-700">Hazard #{idx + 1}</span>
+                            {tplHazards.length > 1 && (
+                              <button onClick={() => removeHazardRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors" title="Remove hazard">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Type</label>
+                              <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent">
+                                <option value="">Select type...</option>
+                                <option value="Biological">Biological</option>
+                                <option value="Chemical">Chemical</option>
+                                <option value="Physical">Physical</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Significance (High / Medium / Low)</label>
+                              <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent">
+                                <option value="">Select...</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                              </select>
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Description</label>
+                              <textarea value={hazard.description} onChange={(e) => updateHazard(idx, 'description', e.target.value)} placeholder="Describe the specific hazard (e.g., Salmonella in raw poultry, metal fragments from processing equipment)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div className="md:col-span-2">
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Preventive Measures</label>
+                              <textarea value={hazard.preventive} onChange={(e) => updateHazard(idx, 'preventive', e.target.value)} placeholder="Describe preventive measures (e.g., cook to 165F internal temp, use metal detectors, supplier certification)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={addHazardRow}
+                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
+                      style={{ color: '#1e4d6b' }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Hazard
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 6: Determine Critical Control Points ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(6)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>6</span>
+                    <span className="font-semibold text-gray-900">Determine Critical Control Points</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[6] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[6] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
+                    <p className="text-sm text-gray-600 mb-4">For each CCP, document the process step, associated hazard, critical limits, monitoring procedures, corrective actions, verification activities, and record-keeping requirements.</p>
+                    <div className="space-y-4">
+                      {tplCCPs.map((ccp, idx) => (
+                        <div key={idx} className="rounded-lg border-2 border-[#1e4d6b]/20 overflow-hidden">
+                          <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#eef4f8' }}>
+                            <span className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
+                            {tplCCPs.length > 1 && (
+                              <button onClick={() => removeCCPRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors" title="Remove CCP">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                          <div className="p-4 space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
+                                <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-medium text-gray-600 mb-1">Process Step</label>
+                                <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard</label>
+                              <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
+                              <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., Internal temperature >= 165F for poultry" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Monitoring Procedure</label>
+                              <textarea value={ccp.monitoring} onChange={(e) => updateCCP(idx, 'monitoring', e.target.value)} placeholder="Describe what is monitored, how, frequency, and who is responsible" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Corrective Action</label>
+                              <textarea value={ccp.corrective} onChange={(e) => updateCCP(idx, 'corrective', e.target.value)} placeholder="Describe actions taken when critical limit is not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Verification</label>
+                              <textarea value={ccp.verification} onChange={(e) => updateCCP(idx, 'verification', e.target.value)} placeholder="Describe verification activities (e.g., supervisor review, equipment calibration)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Records</label>
+                              <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log, corrective action report" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={addCCPRow}
+                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
+                      style={{ color: '#1e4d6b' }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Critical Control Point
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Section 7: Establish Critical Limits ──── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <button
+                  onClick={() => toggleSection(7)}
+                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>7</span>
+                    <span className="font-semibold text-gray-900">Establish Critical Limits</span>
+                  </div>
+                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[7] ? 'rotate-180' : ''}`} />
+                </button>
+                {expandedSections[7] && (
+                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
+                    <p className="text-sm text-gray-600 mb-4">Summarize the critical limits for each CCP. Critical limits are the maximum or minimum values to which a biological, chemical, or physical parameter must be controlled.</p>
+                    <div className="space-y-3">
+                      {tplCriticalLimits.map((limit, idx) => (
+                        <div key={idx} className="flex items-start space-x-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                          <div className="flex-shrink-0 w-24">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">CCP #</label>
+                            <input type="text" value={limit.ccpNum} onChange={(e) => updateLimit(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                          </div>
+                          <div className="flex-1">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit Description</label>
+                            <input type="text" value={limit.limitDesc} onChange={(e) => updateLimit(idx, 'limitDesc', e.target.value)} placeholder="e.g., Internal temperature >= 165F for 15 seconds (poultry)" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                          </div>
+                          {tplCriticalLimits.length > 1 && (
+                            <button onClick={() => removeLimitRow(idx)} className="mt-5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors flex-shrink-0" title="Remove limit">
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={addLimitRow}
+                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
+                      style={{ color: '#1e4d6b' }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Critical Limit
+                    </button>
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Bottom save button */}
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={handleTemplateSave}
+                className="inline-flex items-center px-6 py-3 rounded-lg text-white text-sm font-medium transition-colors"
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                Save HACCP Plan Template
+              </button>
             </div>
           </div>
         )}

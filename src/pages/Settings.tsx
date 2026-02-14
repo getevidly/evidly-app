@@ -51,6 +51,9 @@ export function Settings() {
   const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
   const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
+  const [timezone, setTimezone] = useState(() => {
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return 'America/Chicago'; }
+  });
 
   // Tab names resolved at render time via i18n
   const tabI18n: Record<string, string> = {
@@ -317,6 +320,27 @@ export function Settings() {
                   <option value="other">Other</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">Used for industry benchmarking and peer comparison</p>
+              </div>
+
+              {/* Timezone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                <select
+                  value={timezone}
+                  onChange={(e) => {
+                    setTimezone(e.target.value);
+                    toast.success('Timezone updated');
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                >
+                  <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                  <option value="America/Denver">Mountain Time (MT)</option>
+                  <option value="America/Chicago">Central Time (CT)</option>
+                  <option value="America/New_York">Eastern Time (ET)</option>
+                  <option value="America/Anchorage">Alaska Time (AKT)</option>
+                  <option value="Pacific/Honolulu">Hawaii Time (HT)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">All scheduled tasks and reports will use this timezone</p>
               </div>
 
               {/* Locations */}

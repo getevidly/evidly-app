@@ -11,6 +11,9 @@ import { DemoBanner } from '../DemoBanner';
 import MobileStickyBar from '../MobileStickyBar';
 import { QuickSwitcher } from '../QuickSwitcher';
 import { ReferralTouchpoint } from '../ReferralTouchpoint';
+import { DemoCTABar } from '../DemoCTABar';
+import { DemoWatermark } from '../DemoWatermark';
+import { DemoRestrictions } from '../DemoRestrictions';
 import { useDemo } from '../../contexts/DemoContext';
 import { trackEvent } from '../../utils/analytics';
 
@@ -92,6 +95,9 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       <AIChatPanel hidden={anyTourActive} />
       <ReferralTouchpoint />
       <QuickSwitcher />
+      <DemoCTABar />
+      <DemoWatermark />
+      <DemoRestrictions />
     </div>
   );
 }

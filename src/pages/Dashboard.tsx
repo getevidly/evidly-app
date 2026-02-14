@@ -56,6 +56,7 @@ import { WelcomeBack } from '../components/WelcomeBack';
 import { OnboardingProgressWidget } from '../components/OnboardingProgressWidget';
 import { CopilotCard } from '../components/CopilotCard';
 import { DEMO_CHECKLIST_STATUS, getDocumentsForState } from '../data/onboardingDocuments';
+import { Tooltip as InfoTooltip } from '../components/Tooltip';
 
 export function Dashboard() {
   const { profile } = useAuth();
@@ -154,7 +155,7 @@ export function Dashboard() {
     { name: t('dashboard.foodSafety'), weight: Math.round(weights.foodSafety * 100), score: foodSafetyScore, tooltip: t('dashboard.foodSafetyTooltip'), trend: foodSafetyTrend },
     { name: t('dashboard.fireSafety'), weight: Math.round(weights.fireSafety * 100), score: fireSafetyScore, tooltip: t('dashboard.fireSafetyTooltip'), trend: fireSafetyTrend },
     { name: t('dashboard.vendorCompliance'), weight: Math.round(weights.vendorCompliance * 100), score: vendorComplianceScore, tooltip: t('dashboard.vendorComplianceTooltip'), trend: vendorComplianceTrend },
-  ].sort((a, b) => b.score - a.score);
+  ];
 
   const scoreInfo = getGrade(complianceScore);
 
@@ -480,7 +481,9 @@ export function Dashboard() {
 
         <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-200">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.complianceScore')}</h3>
+            <InfoTooltip text="Your overall compliance health across all three pillars">
+              <h3 className="text-lg font-semibold text-gray-900">{t('dashboard.complianceScore')}</h3>
+            </InfoTooltip>
             <div className="flex items-center gap-2 flex-wrap">
               {selectedLocation !== 'all' && !inspectorMode && (
                 <button
@@ -517,7 +520,9 @@ export function Dashboard() {
             <>
               <div className="flex items-start justify-center gap-8 flex-wrap">
                 <div className="flex flex-col items-center">
-                  <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">EvidLY Score</div>
+                  <InfoTooltip text="Your overall compliance health across all three pillars">
+                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">EvidLY Score</div>
+                  </InfoTooltip>
                   <AnimatedComplianceScore
                     score={complianceScore}
                     label={scoreInfo.label}
@@ -783,13 +788,19 @@ export function Dashboard() {
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <div className="flex items-center justify-center gap-1"><UtensilsCrossed className="h-3 w-3" /> Food Safety</div>
+                            <InfoTooltip text="Based on temperature logs, checklists, and food handler documentation">
+                              <div className="flex items-center justify-center gap-1"><UtensilsCrossed className="h-3 w-3" /> Food Safety</div>
+                            </InfoTooltip>
                           </th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <div className="flex items-center justify-center gap-1"><Flame className="h-3 w-3" /> Fire Safety</div>
+                            <InfoTooltip text="Based on hood cleaning, fire suppression, and extinguisher records">
+                              <div className="flex items-center justify-center gap-1"><Flame className="h-3 w-3" /> Fire Safety</div>
+                            </InfoTooltip>
                           </th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <div className="flex items-center justify-center gap-1"><Truck className="h-3 w-3" /> Vendors</div>
+                            <InfoTooltip text="Based on vendor certifications and service schedules">
+                              <div className="flex items-center justify-center gap-1"><Truck className="h-3 w-3" /> Vendors</div>
+                            </InfoTooltip>
                           </th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
                         </tr>
@@ -908,10 +919,18 @@ export function Dashboard() {
                     <tr>
                       <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'left' }}>{t('common.location')}</th>
                       <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.complianceScore')}</th>
-                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.foodSafety')}</th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.fireSafety')}</th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.vendorCompliance')}</th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>{t('dashboard.trend')}</th>
+                      <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
+                        <InfoTooltip text="Based on temperature logs, checklists, and food handler documentation">{t('dashboard.foodSafety')}</InfoTooltip>
+                      </th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
+                        <InfoTooltip text="Based on hood cleaning, fire suppression, and extinguisher records">{t('dashboard.fireSafety')}</InfoTooltip>
+                      </th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
+                        <InfoTooltip text="Based on vendor certifications and service schedules">{t('dashboard.vendorCompliance')}</InfoTooltip>
+                      </th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
+                        <InfoTooltip text="Score change compared to 30 days ago">{t('dashboard.trend')}</InfoTooltip>
+                      </th>
                       <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '100px' }}>{t('common.status')}</th>
                     </tr>
                   </thead>
@@ -951,7 +970,9 @@ export function Dashboard() {
                             <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.vendorCompliance) }}>{locScores.vendorCompliance}</span>
                           </td>
                           <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
-                            <span className="text-sm font-semibold" style={{ color: locTrend.color }}>{locTrend.icon} {locTrend.diff}</span>
+                            <InfoTooltip text="Score change compared to 30 days ago">
+                              <span className="text-sm font-semibold" style={{ color: locTrend.color }}>{locTrend.icon} {locTrend.diff}</span>
+                            </InfoTooltip>
                           </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${

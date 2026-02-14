@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -41,6 +42,15 @@ interface DemoUpgradePromptProps {
 export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradePromptProps) {
   const navigate = useNavigate();
   const copy = COPY[action] || COPY.edit;
+
+  // Close on Escape key
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={onClose}>
@@ -94,7 +104,7 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
               onClick={onClose}
               className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
-              Continue Exploring
+              Maybe Later
             </button>
           </div>
         </div>
