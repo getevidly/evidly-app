@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 
 export function SidebarUpgradeBadge() {
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode } = useDemo();
   const navigate = useNavigate();
   const [visible, setVisible] = useState(false);
 
@@ -15,7 +15,8 @@ export function SidebarUpgradeBadge() {
     return () => clearTimeout(timer);
   }, [isDemoMode]);
 
-  if (!isDemoMode || !visible) return null;
+  // Hide in presenter mode — no upgrade prompts during live demos
+  if (!isDemoMode || !visible || presenterMode) return null;
 
   const handleClick = () => {
     console.log('[CTA] Upgrade clicked from: sidebar-badge');

@@ -27,7 +27,7 @@ interface LayoutProps {
 }
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
-  const { tourActive, isDemoMode } = useDemo();
+  const { tourActive, isDemoMode, presenterMode } = useDemo();
   const [guidedTourActive, setGuidedTourActive] = useState(false);
   const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
   const anyTourActive = tourActive || guidedTourActive;
@@ -63,6 +63,10 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
 
   return (
     <div className="min-h-screen bg-[#faf8f3]">
+      {/* Gold top border when presenter mode is active */}
+      {presenterMode && (
+        <div className="fixed top-0 left-0 right-0 h-0.5 z-[99998]" style={{ backgroundColor: '#d4af37' }} />
+      )}
       <DemoBanner />
       <Sidebar />
       <div className="lg:pl-60 flex flex-col flex-1 relative z-0">
@@ -79,7 +83,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
         </main>
       </div>
       <MobileTabBar />
-      {isDemoMode && <MobileStickyBar demoMode />}
+      {isDemoMode && !presenterMode && <MobileStickyBar demoMode />}
       {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
       <AIChatPanel hidden={anyTourActive} />
       <QuickSwitcher />

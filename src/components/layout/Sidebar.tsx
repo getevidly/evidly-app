@@ -194,7 +194,7 @@ export function Sidebar() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { isEvidlyAdmin } = useAuth();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
   const { t } = useTranslation();
   const { currentTier } = useSubscription();
   const { branding } = useBranding();
@@ -255,6 +255,18 @@ export function Sidebar() {
             <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
           </div>
         </div>
+
+        {/* Presenter mode badge */}
+        {presenterMode && (
+          <button
+            onClick={togglePresenterMode}
+            className="mx-3 mb-2 px-2 py-1.5 rounded-md text-xs font-bold text-center transition-opacity hover:opacity-80 cursor-pointer"
+            style={{ backgroundColor: '#d4af37', color: '#1e4d6b' }}
+            title="Click to deactivate presenter mode"
+          >
+            PRESENTER MODE
+          </button>
+        )}
 
         {/* Scrollable navigation */}
         <nav className="flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">

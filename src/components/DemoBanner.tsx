@@ -3,10 +3,11 @@ import { ArrowRight } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 
 export function DemoBanner() {
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode } = useDemo();
   const navigate = useNavigate();
 
-  if (!isDemoMode) return null;
+  // Hide in presenter mode — clean presentation without upgrade prompts
+  if (!isDemoMode || presenterMode) return null;
 
   const handleClick = () => {
     console.log('[CTA] Upgrade clicked from: top-banner');

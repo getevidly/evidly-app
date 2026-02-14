@@ -408,8 +408,8 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
 export function InsuranceRisk() {
   const navigate = useNavigate();
   const { userRole } = useRole();
-  const { isDemoMode } = useDemo();
-  const aiTier = getAiTier(isDemoMode);
+  const { isDemoMode, presenterMode } = useDemo();
+  const aiTier = getAiTier(isDemoMode, presenterMode);
 
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'all';

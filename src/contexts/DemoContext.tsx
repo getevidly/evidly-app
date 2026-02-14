@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, ReactNode } from 'react';
 
 export interface DemoLead {
   fullName: string;
@@ -21,12 +21,16 @@ interface DemoContextType {
   companyName: string;
   userName: string;
   firstName: string;
+  presenterMode: boolean;
+  togglePresenterMode: () => void;
 }
 
 const DemoContext = createContext<DemoContextType | undefined>(undefined);
 
 const DEMO_KEY = 'evidly_demo_mode';
 const LEAD_KEY = 'evidly_demo_lead';
+const PRESENTER_KEY = 'evidly-presenter';
+const PRESENTER_CODE = 'evidly';
 
 function loadLead(): DemoLead | null {
   try {
@@ -49,6 +53,61 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [demoLead, setDemoLeadState] = useState<DemoLead | null>(loadLead);
   const [tourActive, setTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
+
+  // ── Presenter Mode ──────────────────────────────────
+  const [presenterMode, setPresenterMode] = useState(() => {
+    try {
+      // Check URL param first
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('presenter') === 'true') {
+        sessionStorage.setItem(PRESENTER_KEY, 'true');
+        return true;
+      }
+      return sessionStorage.getItem(PRESENTER_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const togglePresenterMode = useCallback(() => {
+    setPresenterMode(prev => {
+      const next = !prev;
+      try {
+        if (next) {
+          sessionStorage.setItem(PRESENTER_KEY, 'true');
+        } else {
+          sessionStorage.removeItem(PRESENTER_KEY);
+        }
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  // Keyboard konami code: type "evidly" (not in input fields)
+  const bufferRef = useRef('');
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key.length !== 1) return;
+
+      bufferRef.current = (bufferRef.current + e.key).slice(-PRESENTER_CODE.length);
+
+      if (bufferRef.current === PRESENTER_CODE) {
+        bufferRef.current = '';
+        setPresenterMode(prev => {
+          const next = !prev;
+          try {
+            if (next) sessionStorage.setItem(PRESENTER_KEY, 'true');
+            else sessionStorage.removeItem(PRESENTER_KEY);
+          } catch {}
+          return next;
+        });
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const setDemoLead = (lead: DemoLead) => {
     setDemoLeadState(lead);
@@ -94,6 +153,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       tourActive, tourStep, setTourStep,
       startTour, completeTour,
       companyName, userName, firstName,
+      presenterMode, togglePresenterMode,
     }}>
       {children}
     </DemoContext.Provider>

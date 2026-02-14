@@ -5,7 +5,16 @@ import { hasAccess, getFeatureDefinition } from '../lib/featureGating';
 
 export function useSubscription() {
   const { profile } = useAuth();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode } = useDemo();
+
+  // Presenter mode: simulate Enterprise tier (unlock everything)
+  if (isDemoMode && presenterMode) {
+    return {
+      currentTier: 'enterprise' as PlanTier,
+      isActive: true,
+      trialDaysLeft: null,
+    };
+  }
 
   // Demo mode: simulate Professional tier (show most features, enterprise gated)
   if (isDemoMode) {
@@ -17,10 +26,8 @@ export function useSubscription() {
   }
 
   // In production, pull from user profile or org metadata
-  // The subscriptions table has plan_name: 'founder' | 'professional' | 'enterprise'
-  // For now, default to 'founder' for logged-in users (baseline paid tier)
   const currentTier: PlanTier = (profile as any)?.plan || 'founder';
-  const isActive = true; // Would check subscription status in production
+  const isActive = true;
 
   return { currentTier, isActive, trialDaysLeft: null };
 }

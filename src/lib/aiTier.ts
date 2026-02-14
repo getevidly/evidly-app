@@ -45,10 +45,11 @@ const TIER_LIMITS: Record<AiTier, AiTierLimits> = {
 /**
  * Get the current user's AI tier.
  * In demo mode, returns 'standard' by default.
+ * In presenter mode, returns 'premium' to unlock all AI features.
  * In production, would check the organization's subscription.
  */
-export function getAiTier(_isDemoMode: boolean): AiTier {
-  // Demo mode always shows standard tier with upgrade prompts
+export function getAiTier(_isDemoMode: boolean, presenterMode = false): AiTier {
+  if (presenterMode) return 'premium';
   return 'standard';
 }
 

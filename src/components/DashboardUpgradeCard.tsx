@@ -7,11 +7,11 @@ interface DashboardUpgradeCardProps {
 }
 
 export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps) {
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode } = useDemo();
   const navigate = useNavigate();
 
-  // Only show in demo mode after visiting 2+ pages
-  if (!isDemoMode || pagesVisited < 2) return null;
+  // Only show in demo mode after visiting 2+ pages; hide in presenter mode
+  if (!isDemoMode || pagesVisited < 2 || presenterMode) return null;
 
   return (
     <div className="rounded-xl overflow-hidden mt-4" style={{ backgroundColor: '#0A3D6B' }}>

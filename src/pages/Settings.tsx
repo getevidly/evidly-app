@@ -27,7 +27,7 @@ const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: 
 export function Settings() {
   const { profile } = useAuth();
   const { userRole } = useRole();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
@@ -1586,6 +1586,17 @@ export function Settings() {
           )}
         </div>
       </div>
+      {/* Presenter mode toggle — only visible in demo mode */}
+      {isDemoMode && (
+        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+          <button
+            onClick={togglePresenterMode}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Presenter Mode: <span className={presenterMode ? 'font-bold text-[#d4af37]' : 'font-medium'}>{presenterMode ? 'ON' : 'OFF'}</span>
+          </button>
+        </div>
+      )}
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}

@@ -55,8 +55,8 @@ const NEVER_SHARED = [
 export function InsuranceSettings() {
   const navigate = useNavigate();
   const { userRole } = useRole();
-  const { isDemoMode } = useDemo();
-  const aiTier = getAiTier(isDemoMode);
+  const { isDemoMode, presenterMode } = useDemo();
+  const aiTier = getAiTier(isDemoMode, presenterMode);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [sharingEnabled, setSharingEnabled] = useState(false);
