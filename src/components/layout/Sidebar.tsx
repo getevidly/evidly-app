@@ -34,6 +34,7 @@ import {
   ListChecks,
   Bot,
   Scale,
+  MapPin,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -90,6 +91,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.equipment', href: '/equipment', icon: Cog, roles: allRoles },
       { i18nKey: 'nav.selfAudit', href: '/self-audit', icon: ClipboardCheck, roles: mgmtRoles },
       { i18nKey: 'nav.photoEvidence', href: '/photo-evidence', icon: Camera, roles: allRoles },
+      { i18nKey: 'nav.jurisdictionSettings', href: '/jurisdiction', icon: MapPin, roles: mgmtRoles },
     ],
   },
   {
@@ -111,6 +113,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.predictiveAlerts', href: '/analysis', icon: TrendingUp, roles: mgmtRoles, badge: 4, featureId: 'ai-predictive-insights' },
       { i18nKey: 'nav.inspectorView', href: '/inspector-view', icon: ClipboardCheck, roles: mgmtRoles },
       { i18nKey: 'nav.auditTrail', href: '/audit-trail', icon: Shield, roles: mgmtRoles },
+      { i18nKey: 'nav.benchmarks', href: '/benchmarks', icon: BarChart3, roles: mgmtRoles, featureId: 'industry-benchmarks' },
       { i18nKey: 'nav.regulatoryUpdates', href: '/regulatory-alerts', icon: Scale, roles: mgmtRoles },
     ],
   },

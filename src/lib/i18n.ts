@@ -95,6 +95,7 @@ const en = {
     copilot: 'Compliance Copilot',
     regulatoryUpdates: 'Regulatory Updates',
     regulatoryChanges: 'Regulatory Changes',
+    jurisdictionSettings: 'Jurisdiction',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -709,6 +710,7 @@ const es: typeof en = {
     copilot: 'Copiloto de Cumplimiento',
     regulatoryUpdates: 'Actualizaciones Regulatorias',
     regulatoryChanges: 'Cambios Regulatorios',
+    jurisdictionSettings: 'Jurisdicción',
   },
 
   common: {

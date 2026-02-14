@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import {
   BarChart3, TrendingUp, TrendingDown, Award, Share2, Download,
   ChevronDown, ChevronRight, ArrowRight, Star, Shield, Crown,
   Diamond, Info, Users, MapPin, Building2, Filter, Brain, Lock,
-  Trophy, Target, CheckCircle2, AlertTriangle, ExternalLink,
+  Trophy, Target, CheckCircle2, AlertTriangle, ExternalLink, Loader2,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -170,6 +170,8 @@ export function Benchmarks() {
   const { isDemoMode } = useDemo();
   const isPremium = false; // Standard tier demo
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const reportRef = useRef<HTMLDivElement>(null);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   const [vertical, setVertical] = useState('Restaurant');
   const [subVertical, setSubVertical] = useState('All Sub-Verticals');
@@ -188,11 +190,72 @@ export function Benchmarks() {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
+  const handleDownloadPDF = async () => {
+    guardAction('download', 'benchmark reports', async () => {
+      if (!reportRef.current) return;
+      setPdfLoading(true);
+      try {
+        const html2canvas = (await import('html2canvas')).default;
+        const jsPDFModule = await import('jspdf');
+        const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
+
+        const canvas = await html2canvas(reportRef.current, {
+          scale: 2, useCORS: true, logging: false, backgroundColor: '#ffffff',
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageW = 210;
+        const pageH = 297;
+        const margin = 8;
+        const hdrH = 10;
+        const ftrH = 8;
+        const usableH = pageH - hdrH - ftrH;
+        const imgW = pageW - 2 * margin;
+        const imgH = (canvas.height * imgW) / canvas.width;
+
+        let heightLeft = imgH;
+        let pageIdx = 0;
+
+        while (heightLeft > 0 || pageIdx === 0) {
+          if (pageIdx > 0) pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', margin, hdrH - pageIdx * usableH, imgW, imgH);
+          heightLeft -= usableH;
+          pageIdx++;
+        }
+
+        const total = pdf.getNumberOfPages();
+        const quarter = `Q1 2026`;
+        for (let i = 1; i <= total; i++) {
+          pdf.setPage(i);
+          pdf.setFillColor(30, 77, 107);
+          pdf.rect(0, 0, pageW, hdrH, 'F');
+          pdf.setFontSize(7);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text('EvidLY — Compliance Benchmark Report', margin, 6.5);
+          pdf.setTextColor(212, 175, 55);
+          pdf.text(quarter, pageW - margin, 6.5, { align: 'right' });
+          pdf.setFontSize(6);
+          pdf.setTextColor(160, 160, 160);
+          pdf.text(`Generated ${new Date().toLocaleDateString()}`, margin, pageH - 3);
+          pdf.text(`Page ${i} of ${total}`, pageW - margin, pageH - 3, { align: 'right' });
+        }
+
+        pdf.save(`EvidLY-Benchmark-Report-${quarter.replace(' ', '-')}.pdf`);
+        toast.success('Benchmark report PDF downloaded');
+      } catch {
+        toast.error('PDF generation failed');
+      } finally {
+        setPdfLoading(false);
+      }
+    });
+  };
+
   return (
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Benchmarks' }]} />
 
-      <div className="space-y-6">
+      <div ref={reportRef} className="space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between flex-wrap gap-2">
           <div>
@@ -210,11 +273,12 @@ export function Benchmarks() {
               <Filter className="h-4 w-4" /> Filters {showFilters ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             </button>
             <button
-              onClick={() => guardAction('download', 'benchmark reports', () => toast.info('Report download coming in Premium tier'))}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-white min-h-[44px]"
+              onClick={handleDownloadPDF}
+              disabled={pdfLoading}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg text-white min-h-[44px] disabled:opacity-60"
               style={{ backgroundColor: '#1e4d6b' }}
             >
-              <Download className="h-4 w-4" /> Export PDF
+              {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} {pdfLoading ? 'Generating...' : 'Export PDF'}
             </button>
           </div>
         </div>

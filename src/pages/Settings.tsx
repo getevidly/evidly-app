@@ -301,12 +301,22 @@ export function Settings() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.industry')}</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                  <option>{t('settings.restaurant')}</option>
-                  <option>{t('settings.foodManufacturing')}</option>
-                  <option>{t('settings.catering')}</option>
-                  <option>{t('settings.retailFood')}</option>
+                <select defaultValue="casual_dining" className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                  <option value="casual_dining">Casual Dining Restaurant</option>
+                  <option value="quick_service">Quick Service / Fast Food</option>
+                  <option value="fine_dining">Fine Dining</option>
+                  <option value="hotel">Hotel / Resort Dining</option>
+                  <option value="education_k12">K-12 School Cafeteria</option>
+                  <option value="education_university">University Dining</option>
+                  <option value="healthcare">Healthcare Facility</option>
+                  <option value="corporate_dining">Corporate Dining / Cafeteria</option>
+                  <option value="catering">Catering Operation</option>
+                  <option value="food_truck">Food Truck / Mobile</option>
+                  <option value="grocery_deli">Grocery / Deli</option>
+                  <option value="convenience">Convenience Store (prepared food)</option>
+                  <option value="other">Other</option>
                 </select>
+                <p className="text-xs text-gray-500 mt-1">Used for industry benchmarking and peer comparison</p>
               </div>
 
               {/* Locations */}
