@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -8,8 +8,8 @@ import {
   Search, ExternalLink, CheckCircle2, AlertTriangle,
   RefreshCw, Pause, Play, Trash2, Copy, Eye, EyeOff,
   ArrowUpRight, ArrowDownLeft, Clock, Filter,
-  Zap, Shield, ChevronRight, Plus, XCircle,
-  Globe, Code2, Webhook, BarChart3,
+  Zap, Shield, ChevronRight, Plus, XCircle, X, Check,
+  Globe, Code2, Webhook, BarChart3, Send,
 } from 'lucide-react';
 import {
   integrationPlatforms,
@@ -17,9 +17,11 @@ import {
   integrationSyncLogs,
   apiWebhookSubscriptions,
   apiUsageStats,
+  webhookDeliveryLogs,
   type IntegrationPlatform,
   type ConnectedIntegration,
   type IntegrationSyncLog,
+  type WebhookDeliveryLog,
 } from '../data/demoData';
 
 type Tab = 'marketplace' | 'connected' | 'api' | 'activity' | 'health';
@@ -32,7 +34,7 @@ const TABS: { id: Tab; label: string; icon: typeof ShoppingBag }[] = [
   { id: 'health', label: 'Health', icon: HeartPulse },
 ];
 
-const CATEGORY_ORDER = ['accounting', 'pos', 'payroll', 'distribution', 'productivity', 'inventory'] as const;
+const CATEGORY_ORDER = ['accounting', 'pos', 'payroll', 'distribution', 'productivity', 'inventory', 'communication', 'automation'] as const;
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
   available: { bg: '#e0f2fe', text: '#0369a1', label: 'Available' },
@@ -286,6 +288,323 @@ function ConnectedRow({ connection }: { connection: ConnectedIntegration }) {
   );
 }
 
+// ── Webhook Event Catalog ────────────────────────────────────────────────────
+
+const WEBHOOK_EVENT_CATALOG = {
+  Temperature: [
+    { key: 'temperature.out_of_range', label: 'Temperature reading outside acceptable range' },
+    { key: 'temperature.reading', label: 'New temperature reading logged' },
+    { key: 'temperature.sensor_offline', label: 'IoT sensor stopped reporting' },
+  ],
+  Incidents: [
+    { key: 'incident.created', label: 'New incident created' },
+    { key: 'incident.resolved', label: 'Incident resolved' },
+    { key: 'incident.escalated', label: 'Incident escalated to critical' },
+  ],
+  Checklists: [
+    { key: 'checklist.completed', label: 'Daily checklist completed' },
+    { key: 'checklist.missed', label: 'Daily checklist not completed by deadline' },
+    { key: 'checklist.item_failed', label: 'Checklist item marked as failed' },
+  ],
+  Documents: [
+    { key: 'document.uploaded', label: 'New document uploaded' },
+    { key: 'document.expiring', label: 'Document expiring within 30 days' },
+    { key: 'document.expired', label: 'Document has expired' },
+  ],
+  Compliance: [
+    { key: 'compliance.score_changed', label: 'Compliance score changed significantly' },
+    { key: 'compliance.dropped_below', label: 'Compliance score dropped below threshold' },
+  ],
+  Equipment: [
+    { key: 'equipment.service_due', label: 'Equipment service coming due' },
+    { key: 'equipment.service_overdue', label: 'Equipment service overdue' },
+  ],
+  'AI Copilot': [
+    { key: 'copilot.critical_insight', label: 'AI Copilot generated a critical insight' },
+  ],
+};
+
+// ── Create API Key Modal ─────────────────────────────────────────────────────
+
+interface DemoApiKey {
+  id: string;
+  name: string;
+  prefix: string;
+  scopes: string[];
+  rateLimit: number;
+  createdAt: string;
+  lastUsedAt: string | null;
+  requestsToday: number;
+  active: boolean;
+}
+
+function CreateApiKeyModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onClose: () => void; onCreated: (key: DemoApiKey, fullKey: string) => void }) {
+  const [name, setName] = useState('');
+  const [scopes, setScopes] = useState<string[]>(['read']);
+  const [rateLimit, setRateLimit] = useState('1000');
+  const [expiry, setExpiry] = useState('never');
+
+  if (!isOpen) return null;
+
+  const toggleScope = (scope: string) => {
+    setScopes(prev => prev.includes(scope) ? prev.filter(s => s !== scope) : [...prev, scope]);
+  };
+
+  const handleCreate = () => {
+    if (!name.trim()) { toast.warning('Please enter a key name'); return; }
+    const randomPart = Math.random().toString(36).substring(2, 14);
+    const fullKey = `evd_live_${randomPart}${Math.random().toString(36).substring(2, 14)}`;
+    const prefix = fullKey.substring(0, 16);
+    const newKey: DemoApiKey = {
+      id: `key-${Date.now()}`,
+      name: name.trim(),
+      prefix,
+      scopes,
+      rateLimit: parseInt(rateLimit) || 1000,
+      createdAt: new Date().toISOString(),
+      lastUsedAt: null,
+      requestsToday: 0,
+      active: true,
+    };
+    onCreated(newKey, fullKey);
+    setName('');
+    setScopes(['read']);
+    setRateLimit('1000');
+    setExpiry('never');
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h3 className="font-semibold text-gray-900">Create API Key</h3>
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 text-gray-400"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="px-6 py-4 space-y-4">
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-1">Name</label>
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Production Key" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-2">Scopes</label>
+            <div className="space-y-2">
+              {[
+                { key: 'read', label: 'Read', desc: 'View data (locations, scores, temperatures, documents)' },
+                { key: 'write', label: 'Write', desc: 'Create readings, incidents, upload documents' },
+                { key: 'admin', label: 'Admin', desc: 'Manage settings, users, and API keys' },
+              ].map(s => (
+                <label key={s.key} className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" checked={scopes.includes(s.key)} onChange={() => toggleScope(s.key)} className="mt-0.5 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]" />
+                  <div>
+                    <span className="text-xs font-medium text-gray-900">{s.label}</span>
+                    <span className="text-[10px] text-gray-500 block">{s.desc}</span>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-1">Rate limit (requests/hour)</label>
+            <input type="number" value={rateLimit} onChange={e => setRateLimit(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-1">Expires</label>
+            <select value={expiry} onChange={e => setExpiry(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20">
+              <option value="never">Never</option>
+              <option value="30d">30 days</option>
+              <option value="90d">90 days</option>
+              <option value="1y">1 year</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-gray-100">
+          <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+          <button onClick={handleCreate} className="px-4 py-2 text-sm font-medium bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">Create Key</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShowKeyOnceModal({ isOpen, onClose, fullKey }: { isOpen: boolean; onClose: () => void; fullKey: string }) {
+  if (!isOpen) return null;
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2 text-amber-600">
+            <AlertTriangle className="h-5 w-5" />
+            <h3 className="font-semibold">Copy your API key NOW</h3>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">This is the only time it will be shown. Store it securely.</p>
+        </div>
+        <div className="px-6 py-4">
+          <div className="bg-gray-50 rounded-lg p-3 font-mono text-xs text-gray-800 break-all select-all">{fullKey}</div>
+          <button
+            onClick={() => { navigator.clipboard.writeText(fullKey); toast.success('API key copied to clipboard'); }}
+            className="flex items-center gap-2 mt-3 w-full justify-center py-2 bg-[#1e4d6b] text-white rounded-lg text-sm font-medium hover:bg-[#163a52] transition-colors min-h-[44px]"
+          >
+            <Copy className="h-4 w-4" /> Copy to Clipboard
+          </button>
+          <p className="text-[10px] text-gray-400 text-center mt-2">If lost, revoke this key and create a new one.</p>
+        </div>
+        <div className="flex items-center justify-end px-6 py-3 border-t border-gray-100">
+          <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Done</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Create Webhook Modal ─────────────────────────────────────────────────────
+
+function CreateWebhookModal({ isOpen, onClose, onCreated }: { isOpen: boolean; onClose: () => void; onCreated: (name: string, url: string, events: string[]) => void }) {
+  const [name, setName] = useState('');
+  const [url, setUrl] = useState('');
+  const [selectedEvents, setSelectedEvents] = useState<string[]>([]);
+
+  if (!isOpen) return null;
+
+  const toggleEvent = (key: string) => {
+    setSelectedEvents(prev => prev.includes(key) ? prev.filter(e => e !== key) : [...prev, key]);
+  };
+
+  const handleCreate = () => {
+    if (!name.trim()) { toast.warning('Please enter a webhook name'); return; }
+    if (!url.trim()) { toast.warning('Please enter a webhook URL'); return; }
+    if (selectedEvents.length === 0) { toast.warning('Please select at least one event'); return; }
+    onCreated(name.trim(), url.trim(), selectedEvents);
+    setName('');
+    setUrl('');
+    setSelectedEvents([]);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+          <h3 className="font-semibold text-gray-900">Create Webhook</h3>
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 text-gray-400"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="px-6 py-4 space-y-4 overflow-y-auto flex-1">
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-1">Name</label>
+            <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Slack Kitchen Alerts" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-1">URL</label>
+            <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="https://hooks.example.com/evidly" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-700 block mb-2">Events</label>
+            <div className="space-y-3">
+              {Object.entries(WEBHOOK_EVENT_CATALOG).map(([category, events]) => (
+                <div key={category}>
+                  <div className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1">{category}</div>
+                  <div className="space-y-1">
+                    {events.map(evt => (
+                      <label key={evt.key} className="flex items-start gap-2 cursor-pointer py-0.5">
+                        <input type="checkbox" checked={selectedEvents.includes(evt.key)} onChange={() => toggleEvent(evt.key)} className="mt-0.5 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]" />
+                        <div>
+                          <code className="text-[10px] font-mono text-gray-700">{evt.key}</code>
+                          <span className="text-[10px] text-gray-400 block">{evt.label}</span>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 flex-shrink-0">
+          <span className="text-[10px] text-gray-400">{selectedEvents.length} events selected</span>
+          <div className="flex items-center gap-2">
+            <button onClick={onClose} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Cancel</button>
+            <button onClick={handleCreate} className="px-4 py-2 text-sm font-medium bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">Create Webhook</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Test Webhook Modal ───────────────────────────────────────────────────────
+
+function TestWebhookModal({ isOpen, onClose, webhookName }: { isOpen: boolean; onClose: () => void; webhookName: string }) {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  if (!isOpen) return null;
+
+  const handleTest = () => {
+    setStatus('sending');
+    setTimeout(() => {
+      setStatus(Math.random() > 0.15 ? 'success' : 'error');
+    }, 1200);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-xl w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h3 className="font-semibold text-gray-900">Test Webhook: {webhookName}</h3>
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 text-gray-400"><X className="h-4 w-4" /></button>
+        </div>
+        <div className="px-6 py-4 space-y-4">
+          {status === 'idle' && (
+            <div className="text-center py-4">
+              <Send className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-600">Send a test <code className="font-mono bg-gray-50 px-1 text-xs">compliance.score_changed</code> event to this webhook endpoint.</p>
+              <button onClick={handleTest} className="mt-4 px-6 py-2 bg-[#1e4d6b] text-white rounded-lg text-sm font-medium hover:bg-[#163a52] transition-colors min-h-[44px]">
+                Send Test Event
+              </button>
+            </div>
+          )}
+          {status === 'sending' && (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1e4d6b] mx-auto" />
+              <p className="text-sm text-gray-500 mt-3">Delivering test event...</p>
+            </div>
+          )}
+          {status === 'success' && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-semibold text-sm">Delivered successfully</span>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 space-y-1">
+                <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Status</span><span className="font-mono text-green-600">200 OK</span></div>
+                <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Response time</span><span className="font-mono text-gray-700">142ms</span></div>
+                <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Event</span><code className="font-mono text-gray-700 text-[10px]">compliance.score_changed</code></div>
+              </div>
+              <div>
+                <div className="text-[10px] text-gray-500 mb-1">Response body</div>
+                <pre className="bg-gray-900 rounded-lg px-3 py-2 text-[10px] text-green-300 font-mono overflow-x-auto">{'{ "status": "ok", "received": true }'}</pre>
+              </div>
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-red-600">
+                <XCircle className="h-5 w-5" />
+                <span className="font-semibold text-sm">Delivery failed</span>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-3 space-y-1">
+                <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Status</span><span className="font-mono text-red-600">502 Bad Gateway</span></div>
+                <div className="flex items-center justify-between text-xs"><span className="text-gray-500">Response time</span><span className="font-mono text-gray-700">3,021ms</span></div>
+              </div>
+              <button onClick={handleTest} className="text-xs text-[#1e4d6b] hover:underline">Retry</button>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center justify-end px-6 py-3 border-t border-gray-100">
+          <button onClick={() => { onClose(); setStatus('idle'); }} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── API Management Tab ───────────────────────────────────────────────────────
 
 function ApiManagementTab() {
@@ -295,6 +614,48 @@ function ApiManagementTab() {
   const demoApiKey = 'evd_live_sk_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
   const demoSandboxKey = 'evd_sandbox_sk_x9y8w7v6u5t4s3r2q1p0o9n8m7l6k5j4';
 
+  // Demo state for created keys, webhooks, delivery logs
+  const [apiKeys, setApiKeys] = useState<DemoApiKey[]>([
+    { id: 'key-prod', name: 'Production Key', prefix: 'evd_live_sk_a1b2', scopes: ['read', 'write'], rateLimit: 1000, createdAt: '2026-02-01T10:00:00Z', lastUsedAt: '2026-02-13T14:32:00Z', requestsToday: 847, active: true },
+    { id: 'key-r365', name: 'R365 Integration', prefix: 'evd_live_sk_def4', scopes: ['read'], rateLimit: 500, createdAt: '2026-01-15T09:00:00Z', lastUsedAt: '2026-02-13T13:15:00Z', requestsToday: 124, active: true },
+  ]);
+  const [showCreateKey, setShowCreateKey] = useState(false);
+  const [showKeyOnce, setShowKeyOnce] = useState(false);
+  const [newFullKey, setNewFullKey] = useState('');
+  const [showCreateWebhook, setShowCreateWebhook] = useState(false);
+  const [testWebhook, setTestWebhook] = useState<string | null>(null);
+  const [showDeliveryLogs, setShowDeliveryLogs] = useState(false);
+  const [webhooks, setWebhooks] = useState(apiWebhookSubscriptions);
+
+  const handleKeyCreated = (key: DemoApiKey, fullKey: string) => {
+    setApiKeys(prev => [...prev, key]);
+    setShowCreateKey(false);
+    setNewFullKey(fullKey);
+    setShowKeyOnce(true);
+    toast.success('API key created');
+  };
+
+  const handleRevokeKey = (keyId: string) => {
+    setApiKeys(prev => prev.map(k => k.id === keyId ? { ...k, active: false } : k));
+    toast.success('API key revoked');
+  };
+
+  const handleWebhookCreated = (name: string, url: string, events: string[]) => {
+    const newWebhook = {
+      id: `wh-${Date.now()}`,
+      appName: name,
+      url,
+      events,
+      status: 'active' as const,
+      lastDeliveryAt: null,
+      failureCount: 0,
+      createdAt: new Date().toISOString(),
+    };
+    setWebhooks(prev => [...prev, newWebhook]);
+    setShowCreateWebhook(false);
+    toast.success('Webhook created');
+  };
+
   return (
     <>
     <div className="space-y-6">
@@ -303,34 +664,48 @@ function ApiManagementTab() {
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
             <h3 className="font-semibold text-gray-900">API Keys</h3>
-            <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys</p>
+            <p className="text-xs text-gray-500 mt-0.5">Manage your production and sandbox API keys. Keys are shown once at creation.</p>
           </div>
-          <button onClick={() => guardAction('settings', 'API integrations', () => toast.info('Generate new API key (demo)'))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
-            <Plus className="h-3.5 w-3.5" /> New Key
+          <button onClick={() => guardAction('settings', 'API integrations', () => setShowCreateKey(true))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
+            <Plus className="h-3.5 w-3.5" /> Create New Key
           </button>
         </div>
 
         <div className="space-y-3">
-          {/* Live key */}
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg flex-wrap gap-2">
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
-              <div className="min-w-0">
-                <div className="text-xs font-medium text-gray-900">Production Key</div>
-                <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">
-                  {showKey ? demoApiKey : 'evd_live_sk_••••••••••••••••••••••••••••'}
+          {/* Active keys */}
+          {apiKeys.filter(k => k.active).map(key => (
+            <div key={key.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg flex-wrap gap-2">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-xs font-medium text-gray-900">{key.name}</div>
+                  <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">
+                    {key.id === 'key-prod' && showKey ? demoApiKey : `${key.prefix}...`}
+                    <span className="text-gray-400 ml-2">Scopes: {key.scopes.join(', ')}</span>
+                  </div>
+                  <div className="text-[10px] text-gray-400 mt-0.5">
+                    Created: {new Date(key.createdAt).toLocaleDateString()} · {key.lastUsedAt ? `Last used: ${getTimeSince(key.lastUsedAt)}` : 'Never used'}
+                    {' · '}Rate limit: {key.rateLimit.toLocaleString()}/hr · Requests today: {key.requestsToday}
+                  </div>
                 </div>
               </div>
+              <div className="flex items-center gap-1">
+                {key.id === 'key-prod' && (
+                  <button onClick={() => setShowKey(!showKey)} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+                    {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                  </button>
+                )}
+                {key.id === 'key-prod' && (
+                  <button onClick={() => { navigator.clipboard.writeText(demoApiKey); toast.success('API key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                <button onClick={() => handleRevokeKey(key.id)} className="p-1.5 rounded hover:bg-red-50 text-gray-400 hover:text-red-500" title="Revoke">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => setShowKey(!showKey)} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
-                {showKey ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
-              </button>
-              <button onClick={() => { navigator.clipboard.writeText(demoApiKey); toast.success('API key copied to clipboard'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
-                <Copy className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
+          ))}
 
           {/* Sandbox key */}
           <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg flex-wrap gap-2">
@@ -338,17 +713,27 @@ function ApiManagementTab() {
               <div className="w-2 h-2 rounded-full bg-yellow-500 flex-shrink-0" />
               <div className="min-w-0">
                 <div className="text-xs font-medium text-gray-900">Sandbox Key</div>
-                <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">
-                  evd_sandbox_sk_••••••••••••••••••••••••••••
-                </div>
+                <div className="font-mono text-[11px] text-gray-500 mt-0.5 truncate">evd_sandbox_sk_••••••••</div>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => { navigator.clipboard.writeText(demoSandboxKey); toast.success('Sandbox key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
-                <Copy className="h-3.5 w-3.5" />
-              </button>
-            </div>
+            <button onClick={() => { navigator.clipboard.writeText(demoSandboxKey); toast.success('Sandbox key copied'); }} className="p-1.5 rounded hover:bg-gray-200 text-gray-400">
+              <Copy className="h-3.5 w-3.5" />
+            </button>
           </div>
+
+          {/* Revoked keys */}
+          {apiKeys.filter(k => !k.active).length > 0 && (
+            <div className="pt-2">
+              <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-2">Revoked Keys</div>
+              {apiKeys.filter(k => !k.active).map(key => (
+                <div key={key.id} className="flex items-center gap-3 p-2 text-gray-400">
+                  <div className="w-2 h-2 rounded-full bg-gray-300 flex-shrink-0" />
+                  <span className="text-xs line-through">{key.name}</span>
+                  <span className="text-[10px]">{key.prefix}...</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -373,8 +758,6 @@ function ApiManagementTab() {
             <div className="text-[10px] text-gray-500">Avg Response</div>
           </div>
         </div>
-
-        {/* Top endpoints */}
         <h4 className="text-xs font-semibold text-gray-600 mb-2">Top Endpoints</h4>
         <div className="space-y-2">
           {apiUsageStats.topEndpoints.map(ep => {
@@ -397,47 +780,103 @@ function ApiManagementTab() {
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div>
             <h3 className="font-semibold text-gray-900">Webhook Subscriptions</h3>
-            <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery</p>
+            <p className="text-xs text-gray-500 mt-0.5">Manage outgoing webhook event delivery. All payloads signed with HMAC-SHA256.</p>
           </div>
-          <button onClick={() => guardAction('settings', 'webhook integrations', () => toast.info('Open webhook subscription form (demo)'))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors">
-            <Plus className="h-3.5 w-3.5" /> Add Webhook
+          <button onClick={() => guardAction('settings', 'webhook integrations', () => setShowCreateWebhook(true))} className="flex items-center gap-1.5 text-xs font-medium px-3 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors min-h-[44px]">
+            <Plus className="h-3.5 w-3.5" /> Create Webhook
           </button>
         </div>
 
         <div className="space-y-3">
-          {apiWebhookSubscriptions.map(wh => (
-            <div key={wh.id} className="p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-gray-900">{wh.appName}</span>
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${wh.status === 'active' ? 'bg-green-50 text-green-700' : wh.status === 'paused' ? 'bg-gray-100 text-gray-500' : 'bg-red-50 text-red-600'}`}>
-                      {wh.status}
-                    </span>
+          {webhooks.map(wh => {
+            const healthy = wh.status === 'active' && wh.failureCount === 0;
+            const warning = wh.status === 'active' && wh.failureCount > 0;
+            return (
+              <div key={wh.id} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-medium text-gray-900">{wh.appName}</span>
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                        healthy ? 'bg-green-50 text-green-700' :
+                        warning ? 'bg-yellow-50 text-yellow-700' :
+                        wh.status === 'paused' ? 'bg-gray-100 text-gray-500' :
+                        'bg-red-50 text-red-600'
+                      }`}>
+                        {healthy ? 'Healthy' : warning ? `${wh.failureCount} failure${wh.failureCount > 1 ? 's' : ''}` : wh.status}
+                      </span>
+                    </div>
+                    <code className="text-[10px] text-gray-400 font-mono block mt-1 truncate max-w-[400px]">{wh.url}</code>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {wh.events.map(e => (
+                        <span key={e} className="text-[9px] bg-white border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded font-mono">{e}</span>
+                      ))}
+                    </div>
                   </div>
-                  <code className="text-[10px] text-gray-400 font-mono block mt-1">{wh.url}</code>
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {wh.events.map(e => (
-                      <span key={e} className="text-[9px] bg-white border border-gray-200 text-gray-500 px-1.5 py-0.5 rounded font-mono">{e}</span>
-                    ))}
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => toast.info(`${wh.status === 'paused' ? 'Resuming' : 'Pausing'} webhook`)} className="p-1 rounded hover:bg-gray-200 text-gray-400" title={wh.status === 'paused' ? 'Resume' : 'Pause'}>
+                      {wh.status === 'paused' ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
+                    </button>
+                    <button onClick={() => setTestWebhook(wh.appName)} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Send test event">
+                      <Send className="h-3 w-3" />
+                    </button>
+                    <button onClick={() => { setWebhooks(prev => prev.filter(w => w.id !== wh.id)); toast.success('Webhook deleted'); }} className="p-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500" title="Delete">
+                      <Trash2 className="h-3 w-3" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => toast.info(`${wh.status === 'paused' ? 'Resuming' : 'Pausing'} webhook`)} className="p-1 rounded hover:bg-gray-200 text-gray-400">
-                    {wh.status === 'paused' ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
-                  </button>
-                  <button onClick={() => toast.info('Send test webhook event (demo)')} className="p-1 rounded hover:bg-gray-200 text-gray-400" title="Test">
-                    <Zap className="h-3 w-3" />
-                  </button>
+                <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                  {wh.lastDeliveryAt && <span>Last delivery: {getTimeSince(wh.lastDeliveryAt)}</span>}
+                  <span>Deliveries: {webhookDeliveryLogs.filter(d => d.webhookId === wh.id).length} total</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
-                {wh.lastDeliveryAt && <span>Last delivery: {getTimeSince(wh.lastDeliveryAt)}</span>}
-                {wh.failureCount > 0 && <span className="text-red-500">{wh.failureCount} failures</span>}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        {/* Webhook Delivery Logs toggle */}
+        <button
+          onClick={() => setShowDeliveryLogs(!showDeliveryLogs)}
+          className="flex items-center gap-2 mt-4 text-xs text-[#1e4d6b] hover:underline"
+        >
+          <Activity className="h-3.5 w-3.5" />
+          {showDeliveryLogs ? 'Hide' : 'View'} Delivery Logs ({webhookDeliveryLogs.length} deliveries)
+        </button>
+
+        {showDeliveryLogs && (
+          <div className="mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-gray-50 text-gray-600 uppercase text-[10px]">
+                  <th className="text-left px-3 py-2 font-semibold">Time</th>
+                  <th className="text-left px-3 py-2 font-semibold">Webhook</th>
+                  <th className="text-left px-3 py-2 font-semibold hidden sm:table-cell">Event</th>
+                  <th className="text-center px-3 py-2 font-semibold">Status</th>
+                  <th className="text-center px-3 py-2 font-semibold hidden sm:table-cell">Attempts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {webhookDeliveryLogs.map(log => {
+                  const wh = apiWebhookSubscriptions.find(w => w.id === log.webhookId);
+                  return (
+                    <tr key={log.id} className="border-t border-gray-50">
+                      <td className="px-3 py-2 text-gray-700">{getTimeSince(log.createdAt)}</td>
+                      <td className="px-3 py-2 text-gray-700">{wh?.appName || log.webhookId}</td>
+                      <td className="px-3 py-2 hidden sm:table-cell"><code className="font-mono text-[10px] text-gray-500">{log.eventType}</code></td>
+                      <td className="px-3 py-2 text-center">
+                        {log.delivered
+                          ? <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-50 text-green-700">{log.statusCode}</span>
+                          : <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-red-50 text-red-600">{log.statusCode || 'Failed'}</span>
+                        }
+                      </td>
+                      <td className="px-3 py-2 text-center text-gray-500 hidden sm:table-cell">{log.attempts}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Developer Portal Link */}
@@ -456,6 +895,12 @@ function ApiManagementTab() {
         </div>
       </div>
     </div>
+
+    {/* Modals */}
+    <CreateApiKeyModal isOpen={showCreateKey} onClose={() => setShowCreateKey(false)} onCreated={handleKeyCreated} />
+    <ShowKeyOnceModal isOpen={showKeyOnce} onClose={() => setShowKeyOnce(false)} fullKey={newFullKey} />
+    <CreateWebhookModal isOpen={showCreateWebhook} onClose={() => setShowCreateWebhook(false)} onCreated={handleWebhookCreated} />
+    <TestWebhookModal isOpen={!!testWebhook} onClose={() => setTestWebhook(null)} webhookName={testWebhook || ''} />
     {showUpgrade && (
       <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
     )}
@@ -684,7 +1129,9 @@ function getTimeSince(dateStr: string): string {
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export function IntegrationHub() {
-  const [activeTab, setActiveTab] = useState<Tab>('marketplace');
+  const location = useLocation();
+  const initialTab: Tab = location.pathname.includes('/api-keys') || location.pathname.includes('/webhooks') ? 'api' : 'marketplace';
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
 
   return (
     <div className="max-w-7xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif" }}>

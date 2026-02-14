@@ -38,6 +38,8 @@ import {
   ShieldAlert,
   Palette,
   Radio,
+  Globe,
+  Code2,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -148,6 +150,8 @@ const sections: NavSection[] = [
     items: [
       { i18nKey: 'nav.settings', href: '/settings', icon: Settings, roles: mgmtRoles },
       { i18nKey: 'nav.branding', href: '/settings/branding', icon: Palette, roles: mgmtRoles },
+      { i18nKey: 'nav.integrations', href: '/integrations', icon: Globe, roles: mgmtRoles },
+      { i18nKey: 'nav.developerPortal', href: '/developers', icon: Code2, roles: mgmtRoles },
       { i18nKey: 'nav.iotSensors', href: '/settings/sensors', icon: Radio, roles: mgmtRoles },
       { i18nKey: 'nav.importData', href: '/import', icon: Upload, roles: mgmtRoles },
       { i18nKey: 'nav.billing', href: '/settings', icon: CreditCard, roles: mgmtRoles },

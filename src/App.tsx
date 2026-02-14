@@ -298,6 +298,9 @@ function AppRoutes() {
           <Route path="/sensors/add" element={<SensorSetupWizard />} />
           <Route path="/sensors/:id" element={<SensorDetail />} />
           <Route path="/integrations" element={<IntegrationHub />} />
+          <Route path="/settings/integrations" element={<IntegrationHub />} />
+          <Route path="/settings/api-keys" element={<IntegrationHub />} />
+          <Route path="/settings/webhooks" element={<IntegrationHub />} />
           <Route path="/developers" element={<DeveloperPortal />} />
           <Route path="/training" element={<TrainingHub />} />
           <Route path="/training/course/:id" element={<TrainingCourse />} />

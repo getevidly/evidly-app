@@ -2109,7 +2109,7 @@ export interface IntegrationPlatform {
   id: string;
   slug: string;
   name: string;
-  category: 'accounting' | 'pos' | 'payroll' | 'distribution' | 'productivity' | 'inventory';
+  category: 'accounting' | 'pos' | 'payroll' | 'distribution' | 'productivity' | 'inventory' | 'communication' | 'automation';
   categoryLabel: string;
   color: string;
   description: string;
@@ -2143,6 +2143,10 @@ export const integrationPlatforms: IntegrationPlatform[] = [
   // Inventory
   { id: 'int-marketman', slug: 'marketman', name: 'MarketMan', category: 'inventory', categoryLabel: 'Inventory', color: '#ff9900', description: 'Inventory management platform. Correlate food inventory with safety data for shelf-life and receiving compliance.', authType: 'api_key', features: ['Inventory data', 'Shelf life tracking', 'Receiving log', 'Supplier data'], status: 'coming_soon', pricingNote: 'MarketMan API', marketSize: 'Cloud inventory leader', docsUrl: '' },
   { id: 'int-bluecart', slug: 'bluecart', name: 'BlueCart', category: 'inventory', categoryLabel: 'Inventory', color: '#2563eb', description: 'Restaurant ordering platform. Order data for receiving checks and supplier compliance verification.', authType: 'api_key', features: ['Order data', 'Receiving checks', 'Supplier compliance'], status: 'coming_soon', pricingNote: 'BlueCart API tiers', marketSize: 'Restaurant ordering', docsUrl: '' },
+  // Communication
+  { id: 'int-slack', slug: 'slack', name: 'Slack', category: 'communication', categoryLabel: 'Communication', color: '#4A154B', description: 'Get EvidLY alerts and copilot insights delivered to your Slack channels. Real-time temperature violations, incident reports, and compliance score changes.', authType: 'oauth2', features: ['Channel notifications', 'Temperature alerts', 'Incident reports', 'Copilot insights'], status: 'connected', pricingNote: 'Slack App Directory', marketSize: '65M+ daily users', docsUrl: 'https://api.slack.com/' },
+  // Automation
+  { id: 'int-zapier', slug: 'zapier', name: 'Zapier', category: 'automation', categoryLabel: 'Automation', color: '#FF4A00', description: 'Connect EvidLY to 5,000+ apps through Zapier automations. Trigger workflows on compliance events, temperature violations, and more.', authType: 'api_key', features: ['5,000+ app connections', 'Event triggers', 'Multi-step zaps', 'Custom workflows'], status: 'available', pricingNote: 'Zapier Integration Partner', marketSize: '2.2M+ businesses', docsUrl: 'https://platform.zapier.com/' },
 ];
 
 export interface ConnectedIntegration {
@@ -2177,6 +2181,7 @@ export const connectedIntegrations: ConnectedIntegration[] = [
   { id: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', status: 'connected', authType: 'certificate', platformAccountId: 'adp-org-7812', platformAccountName: 'EvidLY Foods', scopes: ['workers:read', 'events:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', lastError: '2 employees missing location assignment in ADP', errorCount: 1, nextSyncAt: '2026-02-11T03:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2026-01-20T11:00:00Z', disconnectedAt: null, employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-5', platform: 'google', platformDisplayName: 'Google Workspace', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: 'evidly-demo@evidly.com', scopes: ['drive.file', 'calendar.events', 'gmail.send'], syncConfig: { entities: ['documents'], direction: 'outbound', frequencyMin: 60 }, lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T15:58:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-10-05T08:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38 },
   { id: 'ci-6', platform: 'toast', platformDisplayName: 'Toast', status: 'error', authType: 'oauth2', platformAccountId: 'toast-guid-d4e5f6', platformAccountName: 'Airport Location', scopes: ['employees:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', lastError: 'OAuth token refresh failed — re-authorize required', errorCount: 3, nextSyncAt: '2026-02-10T16:00:00Z', connectedBy: 'Sarah Lee', connectedAt: '2026-02-01T16:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
+  { id: 'ci-7', platform: 'slack', platformDisplayName: 'Slack', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: '#kitchen-compliance', scopes: ['incoming-webhook', 'chat:write'], syncConfig: { entities: ['notifications'], direction: 'outbound', frequencyMin: 0 }, lastSyncAt: '2026-02-10T13:22:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '', connectedBy: 'Maria Chen', connectedAt: '2026-01-12T10:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
 ];
 
 export interface IntegrationSyncLog {
@@ -2251,6 +2256,29 @@ export const apiUsageStats: ApiUsageStats = {
     { endpoint: 'GET /v1/locations/{id}/documents', count: 890 },
   ],
 };
+
+export interface WebhookDeliveryLog {
+  id: string;
+  webhookId: string;
+  eventType: string;
+  statusCode: number | null;
+  delivered: boolean;
+  attempts: number;
+  createdAt: string;
+}
+
+export const webhookDeliveryLogs: WebhookDeliveryLog[] = [
+  { id: 'wdl-01', webhookId: 'wh-01', eventType: 'compliance.score_changed', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-10T14:32:00Z' },
+  { id: 'wdl-02', webhookId: 'wh-02', eventType: 'temperature.violation', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-10T14:57:00Z' },
+  { id: 'wdl-03', webhookId: 'wh-01', eventType: 'document.uploaded', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-10T13:15:00Z' },
+  { id: 'wdl-04', webhookId: 'wh-02', eventType: 'incident.created', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-10T11:30:00Z' },
+  { id: 'wdl-05', webhookId: 'wh-03', eventType: 'compliance.score_changed', statusCode: 502, delivered: false, attempts: 3, createdAt: '2026-02-10T09:00:00Z' },
+  { id: 'wdl-06', webhookId: 'wh-01', eventType: 'vendor.service_completed', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-10T08:45:00Z' },
+  { id: 'wdl-07', webhookId: 'wh-02', eventType: 'compliance.threshold_breach', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-09T16:20:00Z' },
+  { id: 'wdl-08', webhookId: 'wh-04', eventType: 'checklist.completed', statusCode: null, delivered: false, attempts: 1, createdAt: '2026-02-08T16:00:00Z' },
+  { id: 'wdl-09', webhookId: 'wh-02', eventType: 'temperature.violation', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-09T10:15:00Z' },
+  { id: 'wdl-10', webhookId: 'wh-01', eventType: 'compliance.score_changed', statusCode: 200, delivered: true, attempts: 1, createdAt: '2026-02-09T07:00:00Z' },
+];
 
 // ── Training & Certification LMS Data ────────────────────────────────────────
 
