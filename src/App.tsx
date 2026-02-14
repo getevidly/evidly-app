@@ -121,6 +121,7 @@ import { usePageTracking } from './hooks/usePageTracking';
 const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBanner'));
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
+import { PageTransition } from './components/PageTransition';
 
 function LandingPage() {
   return (
@@ -224,7 +225,9 @@ function ProtectedLayout() {
             </div>
           </div>
         }>
-          <Outlet />
+          <PageTransition key={location.pathname}>
+            <Outlet />
+          </PageTransition>
         </Suspense>
       </ErrorBoundary>
       {isDemoMode && (

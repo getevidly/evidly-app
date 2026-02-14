@@ -1,3 +1,5 @@
+export { Skeleton, SkeletonCard, SkeletonTable, SkeletonChart, SkeletonScore, SkeletonKPI, SkeletonList } from './ui/Skeleton';
+
 export function LoadingSkeleton({ className = '' }: { className?: string }) {
   return (
     <div className={`animate-pulse bg-gray-200 rounded ${className}`}></div>
