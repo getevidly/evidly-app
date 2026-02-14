@@ -3,8 +3,11 @@ import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, Shield, AlertTriangle, Clock,
   MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
+  Radio, Wifi, WifiOff, Battery, Signal,
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { toast } from 'sonner';
+import { format, formatDistanceToNow } from 'date-fns';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
 import { useAuth } from '../contexts/AuthContext';
@@ -14,6 +17,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
+import { iotSensors, iotSensorReadings, iotSensorProviders } from '../data/demoData';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -586,7 +590,7 @@ export function Equipment() {
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [detailTab, setDetailTab] = useState<'overview' | 'warranty' | 'service' | 'schedule' | 'forecast' | 'costs' | 'vendors'>('overview');
+  const [detailTab, setDetailTab] = useState<'overview' | 'warranty' | 'service' | 'schedule' | 'forecast' | 'costs' | 'vendors' | 'iot'>('overview');
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -910,10 +914,20 @@ export function Equipment() {
 
             {/* Tabs */}
             <div className="flex border-b border-gray-200 overflow-x-auto">
-              {([
-                ['overview', 'Overview'], ['warranty', 'Warranty'], ['service', 'Service History'],
-                ['schedule', 'Schedule'], ['forecast', 'Lifecycle & Cost'], ['costs', 'Cost Breakdown'], ['vendors', 'Vendors'],
-              ] as const).map(([tab, label]) => (
+              {(() => {
+                const linkedSensor = iotSensors.find(s =>
+                  s.name.toLowerCase() === selected.name.toLowerCase() ||
+                  s.zone.toLowerCase() === selected.name.toLowerCase() ||
+                  (selected.name.toLowerCase().includes('cooler') && s.name.toLowerCase().includes('cooler') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___')) ||
+                  (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
+                );
+                const baseTabs: [string, string][] = [
+                  ['overview', 'Overview'], ['warranty', 'Warranty'], ['service', 'Service History'],
+                  ['schedule', 'Schedule'], ['forecast', 'Lifecycle & Cost'], ['costs', 'Cost Breakdown'], ['vendors', 'Vendors'],
+                ];
+                if (linkedSensor) baseTabs.push(['iot', 'IoT Sensor']);
+                return baseTabs;
+              })().map(([tab, label]) => (
                 <button
                   key={tab}
                   onClick={() => setDetailTab(tab as typeof detailTab)}
@@ -1348,6 +1362,157 @@ export function Equipment() {
                         )}
                       </div>
                     )}
+                  </div>
+                );
+              })()}
+
+              {/* ── Tab: IoT Sensor ─── */}
+              {detailTab === 'iot' && (() => {
+                const sensor = iotSensors.find(s =>
+                  s.name.toLowerCase() === selected.name.toLowerCase() ||
+                  s.zone.toLowerCase() === selected.name.toLowerCase() ||
+                  (selected.name.toLowerCase().includes('cooler') && s.name.toLowerCase().includes('cooler') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___')) ||
+                  (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
+                );
+                if (!sensor) return <p className="text-sm text-gray-500">No IoT sensor linked to this equipment.</p>;
+
+                const provider = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
+                const readings = iotSensorReadings.filter(r => r.sensorId === sensor.id);
+                const lastSeen = formatDistanceToNow(new Date(sensor.lastSeenAt), { addSuffix: true });
+                const isOnline = sensor.status === 'online';
+                const statusColor = isOnline ? '#16a34a' : sensor.status === 'warning' ? '#f59e0b' : '#dc2626';
+
+                // Get threshold range
+                const zone = sensor.zone.toLowerCase();
+                let thMin = 32, thMax = 41;
+                if (zone.includes('freezer')) { thMin = -10; thMax = 0; }
+                else if (zone.includes('hot')) { thMin = 135; thMax = 200; }
+                else if (zone.includes('dry')) { thMin = 50; thMax = 75; }
+                const inRange = sensor.currentTempF >= thMin && sensor.currentTempF <= thMax;
+
+                // Generate 24h chart data
+                const chartData = [];
+                for (let i = 23; i >= 0; i--) {
+                  const h = new Date();
+                  h.setHours(h.getHours() - i, 0, 0, 0);
+                  const jitter = (Math.sin(i * 2.1 + sensor.id.charCodeAt(5)) * 1.5) + (Math.cos(i * 0.7) * 0.5);
+                  chartData.push({ hour: format(h, 'ha'), temp: Math.round((sensor.currentTempF + jitter) * 10) / 10, max: thMax, min: thMin });
+                }
+
+                const todayReadings = 288;
+                const outOfRange = readings.filter(r => r.complianceStatus === 'violation').length;
+
+                return (
+                  <div className="space-y-5">
+                    {/* Sensor Header */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-lg" style={{ backgroundColor: (provider?.color || '#1e4d6b') + '15' }}>
+                          <Radio className="h-5 w-5" style={{ color: provider?.color || '#1e4d6b' }} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-900">{sensor.name}</h4>
+                          <p className="text-xs text-gray-500">{provider?.name || sensor.providerSlug} &middot; {sensor.macAddress}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColor }} />
+                        <span className="text-xs font-medium" style={{ color: statusColor }}>
+                          {isOnline ? 'Connected' : sensor.status === 'warning' ? 'Warning' : 'Disconnected'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Current Reading + Stats */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Current</p>
+                        <p className={`text-2xl font-bold ${inRange ? 'text-gray-900' : 'text-red-600'}`}>{sensor.currentTempF}°F</p>
+                        <p className="text-xs mt-0.5">{inRange ? <span className="text-green-600">In Range</span> : <span className="text-red-600">Out of Range</span>}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Range</p>
+                        <p className="text-lg font-semibold text-gray-900">{thMin}–{thMax}°F</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Threshold</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Today</p>
+                        <p className="text-lg font-semibold text-gray-900">{todayReadings}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} out of range</span> : <span className="text-green-600">All in range</span>}</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Last Seen</p>
+                        <p className="text-sm font-semibold text-gray-900">{lastSeen}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-400 flex items-center gap-0.5"><Battery className="h-3 w-3" /> {sensor.batteryPct}%</span>
+                          <span className="text-xs text-gray-400 flex items-center gap-0.5"><Signal className="h-3 w-3" /> {sensor.signalRssi}dBm</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 24-Hour Chart */}
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">24-Hour Temperature Chart</h4>
+                      <div className="bg-white border border-gray-200 rounded-xl p-3" style={{ height: 180 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="hour" tick={{ fontSize: 10 }} interval={3} />
+                            <YAxis tick={{ fontSize: 10 }} domain={[thMin - 5, thMax + 5]} />
+                            <Tooltip contentStyle={{ fontSize: 12 }} formatter={(v: number) => [`${v}°F`, 'Temperature']} />
+                            <ReferenceLine y={thMax} stroke="#f59e0b" strokeDasharray="4 4" label={{ value: `${thMax}°F max`, fontSize: 9, fill: '#f59e0b', position: 'right' }} />
+                            {thMin > -20 && <ReferenceLine y={thMin} stroke="#3b82f6" strokeDasharray="4 4" label={{ value: `${thMin}°F min`, fontSize: 9, fill: '#3b82f6', position: 'right' }} />}
+                            <Line type="monotone" dataKey="temp" stroke={inRange ? '#16a34a' : '#dc2626'} strokeWidth={2} dot={false} />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
+                    {/* Recent Readings Table */}
+                    <div>
+                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Recent Readings</h4>
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <table className="w-full text-sm">
+                          <thead><tr className="bg-gray-50">
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Time</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">Temp</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">Humidity</th>
+                            <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600">Status</th>
+                          </tr></thead>
+                          <tbody>
+                            {readings.map((r, i) => (
+                              <tr key={i} className="border-t border-gray-100">
+                                <td className="px-3 py-2 text-xs text-gray-600">{format(new Date(r.timestamp), 'h:mm:ss a')}</td>
+                                <td className="px-3 py-2 text-sm font-medium text-right">{r.temperatureF}°F</td>
+                                <td className="px-3 py-2 text-xs text-gray-500 text-right">{r.humidityPct != null ? `${r.humidityPct}%` : '—'}</td>
+                                <td className="px-3 py-2 text-center">
+                                  {r.complianceStatus === 'in_range' ? (
+                                    <span className="text-green-600 text-xs font-medium">In Range</span>
+                                  ) : r.complianceStatus === 'warning' ? (
+                                    <span className="text-amber-600 text-xs font-medium">Warning</span>
+                                  ) : (
+                                    <span className="text-red-600 text-xs font-medium">Violation</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={() => toast.info('Opening sensor detail page...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1e4d6b] bg-[#eef4f8] rounded-lg hover:bg-[#d9e8f0]">
+                        <Wifi className="h-3.5 w-3.5" /> View Full History
+                      </button>
+                      <button onClick={() => toast.info('CSV export started...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                        <TrendingDown className="h-3.5 w-3.5" /> Download CSV
+                      </button>
+                      <button onClick={() => toast.info('Opening sensor settings...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                        <Wrench className="h-3.5 w-3.5" /> Configure Sensor
+                      </button>
+                    </div>
                   </div>
                 );
               })()}

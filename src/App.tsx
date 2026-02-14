@@ -274,6 +274,7 @@ function AppRoutes() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/branding" element={<BrandingSettings />} />
+          <Route path="/settings/sensors" element={<IoTSensorHub />} />
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />

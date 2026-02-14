@@ -1,19 +1,20 @@
 import { useState, useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
-import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { format, subDays, startOfDay, endOfDay, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts';
 import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type IoTSensorReading } from '../data/demoData';
 
 interface TemperatureEquipment {
   id: string;
@@ -93,7 +94,7 @@ export function TempLogs() {
   const [temperature, setTemperature] = useState('');
   const [correctiveAction, setCorrectiveAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown'>('equipment');
+  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot'>('equipment');
   const [showHistoryDetails, setShowHistoryDetails] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -1235,6 +1236,17 @@ export function TempLogs() {
           >
             {t('tempLogs.cooldown')}
           </button>
+          <button
+            onClick={() => setActiveTab('iot')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'iot'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Radio className="h-3.5 w-3.5" />
+            IoT Live View
+          </button>
         </div>
 
         {/* Equipment Tab */}
@@ -2098,6 +2110,240 @@ export function TempLogs() {
             </div>
           </div>
         )}
+
+        {/* IoT Live View Tab */}
+        {activeTab === 'iot' && (() => {
+          const locationSensors = locationFilter === 'all'
+            ? iotSensors
+            : iotSensors.filter(s => s.locationName.toLowerCase().includes(locationFilter.toLowerCase()));
+          const onlineCount = locationSensors.filter(s => s.status === 'online').length;
+          const warningCount = locationSensors.filter(s => s.status === 'warning').length;
+          const offlineCount = locationSensors.filter(s => s.status === 'offline' || s.status === 'error').length;
+
+          // Generate sparkline data for each sensor
+          const getSparkline = (sensor: IoTSensor) => {
+            const readings = iotSensorReadings.filter(r => r.sensorId === sensor.id);
+            const base = sensor.currentTempF;
+            const points = [];
+            for (let i = 23; i >= 0; i--) {
+              const h = new Date();
+              h.setHours(h.getHours() - i, 0, 0, 0);
+              const jitter = (Math.sin(i * 2.1 + sensor.id.charCodeAt(5)) * 1.5) + (Math.cos(i * 0.7) * 0.5);
+              points.push({ hour: format(h, 'ha'), temp: Math.round((base + jitter) * 10) / 10 });
+            }
+            return points;
+          };
+
+          const getStatusColor = (s: string) => s === 'online' ? '#16a34a' : s === 'warning' ? '#f59e0b' : '#dc2626';
+          const getStatusLabel = (s: string) => s === 'online' ? 'Connected' : s === 'warning' ? 'Warning' : 'Disconnected';
+
+          // Get threshold for sensor
+          const getThreshold = (sensor: IoTSensor) => {
+            const zone = sensor.zone.toLowerCase();
+            if (zone.includes('freezer')) return { min: -10, max: 0 };
+            if (zone.includes('cooler') || zone.includes('walk-in') || zone.includes('reach-in') || zone.includes('salad') || zone.includes('beverage') || zone.includes('display')) return { min: 32, max: 41 };
+            if (zone.includes('hot')) return { min: 135, max: 200 };
+            if (zone.includes('dry')) return { min: 50, max: 75 };
+            return { min: 32, max: 80 };
+          };
+
+          const isInRange = (sensor: IoTSensor) => {
+            const t = getThreshold(sensor);
+            return sensor.currentTempF >= t.min && sensor.currentTempF <= t.max;
+          };
+
+          // Build combined log: IoT readings + manual readings merged
+          const combinedLog = [
+            ...iotSensorReadings
+              .filter(r => {
+                if (locationFilter === 'all') return true;
+                const s = iotSensors.find(s => s.id === r.sensorId);
+                return s && s.locationName.toLowerCase().includes(locationFilter.toLowerCase());
+              })
+              .map(r => {
+                const s = iotSensors.find(s => s.id === r.sensorId);
+                return {
+                  time: r.timestamp,
+                  equipment: s?.name || 'Unknown',
+                  temp: r.temperatureF,
+                  inRange: r.complianceStatus === 'in_range',
+                  source: 'iot' as const,
+                };
+              }),
+            // Add recent manual readings from history
+            ...history.slice(0, 5).map(h => ({
+              time: h.created_at,
+              equipment: h.equipment_name,
+              temp: h.temperature_value,
+              inRange: h.is_within_range,
+              source: 'manual' as const,
+            })),
+          ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 20);
+
+          const providerFor = (slug: string) => iotSensorProviders.find(p => p.slug === slug);
+
+          return (
+            <div className="space-y-6">
+              {/* IoT Status Summary */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-green-100"><Wifi className="h-5 w-5 text-green-600" /></div>
+                  <div><p className="text-2xl font-bold text-gray-900">{onlineCount}</p><p className="text-xs text-gray-500">Online Sensors</p></div>
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-amber-100"><AlertTriangle className="h-5 w-5 text-amber-600" /></div>
+                  <div><p className="text-2xl font-bold text-gray-900">{warningCount}</p><p className="text-xs text-gray-500">Warnings</p></div>
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-red-100"><WifiOff className="h-5 w-5 text-red-600" /></div>
+                  <div><p className="text-2xl font-bold text-gray-900">{offlineCount}</p><p className="text-xs text-gray-500">Disconnected</p></div>
+                </div>
+              </div>
+
+              {/* Live Sensor Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                {locationSensors.map(sensor => {
+                  const sparkline = getSparkline(sensor);
+                  const threshold = getThreshold(sensor);
+                  const inRange = isInRange(sensor);
+                  const provider = providerFor(sensor.providerSlug);
+                  const lastSeen = formatDistanceToNow(new Date(sensor.lastSeenAt), { addSuffix: true });
+
+                  return (
+                    <div key={sensor.id} className={`bg-white rounded-xl border-2 p-4 ${
+                      sensor.status === 'offline' || sensor.status === 'error' ? 'border-red-200' :
+                      !inRange || sensor.status === 'warning' ? 'border-amber-200' : 'border-green-200'
+                    }`}>
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-semibold text-gray-900 truncate">{sensor.name}</h4>
+                          <p className="text-xs text-gray-500">{sensor.locationName} &middot; {sensor.zone}</p>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: getStatusColor(sensor.status) }} />
+                          <span className="text-[10px] font-medium" style={{ color: getStatusColor(sensor.status) }}>
+                            {getStatusLabel(sensor.status)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current Reading */}
+                      <div className="flex items-baseline gap-2 mb-1">
+                        <span className={`text-3xl font-bold ${inRange ? 'text-gray-900' : 'text-red-600'}`}>
+                          {sensor.currentTempF}°F
+                        </span>
+                        {inRange ? (
+                          <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded">In Range</span>
+                        ) : (
+                          <span className="text-xs font-medium text-red-600 bg-red-50 px-1.5 py-0.5 rounded">Out of Range</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-400 mb-3">{lastSeen} &middot; Range: {threshold.min}–{threshold.max}°F</p>
+
+                      {/* Mini Sparkline */}
+                      <div className="h-16 -mx-1 mb-3">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={sparkline} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                            <defs>
+                              <linearGradient id={`grad-${sensor.id}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor={inRange ? '#16a34a' : '#dc2626'} stopOpacity={0.2} />
+                                <stop offset="95%" stopColor={inRange ? '#16a34a' : '#dc2626'} stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <Area type="monotone" dataKey="temp" stroke={inRange ? '#16a34a' : '#dc2626'} fill={`url(#grad-${sensor.id})`} strokeWidth={1.5} dot={false} />
+                            <ReferenceLine y={threshold.max} stroke="#f59e0b" strokeDasharray="3 3" strokeWidth={0.5} />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* Footer: provider, battery, signal */}
+                      <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-100 pt-2">
+                        <div className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: provider?.color || '#888' }} />
+                          <span>{provider?.name || sensor.providerSlug}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-0.5">
+                            <Battery className="h-3 w-3" /> {sensor.batteryPct}%
+                          </span>
+                          <span className="flex items-center gap-0.5">
+                            <Signal className="h-3 w-3" /> {sensor.signalRssi}dBm
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Combined Readings Log */}
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-900">Combined Readings Log</h3>
+                  <p className="text-xs text-gray-500">IoT sensor and manual readings in one timeline</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Time</th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600">Equipment</th>
+                        <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-600">Temp</th>
+                        <th className="px-4 py-2.5 text-center text-xs font-semibold text-gray-600">Status</th>
+                        <th className="px-4 py-2.5 text-center text-xs font-semibold text-gray-600">Source</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {combinedLog.map((entry, i) => (
+                        <tr key={i} className="border-t border-gray-100 hover:bg-gray-50">
+                          <td className="px-4 py-2.5 text-xs text-gray-600 whitespace-nowrap">
+                            {format(new Date(entry.time), 'h:mm a')}
+                          </td>
+                          <td className="px-4 py-2.5 text-sm font-medium text-gray-900">{entry.equipment}</td>
+                          <td className="px-4 py-2.5 text-sm font-bold text-right">{entry.temp}°F</td>
+                          <td className="px-4 py-2.5 text-center">
+                            {entry.inRange ? (
+                              <span className="text-green-600 text-xs font-medium">In Range</span>
+                            ) : (
+                              <span className="text-red-600 text-xs font-medium">Out of Range</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5 text-center">
+                            {entry.source === 'iot' ? (
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                                <Radio className="h-3 w-3" /> IoT
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
+                                <Pen className="h-3 w-3" /> Manual
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Supported Sensors CTA */}
+              <div className="bg-gradient-to-br from-[#1e4d6b]/5 to-[#d4af37]/5 rounded-xl border border-[#1e4d6b]/10 p-5">
+                <h3 className="text-sm font-semibold text-[#1e4d6b] mb-2">Supported IoT Sensors</h3>
+                <p className="text-xs text-gray-600 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
+                <div className="flex flex-wrap gap-2">
+                  {iotSensorProviders.filter(p => p.status !== 'available' || p.sensorCount > 0 || ['tempstick', 'sensorpush', 'compliancemate'].includes(p.slug)).slice(0, 6).map(p => (
+                    <span key={p.slug} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-gray-200">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                      {p.name}
+                      {p.status === 'connected' && <Check className="h-3 w-3 text-green-500" />}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Log Temperature Modal */}
