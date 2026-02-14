@@ -40,6 +40,7 @@ import {
   Radio,
   Globe,
   Code2,
+  Gift,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -141,6 +142,7 @@ const sections: NavSection[] = [
     items: [
       { i18nKey: 'nav.locations', href: '/org-hierarchy', icon: Network, roles: mgmtRoles },
       { i18nKey: 'nav.leaderboard', href: '/leaderboard', icon: Trophy, roles: mgmtRoles },
+      { i18nKey: 'nav.referralProgram', href: '/referrals', icon: Gift, roles: mgmtRoles },
       { i18nKey: 'nav.teams', href: '/team', icon: Users, roles: mgmtRoles },
     ],
   },

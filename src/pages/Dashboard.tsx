@@ -46,6 +46,7 @@ import { JurisdictionScoreDisplay } from '../components/JurisdictionScoreDisplay
 import { DEMO_LOCATION_JURISDICTIONS } from '../lib/jurisdictions';
 import { getStateLabel } from '../lib/stateCodes';
 import { DashboardUpgradeCard } from '../components/DashboardUpgradeCard';
+import { K2CWidget } from '../components/K2CWidget';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { FeatureGate } from '../components/FeatureGate';
 import { Gift } from 'lucide-react';
@@ -645,6 +646,13 @@ export function Dashboard() {
 
         {/* Demo upgrade CTA — shows after visiting 2+ pages */}
         <DashboardUpgradeCard pagesVisited={parseInt(sessionStorage.getItem('evidly_demo_pages') || '0', 10)} />
+
+        {/* K2C — Kitchen to Community widget */}
+        {isDemoMode && (
+          <div className="mt-4">
+            <K2CWidget />
+          </div>
+        )}
 
         {/* Tab Navigation + Location Filter — stays in fixed position */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-3 sm:px-6 mt-4">
