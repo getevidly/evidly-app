@@ -35,6 +35,7 @@ import {
   Bot,
   Scale,
   MapPin,
+  ShieldAlert,
   type LucideIcon,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
@@ -114,6 +115,7 @@ const sections: NavSection[] = [
       { i18nKey: 'nav.inspectorView', href: '/inspector-view', icon: ClipboardCheck, roles: mgmtRoles },
       { i18nKey: 'nav.auditTrail', href: '/audit-trail', icon: Shield, roles: mgmtRoles },
       { i18nKey: 'nav.benchmarks', href: '/benchmarks', icon: BarChart3, roles: mgmtRoles, featureId: 'industry-benchmarks' },
+      { i18nKey: 'nav.insuranceRisk', href: '/insurance-risk', icon: ShieldAlert, roles: mgmtRoles, featureId: 'insurance-risk-score' },
       { i18nKey: 'nav.regulatoryUpdates', href: '/regulatory-alerts', icon: Scale, roles: mgmtRoles },
     ],
   },
