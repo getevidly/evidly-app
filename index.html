@@ -9,11 +9,89 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
-    <title>EvidLY Compliance Simplified</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
+    <title>EvidLY — Commercial Kitchen Compliance Simplified | Food Safety & Fire Safety</title>
+    <meta name="description" content="EvidLY automates commercial kitchen compliance — temperature monitoring, daily checklists, fire safety documentation, vendor management, and AI-powered insights. Trusted by Aramark at Yosemite National Park. Start your free trial." />
+    <link rel="canonical" href="https://evidly.com" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="EvidLY — Compliance Simplified for Commercial Kitchens" />
+    <meta property="og:description" content="Automate food safety, fire safety, and vendor compliance. AI-powered insights, real-time monitoring, and inspection-ready documentation." />
+    <meta property="og:image" content="https://evidly.com/dashboard-hero.png" />
+    <meta property="og:url" content="https://evidly.com" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="EvidLY" />
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
+    <meta name="twitter:title" content="EvidLY — Commercial Kitchen Compliance Simplified" />
+    <meta name="twitter:description" content="Automate food safety, fire safety, and vendor compliance for commercial kitchens." />
+    <meta name="twitter:image" content="https://evidly.com/dashboard-hero.png" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "EvidLY",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "description": "Commercial kitchen compliance platform — food safety, fire safety, vendor management, AI-powered insights.",
+      "url": "https://evidly.com",
+      "offers": {
+        "@type": "Offer",
+        "price": "99",
+        "priceCurrency": "USD",
+        "priceValidUntil": "2026-12-31",
+        "description": "Founder Tier — limited to 100 customers"
+      }
+    }
+    </script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Google Analytics 4 -->
+    <!-- TODO: Replace G-XXXXXXXXXX with actual GA4 Measurement ID from https://analytics.google.com -->
+    <script>
+      // Only load GA4 if user has accepted cookies
+      (function() {
+        if (localStorage.getItem('evidly-cookie-consent') === 'declined') return;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX', { send_page_view: false });
+      })();
+    </script>
+
+    <!-- ZoomInfo WebSights — public pages only, respects cookie consent -->
+    <!-- TODO: Replace ZOOMINFO_PIXEL_ID with actual ZoomInfo pixel ID from https://www.zoominfo.com -->
+    <script>
+      (function() {
+        if (localStorage.getItem('evidly-cookie-consent') === 'declined') return;
+        var path = window.location.pathname;
+        var publicPaths = ['/', '/login', '/signup', '/enterprise', '/iot', '/providers', '/partners', '/verify', '/passport'];
+        var isPublic = publicPaths.some(function(p) { return path === p || path.startsWith(p + '/'); });
+        if (!isPublic) return;
+        var zi = document.createElement('script');
+        zi.type = 'text/javascript';
+        zi.async = true;
+        zi.referrerPolicy = 'unsafe-url';
+        zi.src = 'https://ws.zoominfo.com/pixel/ZOOMINFO_PIXEL_ID';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(zi, s);
+      })();
+    </script>
+    <noscript>
+      <img src="https://ws.zoominfo.com/pixel/ZOOMINFO_PIXEL_ID" width="1" height="1" style="display:none;" alt="" />
+    </noscript>
+
+    <!-- Calendly widget -->
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   </head>
   <body>
     <div id="root"></div>

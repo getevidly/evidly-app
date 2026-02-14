@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /settings
+Disallow: /admin
+Disallow: /vendor/dashboard
+Disallow: /enterprise/admin
+Sitemap: https://evidly.com/sitemap.xml

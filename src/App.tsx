@@ -109,12 +109,21 @@ import Trust from './components/Trust';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import MobileStickyBar from './components/MobileStickyBar';
+import AIChatWidget from './components/landing/AIChatWidget';
+import AppInstallSection from './components/landing/AppInstallSection';
+import WebinarSection from './components/landing/WebinarSection';
+import MobileInstallBanner from './components/landing/MobileInstallBanner';
+import { CookieConsent } from './components/CookieConsent';
+import { usePageTracking } from './hooks/usePageTracking';
+
+const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBanner'));
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
 
 function LandingPage() {
   return (
     <div className="min-h-screen">
+      <MobileInstallBanner />
       <Navigation />
       <Hero />
       <DailyOperations />
@@ -122,11 +131,14 @@ function LandingPage() {
       <BeforeAfter />
       <QRFeature />
       <AllFeatures />
+      <AppInstallSection />
       <Pricing />
+      <WebinarSection />
       <Trust />
       <FinalCTA />
       <Footer />
       <MobileStickyBar />
+      <AIChatWidget />
     </div>
   );
 }
@@ -213,11 +225,18 @@ function ProtectedLayout() {
           <Outlet />
         </Suspense>
       </ErrorBoundary>
+      {isDemoMode && (
+        <Suspense fallback={null}>
+          <DemoBookingBanner />
+        </Suspense>
+      )}
     </Layout>
   );
 }
 
 function AppRoutes() {
+  usePageTracking();
+
   return (
     <>
       <Routes>
@@ -357,6 +376,7 @@ function App() {
                       <GlobalErrorHandlers>
                         <AppRoutes />
                       </GlobalErrorHandlers>
+                      <CookieConsent />
                       <Toaster position="top-right" richColors closeButton duration={3000} />
                     </InactivityProvider>
                   </OfflineProvider>
