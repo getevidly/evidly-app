@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe } from 'lucide-react';
+import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe, Search } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
@@ -114,6 +114,19 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
           </div>
 
           <div className="ml-4 flex items-center md:ml-6 space-x-4">
+            {/* Quick Switcher trigger (Ctrl+K) */}
+            <button
+              onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-gray-300 transition-colors text-sm text-gray-400 cursor-pointer"
+              title="Quick search (Ctrl+K)"
+            >
+              <Search className="h-3.5 w-3.5" />
+              <span className="text-xs">{t('topBar.search') || 'Search...'}</span>
+              <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-white border border-gray-200 rounded text-gray-400">
+                {navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'}
+              </kbd>
+            </button>
+
             {/* Notification Center */}
             <NotificationCenter />
 

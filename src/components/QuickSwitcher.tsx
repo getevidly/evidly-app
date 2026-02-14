@@ -87,6 +87,13 @@ export function QuickSwitcher() {
     return () => window.removeEventListener('keydown', handler);
   }, [open]);
 
+  // Allow programmatic open via custom event (e.g. from TopBar search button)
+  useEffect(() => {
+    const handleOpen = () => { setOpen(true); setQuery(''); setSelectedIndex(0); };
+    window.addEventListener('open-quick-switcher', handleOpen);
+    return () => window.removeEventListener('open-quick-switcher', handleOpen);
+  }, []);
+
   // Focus input when opening
   useEffect(() => {
     if (open) {

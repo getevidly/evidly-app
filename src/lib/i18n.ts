@@ -87,7 +87,6 @@ const en = {
     locations: 'Locations',
     billing: 'Billing',
     branding: 'Branding',
-    iotSensors: 'IoT Sensors',
     helpSupport: 'Help & Support',
     importData: 'Import Data',
     systemAdmin: 'System Admin',
@@ -505,6 +504,7 @@ const en = {
 
   // ── TopBar ──────────────────────────────────────────
   topBar: {
+    search: 'Search...',
     complianceSimplified: 'Compliance Simplified',
     myProfile: 'My Profile',
     changePassword: 'Change Password',
@@ -704,7 +704,6 @@ const es: typeof en = {
     locations: 'Ubicaciones',
     billing: 'Facturación',
     branding: 'Marca',
-    iotSensors: 'Sensores IoT',
     helpSupport: 'Ayuda y Soporte',
     importData: 'Importar Datos',
     systemAdmin: 'Admin del Sistema',
@@ -1086,6 +1085,7 @@ const es: typeof en = {
   },
 
   topBar: {
+    search: 'Buscar...',
     complianceSimplified: 'Cumplimiento Simplificado',
     myProfile: 'Mi Perfil',
     changePassword: 'Cambiar Contraseña',

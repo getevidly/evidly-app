@@ -87,6 +87,7 @@ export interface Location {
   id: string;
   urlId: string;
   name: string;
+  address: string;
   lat: number;
   lng: number;
   score: number;
@@ -96,9 +97,9 @@ export interface Location {
 }
 
 export const locations: Location[] = [
-  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', lat: 36.7378, lng: -119.7871, score: locationScores['downtown'].overall, status: getScoreStatus(locationScores['downtown'].overall), actionItems: 2, stateCode: 'CA' },
-  { id: '2', urlId: 'airport', name: 'Airport Cafe', lat: 37.2847, lng: -120.5139, score: locationScores['airport'].overall, status: getScoreStatus(locationScores['airport'].overall), actionItems: 5, stateCode: 'CA' },
-  { id: '3', urlId: 'university', name: 'University Dining', lat: 37.6393, lng: -120.9969, score: locationScores['university'].overall, status: getScoreStatus(locationScores['university'].overall), actionItems: 12, stateCode: 'CA' },
+  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '742 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, score: locationScores['downtown'].overall, status: getScoreStatus(locationScores['downtown'].overall), actionItems: 2, stateCode: 'CA' },
+  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '5175 E Clinton Way, Fresno, CA 93727', lat: 37.2847, lng: -120.5139, score: locationScores['airport'].overall, status: getScoreStatus(locationScores['airport'].overall), actionItems: 5, stateCode: 'CA' },
+  { id: '3', urlId: 'university', name: 'University Dining', address: '1600 University Ave, Turlock, CA 95382', lat: 37.6393, lng: -120.9969, score: locationScores['university'].overall, status: getScoreStatus(locationScores['university'].overall), actionItems: 12, stateCode: 'CA' },
 ];
 
 export interface Vendor {
