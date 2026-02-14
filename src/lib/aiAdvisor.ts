@@ -19,7 +19,7 @@ export interface AiMessage {
 
 export interface ComplianceContext {
   orgName: string;
-  locations: { name: string; score: number; foodSafety: number; fireSafety: number; vendorCompliance: number; stateCode?: string }[];
+  locations: { name: string; score: number; foodSafety: number; fireSafety: number; vendorCompliance: number; stateCode?: string; county?: string; jurisdictionChain?: string[] }[];
   overallScore: number;
   recentAlerts: string[];
   overdueItems: string[];
@@ -31,9 +31,9 @@ const DEMO_CONTEXT: ComplianceContext = {
   orgName: 'Pacific Coast Dining',
   overallScore: 76,
   locations: [
-    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, fireSafety: 88, vendorCompliance: 91, stateCode: 'CA' },
-    { name: 'Airport Cafe', score: 69, foodSafety: 72, fireSafety: 62, vendorCompliance: 74, stateCode: 'CA' },
-    { name: 'University Dining', score: 56, foodSafety: 62, fireSafety: 55, vendorCompliance: 42, stateCode: 'CA' },
+    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, fireSafety: 88, vendorCompliance: 91, stateCode: 'CA', county: 'Fresno County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Fresno County'] },
+    { name: 'Airport Cafe', score: 69, foodSafety: 72, fireSafety: 62, vendorCompliance: 74, stateCode: 'CA', county: 'Merced County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Merced County'] },
+    { name: 'University Dining', score: 56, foodSafety: 62, fireSafety: 55, vendorCompliance: 42, stateCode: 'CA', county: 'Stanislaus County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Stanislaus County', 'City of Modesto'] },
   ],
   recentAlerts: [
     'Airport Cafe Walk-in Cooler #2 above 41°F',
@@ -78,7 +78,11 @@ IMPORTANT GUARDRAILS:
   }
 
   const locSummary = context.locations
-    .map((l) => `  - ${l.name}${l.stateCode ? ` [${l.stateCode}]` : ''}: Overall ${l.score}% (Food Safety ${l.foodSafety}%, Fire Safety ${l.fireSafety}%, Vendor Compliance ${l.vendorCompliance}%)`)
+    .map((l) => {
+      let line = `  - ${l.name}${l.stateCode ? ` [${l.stateCode}]` : ''}: Overall ${l.score}% (Food Safety ${l.foodSafety}%, Fire Safety ${l.fireSafety}%, Vendor Compliance ${l.vendorCompliance}%)`;
+      if (l.county) line += `\n    Jurisdiction: ${l.jurisdictionChain?.join(' → ') || l.county}`;
+      return line;
+    })
     .join('\n');
 
   return `You are EvidLY's AI Compliance Advisor. You help commercial kitchen managers with food safety, fire safety, and vendor compliance. You have access to the user's compliance data, temperature logs, checklists, corrective actions, and vendor records. Be specific, actionable, and reference their actual data. Keep responses concise and professional. When recommending actions, format them as clear steps. If you identify action items, format each one on its own line starting with "Action:" followed by the action description.
@@ -86,6 +90,8 @@ IMPORTANT GUARDRAILS:
 CRITICAL CATEGORIZATION RULE: Equipment cleaning (hoods, exhaust systems, grease traps, fire suppression systems, fire extinguishers) and equipment inspections are ALWAYS categorized as FIRE SAFETY issues under NFPA 96 (2025 Edition) — never as health/food safety. Hood cleaning, fire suppression inspection, grease trap service, and fire extinguisher checks fall under the Fire Safety compliance pillar and NFPA 96 (2025 Edition) regulatory standards.
 
 STATE-SPECIFIC COMPLIANCE: When advising on compliance, always consider the location's state code requirements. California locations follow CalCode (Health & Safety Code Div 104, Part 7). Texas locations follow TFER (25 TAC Chapter 228). Florida locations follow DBPR Chapter 509. New York locations follow NYCRR Title 10. Washington locations follow WAC 246-215. Oregon locations follow OAR 333-150. Arizona locations follow AAC R9-8. Always cite the specific state code section when giving state-specific guidance.
+
+COUNTY/CITY JURISDICTION: Each location has a jurisdiction chain (Federal → State → County → City). More specific jurisdictions ADD requirements on top of less specific ones — they never relax them. When answering questions about a location, consider its full jurisdiction chain. For example, a City of Modesto location must comply with Federal (FDA), California (CalCode), Stanislaus County, AND City of Modesto requirements. Key county-level differences include: inspection system type (letter grade vs score vs pass/fail), health department contact info, additional document requirements, service frequency requirements, and minimum wage. NYC has unique requirements like letter grade posting, trans fat ban, and sodium warnings. Harris County TX requires monthly grease trap documentation. Miami-Dade FL requires multilingual signage (English, Spanish, Haitian Creole).
 
 ICE MACHINE COMPLIANCE: Ice is classified as a food under FDA Food Code §3-202.16. Ice machines are food contact surfaces and must be cleaned and sanitized at a minimum monthly or per manufacturer specifications, whichever is more frequent (FDA §4-602.11). Ice scoops must be stored outside the ice bin in a clean, protected container — never left sitting in the ice (FDA §3-304.12). Ice machine maintenance is a FOOD SAFETY issue, not fire safety. Common inspection failures include mold/slime buildup, dirty scoop, improper scoop storage, and missing cleaning logs. Always recommend documenting ice machine cleaning in the equipment maintenance log.
 

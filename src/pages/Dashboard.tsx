@@ -728,7 +728,17 @@ export function Dashboard() {
                           onClick={() => { navigate(`/dashboard?location=${loc.urlId}`); }}
                           className="hover:bg-gray-50 cursor-pointer"
                         >
-                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" style={{ textAlign: 'left' }}>{loc.name}</td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'left' }}>
+                            <div className="text-sm font-medium text-gray-900">{loc.name}</div>
+                            {(() => {
+                              const jur = DEMO_LOCATION_JURISDICTIONS.find(j => j.locationName === loc.name);
+                              return jur ? (
+                                <div className="flex items-center gap-1 mt-0.5">
+                                  <span className="text-[10px] text-gray-400 font-medium">{jur.county}, {jur.state}</span>
+                                </div>
+                              ) : null;
+                            })()}
+                          </td>
                           <td className="px-3 sm:px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: grade.hex }}>{locScores.overall}</span>
                           </td>

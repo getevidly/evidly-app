@@ -766,6 +766,295 @@ const STANISLAUS_COUNTY: JurisdictionProfile = {
   ],
 };
 
+// ── Harris County, TX (Houston) ──────────────────────────────
+
+const HARRIS_COUNTY_TX: JurisdictionProfile = {
+  id: 'county-harris-tx',
+  name: 'Harris County (Houston)',
+  level: 'county',
+  parentId: 'state-tx',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [],
+  requiredDocuments: [
+    { name: 'Harris County Health Permit', description: 'Food service permit issued by Harris County Public Health', renewalFrequency: 'Annual', source: 'Harris County Public Health Ordinance' },
+    { name: 'Grease Trap Maintenance Records', description: 'Monthly grease trap cleaning logs — Harris County requires documentation', renewalFrequency: 'Monthly', source: 'Harris County pretreatment ordinance' },
+  ],
+  requiredPostings: [
+    { name: 'Harris County Health Permit', languages: ['English'], source: 'Harris County Public Health' },
+    { name: 'Handwashing Signs', languages: ['English', 'Spanish'], source: 'Harris County Public Health' },
+  ],
+  serviceFrequencies: [
+    { service: 'Grease Trap Cleaning', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Harris County requires monthly grease trap service', source: 'Harris County pretreatment ordinance' },
+  ],
+  inspectionSystem: {
+    type: 'score_only',
+    details: 'Harris County uses scored inspections (0-100). Facilities scored below 70 require re-inspection within 10 days.',
+    grades: [
+      { label: 'Excellent', range: '90-100' },
+      { label: 'Good', range: '80-89' },
+      { label: 'Acceptable', range: '70-79' },
+      { label: 'Failing', range: 'Below 70' },
+    ],
+  },
+  populationTier: 'large',
+  healthDepartment: {
+    name: 'Harris County Public Health — Environmental Public Health Division',
+    phone: '(713) 274-6300',
+    website: 'https://publichealth.harriscountytx.gov/',
+    inspectionFrequency: 'Risk-based: high-risk 2x/year, moderate 1x/year',
+    permitRenewal: 'Annual',
+  },
+  specialRequirements: [
+    'Harris County health permit required — separate from City of Houston permit for unincorporated areas',
+    'Monthly grease trap maintenance documentation required',
+    'Food managers must maintain active CFM certification at all times',
+    'Reinspection required within 10 days for scores below 70',
+    'Mobile food units require separate Harris County mobile vendor permit',
+  ],
+};
+
+// ── City of Houston (overlay on Harris County) ──────────────
+
+const HOUSTON_CITY: JurisdictionProfile = {
+  id: 'city-houston',
+  name: 'City of Houston',
+  level: 'city',
+  parentId: 'county-harris-tx',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [],
+  requiredDocuments: [
+    { name: 'City of Houston Health Permit', description: 'Food establishment permit from City of Houston Health Department (within city limits)', renewalFrequency: 'Annual', source: 'City of Houston Code of Ordinances Chapter 20' },
+  ],
+  requiredPostings: [
+    { name: 'City of Houston Health Permit', languages: ['English'], source: 'City of Houston Code of Ordinances Chapter 20' },
+  ],
+  serviceFrequencies: [],
+  minimumWage: {
+    general: 7.25,
+    source: 'Texas state minimum wage (no city-level override)',
+    effectiveDate: '2009-07-24',
+  },
+  specialRequirements: [
+    'City of Houston health permit required for food establishments within city limits (separate from Harris County)',
+    'Grease trap interceptors required for all food establishments — quarterly inspection by City',
+    'Food truck commissary agreement must be filed with City of Houston Health Department',
+  ],
+};
+
+// ── Dallas County, TX ────────────────────────────────────────
+
+const DALLAS_COUNTY_TX: JurisdictionProfile = {
+  id: 'county-dallas-tx',
+  name: 'Dallas County',
+  level: 'county',
+  parentId: 'state-tx',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [],
+  requiredDocuments: [
+    { name: 'Dallas County Health Permit', description: 'Food establishment permit from Dallas County Health and Human Services', renewalFrequency: 'Annual', source: 'Dallas County Health Ordinance' },
+  ],
+  requiredPostings: [
+    { name: 'Health Inspection Score Card', languages: ['English'], source: 'Dallas County Health and Human Services' },
+    { name: 'Handwashing Signs', languages: ['English', 'Spanish'], source: 'Dallas County Health and Human Services' },
+  ],
+  serviceFrequencies: [],
+  inspectionSystem: {
+    type: 'score_only',
+    details: 'Dallas County uses scored inspections (0-100). Score must be posted at entrance visible to customers.',
+    grades: [
+      { label: 'Excellent', range: '90-100' },
+      { label: 'Good', range: '80-89' },
+      { label: 'Acceptable', range: '70-79' },
+      { label: 'Failing', range: 'Below 70' },
+    ],
+  },
+  populationTier: 'large',
+  healthDepartment: {
+    name: 'Dallas County Health and Human Services',
+    phone: '(214) 819-2100',
+    website: 'https://www.dallascounty.org/departments/dchhs/',
+    inspectionFrequency: 'Risk-based: high-risk 2-3x/year',
+    permitRenewal: 'Annual',
+  },
+  specialRequirements: [
+    'Inspection score card must be posted at entrance visible to customers',
+    'Re-inspection within 10 days for scores below 70',
+    'City of Dallas has separate health department for areas within city limits',
+  ],
+};
+
+// ── Miami-Dade County, FL ────────────────────────────────────
+
+const MIAMI_DADE_FL: JurisdictionProfile = {
+  id: 'county-miami-dade-fl',
+  name: 'Miami-Dade County',
+  level: 'county',
+  parentId: 'state-fl',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [
+    {
+      type: 'Miami-Dade Food Handler Training',
+      description: 'All food handlers must complete approved food safety training. Miami-Dade requires ANSI-accredited training within 30 days of employment.',
+      renewalYears: 3,
+      approvedProviders: ['ServSafe', 'National Registry', 'State-approved providers'],
+      source: 'Miami-Dade County Code Chapter 24',
+    },
+  ],
+  requiredDocuments: [
+    { name: 'Miami-Dade Health Permit', description: 'Food establishment permit from Florida DOH in Miami-Dade County', renewalFrequency: 'Annual', source: 'Miami-Dade County Code Chapter 24' },
+    { name: 'Backflow Prevention Test Report', description: 'Annual backflow prevention device testing by certified tester', renewalFrequency: 'Annual', source: 'Miami-Dade WASD' },
+  ],
+  requiredPostings: [
+    { name: 'DBPR License', languages: ['English'], source: 'Florida DBPR' },
+    { name: 'Handwashing Signs', languages: ['English', 'Spanish', 'Haitian Creole'], source: 'Miami-Dade County Code Chapter 24' },
+  ],
+  serviceFrequencies: [
+    { service: 'Pest Control Service', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Required for all food establishments in Miami-Dade', source: 'Miami-Dade County Code Chapter 24' },
+  ],
+  inspectionSystem: {
+    type: 'pass_fail',
+    details: 'Florida DOH in Miami-Dade County conducts risk-based inspections. Priority violations require immediate corrective action. High-risk facilities inspected 3x/year.',
+  },
+  populationTier: 'large',
+  healthDepartment: {
+    name: 'Florida DOH in Miami-Dade County — Environmental Health',
+    phone: '(786) 336-1300',
+    website: 'https://miamidade.gov/global/economy/environmental-health.page',
+    inspectionFrequency: 'Risk-based: high-risk 3x/year, moderate 2x/year, low-risk 1x/year',
+    permitRenewal: 'Annual',
+  },
+  specialRequirements: [
+    'Handwashing signs required in English, Spanish, and Haitian Creole',
+    'Food handlers must complete ANSI-accredited training within 30 days of employment',
+    'Backflow prevention devices must be tested annually by Miami-Dade certified tester',
+    'Hurricane preparedness plan required for all food establishments',
+    'Flood zone establishments require additional grease trap protections',
+  ],
+};
+
+// ── New York City (5 Boroughs) ───────────────────────────────
+
+const NYC: JurisdictionProfile = {
+  id: 'county-nyc',
+  name: 'New York City (5 Boroughs)',
+  level: 'county',
+  parentId: 'state-ny',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [
+    {
+      type: 'NYC Food Protection Certificate',
+      description: 'NYC DOHMH requires at least one certified food protection supervisor per establishment during all hours. Must pass NYC DOHMH-approved course.',
+      renewalYears: 5,
+      approvedProviders: ['NYC DOHMH-approved courses', 'ServSafe (with NYC supplement)'],
+      source: 'NYC Health Code §81.15',
+    },
+  ],
+  requiredDocuments: [
+    { name: 'NYC DOHMH Permit', description: 'Food service establishment permit from NYC DOHMH', renewalFrequency: 'Annual', source: 'NYC Health Code Article 81' },
+    { name: 'Letter Grade Card', description: 'Current letter grade must be posted in front window', renewalFrequency: 'Updated after each inspection cycle', source: 'NYC Health Code §81.51' },
+    { name: 'Self-Inspection Checklist', description: 'NYC DOHMH recommends monthly self-inspections using official checklist', renewalFrequency: 'Monthly (recommended)', source: 'NYC DOHMH guidance' },
+  ],
+  requiredPostings: [
+    { name: 'Letter Grade Card', languages: ['English'], source: 'NYC Health Code §81.51 — posted in front window' },
+    { name: 'Calorie Information (chains 15+ locations)', languages: ['English'], source: 'NYC Health Code §81.50' },
+    { name: 'Sodium Warning (chains 15+ locations)', languages: ['English'], source: 'NYC Health Code §81.49' },
+    { name: 'Trans Fat Compliance Notice', languages: ['English'], source: 'NYC Health Code §81.08' },
+  ],
+  serviceFrequencies: [],
+  inspectionSystem: {
+    type: 'letter_grade',
+    details: 'NYC DOHMH letter grade system: A (0-13 pts), B (14-27 pts), C (28+ pts). Grade must be displayed in front window. Initial + re-inspection cycle; Grade Pending card allowed during adjudication.',
+    grades: [
+      { label: 'A', range: '0-13 violation points' },
+      { label: 'B', range: '14-27 violation points' },
+      { label: 'C', range: '28+ violation points' },
+      { label: 'Grade Pending', range: 'During adjudication' },
+    ],
+  },
+  populationTier: 'large',
+  healthDepartment: {
+    name: 'NYC Department of Health and Mental Hygiene (DOHMH)',
+    phone: '311 (within NYC) or (212) 639-9675',
+    website: 'https://www.nyc.gov/site/doh/business/food-operators/letter-grading-for-restaurants.page',
+    inspectionFrequency: 'Unannounced: initial inspection + re-inspection if B or C grade received',
+    permitRenewal: 'Annual',
+  },
+  specialRequirements: [
+    'Letter grade (A, B, C) must be posted in front window at all times',
+    'Trans fat ban: no artificial trans fats in food preparation or cooking oils',
+    'Sodium warning icon required on menu items with 2,300+ mg sodium (chains 15+ locations)',
+    'Calorie posting required on menus and menu boards (chains 15+ locations)',
+    'NYC Food Protection Certificate required — DOHMH-approved course (not just ServSafe)',
+    'Self-inspection using DOHMH checklist recommended monthly',
+    'Initial inspection + re-inspection cycle; establishments may operate with Grade Pending during adjudication',
+    'Violations categorized as critical, general, and condition-based',
+  ],
+};
+
+// ── San Francisco (city-county, overlay on CA) ───────────────
+
+const SAN_FRANCISCO: JurisdictionProfile = {
+  id: 'city-sf',
+  name: 'City and County of San Francisco',
+  level: 'city',
+  parentId: 'county-sf',
+  temperatureThresholds: [],
+  cookingTemps: [],
+  coolingRequirements: [],
+  certifications: [],
+  requiredDocuments: [
+    { name: 'SF DPH Health Permit', description: 'Food facility permit from SF Department of Public Health', renewalFrequency: 'Annual', source: 'San Francisco Health Code Article 8' },
+    { name: 'SF Green Business Certification', description: 'Optional but incentivized green business certification for waste reduction', renewalFrequency: 'Every 3 years', source: 'SF Environment Dept' },
+  ],
+  requiredPostings: [
+    { name: 'Health Permit', languages: ['English'], source: 'San Francisco Health Code Article 8' },
+    { name: 'Calorie Information', languages: ['English'], source: 'SF Health Code §468 (chains 20+ locations)' },
+    { name: 'Healthy SF Notice', languages: ['English'], source: 'SF Health Care Security Ordinance' },
+  ],
+  serviceFrequencies: [],
+  inspectionSystem: {
+    type: 'score_only',
+    details: 'SF DPH uses scored inspections (0-100). Results published online. Risk-based inspection frequency.',
+    grades: [
+      { label: 'Excellent', range: '90-100' },
+      { label: 'Good', range: '80-89' },
+      { label: 'Needs Improvement', range: '70-79' },
+      { label: 'Poor', range: 'Below 70' },
+    ],
+  },
+  minimumWage: {
+    general: 18.67,
+    source: 'San Francisco Minimum Wage Ordinance',
+    effectiveDate: '2024-07-01',
+  },
+  populationTier: 'large',
+  healthDepartment: {
+    name: 'San Francisco Dept of Public Health — Environmental Health Branch',
+    phone: '(415) 252-3800',
+    website: 'https://www.sfdph.org/dph/EH/Food/default.asp',
+    inspectionFrequency: 'Risk-based: high-risk 2-3x/year',
+    permitRenewal: 'Annual',
+  },
+  specialRequirements: [
+    'SF is a consolidated city-county — DPH handles all food safety inspections',
+    'Mandatory composting and recycling for all food establishments (SF Environment Code)',
+    'Healthy San Francisco surcharge permitted on bills if healthcare provided to employees',
+    'SF minimum wage ($18.67/hr as of 2024) applies to all employees working 2+ hours/week in SF',
+    'Calorie posting required for chain restaurants with 20+ locations (SF §468)',
+    'Inspection results published publicly online',
+  ],
+};
+
 // ── City of Modesto (overlay for University Dining) ─────────
 
 const MODESTO_CITY: JurisdictionProfile = {
@@ -802,6 +1091,12 @@ export const ALL_JURISDICTIONS: JurisdictionProfile[] = [
   FRESNO_COUNTY,
   MERCED_COUNTY,
   STANISLAUS_COUNTY,
+  HARRIS_COUNTY_TX,
+  HOUSTON_CITY,
+  DALLAS_COUNTY_TX,
+  MIAMI_DADE_FL,
+  NYC,
+  SAN_FRANCISCO,
   MODESTO_CITY,
   ...ADDITIONAL_COUNTIES,
 ];

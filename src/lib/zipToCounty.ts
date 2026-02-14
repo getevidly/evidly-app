@@ -1,8 +1,8 @@
 // ============================================================
-// California Zip Code → County Mapping
+// Multi-State Zip Code → County Mapping
 // ============================================================
 // Maps zip code ranges to county jurisdiction IDs for auto-detection.
-// Covers all 58 California counties with primary zip ranges.
+// Covers all 58 California counties, plus key TX, FL, NY counties.
 // ============================================================
 
 export interface ZipCountyMapping {
@@ -10,6 +10,7 @@ export interface ZipCountyMapping {
   zipEnd: number;
   countyId: string;
   countyName: string;
+  state?: string;
 }
 
 // California zip code ranges by county (sorted by zip start)
@@ -110,6 +111,31 @@ const CA_ZIP_RANGES: ZipCountyMapping[] = [
   { zipStart: 93513, zipEnd: 93592, countyId: 'county-inyo', countyName: 'Inyo County' },
   // Mono County (935xx partial)
   { zipStart: 93517, zipEnd: 96133, countyId: 'county-mono', countyName: 'Mono County' },
+];
+
+// ── Texas zip code ranges ────────────────────────────────────
+const TX_ZIP_RANGES: ZipCountyMapping[] = [
+  // Harris County (Houston) — 770xx-774xx
+  { zipStart: 77001, zipEnd: 77099, countyId: 'county-harris-tx', countyName: 'Harris County', state: 'TX' },
+  { zipStart: 77201, zipEnd: 77299, countyId: 'county-harris-tx', countyName: 'Harris County', state: 'TX' },
+  { zipStart: 77301, zipEnd: 77399, countyId: 'county-harris-tx', countyName: 'Harris County', state: 'TX' },
+  { zipStart: 77400, zipEnd: 77499, countyId: 'county-harris-tx', countyName: 'Harris County', state: 'TX' },
+  // Dallas County — 750xx-753xx
+  { zipStart: 75001, zipEnd: 75399, countyId: 'county-dallas-tx', countyName: 'Dallas County', state: 'TX' },
+];
+
+// ── Florida zip code ranges ──────────────────────────────────
+const FL_ZIP_RANGES: ZipCountyMapping[] = [
+  // Miami-Dade County — 330xx-332xx
+  { zipStart: 33001, zipEnd: 33299, countyId: 'county-miami-dade-fl', countyName: 'Miami-Dade County', state: 'FL' },
+];
+
+// ── New York zip code ranges ─────────────────────────────────
+const NY_ZIP_RANGES: ZipCountyMapping[] = [
+  // NYC (all 5 boroughs) — 100xx-104xx, 110xx-114xx, 116xx
+  { zipStart: 10001, zipEnd: 10499, countyId: 'county-nyc', countyName: 'New York City', state: 'NY' },
+  { zipStart: 11001, zipEnd: 11499, countyId: 'county-nyc', countyName: 'New York City', state: 'NY' },
+  { zipStart: 11600, zipEnd: 11699, countyId: 'county-nyc', countyName: 'New York City', state: 'NY' },
 ];
 
 // Specific zip-to-county overrides for ambiguous zips (more precise than ranges)
@@ -266,8 +292,50 @@ export function isCaliforniaZip(zip: string): boolean {
 }
 
 /**
+ * Get county from a non-CA zip code (TX, FL, NY).
+ */
+export function getCountyFromMultiStateZip(zip: string): { countyId: string; countyName: string; state: string } | null {
+  const zipNum = parseInt(zip, 10);
+  if (isNaN(zipNum)) return null;
+
+  // Check TX ranges
+  for (const range of TX_ZIP_RANGES) {
+    if (zipNum >= range.zipStart && zipNum <= range.zipEnd) {
+      return { countyId: range.countyId, countyName: range.countyName, state: 'TX' };
+    }
+  }
+
+  // Check FL ranges
+  for (const range of FL_ZIP_RANGES) {
+    if (zipNum >= range.zipStart && zipNum <= range.zipEnd) {
+      return { countyId: range.countyId, countyName: range.countyName, state: 'FL' };
+    }
+  }
+
+  // Check NY ranges
+  for (const range of NY_ZIP_RANGES) {
+    if (zipNum >= range.zipStart && zipNum <= range.zipEnd) {
+      return { countyId: range.countyId, countyName: range.countyName, state: 'NY' };
+    }
+  }
+
+  return null;
+}
+
+/** Map state abbreviations to jurisdiction profile IDs */
+const STATE_TO_JURISDICTION: Record<string, string> = {
+  CA: 'state-ca',
+  TX: 'state-tx',
+  FL: 'state-fl',
+  NY: 'state-ny',
+  WA: 'state-wa',
+  OR: 'state-or',
+  AZ: 'state-az',
+};
+
+/**
  * Full jurisdiction detection: returns the complete jurisdiction chain
- * based on zip code and/or state.
+ * based on zip code and/or state. Supports CA, TX, FL, NY, WA, OR, AZ.
  */
 export function detectJurisdiction(input: {
   zip?: string;
@@ -275,46 +343,75 @@ export function detectJurisdiction(input: {
   city?: string;
 }): {
   isCalifornnia: boolean;
+  detectedState: string | null;
   jurisdictionChain: string[];
   countyId: string | null;
   countyName: string | null;
   detectionMethod: 'zip' | 'state' | 'none';
 } {
+  const stateUpper = (input.state || '').trim().toUpperCase();
+
+  // California detection (existing logic)
   const isCa =
-    (input.state && isCaliforniaState(input.state)) ||
+    (stateUpper === 'CA' || stateUpper === 'CALIFORNIA') ||
     (input.zip && isCaliforniaZip(input.zip));
 
-  if (!isCa) {
-    return {
-      isCalifornnia: false,
-      jurisdictionChain: ['federal-fda'],
-      countyId: null,
-      countyName: null,
-      detectionMethod: 'none',
-    };
+  if (isCa) {
+    const chain: string[] = ['federal-fda', 'state-ca'];
+    let countyId: string | null = null;
+    let countyName: string | null = null;
+    const detectionMethod: 'zip' | 'state' = input.zip ? 'zip' : 'state';
+
+    if (input.zip) {
+      const county = getCountyFromZip(input.zip);
+      if (county) {
+        countyId = county.countyId;
+        countyName = county.countyName;
+        chain.push(county.countyId);
+      }
+    }
+
+    return { isCalifornnia: true, detectedState: 'CA', jurisdictionChain: chain, countyId, countyName, detectionMethod };
   }
 
-  // Detected California — build chain
-  const chain: string[] = ['federal-fda', 'state-ca'];
-  let countyId: string | null = null;
-  let countyName: string | null = null;
-  let detectionMethod: 'zip' | 'state' = input.zip ? 'zip' : 'state';
+  // Multi-state detection (TX, FL, NY, WA, OR, AZ)
+  const stateJurisdictionId = STATE_TO_JURISDICTION[stateUpper];
 
-  // Try to detect county from zip
+  // Try zip-based county detection for non-CA states
   if (input.zip) {
-    const county = getCountyFromZip(input.zip);
-    if (county) {
-      countyId = county.countyId;
-      countyName = county.countyName;
-      chain.push(county.countyId);
+    const multiResult = getCountyFromMultiStateZip(input.zip);
+    if (multiResult) {
+      const stateId = STATE_TO_JURISDICTION[multiResult.state] || `state-${multiResult.state.toLowerCase()}`;
+      return {
+        isCalifornnia: false,
+        detectedState: multiResult.state,
+        jurisdictionChain: ['federal-fda', stateId, multiResult.countyId],
+        countyId: multiResult.countyId,
+        countyName: multiResult.countyName,
+        detectionMethod: 'zip',
+      };
     }
   }
 
+  // State-level detection without county
+  if (stateJurisdictionId) {
+    return {
+      isCalifornnia: false,
+      detectedState: stateUpper,
+      jurisdictionChain: ['federal-fda', stateJurisdictionId],
+      countyId: null,
+      countyName: null,
+      detectionMethod: 'state',
+    };
+  }
+
+  // No supported state detected
   return {
-    isCalifornnia: true,
-    jurisdictionChain: chain,
-    countyId,
-    countyName,
-    detectionMethod,
+    isCalifornnia: false,
+    detectedState: null,
+    jurisdictionChain: ['federal-fda'],
+    countyId: null,
+    countyName: null,
+    detectionMethod: 'none',
   };
 }
