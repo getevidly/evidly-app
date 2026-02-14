@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, ReactNode } from 'react';
+import { trackEvent } from '../utils/analytics';
 
 export interface DemoLead {
   fullName: string;
@@ -125,6 +126,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   const enterDemo = (lead?: DemoLead) => {
     setIsDemoMode(true);
+    trackEvent('demo_start');
     try { sessionStorage.setItem(DEMO_KEY, 'true'); } catch {}
     if (lead) {
       setDemoLead(lead);

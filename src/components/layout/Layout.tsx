@@ -10,7 +10,9 @@ import { OfflineBanner } from '../OfflineBanner';
 import { DemoBanner } from '../DemoBanner';
 import MobileStickyBar from '../MobileStickyBar';
 import { QuickSwitcher } from '../QuickSwitcher';
+import { ReferralTouchpoint } from '../ReferralTouchpoint';
 import { useDemo } from '../../contexts/DemoContext';
+import { trackEvent } from '../../utils/analytics';
 
 interface LocationOption {
   id: string;
@@ -38,6 +40,8 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
   useEffect(() => {
     if (isDemoMode && location.pathname !== prevPathRef.current) {
       prevPathRef.current = location.pathname;
+      const pageName = location.pathname.replace(/^\//, '') || 'dashboard';
+      trackEvent('demo_page_view', { page: pageName });
       try {
         const count = parseInt(sessionStorage.getItem('evidly_demo_pages') || '0', 10);
         sessionStorage.setItem('evidly_demo_pages', String(count + 1));
@@ -86,6 +90,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       {isDemoMode && !presenterMode && <MobileStickyBar demoMode />}
       {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
       <AIChatPanel hidden={anyTourActive} />
+      <ReferralTouchpoint />
       <QuickSwitcher />
     </div>
   );

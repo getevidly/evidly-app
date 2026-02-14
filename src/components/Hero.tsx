@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
+import { trackEvent } from '../utils/analytics';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ export default function Hero() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    trackEvent('cta_click', { cta: 'hero_get_started', page: 'landing' });
     navigate(`/signup${email ? `?email=${encodeURIComponent(email)}` : ''}`);
   };
 
@@ -48,7 +50,7 @@ export default function Hero() {
             </form>
             <div className="mb-4">
               <button
-                onClick={() => { enterDemo(); navigate('/dashboard'); }}
+                onClick={() => { trackEvent('cta_click', { cta: 'hero_try_demo', page: 'landing' }); enterDemo(); navigate('/dashboard'); }}
                 className="text-[0.9rem] font-medium text-[var(--color-blue)] hover:text-[var(--color-gold-dark)] transition-colors underline underline-offset-4 min-h-[44px] bg-transparent border-none cursor-pointer p-0"
               >
                 Try the interactive demo →

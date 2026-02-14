@@ -78,6 +78,7 @@ export default function AIChatWidget() {
     setInput('');
     setShowSuggestions(false);
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    trackEvent('chat_widget_message', { message_number: userMessageCount + 1, page: 'landing' });
     setLoading(true);
 
     try {
@@ -127,7 +128,7 @@ export default function AIChatWidget() {
       {/* Floating bubble */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={() => { trackEvent('chat_widget_open', { page: 'landing' }); setIsOpen(true); }}
           className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
           style={{ backgroundColor: '#1e4d6b' }}
           aria-label="Open compliance chat"

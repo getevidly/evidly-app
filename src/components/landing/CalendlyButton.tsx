@@ -1,5 +1,6 @@
 import { Calendar } from 'lucide-react';
 import { CALENDLY_URL } from '../../lib/config';
+import { trackEvent } from '../../utils/analytics';
 
 declare global {
   interface Window {
@@ -21,6 +22,7 @@ export default function CalendlyButton({
   className = '',
 }: CalendlyButtonProps) {
   function openCalendly() {
+    trackEvent('calendly_click', { source: 'button', text: text || 'Book Free Walkthrough' });
     if (window.Calendly) {
       window.Calendly.initPopupWidget({ url: CALENDLY_URL });
     } else {

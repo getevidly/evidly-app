@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Check, X } from 'lucide-react';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
+import { trackEvent, trackConversion } from '../utils/analytics';
 
 const INDUSTRY_TYPES = {
   RESTAURANT: {
@@ -126,6 +127,7 @@ export function Signup() {
     }
 
     setLoading(true);
+    trackEvent('signup_start', { method: 'email' });
 
     const { error } = await signUp(email, password, fullName, phone, orgName, industryType, industrySubtype);
 
@@ -133,6 +135,8 @@ export function Signup() {
       setError(error.message);
       setLoading(false);
     } else {
+      trackEvent('signup_complete', { method: 'email' });
+      trackConversion('trial_started');
       setEmailSent(true);
       setLoading(false);
     }

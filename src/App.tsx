@@ -96,6 +96,8 @@ const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m 
 const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
+const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
+const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -244,6 +246,7 @@ function AppRoutes() {
 
         {/* Public routes */}
         <Route path="/verify/:code" element={<Suspense fallback={<PageSkeleton />}><PublicVerification /></Suspense>} />
+        <Route path="/ref/:code" element={<Suspense fallback={<PageSkeleton />}><ReferralRedirect /></Suspense>} />
         <Route path="/risk/:shareToken" element={<Suspense fallback={<PageSkeleton />}><InsuranceRiskShared /></Suspense>} />
         <Route path="/passport/demo" element={<Suspense fallback={<PageSkeleton />}><PassportDemo /></Suspense>} />
         <Route path="/passport/:id" element={<Suspense fallback={<PageSkeleton />}><Passport /></Suspense>} />
@@ -288,6 +291,7 @@ function AppRoutes() {
           <Route path="/incidents" element={<IncidentLog />} />
           <Route path="/ai-advisor" element={<AIAdvisor />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/referrals" element={<ReferralDashboard />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/team" element={<Team />} />
           <Route path="/reports" element={<Reports />} />

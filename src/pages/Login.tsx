@@ -7,6 +7,7 @@ import ReCAPTCHA from 'react-google-recaptcha';
 import { LeadCaptureModal } from '../components/LeadCaptureModal';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useBranding } from '../contexts/BrandingContext';
+import { trackEvent } from '../utils/analytics';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -55,6 +56,7 @@ export function Login() {
       recaptchaRef.current?.reset();
       setCaptchaToken(null);
     } else {
+      trackEvent('login', { method: 'email' });
       const { data: { user } } = await supabase.auth.getUser();
       const userType = user?.user_metadata?.user_type;
 

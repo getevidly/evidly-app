@@ -1,6 +1,7 @@
 import { Check, Mail, Phone, Shield, Gift, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { trackEvent } from '../utils/analytics';
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -224,7 +225,7 @@ export default function Pricing() {
 
               <div>
                 <button
-                  onClick={() => navigate('/signup')}
+                  onClick={() => { trackEvent('cta_click', { cta: 'pricing_start_trial', page: 'landing', billing: billingCycle }); navigate('/signup'); }}
                   className="w-full py-4 px-6 rounded-xl font-semibold text-base transition-all bg-[#1e4d6b] text-white hover:bg-[#163a52] shadow-sm hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   Start Free Trial
