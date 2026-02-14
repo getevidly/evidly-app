@@ -315,6 +315,32 @@ export function VendorProfile() {
                 ))}
               </div>
             </div>
+
+            {/* EvidLY Platform Stats */}
+            <div className="mt-8 bg-gradient-to-r from-[#eef4f8] to-[#f0f7fb] rounded-xl border border-[#b8d4e8] p-5">
+              <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                <h3 className="text-sm font-semibold text-gray-900">EvidLY Platform Stats</h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.kitchensServed}+</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Kitchens Serviced</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.docUploadRate}%</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Docs Uploaded &lt;24h</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold" style={{ color: '#1e4d6b' }}>{vendor.rating.toFixed(1)}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Customer Rating</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-green-600">0</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Compliance Issues (12mo)</div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -441,10 +467,13 @@ export function VendorProfile() {
                     <span className="text-xs text-gray-400">{review.date}</span>
                   </div>
 
-                  {/* Stars + service type */}
-                  <div className="flex items-center gap-3 mt-1">
+                  {/* Stars + service type + verified badge */}
+                  <div className="flex items-center gap-3 mt-1 flex-wrap">
                     <StarRating rating={review.rating} />
                     <span className="bg-gray-100 rounded-full px-2 py-0.5 text-xs text-gray-600">{review.serviceType}</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+                      <CheckCircle className="h-3 w-3" /> Verified EvidLY Customer
+                    </span>
                   </div>
 
                   {/* Text */}

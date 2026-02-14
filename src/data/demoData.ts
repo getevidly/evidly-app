@@ -910,6 +910,47 @@ marketplaceReviews.push(
 );
 
 // ============================================================
+// Central Valley Services / Filta — Launch Vendor (EvidLY Preferred)
+// ============================================================
+
+export const centralValleyServicesFilta: MarketplaceVendor = {
+  id: 'mv-17', slug: 'central-valley-services-filta', companyName: 'Central Valley Services / Filta',
+  description: 'Environmental kitchen services including cooking oil filtration, fryer management, grease trap pumping, and kitchen equipment deep cleaning. Filta franchise covering Central California with eco-friendly mobile service. Helping commercial kitchens reduce waste, save on oil costs, and stay compliant with local FOG ordinances.',
+  tier: 'preferred', rating: 4.8, reviewCount: 15, yearsInBusiness: 3,
+  serviceArea: ['Stockton', 'Fresno', 'Modesto', 'Merced', 'Madera', 'Turlock', 'Manteca'],
+  responseTimeHours: 3, categories: ['Equipment', 'Fire Safety'], subcategories: ['Grease Trap', 'Kitchen Equipment Repair', 'Hood Cleaning'],
+  languages: ['English', 'Spanish'], kitchensServed: 65, totalServices: 480, onTimeRate: 97, docUploadRate: 96,
+  certifications: [
+    { name: 'Filta Certified Franchise Operator', verified: true },
+    { name: 'FOG Hauler Permit — San Joaquin County', verified: true, expirationDate: '2027-03-31' },
+    { name: 'FOG Hauler Permit — Stanislaus County', verified: true, expirationDate: '2027-03-31' },
+    { name: 'CA Business License', verified: true, expirationDate: '2026-12-31' },
+  ],
+  insurance: [
+    { type: 'General Liability ($2M)', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Workers Compensation', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Commercial Auto', verified: true, expirationDate: '2026-12-31' },
+    { type: 'Pollution Liability', verified: true, expirationDate: '2026-12-31' },
+  ],
+  serviceOfferings: [
+    { name: 'FiltaFry — Cooking Oil Filtration', description: 'Mobile micro-filtration extends cooking oil life 2-3x. Reduces oil costs by 50% while improving food quality. Service includes oil quality testing and usage tracking.', frequencyOptions: ['Weekly', 'Bi-Weekly'], pricingDisplay: '$75 - $150/visit' },
+    { name: 'FiltaGMM — Grease Management', description: 'Complete grease trap pumping, cleaning, and FOG compliance documentation. Manifests and disposal certificates provided for sewer authority audits.', frequencyOptions: ['Monthly', 'Quarterly'], pricingDisplay: '$200 - $500' },
+    { name: 'FiltaDrain — Drain Care', description: 'Bio-enzymatic drain maintenance program. Prevents grease buildup and blockages in kitchen drain lines.', frequencyOptions: ['Monthly'], pricingDisplay: '$85/mo' },
+    { name: 'Kitchen Equipment Deep Cleaning', description: 'Professional deep cleaning of commercial kitchen equipment — fryers, grills, ovens, prep surfaces. Restaurant-grade degreasers and sanitizers.', frequencyOptions: ['Monthly', 'Quarterly'], pricingDisplay: '$250 - $600' },
+  ],
+  contactName: 'Arthur Haggerty', phone: '(209) 555-0200', email: 'arthur@cvservicesfilta.com', website: 'filtaenv.com/central-valley',
+};
+
+marketplaceVendors.push(centralValleyServicesFilta);
+
+marketplaceReviews.push(
+  { id: 'mr-29', vendorSlug: 'central-valley-services-filta', reviewerName: 'Jason K.', reviewerOrg: 'Valley Restaurant Group', rating: 5, text: 'Arthur\'s FiltaFry service cut our cooking oil costs by 45%. The oil quality testing report is incredibly detailed and our food quality actually improved because the oil stays cleaner longer.', serviceType: 'Cooking Oil Filtration', date: '2026-01-25', vendorResponse: 'Thanks Jason! The oil savings speak for themselves. We love helping kitchens reduce waste and save money at the same time.' },
+  { id: 'mr-30', vendorSlug: 'central-valley-services-filta', reviewerName: 'Maria F.', reviewerOrg: 'Stockton School District', rating: 5, text: 'They handle grease trap service for all our school cafeterias. Always on schedule, manifests uploaded same day, and they keep us compliant with San Joaquin County FOG ordinance.', serviceType: 'Grease Management', date: '2025-12-15' },
+  { id: 'mr-31', vendorSlug: 'central-valley-services-filta', reviewerName: 'Tony P.', reviewerOrg: 'Modesto Burger Co', rating: 5, text: 'Switched from pumping our grease trap monthly to their FiltaDrain program and we haven\'t had a single drain backup in 8 months. The bio-enzymatic treatment actually works.', serviceType: 'Drain Care', date: '2025-11-05', vendorResponse: 'Glad the FiltaDrain program is working great Tony! Prevention is always better (and cheaper) than emergency plumbing calls.' },
+  { id: 'mr-32', vendorSlug: 'central-valley-services-filta', reviewerName: 'Linda W.', reviewerOrg: 'Airport Cafe', rating: 4, text: 'Good equipment cleaning service. They deep cleaned our entire kitchen before our health inspection and everything looked brand new. Only reason for 4 stars is we had to reschedule once.', serviceType: 'Kitchen Equipment Cleaning', date: '2025-09-20' },
+);
+
+// ============================================================
 // Vendor Dashboard Demo Data
 // (from the perspective of ABC Fire Protection as logged-in vendor)
 // ============================================================

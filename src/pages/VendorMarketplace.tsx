@@ -14,6 +14,8 @@ import {
   ClipboardCheck,
   Zap,
   SlidersHorizontal,
+  ArrowRight,
+  Building2,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
@@ -131,6 +133,7 @@ export function VendorMarketplace() {
   const [sortBy, setSortBy] = useState<'rating' | 'response-time' | 'reviews'>(
     'rating',
   );
+  const [locationFilter, setLocationFilter] = useState<string>('');
 
   /* ---- smart recommendations ---- */
   const recommendations = getSmartRecommendations(existingVendors);
@@ -179,6 +182,14 @@ export function VendorMarketplace() {
       result = result.filter((v) => v.rating >= ratingFilter);
     }
 
+    // location
+    if (locationFilter) {
+      const loc = locationFilter.toLowerCase();
+      result = result.filter((v) =>
+        v.serviceArea.some((area) => area.toLowerCase().includes(loc)),
+      );
+    }
+
     // sort
     if (sortBy === 'rating') {
       result.sort((a, b) => b.rating - a.rating);
@@ -203,6 +214,7 @@ export function VendorMarketplace() {
     selectedSubcategory !== null ||
     tierFilter !== 'all' ||
     ratingFilter > 0 ||
+    locationFilter !== '' ||
     sortBy !== 'rating';
 
   /* ---- clear filters ---- */
@@ -210,6 +222,7 @@ export function VendorMarketplace() {
     setSelectedSubcategory(null);
     setTierFilter('all');
     setRatingFilter(0);
+    setLocationFilter('');
     setSortBy('rating');
   };
 
@@ -400,6 +413,18 @@ export function VendorMarketplace() {
               <option value={4.5}>4.5+ Stars</option>
             </select>
 
+            {/* Location filter */}
+            <div className="relative">
+              <MapPin className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="City or area..."
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                className="rounded-xl border border-gray-200 pl-8 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 w-36"
+              />
+            </div>
+
             {/* Sort dropdown */}
             <select
               value={sortBy}
@@ -524,6 +549,29 @@ export function VendorMarketplace() {
             </p>
           </div>
         )}
+
+        {/* -------------------------------------------------------- */}
+        {/*  Vendor Claim CTA                                        */}
+        {/* -------------------------------------------------------- */}
+        <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-2xl p-6 sm:p-8 mt-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Building2 className="h-5 w-5 text-[#d4af37]" />
+                <h3 className="text-lg font-bold text-white">Are you a service provider?</h3>
+              </div>
+              <p className="text-sm text-white/80 max-w-lg">
+                List your business on EvidLY Marketplace. Reach commercial kitchens looking for hood cleaning, fire safety, pest control, and more. Free listing available — upgrade anytime.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/vendor/register')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-[#d4af37] text-white rounded-lg text-sm font-semibold hover:bg-[#b8962f] transition-colors whitespace-nowrap"
+            >
+              Claim Your Listing <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
