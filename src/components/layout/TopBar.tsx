@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe, Search } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../../lib/i18n';
+import { DEMO_ROLES, checkTestMode } from '../../config/sidebarConfig';
 
 interface LocationOption {
   id: string;
@@ -39,6 +40,9 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   const { userRole, setUserRole } = useRole();
   const { isDemoMode, companyName, userName } = useDemo();
   const { t, locale, setLocale } = useTranslation();
+
+  const isTestMode = useMemo(() => checkTestMode(), []);
+  const showRoleSwitcher = isDemoMode || isTestMode;
 
   const roleLabels: Record<string, string> = {
     management: t('topBar.ownerOperator'),
@@ -227,8 +231,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               )}
             </div>
 
-            {/* Role switcher - only visible in demo mode */}
-            {isDemoMode && (
+            {/* Role switcher - visible in demo mode and test mode */}
+            {showRoleSwitcher && (
             <div className="relative">
               <button
                 onClick={() => {
@@ -238,36 +242,41 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   setShowLangMenu(false);
                 }}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 transition-colors duration-150"
+                {...(isTestMode ? { 'data-testid': 'role-switcher-button' } : {})}
               >
                 <Users className="h-5 w-5 text-gray-500" />
                 <span className="text-sm font-medium text-gray-700">
                   {roleLabels[userRole]}
                 </span>
+                {isTestMode && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">TEST</span>
+                )}
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>
               {showRoleMenu && (
-                <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
+                <div className="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
-                    {([
-                      { role: 'management' as const, key: 'topBar.ownerOperator' },
-                      { role: 'executive' as const, key: 'topBar.executiveView' },
-                      { role: 'kitchen_manager' as const, key: 'topBar.kitchenManager' },
-                      { role: 'kitchen' as const, key: 'topBar.kitchenStaff' },
-                      { role: 'facilities' as const, key: 'topBar.facilitiesManager' },
-                    ]).map(({ role, key }) => (
+                    {DEMO_ROLES.map(({ role, label, description, i18nKey }) => (
                       <button
                         key={role}
                         onClick={() => {
                           setUserRole(role);
                           setShowRoleMenu(false);
+                          if (isTestMode) {
+                            console.log(`[EvidLY Test] Role switched to: ${role} (${label})`);
+                          }
                         }}
-                        className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
+                        className={`block w-full text-left px-4 py-2.5 transition-colors duration-150 ${
                           userRole === role
-                            ? 'bg-[#eef4f8] text-[#1e4d6b] font-medium border-l-2 border-[#d4af37]'
+                            ? 'bg-[#eef4f8] text-[#1e4d6b] border-l-2 border-[#d4af37]'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
+                        {...(isTestMode ? { 'data-testid': `role-option-${role}` } : {})}
                       >
-                        {t(key)}
+                        <span className={`text-sm ${userRole === role ? 'font-medium' : ''}`}>
+                          {t(i18nKey) !== i18nKey ? t(i18nKey) : label}
+                        </span>
+                        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{description}</p>
                       </button>
                     ))}
                   </div>
