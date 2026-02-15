@@ -89,12 +89,12 @@ type DashboardState = 'all_clear' | 'warning' | 'critical';
 // ===============================================
 
 const DEMO_JURISDICTION_THRESHOLDS: JurisdictionThresholds = {
-  warningLevel: 88,
-  criticalLevel: 80,
+  warningLevel: 86,
+  criticalLevel: 78,
   source: 'CA Health & Safety Code + NFPA 96 2024',
   jurisdiction: 'Sacramento County, California',
   autoAssigned: true,
-  explanation: 'Based on Sacramento County color placard system (Green/Yellow/Red) and NFPA 96 2024 fire safety standards. Kitchens scoring below 80% are likely to receive a Yellow (Conditional Pass) or Red (Closed) placard.',
+  explanation: 'Based on Sacramento County color placard system (Green/Yellow/Red) and NFPA 96 2024 fire safety standards. Kitchens scoring below 78% have a high probability of failing inspection.',
 };
 
 // ===============================================
@@ -122,7 +122,7 @@ const DEMO_VENDOR_SCHEDULE: DemoVendorSchedule[] = [
 
 // --- State-specific location data ---
 // Sub-scores calibrated so the scoring engine (Food 60% + Fire 40%, each Ops/Docs 50/50)
-// produces overall scores that land in the correct threshold band (warning: 88, critical: 80).
+// produces overall scores that land in the correct threshold band (warning: 86, critical: 78).
 
 const DEMO_STATES: Record<DashboardState, {
   locations: LocationDemoData[];
@@ -139,7 +139,7 @@ const DEMO_STATES: Record<DashboardState, {
 }> = {
   all_clear: {
     locations: [
-      // Downtown → 94%, Airport → 88%, University → 91%  (all ≥ 88)
+      // Downtown → 94%, Airport → 88%, University → 91%  (all ≥ 86)
       { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
       { id: 'airport', name: 'Airport Cafe', foodOps: 89, foodDocs: 86, fireOps: 85, fireDocs: 90 },
       { id: 'university', name: 'University Dining', foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
@@ -159,7 +159,7 @@ const DEMO_STATES: Record<DashboardState, {
       location: 'Airport Cafe',
       pillar: 'Fire Safety',
       pillarScore: 78,
-      jurisdictionMessage: `Sacramento County requires approximately 80% to pass inspection. Airport Cafe is at 84%, below your safety buffer of 88%.`,
+      jurisdictionMessage: `Sacramento County requires approximately 78% to pass inspection. Airport Cafe is at 84%, below your safety buffer of 86%.`,
       items: [
         'Hood cleaning cert expires in 5 days',
         'Fire suppression inspection overdue',
