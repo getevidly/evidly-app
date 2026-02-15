@@ -1,10 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Thermometer,
-  ClipboardCheck,
-  FileUp,
-  AlertTriangle,
   CheckCircle2,
   Hammer,
   Clock,
@@ -285,56 +281,7 @@ function SingleLocationView({
         </div>
       </Card>
 
-      {/* Quick Actions — desktop */}
-      <div className="hidden sm:grid grid-cols-4 gap-3">
-        <QuickActionButton icon={<Thermometer size={20} />} label="Log Temp" onClick={() => navigate('/temp-logs')} />
-        <QuickActionButton icon={<ClipboardCheck size={20} />} label="Checklist" onClick={() => navigate('/checklists')} />
-        <QuickActionButton icon={<FileUp size={20} />} label="Upload Doc" onClick={() => navigate('/documents')} />
-        <QuickActionButton icon={<AlertTriangle size={20} />} label="Report Issue" onClick={() => navigate('/incidents')} />
-      </div>
-
-      {/* Quick Actions — mobile sticky bar */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40" style={{ height: 56 }}>
-        <div className="grid grid-cols-4 h-full">
-          <MobileQuickAction icon={<Thermometer size={18} />} label="Temp" onClick={() => navigate('/temp-logs')} />
-          <MobileQuickAction icon={<ClipboardCheck size={18} />} label="Checklist" onClick={() => navigate('/checklists')} />
-          <MobileQuickAction icon={<FileUp size={18} />} label="Upload" onClick={() => navigate('/documents')} />
-          <MobileQuickAction icon={<AlertTriangle size={18} />} label="Report" onClick={() => navigate('/incidents')} />
-        </div>
-      </div>
-
-      {/* Mobile bottom spacer */}
-      <div className="sm:hidden h-16" />
     </div>
-  );
-}
-
-// --------------- Quick Action Buttons ---------------
-
-function QuickActionButton({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex items-center justify-center gap-2 bg-white rounded-lg py-3 text-sm font-medium text-gray-700 hover:shadow-md transition-shadow"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}
-    >
-      <span style={{ color: '#1e4d6b' }}>{icon}</span>
-      {label}
-    </button>
-  );
-}
-
-function MobileQuickAction({ icon, label, onClick }: { icon: React.ReactNode; label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex flex-col items-center justify-center gap-0.5 text-gray-600 active:bg-gray-50"
-    >
-      <span style={{ color: '#1e4d6b' }}>{icon}</span>
-      <span className="text-[10px] font-medium">{label}</span>
-    </button>
   );
 }
 
@@ -574,26 +521,6 @@ export default function OperatorDashboard() {
           </div>
         </Card>
 
-        {/* Quick Actions — desktop */}
-        <div className="hidden sm:grid grid-cols-4 gap-3">
-          <QuickActionButton icon={<Thermometer size={20} />} label="Log Temp" onClick={() => navigate('/temp-logs')} />
-          <QuickActionButton icon={<ClipboardCheck size={20} />} label="Checklist" onClick={() => navigate('/checklists')} />
-          <QuickActionButton icon={<FileUp size={20} />} label="Upload Doc" onClick={() => navigate('/documents')} />
-          <QuickActionButton icon={<AlertTriangle size={20} />} label="Report Issue" onClick={() => navigate('/incidents')} />
-        </div>
-
-        {/* Quick Actions — mobile sticky bar */}
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40" style={{ height: 56 }}>
-          <div className="grid grid-cols-4 h-full">
-            <MobileQuickAction icon={<Thermometer size={18} />} label="Temp" onClick={() => navigate('/temp-logs')} />
-            <MobileQuickAction icon={<ClipboardCheck size={18} />} label="Checklist" onClick={() => navigate('/checklists')} />
-            <MobileQuickAction icon={<FileUp size={18} />} label="Upload" onClick={() => navigate('/documents')} />
-            <MobileQuickAction icon={<AlertTriangle size={18} />} label="Report" onClick={() => navigate('/incidents')} />
-          </div>
-        </div>
-
-        {/* Mobile bottom spacer */}
-        <div className="sm:hidden h-16" />
       </div>
     </div>
   );

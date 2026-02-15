@@ -50,6 +50,12 @@ export function MobileTabBar() {
       { path: '/documents', icon: FileText, label: 'Docs' },
       { path: '/reports', icon: BarChart3, label: 'Reporting' },
     ],
+    kitchen_manager: [
+      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+    ],
     kitchen: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
@@ -97,6 +103,15 @@ export function MobileTabBar() {
       { path: '/ai-advisor', icon: Brain, label: 'AI Advisor' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/alerts', icon: Bell, label: 'Alerts' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
+    kitchen_manager: [
+      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
+      { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/haccp', icon: AlertTriangle, label: 'HACCP' },
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/team', icon: Users, label: 'Team' },
       { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
