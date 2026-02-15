@@ -41,10 +41,11 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   const { t, locale, setLocale } = useTranslation();
 
   const roleLabels: Record<string, string> = {
+    management: t('topBar.ownerOperator'),
     executive: t('topBar.executiveView'),
-    management: t('topBar.managementView'),
+    kitchen_manager: t('topBar.kitchenManager'),
     kitchen: t('topBar.kitchenStaff'),
-    facilities: t('topBar.facilitiesView'),
+    facilities: t('topBar.facilitiesManager'),
   };
 
   const handleChangePassword = () => {
@@ -248,10 +249,11 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     {([
+                      { role: 'management' as const, key: 'topBar.ownerOperator' },
                       { role: 'executive' as const, key: 'topBar.executiveView' },
-                      { role: 'management' as const, key: 'topBar.managementView' },
+                      { role: 'kitchen_manager' as const, key: 'topBar.kitchenManager' },
                       { role: 'kitchen' as const, key: 'topBar.kitchenStaff' },
-                      { role: 'facilities' as const, key: 'topBar.facilitiesView' },
+                      { role: 'facilities' as const, key: 'topBar.facilitiesManager' },
                     ]).map(({ role, key }) => (
                       <button
                         key={role}

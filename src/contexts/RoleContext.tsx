@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-export type UserRole = 'executive' | 'management' | 'kitchen' | 'facilities';
+export type UserRole = 'executive' | 'management' | 'kitchen_manager' | 'kitchen' | 'facilities';
 
 export interface LocationAssignment {
   locationId: string;
@@ -31,6 +31,7 @@ const ALL_LOCATIONS: LocationAssignment[] = [
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
   executive: ALL_LOCATIONS,
   management: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
+  kitchen_manager: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
   kitchen: [ALL_LOCATIONS[0]],    // Downtown only
   facilities: ALL_LOCATIONS,      // All locations — facilities services entire org
 };

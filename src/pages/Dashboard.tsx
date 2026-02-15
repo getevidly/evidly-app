@@ -58,6 +58,10 @@ import { CopilotCard } from '../components/CopilotCard';
 import { DEMO_CHECKLIST_STATUS, getDocumentsForState } from '../data/onboardingDocuments';
 import { Tooltip as InfoTooltip } from '../components/Tooltip';
 import OperatorDashboard from '../components/dashboard/OperatorDashboard';
+import ExecutiveDashboard from '../components/dashboard/ExecutiveDashboard';
+import KitchenManagerDashboard from '../components/dashboard/KitchenManagerDashboard';
+import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
+import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
 
 // --------------- Role-Based Dashboard Router ---------------
 
@@ -68,11 +72,13 @@ export function Dashboard() {
     case 'management':
       return <OperatorDashboard />;
     case 'executive':
-      return <LegacyDashboard />;
+      return <ExecutiveDashboard />;
+    case 'kitchen_manager':
+      return <KitchenManagerDashboard />;
     case 'kitchen':
-      return <KitchenDashboard />;
+      return <KitchenStaffTaskList />;
     case 'facilities':
-      return <FacilitiesDashboard />;
+      return <FacilitiesDashboardNew />;
     default:
       return <OperatorDashboard />;
   }

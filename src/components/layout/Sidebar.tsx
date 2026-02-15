@@ -75,8 +75,8 @@ interface NavSection {
 
 // ── Navigation structure ────────────────────────────────
 
-const allRoles: UserRole[] = ['executive', 'management', 'kitchen', 'facilities'];
-const mgmtRoles: UserRole[] = ['executive', 'management'];
+const allRoles: UserRole[] = ['executive', 'management', 'kitchen_manager', 'kitchen', 'facilities'];
+const mgmtRoles: UserRole[] = ['executive', 'management', 'kitchen_manager'];
 
 const sections: NavSection[] = [
   {

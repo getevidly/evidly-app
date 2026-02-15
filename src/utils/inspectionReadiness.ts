@@ -15,8 +15,8 @@ export const PILLAR_WEIGHTS = {
 } as const;
 
 export const COMPONENT_WEIGHTS = {
-  operations: 0.60,
-  documentation: 0.40,
+  operations: 0.50,
+  documentation: 0.50,
 } as const;
 
 // --------------- Types ---------------
