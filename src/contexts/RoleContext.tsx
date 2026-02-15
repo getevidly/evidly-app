@@ -70,7 +70,7 @@ interface RoleContextType {
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export function RoleProvider({ children }: { children: ReactNode }) {
-  const [userRole, setUserRole] = useState<UserRole>('executive');
+  const [userRole, setUserRole] = useState<UserRole>('management');
   const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(INITIAL_TEMP_COVERAGE);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {

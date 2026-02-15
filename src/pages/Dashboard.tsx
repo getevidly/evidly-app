@@ -57,8 +57,30 @@ import { OnboardingProgressWidget } from '../components/OnboardingProgressWidget
 import { CopilotCard } from '../components/CopilotCard';
 import { DEMO_CHECKLIST_STATUS, getDocumentsForState } from '../data/onboardingDocuments';
 import { Tooltip as InfoTooltip } from '../components/Tooltip';
+import OperatorDashboard from '../components/dashboard/OperatorDashboard';
+
+// --------------- Role-Based Dashboard Router ---------------
 
 export function Dashboard() {
+  const { userRole } = useRole();
+
+  switch (userRole) {
+    case 'management':
+      return <OperatorDashboard />;
+    case 'executive':
+      return <LegacyDashboard />;
+    case 'kitchen':
+      return <KitchenDashboard />;
+    case 'facilities':
+      return <FacilitiesDashboard />;
+    default:
+      return <OperatorDashboard />;
+  }
+}
+
+// --------------- Legacy Dashboard (Executive/Management View) ---------------
+
+function LegacyDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { userRole } = useRole();
@@ -298,8 +320,7 @@ export function Dashboard() {
     }
   }, [selectedLocation]);
 
-  if (userRole === 'kitchen') return <KitchenDashboard />;
-  if (userRole === 'facilities') return <FacilitiesDashboard />;
+  // Role routing is now handled by the Dashboard() wrapper above
 
   // Loading skeleton — only shows on first load
   if (dataLoading && !dashboardData) {
