@@ -86,7 +86,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <OfflineBanner />
-        <main className={`flex-1 md:pb-20 ${isDemoMode ? 'pb-44' : 'pb-36'}`}>
+        <main className={`flex-1 md:pb-[72px] ${isDemoMode ? 'pb-44' : 'pb-36'}`}>
           <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
         </main>
       </div>

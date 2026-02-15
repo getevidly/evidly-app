@@ -158,8 +158,8 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     detail: 'IoT sensor alert — check immediately',
     actionLabel: 'View',
     actionRoute: '/temp-logs',
-    locationId: 'university',
-    locationName: 'University Dining',
+    locationId: 'airport',
+    locationName: 'Airport Cafe',
     daysUntilDue: 0,
   },
   {

@@ -36,38 +36,38 @@ export function QuickActionsBar() {
 
   return (
     <>
-      {/* Desktop — fixed bottom bar, offset by sidebar */}
-      <div className="hidden md:flex fixed bottom-0 left-0 lg:left-60 right-0 z-30 bg-white border-t border-gray-200"
-        style={{ height: 52 }}
+      {/* Desktop — position: fixed, bottom: 0, offset by sidebar at lg */}
+      <div
+        className="hidden md:flex fixed bottom-0 left-0 lg:left-60 right-0 z-40 bg-white border-t border-gray-200 justify-center items-center gap-3"
+        style={{ padding: '8px 16px', fontFamily: 'Inter, sans-serif' }}
       >
-        <div className="flex items-center justify-center gap-3 w-full max-w-[1200px] mx-auto px-4">
-          {actions.map((action) => {
-            const Icon = action.icon;
-            const isActive = location.pathname === action.route;
-            return (
-              <button
-                key={action.route}
-                onClick={() => navigate(action.route)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[#1e4d6b] text-white'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                }`}
-                style={!isActive ? { border: '1px solid #e5e7eb' } : undefined}
-              >
-                <Icon size={18} />
-                {action.label}
-              </button>
-            );
-          })}
-        </div>
+        {actions.map((action) => {
+          const Icon = action.icon;
+          const isActive = location.pathname === action.route;
+          return (
+            <button
+              key={action.route}
+              onClick={() => navigate(action.route)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                isActive
+                  ? 'text-white'
+                  : 'text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+              style={isActive ? { backgroundColor: '#1e4d6b' } : undefined}
+            >
+              <Icon size={18} />
+              {action.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Mobile — above MobileTabBar (which is h-16 at bottom-0) */}
-      <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-gray-200"
-        style={{ height: 56 }}
+      <div
+        className="md:hidden fixed bottom-16 left-0 right-0 z-40 bg-white border-t border-gray-200"
+        style={{ height: 56, fontFamily: 'Inter, sans-serif' }}
       >
-        <div className={`grid h-full`} style={{ gridTemplateColumns: `repeat(${actions.length}, 1fr)` }}>
+        <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${actions.length}, 1fr)` }}>
           {actions.map((action) => {
             const Icon = action.icon;
             const isActive = location.pathname === action.route;
@@ -76,11 +76,15 @@ export function QuickActionsBar() {
                 key={action.route}
                 onClick={() => navigate(action.route)}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
-                  isActive ? 'bg-[#1e4d6b]/10' : 'active:bg-gray-50'
+                  isActive ? '' : 'active:bg-gray-50'
                 }`}
+                style={isActive ? { backgroundColor: 'rgba(30,77,107,0.1)' } : undefined}
               >
-                <Icon size={18} className={isActive ? 'text-[#1e4d6b]' : 'text-gray-500'} />
-                <span className={`text-[10px] font-medium ${isActive ? 'text-[#1e4d6b]' : 'text-gray-500'}`}>
+                <Icon size={18} style={{ color: isActive ? '#1e4d6b' : '#6b7280' }} />
+                <span
+                  className="text-[10px] font-medium"
+                  style={{ color: isActive ? '#1e4d6b' : '#6b7280' }}
+                >
                   {action.label}
                 </span>
               </button>
