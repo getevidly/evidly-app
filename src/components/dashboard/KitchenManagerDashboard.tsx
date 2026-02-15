@@ -8,7 +8,6 @@ import {
   MapPin,
   Thermometer,
   ClipboardCheck,
-  Users,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import {
@@ -112,6 +111,12 @@ function getChecklistBorderColor(status: DemoChecklist['status']): string {
   return '#d1d5db';
 }
 
+function getChecklistBgTint(status: DemoChecklist['status']): string {
+  if (status === 'done') return '#f0fdf4';
+  if (status === 'in_progress') return '#fffbeb';
+  return '#fafafa';
+}
+
 // ===============================================
 // KITCHEN MANAGER DASHBOARD
 // ===============================================
@@ -207,10 +212,11 @@ export default function KitchenManagerDashboard() {
               key={cl.id}
               type="button"
               onClick={() => navigate('/checklists')}
-              className="w-full bg-white rounded-lg p-4 text-left hover:shadow-md transition-shadow"
+              className="w-full rounded-lg p-4 text-left hover:shadow-md transition-shadow"
               style={{
                 boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
                 borderLeft: `4px solid ${getChecklistBorderColor(cl.status)}`,
+                backgroundColor: getChecklistBgTint(cl.status),
                 fontFamily: 'Inter, sans-serif',
               }}
             >

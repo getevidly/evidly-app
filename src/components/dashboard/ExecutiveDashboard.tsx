@@ -133,7 +133,7 @@ export default function ExecutiveDashboard() {
           </div>
         ) : (
           <div className="flex items-center gap-2 py-4 justify-center rounded-lg" style={{ backgroundColor: '#f0fdf4' }}>
-            <span className="text-green-600 font-medium text-sm">All locations on track</span>
+            <span className="text-green-600 font-medium text-sm">All locations on track &#x2705;</span>
           </div>
         )}
       </Card>
@@ -152,6 +152,7 @@ export default function ExecutiveDashboard() {
             />
           ))}
         </div>
+        <p className="text-xs text-gray-400 mt-2">Click any location to drill down</p>
       </div>
 
       {/* Trend + Strategic Actions */}
