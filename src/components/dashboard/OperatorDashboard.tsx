@@ -14,7 +14,6 @@ import {
 import { useDemo } from '../../contexts/DemoContext';
 import {
   calculateInspectionReadiness,
-  getReadinessColor,
 } from '../../utils/inspectionReadiness';
 import type { InspectionReadinessScore } from '../../utils/inspectionReadiness';
 import PillarCard from './PillarCard';
@@ -50,9 +49,13 @@ interface DemoVendorSchedule {
   vendor: string;
 }
 
-interface ComplianceThresholds {
+interface JurisdictionThresholds {
   warningLevel: number;
   criticalLevel: number;
+  source: string;
+  jurisdiction: string;
+  autoAssigned: boolean;
+  explanation: string;
 }
 
 interface LocationDemoData {
@@ -82,6 +85,19 @@ interface AttentionItem {
 type DashboardState = 'all_clear' | 'warning' | 'critical';
 
 // ===============================================
+// JURISDICTION THRESHOLDS
+// ===============================================
+
+const DEMO_JURISDICTION_THRESHOLDS: JurisdictionThresholds = {
+  warningLevel: 86,
+  criticalLevel: 78,
+  source: 'CA Health & Safety Code + NFPA 96 2024',
+  jurisdiction: 'Sacramento County, California',
+  autoAssigned: true,
+  explanation: 'Based on Sacramento County health department requirements and NFPA 96 2024 fire safety standards. Kitchens scoring below 78% have a high probability of failing inspection.',
+};
+
+// ===============================================
 // DEMO DATA
 // ===============================================
 
@@ -104,18 +120,26 @@ const DEMO_VENDOR_SCHEDULE: DemoVendorSchedule[] = [
   { day: 'Fri', service: 'Hood Cleaning', vendor: 'Cleaning Pros Plus' },
 ];
 
-const DEFAULT_THRESHOLDS: ComplianceThresholds = { warningLevel: 85, criticalLevel: 75 };
-
 // --- State-specific location data ---
+// Sub-scores calibrated so the scoring engine (Food 60% + Fire 40%, each Ops/Docs 50/50)
+// produces overall scores that land in the correct threshold band (warning: 86, critical: 78).
 
 const DEMO_STATES: Record<DashboardState, {
   locations: LocationDemoData[];
-  complianceAlert?: { location: string; pillar: string; pillarScore: number; items: string[] };
+  complianceAlert?: {
+    location: string;
+    pillar: string;
+    pillarScore: number;
+    jurisdictionMessage: string;
+    items: string[];
+  };
+  criticalMessage?: string;
   criticalItems?: ComplianceAlertItem[];
   attentionItems: AttentionItem[];
 }> = {
   all_clear: {
     locations: [
+      // Downtown → 94%, Airport → 88%, University → 91%  (all ≥ 86)
       { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
       { id: 'airport', name: 'Airport Cafe', foodOps: 89, foodDocs: 86, fireOps: 85, fireDocs: 90 },
       { id: 'university', name: 'University Dining', foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
@@ -126,14 +150,16 @@ const DEMO_STATES: Record<DashboardState, {
   },
   warning: {
     locations: [
+      // Downtown → 94%, Airport → 84% (warning), University → 91%
       { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-      { id: 'airport', name: 'Airport Cafe', foodOps: 82, foodDocs: 80, fireOps: 78, fireDocs: 82 },
+      { id: 'airport', name: 'Airport Cafe', foodOps: 90, foodDocs: 86, fireOps: 74, fireDocs: 82 },
       { id: 'university', name: 'University Dining', foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
     ],
     complianceAlert: {
       location: 'Airport Cafe',
       pillar: 'Fire Safety',
-      pillarScore: 80,
+      pillarScore: 78,
+      jurisdictionMessage: `Sacramento County requires approximately 78% to pass inspection. Airport Cafe is at 84%, below your safety buffer of 86%.`,
       items: [
         'Hood cleaning cert expires in 5 days',
         'Fire suppression inspection overdue',
@@ -146,10 +172,12 @@ const DEMO_STATES: Record<DashboardState, {
   },
   critical: {
     locations: [
+      // Downtown → 94%, Airport → 70% (critical), University → 56% (critical)
       { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-      { id: 'airport', name: 'Airport Cafe', foodOps: 72, foodDocs: 65, fireOps: 58, fireDocs: 62 },
-      { id: 'university', name: 'University Dining', foodOps: 55, foodDocs: 50, fireOps: 52, fireDocs: 58 },
+      { id: 'airport', name: 'Airport Cafe', foodOps: 80, foodDocs: 72, fireOps: 58, fireDocs: 64 },
+      { id: 'university', name: 'University Dining', foodOps: 58, foodDocs: 52, fireOps: 55, fireDocs: 60 },
     ],
+    criticalMessage: 'Based on Sacramento County requirements, this location would likely fail inspection. Immediate action required.',
     criticalItems: [
       { severity: 'critical', title: 'Health permit expired 3 days ago', actionLabel: 'Upload', actionRoute: '/documents', location: 'University Dining' },
       { severity: 'critical', title: 'Hood cleaning 2 months overdue', actionLabel: 'Schedule', actionRoute: '/vendors', location: 'Airport Cafe' },
@@ -201,28 +229,54 @@ function TempStatusDot({ status }: { status: DemoTemperature['status'] }) {
   return <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-300" />;
 }
 
-function getLocationState(score: number, thresholds: ComplianceThresholds): 'all_clear' | 'warning' | 'critical' {
+function getLocationState(score: number, thresholds: JurisdictionThresholds): 'all_clear' | 'warning' | 'critical' {
   if (score < thresholds.criticalLevel) return 'critical';
   if (score < thresholds.warningLevel) return 'warning';
   return 'all_clear';
 }
 
 // ===============================================
-// STATUS BADGE
+// STATUS BADGE (jurisdiction-aware)
 // ===============================================
 
-function StatusBadge({ score, state, onClick }: { score: number; state: 'all_clear' | 'warning' | 'critical'; onClick: () => void }) {
+function StatusBadge({
+  score,
+  state,
+  thresholds,
+  onClick,
+}: {
+  score: number;
+  state: 'all_clear' | 'warning' | 'critical';
+  thresholds: JurisdictionThresholds;
+  onClick: () => void;
+}) {
   const config = {
-    all_clear: { bg: '#dcfce7', color: '#16a34a', label: `Ready (${score}%)` },
-    warning: { bg: '#fef3c7', color: '#d97706', label: `${score}% \u2193` },
-    critical: { bg: '#fee2e2', color: '#dc2626', label: `${score}%` },
+    all_clear: {
+      bg: '#dcfce7',
+      color: '#16a34a',
+      label: `Ready (${score}%)`,
+      tooltip: `Above ${thresholds.jurisdiction} threshold (${thresholds.warningLevel}%)`,
+    },
+    warning: {
+      bg: '#fef3c7',
+      color: '#d97706',
+      label: `${score}% \u2014 Below threshold (${thresholds.warningLevel}%)`,
+      tooltip: `Below ${thresholds.jurisdiction} safety buffer of ${thresholds.warningLevel}%`,
+    },
+    critical: {
+      bg: '#fee2e2',
+      color: '#dc2626',
+      label: `${score}% \u2014 Will fail inspection`,
+      tooltip: `Below ${thresholds.jurisdiction} passing threshold of ${thresholds.criticalLevel}%`,
+    },
   }[state];
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
+      title={config.tooltip}
+      className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-opacity hover:opacity-80 shrink-0"
       style={{ backgroundColor: config.bg, color: config.color }}
     >
       {state === 'all_clear' && <CheckCircle2 size={14} />}
@@ -295,7 +349,7 @@ function DailyTasks({ navigate }: { navigate: (path: string) => void }) {
                   className="text-xs font-medium px-2 py-1 rounded hover:bg-white transition-colors"
                   style={{ color: '#1e4d6b' }}
                 >
-                  Log Temp →
+                  Log Temp &rarr;
                 </button>
               )}
             </div>
@@ -334,18 +388,26 @@ function SingleLocationView({
   locationName,
   score,
   locState,
-  demoState,
+  thresholds,
   navigate,
   complianceAlert,
+  criticalMessage,
   criticalItems,
   attentionItems,
 }: {
   locationName: string;
   score: InspectionReadinessScore;
   locState: 'all_clear' | 'warning' | 'critical';
-  demoState: DashboardState;
+  thresholds: JurisdictionThresholds;
   navigate: (path: string) => void;
-  complianceAlert?: { location: string; pillar: string; pillarScore: number; items: string[] };
+  complianceAlert?: {
+    location: string;
+    pillar: string;
+    pillarScore: number;
+    jurisdictionMessage: string;
+    items: string[];
+  };
+  criticalMessage?: string;
   criticalItems?: ComplianceAlertItem[];
   attentionItems: AttentionItem[];
 }) {
@@ -360,20 +422,25 @@ function SingleLocationView({
           <h2 className="text-lg font-semibold text-gray-900">{locationName}</h2>
         </div>
         <div className="flex items-center gap-3">
-          <StatusBadge score={score.overall} state={locState} onClick={() => navigate('/compliance')} />
+          <StatusBadge score={score.overall} state={locState} thresholds={thresholds} onClick={() => navigate('/compliance')} />
           <span className="text-sm text-gray-400">{today}</span>
         </div>
       </div>
 
-      {/* STATE 3: CRITICAL — red alert banner */}
+      {/* STATE 3: CRITICAL — red alert section with jurisdiction context */}
       {locState === 'critical' && criticalItems && (
         <div
           className="rounded-lg p-4"
           style={{ borderLeft: '4px solid #dc2626', backgroundColor: '#fef2f2' }}
         >
-          <p className="text-sm font-bold text-red-700 mb-3">
+          <p className="text-sm font-bold text-red-700 mb-2">
             <ShieldAlert size={16} className="inline mr-1.5" style={{ verticalAlign: 'text-bottom' }} />
-            INSPECTION READINESS: {score.overall}% — ACTION REQUIRED
+            INSPECTION READINESS: {score.overall}% &mdash; ACTION REQUIRED
+          </p>
+          {/* Jurisdiction context */}
+          <p className="text-sm text-gray-700 mb-4">
+            Based on {thresholds.jurisdiction} requirements, this location would likely fail inspection.
+            Passing threshold: {thresholds.criticalLevel}%.
           </p>
           {/* Pillar cards inline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
@@ -381,6 +448,9 @@ function SingleLocationView({
             <PillarCard pillar="fire_safety" score={score.fireSafety.score} opsScore={score.fireSafety.ops} docsScore={score.fireSafety.docs} />
           </div>
           {/* Critical items */}
+          <p className="text-xs font-semibold uppercase text-red-600 mb-2" style={{ letterSpacing: '0.05em' }}>
+            Critical Items
+          </p>
           <div className="space-y-2">
             {criticalItems.map((item, i) => (
               <div key={i} className="flex items-center gap-2.5 py-1.5">
@@ -388,14 +458,19 @@ function SingleLocationView({
                   className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: item.severity === 'critical' ? '#dc2626' : '#d4af37' }}
                 />
-                <span className="text-sm text-gray-800 flex-1">{item.title}</span>
+                <span className="text-sm text-gray-800 flex-1">
+                  {item.title}
+                  {item.location && (
+                    <span className="text-xs text-gray-400 ml-1.5">({item.location})</span>
+                  )}
+                </span>
                 <button
                   type="button"
                   onClick={() => navigate(item.actionRoute)}
                   className="text-xs font-medium px-2.5 py-1 rounded-lg text-white shrink-0"
                   style={{ backgroundColor: '#1e4d6b' }}
                 >
-                  {item.actionLabel} →
+                  {item.actionLabel} &rarr;
                 </button>
               </div>
             ))}
@@ -403,7 +478,7 @@ function SingleLocationView({
         </div>
       )}
 
-      {/* STATE 2: WARNING — compliance alert card */}
+      {/* STATE 2: WARNING — compliance alert card with jurisdiction context */}
       {locState === 'warning' && complianceAlert && (
         <div
           className="rounded-lg p-4"
@@ -416,10 +491,14 @@ function SingleLocationView({
           <p className="text-sm font-semibold text-gray-800 mb-2">
             {complianceAlert.pillar} dropped to {complianceAlert.pillarScore}%
           </p>
+          {/* Jurisdiction context message */}
+          <p className="text-sm text-gray-600 mb-3">
+            {complianceAlert.jurisdictionMessage}
+          </p>
           <ul className="space-y-1 mb-3">
             {complianceAlert.items.map((item, i) => (
               <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
-                <span className="text-gray-400 mt-0.5">•</span>
+                <span className="text-gray-400 mt-0.5">&bull;</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -430,7 +509,7 @@ function SingleLocationView({
             className="text-xs font-medium hover:underline"
             style={{ color: '#1e4d6b' }}
           >
-            View Compliance Details →
+            View Compliance Details &rarr;
           </button>
         </div>
       )}
@@ -460,7 +539,7 @@ function SingleLocationView({
                   className="text-xs font-medium shrink-0 px-3 py-1.5 rounded-lg text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: '#1e4d6b' }}
                 >
-                  {item.actionLabel} →
+                  {item.actionLabel} &rarr;
                 </button>
               </div>
             ))}
@@ -481,7 +560,7 @@ export default function OperatorDashboard() {
 
   // Demo state switcher
   const [demoState, setDemoState] = useState<DashboardState>('all_clear');
-  const thresholds = DEFAULT_THRESHOLDS;
+  const thresholds = DEMO_JURISDICTION_THRESHOLDS;
   const stateData = DEMO_STATES[demoState];
 
   // Compute scores for each location
@@ -518,7 +597,6 @@ export default function OperatorDashboard() {
     const locState = getLocationState(loc.score.overall, thresholds);
     return (
       <div style={{ fontFamily: 'Inter, sans-serif' }}>
-        {/* Demo state switcher */}
         {isDemoMode && (
           <DemoStateSwitcher value={demoState} onChange={setDemoState} />
         )}
@@ -526,9 +604,10 @@ export default function OperatorDashboard() {
           locationName={loc.name}
           score={loc.score}
           locState={locState}
-          demoState={demoState}
+          thresholds={thresholds}
           navigate={navigate}
           complianceAlert={stateData.complianceAlert}
+          criticalMessage={stateData.criticalMessage}
           criticalItems={stateData.criticalItems}
           attentionItems={stateData.attentionItems}
         />
@@ -554,7 +633,7 @@ export default function OperatorDashboard() {
           </h2>
         </div>
         <div className="flex items-center gap-3">
-          <StatusBadge score={orgScore} state={orgState} onClick={() => navigate('/compliance')} />
+          <StatusBadge score={orgScore} state={orgState} thresholds={thresholds} onClick={() => navigate('/compliance')} />
           <span className="text-sm text-gray-400">{today}</span>
         </div>
       </div>
@@ -573,10 +652,18 @@ export default function OperatorDashboard() {
         ))}
       </div>
 
-      {/* Locations needing attention (multi-location warning) */}
+      {/* Locations below inspection threshold (jurisdiction-aware) */}
       {problemLocations.length > 0 && (
         <Card>
-          <SectionHeader>{problemLocations.length} location{problemLocations.length > 1 ? 's' : ''} need{problemLocations.length === 1 ? 's' : ''} attention</SectionHeader>
+          <div className="flex items-center gap-2 mb-1">
+            <ShieldAlert size={16} className="text-red-600" />
+            <SectionHeader>
+              {problemLocations.length} location{problemLocations.length > 1 ? 's' : ''} below inspection threshold
+            </SectionHeader>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            {thresholds.jurisdiction} passing threshold: {thresholds.criticalLevel}% &middot; Source: {thresholds.source}
+          </p>
           <div className="space-y-2">
             {problemLocations
               .sort((a, b) => a.score.overall - b.score.overall)
@@ -588,7 +675,10 @@ export default function OperatorDashboard() {
                   ? `Food Safety at ${loc.score.foodSafety.score}%`
                   : loc.score.fireSafety.score < loc.score.foodSafety.score
                     ? `Fire Safety at ${loc.score.fireSafety.score}%`
-                    : `Food + Fire Safety`;
+                    : `Food + Fire Safety both critical`;
+                const failMessage = locSt === 'critical'
+                  ? 'Would fail inspection'
+                  : `Below safety buffer of ${thresholds.warningLevel}%`;
                 return (
                   <div
                     key={loc.id}
@@ -597,7 +687,10 @@ export default function OperatorDashboard() {
                   >
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-900">
-                        {loc.name} ({loc.score.overall}%) — {worstPillar}
+                        {loc.name} ({loc.score.overall}%) &mdash; {failMessage}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {worstPillar}
                       </p>
                     </div>
                     <button
@@ -606,7 +699,7 @@ export default function OperatorDashboard() {
                       className="text-xs font-medium shrink-0 px-2.5 py-1 rounded hover:bg-white/50 transition-colors"
                       style={{ color: '#1e4d6b' }}
                     >
-                      View {loc.name} →
+                      View {loc.name} &rarr;
                     </button>
                   </div>
                 );
@@ -627,9 +720,10 @@ export default function OperatorDashboard() {
         locationName={selectedLoc.name}
         score={selectedLoc.score}
         locState={selectedLocState}
-        demoState={demoState}
+        thresholds={thresholds}
         navigate={navigate}
         complianceAlert={selectedLocState === 'warning' ? stateData.complianceAlert : undefined}
+        criticalMessage={selectedLocState === 'critical' ? stateData.criticalMessage : undefined}
         criticalItems={selectedLocState === 'critical' ? stateData.criticalItems : undefined}
         attentionItems={stateData.attentionItems}
       />
