@@ -94,7 +94,7 @@ const DEMO_JURISDICTION_THRESHOLDS: JurisdictionThresholds = {
   source: 'CA Health & Safety Code + NFPA 96 2024',
   jurisdiction: 'Sacramento County, California',
   autoAssigned: true,
-  explanation: 'Based on Sacramento County color placard system (Green/Yellow/Red) and NFPA 96 2024 fire safety standards. Kitchens scoring below 78% have a high probability of failing inspection.',
+  explanation: 'Based on Sacramento County health department requirements and NFPA 96 2024 fire safety standards. Kitchens scoring below 78% have a high probability of failing inspection.',
 };
 
 // ===============================================
