@@ -168,7 +168,7 @@ function SingleLocationView({
       {/* Needs Attention (single location — no location prefix) */}
       <Card>
         <NeedsAttention
-          items={DEMO_ATTENTION_ITEMS.filter(i => i.locationId === 'valley-lodge')}
+          items={DEMO_ATTENTION_ITEMS.filter(i => i.locationId === 'downtown')}
           showLocationPrefix={false}
         />
       </Card>

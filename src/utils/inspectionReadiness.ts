@@ -103,13 +103,9 @@ export function calculateOrgReadiness(
 // --------------- Demo Mode Scores ---------------
 
 export const DEMO_LOCATION_SCORES: Record<string, { name: string; foodOps: number; foodDocs: number; fireOps: number; fireDocs: number }> = {
-  'valley-lodge':      { name: 'Yosemite Valley Lodge', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-  'curry-village':     { name: 'Curry Village',         foodOps: 95, foodDocs: 92, fireOps: 85, fireDocs: 94 },
-  'the-ahwahnee':      { name: 'The Ahwahnee',         foodOps: 99, foodDocs: 96, fireOps: 93, fireDocs: 98 },
-  'degnans-deli':      { name: "Degnan's Deli",        foodOps: 93, foodDocs: 90, fireOps: 83, fireDocs: 92 },
-  'village-grill':     { name: 'Village Grill',         foodOps: 92, foodDocs: 89, fireOps: 78, fireDocs: 90 },
-  'badger-pass':       { name: 'Badger Pass',           foodOps: 89, foodDocs: 86, fireOps: 75, fireDocs: 87 },
-  'tuolumne-meadows':  { name: 'Tuolumne Meadows',     foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
+  'downtown':    { name: 'Downtown Kitchen',   foodOps: 95, foodDocs: 92, fireOps: 88, fireDocs: 90 },
+  'airport':     { name: 'Airport Cafe',       foodOps: 78, foodDocs: 72, fireOps: 65, fireDocs: 60 },
+  'university':  { name: 'University Dining',  foodOps: 62, foodDocs: 58, fireOps: 52, fireDocs: 48 },
 };
 
 export function getDemoScores(): LocationReadinessEntry[] {
