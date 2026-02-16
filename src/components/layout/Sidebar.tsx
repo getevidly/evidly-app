@@ -1,12 +1,19 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, ChevronRight, ChevronDown } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { locations as demoLocations, locationScores } from '../../data/demoData';
-import { getNavItemsForRole, checkTestMode, LOCATION_VISIBLE_ROLES } from '../../config/sidebarConfig';
+import {
+  getNavItemsForRole,
+  checkTestMode,
+  LOCATION_VISIBLE_ROLES,
+  SIDEBAR_SECTIONS,
+  UNGROUPED_IDS,
+  type SidebarNavItem,
+} from '../../config/sidebarConfig';
 
 // ── Score color helper ───────────────────────────────────
 
@@ -15,6 +22,8 @@ function getScoreColor(score: number): string {
   if (score >= 70) return '#d97706';
   return '#dc2626';
 }
+
+const STORAGE_KEY = 'evidly-sidebar-collapsed';
 
 // ── Sidebar component ───────────────────────────────────
 
@@ -26,15 +35,51 @@ export function Sidebar() {
   const { branding } = useBranding();
 
   const isTestMode = useMemo(() => checkTestMode(), []);
-  // In demo mode, never show EvidLY-admin-only items (Usage Analytics, etc.)
   const isEvidlyAdmin = false;
   const navItems = useMemo(() => getNavItemsForRole(userRole, isEvidlyAdmin), [userRole, isEvidlyAdmin]);
+  const navItemMap = useMemo(() => new Map(navItems.map(item => [item.id, item])), [navItems]);
+
+  // ── Collapsible section state ──
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const toggleSection = useCallback((sectionId: string) => {
+    setCollapsed(prev => {
+      const next = { ...prev, [sectionId]: !prev[sectionId] };
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  // ── Ungrouped items (always visible at top) ──
+  const ungroupedItems = useMemo(() =>
+    UNGROUPED_IDS.map(id => navItemMap.get(id)).filter(Boolean) as SidebarNavItem[],
+    [navItemMap]
+  );
+
+  // ── Sections with role-filtered items ──
+  const sections = useMemo(() =>
+    SIDEBAR_SECTIONS
+      .map(section => ({
+        ...section,
+        items: section.itemIds
+          .map(id => navItemMap.get(id))
+          .filter(Boolean) as SidebarNavItem[],
+      }))
+      .filter(section => section.items.length > 0),
+    [navItemMap]
+  );
 
   // Location section visibility
   const showLocations = LOCATION_VISIBLE_ROLES.includes(userRole);
   const visibleLocations = useMemo(() => {
     if (!showLocations) return [];
-    // Kitchen staff sees only their assigned location (Downtown Kitchen in demo)
     if (userRole === 'kitchen') {
       return demoLocations.filter(loc => loc.urlId === 'downtown');
     }
@@ -58,6 +103,32 @@ export function Sidebar() {
       }
     };
   }, [isTestMode, navItems, userRole]);
+
+  // ── Render a single nav item ──
+  const renderNavItem = (item: SidebarNavItem) => {
+    const active = location.pathname === item.route;
+    const testId = isTestMode ? `nav-${item.id}` : undefined;
+    return (
+      <div
+        key={item.id}
+        onClick={() => navigate(item.route)}
+        className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+          active
+            ? 'text-[#d4af37] bg-[#163a52]'
+            : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
+        }`}
+        style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+        {...(testId ? { 'data-testid': testId } : {})}
+      >
+        <item.icon
+          className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
+            active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
+          }`}
+        />
+        <span className="flex-1 truncate">{item.label}</span>
+      </div>
+    );
+  };
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
@@ -99,34 +170,41 @@ export function Sidebar() {
           </div>
         )}
 
-        {/* FLAT nav list — no groups, no accordions, no category headers */}
+        {/* Collapsible sidebar navigation */}
         <nav className="flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
-          {navItems.map((item, index) => {
-            const active = location.pathname === item.route;
-            const testId = isTestMode ? `nav-${item.id}` : undefined;
+          {/* Ungrouped items (Dashboard, Calendar, My Tasks) */}
+          {ungroupedItems.map(item => renderNavItem(item))}
 
+          {ungroupedItems.length > 0 && sections.length > 0 && (
+            <div className="my-2 border-t border-white/10 mx-1" />
+          )}
+
+          {/* Collapsible sections */}
+          {sections.map(section => {
+            const isCollapsed = !!collapsed[section.id];
             return (
-              <div key={item.id}>
-                <div
-                  onClick={() => navigate(item.route)}
-                  className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-                    active
-                      ? 'text-[#d4af37] bg-[#163a52]'
-                      : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
-                  }`}
-                  style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-                  {...(testId ? { 'data-testid': testId } : {})}
+              <div key={section.id} className="mb-1">
+                {/* Section header */}
+                <button
+                  type="button"
+                  onClick={() => toggleSection(section.id)}
+                  className="w-full flex items-center justify-between px-3 py-1.5 mt-1 group cursor-pointer"
                 >
-                  <item.icon
-                    className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
-                      active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
-                    }`}
-                  />
-                  <span className="flex-1 truncate">{item.label}</span>
-                </div>
-                {item.dividerAfter && index < navItems.length - 1 && (
-                  <div className="my-2 border-t border-white/10 mx-4" />
-                )}
+                  <span
+                    className="text-[11px] uppercase font-semibold tracking-wider"
+                    style={{ color: '#94a3b8' }}
+                  >
+                    {section.label}
+                  </span>
+                  {isCollapsed ? (
+                    <ChevronRight className="h-3 w-3" style={{ color: '#94a3b8' }} />
+                  ) : (
+                    <ChevronDown className="h-3 w-3" style={{ color: '#94a3b8' }} />
+                  )}
+                </button>
+
+                {/* Section items */}
+                {!isCollapsed && section.items.map(item => renderNavItem(item))}
               </div>
             );
           })}

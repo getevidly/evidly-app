@@ -159,7 +159,7 @@ export default function KitchenManagerDashboard() {
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">Today: {today}</span>
           <span className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
-            Readiness: {readinessScore}%
+            Readiness: {readinessScore}
           </span>
         </div>
       </div>

@@ -32,7 +32,7 @@ export default function LocationCard({ locationName, score, onClick, isSelected 
         {locationName}
       </span>
       <span className="text-xl font-bold" style={{ color }}>
-        {score}%
+        {score}
       </span>
       <span
         className="inline-block w-2.5 h-2.5 rounded-full mt-1.5"

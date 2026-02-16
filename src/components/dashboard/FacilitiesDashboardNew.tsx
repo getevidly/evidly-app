@@ -174,7 +174,7 @@ export default function FacilitiesDashboardNew() {
         <div className="flex items-center gap-2">
           <MapPin size={18} style={{ color: '#1e4d6b' }} />
           <h2 className="text-lg font-semibold text-gray-900">
-            {locationName} — <span className="text-gray-500">Facilities</span>
+            {locationName}
           </h2>
         </div>
         <span className="text-sm text-gray-500">Today: {today}</span>
@@ -186,7 +186,7 @@ export default function FacilitiesDashboardNew() {
           <div className="flex items-center gap-2">
             <Flame size={24} style={{ color: getReadinessColor(fireScore) }} />
             <span className="font-bold" style={{ fontSize: 28, color: getReadinessColor(fireScore) }}>
-              {fireScore}%
+              {fireScore}
             </span>
             <span className="text-sm font-semibold text-gray-700 ml-1">Fire Safety</span>
           </div>
@@ -208,33 +208,7 @@ export default function FacilitiesDashboardNew() {
           />
         </div>
 
-        {/* Sub-scores */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-gray-500">Ops</span>
-              <span className="text-xs font-semibold text-gray-700">{fireOps}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full" style={{ height: 6 }}>
-              <div
-                className="rounded-full"
-                style={{ width: `${fireOps}%`, height: 6, backgroundColor: getReadinessColor(fireOps) }}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-xs font-medium text-gray-500">Docs</span>
-              <span className="text-xs font-semibold text-gray-700">{fireDocs}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full" style={{ height: 6 }}>
-              <div
-                className="rounded-full"
-                style={{ width: `${fireDocs}%`, height: 6, backgroundColor: getReadinessColor(fireDocs) }}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Sub-scores hidden from main surface — visible only in drill-down */}
       </Card>
 
       {/* Needs Attention */}

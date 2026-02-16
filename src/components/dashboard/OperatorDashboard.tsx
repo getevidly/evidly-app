@@ -215,19 +215,19 @@ function StatusBadge({
     all_clear: {
       bg: '#dcfce7',
       color: '#16a34a',
-      label: `Ready (${score}%)`,
+      label: `Ready (${score})`,
       tooltip: `Above ${thresholds.jurisdiction} threshold (${thresholds.warningLevel}%)`,
     },
     warning: {
       bg: '#fef3c7',
       color: '#d97706',
-      label: `${score}% \u2014 Below threshold (${thresholds.warningLevel}%)`,
+      label: `${score} \u2014 Below threshold (${thresholds.warningLevel})`,
       tooltip: `Below ${thresholds.jurisdiction} safety buffer of ${thresholds.warningLevel}%`,
     },
     critical: {
       bg: '#fee2e2',
       color: '#dc2626',
-      label: `${score}% \u2014 Will fail inspection`,
+      label: `${score} \u2014 Will fail inspection`,
       tooltip: `Below ${thresholds.jurisdiction} passing threshold of ${thresholds.criticalLevel}%`,
     },
   }[state];
@@ -386,7 +386,7 @@ function SingleLocationView({
         >
           <p className="text-sm font-bold text-red-700 mb-2">
             <ShieldAlert size={16} className="inline mr-1.5" style={{ verticalAlign: 'text-bottom' }} />
-            INSPECTION READINESS: {score.overall}% &mdash; ACTION REQUIRED
+            INSPECTION READINESS: {score.overall} &mdash; ACTION REQUIRED
           </p>
           <p className="text-sm text-gray-700 mb-4">
             Based on {thresholds.jurisdiction} requirements, this location would likely fail inspection.
@@ -437,7 +437,7 @@ function SingleLocationView({
             COMPLIANCE ALERT
           </p>
           <p className="text-sm font-semibold text-gray-800 mb-2">
-            {complianceAlert.pillar} dropped to {complianceAlert.pillarScore}%
+            {complianceAlert.pillar} dropped to {complianceAlert.pillarScore}
           </p>
           <p className="text-sm text-gray-600 mb-3">
             {complianceAlert.jurisdictionMessage}
@@ -688,9 +688,9 @@ export default function OperatorDashboard() {
                 const locSt = getLocationState(loc.score.overall, thresholds);
                 const borderColor = locSt === 'critical' ? '#dc2626' : '#d4af37';
                 const worstPillar = loc.score.foodSafety.score < loc.score.fireSafety.score
-                  ? `Food Safety at ${loc.score.foodSafety.score}%`
+                  ? `Food Safety at ${loc.score.foodSafety.score}`
                   : loc.score.fireSafety.score < loc.score.foodSafety.score
-                    ? `Fire Safety at ${loc.score.fireSafety.score}%`
+                    ? `Fire Safety at ${loc.score.fireSafety.score}`
                     : `Food + Fire Safety both critical`;
                 const failMessage = locSt === 'critical'
                   ? 'Would fail inspection'

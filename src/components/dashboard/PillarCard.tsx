@@ -49,26 +49,11 @@ export default function PillarCard({ pillar, score, opsScore, docsScore, onClick
           <span className="text-sm font-semibold text-gray-900">{label}</span>
         </div>
         <span className="text-lg font-bold" style={{ color }}>
-          {score}%
+          {score}
         </span>
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 w-10 shrink-0">Ops</span>
-          <ProgressBar value={opsScore} color={opsColor} />
-          <span className="text-xs font-medium w-9 text-right" style={{ color: opsColor }}>
-            {opsScore}%
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 w-10 shrink-0">Docs</span>
-          <ProgressBar value={docsScore} color={docsColor} />
-          <span className="text-xs font-medium w-9 text-right" style={{ color: docsColor }}>
-            {docsScore}%
-          </span>
-        </div>
-      </div>
+      <ProgressBar value={score} color={color} />
     </button>
   );
 }

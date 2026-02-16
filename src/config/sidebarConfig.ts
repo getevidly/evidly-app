@@ -94,7 +94,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
   { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
   { id: 'leaderboard',         label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
-  { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT_EXEC, dividerAfter: true },
+  { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT, dividerAfter: true },
 
   // ── TEAM & ADMIN ──
   { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
@@ -149,6 +149,45 @@ export interface DemoRoleDefinition {
   description: string;
   i18nKey: string;
 }
+
+// ── Sidebar sections for collapsible groups ─────────────
+
+export interface SidebarSection {
+  id: string;
+  label: string;
+  itemIds: string[];
+}
+
+export const SIDEBAR_SECTIONS: SidebarSection[] = [
+  {
+    id: 'operations',
+    label: 'Operations',
+    itemIds: ['checklists', 'temperatures', 'log-temp', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
+  },
+  {
+    id: 'documents',
+    label: 'Documents & Assets',
+    itemIds: ['documents', 'equipment', 'vendors', 'haccp', 'photos'],
+  },
+  {
+    id: 'compliance',
+    label: 'Compliance & Insights',
+    itemIds: ['compliance', 'ai-copilot', 'self-inspection', 'inspector', 'reporting', 'regulatory', 'alerts'],
+  },
+  {
+    id: 'enterprise',
+    label: 'Enterprise',
+    itemIds: ['locations', 'benchmarks', 'risk-score', 'leaderboard', 'marketplace'],
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    itemIds: ['team', 'training', 'system-admin', 'settings', 'help', 'usage-analytics'],
+  },
+];
+
+/** Items that are always visible at top, never grouped into sections */
+export const UNGROUPED_IDS = ['dashboard', 'my-tasks', 'calendar'];
 
 export const DEMO_ROLES: DemoRoleDefinition[] = [
   {

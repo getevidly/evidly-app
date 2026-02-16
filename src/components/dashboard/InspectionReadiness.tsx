@@ -25,7 +25,7 @@ export default function InspectionReadiness({ score, jurisdiction, trend, subtit
 
       <div className="flex items-center justify-center gap-2">
         <span className="text-5xl font-bold" style={{ color }}>
-          {score}%
+          {score}
         </span>
         {trend && trend !== 'stable' && (
           <TrendIcon size={20} style={{ color: trendColor }} />

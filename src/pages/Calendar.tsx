@@ -1,6 +1,8 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useRole } from '../contexts/RoleContext';
+import type { UserRole } from '../contexts/RoleContext';
 import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_LABELS } from '../contexts/OperatingHoursContext';
 import type { LocationHours } from '../contexts/OperatingHoursContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -198,11 +200,20 @@ function hourLabel(h: number) {
   return `${h - 12} PM`;
 }
 
+// ── Role-based event type visibility ─────────────────────────
+const ROLE_EVENT_TYPES: Record<UserRole, string[] | 'all'> = {
+  management: 'all', // Owner/Operator sees everything
+  executive: ['inspection', 'certification', 'meeting', 'corrective'],
+  kitchen_manager: ['temp-check', 'checklist', 'vendor', 'inspection', 'meeting', 'corrective'],
+  kitchen: ['temp-check', 'checklist', 'corrective'],
+  facilities: ['vendor', 'inspection', 'certification', 'corrective'],
+};
+
 // ── Component ────────────────────────────────────────────────
 export function Calendar() {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
-  const [view, setView] = useState<ViewMode>('month');
+  const [view, setView] = useState<ViewMode>('week');
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
@@ -210,6 +221,7 @@ export function Calendar() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -378,13 +390,14 @@ export function Calendar() {
   const demoEvents = useMemo(() => generateDemoEvents(opHours), [opHours]);
   const events = isDemoMode ? demoEvents : liveEvents.length > 0 ? liveEvents : demoEvents;
 
-  const filteredEvents = useMemo(() =>
-    events.filter(e =>
+  const filteredEvents = useMemo(() => {
+    const roleTypes = ROLE_EVENT_TYPES[userRole];
+    return events.filter(e =>
+      (roleTypes === 'all' || roleTypes.includes(e.type)) &&
       (typeFilter === 'all' || e.type === typeFilter) &&
       (locationFilter === 'all' || e.location === locationFilter)
-    ),
-    [events, typeFilter, locationFilter]
-  );
+    );
+  }, [events, typeFilter, locationFilter, userRole]);
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};

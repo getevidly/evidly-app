@@ -70,8 +70,20 @@ interface RoleContextType {
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
+const VALID_ROLES: UserRole[] = ['executive', 'management', 'kitchen_manager', 'kitchen', 'facilities'];
+
 export function RoleProvider({ children }: { children: ReactNode }) {
-  const [userRole, setUserRole] = useState<UserRole>('management');
+  const [userRole, setUserRoleRaw] = useState<UserRole>(() => {
+    try {
+      const saved = localStorage.getItem('evidly-demo-role');
+      if (saved && VALID_ROLES.includes(saved as UserRole)) return saved as UserRole;
+    } catch {}
+    return 'management';
+  });
+  const setUserRole = useCallback((role: UserRole) => {
+    setUserRoleRaw(role);
+    try { localStorage.setItem('evidly-demo-role', role); } catch {}
+  }, []);
   const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(INITIAL_TEMP_COVERAGE);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
