@@ -26,7 +26,7 @@ type RecordType =
 
 type LocationName =
   | 'Downtown Kitchen'
-  | 'Airport Terminal'
+  | 'Airport Cafe'
   | 'University Dining';
 
 type DateRange = '7' | '30' | '90' | 'all';
@@ -51,7 +51,7 @@ interface GalleryPhoto {
 // Constants
 // ---------------------------------------------------------------------------
 
-const LOCATIONS: LocationName[] = ['Downtown Kitchen', 'Airport Terminal', 'University Dining'];
+const LOCATIONS: LocationName[] = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
 
 const RECORD_TYPES: RecordType[] = [
   'Temperature Log', 'Checklist', 'Incident', 'Vendor Delivery',
@@ -88,7 +88,7 @@ const RECORD_TYPE_ICONS: Record<RecordType, typeof Thermometer> = {
 
 const LOCATION_BADGE: Record<LocationName, { bg: string; text: string }> = {
   'Downtown Kitchen':  { bg: '#eef4f8', text: '#1e4d6b' },
-  'Airport Terminal':  { bg: '#fef3c7', text: '#92400e' },
+  'Airport Cafe':  { bg: '#fef3c7', text: '#92400e' },
   'University Dining': { bg: '#dcfce7', text: '#166534' },
 };
 
@@ -192,7 +192,7 @@ function createDemoPhotos(): GalleryPhoto[] {
       daysBack: 0, hour: 8, minute: 30,
       description: 'Walk-in cooler temperature reading at 38°F — within safe range', verified: true },
     { title: 'Prep Table', subtitle: '41°F Surface Temp',
-      recordType: 'Temperature Log', location: 'Airport Terminal',
+      recordType: 'Temperature Log', location: 'Airport Cafe',
       daysBack: 1, hour: 9, minute: 15,
       description: 'Prep table surface temperature check during morning shift', verified: true },
     { title: 'Hot Hold Station', subtitle: '157°F Verified',
@@ -204,7 +204,7 @@ function createDemoPhotos(): GalleryPhoto[] {
       daysBack: 0, hour: 16, minute: 0,
       description: 'End-of-shift deep cleaning — all surfaces sanitized and documented', verified: true },
     { title: 'Hand Wash Station', subtitle: 'Soap & Towels Stocked',
-      recordType: 'Checklist', location: 'Airport Terminal',
+      recordType: 'Checklist', location: 'Airport Cafe',
       daysBack: 1, hour: 7, minute: 45,
       description: 'Hand wash station fully stocked — soap, paper towels, signage visible', verified: false },
     { title: 'Floor Drain', subtitle: 'Cleaned & Inspected',
@@ -216,7 +216,7 @@ function createDemoPhotos(): GalleryPhoto[] {
       daysBack: 2, hour: 12, minute: 10,
       description: 'Grease spill near fryer station — cleaned and area cordoned off within 5 mins', verified: true },
     { title: 'Broken Tile', subtitle: 'Walk-in Entrance',
-      recordType: 'Incident', location: 'Airport Terminal',
+      recordType: 'Incident', location: 'Airport Cafe',
       daysBack: 8, hour: 10, minute: 0,
       description: 'Cracked floor tile at walk-in cooler entrance — maintenance ticket filed', verified: false },
     { title: 'Receiving Inspection', subtitle: 'Produce Delivery',
@@ -232,7 +232,7 @@ function createDemoPhotos(): GalleryPhoto[] {
       daysBack: 4, hour: 15, minute: 20,
       description: 'Walk-in cooler door gasket inspection — seal intact, no condensation', verified: true },
     { title: 'Fire Extinguisher', subtitle: 'Monthly Check',
-      recordType: 'Self Audit', location: 'Airport Terminal',
+      recordType: 'Equipment', location: 'Airport Cafe',
       daysBack: 10, hour: 9, minute: 0,
       description: 'Fire extinguisher monthly inspection — pressure gauge green, tag current', verified: true },
   ];

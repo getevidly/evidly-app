@@ -126,6 +126,7 @@ import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
 import { PageTransition } from './components/PageTransition';
 import { PageExplanation } from './components/PageExplanation';
+import { AutoBreadcrumb } from './components/layout/AutoBreadcrumb';
 
 function LandingPage() {
   return (
@@ -230,6 +231,7 @@ function ProtectedLayout() {
           </div>
         }>
           <PageTransition key={location.pathname}>
+            <AutoBreadcrumb />
             <PageExplanation />
             <Outlet />
           </PageTransition>

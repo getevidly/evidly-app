@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, Bell, Users, TrendingUp } from 'lucide-react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
@@ -55,6 +55,17 @@ function SectionHeader({ children }: { children: React.ReactNode }) {
 }
 
 // ===============================================
+// FILTER TYPES & THRESHOLDS
+// ===============================================
+
+type DashboardFilter = 'all' | 'attention' | 'critical';
+
+const THRESHOLDS = {
+  warning: 85,
+  critical: 70,
+};
+
+// ===============================================
 // EXECUTIVE DASHBOARD
 // ===============================================
 
@@ -70,6 +81,29 @@ export default function ExecutiveDashboard() {
 
   const userName = 'James';
   const locationCount = demoLocationScores.length;
+
+  // Filter state
+  const [filter, setFilter] = useState<DashboardFilter>('all');
+
+  const attentionCount = useMemo(
+    () => demoLocationScores.filter(l => l.score.overall < THRESHOLDS.warning).length,
+    [demoLocationScores],
+  );
+  const criticalCount = useMemo(
+    () => demoLocationScores.filter(l => l.score.overall < THRESHOLDS.critical).length,
+    [demoLocationScores],
+  );
+
+  const filteredLocations = useMemo(() => {
+    switch (filter) {
+      case 'attention':
+        return demoLocationScores.filter(l => l.score.overall < THRESHOLDS.warning);
+      case 'critical':
+        return demoLocationScores.filter(l => l.score.overall < THRESHOLDS.critical);
+      default:
+        return demoLocationScores;
+    }
+  }, [demoLocationScores, filter]);
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -138,20 +172,50 @@ export default function ExecutiveDashboard() {
         )}
       </Card>
 
-      {/* Location Cards */}
+      {/* Location Cards with filter */}
       <div>
         <SectionHeader>Locations</SectionHeader>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {demoLocationScores.map((loc) => (
-            <LocationCard
-              key={loc.locationId}
-              locationId={loc.locationId}
-              locationName={loc.locationName}
-              score={loc.score.overall}
-              onClick={() => navigate(`/dashboard?location=${loc.locationId}`)}
-            />
+
+        {/* Filter Tabs */}
+        <div className="flex items-center gap-1 mb-4">
+          {([
+            { key: 'all' as DashboardFilter, label: 'All Locations' },
+            { key: 'attention' as DashboardFilter, label: `Needs Attention (${attentionCount})` },
+            { key: 'critical' as DashboardFilter, label: `Critical (${criticalCount})` },
+          ]).map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setFilter(tab.key)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                filter === tab.key
+                  ? 'text-[#1e4d6b] bg-[#eef4f8]'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              }`}
+              style={filter === tab.key ? { borderBottom: '2px solid #1e4d6b' } : undefined}
+            >
+              {tab.label}
+            </button>
           ))}
         </div>
+
+        {filteredLocations.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {filteredLocations.map((loc) => (
+              <LocationCard
+                key={loc.locationId}
+                locationId={loc.locationId}
+                locationName={loc.locationName}
+                score={loc.score.overall}
+                onClick={() => navigate(`/dashboard?location=${loc.locationId}`)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 py-6 justify-center rounded-lg bg-white" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+            <span className="text-green-600 font-medium text-sm">All locations are above this threshold &#x2705;</span>
+          </div>
+        )}
         <p className="text-xs text-gray-400 mt-2">Click any location to drill down</p>
       </div>
 
