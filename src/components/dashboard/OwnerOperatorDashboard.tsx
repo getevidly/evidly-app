@@ -989,7 +989,7 @@ export default function OwnerOperatorDashboard() {
   };
 
   return (
-    <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 72 }}>
+    <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
@@ -1111,8 +1111,9 @@ export default function OwnerOperatorDashboard() {
               onClick={() => setCustomizing(prev => !prev)}
               className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
               style={{
-                color: customizing ? '#16a34a' : NAVY,
-                backgroundColor: customizing ? '#dcfce7' : '#f1f5f9',
+                color: customizing ? '#92400e' : NAVY,
+                backgroundColor: customizing ? '#fefce8' : '#f1f5f9',
+                border: customizing ? `1px solid ${GOLD}` : '1px solid transparent',
               }}
             >
               {customizing ? <CheckCircle2 size={13} /> : <Settings2 size={13} />}
@@ -1120,19 +1121,32 @@ export default function OwnerOperatorDashboard() {
             </button>
           </div>
 
-          {/* Customization pills */}
+          {/* Customization instruction banner */}
           {customizing && (
-            <div className="flex flex-wrap gap-2 mb-4 p-3 rounded-lg bg-gray-50 border border-dashed border-gray-300">
+            <div className="mb-4 p-2.5 rounded-lg text-[12px] font-medium text-center"
+              style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a', color: '#92400e' }}>
+              Reorder with arrows &middot; Click to show/hide
+            </div>
+          )}
+
+          {/* Widget pills */}
+          {customizing && (
+            <div className="flex flex-wrap gap-2 mb-4">
               {widgets.map(w => (
                 <button
                   key={w.id}
                   type="button"
                   onClick={() => toggleWidget(w.id)}
                   className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
-                  style={{
-                    backgroundColor: w.visible ? '#eef4f8' : '#f9fafb',
-                    color: w.visible ? '#1e4d6b' : '#94a3b8',
-                    border: w.visible ? '1px solid #1e4d6b' : '1px solid #e5e7eb',
+                  style={w.visible ? {
+                    backgroundColor: '#fefce8',
+                    color: '#92400e',
+                    border: `1px solid ${GOLD}`,
+                  } : {
+                    backgroundColor: '#f9fafb',
+                    color: MUTED,
+                    border: '1px solid #e5e7eb',
+                    textDecoration: 'line-through',
                   }}
                 >
                   {w.visible ? <Eye size={12} /> : <EyeOff size={12} />}
@@ -1168,7 +1182,7 @@ export default function OwnerOperatorDashboard() {
                     </button>
                   </div>
                 )}
-                <div style={customizing ? { border: `2px dashed ${GOLD}`, borderRadius: 12, padding: 2 } : undefined}>
+                <div style={customizing ? { border: `2px dashed ${GOLD}`, borderRadius: 16, padding: 2 } : undefined}>
                   {renderWidget(w.id)}
                 </div>
               </div>
