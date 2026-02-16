@@ -80,7 +80,7 @@ const getDemoResponse = (question: string): { text: string; suggestions: string[
 const INSPECTION_TEMPLATES = [
   { id: 'health', label: 'Health Department', icon: '🏥' },
   { id: 'fire', label: 'Fire Marshal', icon: '🔥' },
-  { id: 'internal', label: 'Internal Audit', icon: '📋' },
+  { id: 'internal', label: 'Internal Inspection', icon: '📋' },
 ];
 
 const DEMO_INSPECTION_QUESTIONS = [

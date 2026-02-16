@@ -67,7 +67,7 @@ export function CarrierPartnership() {
               'Consent can be revoked at any time with immediate effect',
               'No employee PII is ever exposed through the API',
               'No specific health department violation details are shared',
-              'All API calls are logged for audit trail compliance',
+              'All API calls are logged for inspection trail compliance',
             ].map((item, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />

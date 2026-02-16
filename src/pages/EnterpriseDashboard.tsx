@@ -35,7 +35,7 @@ const TABS: { id: Tab; label: string; icon: typeof LayoutDashboard }[] = [
   { id: 'sso',           label: 'SSO',                  icon: KeyRound },
   { id: 'users',         label: 'Users',                icon: Users },
   { id: 'branding',      label: 'Branding',             icon: Palette },
-  { id: 'reports',       label: 'Reports',              icon: FileText },
+  { id: 'reports',       label: 'Reporting',             icon: FileText },
   { id: 'integrations',  label: 'Integrations',         icon: Zap },
   { id: 'bulk_ops',      label: 'Bulk Ops',             icon: Layers },
   { id: 'onboarding',    label: 'Onboarding',           icon: Award },
@@ -458,7 +458,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Run SCIM Sync', icon: RefreshCw },
             { label: 'Generate Reports', icon: FileText },
             { label: 'Bulk Import', icon: Upload },
-            { label: 'Export Audit Log', icon: Download },
+            { label: 'Export Inspection Log', icon: Download },
             { label: 'View All Alerts', icon: AlertTriangle },
           ].map(a => (
             <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">

@@ -181,7 +181,7 @@ export function HealthDeptReport() {
           {[
             { id: 'generate', label: 'Generate Report', icon: <FileText className="h-4 w-4" /> },
             { id: 'preview', label: 'Report Preview', icon: <Eye className="h-4 w-4" /> },
-            { id: 'self-audit', label: 'Self-Audit Checklist', icon: <ClipboardCheck className="h-4 w-4" /> },
+            { id: 'self-audit', label: 'Self-Inspection Checklist', icon: <ClipboardCheck className="h-4 w-4" /> },
             { id: 'history', label: 'Report History', icon: <History className="h-4 w-4" /> },
           ].map(tab => (
             <button
@@ -819,7 +819,7 @@ export function HealthDeptReport() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900">Pre-Inspection Self-Audit Checklist</h3>
+                  <h3 className="font-semibold text-gray-900">Pre-Inspection Self-Inspection Checklist</h3>
                   <p className="text-sm text-gray-600 mt-1">Mock inspection based on county scoring — flags potential point deductions</p>
                 </div>
                 <select

@@ -124,16 +124,16 @@ export const helpDocs: Record<string, HelpDoc> = {
   },
   selfAudit: {
     id: 'selfAudit',
-    title: 'Self-Audit',
+    title: 'Self-Inspection',
     steps: [
-      'Navigate to Self-Audit from the sidebar',
-      'Select the audit type (full inspection, focused audit, etc.)',
+      'Navigate to Self-Inspection from the sidebar',
+      'Select the inspection type (full inspection, focused inspection, etc.)',
       'Work through each section as an inspector would',
       'Take photos of any issues found',
       'Document corrective actions for each finding',
       'Generate a report to track improvement over time',
     ],
-    tips: 'Run a self-audit monthly or before a scheduled inspection. Fix issues found to improve your compliance score before the real inspection.',
+    tips: 'Run a self-inspection monthly or before a scheduled inspection. Fix issues found to improve your compliance score before the real inspection.',
   },
   benchmarks: {
     id: 'benchmarks',
@@ -151,7 +151,7 @@ export const helpDocs: Record<string, HelpDoc> = {
 
 export const featureExplanations: Record<string, string> = {
   '/temp-logs': 'Track every cooler, freezer, and hot-holding unit. FDA requires cold foods at 41°F or below. EvidLY flags out-of-range readings instantly and builds a compliance record for inspections.',
-  '/checklists': 'Structured daily tasks ensure nothing gets missed. Opening, midday, and closing checklists replace paper logs and create a digital audit trail.',
+  '/checklists': 'Structured daily tasks ensure nothing gets missed. Opening, midday, and closing checklists replace paper logs and create a digital inspection trail.',
   '/scoring-breakdown': 'Your real-time compliance health score across food safety, fire safety, and vendor management. Scores above 90% mean you are inspection-ready.',
   '/documents': 'Store and track all compliance documents — health permits, hood cleaning certificates, fire inspections. EvidLY alerts you before they expire.',
   '/equipment': 'Register every temperature-monitored piece of equipment. Track warranty, service history, and connect IoT sensors for automatic monitoring.',
@@ -166,7 +166,7 @@ export const featureExplanations: Record<string, string> = {
   '/marketplace': 'Find and connect with vetted service providers in your area. Compare ratings, pricing, and availability.',
   '/reports': 'Generate compliance reports for inspectors, insurance companies, and internal review. Download or share directly from EvidLY.',
   '/health-dept-report': 'Generate inspection-ready reports formatted for your local health department. Includes all required documentation.',
-  '/audit-trail': 'Every action in EvidLY is logged. View who did what, when, for complete accountability and audit readiness.',
+  '/audit-trail': 'Every action in EvidLY is logged. View who did what, when, for complete accountability and inspection readiness.',
   '/insurance-risk': 'See how your compliance posture affects your insurance risk profile. Better compliance can lead to lower premiums.',
   '/training': 'Access training courses for your team on food safety, compliance procedures, and best practices.',
   '/playbooks': 'Pre-built response procedures for common incidents. When something goes wrong, follow the playbook step by step.',

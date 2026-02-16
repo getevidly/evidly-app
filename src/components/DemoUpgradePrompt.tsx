@@ -11,7 +11,7 @@ const COPY: Record<string, { headline: string; body: string }> = {
   },
   download: {
     headline: 'Unlock Downloads',
-    body: 'Start your free trial to download compliance reports, inspection documents, and audit trails.',
+    body: 'Start your free trial to download compliance reports, inspection documents, and inspection trails.',
   },
   delete: {
     headline: 'Unlock Full Management',

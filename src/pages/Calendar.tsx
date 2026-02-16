@@ -133,7 +133,7 @@ function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[]
     { title: 'Health Permit Renewal', type: 'certification', date: d(todayDate + 10), time: '9:00 AM', location: 'Airport Cafe', allDay: true },
     { title: 'Deep Cleaning Service', type: 'vendor', date: d(todayDate + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'University Dining' },
     // +14 days
-    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Downtown Kitchen', description: 'Internal compliance audit across all pillars' },
+    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Downtown Kitchen', description: 'Internal compliance inspection across all pillars' },
     // -2 days — another overdue corrective
     { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'University Dining', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true },
     // -10 days

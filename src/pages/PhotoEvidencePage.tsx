@@ -21,7 +21,7 @@ type RecordType =
   | 'Incident'
   | 'Vendor Delivery'
   | 'Equipment'
-  | 'Self Audit'
+  | 'Self-Inspection'
   | 'General';
 
 type LocationName =
@@ -55,7 +55,7 @@ const LOCATIONS: LocationName[] = ['Downtown Kitchen', 'Airport Cafe', 'Universi
 
 const RECORD_TYPES: RecordType[] = [
   'Temperature Log', 'Checklist', 'Incident', 'Vendor Delivery',
-  'Equipment', 'Self Audit', 'General',
+  'Equipment', 'Self-Inspection', 'General',
 ];
 
 const DATE_RANGES: { label: string; value: DateRange }[] = [
@@ -72,7 +72,7 @@ const RECORD_TYPE_STYLES: Record<RecordType, { badgeBg: string; badgeText: strin
   'Incident':        { badgeBg: '#fef2f2', badgeText: '#991b1b', thumbBg: '#ef4444' },
   'Vendor Delivery': { badgeBg: '#fef3c7', badgeText: '#92400e', thumbBg: '#f59e0b' },
   'Equipment':       { badgeBg: '#f3f4f6', badgeText: '#374151', thumbBg: '#6b7280' },
-  'Self Audit':      { badgeBg: '#fffbeb', badgeText: '#92400e', thumbBg: '#d97706' },
+  'Self-Inspection':      { badgeBg: '#fffbeb', badgeText: '#92400e', thumbBg: '#d97706' },
   'General':         { badgeBg: '#f3f4f6', badgeText: '#374151', thumbBg: '#9ca3af' },
 };
 
@@ -82,7 +82,7 @@ const RECORD_TYPE_ICONS: Record<RecordType, typeof Thermometer> = {
   'Incident':        AlertTriangle,
   'Vendor Delivery': Truck,
   'Equipment':       Wrench,
-  'Self Audit':      Shield,
+  'Self-Inspection':      Shield,
   'General':         FileText,
 };
 

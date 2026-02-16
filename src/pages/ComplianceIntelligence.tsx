@@ -91,7 +91,7 @@ const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
   { id: 'risk', label: 'Risk', icon: Shield },
   { id: 'staffing', label: 'Staffing', icon: Brain },
   { id: 'financial', label: 'Financial', icon: DollarSign },
-  { id: 'reports', label: 'Reports', icon: FileBarChart },
+  { id: 'reports', label: 'Reporting', icon: FileBarChart },
   { id: 'anomalies', label: 'Anomalies', icon: Radar },
   { id: 'platform', label: 'Platform', icon: Layers },
 ];
@@ -1509,8 +1509,8 @@ function AnomalyTab() {
           ))}
         </div>
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-amber-100 flex-wrap gap-2">
-          <p className="text-[10px] text-amber-700 italic">Recommend on-site data quality audit for flagged locations.</p>
-          <button onClick={() => toast.info('Schedule on-site audit coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50 min-h-[44px]">Schedule Audit</button>
+          <p className="text-[10px] text-amber-700 italic">Recommend on-site data quality inspection for flagged locations.</p>
+          <button onClick={() => toast.info('Schedule on-site inspection coming soon')} className="px-4 py-2 text-[11px] font-semibold rounded-lg border border-amber-300 text-amber-700 cursor-pointer hover:bg-amber-50 min-h-[44px]">Schedule Inspection</button>
         </div>
       </div>
     </div>

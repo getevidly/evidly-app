@@ -517,7 +517,7 @@ export function SelfAudit() {
       <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5">
         <div className="flex items-center gap-3 mb-2">
           <ClipboardList className="h-6 w-6 text-[#1e4d6b]" />
-          <h2 className="text-xl font-bold text-[#1e4d6b]">Self-Audit Checklist</h2>
+          <h2 className="text-xl font-bold text-[#1e4d6b]">Self-Inspection Checklist</h2>
         </div>
         <p className="text-sm text-gray-600 mb-4">
           Walk through 8 compliance sections covering {total} checklist items. Score your location,
@@ -529,7 +529,7 @@ export function SelfAudit() {
             className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
           >
             <Play className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-            Start Audit
+            Start Inspection
           </button>
           {hasSavedState && (
             <>
@@ -538,7 +538,7 @@ export function SelfAudit() {
                 className="px-6 py-2.5 rounded-lg font-semibold text-sm text-[#1e4d6b] border-2 border-[#d4af37] hover:bg-[#eef4f8] transition-colors"
               >
                 <RotateCcw className="h-4 w-4 inline mr-1.5 -mt-0.5" />
-                Resume Audit
+                Resume Inspection
               </button>
               <button
                 onClick={discardDraft}
@@ -758,7 +758,7 @@ export function SelfAudit() {
               className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-bold text-[#1e4d6b] bg-[#d4af37] hover:bg-[#c49a2b] transition-colors"
               style={{ minHeight: 44 }}
             >
-              Finish Audit
+              Finish Inspection
             </button>
           )}
         </div>
@@ -796,7 +796,7 @@ export function SelfAudit() {
       <div className="space-y-6">
         {/* Score overview */}
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4 sm:p-5 text-center">
-          <h2 className="text-lg font-bold text-[#1e4d6b] mb-4">Audit Results</h2>
+          <h2 className="text-lg font-bold text-[#1e4d6b] mb-4">Inspection Results</h2>
           <div className="flex justify-center mb-4">
             <svg width={circleSize} height={circleSize} className="-rotate-90">
               <circle
@@ -917,14 +917,14 @@ export function SelfAudit() {
 
         {/* Audit Photos */}
         {auditPhotos.length > 0 && (
-          <PhotoGallery photos={auditPhotos} title="Audit Photos" />
+          <PhotoGallery photos={auditPhotos} title="Inspection Photos" />
         )}
 
         {/* Actions */}
         <div className="flex flex-wrap gap-3">
           <button
             onClick={() =>
-              guardAction('print', 'Self-Audit Report', () => toast.success('Printing report...'))
+              guardAction('print', 'Self-Inspection Report', () => toast.success('Printing report...'))
             }
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] hover:bg-[#d9e8f0] transition-colors"
             style={{ minHeight: 44 }}
@@ -934,7 +934,7 @@ export function SelfAudit() {
           </button>
           <button
             onClick={() =>
-              guardAction('export', 'Self-Audit Results', () => toast.success('Sharing results...'))
+              guardAction('export', 'Self-Inspection Results', () => toast.success('Sharing results...'))
             }
             className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] hover:bg-[#d9e8f0] transition-colors"
             style={{ minHeight: 44 }}
@@ -948,7 +948,7 @@ export function SelfAudit() {
             style={{ minHeight: 44 }}
           >
             <RotateCcw className="h-4 w-4" />
-            Start New Audit
+            Start New Inspection
           </button>
         </div>
       </div>
@@ -965,10 +965,10 @@ export function SelfAudit() {
       <div className="bg-white rounded-xl border border-[#b8d4e8] p-5">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="h-5 w-5 text-green-600" />
-          <h3 className="text-sm font-bold text-gray-900">Audit Trend</h3>
+          <h3 className="text-sm font-bold text-gray-900">Inspection Trend</h3>
         </div>
         <p className="text-sm text-gray-600">
-          Your scores have improved from 85% to 94% over the last 3 audits — a{' '}
+          Your scores have improved from 85% to 94% over the last 3 inspections — a{' '}
           <span className="font-semibold text-green-600">+9 point</span> improvement.
         </p>
       </div>
@@ -1070,7 +1070,7 @@ export function SelfAudit() {
         items={[
           { label: 'Dashboard', href: '/' },
           { label: 'Compliance', href: '/compliance' },
-          { label: 'Self-Audit' },
+          { label: 'Self-Inspection' },
         ]}
       />
 
@@ -1088,7 +1088,7 @@ export function SelfAudit() {
             }`}
           >
             <ClipboardList className="h-4 w-4" />
-            Audit Mode
+            Inspection Mode
           </button>
           <button
             onClick={() => setActiveTab('history')}

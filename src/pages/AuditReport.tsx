@@ -418,7 +418,7 @@ export function AuditReport() {
     : reportType === 'food_safety' ? 'Food Safety Report'
     : reportType === 'fire_safety' ? 'Fire Safety Report'
     : reportType === 'vendor_docs' ? 'Vendor Documentation Report'
-    : 'Custom Audit Report';
+    : 'Custom Inspection Report';
 
   const generatedAt = format(new Date(), 'MMMM d, yyyy \'at\' h:mm a');
   const dateRangeLabel = `${format(subDays(new Date(), days), 'MMM d, yyyy')} — ${format(new Date(), 'MMM d, yyyy')}`;
@@ -549,13 +549,13 @@ export function AuditReport() {
       `}</style>
 
       <div className="no-print">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Audit Report' }]} />
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Inspection Report' }]} />
       </div>
 
       <div className="space-y-6">
         {/* Header — no-print on config panel */}
         <div className="no-print">
-          <h1 className="text-2xl font-bold text-gray-900">Audit Trail Report</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Inspection Trail Report</h1>
           <p className="text-sm text-gray-600 mt-1">One-click compliance documentation for inspectors and auditors</p>
         </div>
 
@@ -1123,7 +1123,7 @@ export function AuditReport() {
                   <button onClick={() => toggleExpand('audit_log')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.audit_log ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
                     <ClipboardList className="h-5 w-5 text-[#1e4d6b]" />
-                    <h3 className="text-lg font-bold text-gray-900 flex-1">Chain of Custody — Audit Log</h3>
+                    <h3 className="text-lg font-bold text-gray-900 flex-1">Chain of Custody — Inspection Log</h3>
                     <span className="text-sm text-gray-400">{reportData.auditLog.length} entries</span>
                   </button>
                   {expandedSections.audit_log && (

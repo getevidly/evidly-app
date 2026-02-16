@@ -648,7 +648,7 @@ export const marketplaceCategories: MarketplaceCategory[] = [
   { id: 'fire-safety', name: 'Fire Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
   { id: 'food-safety', name: 'Food Safety', icon: 'ShieldCheck', subcategories: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
   { id: 'equipment', name: 'Equipment', icon: 'Cog', subcategories: ['HVAC Service', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Ice Machine', 'Plumbing'] },
-  { id: 'compliance', name: 'Compliance', icon: 'ClipboardCheck', subcategories: ['Permit Consulting', 'Food Safety Auditing', 'HACCP Plan Development', 'Insurance Brokers'] },
+  { id: 'compliance', name: 'Compliance', icon: 'ClipboardCheck', subcategories: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development', 'Insurance Brokers'] },
 ];
 
 export const marketplaceVendors: MarketplaceVendor[] = [
@@ -691,7 +691,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
       { type: 'Vehicle Insurance', verified: true, expirationDate: '2026-08-20' },
     ],
     serviceOfferings: [
-      { name: 'Commercial Pest Management', description: 'Monthly IPM service with detailed inspection reports, treatment logs, and compliance documentation for health department audits.', frequencyOptions: ['Monthly', 'Bi-Monthly'], pricingDisplay: '$150 - $300/mo' },
+      { name: 'Commercial Pest Management', description: 'Monthly IPM service with detailed inspection reports, treatment logs, and compliance documentation for health department inspections.', frequencyOptions: ['Monthly', 'Bi-Monthly'], pricingDisplay: '$150 - $300/mo' },
       { name: 'Emergency Pest Response', description: 'Same-day response for critical pest issues. Includes follow-up inspection and documentation.', frequencyOptions: ['One-Time'], pricingDisplay: 'Request Quote' },
     ],
     contactName: 'Maria Garcia', phone: '(555) 234-5678', email: 'maria@pacificpest.com', website: 'pacificpestcontrol.com',
@@ -871,7 +871,7 @@ export const marketplaceVendors: MarketplaceVendor[] = [
     description: 'Former health department inspectors turned food safety consultants. We help restaurants achieve and maintain top compliance scores through mock inspections, staff training, and SOP development.',
     tier: 'preferred', rating: 4.8, reviewCount: 37, yearsInBusiness: 15,
     serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Bakersfield', 'Modesto'],
-    responseTimeHours: 4, categories: ['Compliance', 'Food Safety'], subcategories: ['Food Safety Auditing', 'Health Inspection Prep', 'Food Safety Consulting', 'HACCP Plan Development'],
+    responseTimeHours: 4, categories: ['Compliance', 'Food Safety'], subcategories: ['Food Safety Inspections', 'Health Inspection Prep', 'Food Safety Consulting', 'HACCP Plan Development'],
     languages: ['English', 'Spanish', 'Mandarin'], kitchensServed: 200, totalServices: 450, onTimeRate: 96, docUploadRate: 98,
     certifications: [
       { name: 'Certified Professional in Food Safety (CP-FS)', verified: true, expirationDate: '2027-08-15' },
@@ -1080,7 +1080,7 @@ export const centralValleyServicesFilta: MarketplaceVendor = {
   ],
   serviceOfferings: [
     { name: 'FiltaFry — Cooking Oil Filtration', description: 'Mobile micro-filtration extends cooking oil life 2-3x. Reduces oil costs by 50% while improving food quality. Service includes oil quality testing and usage tracking.', frequencyOptions: ['Weekly', 'Bi-Weekly'], pricingDisplay: '$75 - $150/visit' },
-    { name: 'FiltaGMM — Grease Management', description: 'Complete grease trap pumping, cleaning, and FOG compliance documentation. Manifests and disposal certificates provided for sewer authority audits.', frequencyOptions: ['Monthly', 'Quarterly'], pricingDisplay: '$200 - $500' },
+    { name: 'FiltaGMM — Grease Management', description: 'Complete grease trap pumping, cleaning, and FOG compliance documentation. Manifests and disposal certificates provided for sewer authority inspections.', frequencyOptions: ['Monthly', 'Quarterly'], pricingDisplay: '$200 - $500' },
     { name: 'FiltaDrain — Drain Care', description: 'Bio-enzymatic drain maintenance program. Prevents grease buildup and blockages in kitchen drain lines.', frequencyOptions: ['Monthly'], pricingDisplay: '$85/mo' },
     { name: 'Kitchen Equipment Deep Cleaning', description: 'Professional deep cleaning of commercial kitchen equipment — fryers, grills, ovens, prep surfaces. Restaurant-grade degreasers and sanitizers.', frequencyOptions: ['Monthly', 'Quarterly'], pricingDisplay: '$250 - $600' },
   ],
@@ -1624,7 +1624,7 @@ export const enterpriseUsers: EnterpriseUser[] = [
 export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
   { id: 'ert-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
   { id: 'ert-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
-  { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Audit Package', templateType: 'audit_package', sections: ['Audit Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
+  { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Inspection Package', templateType: 'audit_package', sections: ['Inspection Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
   { id: 'ert-4', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Location Detail Report', templateType: 'location_detail', sections: ['Site Overview', 'Temperature Logs', 'Checklist Completion', 'Equipment Status', 'Vendor Documents'], brandWatermark: false, exportFormats: ['PDF', 'CSV'], isDefault: true },
   { id: 'ert-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
   { id: 'ert-6', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Vendor Performance Review', templateType: 'regional_rollup', sections: ['Vendor Scorecard', 'Service Completion Rates', 'Response Time Analysis', 'Certification Status', 'Cost Analysis', 'Recommendations'], brandWatermark: true, exportFormats: ['PDF', 'Excel', 'CSV'], isDefault: false },
@@ -1633,7 +1633,7 @@ export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
 export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
   { id: 'eal-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
   { id: 'eal-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
-  { id: 'eal-3', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'report_generated', resourceType: 'Report', resourceName: 'Q1 2026 Quarterly Audit Package', details: 'Generated for North America region — 1,234 locations', timestamp: '2026-02-09T17:30:00Z', ipAddress: '10.56.2.88' },
+  { id: 'eal-3', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'report_generated', resourceType: 'Report', resourceName: 'Q1 2026 Quarterly Inspection Package', details: 'Generated for North America region — 1,234 locations', timestamp: '2026-02-09T17:30:00Z', ipAddress: '10.56.2.88' },
   { id: 'eal-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
   { id: 'eal-5', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'System (SCIM)', action: 'user_deactivated', resourceType: 'User', resourceName: 'Rachel Singh', details: 'Deactivated via SCIM — employee offboarded in Azure AD', timestamp: '2026-02-08T09:00:00Z', ipAddress: '52.14.87.203' },
   { id: 'eal-6', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'Arthur Haggerty', action: 'tenant_created', resourceType: 'Tenant', resourceName: 'Sodexo Safe Kitchen', details: 'Pilot tenant provisioned — 623 locations, 1-year contract', timestamp: '2026-02-07T11:00:00Z', ipAddress: '67.183.45.12' },
@@ -1846,7 +1846,7 @@ export const enterprisePricingTiers: EnterprisePricingTier[] = [
     'Custom report builder',
     'HIPAA compliance mode',
     'Data residency controls',
-    'SOC 2 audit support',
+    'SOC 2 compliance support',
     '24/7 emergency support',
     'Quarterly business reviews',
     'Unlimited API access',

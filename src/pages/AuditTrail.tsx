@@ -378,7 +378,7 @@ export function AuditTrail() {
     { id: 'vendors', label: 'Vendor Services', icon: Truck, enabled: true, description: 'Service records and certifications' },
     { id: 'documents', label: 'Documents', icon: FileText, enabled: true, description: 'Licenses, permits, certifications' },
     { id: 'compliance', label: 'Compliance Scores', icon: ShieldCheck, enabled: true, description: 'Food safety, fire safety, vendor compliance' },
-    { id: 'audit_activity', label: 'Audit Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
+    { id: 'audit_activity', label: 'Inspection Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
     { id: 'photos', label: 'Photo Evidence', icon: Camera, enabled: false, description: 'Photographic documentation' },
     { id: 'training', label: 'Training Records', icon: GraduationCap, enabled: false, description: 'Staff certifications and course completions' },
   ]);
@@ -542,7 +542,7 @@ export function AuditTrail() {
           pdf.rect(0, 0, pageW, hdrH, 'F');
           pdf.setFontSize(7);
           pdf.setTextColor(255, 255, 255);
-          pdf.text('EvidLY — Chain of Custody Audit Trail', margin, 6.5);
+          pdf.text('EvidLY — Chain of Custody Inspection Trail', margin, 6.5);
           pdf.setTextColor(212, 175, 55);
           pdf.text(reportNumber, pageW - margin, 6.5, { align: 'right' });
           pdf.setFontSize(6);
@@ -660,14 +660,14 @@ export function AuditTrail() {
       `}</style>
 
       <div className="no-print">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reports', href: '/reports' }, { label: 'Audit Trail' }]} />
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reporting', href: '/reports' }, { label: 'Inspection Trail' }]} />
       </div>
 
       <div className="space-y-6">
         {/* Header */}
         <div className="no-print flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Audit Trail & Chain of Custody</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Inspection Trail & Chain of Custody</h1>
             <p className="text-sm text-gray-600 mt-1">Generate tamper-evident compliance reports with full evidence chain</p>
           </div>
           {!generated && (
@@ -817,7 +817,7 @@ export function AuditTrail() {
               onClick={handleGenerate}
               className="w-full md:w-auto px-8 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg font-bold text-lg hover:bg-[#163a52] shadow-sm transition-colors"
             >
-              Generate Audit Trail Report
+              Generate Inspection Trail Report
             </button>
           </div>
         )}
@@ -876,7 +876,7 @@ export function AuditTrail() {
                 <div className="flex items-center gap-3 mb-4">
                   <ShieldCheck className="h-8 w-8 text-[#d4af37]" />
                   <div>
-                    <h2 className="text-xl font-bold">Chain of Custody Audit Trail</h2>
+                    <h2 className="text-xl font-bold">Chain of Custody Inspection Trail</h2>
                     <p className="text-blue-200 text-sm">Demo Restaurant Group — EvidLY Compliance Platform</p>
                   </div>
                 </div>
@@ -1282,7 +1282,7 @@ export function AuditTrail() {
               {/* Audit Activity */}
               {moduleEnabled('audit_activity') && reportData.auditActivity.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="audit_activity" icon={ClipboardList} title="Audit Activity Log" count={reportData.auditActivity.length} />
+                  <SectionHeader id="audit_activity" icon={ClipboardList} title="Inspection Activity Log" count={reportData.auditActivity.length} />
                   {expandedSections['audit_activity'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">

@@ -349,6 +349,7 @@ function AppRoutes() {
           <Route path="/playbooks/history/:id" element={<PlaybookTimeline />} />
           <Route path="/inspector-view" element={<InspectorView />} />
           <Route path="/self-audit" element={<SelfAudit />} />
+          <Route path="/self-inspection" element={<SelfAudit />} />
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />

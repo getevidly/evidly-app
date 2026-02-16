@@ -209,7 +209,7 @@ export function DemoTour() {
                     {companyName} is Inspection Ready!
                   </h2>
                   <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">
-                    With EvidLY, this is your score on day one. Every temperature logged, every checklist completed, every document organized — all verified and audit-ready.
+                    With EvidLY, this is your score on day one. Every temperature logged, every checklist completed, every document organized — all verified and inspection-ready.
                   </p>
                 </div>
               )}

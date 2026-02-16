@@ -44,7 +44,7 @@ export function MobileTabBar() {
   const tabsByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
     executive: [
       { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/reports', icon: BarChart3, label: 'Reports' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
       { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
       { path: '/org-hierarchy', icon: Network, label: 'Locations' },
     ],
@@ -52,13 +52,13 @@ export function MobileTabBar() {
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
       { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/reports', icon: BarChart3, label: 'Reports' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
     ],
     kitchen_manager: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
       { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-      { path: '/reports', icon: BarChart3, label: 'Reports' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
     ],
     kitchen: [
       { path: '/dashboard', icon: ClipboardCheck, label: 'Tasks' },
@@ -94,7 +94,7 @@ export function MobileTabBar() {
       { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
       { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
       { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/self-audit', icon: ClipboardCheck, label: 'Self Audit' },
+      { path: '/self-inspection', icon: ClipboardCheck, label: 'Self-Inspection' },
       { path: '/photo-evidence', icon: Camera, label: 'Photos' },
       { path: '/analysis', icon: Bell, label: 'Alerts' },
       { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
@@ -108,9 +108,7 @@ export function MobileTabBar() {
     kitchen_manager: [
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
       { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
       { path: '/training', icon: GraduationCap, label: 'Training' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/settings', icon: Settings, label: 'Settings' },

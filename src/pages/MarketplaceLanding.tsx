@@ -71,7 +71,7 @@ export function MarketplaceLanding() {
               { icon: Flame, title: 'Fire Safety', subs: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
               { icon: ShieldCheck, title: 'Food Safety', subs: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
               { icon: Wrench, title: 'Equipment', subs: ['HVAC', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Plumbing'] },
-              { icon: ClipboardCheck, title: 'Compliance', subs: ['Permit Consulting', 'Food Safety Auditing', 'HACCP Plan Development'] },
+              { icon: ClipboardCheck, title: 'Compliance', subs: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development'] },
             ].map(cat => (
               <div key={cat.title} className="p-4 rounded-xl bg-gray-50">
                 <div className="flex items-center gap-3 mb-3">

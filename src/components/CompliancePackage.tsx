@@ -34,7 +34,7 @@ const packagePresets: Record<PackageType, { label: string; description: string; 
   },
   insurance: {
     label: 'Insurance / PSE Package',
-    description: 'For insurance audits and renewals — COI, fire safety docs, vendor certifications',
+    description: 'For insurance inspections and renewals — COI, fire safety docs, vendor certifications',
     icon: FileText,
     docs: ['Certificate of Insurance', 'Hood Cleaning Certificate', 'Fire Suppression Inspection', 'Fire Extinguisher Tags', 'Grease Trap Manifest', 'Business License', 'Compliance Score Report'],
   },

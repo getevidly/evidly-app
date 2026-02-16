@@ -952,7 +952,7 @@ export function Settings() {
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-900">Ecolab / EcoSure</h4>
-                        <p className="text-sm text-gray-500">Food safety audits and sanitation services</p>
+                        <p className="text-sm text-gray-500">Food safety inspections and sanitation services</p>
                       </div>
                     </div>
                     <button
@@ -964,7 +964,7 @@ export function Settings() {
                   </div>
                   <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
                     <span className="px-2 py-0.5 bg-gray-100 rounded-full">{t('settings.comingSoon')}</span>
-                    <span>Import audit scores and corrective actions</span>
+                    <span>Import inspection scores and corrective actions</span>
                   </div>
                 </div>
 

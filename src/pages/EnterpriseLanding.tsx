@@ -94,7 +94,7 @@ export function EnterpriseLanding() {
           {[
             { value: '12%', label: 'Compliance Score Improvement', sub: 'Average across enterprise clients' },
             { value: '4.2 hrs', label: 'Saved per Week per Location', sub: 'Reduced manual compliance tasks' },
-            { value: '$18K', label: 'Annual Savings per 100 Locations', sub: 'Reduced audit and remediation costs' },
+            { value: '$18K', label: 'Annual Savings per 100 Locations', sub: 'Reduced inspection and remediation costs' },
           ].map(item => (
             <div key={item.label} className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 text-center">
               <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{item.value}</p>
