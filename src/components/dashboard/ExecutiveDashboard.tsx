@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UtensilsCrossed, Flame, ChevronRight, X, AlertTriangle, ShieldAlert,
-  Thermometer, ClipboardList, FileUp, Bot, TrendingUp, TrendingDown,
+  Thermometer, ClipboardList,
   CheckCircle2, BarChart3, LineChart as LineChartIcon, Shield,
   Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
 } from 'lucide-react';
@@ -661,83 +661,6 @@ function WidgetTrendAttention({ navigate }: { navigate: (path: string) => void }
 }
 
 // ================================================================
-// WIDGET: Strategic Actions
-// ================================================================
-
-function WidgetActions({ navigate }: { navigate: (path: string) => void }) {
-  const actions = [
-    {
-      icon: <BarChart3 size={22} style={{ color: NAVY }} />,
-      title: 'Generate Org Report',
-      description: 'Export a comprehensive compliance report across all 3 locations for stakeholders or board review.',
-      context: '\uD83D\uDCC5 Last generated: Jan 28, 2026',
-      cta: 'Generate Report',
-      route: '/reports',
-    },
-    {
-      icon: <LineChartIcon size={22} style={{ color: NAVY }} />,
-      title: 'View Benchmarks',
-      description: 'Compare your scores against industry averages and top-performing organizations in California.',
-      context: '\uD83C\uDFC6 You\u2019re in the top 22\u0025 for Food Safety',
-      cta: 'View Benchmarks',
-      route: '/benchmarks',
-    },
-    {
-      icon: <Shield size={22} style={{ color: NAVY }} />,
-      title: 'Risk Assessment',
-      description: 'Review organization-wide risk exposure across jurisdictions and identify areas requiring executive attention.',
-      context: '\u26A0\uFE0F 2 locations flagged for elevated risk',
-      cta: 'View Risk Report',
-      route: '/risk-score',
-    },
-  ];
-
-  return (
-    <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Strategic Actions</h4>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {actions.map(action => (
-          <div
-            key={action.title}
-            className="rounded-xl p-5 transition-all hover:shadow-lg"
-            style={{ border: '1px solid #e5e7eb' }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.borderColor = GOLD;
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.borderColor = '#e5e7eb';
-              (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
-            }}
-          >
-            <div className="mb-3">{action.icon}</div>
-            <h5 className="text-sm font-bold mb-1.5" style={{ color: BODY_TEXT }}>{action.title}</h5>
-            <p className="text-[12px] text-gray-500 leading-relaxed mb-3">{action.description}</p>
-            <p className="text-[11px] text-gray-400 mb-4">{action.context}</p>
-            <button
-              type="button"
-              onClick={() => navigate(action.route)}
-              className="w-full py-2 rounded-lg text-xs font-semibold transition-all"
-              style={{ border: `1px solid ${NAVY}`, color: NAVY, backgroundColor: 'transparent' }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.backgroundColor = NAVY;
-                (e.currentTarget as HTMLElement).style.color = '#ffffff';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
-                (e.currentTarget as HTMLElement).style.color = NAVY;
-              }}
-            >
-              {action.cta}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ================================================================
 // WIDGET CONFIG
 // ================================================================
 
@@ -752,51 +675,56 @@ const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
   { id: 'kpis', label: "This Week's Performance", icon: <BarChart3 size={14} />, visible: true },
   { id: 'locations', label: 'Location Performance', icon: <Users size={14} />, visible: true },
   { id: 'trendAttention', label: 'Trend & Attention', icon: <LineChartIcon size={14} />, visible: true },
-  { id: 'actions', label: 'Strategic Actions', icon: <Shield size={14} />, visible: true },
 ];
 
 // ================================================================
-// QUICK ACTIONS BAR
+// STRATEGIC ACTIONS BAR (fixed bottom — NOT customizable)
 // ================================================================
 
-function QuickActionsBar({ navigate }: { navigate: (path: string) => void }) {
+function StrategicActionsBar({ navigate }: { navigate: (path: string) => void }) {
   const actions = [
-    { icon: <Thermometer size={16} />, label: 'Log Temp', route: '/temp-logs' },
-    { icon: <ClipboardList size={16} />, label: 'Checklist', route: '/checklists' },
-    { icon: <FileUp size={16} />, label: 'Upload Doc', route: '/documents' },
-    { icon: <Bot size={16} />, label: 'AI Advisor', route: '/compliance-copilot' },
+    { icon: <BarChart3 size={16} />, title: 'Generate Org Report', cta: 'Generate Report', route: '/reports' },
+    { icon: <LineChartIcon size={16} />, title: 'View Benchmarks', cta: 'View Benchmarks', route: '/benchmarks' },
+    { icon: <Shield size={16} />, title: 'Risk Assessment', cta: 'View Risk Report', route: '/risk-score' },
   ];
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[9998] flex items-center justify-center gap-2 sm:gap-4 px-4"
+      className="fixed bottom-0 left-0 right-0 z-[100]"
       style={{
-        height: 56,
         backgroundColor: 'white',
-        borderTop: '1px solid #e5e7eb',
+        borderTop: '1px solid #e2e8f0',
         boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
       }}
     >
-      {actions.map(a => (
-        <button
-          key={a.label}
-          type="button"
-          onClick={() => navigate(a.route)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] transition-colors"
-          style={{ color: '#6b7280', backgroundColor: '#f9fafb', border: '1px solid transparent' }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = '#fefce8';
-            (e.currentTarget as HTMLElement).style.borderColor = GOLD;
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = '#f9fafb';
-            (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
-          }}
-        >
-          {a.icon}
-          <span className="hidden sm:inline">{a.label}</span>
-        </button>
-      ))}
+      <div className="max-w-[1100px] mx-auto px-4 py-2.5 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3">
+        {actions.map(a => (
+          <div
+            key={a.title}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-[10px] flex-1 transition-all"
+            style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = GOLD;
+              (e.currentTarget as HTMLElement).style.backgroundColor = '#fefce8';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = '#e2e8f0';
+              (e.currentTarget as HTMLElement).style.backgroundColor = '#f8fafc';
+            }}
+          >
+            <span style={{ color: NAVY }}>{a.icon}</span>
+            <span className="text-[13px] font-semibold flex-1" style={{ color: BODY_TEXT }}>{a.title}</span>
+            <button
+              type="button"
+              onClick={() => navigate(a.route)}
+              className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
+              style={{ border: `1px solid ${NAVY}`, color: NAVY }}
+            >
+              {a.cta}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -861,13 +789,12 @@ export default function ExecutiveDashboard() {
       case 'kpis': return <WidgetKPIs />;
       case 'locations': return <WidgetLocations onPillarClick={(locId, pillar) => setModal({ kind: 'location-pillar', locationId: locId, pillar })} navigate={navigate} />;
       case 'trendAttention': return <WidgetTrendAttention navigate={navigate} />;
-      case 'actions': return <WidgetActions navigate={navigate} />;
       default: return null;
     }
   };
 
   return (
-    <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 72 }}>
+    <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
@@ -876,8 +803,12 @@ export default function ExecutiveDashboard() {
       <div
         className="relative overflow-hidden"
         style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
           background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
           padding: '20px 24px 40px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
           ...stagger(0),
         }}
       >
@@ -1046,8 +977,8 @@ export default function ExecutiveDashboard() {
         <EvidlyFooter />
       </div>
 
-      {/* Quick Actions Bar (locked) */}
-      <QuickActionsBar navigate={navigate} />
+      {/* Strategic Actions Bar (fixed bottom — NOT customizable) */}
+      <StrategicActionsBar navigate={navigate} />
 
       {/* Drill-Down Modal */}
       {modal && <DrillDownModal modal={modal} onClose={() => setModal(null)} />}
