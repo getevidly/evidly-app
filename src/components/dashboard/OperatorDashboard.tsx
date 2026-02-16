@@ -16,8 +16,6 @@ import {
   calculateInspectionReadiness,
 } from '../../utils/inspectionReadiness';
 import type { InspectionReadinessScore } from '../../utils/inspectionReadiness';
-import { DEMO_LOCATIONS } from '../../data/demoData';
-import type { DemoLocationData } from '../../data/demoData';
 import PillarCard from './PillarCard';
 import LocationCard from './LocationCard';
 
@@ -60,7 +58,14 @@ interface JurisdictionThresholds {
   explanation: string;
 }
 
-type LocationDemoData = DemoLocationData;
+interface LocationDemoData {
+  id: string;
+  name: string;
+  foodOps: number;
+  foodDocs: number;
+  fireOps: number;
+  fireDocs: number;
+}
 
 interface ComplianceAlertItem {
   severity: 'critical' | 'warning';
@@ -96,8 +101,13 @@ const DEMO_JURISDICTION_THRESHOLDS: JurisdictionThresholds = {
 // FIXED DEMO DATA — scores never change
 // ===============================================
 
-// Sub-scores imported from demoData.ts (single source of truth)
+// Sub-scores calibrated so the scoring engine produces:
 // Downtown Kitchen → 94%, Airport Cafe → 82%, University Dining → 68%
+const DEMO_LOCATIONS: LocationDemoData[] = [
+  { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
+  { id: 'airport', name: 'Airport Cafe', foodOps: 85, foodDocs: 82, fireOps: 78, fireDocs: 82 },
+  { id: 'university', name: 'University Dining', foodOps: 72, foodDocs: 68, fireOps: 62, fireDocs: 66 },
+];
 
 const DEMO_CHECKLISTS: DemoChecklist[] = [
   { id: 'opening', name: 'Opening', status: 'done', assignee: 'Maria', completedAt: '6:15 AM', items: 12, completed: 12 },

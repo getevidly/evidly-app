@@ -1,172 +1,150 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, BarChart3, CalendarCheck, AlertTriangle, ClipboardCheck, Thermometer, AlertCircle } from 'lucide-react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { BarChart3, FileText, CalendarCheck } from 'lucide-react';
 import {
-  locationScores,
-  locationScoresThirtyDaysAgo,
-  complianceScores,
-  getTrend,
-  getLocationScoreColor,
-  getLocationStatus,
-  DEMO_LOCATIONS,
+  ResponsiveContainer, ComposedChart, Line, Area,
+  XAxis, YAxis, CartesianGrid, Tooltip,
+} from 'recharts';
+import {
+  LOCATIONS_WITH_SCORES,
   DEMO_ORG,
+  DEMO_ORG_SCORES,
   DEMO_WEEKLY_ACTIVITY,
-  DEMO_TREND_30DAY,
-  EXEC_ATTENTION_ITEMS,
+  DEMO_ATTENTION_ITEMS,
+  DEMO_TREND_DATA,
+  DEFAULT_WEIGHTS,
+  getLocationScoreColor,
+  getLocationStatusLabel,
 } from '../../data/demoData';
-import {
-  calculateInspectionReadiness,
-  calculateOrgReadiness,
-} from '../../utils/inspectionReadiness';
 
 // ===============================================
-// STYLES
+// CONSTANTS
 // ===============================================
 
+const GOLD = '#C49A2B';
+const NAVY_BLUE = '#163a5f';
 const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
-const ANIM_KEYFRAMES = `
-@keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(16px); }
+// ===============================================
+// ANIMATIONS
+// ===============================================
+
+const KEYFRAMES = `
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes ringDraw {
-  from { stroke-dashoffset: var(--ring-circumference); }
-  to   { stroke-dashoffset: var(--ring-offset); }
+  from { stroke-dashoffset: var(--circ); }
+  to   { stroke-dashoffset: var(--off); }
 }
 `;
 
-function animDelay(i: number): React.CSSProperties {
-  return {
-    animation: `fadeSlideUp 0.5s ease-out ${i * 0.1}s both`,
-  };
+function stagger(i: number): React.CSSProperties {
+  return { animation: `fadeInUp 0.4s ease-out ${i * 0.1}s both` };
 }
 
 // ===============================================
-// SCORE RING COMPONENT
+// HELPERS
 // ===============================================
 
-function ScoreRing({
-  score,
-  size = 120,
-  strokeWidth = 8,
-  fontSize = 48,
-  color,
-  animate = true,
-}: {
-  score: number;
-  size?: number;
-  strokeWidth?: number;
-  fontSize?: number;
-  color?: string;
-  animate?: boolean;
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function getFormattedDate(): string {
+  return new Date().toLocaleDateString('en-US', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  });
+}
+
+function scoreColor(s: number): string {
+  return getLocationScoreColor(s);
+}
+
+// ===============================================
+// SCORE RING — DARK BG (header)
+// ===============================================
+
+function ScoreRing({ score, size = 120, stroke = 8, fontSize = 48 }: {
+  score: number; size?: number; stroke?: number; fontSize?: number;
 }) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const ringColor = color || (score >= 85 ? '#d4af37' : score >= 70 ? '#d97706' : '#dc2626');
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
+  const off = C - (score / 100) * C;
+  const color = score >= 85 ? GOLD : score >= 70 ? '#d97706' : '#dc2626';
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="transform -rotate-90">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="rgba(255,255,255,0.15)"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke={ringColor}
-          strokeWidth={strokeWidth}
-          fill="none"
+        <circle cx={size/2} cy={size/2} r={r} stroke="rgba(255,255,255,0.10)" strokeWidth={stroke} fill="none" />
+        <circle cx={size/2} cy={size/2} r={r} stroke={color} strokeWidth={stroke} fill="none"
           strokeLinecap="round"
-          style={animate ? {
-            '--ring-circumference': `${circumference}`,
-            '--ring-offset': `${offset}`,
-            strokeDasharray: circumference,
-            strokeDashoffset: offset,
-            animation: `ringDraw 1.2s ease-out 0.3s both`,
-          } as React.CSSProperties : {
-            strokeDasharray: circumference,
-            strokeDashoffset: offset,
-          }}
+          style={{
+            '--circ': `${C}`, '--off': `${off}`,
+            strokeDasharray: C, strokeDashoffset: off,
+            animation: 'ringDraw 1s ease-out 0.3s both',
+          } as React.CSSProperties}
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-bold text-white" style={{ fontSize }}>{score}</span>
-      </div>
-    </div>
-  );
-}
-
-function ScoreRingLight({
-  score,
-  size = 80,
-  strokeWidth = 6,
-  fontSize = 28,
-}: {
-  score: number;
-  size?: number;
-  strokeWidth?: number;
-  fontSize?: number;
-}) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
-  const color = getLocationScoreColor(score);
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="transform -rotate-90">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#e5e7eb"
-          strokeWidth={strokeWidth}
-          fill="none"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke={color}
-          strokeWidth={strokeWidth}
-          fill="none"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="font-bold" style={{ fontSize, color }}>{score}</span>
+        <span className="font-bold text-white" style={{ fontSize, letterSpacing: '-1px' }}>{score}</span>
       </div>
     </div>
   );
 }
 
 // ===============================================
-// PILLAR BAR COMPONENT
+// SCORE RING — LIGHT BG (location cards)
 // ===============================================
 
-function PillarBar({ label, score }: { label: string; score: number }) {
-  const color = getLocationScoreColor(score);
+function ScoreRingLight({ score, size = 80, stroke = 6, fontSize = 28 }: {
+  score: number; size?: number; stroke?: number; fontSize?: number;
+}) {
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
+  const off = C - (score / 100) * C;
+  const c = scoreColor(score);
+
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 w-24 shrink-0">{label}</span>
-      <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${score}%`, backgroundColor: color }}
+    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="transform -rotate-90">
+        <circle cx={size/2} cy={size/2} r={r} stroke="#e2e8f0" strokeWidth={stroke} fill="none" />
+        <circle cx={size/2} cy={size/2} r={r} stroke={c} strokeWidth={stroke} fill="none"
+          strokeLinecap="round" strokeDasharray={C} strokeDashoffset={off}
         />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span className="font-bold" style={{ fontSize, color: c }}>{score}</span>
       </div>
-      <span className="text-xs font-semibold w-8 text-right" style={{ color }}>{score}</span>
+    </div>
+  );
+}
+
+// ===============================================
+// PILLAR BREAKDOWN — inside location card
+// ===============================================
+
+function PillarBreakdown({ icon, label, score, ops, docs }: {
+  icon: string; label: string; score: number; ops: number; docs: number;
+}) {
+  const c = scoreColor(score);
+  return (
+    <div className="rounded-lg p-3" style={{ backgroundColor: '#f8fafc' }}>
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-xs font-medium text-gray-700">{icon} {label}</span>
+        <span className="text-sm font-bold" style={{ color: c }}>{score}%</span>
+      </div>
+      <div className="h-1 rounded-full overflow-hidden mb-2" style={{ backgroundColor: '#e2e8f0' }}>
+        <div className="h-full rounded-full" style={{ width: `${score}%`, backgroundColor: c }} />
+      </div>
+      <div className="flex gap-4 text-[11px] text-gray-500">
+        <span>Ops: <strong className="text-gray-700">{ops}%</strong></span>
+        <span>Docs: <strong className="text-gray-700">{docs}%</strong></span>
+      </div>
     </div>
   );
 }
@@ -178,298 +156,385 @@ function PillarBar({ label, score }: { label: string; score: number }) {
 export default function ExecutiveDashboard() {
   const navigate = useNavigate();
 
-  // Compute inspection readiness scores from shared data
-  const locationReadiness = useMemo(() => {
-    return DEMO_LOCATIONS.map(loc => ({
-      locationId: loc.id,
-      locationName: loc.name,
-      score: calculateInspectionReadiness(loc.foodOps, loc.foodDocs, loc.fireOps, loc.fireDocs),
-    }));
-  }, []);
+  const weightLabel = `${Math.round(DEFAULT_WEIGHTS.foodSafetyWeight * 100)}%`;
+  const fireWeightLabel = `${Math.round(DEFAULT_WEIGHTS.fireSafetyWeight * 100)}%`;
+  const opsDocsLabel = `Ops ${Math.round(DEFAULT_WEIGHTS.opsWeight * 100)}% \u00B7 Docs ${Math.round(DEFAULT_WEIGHTS.docsWeight * 100)}%`;
 
-  const orgResult = useMemo(() => calculateOrgReadiness(locationReadiness), [locationReadiness]);
-  const orgTrend = getTrend(complianceScores.overall, 76); // 30 days ago org was ~76
+  // Trend data (memoized since it generates dates)
+  const trendData = useMemo(() => DEMO_TREND_DATA, []);
 
   return (
     <div style={FONT}>
-      <style>{ANIM_KEYFRAMES}</style>
+      <style>{KEYFRAMES}</style>
 
-      {/* ─── DARK NAVY HEADER ─── */}
+      {/* ================================================================ */}
+      {/* DARK NAVY HEADER                                                 */}
+      {/* ================================================================ */}
       <div
-        className="rounded-2xl p-6 sm:p-8 mb-6"
+        className="rounded-none sm:rounded-b-[20px] relative overflow-hidden mb-8"
         style={{
-          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 100%)',
-          ...animDelay(0),
+          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
+          padding: '24px 24px 44px',
+          ...stagger(0),
         }}
       >
-        {/* Branding */}
-        <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#d4af37' }}>
-            <span className="text-sm font-bold text-white">E</span>
-          </div>
-          <div className="flex items-baseline">
-            <span className="text-lg font-bold" style={{ color: '#d4af37' }}>E</span>
-            <span className="text-lg font-bold text-white">vid</span>
-            <span className="text-lg font-bold" style={{ color: '#d4af37' }}>LY</span>
-          </div>
-          <span className="text-xs text-blue-200 opacity-60 ml-1">Compliance Simplified</span>
-        </div>
+        {/* Gold radial glow */}
+        <div className="absolute pointer-events-none" style={{
+          top: -80, right: -40, width: 500, height: 500,
+          background: 'radial-gradient(circle, rgba(196,154,43,0.10) 0%, transparent 55%)',
+        }} />
 
-        {/* Score Ring + Org Info */}
-        <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
-          <ScoreRing score={complianceScores.overall} />
-          <div className="text-center sm:text-left">
-            <p className="text-sm text-blue-200 mb-1">Organization Score</p>
-            <p className="text-2xl font-bold text-white">{DEMO_ORG.name}</p>
-            <p className="text-sm text-blue-300 mt-1">{DEMO_ORG.locationCount} Locations</p>
-            <div className="flex items-center gap-1 mt-2">
-              <span className="text-sm" style={{ color: orgTrend.color }}>{orgTrend.icon}</span>
-              <span className="text-sm text-blue-200">{orgTrend.diff} pts vs 30 days ago</span>
+        {/* Row 1: Logo | Divider | Greeting | Org */}
+        <div className="flex items-start gap-4 mb-8 relative z-10">
+          {/* Logo block */}
+          <div className="flex-shrink-0">
+            <div className="flex items-baseline">
+              <span className="text-2xl font-bold" style={{ color: GOLD }}>E</span>
+              <span className="text-2xl font-bold text-white">vid</span>
+              <span className="text-2xl font-bold" style={{ color: GOLD }}>LY</span>
             </div>
+            <p className="text-[9px] uppercase text-white mt-0.5" style={{ opacity: 0.45, letterSpacing: '0.12em' }}>
+              Compliance Simplified
+            </p>
+          </div>
+
+          {/* Vertical divider */}
+          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
+
+          {/* Greeting + Date */}
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-base font-medium">{getGreeting()}, James.</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{getFormattedDate()}</p>
+          </div>
+
+          {/* Org info */}
+          <div className="text-right flex-shrink-0">
+            <p className="text-white font-semibold text-sm">{DEMO_ORG.name}</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>
+              {DEMO_ORG.locationCount} locations &middot; CA
+            </p>
           </div>
         </div>
 
-        {/* Pillar Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Overall Score Ring — centered hero */}
+        <div className="flex flex-col items-center mb-8 relative z-10" style={stagger(1)}>
+          <ScoreRing score={DEMO_ORG_SCORES.overall} />
+          <div className="flex items-center gap-1.5 mt-3">
+            <span className="text-sm" style={{ color: '#22c55e' }}>&uarr;</span>
+            <span className="text-sm text-blue-100">2.3 vs last week</span>
+          </div>
+          <p className="text-[11px] uppercase text-white mt-1" style={{ letterSpacing: '0.1em', opacity: 0.5 }}>
+            Inspection Readiness
+          </p>
+        </div>
+
+        {/* Two Pillar Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 relative z-10" style={stagger(2)}>
           {[
-            { label: 'Food Safety', score: complianceScores.foodSafety, weight: '45%' },
-            { label: 'Fire Safety', score: complianceScores.fireSafety, weight: '35%' },
-            { label: 'Vendor Compliance', score: complianceScores.vendorCompliance, weight: '20%' },
-          ].map((pillar) => (
-            <div
-              key={pillar.label}
-              className="rounded-xl p-4"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-            >
+            { icon: '\uD83C\uDF7D\uFE0F', label: 'Food Safety', score: DEMO_ORG_SCORES.foodSafety, weight: weightLabel, trend: '+1.2' },
+            { icon: '\uD83D\uDD25', label: 'Fire Safety', score: DEMO_ORG_SCORES.fireSafety, weight: fireWeightLabel, trend: '+0.8' },
+          ].map(p => (
+            <div key={p.label} className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-blue-200">{pillar.label}</span>
-                <span className="text-[10px] text-blue-300 opacity-60">{pillar.weight}</span>
+                <span className="text-xs text-blue-100">{p.icon} {p.label}</span>
+                <span className="text-[10px] text-blue-200" style={{ opacity: 0.6 }}>{p.weight}</span>
               </div>
-              <p className="text-2xl font-bold text-white">{pillar.score}</p>
-              <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${pillar.score}%`,
-                    backgroundColor: pillar.score >= 85 ? '#16a34a' : pillar.score >= 70 ? '#d97706' : '#dc2626',
-                  }}
-                />
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="text-2xl font-bold text-white">{p.score}%</span>
+                <span className="text-xs" style={{ color: '#22c55e' }}>&uarr;{p.trend}</span>
               </div>
+              <div className="h-1 rounded-full overflow-hidden mb-1.5" style={{ backgroundColor: 'rgba(255,255,255,0.10)' }}>
+                <div className="h-full rounded-full" style={{
+                  width: `${p.score}%`,
+                  backgroundColor: p.score >= 85 ? '#16a34a' : p.score >= 70 ? '#d97706' : '#dc2626',
+                }} />
+              </div>
+              <p className="text-[10px] text-blue-200" style={{ opacity: 0.5 }}>{opsDocsLabel}</p>
             </div>
           ))}
         </div>
+
+        {/* Gold accent line at bottom of header */}
+        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: GOLD }} />
       </div>
 
-      {/* ─── LOCATION PERFORMANCE ─── */}
-      <div style={animDelay(1)}>
-        <h3
-          className="text-xs font-semibold uppercase mb-4"
-          style={{ letterSpacing: '0.1em', color: '#6b7280' }}
-        >
+      {/* ================================================================ */}
+      {/* LOCATION PERFORMANCE                                             */}
+      {/* ================================================================ */}
+      <div className="px-1" style={stagger(3)}>
+        <h3 className="text-[13px] font-semibold uppercase mb-4" style={{ letterSpacing: '0.05em', color: '#64748b' }}>
           Location Performance
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          {DEMO_LOCATIONS.map((loc) => {
-            const scores = locationScores[loc.id];
-            const prevScores = locationScoresThirtyDaysAgo[loc.id];
-            const trend = getTrend(scores.overall, prevScores?.overall || scores.overall);
-            const status = getLocationStatus(scores.overall);
-            const statusColor = getLocationScoreColor(scores.overall);
-            const readiness = locationReadiness.find(l => l.locationId === loc.id);
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
+          {LOCATIONS_WITH_SCORES.map((loc, idx) => {
+            const c = scoreColor(loc.score);
+            const statusLabel = getLocationStatusLabel(loc.score);
+            const trendSign = loc.trend >= 0 ? '+' : '';
 
             return (
               <div
                 key={loc.id}
-                className="bg-white rounded-xl p-5 border border-gray-100 cursor-pointer transition-all duration-200"
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                className="bg-white rounded-2xl p-6 cursor-pointer transition-all duration-200"
+                style={{
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04)',
+                  border: '1px solid #f1f5f9',
+                  ...stagger(3 + idx),
+                }}
                 onClick={() => navigate(`/dashboard?location=${loc.id}`)}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'; }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08), 0 16px 40px rgba(0,0,0,0.06)';
+                  e.currentTarget.style.borderColor = GOLD;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.04)';
+                  e.currentTarget.style.borderColor = '#f1f5f9';
+                }}
               >
-                <div className="flex items-start gap-4 mb-4">
-                  <ScoreRingLight score={scores.overall} />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-semibold text-gray-900 truncate">{loc.name}</h4>
-                    <span
-                      className="inline-block text-xs font-medium px-2 py-0.5 rounded-full mt-1"
-                      style={{
-                        color: statusColor,
-                        backgroundColor: statusColor + '15',
-                      }}
-                    >
-                      {status}
-                    </span>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-xs" style={{ color: trend.color }}>{trend.icon} {trend.diff}</span>
-                      <span className="text-[10px] text-gray-400">30d</span>
-                    </div>
+                {/* Name */}
+                <h4 className="text-base font-medium text-gray-900 mb-4">{loc.name}</h4>
+
+                {/* Score ring centered */}
+                <div className="flex flex-col items-center mb-4">
+                  <ScoreRingLight score={loc.score} />
+                  <div className="flex items-center gap-1 mt-2">
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c }} />
+                    <span className="text-xs font-medium" style={{ color: c }}>{statusLabel}</span>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1">{trendSign}{loc.trend} vs last week</p>
                 </div>
-                <div className="space-y-2">
-                  <PillarBar label="Food Safety" score={scores.foodSafety} />
-                  <PillarBar label="Fire Safety" score={scores.fireSafety} />
-                  <PillarBar label="Vendor" score={scores.vendorCompliance} />
+
+                {/* Two pillar breakdowns */}
+                <div className="space-y-2 mb-4">
+                  <PillarBreakdown
+                    icon={'\uD83C\uDF7D\uFE0F'}
+                    label="Food Safety"
+                    score={loc.foodScore}
+                    ops={loc.foodSafety.ops}
+                    docs={loc.foodSafety.docs}
+                  />
+                  <PillarBreakdown
+                    icon={'\uD83D\uDD25'}
+                    label="Fire Safety"
+                    score={loc.fireScore}
+                    ops={loc.fireSafety.ops}
+                    docs={loc.fireSafety.docs}
+                  />
                 </div>
-                {readiness && (
-                  <div className="mt-3 pt-3 border-t border-gray-50 grid grid-cols-2 gap-2 text-[10px] text-gray-400">
-                    <span>Food Ops: {readiness.score.foodSafety.ops}</span>
-                    <span>Food Docs: {readiness.score.foodSafety.docs}</span>
-                    <span>Fire Ops: {readiness.score.fireSafety.ops}</span>
-                    <span>Fire Docs: {readiness.score.fireSafety.docs}</span>
-                  </div>
-                )}
+
+                {/* View Details link */}
+                <button
+                  className="text-sm font-medium w-full text-center py-1"
+                  style={{ color: NAVY_BLUE }}
+                  onClick={e => { e.stopPropagation(); navigate(`/dashboard?location=${loc.id}`); }}
+                >
+                  View Details &rarr;
+                </button>
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* ─── 30-DAY TREND ─── */}
-      <div
-        className="bg-white rounded-xl p-5 border border-gray-100 mb-6"
-        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)', ...animDelay(2) }}
-      >
-        <h3
-          className="text-xs font-semibold uppercase mb-4"
-          style={{ letterSpacing: '0.1em', color: '#6b7280' }}
-        >
-          30-Day Trend
-        </h3>
-        <div style={{ height: 240 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={DEMO_TREND_30DAY} margin={{ top: 4, right: 12, bottom: 0, left: -16 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis
-                dataKey="day"
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
-                axisLine={false}
-                tickLine={false}
-                label={{ value: 'Day', position: 'insideBottomRight', offset: -4, fontSize: 10, fill: '#9ca3af' }}
-              />
-              <YAxis
-                domain={[60, 100]}
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb', fontSize: 12 }}
-                formatter={(value: number, name: string) => {
-                  const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
-                  return [`${value}%`, labels[name] || name];
-                }}
-              />
-              <Line type="monotone" dataKey="overall" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 2, fill: '#1e4d6b' }} activeDot={{ r: 4 }} name="overall" />
-              <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={{ r: 2, fill: '#16a34a' }} strokeDasharray="4 2" name="foodSafety" />
-              <Line type="monotone" dataKey="fireSafety" stroke="#d97706" strokeWidth={1.5} dot={{ r: 2, fill: '#d97706' }} strokeDasharray="4 2" name="fireSafety" />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex items-center justify-center gap-6 mt-3">
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#1e4d6b' }} />
-            <span className="text-[10px] text-gray-500">Overall</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#16a34a' }} />
-            <span className="text-[10px] text-gray-500">Food Safety</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-0.5 rounded" style={{ backgroundColor: '#d97706' }} />
-            <span className="text-[10px] text-gray-500">Fire Safety</span>
-          </div>
-        </div>
-      </div>
+      {/* ================================================================ */}
+      {/* TREND + ATTENTION (side by side on desktop)                      */}
+      {/* ================================================================ */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8 px-1">
 
-      {/* ─── ATTENTION REQUIRED ─── */}
-      <div
-        className="bg-white rounded-xl p-5 border border-gray-100 mb-6"
-        style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)', ...animDelay(3) }}
-      >
-        <div className="flex items-center gap-2 mb-4">
-          <h3
-            className="text-xs font-semibold uppercase"
-            style={{ letterSpacing: '0.1em', color: '#6b7280' }}
-          >
+        {/* 30-Day Compliance Trend */}
+        <div
+          className="bg-white rounded-2xl p-6"
+          style={{
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            border: '1px solid #f1f5f9',
+            ...stagger(6),
+          }}
+        >
+          <h3 className="text-[13px] font-semibold uppercase mb-4" style={{ letterSpacing: '0.05em', color: '#64748b' }}>
+            Compliance Trend
+          </h3>
+          <div style={{ height: 280 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={trendData} margin={{ top: 4, right: 8, bottom: 0, left: -16 }}>
+                <defs>
+                  <linearGradient id="goldAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={GOLD} stopOpacity={0.15} />
+                    <stop offset="95%" stopColor={GOLD} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 10, fill: '#94a3b8' }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={4}
+                />
+                <YAxis
+                  domain={[60, 100]}
+                  tick={{ fontSize: 10, fill: '#94a3b8' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip
+                  contentStyle={{ borderRadius: 10, border: '1px solid #e2e8f0', fontSize: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
+                  formatter={(v: number, name: string) => {
+                    const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
+                    return [`${v}%`, labels[name] || name];
+                  }}
+                />
+                <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#goldAreaGrad)" dot={false} activeDot={{ r: 4, fill: GOLD }} name="overall" />
+                <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="foodSafety" />
+                <Line type="monotone" dataKey="fireSafety" stroke="#ea580c" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="fireSafety" />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          {/* Legend */}
+          <div className="flex items-center justify-center gap-5 mt-3">
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-[2.5px] rounded" style={{ backgroundColor: GOLD }} />
+              <span className="text-[10px] text-gray-500">Overall</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-[1.5px] rounded" style={{ backgroundColor: '#16a34a' }} />
+              <span className="text-[10px] text-gray-500">Food Safety</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-4 h-[1.5px] rounded" style={{ backgroundColor: '#ea580c' }} />
+              <span className="text-[10px] text-gray-500">Fire Safety</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Attention Required */}
+        <div
+          className="bg-white rounded-2xl p-6"
+          style={{
+            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            border: '1px solid #f1f5f9',
+            ...stagger(7),
+          }}
+        >
+          <h3 className="text-[13px] font-semibold uppercase mb-4" style={{ letterSpacing: '0.05em', color: '#64748b' }}>
             Attention Required
           </h3>
-          <span className="text-xs font-medium px-1.5 py-0.5 rounded-full bg-red-50 text-red-600">
-            {EXEC_ATTENTION_ITEMS.length}
-          </span>
-        </div>
-        <div className="space-y-2">
-          {EXEC_ATTENTION_ITEMS.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-start gap-3 p-3 rounded-lg"
-              style={{
-                borderLeft: `4px solid ${item.severity === 'critical' ? '#dc2626' : '#d97706'}`,
-                backgroundColor: item.severity === 'critical' ? '#fef2f2' : '#fffbeb',
-              }}
-            >
-              {item.severity === 'critical' ? (
-                <AlertTriangle size={16} className="text-red-500 shrink-0 mt-0.5" />
-              ) : (
-                <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">
-                  {item.location}: {item.title}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>
-              </div>
-              <button
-                onClick={() => navigate(item.actionRoute)}
-                className="text-xs font-medium shrink-0 px-3 py-1.5 rounded-lg text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: '#1e4d6b' }}
-              >
-                {item.actionLabel} &rarr;
-              </button>
+
+          {DEMO_ATTENTION_ITEMS.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <span className="text-3xl mb-2">&#x2705;</span>
+              <p className="text-sm font-medium text-gray-700">All Clear</p>
+              <p className="text-xs text-gray-400 mt-1">All {DEMO_ORG.locationCount} locations are above 85%. No immediate action required.</p>
+              <p className="text-[10px] text-gray-300 mt-2">Last reviewed: 2 minutes ago</p>
             </div>
-          ))}
+          ) : (
+            <div className="space-y-3">
+              {DEMO_ATTENTION_ITEMS.map(item => {
+                const isCritical = item.status === 'critical';
+                const borderColor = isCritical ? '#dc2626' : '#d97706';
+
+                return (
+                  <div
+                    key={item.locationId}
+                    className="rounded-xl p-4 relative"
+                    style={{
+                      borderLeft: `4px solid ${borderColor}`,
+                      backgroundColor: isCritical ? '#fef2f2' : '#fffbeb',
+                    }}
+                  >
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">{isCritical ? '\uD83D\uDD34' : '\uD83D\uDFE1'}</span>
+                        <span className="text-sm font-semibold text-gray-900">{item.locationName}</span>
+                        <span className="text-xs font-medium px-1.5 py-0.5 rounded-full"
+                          style={{ color: borderColor, backgroundColor: borderColor + '15' }}
+                        >
+                          {item.score}%
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 leading-relaxed mb-3 ml-6">
+                      {item.summary}
+                    </p>
+                    <button
+                      className="ml-6 text-sm font-medium transition-colors"
+                      style={{ color: NAVY_BLUE }}
+                      onClick={() => navigate(item.route)}
+                    >
+                      {item.action} &rarr;
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ─── ACTIVITY STRIP ─── */}
+      {/* ================================================================ */}
+      {/* THIS WEEK'S ACTIVITY — data-dense strip                          */}
+      {/* ================================================================ */}
       <div
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"
-        style={animDelay(4)}
+        className="rounded-xl p-4 sm:px-6 mb-8 mx-1 flex flex-wrap gap-x-6 gap-y-2 text-sm"
+        style={{
+          backgroundColor: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          color: '#475569',
+          ...stagger(8),
+        }}
       >
-        {[
-          { icon: ClipboardCheck, label: 'Inspections', value: DEMO_WEEKLY_ACTIVITY.inspections, color: '#1e4d6b' },
-          { icon: FileText, label: 'Checklists', value: DEMO_WEEKLY_ACTIVITY.checklists, color: '#16a34a' },
-          { icon: Thermometer, label: 'Temps Logged', value: DEMO_WEEKLY_ACTIVITY.tempsLogged, color: '#d97706' },
-          { icon: AlertTriangle, label: 'Incidents', value: DEMO_WEEKLY_ACTIVITY.incidents, color: '#dc2626' },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="bg-white rounded-xl p-4 border border-gray-100 text-center"
-            style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
-          >
-            <stat.icon size={20} className="mx-auto mb-2" style={{ color: stat.color }} />
-            <p className="text-xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">{stat.label} this week</p>
-          </div>
-        ))}
+        <span>
+          &#x1F4CA; <strong style={{ color: '#1a3d6d' }}>{DEMO_WEEKLY_ACTIVITY.tempChecks.total}</strong> temp checks ({DEMO_WEEKLY_ACTIVITY.tempChecks.onTimePercent}% on time)
+        </span>
+        <span className="hidden sm:inline text-gray-300">&middot;</span>
+        <span>
+          &#x1F4CB; <strong style={{ color: '#1a3d6d' }}>{DEMO_WEEKLY_ACTIVITY.checklists.completed}/{DEMO_WEEKLY_ACTIVITY.checklists.required}</strong> checklists ({DEMO_WEEKLY_ACTIVITY.checklists.percent}%)
+        </span>
+        <span className="hidden sm:inline text-gray-300">&middot;</span>
+        <span>
+          &#x1F4C4; <strong style={{ color: '#1a3d6d' }}>{DEMO_WEEKLY_ACTIVITY.documents.uploaded}</strong> docs uploaded &middot; {DEMO_WEEKLY_ACTIVITY.documents.expiringSoon} expiring
+        </span>
+        <span className="hidden sm:inline text-gray-300">&middot;</span>
+        <span>
+          &#x26A0;&#xFE0F; <strong style={{ color: '#1a3d6d' }}>{DEMO_WEEKLY_ACTIVITY.incidents.total}</strong> incidents ({DEMO_WEEKLY_ACTIVITY.incidents.resolved} resolved)
+        </span>
+        <span className="hidden sm:inline text-gray-300">&middot;</span>
+        <span>
+          &#x1F465; <strong style={{ color: '#1a3d6d' }}>{DEMO_WEEKLY_ACTIVITY.activeTeam}</strong> active team
+        </span>
       </div>
 
-      {/* ─── STRATEGIC ACTIONS ─── */}
-      <div
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8"
-        style={animDelay(5)}
-      >
+      {/* ================================================================ */}
+      {/* STRATEGIC ACTIONS                                                */}
+      {/* ================================================================ */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10 px-1" style={stagger(9)}>
         {[
           { icon: BarChart3, label: 'Generate Org Report', route: '/reports' },
-          { icon: FileText, label: 'Benchmarks', route: '/benchmarks' },
+          { icon: FileText, label: 'View Benchmarks', route: '/benchmarks' },
           { icon: CalendarCheck, label: 'Schedule Audit', route: '/inspections' },
-        ].map((action) => (
+        ].map(action => (
           <button
             key={action.route}
             onClick={() => navigate(action.route)}
-            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all duration-200"
-            style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
-            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#1e4d6b'; e.currentTarget.style.color = '#ffffff'; }}
-            onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = '#1e4d6b'; }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-150 w-full sm:w-auto justify-center"
+            style={{
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#ffffff',
+              color: NAVY_BLUE,
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = '#1e40af';
+              e.currentTarget.style.color = '#1e40af';
+              e.currentTarget.style.backgroundColor = '#eff6ff';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(30,64,175,0.1)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = '#e2e8f0';
+              e.currentTarget.style.color = NAVY_BLUE;
+              e.currentTarget.style.backgroundColor = '#ffffff';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             <action.icon size={18} />
             {action.label}
@@ -477,14 +542,16 @@ export default function ExecutiveDashboard() {
         ))}
       </div>
 
-      {/* ─── FOOTER ─── */}
-      <div className="text-center pb-4" style={animDelay(6)}>
-        <p className="text-[11px] text-gray-400">
-          Powered by{' '}
-          <span className="font-semibold" style={{ color: '#1e4d6b' }}>Evid</span>
-          <span className="font-semibold" style={{ color: '#d4af37' }}>LY</span>
-          {' '}&mdash; Compliance Simplified
-        </p>
+      {/* ================================================================ */}
+      {/* FOOTER — EvidLY branding                                         */}
+      {/* ================================================================ */}
+      <div className="text-center pb-6" style={stagger(10)}>
+        <div className="flex items-center justify-center gap-1.5">
+          <span className="font-bold" style={{ color: GOLD }}>E</span>
+          <span className="font-bold" style={{ color: NAVY_BLUE }}>vid</span>
+          <span className="font-bold" style={{ color: GOLD }}>LY</span>
+          <span className="text-xs text-gray-400 ml-1">Compliance Simplified</span>
+        </div>
       </div>
     </div>
   );

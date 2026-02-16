@@ -104,33 +104,91 @@ export const locations: Location[] = [
 ];
 
 // ============================================================
-// Executive Dashboard — shared demo data
+// Executive Dashboard — 2-Pillar Model (Single Source of Truth)
+// ============================================================
+//
+// TWO PILLARS ONLY:
+//   Food Safety = Ops + Docs (weight set by jurisdiction)
+//   Fire Safety = Ops + Docs (weight set by jurisdiction)
+//
+// Documentation is INSIDE each pillar, NOT a separate pillar.
+// Vendor credentials fold into the pillar they serve.
+//
+// WEIGHTS ARE JURISDICTION-DEPENDENT:
+//   Defaults below are placeholders until Jurisdiction Intelligence is loaded.
 // ============================================================
 
-// 2-pillar sub-scores (used by inspectionReadiness engine)
-// Calibrated to produce identical overalls: Downtown=94, Airport=82, University=68
-export interface DemoLocationData {
-  id: string;
-  name: string;
-  foodOps: number;
-  foodDocs: number;
-  fireOps: number;
-  fireDocs: number;
+export const DEFAULT_WEIGHTS = {
+  foodSafetyWeight: 0.60,
+  fireSafetyWeight: 0.40,
+  opsWeight: 0.60,
+  docsWeight: 0.40,
+};
+
+export function calcPillar(
+  p: { ops: number; docs: number },
+  opsWeight = DEFAULT_WEIGHTS.opsWeight,
+  docsWeight = DEFAULT_WEIGHTS.docsWeight,
+): number {
+  return Math.round(p.ops * opsWeight + p.docs * docsWeight);
 }
 
-export const DEMO_LOCATIONS: DemoLocationData[] = [
-  { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-  { id: 'airport', name: 'Airport Cafe', foodOps: 88, foodDocs: 80, fireOps: 75, fireDocs: 82 },
-  { id: 'university', name: 'University Dining', foodOps: 74, foodDocs: 69, fireOps: 60, fireDocs: 67 },
-];
+export function calcReadiness(
+  food: { ops: number; docs: number },
+  fire: { ops: number; docs: number },
+  weights = DEFAULT_WEIGHTS,
+): number {
+  const foodScore = calcPillar(food, weights.opsWeight, weights.docsWeight);
+  const fireScore = calcPillar(fire, weights.opsWeight, weights.docsWeight);
+  return Math.round(foodScore * weights.foodSafetyWeight + fireScore * weights.fireSafetyWeight);
+}
 
 export const DEMO_ORG = {
   name: 'Pacific Coast Dining',
   locationCount: 3,
-  jurisdiction: 'California Health Code + NFPA 96 2024',
 };
 
-export const DEMO_ORG_SCORES = complianceScores; // auto-computed from locationScores
+export const DEMO_LOCATIONS = [
+  {
+    id: 'downtown',
+    name: 'Downtown Kitchen',
+    foodSafety: { ops: 97, docs: 94 },
+    fireSafety: { ops: 88, docs: 95 },
+    trend: +3,
+    status: 'good' as const,
+  },
+  {
+    id: 'airport',
+    name: 'Airport Cafe',
+    foodSafety: { ops: 88, docs: 80 },
+    fireSafety: { ops: 75, docs: 82 },
+    trend: -1,
+    status: 'attention' as const,
+  },
+  {
+    id: 'university',
+    name: 'University Dining',
+    foodSafety: { ops: 74, docs: 69 },
+    fireSafety: { ops: 60, docs: 67 },
+    trend: +5,
+    status: 'critical' as const,
+  },
+];
+
+// Enrich with calculated scores using default weights
+export const LOCATIONS_WITH_SCORES = DEMO_LOCATIONS.map(loc => ({
+  ...loc,
+  foodScore: calcPillar(loc.foodSafety),
+  fireScore: calcPillar(loc.fireSafety),
+  score: calcReadiness(loc.foodSafety, loc.fireSafety),
+}));
+
+const _locs = LOCATIONS_WITH_SCORES;
+export const DEMO_ORG_SCORES = {
+  overall: Math.round(_locs.reduce((s, l) => s + l.score, 0) / _locs.length),
+  foodSafety: Math.round(_locs.reduce((s, l) => s + l.foodScore, 0) / _locs.length),
+  fireSafety: Math.round(_locs.reduce((s, l) => s + l.fireScore, 0) / _locs.length),
+};
 
 export function getLocationScoreColor(score: number): string {
   if (score >= 85) return '#16a34a';
@@ -138,91 +196,57 @@ export function getLocationScoreColor(score: number): string {
   return '#dc2626';
 }
 
-export function getLocationStatus(score: number): string {
+export function getLocationStatusLabel(score: number): string {
   if (score >= 85) return 'On Track';
   if (score >= 70) return 'Needs Attention';
   return 'Critical';
 }
 
 export const DEMO_WEEKLY_ACTIVITY = {
-  inspections: 12,
-  checklists: 47,
-  tempsLogged: 156,
-  incidents: 2,
+  tempChecks: { total: 487, onTimePercent: 98.2 },
+  checklists: { completed: 126, required: 132, percent: 95.5 },
+  documents: { uploaded: 3, expiringSoon: 2 },
+  incidents: { total: 4, resolved: 3, open: 1 },
+  activeTeam: 12,
 };
 
-// 30-day trend data for executive chart (3 lines)
-export const DEMO_TREND_30DAY = [
-  { day: '1', overall: 76, foodSafety: 78, fireSafety: 72 },
-  { day: '3', overall: 77, foodSafety: 79, fireSafety: 73 },
-  { day: '5', overall: 77, foodSafety: 78, fireSafety: 74 },
-  { day: '7', overall: 78, foodSafety: 79, fireSafety: 75 },
-  { day: '9', overall: 78, foodSafety: 80, fireSafety: 74 },
-  { day: '11', overall: 79, foodSafety: 80, fireSafety: 76 },
-  { day: '13', overall: 79, foodSafety: 81, fireSafety: 75 },
-  { day: '15', overall: 79, foodSafety: 80, fireSafety: 76 },
-  { day: '17', overall: 80, foodSafety: 82, fireSafety: 76 },
-  { day: '19', overall: 80, foodSafety: 81, fireSafety: 77 },
-  { day: '21', overall: 80, foodSafety: 82, fireSafety: 76 },
-  { day: '23', overall: 81, foodSafety: 83, fireSafety: 77 },
-  { day: '25', overall: 81, foodSafety: 83, fireSafety: 78 },
-  { day: '27', overall: 81, foodSafety: 83, fireSafety: 78 },
-  { day: '30', overall: 81, foodSafety: 84, fireSafety: 78 },
+export const DEMO_ATTENTION_ITEMS = [
+  {
+    locationId: 'university',
+    locationName: 'University Dining',
+    score: 68,
+    status: 'critical' as const,
+    summary: 'Score below 70%. 3 equipment inspections overdue. Fire suppression certificate expires in 12 days.',
+    action: 'Take Action',
+    route: '/dashboard?location=university',
+  },
+  {
+    locationId: 'airport',
+    locationName: 'Airport Cafe',
+    score: 82,
+    status: 'attention' as const,
+    summary: '3 out-of-range temperature readings this week. Walk-in cooler trending warm \u2014 schedule service.',
+    action: 'View Temps',
+    route: '/temp-logs?location=airport',
+  },
 ];
 
-export interface ExecAttentionItem {
-  id: string;
-  severity: 'critical' | 'warning';
-  location: string;
-  locationId: string;
-  title: string;
-  detail: string;
-  actionLabel: string;
-  actionRoute: string;
-}
-
-export const EXEC_ATTENTION_ITEMS: ExecAttentionItem[] = [
-  {
-    id: 'exec-att-1',
-    severity: 'critical',
-    location: 'University Dining',
-    locationId: 'university',
-    title: 'Health permit expired — renewal overdue',
-    detail: 'Vendor compliance score dropped to 68. Immediate action required.',
-    actionLabel: 'View Details',
-    actionRoute: '/documents?location=university',
-  },
-  {
-    id: 'exec-att-2',
-    severity: 'critical',
-    location: 'University Dining',
-    locationId: 'university',
-    title: '2 food handler certifications expired',
-    detail: 'Staff cannot operate without valid certifications.',
-    actionLabel: 'View Team',
-    actionRoute: '/team?location=university',
-  },
-  {
-    id: 'exec-att-3',
-    severity: 'warning',
-    location: 'Airport Cafe',
-    locationId: 'airport',
-    title: 'Hood cleaning cert expires in 18 days',
-    detail: 'Fire safety ops score at 75. Schedule vendor service.',
-    actionLabel: 'Schedule',
-    actionRoute: '/vendors?location=airport',
-  },
-  {
-    id: 'exec-att-4',
-    severity: 'warning',
-    location: 'Airport Cafe',
-    locationId: 'airport',
-    title: 'Fire suppression inspection due in 12 days',
-    detail: 'ABC Fire Protection notified. Confirm appointment.',
-    actionLabel: 'View Vendors',
-    actionRoute: '/vendors?location=airport',
-  },
-];
+// 30-day trend data (dates generated dynamically, scores deterministic)
+export const DEMO_TREND_DATA = (() => {
+  const food = [79,79,80,79,80,81,80,81,81,82,81,82,82,83,82,83,83,82,83,84,83,84,84,83,84,85,84,84,85,84];
+  const fire = [72,73,72,73,73,72,74,73,74,74,75,74,75,75,76,75,76,76,75,76,77,76,77,77,76,77,77,78,77,77];
+  return food.map((f, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (29 - i));
+    const fr = fire[i];
+    return {
+      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      overall: Math.round(f * 0.6 + fr * 0.4),
+      foodSafety: f,
+      fireSafety: fr,
+    };
+  });
+})();
 
 export interface Vendor {
   id: string;
