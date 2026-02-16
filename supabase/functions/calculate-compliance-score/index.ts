@@ -1,0 +1,598 @@
+// supabase/functions/calculate-compliance-score/index.ts
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface ScoringResult {
+  locationId: string;
+  jurisdictionId: string;
+  jurisdictionName: string;
+  scoringType: string;
+  gradingType: string;
+  pillar: string;
+  subComponent: string;
+  rawScore: number;
+  normalizedScore: number;
+  jurisdictionGrade: string;
+  gradeDisplay: string;
+  passFail: string;
+  violations: ViolationDetail[];
+  calculatedAt: string;
+}
+
+interface ViolationDetail {
+  calcodeSection: string;
+  title: string;
+  severity: string;
+  pointsDeducted: number;
+  module: string;
+  cdcRiskFactor: boolean;
+  status: string; // compliant | non_compliant | not_assessed
+}
+
+interface OverallScore {
+  locationId: string;
+  overallScore: number;
+  foodSafety: PillarScore;
+  fireSafety: PillarScore;
+  jurisdictions: ScoringResult[];
+}
+
+interface PillarScore {
+  score: number;
+  ops: number;
+  docs: number;
+  weight: number;
+}
+
+serve(async (req: Request) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+
+    const { location_id, save_to_audit } = await req.json();
+
+    if (!location_id) {
+      return new Response(
+        JSON.stringify({ error: 'location_id is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // ── STEP 1: Get jurisdictions for this location ──
+    const { data: locationJurisdictions, error: ljError } = await supabase
+      .from('location_jurisdictions')
+      .select(`
+        jurisdiction_layer,
+        is_most_restrictive,
+        jurisdictions (
+          id, county, city, agency_name, scoring_type, grading_type,
+          grading_config, pass_threshold, warning_threshold, critical_threshold,
+          violation_weight_map
+        )
+      `)
+      .eq('location_id', location_id);
+
+    if (ljError || !locationJurisdictions || locationJurisdictions.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'No jurisdictions found for this location. Run address detection first.' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // ── STEP 2: Get CalCode violation map ──
+    const { data: calcodeMap } = await supabase
+      .from('calcode_violation_map')
+      .select('*');
+
+    // ── STEP 3: Get jurisdiction-specific overrides ──
+    const jurisdictionIds = locationJurisdictions.map(
+      (lj: any) => lj.jurisdictions.id
+    );
+
+    const { data: overrides } = await supabase
+      .from('jurisdiction_violation_overrides')
+      .select('*')
+      .in('jurisdiction_id', jurisdictionIds);
+
+    // ── STEP 4: Get compliance data for this location ──
+    // Pull from EvidLY operational modules
+    const complianceData = await getComplianceData(supabase, location_id);
+
+    // ── STEP 5: Calculate score per jurisdiction ──
+    const results: ScoringResult[] = [];
+
+    for (const lj of locationJurisdictions) {
+      const jurisdiction = (lj as any).jurisdictions;
+      const layer = (lj as any).jurisdiction_layer;
+
+      // Only calculate food_safety for food jurisdictions, fire_safety for fire
+      const pillar = layer.includes('fire') ? 'fire_safety' : 'food_safety';
+
+      // Get overrides for this specific jurisdiction
+      const jurisdictionOverrides = (overrides || []).filter(
+        (o: any) => o.jurisdiction_id === jurisdiction.id
+      );
+
+      // Calculate operations score
+      const opsResult = calculateScore(
+        jurisdiction,
+        calcodeMap || [],
+        jurisdictionOverrides,
+        complianceData,
+        pillar,
+        'operations',
+      );
+
+      // Calculate documentation score
+      const docsResult = calculateScore(
+        jurisdiction,
+        calcodeMap || [],
+        jurisdictionOverrides,
+        complianceData,
+        pillar,
+        'documentation',
+      );
+
+      // Combined pillar score: Ops 60% + Docs 40%
+      const pillarRawScore = (opsResult.rawScore * 0.6) + (docsResult.rawScore * 0.4);
+      const normalizedScore = Math.round(pillarRawScore);
+
+      // Determine grade based on jurisdiction grading type
+      const gradeResult = determineGrade(jurisdiction, normalizedScore, complianceData.majorViolationCount);
+
+      const result: ScoringResult = {
+        locationId: location_id,
+        jurisdictionId: jurisdiction.id,
+        jurisdictionName: jurisdiction.city
+          ? `${jurisdiction.city} (${jurisdiction.county} County)`
+          : `${jurisdiction.county} County`,
+        scoringType: jurisdiction.scoring_type,
+        gradingType: jurisdiction.grading_type,
+        pillar,
+        subComponent: 'combined',
+        rawScore: pillarRawScore,
+        normalizedScore,
+        jurisdictionGrade: gradeResult.grade,
+        gradeDisplay: gradeResult.display,
+        passFail: gradeResult.passFail,
+        violations: [...opsResult.violations, ...docsResult.violations],
+        calculatedAt: new Date().toISOString(),
+      };
+
+      results.push(result);
+
+      // Also push ops and docs individually
+      results.push({
+        ...result,
+        subComponent: 'operations',
+        rawScore: opsResult.rawScore,
+        normalizedScore: Math.round(opsResult.rawScore),
+        violations: opsResult.violations,
+      });
+
+      results.push({
+        ...result,
+        subComponent: 'documentation',
+        rawScore: docsResult.rawScore,
+        normalizedScore: Math.round(docsResult.rawScore),
+        violations: docsResult.violations,
+      });
+    }
+
+    // ── STEP 6: Calculate overall score ──
+    // Food Safety 60% + Fire Safety 40%
+    const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
+    const fireResults = results.filter(r => r.pillar === 'fire_safety' && r.subComponent === 'combined');
+
+    const foodScore = foodResults.length > 0
+      ? Math.min(...foodResults.map(r => r.normalizedScore)) // Most restrictive
+      : 100;
+
+    const fireScore = fireResults.length > 0
+      ? Math.min(...fireResults.map(r => r.normalizedScore))
+      : 100;
+
+    const foodOps = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'operations');
+    const foodDocs = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'documentation');
+    const fireOps = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'operations');
+    const fireDocs = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'documentation');
+
+    const overallScore: OverallScore = {
+      locationId: location_id,
+      overallScore: Math.round((foodScore * 0.6) + (fireScore * 0.4)),
+      foodSafety: {
+        score: foodScore,
+        ops: foodOps?.normalizedScore ?? 100,
+        docs: foodDocs?.normalizedScore ?? 100,
+        weight: 60,
+      },
+      fireSafety: {
+        score: fireScore,
+        ops: fireOps?.normalizedScore ?? 100,
+        docs: fireDocs?.normalizedScore ?? 100,
+        weight: 40,
+      },
+      jurisdictions: results.filter(r => r.subComponent === 'combined'),
+    };
+
+    // ── STEP 7: Save to audit trail ──
+    if (save_to_audit !== false) {
+      const auditRecords = results.map(r => ({
+        location_id: r.locationId,
+        jurisdiction_id: r.jurisdictionId,
+        calculation_type: r.pillar,
+        pillar: r.pillar,
+        sub_component: r.subComponent,
+        raw_score: r.rawScore,
+        normalized_score: r.normalizedScore,
+        jurisdiction_grade: r.jurisdictionGrade,
+        grade_display: r.gradeDisplay,
+        pass_fail: r.passFail,
+        inputs: { violations: r.violations, compliance_data: complianceData.summary },
+        methodology: r.scoringType,
+        calculation_details: {
+          scoring_type: r.scoringType,
+          grading_type: r.gradingType,
+          violation_count: r.violations.length,
+          non_compliant_count: r.violations.filter(v => v.status === 'non_compliant').length,
+        },
+      }));
+
+      await supabase.from('score_calculations').insert(auditRecords);
+    }
+
+    return new Response(
+      JSON.stringify(overallScore),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: (error as Error).message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+// SCORING CALCULATION ENGINE
+// 5 scoring types, each mirrors a real inspector methodology
+// ═══════════════════════════════════════════════════════════
+
+function calculateScore(
+  jurisdiction: any,
+  calcodeMap: any[],
+  overrides: any[],
+  complianceData: any,
+  pillar: string,
+  subComponent: string,
+): { rawScore: number; violations: ViolationDetail[] } {
+
+  // Filter calcode items by pillar
+  const relevantItems = calcodeMap.filter((item: any) => item.evidly_pillar === pillar);
+
+  // Filter by sub-component
+  const items = subComponent === 'operations'
+    ? relevantItems.filter((item: any) => ['temperatures', 'checklists', 'equipment'].includes(item.evidly_module))
+    : relevantItems.filter((item: any) => ['documents', 'haccp', 'training', 'photos'].includes(item.evidly_module));
+
+  const violations: ViolationDetail[] = [];
+  let totalDeductions = 0;
+  let majorCount = 0;
+
+  for (const item of items) {
+    // Check if jurisdiction has an override for this violation
+    const override = overrides.find((o: any) => o.calcode_section === item.calcode_section);
+    const severity = override?.severity_override || item.severity_default;
+    const points = override?.point_deduction_override ?? item.point_deduction_default;
+
+    // Check compliance status from EvidLY module data
+    const status = checkComplianceStatus(item, complianceData);
+
+    const violation: ViolationDetail = {
+      calcodeSection: item.calcode_section,
+      title: item.calcode_title,
+      severity,
+      pointsDeducted: status === 'non_compliant' ? points : 0,
+      module: item.evidly_module,
+      cdcRiskFactor: item.cdc_risk_factor,
+      status,
+    };
+
+    violations.push(violation);
+
+    if (status === 'non_compliant') {
+      totalDeductions += points;
+      if (severity === 'critical' || severity === 'major') {
+        majorCount++;
+      }
+    }
+  }
+
+  // Apply jurisdiction scoring type
+  let rawScore: number;
+
+  switch (jurisdiction.scoring_type) {
+    case 'weighted_deduction':
+      // Start at 100, subtract weighted deductions
+      rawScore = Math.max(0, 100 - totalDeductions);
+      break;
+
+    case 'heavy_weighted':
+      // Santa Clara model: 8 points per major, 2 per minor
+      const heavyDeductions = violations
+        .filter(v => v.status === 'non_compliant')
+        .reduce((sum, v) => {
+          if (v.severity === 'critical' || v.severity === 'major') return sum + 8;
+          return sum + 2;
+        }, 0);
+      rawScore = Math.max(0, 100 - heavyDeductions);
+      break;
+
+    case 'major_violation_count':
+      // Sacramento model: score based on count of major violations
+      // 0-1 majors = 95, 2-3 majors = 80, 4+ majors = 60
+      if (majorCount <= 1) rawScore = 95;
+      else if (majorCount <= 3) rawScore = 80;
+      else rawScore = 60;
+      break;
+
+    case 'negative_scale':
+      // SLO model: 0 = perfect, add negative points
+      // We store normalized (0-100) so convert: 100 + negative = normalized
+      rawScore = Math.max(0, 100 - totalDeductions);
+      break;
+
+    case 'report_only':
+      // No official score — EvidLY calculates synthetic score
+      // Use standard weighted deduction as synthetic
+      rawScore = Math.max(0, 100 - totalDeductions);
+      break;
+
+    default:
+      rawScore = Math.max(0, 100 - totalDeductions);
+  }
+
+  // Store major count for grade determination
+  complianceData.majorViolationCount = majorCount;
+
+  return { rawScore, violations };
+}
+
+// ═══════════════════════════════════════════════════════════
+// GRADE DETERMINATION
+// Maps numeric score to jurisdiction-specific grade format
+// ═══════════════════════════════════════════════════════════
+
+function determineGrade(
+  jurisdiction: any,
+  score: number,
+  majorViolationCount: number,
+): { grade: string; display: string; passFail: string } {
+
+  const config = jurisdiction.grading_config || {};
+
+  switch (jurisdiction.grading_type) {
+    case 'letter_grade': {
+      let letter = 'F';
+      if (score >= 90) letter = 'A';
+      else if (score >= 80) letter = 'B';
+      else if (score >= 70) letter = 'C';
+
+      const failBelow = config.fail_below || 70;
+      return {
+        grade: letter,
+        display: letter,
+        passFail: score >= failBelow ? 'pass' : 'fail',
+      };
+    }
+
+    case 'letter_grade_strict': {
+      // Riverside: A-only passes
+      let letter = 'F';
+      if (score >= 90) letter = 'A';
+      else if (score >= 80) letter = 'B';
+      else if (score >= 70) letter = 'C';
+
+      const passRequires = config.pass_requires || 'A';
+      const passing = (passRequires === 'A' && score >= 90) ||
+                      (passRequires === 'B' && score >= 80) ||
+                      (passRequires === 'C' && score >= 70);
+
+      return {
+        grade: letter,
+        display: passing ? letter : letter + ' - FAIL',
+        passFail: passing ? 'pass' : 'fail',
+      };
+    }
+
+    case 'color_placard': {
+      const greenMax = config.green?.max_majors ?? 1;
+      const yellowMax = config.yellow?.max_majors ?? 3;
+
+      if (majorViolationCount <= greenMax) {
+        return { grade: 'Green', display: 'Green', passFail: 'pass' };
+      } else if (majorViolationCount <= yellowMax) {
+        return { grade: 'Yellow', display: 'Yellow', passFail: 'warning' };
+      } else {
+        return { grade: 'Red', display: 'Red', passFail: 'fail' };
+      }
+    }
+
+    case 'score_100': {
+      const threshold = jurisdiction.pass_threshold || 70;
+      return {
+        grade: String(score),
+        display: String(score),
+        passFail: score >= threshold ? 'pass' : 'fail',
+      };
+    }
+
+    case 'score_negative': {
+      // Convert normalized back to negative for display
+      const negativeScore = score - 100; // 88 normalized = -12 display
+      const warning = config.warning || -10;
+      const critical = config.critical || -25;
+
+      let passFail = 'pass';
+      if (negativeScore <= critical) passFail = 'fail';
+      else if (negativeScore <= warning) passFail = 'warning';
+
+      return {
+        grade: String(negativeScore),
+        display: String(negativeScore),
+        passFail,
+      };
+    }
+
+    case 'report_only':
+    default:
+      return {
+        grade: 'N/A',
+        display: 'Report Only',
+        passFail: 'not_applicable',
+      };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPLIANCE DATA RETRIEVAL
+// Pulls current compliance status from EvidLY modules
+// ═══════════════════════════════════════════════════════════
+
+async function getComplianceData(supabase: any, locationId: string) {
+  // Pull latest data from each EvidLY module
+  // These queries check if required tasks are being completed
+
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  // Temperature logs — check if daily temps are being recorded
+  const { data: tempLogs } = await supabase
+    .from('temperature_logs')
+    .select('id, recorded_at, temperature, in_range')
+    .eq('location_id', locationId)
+    .gte('recorded_at', sevenDaysAgo)
+    .order('recorded_at', { ascending: false })
+    .limit(50);
+
+  // Checklists — check completion rate
+  const { data: checklists } = await supabase
+    .from('checklist_completions')
+    .select('id, completed_at, checklist_type, all_items_passed')
+    .eq('location_id', locationId)
+    .gte('completed_at', sevenDaysAgo)
+    .order('completed_at', { ascending: false })
+    .limit(50);
+
+  // Documents — check for expired or missing required docs
+  const { data: documents } = await supabase
+    .from('documents')
+    .select('id, document_type, expires_at, status')
+    .eq('location_id', locationId)
+    .eq('status', 'active');
+
+  // Equipment — check maintenance status
+  const { data: equipment } = await supabase
+    .from('equipment')
+    .select('id, equipment_type, last_service_date, next_service_date, status')
+    .eq('location_id', locationId);
+
+  // HACCP plans — check if current
+  const { data: haccpPlans } = await supabase
+    .from('haccp_plans')
+    .select('id, status, last_reviewed_at')
+    .eq('location_id', locationId);
+
+  // Training records — check for expired food handler cards
+  const { data: training } = await supabase
+    .from('training_records')
+    .select('id, training_type, expires_at, status')
+    .eq('location_id', locationId);
+
+  return {
+    tempLogs: tempLogs || [],
+    checklists: checklists || [],
+    documents: documents || [],
+    equipment: equipment || [],
+    haccpPlans: haccpPlans || [],
+    training: training || [],
+    majorViolationCount: 0, // Set during calculation
+    summary: {
+      tempLogsLast7Days: (tempLogs || []).length,
+      checklistsLast7Days: (checklists || []).length,
+      outOfRangeTemps: (tempLogs || []).filter((t: any) => !t.in_range).length,
+      expiredDocs: (documents || []).filter((d: any) => d.expires_at && new Date(d.expires_at) < new Date()).length,
+      overdueEquipment: (equipment || []).filter((e: any) => e.next_service_date && new Date(e.next_service_date) < new Date()).length,
+      expiredTraining: (training || []).filter((t: any) => t.expires_at && new Date(t.expires_at) < new Date()).length,
+    },
+  };
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPLIANCE STATUS CHECK
+// Determines if a specific CalCode item is being met
+// based on EvidLY module data
+// ═══════════════════════════════════════════════════════════
+
+function checkComplianceStatus(calcodeItem: any, complianceData: any): string {
+  const module = calcodeItem.evidly_module;
+
+  switch (module) {
+    case 'temperatures': {
+      // Check if temp logs exist and temps are in range
+      if (complianceData.tempLogs.length === 0) return 'non_compliant';
+      const outOfRange = complianceData.tempLogs.filter((t: any) => !t.in_range);
+      // If more than 10% of readings are out of range, non-compliant
+      if (outOfRange.length > complianceData.tempLogs.length * 0.1) return 'non_compliant';
+      return 'compliant';
+    }
+
+    case 'checklists': {
+      // Check if daily checklists are being completed
+      if (complianceData.checklists.length === 0) return 'non_compliant';
+      // Check if any failed items in recent checklists
+      const failedChecklists = complianceData.checklists.filter((c: any) => !c.all_items_passed);
+      if (failedChecklists.length > complianceData.checklists.length * 0.2) return 'non_compliant';
+      return 'compliant';
+    }
+
+    case 'documents': {
+      // Check for expired documents
+      if (complianceData.summary.expiredDocs > 0) return 'non_compliant';
+      return 'compliant';
+    }
+
+    case 'equipment': {
+      // Check for overdue equipment maintenance
+      if (complianceData.summary.overdueEquipment > 0) return 'non_compliant';
+      return 'compliant';
+    }
+
+    case 'haccp': {
+      // Check if HACCP plan exists and is current
+      if (complianceData.haccpPlans.length === 0) return 'not_assessed';
+      const current = complianceData.haccpPlans.find((h: any) => h.status === 'active');
+      return current ? 'compliant' : 'non_compliant';
+    }
+
+    case 'training': {
+      // Check for expired training/certifications
+      if (complianceData.summary.expiredTraining > 0) return 'non_compliant';
+      return 'compliant';
+    }
+
+    default:
+      return 'not_assessed';
+  }
+}
