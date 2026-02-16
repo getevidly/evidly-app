@@ -21,6 +21,7 @@ interface ScoringResult {
   gradeDisplay: string;
   passFail: string;
   violations: ViolationDetail[];
+  weights: { foodSafety: number; fireSafety: number; ops: number; docs: number };
   calculatedAt: string;
 }
 
@@ -40,6 +41,7 @@ interface OverallScore {
   foodSafety: PillarScore;
   fireSafety: PillarScore;
   jurisdictions: ScoringResult[];
+  weightsUsed: { foodSafety: number; fireSafety: number; ops: number; docs: number };
 }
 
 interface PillarScore {
@@ -70,6 +72,7 @@ serve(async (req: Request) => {
     }
 
     // ── STEP 1: Get jurisdictions for this location ──
+    // ALL weights come from the jurisdiction record — nothing hardcoded
     const { data: locationJurisdictions, error: ljError } = await supabase
       .from('location_jurisdictions')
       .select(`
@@ -78,7 +81,8 @@ serve(async (req: Request) => {
         jurisdictions (
           id, county, city, agency_name, scoring_type, grading_type,
           grading_config, pass_threshold, warning_threshold, critical_threshold,
-          violation_weight_map
+          violation_weight_map, food_safety_weight, fire_safety_weight,
+          ops_weight, docs_weight
         )
       `)
       .eq('location_id', location_id);
@@ -110,16 +114,19 @@ serve(async (req: Request) => {
     const complianceData = await getComplianceData(supabase, location_id);
 
     // ── STEP 5: Calculate score per jurisdiction ──
+    // Each jurisdiction defines its own weights — we read them, not assume them
     const results: ScoringResult[] = [];
 
     for (const lj of locationJurisdictions) {
       const jurisdiction = (lj as any).jurisdictions;
       const layer = (lj as any).jurisdiction_layer;
 
-      // Only calculate food_safety for food jurisdictions, fire_safety for fire
       const pillar = layer.includes('fire') ? 'fire_safety' : 'food_safety';
 
-      // Get overrides for this specific jurisdiction
+      // JURISDICTION-DRIVEN WEIGHTS — not hardcoded
+      const opsWeight = (jurisdiction.ops_weight || 60) / 100;
+      const docsWeight = (jurisdiction.docs_weight || 40) / 100;
+
       const jurisdictionOverrides = (overrides || []).filter(
         (o: any) => o.jurisdiction_id === jurisdiction.id
       );
@@ -144,12 +151,18 @@ serve(async (req: Request) => {
         'documentation',
       );
 
-      // Combined pillar score: Ops 60% + Docs 40%
-      const pillarRawScore = (opsResult.rawScore * 0.6) + (docsResult.rawScore * 0.4);
+      // Combined pillar score using JURISDICTION weights
+      const pillarRawScore = (opsResult.rawScore * opsWeight) + (docsResult.rawScore * docsWeight);
       const normalizedScore = Math.round(pillarRawScore);
 
-      // Determine grade based on jurisdiction grading type
       const gradeResult = determineGrade(jurisdiction, normalizedScore, complianceData.majorViolationCount);
+
+      const weights = {
+        foodSafety: jurisdiction.food_safety_weight || 60,
+        fireSafety: jurisdiction.fire_safety_weight || 40,
+        ops: jurisdiction.ops_weight || 60,
+        docs: jurisdiction.docs_weight || 40,
+      };
 
       const result: ScoringResult = {
         locationId: location_id,
@@ -167,12 +180,12 @@ serve(async (req: Request) => {
         gradeDisplay: gradeResult.display,
         passFail: gradeResult.passFail,
         violations: [...opsResult.violations, ...docsResult.violations],
+        weights,
         calculatedAt: new Date().toISOString(),
       };
 
       results.push(result);
 
-      // Also push ops and docs individually
       results.push({
         ...result,
         subComponent: 'operations',
@@ -191,12 +204,20 @@ serve(async (req: Request) => {
     }
 
     // ── STEP 6: Calculate overall score ──
-    // Food Safety 60% + Fire Safety 40%
+    // Use the MOST RESTRICTIVE jurisdiction's weights for the overall calculation
+    const mostRestrictive = locationJurisdictions.find((lj: any) => lj.is_most_restrictive)
+      || locationJurisdictions[0];
+    const mrJurisdiction = (mostRestrictive as any).jurisdictions;
+
+    // Pillar weights from the most restrictive jurisdiction
+    const foodWeight = (mrJurisdiction.food_safety_weight || 60) / 100;
+    const fireWeight = (mrJurisdiction.fire_safety_weight || 40) / 100;
+
     const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
     const fireResults = results.filter(r => r.pillar === 'fire_safety' && r.subComponent === 'combined');
 
     const foodScore = foodResults.length > 0
-      ? Math.min(...foodResults.map(r => r.normalizedScore)) // Most restrictive
+      ? Math.min(...foodResults.map(r => r.normalizedScore))
       : 100;
 
     const fireScore = fireResults.length > 0
@@ -210,20 +231,26 @@ serve(async (req: Request) => {
 
     const overallScore: OverallScore = {
       locationId: location_id,
-      overallScore: Math.round((foodScore * 0.6) + (fireScore * 0.4)),
+      overallScore: Math.round((foodScore * foodWeight) + (fireScore * fireWeight)),
       foodSafety: {
         score: foodScore,
         ops: foodOps?.normalizedScore ?? 100,
         docs: foodDocs?.normalizedScore ?? 100,
-        weight: 60,
+        weight: mrJurisdiction.food_safety_weight || 60,
       },
       fireSafety: {
         score: fireScore,
         ops: fireOps?.normalizedScore ?? 100,
         docs: fireDocs?.normalizedScore ?? 100,
-        weight: 40,
+        weight: mrJurisdiction.fire_safety_weight || 40,
       },
       jurisdictions: results.filter(r => r.subComponent === 'combined'),
+      weightsUsed: {
+        foodSafety: mrJurisdiction.food_safety_weight || 60,
+        fireSafety: mrJurisdiction.fire_safety_weight || 40,
+        ops: mrJurisdiction.ops_weight || 60,
+        docs: mrJurisdiction.docs_weight || 40,
+      },
     };
 
     // ── STEP 7: Save to audit trail ──
