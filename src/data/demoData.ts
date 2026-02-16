@@ -1,7 +1,6 @@
 // Re-export scoring engine as single source of truth
 import {
   INDUSTRY_WEIGHTS as ENGINE_WEIGHTS,
-  DEFAULT_WEIGHTS,
   getScoreColor,
   getScoreStatus,
   getScoreInfo,
@@ -16,7 +15,7 @@ export type { PillarWeights, IndustryVertical };
 
 // Re-export for backwards compat — all imports come through here
 export const INDUSTRY_WEIGHTS = ENGINE_WEIGHTS;
-export const PILLAR_WEIGHTS = DEFAULT_WEIGHTS;
+export const PILLAR_WEIGHTS = ENGINE_WEIGHTS.RESTAURANT;
 
 let currentIndustry: IndustryVertical = 'RESTAURANT';
 export function setIndustry(industry: IndustryVertical) {
