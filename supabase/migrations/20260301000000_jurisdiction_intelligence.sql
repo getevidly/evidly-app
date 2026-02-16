@@ -59,12 +59,12 @@ CREATE TABLE IF NOT EXISTS jurisdictions (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_jurisdictions_state_county ON jurisdictions(state, county);
-CREATE INDEX idx_jurisdictions_city ON jurisdictions(city) WHERE city IS NOT NULL;
-CREATE INDEX idx_jurisdictions_county_fips ON jurisdictions(county_fips);
-CREATE INDEX idx_jurisdictions_scoring_type ON jurisdictions(scoring_type);
-CREATE INDEX idx_jurisdictions_grading_type ON jurisdictions(grading_type);
-CREATE INDEX idx_jurisdictions_data_source_tier ON jurisdictions(data_source_tier);
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_state_county ON jurisdictions(state, county);
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_city ON jurisdictions(city) WHERE city IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_county_fips ON jurisdictions(county_fips);
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_scoring_type ON jurisdictions(scoring_type);
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_grading_type ON jurisdictions(grading_type);
+CREATE INDEX IF NOT EXISTS idx_jurisdictions_data_source_tier ON jurisdictions(data_source_tier);
 
 CREATE OR REPLACE FUNCTION update_jurisdictions_updated_at()
 RETURNS TRIGGER AS $$
@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS location_jurisdictions (
   UNIQUE(location_id, jurisdiction_id, jurisdiction_layer)
 );
 
-CREATE INDEX idx_loc_jurisdictions_location ON location_jurisdictions(location_id);
-CREATE INDEX idx_loc_jurisdictions_jurisdiction ON location_jurisdictions(jurisdiction_id);
+CREATE INDEX IF NOT EXISTS idx_loc_jurisdictions_location ON location_jurisdictions(location_id);
+CREATE INDEX IF NOT EXISTS idx_loc_jurisdictions_jurisdiction ON location_jurisdictions(jurisdiction_id);
 
 
 -- ═══════════════════════════════════════════════════════════
@@ -123,8 +123,8 @@ CREATE TABLE IF NOT EXISTS jurisdiction_violation_overrides (
   UNIQUE(jurisdiction_id, calcode_section)
 );
 
-CREATE INDEX idx_jvo_jurisdiction ON jurisdiction_violation_overrides(jurisdiction_id);
-CREATE INDEX idx_jvo_calcode ON jurisdiction_violation_overrides(calcode_section);
+CREATE INDEX IF NOT EXISTS idx_jvo_jurisdiction ON jurisdiction_violation_overrides(jurisdiction_id);
+CREATE INDEX IF NOT EXISTS idx_jvo_calcode ON jurisdiction_violation_overrides(calcode_section);
 
 
 -- ═══════════════════════════════════════════════════════════
@@ -155,10 +155,10 @@ CREATE TABLE IF NOT EXISTS score_calculations (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_score_calc_location ON score_calculations(location_id);
-CREATE INDEX idx_score_calc_jurisdiction ON score_calculations(jurisdiction_id);
-CREATE INDEX idx_score_calc_type ON score_calculations(calculation_type);
-CREATE INDEX idx_score_calc_date ON score_calculations(calculated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_score_calc_location ON score_calculations(location_id);
+CREATE INDEX IF NOT EXISTS idx_score_calc_jurisdiction ON score_calculations(jurisdiction_id);
+CREATE INDEX IF NOT EXISTS idx_score_calc_type ON score_calculations(calculation_type);
+CREATE INDEX IF NOT EXISTS idx_score_calc_date ON score_calculations(calculated_at DESC);
 
 
 -- ═══════════════════════════════════════════════════════════
@@ -183,10 +183,10 @@ CREATE TABLE IF NOT EXISTS calcode_violation_map (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_calcode_section ON calcode_violation_map(calcode_section);
-CREATE INDEX idx_calcode_module ON calcode_violation_map(evidly_module);
-CREATE INDEX idx_calcode_pillar ON calcode_violation_map(evidly_pillar);
-CREATE INDEX idx_calcode_severity ON calcode_violation_map(severity_default);
+CREATE INDEX IF NOT EXISTS idx_calcode_section ON calcode_violation_map(calcode_section);
+CREATE INDEX IF NOT EXISTS idx_calcode_module ON calcode_violation_map(evidly_module);
+CREATE INDEX IF NOT EXISTS idx_calcode_pillar ON calcode_violation_map(evidly_pillar);
+CREATE INDEX IF NOT EXISTS idx_calcode_severity ON calcode_violation_map(severity_default);
 
 
 -- ═══════════════════════════════════════════════════════════
@@ -221,10 +221,10 @@ CREATE TABLE IF NOT EXISTS external_facilities (
   UNIQUE(external_id, jurisdiction_id)
 );
 
-CREATE INDEX idx_ext_fac_jurisdiction ON external_facilities(jurisdiction_id);
-CREATE INDEX idx_ext_fac_name_city ON external_facilities(facility_name, city);
-CREATE INDEX idx_ext_fac_zip ON external_facilities(zip_code);
-CREATE INDEX idx_ext_fac_matched ON external_facilities(matched_org_id) WHERE matched_org_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_ext_fac_jurisdiction ON external_facilities(jurisdiction_id);
+CREATE INDEX IF NOT EXISTS idx_ext_fac_name_city ON external_facilities(facility_name, city);
+CREATE INDEX IF NOT EXISTS idx_ext_fac_zip ON external_facilities(zip_code);
+CREATE INDEX IF NOT EXISTS idx_ext_fac_matched ON external_facilities(matched_org_id) WHERE matched_org_id IS NOT NULL;
 
 -- Table 7: external_inspections
 CREATE TABLE IF NOT EXISTS external_inspections (
@@ -245,8 +245,8 @@ CREATE TABLE IF NOT EXISTS external_inspections (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_ext_insp_facility ON external_inspections(facility_id);
-CREATE INDEX idx_ext_insp_date ON external_inspections(inspection_date DESC);
+CREATE INDEX IF NOT EXISTS idx_ext_insp_facility ON external_inspections(facility_id);
+CREATE INDEX IF NOT EXISTS idx_ext_insp_date ON external_inspections(inspection_date DESC);
 
 -- Table 8: external_violations
 CREATE TABLE IF NOT EXISTS external_violations (
@@ -266,9 +266,9 @@ CREATE TABLE IF NOT EXISTS external_violations (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_ext_viol_inspection ON external_violations(inspection_id);
-CREATE INDEX idx_ext_viol_calcode ON external_violations(calcode_section);
-CREATE INDEX idx_ext_viol_severity ON external_violations(severity);
+CREATE INDEX IF NOT EXISTS idx_ext_viol_inspection ON external_violations(inspection_id);
+CREATE INDEX IF NOT EXISTS idx_ext_viol_calcode ON external_violations(calcode_section);
+CREATE INDEX IF NOT EXISTS idx_ext_viol_severity ON external_violations(severity);
 
 
 -- ═══════════════════════════════════════════════════════════

@@ -6,6 +6,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/industryTemplates';
 import { toast } from 'sonner';
+import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
 
 const steps = [
   { id: 1, name: 'Welcome', icon: Shield },
@@ -135,13 +136,26 @@ export function Onboarding() {
   const handleNext = async () => {
     if (currentStep === 3 && locationName) {
       if (!isDemoMode && profile?.organization_id) {
-        await supabase.from('locations').insert([
+        const { data: insertedLocation } = await supabase.from('locations').insert([
           {
             organization_id: profile.organization_id,
             name: locationName,
             address: locationAddress,
           },
-        ]);
+        ]).select('id').single();
+
+        // Auto-detect jurisdiction for the new location
+        // SUGGESTION: Add geocoding to parse address into city/county/state/zip components
+        if (insertedLocation?.id && locationAddress) {
+          try {
+            const matches = await lookupJurisdiction(locationAddress, '', '', 'CA', '');
+            if (matches.length > 0) {
+              await linkJurisdictionToLocation(insertedLocation.id, matches);
+            }
+          } catch {
+            // Non-blocking — jurisdiction detection is best-effort during onboarding
+          }
+        }
       }
       setLocationName('');
       setLocationAddress('');
