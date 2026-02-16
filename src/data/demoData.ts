@@ -37,27 +37,28 @@ export function computeOverall(
 export const getGrade = (score: number) => getScoreInfo(score);
 
 // ============================================================
-// Location Scores — reflect graduated urgency penalties
+// Location Scores — SINGLE SOURCE OF TRUTH
 // ============================================================
 // Weights: Food Safety 45%, Fire Safety 35%, Vendor Compliance 20%
-// Downtown: Everything current, fire suppression due in 15 days (−3.75 on Fire Safety)
-//   Food Safety 94, Fire Safety 88, Vendor Compliance 91 → Overall 91
-// Airport: Hood cleaning 5 days overdue (−30 Fire Safety), 1 vendor cert due in 12 days, checklist rate dropped
-//   Food Safety 72, Fire Safety 62, Vendor Compliance 74 → Overall 69
-// University: Health permit expired (−25 Vendor), 2 food handler certs expired (−10 Vendor), equipment overdue
-//   Food Safety 62, Fire Safety 55, Vendor Compliance 42 → Overall 56
+// Downtown Kitchen: Strong across all pillars
+//   Food Safety 96, Fire Safety 92, Vendor Compliance 94 → Overall 94
+// Airport Cafe: Moderate — some fire and vendor gaps
+//   Food Safety 84, Fire Safety 80, Vendor Compliance 82 → Overall 82
+// University Dining: At risk — multiple overdue items
+//   Food Safety 70, Fire Safety 64, Vendor Compliance 68 → Overall 68
+// Org Average: (94+82+68)/3 = 81
 // ============================================================
 
 export const locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
-  'downtown': { foodSafety: 94, fireSafety: 88, vendorCompliance: 91, overall: 91 },
-  'airport':  { foodSafety: 72, fireSafety: 62, vendorCompliance: 74, overall: 69 },
-  'university': { foodSafety: 62, fireSafety: 55, vendorCompliance: 42, overall: 56 },
+  'downtown': { foodSafety: 96, fireSafety: 92, vendorCompliance: 94, overall: 94 },
+  'airport':  { foodSafety: 84, fireSafety: 80, vendorCompliance: 82, overall: 82 },
+  'university': { foodSafety: 70, fireSafety: 64, vendorCompliance: 68, overall: 68 },
 };
 
 export const locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
-  'downtown':   { foodSafety: 90, fireSafety: 85, vendorCompliance: 88, overall: 88 },
-  'airport':    { foodSafety: 75, fireSafety: 76, vendorCompliance: 72, overall: 75 },
-  'university': { foodSafety: 55, fireSafety: 58, vendorCompliance: 48, overall: 55 },
+  'downtown':   { foodSafety: 91, fireSafety: 88, vendorCompliance: 90, overall: 90 },
+  'airport':    { foodSafety: 78, fireSafety: 74, vendorCompliance: 76, overall: 76 },
+  'university': { foodSafety: 64, fireSafety: 58, vendorCompliance: 62, overall: 62 },
 };
 
 // Company-level scores = average of all location scores
@@ -100,6 +101,127 @@ export const locations: Location[] = [
   { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '742 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, score: locationScores['downtown'].overall, status: getScoreStatus(locationScores['downtown'].overall), actionItems: 2, stateCode: 'CA' },
   { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '5175 E Clinton Way, Fresno, CA 93727', lat: 37.2847, lng: -120.5139, score: locationScores['airport'].overall, status: getScoreStatus(locationScores['airport'].overall), actionItems: 5, stateCode: 'CA' },
   { id: '3', urlId: 'university', name: 'University Dining', address: '1600 University Ave, Turlock, CA 95382', lat: 37.6393, lng: -120.9969, score: locationScores['university'].overall, status: getScoreStatus(locationScores['university'].overall), actionItems: 12, stateCode: 'CA' },
+];
+
+// ============================================================
+// Executive Dashboard — shared demo data
+// ============================================================
+
+// 2-pillar sub-scores (used by inspectionReadiness engine)
+// Calibrated to produce identical overalls: Downtown=94, Airport=82, University=68
+export interface DemoLocationData {
+  id: string;
+  name: string;
+  foodOps: number;
+  foodDocs: number;
+  fireOps: number;
+  fireDocs: number;
+}
+
+export const DEMO_LOCATIONS: DemoLocationData[] = [
+  { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
+  { id: 'airport', name: 'Airport Cafe', foodOps: 88, foodDocs: 80, fireOps: 75, fireDocs: 82 },
+  { id: 'university', name: 'University Dining', foodOps: 74, foodDocs: 69, fireOps: 60, fireDocs: 67 },
+];
+
+export const DEMO_ORG = {
+  name: 'Pacific Coast Dining',
+  locationCount: 3,
+  jurisdiction: 'California Health Code + NFPA 96 2024',
+};
+
+export const DEMO_ORG_SCORES = complianceScores; // auto-computed from locationScores
+
+export function getLocationScoreColor(score: number): string {
+  if (score >= 85) return '#16a34a';
+  if (score >= 70) return '#d97706';
+  return '#dc2626';
+}
+
+export function getLocationStatus(score: number): string {
+  if (score >= 85) return 'On Track';
+  if (score >= 70) return 'Needs Attention';
+  return 'Critical';
+}
+
+export const DEMO_WEEKLY_ACTIVITY = {
+  inspections: 12,
+  checklists: 47,
+  tempsLogged: 156,
+  incidents: 2,
+};
+
+// 30-day trend data for executive chart (3 lines)
+export const DEMO_TREND_30DAY = [
+  { day: '1', overall: 76, foodSafety: 78, fireSafety: 72 },
+  { day: '3', overall: 77, foodSafety: 79, fireSafety: 73 },
+  { day: '5', overall: 77, foodSafety: 78, fireSafety: 74 },
+  { day: '7', overall: 78, foodSafety: 79, fireSafety: 75 },
+  { day: '9', overall: 78, foodSafety: 80, fireSafety: 74 },
+  { day: '11', overall: 79, foodSafety: 80, fireSafety: 76 },
+  { day: '13', overall: 79, foodSafety: 81, fireSafety: 75 },
+  { day: '15', overall: 79, foodSafety: 80, fireSafety: 76 },
+  { day: '17', overall: 80, foodSafety: 82, fireSafety: 76 },
+  { day: '19', overall: 80, foodSafety: 81, fireSafety: 77 },
+  { day: '21', overall: 80, foodSafety: 82, fireSafety: 76 },
+  { day: '23', overall: 81, foodSafety: 83, fireSafety: 77 },
+  { day: '25', overall: 81, foodSafety: 83, fireSafety: 78 },
+  { day: '27', overall: 81, foodSafety: 83, fireSafety: 78 },
+  { day: '30', overall: 81, foodSafety: 84, fireSafety: 78 },
+];
+
+export interface ExecAttentionItem {
+  id: string;
+  severity: 'critical' | 'warning';
+  location: string;
+  locationId: string;
+  title: string;
+  detail: string;
+  actionLabel: string;
+  actionRoute: string;
+}
+
+export const EXEC_ATTENTION_ITEMS: ExecAttentionItem[] = [
+  {
+    id: 'exec-att-1',
+    severity: 'critical',
+    location: 'University Dining',
+    locationId: 'university',
+    title: 'Health permit expired — renewal overdue',
+    detail: 'Vendor compliance score dropped to 68. Immediate action required.',
+    actionLabel: 'View Details',
+    actionRoute: '/documents?location=university',
+  },
+  {
+    id: 'exec-att-2',
+    severity: 'critical',
+    location: 'University Dining',
+    locationId: 'university',
+    title: '2 food handler certifications expired',
+    detail: 'Staff cannot operate without valid certifications.',
+    actionLabel: 'View Team',
+    actionRoute: '/team?location=university',
+  },
+  {
+    id: 'exec-att-3',
+    severity: 'warning',
+    location: 'Airport Cafe',
+    locationId: 'airport',
+    title: 'Hood cleaning cert expires in 18 days',
+    detail: 'Fire safety ops score at 75. Schedule vendor service.',
+    actionLabel: 'Schedule',
+    actionRoute: '/vendors?location=airport',
+  },
+  {
+    id: 'exec-att-4',
+    severity: 'warning',
+    location: 'Airport Cafe',
+    locationId: 'airport',
+    title: 'Fire suppression inspection due in 12 days',
+    detail: 'ABC Fire Protection notified. Confirm appointment.',
+    actionLabel: 'View Vendors',
+    actionRoute: '/vendors?location=airport',
+  },
 ];
 
 export interface Vendor {
