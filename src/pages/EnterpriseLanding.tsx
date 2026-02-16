@@ -35,7 +35,7 @@ export function EnterpriseLanding() {
         <div className="mb-12">
           <p className="text-center text-sm text-gray-500 font-medium mb-4">Built for the world's largest food service operators</p>
           <div className="grid grid-cols-4 gap-3">
-            {['Aramark', 'Compass Group', 'Sodexo', 'Kaiser', 'HCA Healthcare', 'CommonSpirit', 'Delaware North', 'Levy'].map(name => (
+            {['Pacific Coast Dining', 'Compass Group', 'Sodexo', 'Kaiser', 'HCA Healthcare', 'CommonSpirit', 'Delaware North', 'Levy'].map(name => (
               <div key={name} className="bg-white rounded-xl border border-gray-200 p-3 flex items-center justify-center">
                 <span className="text-xs font-semibold text-gray-400">{name}</span>
               </div>

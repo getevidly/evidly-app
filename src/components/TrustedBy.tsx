@@ -11,12 +11,12 @@ export default function TrustedBy() {
             <span className="inline-block px-2.5 py-1 bg-[var(--color-gold-bg)] border border-[var(--color-gold-border)] rounded text-[0.7rem] font-semibold text-[var(--color-gold-dark)] uppercase tracking-wider">KEC Partner</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[2.5rem] opacity-70">🏞️</span>
-            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Yosemite National Park</span>
+            <span className="text-[2.5rem] opacity-70">🏖️</span>
+            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Pacific Coast Dining</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <span className="text-[2.5rem] opacity-70">🍽️</span>
-            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Aramark</span>
+            <span className="text-[2.5rem] opacity-70">🏥</span>
+            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Regional Healthcare</span>
           </div>
         </div>
       </div>

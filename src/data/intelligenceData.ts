@@ -10,7 +10,7 @@ import {
 } from './demoData';
 
 export { enterpriseHierarchy, enterpriseTrendData, type EnterpriseHierarchyNode, type EnterpriseTrendPoint };
-export const aramarkTenant = enterpriseTenants.find(t => t.id === 'ent-aramark')!;
+export const enterpriseTenant = enterpriseTenants.find(t => t.id === 'ent-pcdining')!;
 
 // ── Types ────────────────────────────────────────────────────────
 
@@ -174,7 +174,7 @@ const DISTRICTS = ['CA/NV', 'Pacific NW', 'Mountain', 'Great Lakes', 'New Englan
 const STATES = ['CA', 'WA', 'OR', 'NV', 'AZ', 'TX', 'FL', 'OH', 'IN', 'IL', 'NY', 'PA', 'MA', 'NC', 'GA', 'CO', 'MI', 'MN', 'TN', 'VA'];
 const VERTICALS = ['Higher Education', 'Healthcare', 'Destinations', 'Corrections', 'Sports & Entertainment'];
 const LOCATION_NAMES = [
-  'Yosemite Valley Lodge', 'The Ahwahnee', 'Half Dome Village', 'Wawona Hotel', 'Tuolumne Meadows',
+  'Oceanview Lodge', 'The Bayshore', 'Harbor Village', 'Coastline Hotel', 'Redwood Meadows',
   'Stanford Dining Hall', 'UCLA Medical Center', 'USC Student Union', 'Portland General Hospital',
   'Seattle Convention Center', 'Denver Arena Complex', 'Phoenix Campus Dining', 'Miami Beach Resort',
   'Orlando Regional Medical', 'Tampa General', 'Jacksonville University', 'Atlanta Corporate Center',
@@ -195,8 +195,8 @@ function generateLocations(): LocationRow[] {
   const locations: LocationRow[] = [];
   // First add named locations with specific scores
   const topLocations: Partial<LocationRow>[] = [
-    { name: 'Yosemite Valley Lodge', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 97.3, fire: 99, food: 96, docs: 97, trend: 1.2, actionItems: 0 },
-    { name: 'The Ahwahnee', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 96.8, fire: 98, food: 95, docs: 97, trend: 0.5, actionItems: 0 },
+    { name: 'Oceanview Lodge', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 97.3, fire: 99, food: 96, docs: 97, trend: 1.2, actionItems: 0 },
+    { name: 'The Bayshore', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Destinations', overall: 96.8, fire: 98, food: 95, docs: 97, trend: 0.5, actionItems: 0 },
     { name: 'Stanford Dining Hall', region: 'West', district: 'CA/NV', state: 'CA', vertical: 'Higher Education', overall: 96.1, fire: 97, food: 95, docs: 96, trend: 0.8, actionItems: 0 },
     { name: 'Harvard Square Café', region: 'Northeast', district: 'New England', state: 'MA', vertical: 'Higher Education', overall: 95.4, fire: 96, food: 94, docs: 96, trend: 1.0, actionItems: 0 },
     { name: 'Cleveland Clinic East', region: 'Midwest', district: 'OH/IN', state: 'OH', vertical: 'Healthcare', overall: 95.0, fire: 97, food: 93, docs: 95, trend: 0.6, actionItems: 0 },
@@ -773,11 +773,11 @@ export const reportSections = [
 ];
 
 export const distributionList: DistributionRecipient[] = [
-  { name: 'Jennifer Martinez', role: 'VP Operations', email: 'j.martinez@aramark.com', deliveryMethod: 'email' },
-  { name: 'Michael Chen', role: 'CFO', email: 'm.chen@aramark.com', deliveryMethod: 'email' },
-  { name: 'Sarah Williams', role: 'VP Risk Management', email: 's.williams@aramark.com', deliveryMethod: 'teams' },
-  { name: 'David Thompson', role: 'CHRO', email: 'd.thompson@aramark.com', deliveryMethod: 'sharepoint' },
-  { name: 'Lisa Rodriguez', role: 'Regional Director — West', email: 'l.rodriguez@aramark.com', deliveryMethod: 'email' },
+  { name: 'Jennifer Martinez', role: 'VP Operations', email: 'j.martinez@pacificcoastdining.com', deliveryMethod: 'email' },
+  { name: 'Michael Chen', role: 'CFO', email: 'm.chen@pacificcoastdining.com', deliveryMethod: 'email' },
+  { name: 'Sarah Williams', role: 'VP Risk Management', email: 's.williams@pacificcoastdining.com', deliveryMethod: 'teams' },
+  { name: 'David Thompson', role: 'CHRO', email: 'd.thompson@pacificcoastdining.com', deliveryMethod: 'sharepoint' },
+  { name: 'Lisa Rodriguez', role: 'Regional Director — West', email: 'l.rodriguez@pacificcoastdining.com', deliveryMethod: 'email' },
 ];
 
 // ══════════════════════════════════════════════════════════════════
@@ -899,7 +899,7 @@ const allRegulatory = locationLeaderboard.map(l => l.regulatory);
 
 export const enterpriseAggregation: AggregationLevel = {
   level: 'enterprise',
-  entityName: 'Aramark — All Locations',
+  entityName: 'Pacific Coast Dining — All Locations',
   overall: computeStats(allOverall),
   foodSafety: computeStats(allFood),
   workplace: computeStats(allWorkplace),

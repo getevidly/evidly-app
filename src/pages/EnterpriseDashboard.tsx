@@ -13,7 +13,7 @@ import {
   enterpriseTenants, enterpriseHierarchy, enterpriseUsers,
   enterpriseReportTemplates, enterpriseAuditLog,
   enterpriseAlerts, enterpriseIntegrations,
-  enterpriseOnboardingAramark, enterpriseOnboardingSodexo,
+  enterpriseOnboardingPCDining, enterpriseOnboardingSodexo,
   enterpriseTrendData, enterpriseBulkOps, enterprisePricingTiers,
   type EnterpriseTenant, type EnterpriseHierarchyNode,
   type EnterpriseUser, type EnterpriseReportTemplate,
@@ -274,7 +274,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Hierarchy Scorecard Table */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Organization Scorecard — Aramark</h3>
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Organization Scorecard — Pacific Coast Dining</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -371,7 +371,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         {/* 12-Month Trend */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">12-Month Compliance Trend</h3>
-          <p className="text-[10px] text-gray-400 mb-4">Aramark Corporation — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
+          <p className="text-[10px] text-gray-400 mb-4">Pacific Coast Dining — Overall Score · Predict next quarter: {(latestTrend.overall + trend3mDelta / 3).toFixed(1)}%</p>
           <div className="flex items-end gap-6 flex-wrap">
             <div className="relative overflow-x-auto">
               <TrendSparkline data={trendData} width={320} height={100} />
@@ -701,7 +701,7 @@ function HeatMapCell({ score, label, onClick }: { score: number; label: string; 
 }
 
 function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
-  const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
+  const [selectedTenant, setSelectedTenant] = useState('ent-pcdining');
   const [selectedNode, setSelectedNode] = useState<EnterpriseHierarchyNode | null>(null);
   const [showConfig, setShowConfig] = useState(false);
   const tenant = enterpriseTenants.find(t => t.id === selectedTenant)!;
@@ -990,7 +990,7 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
 
 // ── SSO Configuration Tab ──────────────────────────────────────
 function SSOTab({ showToast }: { showToast: (msg: string) => void }) {
-  const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
+  const [selectedTenant, setSelectedTenant] = useState('ent-pcdining');
   const tenant = enterpriseTenants.find(t => t.id === selectedTenant)!;
   const [ssoType, setSsoType] = useState<'saml' | 'oidc'>(tenant.ssoConfig.providerType === 'oidc' ? 'oidc' : 'saml');
 
@@ -1270,7 +1270,7 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
 
 // ── Branding & Theming Tab ─────────────────────────────────────
 function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
-  const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
+  const [selectedTenant, setSelectedTenant] = useState('ent-pcdining');
   const tenant = enterpriseTenants.find(t => t.id === selectedTenant)!;
   const [colors, setColors] = useState({ ...tenant.branding });
   const [showPowered, setShowPowered] = useState(tenant.showPoweredBy);
@@ -1876,10 +1876,10 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
 
 // ── Onboarding Tab ─────────────────────────────────────────────
 function OnboardingTab({ showToast }: { showToast: (msg: string) => void }) {
-  const [selectedTenant, setSelectedTenant] = useState('ent-aramark');
-  const phases = selectedTenant === 'ent-aramark' ? enterpriseOnboardingAramark
+  const [selectedTenant, setSelectedTenant] = useState('ent-pcdining');
+  const phases = selectedTenant === 'ent-pcdining' ? enterpriseOnboardingPCDining
     : selectedTenant === 'ent-sodexo' ? enterpriseOnboardingSodexo
-    : enterpriseOnboardingAramark; // Compass uses Aramark-like completed phases
+    : enterpriseOnboardingPCDining; // Compass uses Pacific Coast Dining-like completed phases
 
   const phaseStatusColors: Record<string, { bg: string; border: string; text: string; dot: string }> = {
     completed: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-700', dot: '#22c55e' },

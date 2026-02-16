@@ -11,11 +11,11 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine,
 } from 'recharts';
 import {
-  aramarkTenant, dataPointsThisMonth,
+  enterpriseTenant, dataPointsThisMonth,
   businessUnitScorecard, businessUnitTrends, regulatoryOverlays, predictedScores,
   BU_LINE_COLORS, BU_LINE_LABELS,
   enterpriseHierarchy, enterpriseTrendData,
-  getAramarkAlerts, findNodeById, getAncestorPath, getScoreByCategory, collectNodeCodes,
+  getEnterpriseAlerts, findNodeById, getAncestorPath, getScoreByCategory, collectNodeCodes,
   type EnterpriseHierarchyNode, type ComplianceCategory,
 } from '../data/enterpriseExecutiveData';
 
@@ -83,7 +83,7 @@ export function EnterpriseExecutive() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  const tenant = aramarkTenant;
+  const tenant = enterpriseTenant;
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = useCallback((msg: string) => {
@@ -109,7 +109,7 @@ export function EnterpriseExecutive() {
   }, [drillDownNodeId]);
 
   const alerts = useMemo(() => {
-    const all = getAramarkAlerts();
+    const all = getEnterpriseAlerts();
     if (!drillDownNodeId) return all;
     const codes = collectNodeCodes(activeNode);
     return all.filter(a => codes.has(a.nodeCode));
@@ -213,7 +213,7 @@ export function EnterpriseExecutive() {
         </div>
       )}
 
-      {/* ── A. Aramark Branded Header ─────────────────────────── */}
+      {/* ── A. Enterprise Branded Header ────────────────────────── */}
       <header className="px-4 sm:px-6 py-3" style={{ backgroundColor: tenant.branding.secondaryColor }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -294,7 +294,7 @@ export function EnterpriseExecutive() {
             <div className="flex items-center gap-2">
               <ScoreCircle score={overallScore} size={52} />
               <div>
-                <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'Aramark Corporation'}</p>
+                <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'Pacific Coast Dining'}</p>
                 <p className="text-[10px] text-gray-500">Organization Score</p>
               </div>
             </div>
@@ -464,7 +464,7 @@ export function EnterpriseExecutive() {
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">
-              {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — Aramark'}
+              {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — Pacific Coast Dining'}
             </h3>
             {drillDownNodeId && (
               <button onClick={() => setDrillDownNodeId(null)} className="text-[11px] text-gray-500 hover:text-gray-700 cursor-pointer">
@@ -544,7 +544,7 @@ export function EnterpriseExecutive() {
             </div>
           </div>
           <p className="text-[10px] text-gray-400 mb-4">
-            {drillDownNodeId ? activeNode.name : 'Aramark Corporation'} — Toggle business units to compare
+            {drillDownNodeId ? activeNode.name : 'Pacific Coast Dining'} — Toggle business units to compare
             {regulatoryOverlays.length > 0 && ' · Dashed lines = regulatory changes'}
           </p>
 
@@ -652,7 +652,7 @@ export function EnterpriseExecutive() {
             <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span>
           </p>
           <p className="text-[10px] text-gray-300 mt-0.5">
-            compliance.aramark.com — Aramark Corporation
+            compliance.pacificcoastdining.com — Pacific Coast Dining
           </p>
         </footer>
       )}

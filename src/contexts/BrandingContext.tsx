@@ -71,8 +71,8 @@ export const DEFAULT_BRANDING: BrandingConfig = {
 
 export const DEMO_BRAND_PRESETS: Record<string, Partial<BrandingConfig>> = {
   evidly: {},
-  aramark: {
-    brandName: 'Aramark Compliance Portal',
+  enterprise: {
+    brandName: 'Enterprise Compliance Portal',
     tagline: 'Kitchen Excellence',
     poweredByVisible: true,
     colors: {
@@ -83,10 +83,10 @@ export const DEMO_BRAND_PRESETS: Record<string, Partial<BrandingConfig>> = {
       sidebarBg: '#1A1A2E',
       sidebarText: '#FFFFFF',
     },
-    loginWelcomeText: 'Welcome to Aramark Compliance Portal',
-    supportEmail: 'compliance@aramark.com',
-    customDomain: 'compliance.aramark.com',
-    sso: { enabled: true, provider: 'saml', enforce: false, entityId: 'https://compliance.aramark.com', ssoUrl: 'https://login.aramark.com/saml' },
+    loginWelcomeText: 'Welcome to Enterprise Compliance Portal',
+    supportEmail: 'compliance@enterprise.com',
+    customDomain: 'compliance.enterprise.com',
+    sso: { enabled: true, provider: 'saml', enforce: false, entityId: 'https://compliance.enterprise.com', ssoUrl: 'https://login.enterprise.com/saml' },
     features: {
       showMarketplace: false,
       showBenchmarking: true,

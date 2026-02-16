@@ -19,7 +19,7 @@ const ALL_ACTIONS: QuickAction[] = [
 const ROLE_ACTIONS: Record<UserRole, string[]> = {
   management: ['/temp-logs', '/checklists', '/documents', '/incidents'],
   kitchen_manager: ['/temp-logs', '/checklists', '/documents', '/incidents'],
-  kitchen: ['/temp-logs', '/incidents'],
+  kitchen: ['/temp-logs', '/checklists', '/incidents'],
   facilities: ['/documents', '/incidents'],
   executive: [], // hidden
 };

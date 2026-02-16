@@ -1346,7 +1346,7 @@ export function Settings() {
                 </div>
                 <div className="space-y-2 mb-3">
                   {[
-                    { name: 'Aramark', provider: 'SAML via Okta', status: 'passed', color: '#C8102E' },
+                    { name: 'Enterprise', provider: 'SAML via Okta', status: 'passed', color: '#C8102E' },
                     { name: 'Compass Group', provider: 'OIDC via Azure AD', status: 'passed', color: '#003DA5' },
                     { name: 'Sodexo', provider: 'Not configured', status: 'pending', color: '#ED1C24' },
                   ].map(item => (
@@ -1380,7 +1380,7 @@ export function Settings() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
                   {[
-                    { name: 'Aramark Compliance Hub', colors: ['#C8102E', '#002855', '#F0AB00'] },
+                    { name: 'Enterprise Compliance Hub', colors: ['#C8102E', '#002855', '#F0AB00'] },
                     { name: 'Compass Compliance', colors: ['#003DA5', '#1B365D', '#FFB81C'] },
                     { name: 'Sodexo Safe Kitchen', colors: ['#ED1C24', '#231F20', '#00A0DF'] },
                   ].map(t => (

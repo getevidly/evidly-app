@@ -12,7 +12,7 @@ export default function Trust() {
           Built by operators, for operators
         </h2>
         <p className="text-[1.2rem] text-[var(--color-text-light)] leading-[1.7] mb-12 max-w-[700px] mx-auto">
-          EvidLY comes from 3+ years running commercial kitchen operations, backed by 20+ years of enterprise IT and cybersecurity expertise. We know compliance because we live it every day — servicing kitchens from Yosemite to Aramark facilities.
+          EvidLY comes from 3+ years running commercial kitchen operations, backed by 20+ years of enterprise IT and cybersecurity expertise. We know compliance because we live it every day — servicing kitchens across California and beyond.
         </p>
         <div className="flex justify-center gap-8 sm:gap-16 flex-wrap">
           {stats.map((stat, index) => (

@@ -1,5 +1,5 @@
 // Enterprise Executive Dashboard — Data Layer
-// White-labeled Aramark view data, types, and helpers
+// White-labeled enterprise view data, types, and helpers
 
 import {
   enterpriseTenants,
@@ -52,8 +52,8 @@ export interface PredictedScore {
 
 export type ComplianceCategory = 'overall' | 'foodSafety' | 'fireSafety' | 'vendorCompliance';
 
-// ── Aramark tenant ───────────────────────────────────────────────
-export const aramarkTenant = enterpriseTenants.find(t => t.id === 'ent-aramark')!;
+// ── Enterprise tenant ────────────────────────────────────────────
+export const enterpriseTenant = enterpriseTenants.find(t => t.id === 'ent-pcdining')!;
 
 // ── Data Points Counter ──────────────────────────────────────────
 export const dataPointsThisMonth = 847_291;
@@ -175,10 +175,10 @@ export const BU_LINE_LABELS: Record<string, string> = {
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-export function getAramarkAlerts(): EnterpriseAlert[] {
+export function getEnterpriseAlerts(): EnterpriseAlert[] {
   const sevOrder: Record<string, number> = { critical: 0, warning: 1, info: 2 };
   return enterpriseAlerts
-    .filter(a => a.tenantId === 'ent-aramark')
+    .filter(a => a.tenantId === 'ent-pcdining')
     .sort((a, b) => (sevOrder[a.severity] ?? 3) - (sevOrder[b.severity] ?? 3));
 }
 

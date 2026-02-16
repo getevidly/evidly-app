@@ -24,8 +24,8 @@ const PRESET_CARDS = [
     accent: '#d4af37',
   },
   {
-    key: 'aramark',
-    label: 'Aramark',
+    key: 'enterprise',
+    label: 'Enterprise',
     desc: 'Red & gold enterprise portal',
     color: '#C8102E',
     accent: '#F0AB00',
@@ -288,7 +288,7 @@ export function BrandingSettings() {
             <label className="block text-xs font-medium text-gray-700 mb-1">SSO Provider</label>
             <select
               value={branding.sso.provider || ''}
-              onChange={() => alert('SSO configuration changes require admin approval.\n\nDemo: Switch brand preset to Aramark or Cintas to see SSO enabled.')}
+              onChange={() => alert('SSO configuration changes require admin approval.\n\nDemo: Switch brand preset to Enterprise or Cintas to see SSO enabled.')}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50"
             >
               <option value="">None</option>
@@ -329,7 +329,7 @@ export function BrandingSettings() {
           </div>
         </div>
         {!branding.sso.enabled && (
-          <p className="text-xs text-gray-400 mt-3">Switch to the Aramark or Cintas brand preset to preview SSO configuration.</p>
+          <p className="text-xs text-gray-400 mt-3">Switch to the Enterprise or Cintas brand preset to preview SSO configuration.</p>
         )}
       </div>
 

@@ -15,7 +15,7 @@ import {
   ScatterChart, Scatter, ZAxis,
 } from 'recharts';
 import {
-  aramarkTenant, TOTAL_LOCATIONS, TOTAL_ENROLLED, ORG_SCORE,
+  enterpriseTenant, TOTAL_LOCATIONS, TOTAL_ENROLLED, ORG_SCORE,
   FIRE_SCORE, FOOD_SCORE, DOCS_SCORE, FIRE_TREND, FOOD_TREND, DOCS_TREND,
   DATA_POINTS_THIS_MONTH,
   urgentLocations, expiringThisQuarter, incidentVelocity, complianceMomentum,
@@ -113,7 +113,7 @@ export function ComplianceIntelligence() {
             <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: '#C8102E' }}>AR</div>
             <div>
               <h1 className="text-white font-bold text-base">Compliance Intelligence</h1>
-              <p className="text-white/60 text-[10px]">Aramark Corporation — Enterprise Analytics</p>
+              <p className="text-white/60 text-[10px]">Pacific Coast Dining — Enterprise Analytics</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ export function ComplianceIntelligence() {
       </div>
 
       {/* Powered By */}
-      {aramarkTenant.showPoweredBy && (
+      {enterpriseTenant.showPoweredBy && (
         <footer className="text-center py-4 border-t border-gray-100 bg-white mt-6">
           <p className="text-xs text-gray-400">Powered by <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span></p>
         </footer>
@@ -187,7 +187,7 @@ function CommandCenterTab() {
             <h2 className="text-base font-bold text-gray-900">Organization Pulse</h2>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-gray-400">
-            <span>Aramark Corporation</span>
+            <span>Pacific Coast Dining</span>
             <span>·</span>
             <span>{TOTAL_LOCATIONS}/{TOTAL_ENROLLED} locations reporting</span>
             <span>·</span>

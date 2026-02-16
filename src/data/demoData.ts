@@ -875,7 +875,7 @@ export const marketplaceReviews: MarketplaceReview[] = [
 
 export const cleaningProsPlus: MarketplaceVendor = {
   id: 'mv-16', slug: 'cleaning-pros-plus', companyName: 'Cleaning Pros Plus',
-  description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including Aramark and Yosemite National Park hospitality. Specializing in NFPA 96 (2025 Edition) compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
+  description: 'Central Valley\'s premier commercial kitchen exhaust cleaning company. IKECA Master Certified with 90+ active accounts including major food service operations and national park hospitality. Specializing in NFPA 96 (2025 Edition) compliant hood and duct cleaning with bare-metal verification photography on every job. Family-owned since 2008.',
   tier: 'preferred', rating: 4.8, reviewCount: 34, yearsInBusiness: 18,
   serviceArea: ['Fresno', 'Clovis', 'Madera', 'Merced', 'Visalia', 'Tulare', 'Stanislaus', 'Mariposa'],
   responseTimeHours: 2, categories: ['Fire Safety'], subcategories: ['Hood Cleaning'],
@@ -905,7 +905,7 @@ marketplaceVendors.push(cleaningProsPlus);
 
 // Cleaning Pros Plus reviews
 marketplaceReviews.push(
-  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Aramark Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our Yosemite hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 (2025 Edition) compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with Aramark across your Yosemite properties. Safety is always job one.' },
+  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Pacific Coast Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our coastal hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 (2025 Edition) compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with Pacific Coast Dining across your coastal properties. Safety is always job one.' },
   { id: 'mr-27', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Patricia V.', reviewerOrg: 'Central Valley School District', rating: 5, text: 'They clean all 14 of our school cafeteria kitchens. Always on schedule, documentation uploaded same day, and they work around our school calendar. The best in the Valley.', serviceType: 'Hood Cleaning', date: '2025-12-08' },
   { id: 'mr-28', vendorSlug: 'cleaning-pros-plus', reviewerName: 'David L.', reviewerOrg: 'Visalia Hotel Group', rating: 5, text: 'Switched to Cleaning Pros after our previous vendor failed an inspection. Night and day difference — their bare metal photos are impressive and the compliance certificate arrives before we even ask.', serviceType: 'Hood Cleaning', date: '2025-10-15', vendorResponse: 'Glad we could help David. Consistent quality and fast documentation is what sets us apart. See you next quarter!' },
 );
@@ -1041,7 +1041,7 @@ export const vendorLeads: VendorLead[] = [
   { id: 'vl-2', operatorName: 'Maria Santos', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
   { id: 'vl-3', operatorName: 'Robert Chang', operatorOrg: 'Valley Restaurant Group', serviceType: 'Hood Cleaning', locationDetails: '890 E Shaw Ave, Fresno', urgency: 'normal', status: 'quoted', receivedAt: '2026-02-07T10:00:00', respondedAt: '2026-02-07T13:45:00', quoteAmount: 650, description: 'Quarterly hood cleaning for single-station restaurant. Standard 8ft hood.' },
   { id: 'vl-4', operatorName: 'Susan Park', operatorOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', locationDetails: '445 Pollasky Ave, Clovis', urgency: 'high', status: 'quoted', receivedAt: '2026-02-05T09:20:00', respondedAt: '2026-02-05T11:00:00', quoteAmount: 875, description: 'Full exhaust system including rooftop unit. Health inspection in 3 weeks.' },
-  { id: 'vl-5', operatorName: 'Tom Harris', operatorOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', locationDetails: 'Fresno Yosemite Int\'l Airport', urgency: 'low', status: 'accepted', receivedAt: '2026-02-03T11:30:00', respondedAt: '2026-02-03T14:00:00', quoteAmount: 480, scheduledDate: '2026-02-18', description: '8 K-class extinguishers in food court area. Annual service.' },
+  { id: 'vl-5', operatorName: 'Tom Harris', operatorOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', locationDetails: 'Regional Airport', urgency: 'low', status: 'accepted', receivedAt: '2026-02-03T11:30:00', respondedAt: '2026-02-03T14:00:00', quoteAmount: 480, scheduledDate: '2026-02-18', description: '8 K-class extinguishers in food court area. Annual service.' },
   { id: 'vl-6', operatorName: 'Lisa Chen', operatorOrg: 'Fresno Eats Group', serviceType: 'Hood Cleaning', locationDetails: '2100 Kern St, Fresno', urgency: 'normal', status: 'scheduled', receivedAt: '2026-01-28T16:00:00', respondedAt: '2026-01-28T18:30:00', quoteAmount: 750, scheduledDate: '2026-02-14', description: 'Quarterly hood and duct cleaning. Two stations with 12ft hoods.' },
   { id: 'vl-7', operatorName: 'Kevin Martinez', operatorOrg: 'Downtown Grill', serviceType: 'Hood Cleaning', locationDetails: '678 Van Ness Ave, Fresno', urgency: 'normal', status: 'completed', receivedAt: '2026-01-15T09:00:00', respondedAt: '2026-01-15T10:30:00', quoteAmount: 550, scheduledDate: '2026-01-22', description: 'Quarterly hood cleaning. Single station, standard size.' },
   { id: 'vl-8', operatorName: 'Amanda White', operatorOrg: 'Merced Kitchen Co', serviceType: 'Hood Cleaning', locationDetails: '1500 R St, Merced', urgency: 'low', status: 'declined', receivedAt: '2026-01-20T13:00:00', respondedAt: '2026-01-20T15:00:00', description: 'Outside our primary service area. Referred to partner company.' },
@@ -1049,7 +1049,7 @@ export const vendorLeads: VendorLead[] = [
 
 export const vendorScheduledServices: VendorScheduledService[] = [
   { id: 'vs-1', clientOrg: 'Fresno Eats Group', serviceType: 'Hood Cleaning', location: '2100 Kern St, Fresno', scheduledDate: '2026-02-14', scheduledTime: '10:00 PM', status: 'confirmed', notes: 'Night shift cleaning. Key code: 4521. Two 12ft hoods.' },
-  { id: 'vs-2', clientOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', location: 'Fresno Yosemite Int\'l Airport', scheduledDate: '2026-02-18', scheduledTime: '6:00 AM', status: 'confirmed', notes: 'Before terminal opens. Check in at security desk. 8 K-class units.' },
+  { id: 'vs-2', clientOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', location: 'Regional Airport', scheduledDate: '2026-02-18', scheduledTime: '6:00 AM', status: 'confirmed', notes: 'Before terminal opens. Check in at security desk. 8 K-class units.' },
   { id: 'vs-3', clientOrg: 'Valley BBQ', serviceType: 'Hood Cleaning', location: '3200 N Blackstone, Fresno', scheduledDate: '2026-02-21', scheduledTime: '11:00 PM', status: 'pending', notes: 'Heavy grease buildup expected. Bring extra degreaser.' },
   { id: 'vs-4', clientOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', location: '445 Pollasky Ave, Clovis', scheduledDate: '2026-02-25', scheduledTime: '10:00 PM', status: 'pending' },
   { id: 'vs-5', clientOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', location: '1247 Fulton St, Fresno', scheduledDate: '2026-03-01', scheduledTime: '11:00 PM', status: 'pending', notes: '3-station system. Full duct access from roof.' },
@@ -1220,10 +1220,10 @@ export interface EnterpriseAuditEntry {
 
 export const enterpriseTenants: EnterpriseTenant[] = [
   {
-    id: 'ent-aramark',
-    slug: 'aramark',
-    displayName: 'Aramark Compliance Hub',
-    logoPlaceholder: 'AR',
+    id: 'ent-pcdining',
+    slug: 'pcdining',
+    displayName: 'Pacific Coast Dining Hub',
+    logoPlaceholder: 'PC',
     poweredByText: 'Powered by EvidLY',
     showPoweredBy: true,
     status: 'active',
@@ -1233,22 +1233,22 @@ export const enterpriseTenants: EnterpriseTenant[] = [
       accentColor: '#F0AB00',
       sidebarBg: '#002855',
       sidebarText: '#FFFFFF',
-      logoText: 'Aramark Compliance Hub',
+      logoText: 'Pacific Coast Dining Hub',
     },
-    domain: 'compliance.aramark.com',
+    domain: 'compliance.pacificcoastdining.com',
     ssoConfig: {
       providerType: 'saml',
       providerName: 'Okta',
-      metadataUrl: 'https://aramark.okta.com/app/exk1234567890/sso/saml/metadata',
-      entityId: 'compliance.aramark.com',
-      acsUrl: 'https://compliance.aramark.com/auth/saml/callback',
+      metadataUrl: 'https://pcdining.okta.com/app/exk1234567890/sso/saml/metadata',
+      entityId: 'compliance.pacificcoastdining.com',
+      acsUrl: 'https://compliance.pacificcoastdining.com/auth/saml/callback',
       attributeMapping: { email: 'user.email', firstName: 'user.firstName', lastName: 'user.lastName', groups: 'user.groups', employeeId: 'user.employeeNumber' },
       enabled: true,
       lastTestAt: '2026-02-08T14:30:00Z',
       testStatus: 'passed',
     },
     scimEnabled: true,
-    scimEndpoint: 'https://api.evidly.com/scim/v2/aramark',
+    scimEndpoint: 'https://api.evidly.com/scim/v2/pcdining',
     features: { customReports: true, apiAccess: true, whiteLabel: true, advancedAnalytics: true, scimProvisioning: true, multiRegionRollup: true, customHierarchy: true, dedicatedCSM: true },
     hierarchy: [
       { key: 'corporate', label: 'Corporate' },
@@ -1345,126 +1345,126 @@ export const enterpriseTenants: EnterpriseTenant[] = [
 ];
 
 export const enterpriseHierarchy: EnterpriseHierarchyNode = {
-  id: 'h-corp', tenantId: 'ent-aramark', parentId: null, level: 'corporate', name: 'Aramark Corporation', code: 'ARMK',
+  id: 'h-corp', tenantId: 'ent-pcdining', parentId: null, level: 'corporate', name: 'Pacific Coast Dining Corporation', code: 'PCD',
   complianceScore: 90, locationCount: 1847, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
   children: [
     {
-      id: 'h-higher-ed', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Higher Education', code: 'ARMK-HE',
+      id: 'h-higher-ed', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Higher Education', code: 'PCD-HE',
       complianceScore: 91, locationCount: 847, foodSafety: 93, fireSafety: 89, vendorCompliance: 90,
       children: [
         {
-          id: 'h-he-west', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'ARMK-HE-W',
+          id: 'h-he-west', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'PCD-HE-W',
           complianceScore: 90, locationCount: 254, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
           children: [
-            { id: 'h-he-w-pac', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'Pacific Northwest', code: 'ARMK-HE-W-PNW', complianceScore: 91, locationCount: 86, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
-            { id: 'h-he-w-cal', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'California', code: 'ARMK-HE-W-CA', complianceScore: 89, locationCount: 102, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
-            { id: 'h-he-w-sw', tenantId: 'ent-aramark', parentId: 'h-he-west', level: 'district', name: 'Southwest', code: 'ARMK-HE-W-SW', complianceScore: 90, locationCount: 66, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
+            { id: 'h-he-w-pac', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-HE-W-PNW', complianceScore: 91, locationCount: 86, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
+            { id: 'h-he-w-cal', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'California', code: 'PCD-HE-W-CA', complianceScore: 89, locationCount: 102, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
+            { id: 'h-he-w-sw', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Southwest', code: 'PCD-HE-W-SW', complianceScore: 90, locationCount: 66, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
           ],
         },
         {
-          id: 'h-he-central', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'ARMK-HE-C',
+          id: 'h-he-central', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'PCD-HE-C',
           complianceScore: 92, locationCount: 298, foodSafety: 94, fireSafety: 90, vendorCompliance: 91,
         },
         {
-          id: 'h-he-east', tenantId: 'ent-aramark', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'ARMK-HE-E',
+          id: 'h-he-east', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'PCD-HE-E',
           complianceScore: 91, locationCount: 295, foodSafety: 93, fireSafety: 89, vendorCompliance: 90,
           children: [
-            { id: 'h-he-e-ne', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'New England', code: 'ARMK-HE-E-NE', complianceScore: 93, locationCount: 98, foodSafety: 95, fireSafety: 91, vendorCompliance: 92 },
-            { id: 'h-he-e-ma', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'Mid-Atlantic', code: 'ARMK-HE-E-MA', complianceScore: 90, locationCount: 112, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
+            { id: 'h-he-e-ne', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'New England', code: 'PCD-HE-E-NE', complianceScore: 93, locationCount: 98, foodSafety: 95, fireSafety: 91, vendorCompliance: 92 },
+            { id: 'h-he-e-ma', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Mid-Atlantic', code: 'PCD-HE-E-MA', complianceScore: 90, locationCount: 112, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
               children: [
-                { id: 'h-he-e-ma-temple', tenantId: 'ent-aramark', parentId: 'h-he-e-ma', level: 'location', name: 'Temple University', code: 'ARMK-TU-001', complianceScore: 68, locationCount: 1, foodSafety: 72, fireSafety: 64, vendorCompliance: 66 },
+                { id: 'h-he-e-ma-temple', tenantId: 'ent-pcdining', parentId: 'h-he-e-ma', level: 'location', name: 'Temple University', code: 'PCD-TU-001', complianceScore: 68, locationCount: 1, foodSafety: 72, fireSafety: 64, vendorCompliance: 66 },
               ],
             },
-            { id: 'h-he-e-se', tenantId: 'ent-aramark', parentId: 'h-he-east', level: 'district', name: 'Southeast', code: 'ARMK-HE-E-SE', complianceScore: 91, locationCount: 85, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
+            { id: 'h-he-e-se', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Southeast', code: 'PCD-HE-E-SE', complianceScore: 91, locationCount: 85, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
           ],
         },
       ],
     },
     {
-      id: 'h-healthcare', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Healthcare', code: 'ARMK-HC',
+      id: 'h-healthcare', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Healthcare', code: 'PCD-HC',
       complianceScore: 95, locationCount: 312, foodSafety: 96, fireSafety: 93, vendorCompliance: 94,
       children: [
-        { id: 'h-hc-west', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'ARMK-HC-W', complianceScore: 94, locationCount: 94, foodSafety: 95, fireSafety: 92, vendorCompliance: 93 },
-        { id: 'h-hc-central', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'ARMK-HC-C', complianceScore: 95, locationCount: 112, foodSafety: 97, fireSafety: 93, vendorCompliance: 94 },
-        { id: 'h-hc-east', tenantId: 'ent-aramark', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'ARMK-HC-E', complianceScore: 95, locationCount: 106, foodSafety: 96, fireSafety: 94, vendorCompliance: 95 },
+        { id: 'h-hc-west', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'PCD-HC-W', complianceScore: 94, locationCount: 94, foodSafety: 95, fireSafety: 92, vendorCompliance: 93 },
+        { id: 'h-hc-central', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'PCD-HC-C', complianceScore: 95, locationCount: 112, foodSafety: 97, fireSafety: 93, vendorCompliance: 94 },
+        { id: 'h-hc-east', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'PCD-HC-E', complianceScore: 95, locationCount: 106, foodSafety: 96, fireSafety: 94, vendorCompliance: 95 },
       ],
     },
     {
-      id: 'h-destinations', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Destinations', code: 'ARMK-DEST',
+      id: 'h-destinations', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Destinations', code: 'PCD-DEST',
       complianceScore: 88, locationCount: 89, foodSafety: 90, fireSafety: 86, vendorCompliance: 87,
       children: [
         {
-          id: 'h-dest-parks', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'National Parks', code: 'ARMK-DEST-NP',
+          id: 'h-dest-parks', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'National Parks', code: 'PCD-DEST-NP',
           complianceScore: 89, locationCount: 32, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
           children: [
             {
-              id: 'h-dest-np-yosemite', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Yosemite District', code: 'ARMK-DEST-YOS',
+              id: 'h-dest-np-coastal', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Coastal District', code: 'PCD-DEST-CST',
               complianceScore: 89, locationCount: 7, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
               children: [
-                { id: 'h-yos-lodge', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Yosemite Valley Lodge', code: 'YOS-001', complianceScore: 92, locationCount: 1, foodSafety: 94, fireSafety: 90, vendorCompliance: 91 },
-                { id: 'h-yos-ahwahnee', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'The Ahwahnee Dining Room', code: 'YOS-002', complianceScore: 94, locationCount: 1, foodSafety: 96, fireSafety: 92, vendorCompliance: 93 },
-                { id: 'h-yos-curry', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Half Dome Village Pavilion', code: 'YOS-003', complianceScore: 87, locationCount: 1, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
-                { id: 'h-yos-tuolumne', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Tuolumne Meadows Grill', code: 'YOS-004', complianceScore: 83, locationCount: 1, foodSafety: 85, fireSafety: 81, vendorCompliance: 82 },
-                { id: 'h-yos-glacier', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
-                { id: 'h-yos-village', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
-                { id: 'h-yos-white-wolf', tenantId: 'ent-aramark', parentId: 'h-dest-np-yosemite', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+                { id: 'h-yos-lodge', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Oceanview Lodge', code: 'CST-001', complianceScore: 92, locationCount: 1, foodSafety: 94, fireSafety: 90, vendorCompliance: 91 },
+                { id: 'h-yos-ahwahnee', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'The Bayshore Dining Room', code: 'CST-002', complianceScore: 94, locationCount: 1, foodSafety: 96, fireSafety: 92, vendorCompliance: 93 },
+                { id: 'h-yos-curry', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Harbor Village Pavilion', code: 'CST-003', complianceScore: 87, locationCount: 1, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
+                { id: 'h-yos-tuolumne', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Redwood Meadows Grill', code: 'CST-004', complianceScore: 83, locationCount: 1, foodSafety: 85, fireSafety: 81, vendorCompliance: 82 },
+                { id: 'h-yos-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
+                { id: 'h-yos-village', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
+                { id: 'h-yos-white-wolf', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
               ],
             },
-            { id: 'h-dest-np-glacier', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Glacier National Park', code: 'ARMK-DEST-GNP', complianceScore: 88, locationCount: 8, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
-            { id: 'h-dest-np-grandcanyon', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Grand Canyon District', code: 'ARMK-DEST-GC', complianceScore: 91, locationCount: 6, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
-            { id: 'h-dest-np-other', tenantId: 'ent-aramark', parentId: 'h-dest-parks', level: 'district', name: 'Other National Parks', code: 'ARMK-DEST-ONP', complianceScore: 90, locationCount: 11, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
+            { id: 'h-dest-np-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Glacier National Park', code: 'PCD-DEST-GNP', complianceScore: 88, locationCount: 8, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+            { id: 'h-dest-np-grandcanyon', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Grand Canyon District', code: 'PCD-DEST-GC', complianceScore: 91, locationCount: 6, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
+            { id: 'h-dest-np-other', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Other National Parks', code: 'PCD-DEST-ONP', complianceScore: 90, locationCount: 11, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
           ],
         },
         {
-          id: 'h-dest-ski', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'Ski Resorts', code: 'ARMK-DEST-SKI',
+          id: 'h-dest-ski', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'Ski Resorts', code: 'PCD-DEST-SKI',
           complianceScore: 87, locationCount: 28, foodSafety: 89, fireSafety: 85, vendorCompliance: 86,
           children: [
-            { id: 'h-dest-ski-badger', tenantId: 'ent-aramark', parentId: 'h-dest-ski', level: 'location', name: 'Badger Pass Ski Area', code: 'ARMK-DEST-BP', complianceScore: 74, locationCount: 1, foodSafety: 78, fireSafety: 70, vendorCompliance: 72 },
-            { id: 'h-dest-ski-mammoth', tenantId: 'ent-aramark', parentId: 'h-dest-ski', level: 'location', name: 'Mammoth Mountain Lodge', code: 'ARMK-DEST-MM', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+            { id: 'h-dest-ski-badger', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Badger Pass Ski Area', code: 'PCD-DEST-BP', complianceScore: 74, locationCount: 1, foodSafety: 78, fireSafety: 70, vendorCompliance: 72 },
+            { id: 'h-dest-ski-mammoth', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Mammoth Mountain Lodge', code: 'PCD-DEST-MM', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
           ],
         },
         {
-          id: 'h-dest-conv', tenantId: 'ent-aramark', parentId: 'h-destinations', level: 'region', name: 'Convention Centers', code: 'ARMK-DEST-CC',
+          id: 'h-dest-conv', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'Convention Centers', code: 'PCD-DEST-CC',
           complianceScore: 89, locationCount: 29, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
         },
       ],
     },
     {
-      id: 'h-corrections', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Corrections', code: 'ARMK-CR',
+      id: 'h-corrections', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Corrections', code: 'PCD-CR',
       complianceScore: 86, locationCount: 156, foodSafety: 88, fireSafety: 84, vendorCompliance: 85,
       children: [
-        { id: 'h-cr-federal', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'Federal Facilities', code: 'ARMK-CR-FED', complianceScore: 87, locationCount: 42, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
-        { id: 'h-cr-state', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'State Facilities', code: 'ARMK-CR-ST', complianceScore: 85, locationCount: 78, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
-        { id: 'h-cr-county', tenantId: 'ent-aramark', parentId: 'h-corrections', level: 'region', name: 'County Facilities', code: 'ARMK-CR-CTY', complianceScore: 86, locationCount: 36, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
+        { id: 'h-cr-federal', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'Federal Facilities', code: 'PCD-CR-FED', complianceScore: 87, locationCount: 42, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
+        { id: 'h-cr-state', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'State Facilities', code: 'PCD-CR-ST', complianceScore: 85, locationCount: 78, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
+        { id: 'h-cr-county', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'County Facilities', code: 'PCD-CR-CTY', complianceScore: 86, locationCount: 36, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
       ],
     },
     {
-      id: 'h-sports', tenantId: 'ent-aramark', parentId: 'h-corp', level: 'division', name: 'Sports & Entertainment', code: 'ARMK-SE',
+      id: 'h-sports', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Sports & Entertainment', code: 'PCD-SE',
       complianceScore: 88, locationCount: 443, foodSafety: 90, fireSafety: 86, vendorCompliance: 87,
       children: [
         {
-          id: 'h-se-west', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'ARMK-SE-W',
+          id: 'h-se-west', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'PCD-SE-W',
           complianceScore: 87, locationCount: 133, foodSafety: 89, fireSafety: 85, vendorCompliance: 86,
           children: [
-            { id: 'h-se-w-bay', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'Bay Area District', code: 'ARMK-SE-W-BAY', complianceScore: 86, locationCount: 42, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
-            { id: 'h-se-w-socal', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'SoCal District', code: 'ARMK-SE-W-SC', complianceScore: 85, locationCount: 48, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
-            { id: 'h-se-w-pnw', tenantId: 'ent-aramark', parentId: 'h-se-west', level: 'district', name: 'Pacific Northwest', code: 'ARMK-SE-W-PNW', complianceScore: 89, locationCount: 43, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
+            { id: 'h-se-w-bay', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Bay Area District', code: 'PCD-SE-W-BAY', complianceScore: 86, locationCount: 42, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
+            { id: 'h-se-w-socal', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'SoCal District', code: 'PCD-SE-W-SC', complianceScore: 85, locationCount: 48, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
+            { id: 'h-se-w-pnw', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-SE-W-PNW', complianceScore: 89, locationCount: 43, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
           ],
         },
-        { id: 'h-se-central', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'ARMK-SE-C', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
-        { id: 'h-se-east', tenantId: 'ent-aramark', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'ARMK-SE-E', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+        { id: 'h-se-central', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'PCD-SE-C', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+        { id: 'h-se-east', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'PCD-SE-E', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
       ],
     },
   ],
 };
 
 export const enterpriseUsers: EnterpriseUser[] = [
-  { id: 'eu-1', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Jennifer Martinez', email: 'j.martinez@aramark.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
-  { id: 'eu-2', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Robert Chen', email: 'r.chen@aramark.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
-  { id: 'eu-3', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Maria Santos', email: 'm.santos@aramark.com', role: 'District Supervisor', location: 'Yosemite District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
-  { id: 'eu-4', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'David Kim', email: 'd.kim@aramark.com', role: 'Site Manager', location: 'Yosemite Valley Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
-  { id: 'eu-5', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Sarah Thompson', email: 's.thompson@aramark.com', role: 'Site Manager', location: 'The Ahwahnee', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
-  { id: 'eu-6', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Kevin Patel', email: 'k.patel@aramark.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
+  { id: 'eu-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Jennifer Martinez', email: 'j.martinez@pacificcoastdining.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
+  { id: 'eu-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Robert Chen', email: 'r.chen@pacificcoastdining.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
+  { id: 'eu-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Maria Santos', email: 'm.santos@pacificcoastdining.com', role: 'District Supervisor', location: 'Coastal District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
+  { id: 'eu-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'David Kim', email: 'd.kim@pacificcoastdining.com', role: 'Site Manager', location: 'Oceanview Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
+  { id: 'eu-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Sarah Thompson', email: 's.thompson@pacificcoastdining.com', role: 'Site Manager', location: 'The Bayshore', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
+  { id: 'eu-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Kevin Patel', email: 'k.patel@pacificcoastdining.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
   { id: 'eu-7', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Emma Williams', email: 'e.williams@compass-group.com', role: 'Corporate Admin', location: 'Global HQ', ssoStatus: 'active', lastLogin: '2026-02-10T09:00:00Z', scimManaged: true, externalId: 'CG-10001', groups: ['Platform_Admins', 'Global_Leadership'] },
   { id: 'eu-8', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'James O\'Brien', email: 'j.obrien@compass-group.com', role: 'Regional Manager', location: 'North America', ssoStatus: 'active', lastLogin: '2026-02-09T18:20:00Z', scimManaged: true, externalId: 'CG-20034', groups: ['Regional_Managers'] },
   { id: 'eu-9', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Lisa Nakamura', email: 'l.nakamura@compass-group.com', role: 'Area Manager', location: 'West Coast Area', ssoStatus: 'active', lastLogin: '2026-02-10T07:45:00Z', scimManaged: true, externalId: 'CG-30112', groups: ['Area_Managers', 'Chartwells'] },
@@ -1477,24 +1477,24 @@ export const enterpriseUsers: EnterpriseUser[] = [
 ];
 
 export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
-  { id: 'ert-1', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
-  { id: 'ert-2', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
+  { id: 'ert-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
+  { id: 'ert-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
   { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Audit Package', templateType: 'audit_package', sections: ['Audit Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
   { id: 'ert-4', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Location Detail Report', templateType: 'location_detail', sections: ['Site Overview', 'Temperature Logs', 'Checklist Completion', 'Equipment Status', 'Vendor Documents'], brandWatermark: false, exportFormats: ['PDF', 'CSV'], isDefault: true },
-  { id: 'ert-5', tenantId: 'ent-aramark', tenantName: 'Aramark', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
+  { id: 'ert-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
   { id: 'ert-6', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Vendor Performance Review', templateType: 'regional_rollup', sections: ['Vendor Scorecard', 'Service Completion Rates', 'Response Time Analysis', 'Certification Status', 'Cost Analysis', 'Recommendations'], brandWatermark: true, exportFormats: ['PDF', 'Excel', 'CSV'], isDefault: false },
 ];
 
 export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
-  { id: 'eal-1', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
-  { id: 'eal-2', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
+  { id: 'eal-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
   { id: 'eal-3', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'report_generated', resourceType: 'Report', resourceName: 'Q1 2026 Quarterly Audit Package', details: 'Generated for North America region — 1,234 locations', timestamp: '2026-02-09T17:30:00Z', ipAddress: '10.56.2.88' },
-  { id: 'eal-4', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
+  { id: 'eal-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
   { id: 'eal-5', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'System (SCIM)', action: 'user_deactivated', resourceType: 'User', resourceName: 'Rachel Singh', details: 'Deactivated via SCIM — employee offboarded in Azure AD', timestamp: '2026-02-08T09:00:00Z', ipAddress: '52.14.87.203' },
   { id: 'eal-6', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'Arthur Haggerty', action: 'tenant_created', resourceType: 'Tenant', resourceName: 'Sodexo Safe Kitchen', details: 'Pilot tenant provisioned — 623 locations, 1-year contract', timestamp: '2026-02-07T11:00:00Z', ipAddress: '67.183.45.12' },
-  { id: 'eal-7', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'Jennifer Martinez', action: 'branding_updated', resourceType: 'Branding', resourceName: 'Aramark Compliance Hub', details: 'Updated sidebar background color from #1D1D1B to #002855', timestamp: '2026-02-06T16:45:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-7', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Jennifer Martinez', action: 'branding_updated', resourceType: 'Branding', resourceName: 'Pacific Coast Dining Hub', details: 'Updated sidebar background color from #1D1D1B to #002855', timestamp: '2026-02-06T16:45:00Z', ipAddress: '10.42.1.15' },
   { id: 'eal-8', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'sso_test_passed', resourceType: 'SSO Configuration', resourceName: 'OIDC Provider', details: 'Azure AD OIDC test connection passed — 12ms response', timestamp: '2026-02-07T10:15:00Z', ipAddress: '10.56.2.88' },
-  { id: 'eal-9', tenantId: 'ent-aramark', tenantName: 'Aramark', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
+  { id: 'eal-9', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
   { id: 'eal-10', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'David Nguyen', action: 'template_created', resourceType: 'Report Template', resourceName: 'Location Detail Report', details: 'Created default location detail template for Sodexo pilot', timestamp: '2026-02-08T13:20:00Z', ipAddress: '67.183.45.12' },
 ];
 
@@ -1517,14 +1517,14 @@ export interface EnterpriseAlert {
 }
 
 export const enterpriseAlerts: EnterpriseAlert[] = [
-  { id: 'ea-1', tenantId: 'ent-aramark', severity: 'critical', category: 'Fire Suppression', nodeName: 'Tuolumne Meadows Grill', nodeCode: 'YOS-004', message: 'Fire suppression system certification expired 12 days ago — immediate action required', score: 83, detectedAt: '2026-02-09T06:00:00Z', acknowledged: false },
-  { id: 'ea-2', tenantId: 'ent-aramark', severity: 'critical', category: 'Compliance Score', nodeName: 'SoCal District', nodeCode: 'ARMK-SL-W-SC', message: 'District compliance score dropped below 85% threshold — 3 locations need attention', score: 84, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
-  { id: 'ea-3', tenantId: 'ent-aramark', severity: 'warning', category: 'Vendor Documentation', nodeName: 'Bay Area District', nodeCode: 'ARMK-SL-W-BAY', message: '4 vendor certifications expiring within 30 days — renewal required', score: 85, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
-  { id: 'ea-4', tenantId: 'ent-aramark', severity: 'warning', category: 'Temperature Monitoring', nodeName: 'Half Dome Village Pavilion', nodeCode: 'YOS-003', message: '3 consecutive temperature excursions in walk-in cooler — equipment service recommended', score: 87, detectedAt: '2026-02-09T14:30:00Z', acknowledged: true },
+  { id: 'ea-1', tenantId: 'ent-pcdining', severity: 'critical', category: 'Fire Suppression', nodeName: 'Redwood Meadows Grill', nodeCode: 'CST-004', message: 'Fire suppression system certification expired 12 days ago — immediate action required', score: 83, detectedAt: '2026-02-09T06:00:00Z', acknowledged: false },
+  { id: 'ea-2', tenantId: 'ent-pcdining', severity: 'critical', category: 'Compliance Score', nodeName: 'SoCal District', nodeCode: 'PCD-SL-W-SC', message: 'District compliance score dropped below 85% threshold — 3 locations need attention', score: 84, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-3', tenantId: 'ent-pcdining', severity: 'warning', category: 'Vendor Documentation', nodeName: 'Bay Area District', nodeCode: 'PCD-SL-W-BAY', message: '4 vendor certifications expiring within 30 days — renewal required', score: 85, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-4', tenantId: 'ent-pcdining', severity: 'warning', category: 'Temperature Monitoring', nodeName: 'Harbor Village Pavilion', nodeCode: 'CST-003', message: '3 consecutive temperature excursions in walk-in cooler — equipment service recommended', score: 87, detectedAt: '2026-02-09T14:30:00Z', acknowledged: true },
   { id: 'ea-5', tenantId: 'ent-compass', severity: 'critical', category: 'Regulatory Gap', nodeName: 'West Coast Area', nodeCode: 'CG-WCA', message: '2 locations missing required health department permits — regulatory risk', score: null, detectedAt: '2026-02-09T09:00:00Z', acknowledged: false },
-  { id: 'ea-6', tenantId: 'ent-aramark', severity: 'warning', category: 'Checklist Completion', nodeName: 'Healthcare Division', nodeCode: 'ARMK-HC', message: 'Opening checklist completion rate dropped to 89% across division — target is 95%', score: 86, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-6', tenantId: 'ent-pcdining', severity: 'warning', category: 'Checklist Completion', nodeName: 'Healthcare Division', nodeCode: 'PCD-HC', message: 'Opening checklist completion rate dropped to 89% across division — target is 95%', score: 86, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
   { id: 'ea-7', tenantId: 'ent-sodexo', severity: 'info', category: 'Onboarding', nodeName: 'Sodexo Safe Kitchen', nodeCode: 'SOD', message: 'Pilot phase data migration 82% complete — 511 of 623 locations imported', score: null, detectedAt: '2026-02-10T08:00:00Z', acknowledged: true },
-  { id: 'ea-8', tenantId: 'ent-aramark', severity: 'warning', category: 'Employee Training', nodeName: 'Eastern Region (Higher Ed)', nodeCode: 'ARMK-HE-E', message: '14 food handler certifications expiring this month — schedule renewals', score: 93, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
+  { id: 'ea-8', tenantId: 'ent-pcdining', severity: 'warning', category: 'Employee Training', nodeName: 'Eastern Region (Higher Ed)', nodeCode: 'PCD-HE-E', message: '14 food handler certifications expiring this month — schedule renewals', score: 93, detectedAt: '2026-02-10T06:00:00Z', acknowledged: false },
 ];
 
 export interface EnterpriseIntegration {
@@ -1542,11 +1542,11 @@ export interface EnterpriseIntegration {
 }
 
 export const enterpriseIntegrations: EnterpriseIntegration[] = [
-  { id: 'ei-1', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'temperature_monitoring', providerName: 'ComplianceMate', providerLogo: 'CM', status: 'active', lastSync: '2026-02-10T09:45:00Z', syncFrequency: 'Every 15 min', dataPoints: 284620, description: 'Real-time temperature monitoring across 1,200+ sensors' },
-  { id: 'ei-2', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'erp', providerName: 'SAP S/4HANA', providerLogo: 'SAP', status: 'active', lastSync: '2026-02-10T06:00:00Z', syncFrequency: 'Daily', dataPoints: 45200, description: 'Location master data, vendor POs, cost center mapping' },
-  { id: 'ei-3', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'bi_tool', providerName: 'Power BI', providerLogo: 'PBI', status: 'active', lastSync: '2026-02-10T07:00:00Z', syncFrequency: 'Hourly', dataPoints: 128400, description: 'Executive dashboards and compliance trend analytics' },
-  { id: 'ei-4', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'active', lastSync: '2026-02-10T09:50:00Z', syncFrequency: 'Real-time', dataPoints: 3240, description: 'Alert notifications, inspection results, action item assignments' },
-  { id: 'ei-5', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'existing_platform', providerName: 'Aramark SAFE', providerLogo: 'AS', status: 'active', lastSync: '2026-02-09T22:00:00Z', syncFrequency: 'Every 6 hours', dataPoints: 89100, description: 'Historical compliance data migration and ongoing sync' },
+  { id: 'ei-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'temperature_monitoring', providerName: 'ComplianceMate', providerLogo: 'CM', status: 'active', lastSync: '2026-02-10T09:45:00Z', syncFrequency: 'Every 15 min', dataPoints: 284620, description: 'Real-time temperature monitoring across 1,200+ sensors' },
+  { id: 'ei-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'erp', providerName: 'SAP S/4HANA', providerLogo: 'SAP', status: 'active', lastSync: '2026-02-10T06:00:00Z', syncFrequency: 'Daily', dataPoints: 45200, description: 'Location master data, vendor POs, cost center mapping' },
+  { id: 'ei-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'bi_tool', providerName: 'Power BI', providerLogo: 'PBI', status: 'active', lastSync: '2026-02-10T07:00:00Z', syncFrequency: 'Hourly', dataPoints: 128400, description: 'Executive dashboards and compliance trend analytics' },
+  { id: 'ei-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'active', lastSync: '2026-02-10T09:50:00Z', syncFrequency: 'Real-time', dataPoints: 3240, description: 'Alert notifications, inspection results, action item assignments' },
+  { id: 'ei-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'existing_platform', providerName: 'PCD Legacy System', providerLogo: 'PL', status: 'active', lastSync: '2026-02-09T22:00:00Z', syncFrequency: 'Every 6 hours', dataPoints: 89100, description: 'Historical compliance data migration and ongoing sync' },
   { id: 'ei-6', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'temperature_monitoring', providerName: 'Testo Saveris', providerLogo: 'TS', status: 'active', lastSync: '2026-02-10T09:30:00Z', syncFrequency: 'Every 15 min', dataPoints: 198400, description: 'Wireless temperature and humidity monitoring for 800+ units' },
   { id: 'ei-7', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'erp', providerName: 'Oracle Cloud', providerLogo: 'OC', status: 'active', lastSync: '2026-02-10T05:30:00Z', syncFrequency: 'Daily', dataPoints: 32100, description: 'Vendor management, procurement, and financial integration' },
   { id: 'ei-8', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'bi_tool', providerName: 'Tableau', providerLogo: 'TB', status: 'pending', lastSync: '', syncFrequency: 'Hourly', dataPoints: 0, description: 'Tableau Cloud connector — in configuration' },
@@ -1566,7 +1566,7 @@ export interface EnterpriseOnboardingPhase {
   tasks: { label: string; done: boolean }[];
 }
 
-export const enterpriseOnboardingAramark: EnterpriseOnboardingPhase[] = [
+export const enterpriseOnboardingPCDining: EnterpriseOnboardingPhase[] = [
   { id: 'eo-1', phase: 1, name: 'Configuration', duration: 'Weeks 1-2', status: 'completed', progress: 100, tasks: [
     { label: 'Tenant provisioning & branding setup', done: true },
     { label: 'SSO/SAML integration with Okta', done: true },
@@ -1582,7 +1582,7 @@ export const enterpriseOnboardingAramark: EnterpriseOnboardingPhase[] = [
     { label: 'Employee training records imported', done: true },
   ]},
   { id: 'eo-3', phase: 3, name: 'Pilot', duration: 'Weeks 6-10', status: 'completed', progress: 100, tasks: [
-    { label: 'Yosemite District (7 locations) live', done: true },
+    { label: 'Coastal District (7 locations) live', done: true },
     { label: 'User acceptance testing completed', done: true },
     { label: 'Report templates customized & approved', done: true },
     { label: 'Integration validation with SAFE platform', done: true },
@@ -1657,12 +1657,12 @@ export interface EnterpriseBulkOp {
 }
 
 export const enterpriseBulkOps: EnterpriseBulkOp[] = [
-  { id: 'ebo-1', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'location_import', status: 'completed', totalItems: 267, processedItems: 267, failedItems: 0, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-08T10:00:00Z', description: 'Central Region location bulk import from SAP' },
-  { id: 'ebo-2', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'template_deploy', status: 'completed', totalItems: 1847, processedItems: 1847, failedItems: 3, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-07T14:00:00Z', description: 'Deploy updated daily checklist template to all locations' },
-  { id: 'ebo-3', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
+  { id: 'ebo-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'location_import', status: 'completed', totalItems: 267, processedItems: 267, failedItems: 0, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-08T10:00:00Z', description: 'Central Region location bulk import from SAP' },
+  { id: 'ebo-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'template_deploy', status: 'completed', totalItems: 1847, processedItems: 1847, failedItems: 3, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-07T14:00:00Z', description: 'Deploy updated daily checklist template to all locations' },
+  { id: 'ebo-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
   { id: 'ebo-4', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'user_provision', status: 'completed', totalItems: 89, processedItems: 89, failedItems: 0, initiatedBy: 'Emma Williams', startedAt: '2026-02-09T11:00:00Z', description: 'SCIM bulk provision — new Chartwells employees' },
   { id: 'ebo-5', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'location_import', status: 'running', totalItems: 623, processedItems: 511, failedItems: 4, initiatedBy: 'Pierre Dubois', startedAt: '2026-02-10T07:00:00Z', description: 'Pilot location data import — all Sodexo sites' },
-  { id: 'ebo-6', tenantId: 'ent-aramark', tenantName: 'Aramark', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Maria Santos', startedAt: '', description: 'Schedule fire suppression inspections — Yosemite District' },
+  { id: 'ebo-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Maria Santos', startedAt: '', description: 'Schedule fire suppression inspections — Coastal District' },
 ];
 
 export interface EnterprisePricingTier {
@@ -2228,7 +2228,7 @@ export interface ApiWebhookSubscription {
 
 export const apiWebhookSubscriptions: ApiWebhookSubscription[] = [
   { id: 'wh-01', appName: 'Restaurant365 Connector', url: 'https://hooks.restaurant365.com/evidly/compliance', events: ['compliance.score_changed', 'document.uploaded', 'vendor.service_completed'], status: 'active', lastDeliveryAt: '2026-02-10T14:32:00Z', failureCount: 0, createdAt: '2025-11-15T10:00:00Z' },
-  { id: 'wh-02', appName: 'Aramark Compliance Hub', url: 'https://api.aramark.com/webhooks/evidly', events: ['compliance.score_changed', 'compliance.threshold_breach', 'temperature.violation', 'incident.created'], status: 'active', lastDeliveryAt: '2026-02-10T14:57:00Z', failureCount: 0, createdAt: '2026-01-05T09:00:00Z' },
+  { id: 'wh-02', appName: 'Pacific Coast Dining Hub', url: 'https://api.pacificcoastdining.com/webhooks/evidly', events: ['compliance.score_changed', 'compliance.threshold_breach', 'temperature.violation', 'incident.created'], status: 'active', lastDeliveryAt: '2026-02-10T14:57:00Z', failureCount: 0, createdAt: '2026-01-05T09:00:00Z' },
   { id: 'wh-03', appName: 'Insurance Risk Monitor', url: 'https://insurance-partner.com/webhooks/evidly', events: ['compliance.score_changed', 'inspection.score_predicted'], status: 'active', lastDeliveryAt: '2026-02-10T12:00:00Z', failureCount: 1, createdAt: '2026-02-01T14:00:00Z' },
   { id: 'wh-04', appName: 'Custom Dashboard', url: 'https://internal.customer.com/api/evidly-hook', events: ['checklist.completed', 'checklist.missed', 'temperature.sustained_violation'], status: 'paused', lastDeliveryAt: '2026-02-08T16:00:00Z', failureCount: 5, createdAt: '2025-12-20T11:00:00Z' },
 ];
