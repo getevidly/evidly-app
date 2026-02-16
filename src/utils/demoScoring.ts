@@ -3,6 +3,10 @@
 // DEMO MODE ONLY — Local scoring engine
 // Mirrors calculate-compliance-score Edge Function
 // Zero database calls. Zero API calls.
+//
+// CREDIBILITY-FIRST: Demo mode shows the same CalCode-based
+// determination the inspector would make. Pass/Reinspect/Closed
+// for non-grading counties. Letter grades for grading counties.
 // ═══════════════════════════════════════════════════════════
 
 import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade } from '../data/demoJurisdictions';
@@ -21,6 +25,11 @@ export interface DemoScoreResult {
   scoringType: string;
   gradingType: string;
   violations: typeof DEMO_SCORE_BREAKDOWN.violations;
+  // Violation counts for pass_reinspect display
+  majorViolations: number;
+  minorViolations: number;
+  uncorrectedMajors: number;
+  totalPoints: number; // For three_tier_rating display
 }
 
 // Calculate demo score for a location with a specific jurisdiction
@@ -56,23 +65,32 @@ export function calculateDemoScore(
     scoringType: jurisdiction.scoringType,
     gradingType: jurisdiction.gradingType,
     violations: DEMO_SCORE_BREAKDOWN.violations,
+    majorViolations: gradeResult.majorViolations || 0,
+    minorViolations: gradeResult.minorViolations || 0,
+    uncorrectedMajors: gradeResult.uncorrectedMajors || 0,
+    totalPoints: gradeResult.totalPoints || 0,
   };
 }
 
-// The 88% Test — calculate the same score across all 7 demo jurisdictions
+// The 88% Test — calculate the same score across all demo jurisdictions
+// Updated to include Central Valley counties
 export function calculate88Test(): Array<{
   jurisdiction: string;
   grade: string;
+  display: string;
   passFail: string;
   explanation: string;
+  scoringType: string;
 }> {
   return DEMO_JURISDICTIONS.map(j => {
     const result = calculateDemoGrade(88, j);
     return {
       jurisdiction: j.county,
       grade: result.grade,
+      display: result.display,
       passFail: result.passFail,
       explanation: j.gradeExplanation,
+      scoringType: j.scoringType,
     };
   });
 }

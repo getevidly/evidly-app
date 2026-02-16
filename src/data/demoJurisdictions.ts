@@ -4,8 +4,8 @@
 // NEVER import this in live mode code paths
 // ═══════════════════════════════════════════════════════════
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'report_only';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'report_only';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'report_only';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'report_only';
 
 export interface DemoJurisdiction {
   id: string;
@@ -42,8 +42,8 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     id: 'demo-fresno',
     county: 'Fresno',
     agencyName: 'Fresno County Department of Public Health',
-    scoringType: 'weighted_deduction',
-    gradingType: 'report_only',
+    scoringType: 'major_minor_reinspect',
+    gradingType: 'pass_reinspect',
     gradingConfig: {},
     passThreshold: null,
     warningThreshold: null,
@@ -52,12 +52,12 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     hoodCleaningDefault: 'quarterly',
     facilityCount: 4500,
     dataSourceTier: 3,
-    gradeLabel: 'N/A',
-    gradeExplanation: 'Report Only — No public grade assigned',
-    passFailLabel: 'No Grade',
+    gradeLabel: 'Pass',
+    gradeExplanation: 'Pass / Reinspection Required — CalCode ORFIR standard. No numeric grade.',
+    passFailLabel: 'PASS',
     demoScore: 88,
-    demoGrade: 'Report Only',
-    demoPassFail: 'no_grade',
+    demoGrade: 'Pass',
+    demoPassFail: 'pass',
   },
   {
     id: 'demo-sacramento',
@@ -170,8 +170,8 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     id: 'demo-yosemite',
     county: 'Mariposa',
     agencyName: 'Mariposa County + NPS (Yosemite)',
-    scoringType: 'weighted_deduction',
-    gradingType: 'report_only',
+    scoringType: 'major_minor_reinspect',
+    gradingType: 'pass_reinspect',
     gradingConfig: {},
     passThreshold: null,
     warningThreshold: null,
@@ -180,12 +180,12 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     hoodCleaningDefault: 'quarterly',
     facilityCount: 150,
     dataSourceTier: 4,
-    gradeLabel: 'N/A',
-    gradeExplanation: 'Multi-Jurisdiction — County health + NPS federal overlay + CAL FIRE',
-    passFailLabel: 'No Grade',
+    gradeLabel: 'Pass',
+    gradeExplanation: 'Multi-Jurisdiction — County health + NPS federal overlay + CAL FIRE. Pass/Reinspect standard.',
+    passFailLabel: 'PASS',
     demoScore: 88,
-    demoGrade: 'Report Only (Dual Jurisdiction)',
-    demoPassFail: 'no_grade',
+    demoGrade: 'Pass (Dual Jurisdiction)',
+    demoPassFail: 'pass',
   },
 ];
 
@@ -222,7 +222,7 @@ export const DEMO_LOCATIONS = [
     score: 92,
     foodSafety: { ops: 97, docs: 94 },
     fireSafety: { ops: 88, docs: 95 },
-    gradeDisplay: 'Report Only',
+    gradeDisplay: 'Pass',
     tagline: 'EvidLY IS your grading system',
   },
   {
@@ -256,21 +256,36 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
   grade: string;
   passFail: 'pass' | 'fail' | 'warning' | 'no_grade';
   display: string;
+  majorViolations?: number;
+  minorViolations?: number;
+  uncorrectedMajors?: number;
+  totalPoints?: number;
 } {
   switch (jurisdiction.gradingType) {
     case 'letter_grade': {
-      const letter = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F';
-      return { grade: letter, passFail: score >= 70 ? 'pass' : 'fail', display: letter };
+      const config = jurisdiction.gradingConfig || {};
+      const grades = config.grades || { A: [90, 100], B: [80, 89], C: [70, 79] };
+      const failBelow = config.fail_below || 70;
+      let letter = 'F';
+      if (grades.A && score >= grades.A[0]) letter = 'A';
+      else if (grades.B && score >= grades.B[0]) letter = 'B';
+      else if (grades.C && score >= grades.C[0]) letter = 'C';
+      return { grade: letter, passFail: score >= failBelow ? 'pass' : 'fail', display: `${letter} \u2014 ${score}` };
     }
     case 'letter_grade_strict': {
       const letter = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F';
-      return { grade: letter, passFail: score >= 90 ? 'pass' : 'fail', display: score >= 90 ? letter : `${letter} \u2014 FAIL` };
+      const config = jurisdiction.gradingConfig || {};
+      const passRequires = config.pass_requires || 'A';
+      const passing = (passRequires === 'A' && score >= 90) ||
+                      (passRequires === 'B' && score >= 80) ||
+                      (passRequires === 'C' && score >= 70);
+      return { grade: letter, passFail: passing ? 'pass' : 'fail', display: passing ? `${letter} \u2014 PASS` : `${letter} \u2014 FAIL` };
     }
     case 'color_placard': {
       // Simplified — in real engine this uses major violation count
-      if (score >= 90) return { grade: '\u{1F7E2} Green', passFail: 'pass', display: '\u{1F7E2} Green' };
-      if (score >= 75) return { grade: '\u{1F7E1} Yellow', passFail: 'warning', display: '\u{1F7E1} Yellow' };
-      return { grade: '\u{1F534} Red', passFail: 'fail', display: '\u{1F534} Red' };
+      if (score >= 90) return { grade: 'Green', passFail: 'pass', display: 'Green' };
+      if (score >= 75) return { grade: 'Yellow', passFail: 'warning', display: 'Yellow' };
+      return { grade: 'Red', passFail: 'fail', display: 'Red' };
     }
     case 'score_100': {
       const t = jurisdiction.passThreshold || 70;
@@ -278,15 +293,90 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
     }
     case 'score_negative': {
       const neg = score - 100; // Convert normalized back to negative
+      const config = jurisdiction.gradingConfig || {};
+      const warning = config.warning || -10;
+      const critical = config.critical || -25;
+      let pf: 'pass' | 'fail' | 'warning' = 'pass';
+      if (neg <= critical) pf = 'fail';
+      else if (neg <= warning) pf = 'warning';
+      return { grade: String(neg), passFail: pf, display: String(neg) };
+    }
+    case 'pass_reinspect': {
+      // CalCode ORFIR Standard — Pass / Reinspection Required / Closed
+      // In demo mode, simulate: score >= 80 means no uncorrected majors (pass)
+      // score 60-79 means uncorrected majors exist (reinspect)
+      // score < 60 means imminent hazard (closed)
+      const demoMajors = Math.max(0, Math.floor((100 - score) / 4));
+      const demoMinors = Math.max(0, Math.floor((100 - score) / 6));
+      const uncorrected = score >= 80 ? 0 : Math.max(1, Math.floor((80 - score) / 8));
+      if (score < 60) {
+        return {
+          grade: 'CLOSED',
+          passFail: 'fail',
+          display: 'Closed \u2014 Imminent Health Hazard',
+          majorViolations: demoMajors, minorViolations: demoMinors,
+          uncorrectedMajors: uncorrected, totalPoints: 0,
+        };
+      }
+      if (uncorrected > 0) {
+        return {
+          grade: 'Reinspection Required',
+          passFail: 'fail',
+          display: `Reinspection Required \u2014 ${uncorrected} Major Violation${uncorrected > 1 ? 's' : ''}`,
+          majorViolations: demoMajors, minorViolations: demoMinors,
+          uncorrectedMajors: uncorrected, totalPoints: 0,
+        };
+      }
+      const minorNote = demoMajors > 0 ? ` (${demoMajors} major corrected on-site)` : '';
       return {
-        grade: String(neg),
-        passFail: neg >= -10 ? 'pass' : neg >= -25 ? 'warning' : 'fail',
-        display: String(neg),
+        grade: 'Pass',
+        passFail: 'pass',
+        display: `Pass${minorNote}`,
+        majorViolations: demoMajors, minorViolations: demoMinors,
+        uncorrectedMajors: 0, totalPoints: 0,
+      };
+    }
+    case 'three_tier_rating': {
+      // Merced County Model — points accumulate
+      // Demo: estimate points from normalized score
+      const totalPoints = Math.max(0, 100 - score);
+      const config = jurisdiction.gradingConfig || {};
+      const tiers = config.tiers || { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] };
+      if (totalPoints >= (tiers.Unsatisfactory?.[0] || 14)) {
+        return {
+          grade: 'Unsatisfactory',
+          passFail: 'fail',
+          display: `Unsatisfactory \u2014 ${totalPoints} points`,
+          totalPoints, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0,
+        };
+      }
+      if (totalPoints >= (tiers.Satisfactory?.[0] || 7)) {
+        return {
+          grade: 'Satisfactory',
+          passFail: 'pass',
+          display: `Satisfactory \u2014 ${totalPoints} points`,
+          totalPoints, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0,
+        };
+      }
+      return {
+        grade: 'Good',
+        passFail: 'pass',
+        display: `Good \u2014 ${totalPoints} points`,
+        totalPoints, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0,
       };
     }
     case 'report_only':
     default:
-      return { grade: 'N/A', passFail: 'no_grade', display: 'Report Only' };
+      // DEPRECATED — treat same as pass_reinspect for backward compatibility
+      if (score >= 80) {
+        return { grade: 'Pass', passFail: 'pass', display: 'Pass', uncorrectedMajors: 0 };
+      }
+      return {
+        grade: 'Reinspection Required',
+        passFail: 'fail',
+        display: `Reinspection Required`,
+        uncorrectedMajors: Math.max(1, Math.floor((80 - score) / 8)),
+      };
   }
 }
 
@@ -354,15 +444,15 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Alameda', agencyName: 'Alameda County DEH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 8500, tier: 3 },
   { county: 'Santa Clara', agencyName: 'Santa Clara County DEH', scoringType: 'heavy_weighted', gradingType: 'color_placard', facilityCount: 10000, tier: 3 },
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
-  { county: 'Fresno', agencyName: 'Fresno County DPH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 4500, tier: 3 },
-  { county: 'Kern', agencyName: 'Kern County PHS', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4000, tier: 3 },
+  { county: 'Fresno', agencyName: 'Fresno County DPH', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 4500, tier: 3 },
+  { county: 'Kern', agencyName: 'Kern County PHS', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 4000, tier: 3 },
   { county: 'Ventura', agencyName: 'Ventura County EHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4500, tier: 3 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
-  { county: 'San Joaquin', agencyName: 'San Joaquin County PHS', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 3500, tier: 3 },
+  { county: 'San Joaquin', agencyName: 'San Joaquin County PHS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 3500, tier: 3 },
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
-  { county: 'Stanislaus', agencyName: 'Stanislaus County HSA', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 2500, tier: 3 },
+  { county: 'Stanislaus', agencyName: 'Stanislaus County HSA', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 2500, tier: 3 },
   { county: 'Monterey', agencyName: 'Monterey County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2500, tier: 3 },
-  { county: 'Tulare', agencyName: 'Tulare County HHSA', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 2000, tier: 3 },
+  { county: 'Tulare', agencyName: 'Tulare County HHSA', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 2000, tier: 3 },
   { county: 'Placer', agencyName: 'Placer County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 2200, tier: 3 },
   { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
@@ -376,9 +466,9 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Alameda', city: 'Berkeley', agencyName: 'Berkeley EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 800, tier: 3 },
   { county: 'Los Angeles', city: 'Vernon', agencyName: 'Vernon EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 100, tier: 3 },
   // Tier 4 — remaining 28 small/rural counties
-  { county: 'Merced', agencyName: 'Merced County DPH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 4 },
-  { county: 'Madera', agencyName: 'Madera County DPH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
-  { county: 'Mariposa', agencyName: 'Mariposa County + NPS', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 150, tier: 4 },
+  { county: 'Merced', agencyName: 'Merced County DPH', scoringType: 'violation_point_accumulation', gradingType: 'three_tier_rating', facilityCount: 1200, tier: 4 },
+  { county: 'Madera', agencyName: 'Madera County DPH', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 700, tier: 4 },
+  { county: 'Mariposa', agencyName: 'Mariposa County + NPS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 150, tier: 4 },
   { county: 'Kings', agencyName: 'Kings County DPH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
   { county: 'Humboldt', agencyName: 'Humboldt County DOH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
   { county: 'Imperial', agencyName: 'Imperial County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
