@@ -84,7 +84,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'self-audit',     label: 'Self-Audit',          icon: ClipboardCheck,   route: '/self-audit',            roles: MGMT },
   { id: 'inspector',      label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: MGMT },
   { id: 'reports',        label: 'Reports',             icon: BarChart3,        route: '/reports',               roles: ALL_BUT_KITCHEN },
-  { id: 'regulatory',     label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: OPS },
+  { id: 'regulatory',     label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: [...OPS, 'executive'] },
   { id: 'alerts',         label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'facilities'], dividerAfter: true },
 
   // ── ENTERPRISE & STRATEGIC ──
@@ -129,7 +129,7 @@ export function checkTestMode(): boolean {
 
 // ── Roles that see the bottom Locations section ──────────
 
-export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'kitchen_manager', 'kitchen'];
+export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'executive', 'kitchen_manager', 'kitchen'];
 
 // ── Demo role definitions with descriptions ──────────────
 

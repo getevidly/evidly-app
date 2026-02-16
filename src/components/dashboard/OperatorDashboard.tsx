@@ -82,24 +82,32 @@ interface AttentionItem {
   actionRoute: string;
 }
 
-type DashboardState = 'all_clear' | 'warning' | 'critical';
+type DashboardFilter = 'all' | 'attention' | 'critical';
 
 // ===============================================
-// JURISDICTION THRESHOLDS
+// THRESHOLDS
 // ===============================================
 
 const DEMO_JURISDICTION_THRESHOLDS: JurisdictionThresholds = {
-  warningLevel: 86,
-  criticalLevel: 78,
+  warningLevel: 85,
+  criticalLevel: 70,
   source: 'CA Health & Safety Code + NFPA 96 2024',
   jurisdiction: 'Sacramento County, California',
   autoAssigned: true,
-  explanation: 'Based on Sacramento County health department requirements and NFPA 96 2024 fire safety standards. Kitchens scoring below 78% have a high probability of failing inspection.',
+  explanation: 'Based on Sacramento County health department requirements and NFPA 96 2024 fire safety standards.',
 };
 
 // ===============================================
-// DEMO DATA
+// FIXED DEMO DATA — scores never change
 // ===============================================
+
+// Sub-scores calibrated so the scoring engine produces:
+// Downtown Kitchen → 94%, Airport Cafe → 82%, University Dining → 68%
+const DEMO_LOCATIONS: LocationDemoData[] = [
+  { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
+  { id: 'airport', name: 'Airport Cafe', foodOps: 85, foodDocs: 82, fireOps: 78, fireDocs: 82 },
+  { id: 'university', name: 'University Dining', foodOps: 72, foodDocs: 68, fireOps: 62, fireDocs: 66 },
+];
 
 const DEMO_CHECKLISTS: DemoChecklist[] = [
   { id: 'opening', name: 'Opening', status: 'done', assignee: 'Maria', completedAt: '6:15 AM', items: 12, completed: 12 },
@@ -120,76 +128,29 @@ const DEMO_VENDOR_SCHEDULE: DemoVendorSchedule[] = [
   { day: 'Fri', service: 'Hood Cleaning', vendor: 'Cleaning Pros Plus' },
 ];
 
-// --- State-specific location data ---
-// Sub-scores calibrated so the scoring engine (Food 60% + Fire 40%, each Ops/Docs 50/50)
-// produces overall scores that land in the correct threshold band (warning: 86, critical: 78).
+const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
+  { title: 'Prep cooler not logged since 10 AM', detail: 'Manual log required', actionLabel: 'Log Temp', actionRoute: '/temp-logs' },
+];
 
-const DEMO_STATES: Record<DashboardState, {
-  locations: LocationDemoData[];
-  complianceAlert?: {
-    location: string;
-    pillar: string;
-    pillarScore: number;
-    jurisdictionMessage: string;
-    items: string[];
-  };
-  criticalMessage?: string;
-  criticalItems?: ComplianceAlertItem[];
-  attentionItems: AttentionItem[];
-}> = {
-  all_clear: {
-    locations: [
-      // Downtown → 94%, Airport → 88%, University → 91%  (all ≥ 86)
-      { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-      { id: 'airport', name: 'Airport Cafe', foodOps: 89, foodDocs: 86, fireOps: 85, fireDocs: 90 },
-      { id: 'university', name: 'University Dining', foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
-    ],
-    attentionItems: [
-      { title: 'Prep cooler not logged since 10 AM', detail: 'Manual log required', actionLabel: 'Log Temp', actionRoute: '/temp-logs' },
-    ],
-  },
-  warning: {
-    locations: [
-      // Downtown → 94%, Airport → 84% (warning), University → 91%
-      { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-      { id: 'airport', name: 'Airport Cafe', foodOps: 90, foodDocs: 86, fireOps: 74, fireDocs: 82 },
-      { id: 'university', name: 'University Dining', foodOps: 94, foodDocs: 91, fireOps: 85, fireDocs: 92 },
-    ],
-    complianceAlert: {
-      location: 'Airport Cafe',
-      pillar: 'Fire Safety',
-      pillarScore: 78,
-      jurisdictionMessage: `Sacramento County requires approximately 78% to pass inspection. Airport Cafe is at 84%, below your safety buffer of 86%.`,
-      items: [
-        'Hood cleaning cert expires in 5 days',
-        'Fire suppression inspection overdue',
-        'Vendor insurance expires in 12 days',
-      ],
-    },
-    attentionItems: [
-      { title: 'Prep cooler not logged since 10 AM', detail: 'Manual log required', actionLabel: 'Log Temp', actionRoute: '/temp-logs' },
-    ],
-  },
-  critical: {
-    locations: [
-      // Downtown → 94%, Airport → 70% (critical), University → 56% (critical)
-      { id: 'downtown', name: 'Downtown Kitchen', foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-      { id: 'airport', name: 'Airport Cafe', foodOps: 80, foodDocs: 72, fireOps: 58, fireDocs: 64 },
-      { id: 'university', name: 'University Dining', foodOps: 58, foodDocs: 52, fireOps: 55, fireDocs: 60 },
-    ],
-    criticalMessage: 'Based on Sacramento County requirements, this location would likely fail inspection. Immediate action required.',
-    criticalItems: [
-      { severity: 'critical', title: 'Health permit expired 3 days ago', actionLabel: 'Upload', actionRoute: '/documents', location: 'University Dining' },
-      { severity: 'critical', title: 'Hood cleaning 2 months overdue', actionLabel: 'Schedule', actionRoute: '/vendors', location: 'Airport Cafe' },
-      { severity: 'critical', title: 'Fire suppression failed inspection', actionLabel: 'View', actionRoute: '/documents', location: 'Airport Cafe' },
-      { severity: 'warning', title: '3 food handler cards expiring this month', actionLabel: 'View', actionRoute: '/documents', location: 'University Dining' },
-      { severity: 'warning', title: 'Vendor insurance expires in 8 days', actionLabel: 'Upload', actionRoute: '/documents', location: 'Airport Cafe' },
-    ],
-    attentionItems: [
-      { title: 'Prep cooler not logged since 10 AM', detail: 'Manual log required', actionLabel: 'Log Temp', actionRoute: '/temp-logs' },
-    ],
-  },
+// Per-location compliance alerts (based on fixed scores)
+const AIRPORT_COMPLIANCE_ALERT = {
+  location: 'Airport Cafe',
+  pillar: 'Fire Safety',
+  pillarScore: 80,
+  jurisdictionMessage: 'Sacramento County requires approximately 70% to pass inspection. Airport Cafe is at 82%, below your safety buffer of 85%.',
+  items: [
+    'Hood cleaning cert expires in 5 days',
+    'Fire suppression inspection overdue',
+    'Vendor insurance expires in 12 days',
+  ],
 };
+
+const UNIVERSITY_CRITICAL_ITEMS: ComplianceAlertItem[] = [
+  { severity: 'critical', title: 'Health permit expired 3 days ago', actionLabel: 'Upload', actionRoute: '/documents', location: 'University Dining' },
+  { severity: 'critical', title: 'Hood cleaning 2 months overdue', actionLabel: 'Schedule', actionRoute: '/vendors', location: 'University Dining' },
+  { severity: 'critical', title: 'Fire suppression failed inspection', actionLabel: 'View', actionRoute: '/documents', location: 'University Dining' },
+  { severity: 'warning', title: '3 food handler cards expiring this month', actionLabel: 'View', actionRoute: '/documents', location: 'University Dining' },
+];
 
 // ===============================================
 // HELPERS
@@ -236,7 +197,7 @@ function getLocationState(score: number, thresholds: JurisdictionThresholds): 'a
 }
 
 // ===============================================
-// STATUS BADGE (jurisdiction-aware)
+// STATUS BADGE
 // ===============================================
 
 function StatusBadge({
@@ -288,16 +249,14 @@ function StatusBadge({
 }
 
 // ===============================================
-// DAILY TASKS SECTION (shared across all states)
+// DAILY TASKS SECTION
 // ===============================================
 
 function DailyTasks({ navigate }: { navigate: (path: string) => void }) {
   return (
     <>
-      {/* TODAY label */}
       <SectionHeader>Today</SectionHeader>
 
-      {/* Checklists — compact horizontal */}
       <Card>
         <SectionHeader>Checklists</SectionHeader>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -322,7 +281,6 @@ function DailyTasks({ navigate }: { navigate: (path: string) => void }) {
         </div>
       </Card>
 
-      {/* Temperatures — compact grid */}
       <Card>
         <SectionHeader>Temperatures</SectionHeader>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -357,7 +315,6 @@ function DailyTasks({ navigate }: { navigate: (path: string) => void }) {
         </div>
       </Card>
 
-      {/* Vendor Schedule — simple list */}
       <Card>
         <SectionHeader>This Week</SectionHeader>
         <div className="space-y-2">
@@ -386,32 +343,26 @@ function DailyTasks({ navigate }: { navigate: (path: string) => void }) {
 
 function SingleLocationView({
   locationName,
+  locationId,
   score,
   locState,
   thresholds,
   navigate,
-  complianceAlert,
-  criticalMessage,
-  criticalItems,
   attentionItems,
 }: {
   locationName: string;
+  locationId: string;
   score: InspectionReadinessScore;
   locState: 'all_clear' | 'warning' | 'critical';
   thresholds: JurisdictionThresholds;
   navigate: (path: string) => void;
-  complianceAlert?: {
-    location: string;
-    pillar: string;
-    pillarScore: number;
-    jurisdictionMessage: string;
-    items: string[];
-  };
-  criticalMessage?: string;
-  criticalItems?: ComplianceAlertItem[];
   attentionItems: AttentionItem[];
 }) {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+  // Derive alerts from the location's actual score
+  const complianceAlert = locationId === 'airport' ? AIRPORT_COMPLIANCE_ALERT : undefined;
+  const criticalItems = locationId === 'university' ? UNIVERSITY_CRITICAL_ITEMS : undefined;
 
   return (
     <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -422,12 +373,12 @@ function SingleLocationView({
           <h2 className="text-lg font-semibold text-gray-900">{locationName}</h2>
         </div>
         <div className="flex items-center gap-3">
-          <StatusBadge score={score.overall} state={locState} thresholds={thresholds} onClick={() => navigate('/compliance')} />
+          <StatusBadge score={score.overall} state={locState} thresholds={thresholds} onClick={() => navigate('/scoring-breakdown')} />
           <span className="text-sm text-gray-400">{today}</span>
         </div>
       </div>
 
-      {/* STATE 3: CRITICAL — red alert section with jurisdiction context */}
+      {/* CRITICAL alert */}
       {locState === 'critical' && criticalItems && (
         <div
           className="rounded-lg p-4"
@@ -437,17 +388,14 @@ function SingleLocationView({
             <ShieldAlert size={16} className="inline mr-1.5" style={{ verticalAlign: 'text-bottom' }} />
             INSPECTION READINESS: {score.overall}% &mdash; ACTION REQUIRED
           </p>
-          {/* Jurisdiction context */}
           <p className="text-sm text-gray-700 mb-4">
             Based on {thresholds.jurisdiction} requirements, this location would likely fail inspection.
             Passing threshold: {thresholds.criticalLevel}%.
           </p>
-          {/* Pillar cards inline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <PillarCard pillar="food_safety" score={score.foodSafety.score} opsScore={score.foodSafety.ops} docsScore={score.foodSafety.docs} />
             <PillarCard pillar="fire_safety" score={score.fireSafety.score} opsScore={score.fireSafety.ops} docsScore={score.fireSafety.docs} />
           </div>
-          {/* Critical items */}
           <p className="text-xs font-semibold uppercase text-red-600 mb-2" style={{ letterSpacing: '0.05em' }}>
             Critical Items
           </p>
@@ -478,7 +426,7 @@ function SingleLocationView({
         </div>
       )}
 
-      {/* STATE 2: WARNING — compliance alert card with jurisdiction context */}
+      {/* WARNING alert */}
       {locState === 'warning' && complianceAlert && (
         <div
           className="rounded-lg p-4"
@@ -491,7 +439,6 @@ function SingleLocationView({
           <p className="text-sm font-semibold text-gray-800 mb-2">
             {complianceAlert.pillar} dropped to {complianceAlert.pillarScore}%
           </p>
-          {/* Jurisdiction context message */}
           <p className="text-sm text-gray-600 mb-3">
             {complianceAlert.jurisdictionMessage}
           </p>
@@ -505,7 +452,7 @@ function SingleLocationView({
           </ul>
           <button
             type="button"
-            onClick={() => navigate('/compliance')}
+            onClick={() => navigate('/scoring-breakdown')}
             className="text-xs font-medium hover:underline"
             style={{ color: '#1e4d6b' }}
           >
@@ -517,7 +464,7 @@ function SingleLocationView({
       {/* Daily tasks */}
       <DailyTasks navigate={navigate} />
 
-      {/* Needs Attention — operational items only (hidden if empty) */}
+      {/* Needs Attention */}
       {attentionItems.length > 0 && (
         <Card>
           <SectionHeader>{attentionItems.length} item{attentionItems.length > 1 ? 's' : ''} needs attention</SectionHeader>
@@ -551,6 +498,48 @@ function SingleLocationView({
 }
 
 // ===============================================
+// FILTER TABS
+// ===============================================
+
+function FilterTabs({
+  value,
+  onChange,
+  attentionCount,
+  criticalCount,
+}: {
+  value: DashboardFilter;
+  onChange: (f: DashboardFilter) => void;
+  attentionCount: number;
+  criticalCount: number;
+}) {
+  const tabs: { key: DashboardFilter; label: string }[] = [
+    { key: 'all', label: 'All Locations' },
+    { key: 'attention', label: `Needs Attention (${attentionCount})` },
+    { key: 'critical', label: `Critical (${criticalCount})` },
+  ];
+
+  return (
+    <div className="flex items-center gap-1 mb-4">
+      {tabs.map((tab) => (
+        <button
+          key={tab.key}
+          type="button"
+          onClick={() => onChange(tab.key)}
+          className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+            value === tab.key
+              ? 'text-[#1e4d6b] bg-[#eef4f8]'
+              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+          }`}
+          style={value === tab.key ? { borderBottom: '2px solid #1e4d6b' } : undefined}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ===============================================
 // MAIN COMPONENT
 // ===============================================
 
@@ -558,20 +547,42 @@ export default function OperatorDashboard() {
   const navigate = useNavigate();
   const { isDemoMode, companyName } = useDemo();
 
-  // Demo state switcher
-  const [demoState, setDemoState] = useState<DashboardState>('all_clear');
   const thresholds = DEMO_JURISDICTION_THRESHOLDS;
-  const stateData = DEMO_STATES[demoState];
 
-  // Compute scores for each location
+  // Compute scores for each location (fixed — never change)
   const locationScores = useMemo(() => {
-    return stateData.locations.map((loc) => {
+    return DEMO_LOCATIONS.map((loc) => {
       const score = calculateInspectionReadiness(loc.foodOps, loc.foodDocs, loc.fireOps, loc.fireDocs);
       return { ...loc, score };
     });
-  }, [stateData.locations]);
+  }, []);
 
-  // Org-wide score = average
+  // Filter state
+  const [filter, setFilter] = useState<DashboardFilter>('all');
+
+  // Count locations in each category
+  const attentionCount = useMemo(
+    () => locationScores.filter(l => l.score.overall < thresholds.warningLevel).length,
+    [locationScores, thresholds.warningLevel],
+  );
+  const criticalCount = useMemo(
+    () => locationScores.filter(l => l.score.overall < thresholds.criticalLevel).length,
+    [locationScores, thresholds.criticalLevel],
+  );
+
+  // Filtered locations (for the card row)
+  const filteredLocations = useMemo(() => {
+    switch (filter) {
+      case 'attention':
+        return locationScores.filter(l => l.score.overall < thresholds.warningLevel);
+      case 'critical':
+        return locationScores.filter(l => l.score.overall < thresholds.criticalLevel);
+      default:
+        return locationScores;
+    }
+  }, [locationScores, filter, thresholds]);
+
+  // Org-wide score = average of ALL locations (not filtered)
   const orgScore = useMemo(() => {
     const avg = locationScores.reduce((sum, l) => sum + l.score.overall, 0) / locationScores.length;
     return Math.round(avg);
@@ -597,19 +608,14 @@ export default function OperatorDashboard() {
     const locState = getLocationState(loc.score.overall, thresholds);
     return (
       <div style={{ fontFamily: 'Inter, sans-serif' }}>
-        {isDemoMode && (
-          <DemoStateSwitcher value={demoState} onChange={setDemoState} />
-        )}
         <SingleLocationView
           locationName={loc.name}
+          locationId={loc.id}
           score={loc.score}
           locState={locState}
           thresholds={thresholds}
           navigate={navigate}
-          complianceAlert={stateData.complianceAlert}
-          criticalMessage={stateData.criticalMessage}
-          criticalItems={stateData.criticalItems}
-          attentionItems={stateData.attentionItems}
+          attentionItems={DEMO_ATTENTION_ITEMS}
         />
       </div>
     );
@@ -619,11 +625,6 @@ export default function OperatorDashboard() {
 
   return (
     <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Demo state switcher */}
-      {isDemoMode && (
-        <DemoStateSwitcher value={demoState} onChange={setDemoState} />
-      )}
-
       {/* Org Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
@@ -633,26 +634,42 @@ export default function OperatorDashboard() {
           </h2>
         </div>
         <div className="flex items-center gap-3">
-          <StatusBadge score={orgScore} state={orgState} thresholds={thresholds} onClick={() => navigate('/compliance')} />
+          <StatusBadge score={orgScore} state={orgState} thresholds={thresholds} onClick={() => navigate('/scoring-breakdown')} />
           <span className="text-sm text-gray-400">{today}</span>
         </div>
       </div>
 
-      {/* Location Cards */}
-      <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
-        {locationScores.map((loc) => (
-          <LocationCard
-            key={loc.id}
-            locationId={loc.id}
-            locationName={loc.name}
-            score={loc.score.overall}
-            onClick={() => setSelectedLocationId(loc.id)}
-            isSelected={loc.id === selectedLocationId}
-          />
-        ))}
-      </div>
+      {/* Filter Tabs */}
+      {isDemoMode && (
+        <FilterTabs
+          value={filter}
+          onChange={setFilter}
+          attentionCount={attentionCount}
+          criticalCount={criticalCount}
+        />
+      )}
 
-      {/* Locations below inspection threshold (jurisdiction-aware) */}
+      {/* Location Cards — filtered */}
+      {filteredLocations.length > 0 ? (
+        <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+          {filteredLocations.map((loc) => (
+            <LocationCard
+              key={loc.id}
+              locationId={loc.id}
+              locationName={loc.name}
+              score={loc.score.overall}
+              onClick={() => setSelectedLocationId(loc.id)}
+              isSelected={loc.id === selectedLocationId}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 py-6 justify-center rounded-lg bg-white" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+          <span className="text-green-600 font-medium text-sm">All locations are above this threshold &#x2705;</span>
+        </div>
+      )}
+
+      {/* Locations below inspection threshold */}
       {problemLocations.length > 0 && (
         <Card>
           <div className="flex items-center gap-2 mb-1">
@@ -670,7 +687,6 @@ export default function OperatorDashboard() {
               .map((loc) => {
                 const locSt = getLocationState(loc.score.overall, thresholds);
                 const borderColor = locSt === 'critical' ? '#dc2626' : '#d4af37';
-                // Show which pillar is worst
                 const worstPillar = loc.score.foodSafety.score < loc.score.fireSafety.score
                   ? `Food Safety at ${loc.score.foodSafety.score}%`
                   : loc.score.fireSafety.score < loc.score.foodSafety.score
@@ -715,54 +731,16 @@ export default function OperatorDashboard() {
         <div className="flex-1 border-t border-gray-200" />
       </div>
 
-      {/* Selected location view (state-appropriate) */}
+      {/* Selected location view */}
       <SingleLocationView
         locationName={selectedLoc.name}
+        locationId={selectedLoc.id}
         score={selectedLoc.score}
         locState={selectedLocState}
         thresholds={thresholds}
         navigate={navigate}
-        complianceAlert={selectedLocState === 'warning' ? stateData.complianceAlert : undefined}
-        criticalMessage={selectedLocState === 'critical' ? stateData.criticalMessage : undefined}
-        criticalItems={selectedLocState === 'critical' ? stateData.criticalItems : undefined}
-        attentionItems={stateData.attentionItems}
+        attentionItems={DEMO_ATTENTION_ITEMS}
       />
-    </div>
-  );
-}
-
-// ===============================================
-// DEMO STATE SWITCHER
-// ===============================================
-
-function DemoStateSwitcher({ value, onChange }: { value: DashboardState; onChange: (s: DashboardState) => void }) {
-  const options: { key: DashboardState; label: string }[] = [
-    { key: 'all_clear', label: 'All Clear' },
-    { key: 'warning', label: 'Warning' },
-    { key: 'critical', label: 'Critical' },
-  ];
-
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <span className="text-xs font-medium text-gray-400 uppercase" style={{ letterSpacing: '0.05em' }}>
-        Dashboard State:
-      </span>
-      <div className="flex bg-gray-100 rounded-lg p-0.5">
-        {options.map((opt) => (
-          <button
-            key={opt.key}
-            type="button"
-            onClick={() => onChange(opt.key)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-              value === opt.key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }
