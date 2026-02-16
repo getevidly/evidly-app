@@ -68,7 +68,7 @@ export default function ExecutiveDashboard() {
   const sorted = sortAttentionItems(DEMO_ATTENTION_ITEMS);
   const topItem = sorted[0];
 
-  const userName = 'James Wilson';
+  const userName = 'James';
   const locationCount = demoLocationScores.length;
 
   return (

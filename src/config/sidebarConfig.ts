@@ -131,6 +131,14 @@ export function checkTestMode(): boolean {
 
 export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'executive', 'kitchen_manager', 'kitchen'];
 
+// ── Roles that can book meetings / see Calendly CTAs ─────
+
+export const BOOKING_ROLES: UserRole[] = ['executive', 'management', 'facilities'];
+
+export function canBookMeeting(role: UserRole): boolean {
+  return BOOKING_ROLES.includes(role);
+}
+
 // ── Demo role definitions with descriptions ──────────────
 
 export interface DemoRoleDefinition {

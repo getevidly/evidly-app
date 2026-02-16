@@ -1,10 +1,15 @@
 import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
 import { useNavigate } from 'react-router-dom';
+import { canBookMeeting } from '../config/sidebarConfig';
 
 export function DemoCTABar() {
   const { isDemoMode, presenterMode } = useDemo();
+  const { userRole } = useRole();
   const navigate = useNavigate();
   if (!isDemoMode || presenterMode) return null;
+
+  const showBooking = canBookMeeting(userRole);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg lg:pl-60">
@@ -20,14 +25,16 @@ export function DemoCTABar() {
           >
             Start Free Trial
           </button>
-          <a
-            href="https://calendly.com/evidly/demo"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
-          >
-            Book a Walkthrough
-          </a>
+          {showBooking && (
+            <a
+              href="https://calendly.com/evidly/demo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+            >
+              Book a Walkthrough
+            </a>
+          )}
         </div>
       </div>
     </div>

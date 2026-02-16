@@ -1,11 +1,15 @@
 import { X } from 'lucide-react';
 import CalendlyButton from './CalendlyButton';
 import { useDemoEngagement } from '../../hooks/useDemoEngagement';
+import { useRole } from '../../contexts/RoleContext';
+import { canBookMeeting } from '../../config/sidebarConfig';
 
 export default function DemoBookingBanner() {
   const { showBooking, dismiss } = useDemoEngagement();
+  const { userRole } = useRole();
 
-  if (!showBooking) return null;
+  // Don't show booking banner for kitchen_manager or kitchen roles
+  if (!showBooking || !canBookMeeting(userRole)) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 transform transition-transform duration-500 animate-slide-up">

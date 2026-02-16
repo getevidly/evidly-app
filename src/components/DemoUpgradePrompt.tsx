@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { X, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useRole } from '../contexts/RoleContext';
+import { canBookMeeting } from '../config/sidebarConfig';
 
 const COPY: Record<string, { headline: string; body: string }> = {
   edit: {
@@ -41,6 +43,8 @@ interface DemoUpgradePromptProps {
 
 export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradePromptProps) {
   const navigate = useNavigate();
+  const { userRole } = useRole();
+  const showBooking = canBookMeeting(userRole);
   const copy = COPY[action] || COPY.edit;
 
   // Close on Escape key
@@ -91,12 +95,14 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
             >
               Start Free Trial — $99/month
             </button>
-            <button
-              onClick={() => { onClose(); navigate('/enterprise'); }}
-              className="w-full py-2.5 px-4 text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] rounded-lg transition-colors"
-            >
-              Schedule a Demo Call
-            </button>
+            {showBooking && (
+              <button
+                onClick={() => { onClose(); navigate('/enterprise'); }}
+                className="w-full py-2.5 px-4 text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] rounded-lg transition-colors"
+              >
+                Schedule a Demo Call
+              </button>
+            )}
           </div>
 
           <div className="mt-4 text-center">
