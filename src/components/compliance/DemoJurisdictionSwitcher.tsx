@@ -1,18 +1,27 @@
 // src/components/compliance/DemoJurisdictionSwitcher.tsx
+// Role-aware — returns null for non-admin/non-demo roles
 import React from 'react';
 import { DEMO_JURISDICTIONS, DemoJurisdiction, calculateDemoGrade } from '../../data/demoJurisdictions';
+import { UserRole, canViewDemoSwitcher } from '../../utils/roleAccess';
 
 interface DemoJurisdictionSwitcherProps {
   currentJurisdictionId: string;
   currentScore: number;
   onSwitch: (jurisdictionId: string) => void;
+  role?: UserRole;
 }
 
 export const DemoJurisdictionSwitcher: React.FC<DemoJurisdictionSwitcherProps> = ({
   currentJurisdictionId,
   currentScore,
   onSwitch,
+  role = 'demo',
 }) => {
+  // Only admin and demo roles can see the switcher
+  if (!canViewDemoSwitcher(role)) {
+    return null;
+  }
+
   return (
     <div style={{
       backgroundColor: '#FFF8E1',

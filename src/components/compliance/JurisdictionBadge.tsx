@@ -1,5 +1,7 @@
 // src/components/compliance/JurisdictionBadge.tsx
+// Role-aware jurisdiction grade badge — supports all 8 grading types
 import React from 'react';
+import { UserRole, getBadgeSize, showJurisdictionName } from '../../utils/roleAccess';
 
 interface JurisdictionBadgeProps {
   gradingType: string;
@@ -7,8 +9,9 @@ interface JurisdictionBadgeProps {
   gradeDisplay: string;
   passFail: string;
   jurisdictionName: string;
+  role?: UserRole;
   size?: 'sm' | 'md' | 'lg';
-  showJurisdiction?: boolean;
+  isClosed?: boolean; // Imminent health hazard — overrides everything
 }
 
 export const JurisdictionBadge: React.FC<JurisdictionBadgeProps> = ({
@@ -17,43 +20,48 @@ export const JurisdictionBadge: React.FC<JurisdictionBadgeProps> = ({
   gradeDisplay,
   passFail,
   jurisdictionName,
-  size = 'md',
-  showJurisdiction = true,
+  role = 'demo',
+  size,
+  isClosed = false,
 }) => {
-  const sizeClasses = {
-    sm: 'text-sm px-2 py-0.5',
-    md: 'text-base px-3 py-1',
-    lg: 'text-xl px-4 py-2 font-bold',
-  };
+  const resolvedSize = size || getBadgeSize(role);
+  const showName = showJurisdictionName(role);
 
-  const getBackgroundColor = (): string => {
+  // Closed overrides everything
+  if (isClosed) {
+    return (
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+        <span style={{
+          backgroundColor: '#B71C1C',
+          color: '#FFFFFF',
+          border: '2px solid #D32F2F',
+          borderRadius: '8px',
+          fontWeight: 700,
+          display: 'inline-block',
+          ...getSizeStyle(resolvedSize),
+          letterSpacing: '0.5px',
+        }}>
+          CLOSED
+        </span>
+        {showName && (
+          <span style={{ fontSize: '0.85em', color: '#C62828', fontWeight: 600 }}>
+            Imminent Health Hazard
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  const getColors = (): { bg: string; text: string; border: string } => {
     switch (passFail) {
-      case 'pass': return '#E8F5E9'; // Light green
-      case 'fail': return '#FFEBEE'; // Light red
-      case 'warning': return '#FFF8E1'; // Light yellow
-      default: return '#F5F5F5'; // Light grey
+      case 'pass': return { bg: '#E8F5E9', text: '#2E7D32', border: '#4CAF50' };
+      case 'fail': return { bg: '#FFEBEE', text: '#C62828', border: '#EF5350' };
+      case 'warning': return { bg: '#FFF8E1', text: '#F57F17', border: '#FFC107' };
+      default: return { bg: '#F5F5F5', text: '#616161', border: '#BDBDBD' };
     }
   };
 
-  const getTextColor = (): string => {
-    switch (passFail) {
-      case 'pass': return '#2E7D32'; // Dark green
-      case 'fail': return '#C62828'; // Dark red
-      case 'warning': return '#F57F17'; // Dark yellow
-      default: return '#616161'; // Grey
-    }
-  };
-
-  const getBorderColor = (): string => {
-    switch (passFail) {
-      case 'pass': return '#4CAF50';
-      case 'fail': return '#EF5350';
-      case 'warning': return '#FFC107';
-      default: return '#BDBDBD';
-    }
-  };
-
-  const renderGradeContent = (): string => {
+  const renderContent = (): string => {
     switch (gradingType) {
       case 'letter_grade':
       case 'letter_grade_strict':
@@ -64,6 +72,13 @@ export const JurisdictionBadge: React.FC<JurisdictionBadgeProps> = ({
         return gradeDisplay;
       case 'score_negative':
         return gradeDisplay;
+      case 'pass_reinspect':
+        // Show Pass / Reinspection Required
+        if (grade === 'Pass') return 'Pass';
+        if (grade === 'Reinspection Required') return 'Reinspect';
+        return gradeDisplay;
+      case 'three_tier_rating':
+        return gradeDisplay;
       case 'report_only':
         return 'Report Only';
       default:
@@ -71,22 +86,24 @@ export const JurisdictionBadge: React.FC<JurisdictionBadgeProps> = ({
     }
   };
 
+  const colors = getColors();
+
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
       <span
         style={{
-          backgroundColor: getBackgroundColor(),
-          color: getTextColor(),
-          border: `2px solid ${getBorderColor()}`,
+          backgroundColor: colors.bg,
+          color: colors.text,
+          border: `2px solid ${colors.border}`,
           borderRadius: '8px',
           fontWeight: 600,
           display: 'inline-block',
-          ...parseSizeStyle(sizeClasses[size]),
+          ...getSizeStyle(resolvedSize),
         }}
       >
-        {renderGradeContent()}
+        {renderContent()}
       </span>
-      {showJurisdiction && (
+      {showName && (
         <span style={{ fontSize: '0.85em', color: '#757575' }}>
           {jurisdictionName}
         </span>
@@ -95,19 +112,16 @@ export const JurisdictionBadge: React.FC<JurisdictionBadgeProps> = ({
   );
 };
 
-function parseSizeStyle(classes: string): React.CSSProperties {
-  const style: React.CSSProperties = {};
-  if (classes.includes('text-sm')) style.fontSize = '0.875rem';
-  if (classes.includes('text-base')) style.fontSize = '1rem';
-  if (classes.includes('text-xl')) style.fontSize = '1.25rem';
-  if (classes.includes('px-2')) style.paddingLeft = style.paddingRight = '0.5rem';
-  if (classes.includes('px-3')) style.paddingLeft = style.paddingRight = '0.75rem';
-  if (classes.includes('px-4')) style.paddingLeft = style.paddingRight = '1rem';
-  if (classes.includes('py-0.5')) style.paddingTop = style.paddingBottom = '0.125rem';
-  if (classes.includes('py-1')) style.paddingTop = style.paddingBottom = '0.25rem';
-  if (classes.includes('py-2')) style.paddingTop = style.paddingBottom = '0.5rem';
-  if (classes.includes('font-bold')) style.fontWeight = 700;
-  return style;
+function getSizeStyle(size: 'sm' | 'md' | 'lg'): React.CSSProperties {
+  switch (size) {
+    case 'sm':
+      return { fontSize: '0.875rem', paddingLeft: '0.5rem', paddingRight: '0.5rem', paddingTop: '0.125rem', paddingBottom: '0.125rem' };
+    case 'lg':
+      return { fontSize: '1.25rem', paddingLeft: '1rem', paddingRight: '1rem', paddingTop: '0.5rem', paddingBottom: '0.5rem', fontWeight: 700 };
+    case 'md':
+    default:
+      return { fontSize: '1rem', paddingLeft: '0.75rem', paddingRight: '0.75rem', paddingTop: '0.25rem', paddingBottom: '0.25rem' };
+  }
 }
 
 export default JurisdictionBadge;

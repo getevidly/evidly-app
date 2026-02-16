@@ -1,5 +1,7 @@
 // src/components/compliance/JurisdictionInfoPanel.tsx
+// Role-aware jurisdiction info — returns null for staff role
 import React from 'react';
+import { UserRole, canViewJurisdictionInfo } from '../../utils/roleAccess';
 
 interface JurisdictionInfo {
   county: string;
@@ -17,6 +19,7 @@ interface JurisdictionInfo {
 
 interface JurisdictionInfoPanelProps {
   jurisdiction: JurisdictionInfo;
+  role?: UserRole;
   currentScore?: number;
   currentGrade?: string;
   passFail?: string;
@@ -27,6 +30,8 @@ const SCORING_LABELS: Record<string, string> = {
   heavy_weighted: 'Heavy Weighted (8 points per major violation)',
   major_violation_count: 'Major Violation Count (Grade based on number of majors)',
   negative_scale: 'Negative Scale (0 is perfect, points added for violations)',
+  major_minor_reinspect: 'Major/Minor with Reinspection (CalCode ORFIR standard)',
+  violation_point_accumulation: 'Violation Point Accumulation (Points accumulate per violation)',
   report_only: 'Report Only (No public grade assigned by jurisdiction)',
 };
 
@@ -36,12 +41,31 @@ const GRADING_LABELS: Record<string, string> = {
   color_placard: 'Color Placard (Green/Yellow/Red)',
   score_100: 'Numeric Score (0-100)',
   score_negative: 'Negative Score (0 is perfect)',
+  pass_reinspect: 'Pass / Reinspection Required (CalCode ORFIR)',
+  three_tier_rating: 'Three-Tier Rating (Good/Satisfactory/Unsatisfactory)',
   report_only: 'No Public Grade',
+};
+
+const THRESHOLD_DESCRIPTIONS: Record<string, string> = {
+  letter_grade: 'A (90-100), B (80-89), C (70-79). Below 70 = closure review.',
+  letter_grade_strict: 'Only A (90+) is a passing grade. B or below = FAIL.',
+  color_placard: 'Green = pass, Yellow = conditional, Red = closure.',
+  score_100: 'Numeric score displayed publicly. Pass threshold set by jurisdiction.',
+  score_negative: '0 is perfect. Points are added for each violation found.',
+  pass_reinspect: 'No numeric grade. Pass if no uncorrected major violations. Reinspection if majors remain uncorrected. Closed if imminent health hazard.',
+  three_tier_rating: 'Good (0-6 points), Satisfactory (7-13 points), Unsatisfactory (14+ points).',
+  report_only: 'Inspection report filed but no public-facing grade or placard.',
 };
 
 export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
   jurisdiction,
+  role = 'demo',
 }) => {
+  // Staff role gets no info panel
+  if (!canViewJurisdictionInfo(role)) {
+    return null;
+  }
+
   return (
     <div style={{
       backgroundColor: '#FFFFFF',
@@ -83,9 +107,14 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
         <p style={{ margin: '4px 0 0', fontSize: '0.9rem', color: '#424242' }}>
           {GRADING_LABELS[jurisdiction.gradingType] || jurisdiction.gradingType}
         </p>
+        {THRESHOLD_DESCRIPTIONS[jurisdiction.gradingType] && (
+          <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#9E9E9E', fontStyle: 'italic' }}>
+            {THRESHOLD_DESCRIPTIONS[jurisdiction.gradingType]}
+          </p>
+        )}
       </div>
 
-      {/* Pass Threshold */}
+      {/* Pass Threshold — only for grading types that use numeric thresholds */}
       {jurisdiction.passThreshold && (
         <div style={{ marginBottom: '12px' }}>
           <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
