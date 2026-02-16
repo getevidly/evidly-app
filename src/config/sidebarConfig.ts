@@ -22,6 +22,7 @@ import {
   Newspaper,
   Store,
   Calendar,
+  Cog,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
@@ -35,6 +36,7 @@ export interface SidebarNavItem {
   route: string;
   roles: UserRole[];
   dividerAfter?: boolean;
+  requiresAdmin?: boolean; // EvidLY platform admin only (not a customer role)
 }
 
 // ── Role shorthands ──────────────────────────────────────
@@ -50,59 +52,66 @@ const MGMT: UserRole[] = ['management'];
 const MGMT_EXEC: UserRole[] = ['management', 'executive'];
 const OPS: UserRole[] = ['management', 'kitchen_manager'];
 const OPS_STAFF: UserRole[] = ['management', 'kitchen_manager', 'kitchen'];
-const FAC_OPS: UserRole[] = ['management', 'kitchen_manager', 'facilities'];
+const ALL_BUT_KITCHEN: UserRole[] = ['executive', 'management', 'kitchen_manager', 'facilities'];
 
 // ── Master Nav Items (flat, ordered, with dividerAfter) ──
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   // ── PRIMARY ──
-  { id: 'dashboard',      label: 'Dashboard',          icon: LayoutDashboard,  route: '/dashboard',          roles: ['executive', 'management', 'kitchen_manager', 'facilities'] },
-  { id: 'my-tasks',       label: 'My Tasks',           icon: ClipboardCheck,   route: '/dashboard',          roles: ['kitchen'], dividerAfter: true },
+  { id: 'dashboard',      label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['executive', 'management', 'kitchen_manager', 'facilities'] },
+  { id: 'my-tasks',       label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen'], dividerAfter: true },
 
-  // ── DAILY OPERATIONS (Food Safety) ──
-  { id: 'checklists',     label: 'Checklists',         icon: ClipboardCheck,   route: '/checklists',         roles: OPS_STAFF },
-  { id: 'temperatures',   label: 'Temperatures',       icon: Thermometer,      route: '/temp-logs',          roles: OPS },
-  { id: 'log-temp',       label: 'Log Temp',           icon: Thermometer,      route: '/temp-logs',          roles: ['kitchen'] },
-  { id: 'calendar',       label: 'Calendar',           icon: Calendar,         route: '/calendar',           roles: OPS },
-  { id: 'incidents',      label: 'Incidents',          icon: AlertTriangle,    route: '/playbooks',          roles: [...OPS, 'facilities'] },
-  { id: 'report-issue',   label: 'Report Issue',       icon: AlertTriangle,    route: '/playbooks',          roles: ['kitchen'], dividerAfter: true },
+  // ── DAILY OPERATIONS ──
+  { id: 'checklists',     label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: OPS_STAFF },
+  { id: 'temperatures',   label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: OPS },
+  { id: 'log-temp',       label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
+  { id: 'calendar',       label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: OPS },
+  { id: 'incidents',      label: 'Incidents',           icon: AlertTriangle,    route: '/playbooks',             roles: [...OPS, 'facilities'] },
+  { id: 'report-issue',   label: 'Report Issue',        icon: AlertTriangle,    route: '/playbooks',             roles: ['kitchen'], dividerAfter: true },
 
   // ── DOCUMENTS & EQUIPMENT ──
-  { id: 'documents',      label: 'Documents',          icon: FileText,         route: '/documents',          roles: FAC_OPS },
-  { id: 'equipment',      label: 'Equipment',          icon: Wrench,           route: '/equipment',          roles: FAC_OPS },
-  { id: 'vendors',        label: 'Vendors',            icon: ShoppingBag,      route: '/vendors',            roles: FAC_OPS },
-  { id: 'haccp',          label: 'HACCP',              icon: Shield,           route: '/haccp',              roles: OPS, dividerAfter: true },
+  { id: 'documents',      label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'equipment',      label: 'Equipment',           icon: Wrench,           route: '/equipment',             roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'vendors',        label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'haccp',          label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: OPS, dividerAfter: true },
 
   // ── PHOTOS ──
-  { id: 'photos',         label: 'Photos',             icon: Camera,           route: '/photo-evidence',     roles: ['management', 'kitchen'], dividerAfter: true },
+  { id: 'photos',         label: 'Photo Evidence',      icon: Camera,           route: '/photo-evidence',        roles: ['management', 'kitchen'], dividerAfter: true },
 
   // ── INSIGHTS & COMPLIANCE ──
-  { id: 'compliance',     label: 'Compliance',         icon: Scale,            route: '/scoring-breakdown',  roles: ['management', 'executive', 'kitchen_manager'] },
-  { id: 'self-audit',     label: 'Self-Audit',         icon: ClipboardCheck,   route: '/self-audit',         roles: MGMT },
-  { id: 'inspector',      label: 'Inspector View',     icon: Eye,              route: '/inspector-view',     roles: MGMT },
-  { id: 'ai-copilot',     label: 'AI Copilot',         icon: Brain,            route: '/copilot',            roles: OPS },
-  { id: 'regulatory',     label: 'Regulatory Updates', icon: Newspaper,        route: '/regulatory-alerts',  roles: MGMT },
-  { id: 'reports',        label: 'Reports',            icon: BarChart3,        route: '/health-dept-report', roles: MGMT_EXEC },
-  { id: 'alerts',         label: 'Alerts',             icon: Bell,             route: '/analysis',           roles: ['management', 'facilities'], dividerAfter: true },
+  { id: 'compliance',     label: 'Compliance Score',    icon: Scale,            route: '/scoring-breakdown',     roles: ['management', 'executive', 'kitchen_manager'] },
+  { id: 'ai-copilot',     label: 'Compliance Copilot',  icon: Brain,            route: '/copilot',               roles: OPS },
+  { id: 'self-audit',     label: 'Self-Audit',          icon: ClipboardCheck,   route: '/self-audit',            roles: MGMT },
+  { id: 'inspector',      label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: MGMT },
+  { id: 'reports',        label: 'Reports',             icon: BarChart3,        route: '/reports',               roles: ALL_BUT_KITCHEN },
+  { id: 'regulatory',     label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: OPS },
+  { id: 'alerts',         label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'facilities'], dividerAfter: true },
 
   // ── ENTERPRISE & STRATEGIC ──
-  { id: 'locations',      label: 'Locations',          icon: MapPin,           route: '/org-hierarchy',      roles: ['executive'] },
-  { id: 'benchmarks',     label: 'Benchmarks',         icon: BarChart3,        route: '/benchmarks',         roles: MGMT_EXEC },
-  { id: 'risk-score',     label: 'Risk Score',         icon: Shield,           route: '/insurance-risk',     roles: MGMT_EXEC },
-  { id: 'leaderboard',    label: 'Leaderboard',        icon: Trophy,           route: '/leaderboard',        roles: MGMT_EXEC },
-  { id: 'marketplace',    label: 'Marketplace',        icon: Store,            route: '/marketplace',        roles: MGMT_EXEC, dividerAfter: true },
+  { id: 'locations',      label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: ['executive'] },
+  { id: 'benchmarks',     label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
+  { id: 'risk-score',     label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
+  { id: 'leaderboard',    label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
+  { id: 'marketplace',    label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT_EXEC, dividerAfter: true },
 
   // ── TEAM & ADMIN ──
-  { id: 'team',           label: 'Team',               icon: Users,            route: '/team',               roles: ['management', 'executive', 'kitchen_manager'] },
-  { id: 'onboarding',     label: 'Onboarding',         icon: GraduationCap,    route: '/training',           roles: MGMT },
-  { id: 'settings',       label: 'Settings',           icon: Settings,         route: '/settings',           roles: ['management', 'executive', 'kitchen_manager', 'facilities'] },
-  { id: 'help',           label: 'Help',               icon: HelpCircle,       route: '/help',               roles: ALL },
+  { id: 'team',           label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
+  { id: 'training',       label: 'Training',            icon: GraduationCap,    route: '/training',              roles: OPS_STAFF },
+  { id: 'system-admin',   label: 'System Admin',        icon: Cog,             route: '/admin/onboard-client',  roles: MGMT },
+  { id: 'settings',       label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'kitchen_manager', 'facilities'] },
+  { id: 'help',           label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
+
+  // ── EVIDLY ADMIN ONLY (not customer-facing) ──
+  { id: 'usage-analytics', label: 'Usage Analytics',    icon: BarChart3,        route: '/admin/usage-analytics', roles: MGMT, requiresAdmin: true },
 ];
 
 // ── Filtered nav items for a role ────────────────────────
 
-export function getNavItemsForRole(role: UserRole): SidebarNavItem[] {
-  return SIDEBAR_NAV_ITEMS.filter(item => item.roles.includes(role));
+export function getNavItemsForRole(role: UserRole, isEvidlyAdmin: boolean = false): SidebarNavItem[] {
+  return SIDEBAR_NAV_ITEMS.filter(item => {
+    if (item.requiresAdmin && !isEvidlyAdmin) return false;
+    return item.roles.includes(role);
+  });
 }
 
 // ── Test mode detection ──────────────────────────────────
@@ -117,6 +126,10 @@ export function checkTestMode(): boolean {
     return false;
   }
 }
+
+// ── Roles that see the bottom Locations section ──────────
+
+export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'kitchen_manager', 'kitchen'];
 
 // ── Demo role definitions with descriptions ──────────────
 

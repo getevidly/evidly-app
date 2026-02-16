@@ -1,12 +1,20 @@
 import { useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck, MapPin } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
-import { locations as demoLocations, locationScores, getGrade } from '../../data/demoData';
-import { getNavItemsForRole, checkTestMode } from '../../config/sidebarConfig';
+import { locations as demoLocations, locationScores } from '../../data/demoData';
+import { getNavItemsForRole, checkTestMode, LOCATION_VISIBLE_ROLES } from '../../config/sidebarConfig';
+
+// ── Score color helper ───────────────────────────────────
+
+function getScoreColor(score: number): string {
+  if (score >= 85) return '#16a34a';
+  if (score >= 70) return '#d97706';
+  return '#dc2626';
+}
 
 // ── Sidebar component ───────────────────────────────────
 
@@ -18,7 +26,20 @@ export function Sidebar() {
   const { branding } = useBranding();
 
   const isTestMode = useMemo(() => checkTestMode(), []);
-  const navItems = useMemo(() => getNavItemsForRole(userRole), [userRole]);
+  // In demo mode, never show EvidLY-admin-only items (Usage Analytics, etc.)
+  const isEvidlyAdmin = false;
+  const navItems = useMemo(() => getNavItemsForRole(userRole, isEvidlyAdmin), [userRole, isEvidlyAdmin]);
+
+  // Location section visibility
+  const showLocations = LOCATION_VISIBLE_ROLES.includes(userRole);
+  const visibleLocations = useMemo(() => {
+    if (!showLocations) return [];
+    // Kitchen staff sees only their assigned location (Downtown Kitchen in demo)
+    if (userRole === 'kitchen') {
+      return demoLocations.filter(loc => loc.urlId === 'downtown');
+    }
+    return demoLocations;
+  }, [showLocations, userRole]);
 
   // Expose test API for Playwright
   useEffect(() => {
@@ -111,16 +132,23 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Location Quick-Switch */}
-        {demoLocations.length >= 2 && (
+        {/* Locations — pinned to bottom, role-based visibility */}
+        {showLocations && visibleLocations.length > 0 && (
           <div className="flex-shrink-0 border-t border-white/10 px-3 py-3">
             <div className="flex items-center justify-between px-2 mb-2">
               <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Locations</span>
-              <kbd className="text-[9px] text-gray-500 bg-white/10 px-1.5 py-0.5 rounded border border-white/10">Ctrl+K</kbd>
+              {userRole === 'management' && (
+                <span
+                  onClick={() => navigate('/org-hierarchy')}
+                  className="text-[10px] text-gray-500 hover:text-[#d4af37] cursor-pointer transition-colors"
+                >
+                  Edit
+                </span>
+              )}
             </div>
-            {demoLocations.map(loc => {
+            {visibleLocations.map(loc => {
               const score = locationScores[loc.urlId]?.overall ?? 0;
-              const grade = getGrade(score);
+              const scoreColor = getScoreColor(score);
               const params = new URLSearchParams(window.location.search);
               const currentLoc = params.get('location');
               const isActive = currentLoc === loc.urlId;
@@ -134,15 +162,15 @@ export function Sidebar() {
                   {...(isTestMode ? { 'data-testid': `nav-location-${loc.urlId}` } : {})}
                 >
                   <div className="flex items-center gap-2 min-w-0">
-                    <MapPin className="h-3 w-3 flex-shrink-0 text-gray-400" />
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: scoreColor }}
+                    />
                     <span className="text-xs font-medium truncate">{loc.name}</span>
                   </div>
                   <span
-                    className="text-[10px] font-bold px-1.5 rounded-full flex-shrink-0"
-                    style={{
-                      color: grade.hex,
-                      backgroundColor: grade.hex + '25',
-                    }}
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 text-white"
+                    style={{ backgroundColor: scoreColor }}
                   >
                     {score}
                   </span>
