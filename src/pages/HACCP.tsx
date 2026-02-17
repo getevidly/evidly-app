@@ -595,6 +595,82 @@ export function HACCP() {
       y += 6;
     });
 
+    // ── Checklist Completion Summary ──
+    doc.addPage();
+    y = 25;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Recent Checklist Completions', m, y);
+    y += 12;
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Reporting period: Last ${exportRange === 'all' ? 'all available' : exportRange + ' days'}`, m, y);
+    y += 8;
+
+    // Demo checklist completion data
+    const demoChecklists = [
+      { name: 'Opening Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Today, 6:15 AM' },
+      { name: 'Mid-Shift Check', score: '83%', completedBy: 'Sarah Chen', date: 'Today, 11:30 AM' },
+      { name: 'Closing Checklist', score: '100%', completedBy: 'Emma Davis', date: 'Yesterday, 9:45 PM' },
+      { name: 'Receiving Checklist', score: '100%', completedBy: 'Mike Johnson', date: 'Yesterday, 7:00 AM' },
+      { name: 'Opening Checklist', score: '100%', completedBy: 'Sarah Chen', date: '2 days ago, 6:20 AM' },
+    ];
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Checklist', m, y);
+    doc.text('Score', m + 70, y);
+    doc.text('Completed By', m + 95, y);
+    doc.text('Date', m + 135, y);
+    y += 2;
+    doc.setDrawColor(200, 200, 200);
+    doc.line(m, y, pageW - m, y);
+    y += 5;
+    doc.setFont('helvetica', 'normal');
+    demoChecklists.forEach(cl => {
+      checkPage(8);
+      doc.text(cl.name, m, y);
+      doc.text(cl.score, m + 70, y);
+      doc.text(cl.completedBy, m + 95, y);
+      doc.text(cl.date, m + 135, y);
+      y += 6;
+    });
+
+    // ── Temperature Log Summary ──
+    y += 10;
+    checkPage(40);
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Temperature Log Summary', m, y);
+    y += 10;
+
+    const demoTempLogs = [
+      { equipment: 'Walk-in Cooler', temp: '38°F', range: '32–41°F', status: 'PASS', time: 'Today, 6:10 AM' },
+      { equipment: 'Walk-in Freezer', temp: '-2°F', range: '≤0°F', status: 'PASS', time: 'Today, 6:12 AM' },
+      { equipment: 'Hot Hold Cabinet', temp: '142°F', range: '≥135°F', status: 'PASS', time: 'Today, 11:00 AM' },
+      { equipment: 'Prep Table', temp: '40°F', range: '32–41°F', status: 'PASS', time: 'Today, 10:30 AM' },
+    ];
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Equipment', m, y);
+    doc.text('Temp', m + 50, y);
+    doc.text('Range', m + 75, y);
+    doc.text('Status', m + 105, y);
+    doc.text('Time', m + 125, y);
+    y += 2;
+    doc.line(m, y, pageW - m, y);
+    y += 5;
+    doc.setFont('helvetica', 'normal');
+    demoTempLogs.forEach(tl => {
+      checkPage(8);
+      doc.text(tl.equipment, m, y);
+      doc.text(tl.temp, m + 50, y);
+      doc.text(tl.range, m + 75, y);
+      doc.text(tl.status, m + 105, y);
+      doc.text(tl.time, m + 125, y);
+      y += 6;
+    });
+
     // ── Corrective Actions ──
     doc.addPage();
     y = 25;
@@ -859,6 +935,9 @@ export function HACCP() {
   const [showNewCAForm, setShowNewCAForm] = useState(false);
   const [newCA, setNewCA] = useState({ planName: '', ccpNumber: '', deviation: '', criticalLimit: '', recordedValue: '', actionTaken: '' });
 
+  // Inspector Package date range
+  const [exportRange, setExportRange] = useState<'7' | '30' | '90' | 'all'>('30');
+
   return (
     <>
       <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
@@ -873,6 +952,16 @@ export function HACCP() {
           </div>
           <div className="flex items-center space-x-2">
             {canExportPackage && (
+              <select
+                value={exportRange}
+                onChange={(e) => setExportRange(e.target.value as typeof exportRange)}
+                className="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+              >
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="all">All data</option>
+              </select>
               <button
                 onClick={handleExportInspectorPackage}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
