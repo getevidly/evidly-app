@@ -2610,6 +2610,63 @@ export const trainingQuizAttempts: TrainingQuizAttempt[] = [
   { id: 'tqa-07', enrollmentId: 'te-09', employeeName: 'Priya Patel', moduleId: 'tm-06', moduleTitle: 'Foodborne Illness Prevention', courseId: null, attemptNumber: 1, scorePercent: 70, passed: true, questionsTotal: 10, questionsCorrect: 7, timeSpentSeconds: 510, completedAt: '2026-02-07T11:00:00Z' },
 ];
 
+// ── Certification Requirements (FS-3) ────────────────────────────────────────
+
+export interface CertificationRequirement {
+  id: string;
+  certType: string;
+  certName: string;
+  required: boolean;
+  requiredForRoles: string[];
+  deadlineDays: number | null;
+  authority: string;
+  authoritySection: string | null;
+  renewalPeriodMonths: number | null;
+  notes: string | null;
+}
+
+export const certificationRequirements: CertificationRequirement[] = [
+  { id: 'cr-01', certType: 'food_handler', certName: 'California Food Handler Card', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: 30, authority: 'California Health & Safety Code', authoritySection: '§113948', renewalPeriodMonths: 36, notes: 'All food handlers must obtain within 30 days of hire (SB 476). Valid for 3 years.' },
+  { id: 'cr-02', certType: 'cfpm', certName: 'Certified Food Protection Manager', required: true, requiredForRoles: ['kitchen_manager', 'management'], deadlineDays: null, authority: 'California Health & Safety Code', authoritySection: '§113947.1', renewalPeriodMonths: 60, notes: 'At least one CFPM required per establishment during all operating hours.' },
+  { id: 'cr-03', certType: 'fire_extinguisher_training', certName: 'Fire Extinguisher Training', required: true, requiredForRoles: ['kitchen', 'kitchen_manager', 'facilities'], deadlineDays: null, authority: 'OSHA 29 CFR 1910.157 / NFPA 10', authoritySection: null, renewalPeriodMonths: 12, notes: 'Annual training on portable extinguisher use required for all employees.' },
+  { id: 'cr-04', certType: 'hood_safety', certName: 'Hood Suppression System Awareness', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: null, authority: 'NFPA 96 / EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 12, notes: 'Kitchen staff must know manual pull station location and activation procedure.' },
+  { id: 'cr-05', certType: 'allergen_awareness', certName: 'Allergen Awareness Training', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: null, authority: 'FDA Food Code 2-102.11', authoritySection: null, renewalPeriodMonths: 24, notes: 'Recommended; becoming mandatory in many jurisdictions.' },
+  { id: 'cr-06', certType: 'first_aid_cpr', certName: 'First Aid / CPR Certification', required: false, requiredForRoles: ['kitchen_manager', 'management', 'facilities'], deadlineDays: null, authority: 'EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 24, notes: 'At least one certified per shift recommended.' },
+  { id: 'cr-07', certType: 'haccp_training', certName: 'HACCP Training', required: false, requiredForRoles: ['kitchen_manager', 'management'], deadlineDays: null, authority: 'FDA 21 CFR Part 120/123', authoritySection: null, renewalPeriodMonths: null, notes: 'Required for specialized processes (juice, seafood).' },
+];
+
+// ── Training Records (FS-3) ──────────────────────────────────────────────────
+
+export interface TrainingRecord {
+  id: string;
+  userId: string;
+  employeeName: string;
+  trainingType: string;
+  trainingName: string;
+  completedDate: string;
+  trainer: string | null;
+  durationMinutes: number | null;
+  score: number | null;
+  passFail: 'pass' | 'fail' | 'not_applicable' | null;
+  nextDueDate: string | null;
+  locationId: string;
+}
+
+export const trainingRecords: TrainingRecord[] = [
+  { id: 'tr-01', userId: '1', employeeName: 'Marcus Johnson', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2025-06-15', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 92, passFail: 'pass', nextDueDate: '2028-06-15', locationId: '1' },
+  { id: 'tr-02', userId: '1', employeeName: 'Marcus Johnson', trainingType: 'cfpm', trainingName: 'ServSafe Manager Certification', completedDate: '2025-03-10', trainer: 'ServSafe', durationMinutes: 480, score: 88, passFail: 'pass', nextDueDate: '2030-03-10', locationId: '1' },
+  { id: 'tr-03', userId: '2', employeeName: 'Sarah Chen', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2025-08-20', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 95, passFail: 'pass', nextDueDate: '2028-08-20', locationId: '1' },
+  { id: 'tr-04', userId: '2', employeeName: 'Sarah Chen', trainingType: 'cfpm', trainingName: 'ServSafe Manager Certification', completedDate: '2025-04-05', trainer: 'ServSafe', durationMinutes: 480, score: 90, passFail: 'pass', nextDueDate: '2030-04-05', locationId: '1' },
+  { id: 'tr-05', userId: '3', employeeName: 'Maria Garcia', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2025-09-01', trainer: 'ANSI', durationMinutes: 120, score: 88, passFail: 'pass', nextDueDate: '2028-09-01', locationId: '2' },
+  { id: 'tr-06', userId: '4', employeeName: 'David Park', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2024-04-02', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 85, passFail: 'pass', nextDueDate: '2027-04-02', locationId: '2' },
+  { id: 'tr-07', userId: '5', employeeName: 'Michael Torres', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2023-02-26', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 82, passFail: 'pass', nextDueDate: '2026-02-26', locationId: '2' },
+  { id: 'tr-08', userId: '6', employeeName: 'Emma Rodriguez', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2025-07-10', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 90, passFail: 'pass', nextDueDate: '2028-07-10', locationId: '1' },
+  { id: 'tr-09', userId: '6', employeeName: 'Emma Rodriguez', trainingType: 'allergen_awareness', trainingName: 'Allergen Awareness Training', completedDate: '2025-07-12', trainer: 'EvidLY LMS', durationMinutes: 60, score: 95, passFail: 'pass', nextDueDate: '2027-07-12', locationId: '1' },
+  { id: 'tr-10', userId: '1', employeeName: 'Marcus Johnson', trainingType: 'fire_extinguisher_training', trainingName: 'Fire Extinguisher Training', completedDate: '2025-11-15', trainer: 'SafeGuard Fire Systems', durationMinutes: 90, score: null, passFail: 'pass', nextDueDate: '2026-11-15', locationId: '1' },
+  { id: 'tr-11', userId: '1', employeeName: 'Marcus Johnson', trainingType: 'haccp_training', trainingName: 'HACCP Principles Training', completedDate: '2025-05-20', trainer: 'ServSafe', durationMinutes: 480, score: 91, passFail: 'pass', nextDueDate: null, locationId: '1' },
+  { id: 'tr-12', userId: '7', employeeName: 'Alex Thompson', trainingType: 'food_handler', trainingName: 'California Food Handler Card', completedDate: '2024-12-10', trainer: 'StateFoodSafety.com', durationMinutes: 120, score: 78, passFail: 'pass', nextDueDate: '2027-12-10', locationId: '3' },
+];
+
 /** Find marketplace vendors whose categories match overdue/upcoming services */
 export function getSmartRecommendations(existingVendors: Vendor[]): { vendor: MarketplaceVendor; reason: string }[] {
   const serviceToSubcategory: Record<string, string> = {
