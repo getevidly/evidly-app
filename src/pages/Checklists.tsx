@@ -958,6 +958,29 @@ export function Checklists() {
     });
   };
 
+  // ── Authority badge + CCP tag helper ──
+  const renderAuthBadges = (item: ChecklistTemplateItem) => (
+    <span className="inline-flex items-center gap-1 ml-1 align-middle">
+      {item.authority_source && (() => {
+        const auth = AUTHORITY_LABELS[item.authority_source!];
+        return auth ? (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+            style={{ color: auth.color, backgroundColor: auth.bg }}>
+            {auth.label}{item.authority_section ? ` ${item.authority_section}` : ''}
+          </span>
+        ) : null;
+      })()}
+      {item.haccp_ccp && (
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">
+          {item.haccp_ccp}
+        </span>
+      )}
+      {item.is_critical && (
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">Critical</span>
+      )}
+    </span>
+  );
+
   const renderItemInput = (item: ChecklistTemplateItem) => {
     const response = itemResponses[item.id];
 
@@ -974,9 +997,15 @@ export function Checklists() {
                 }
                 className="h-6 w-6 text-[#d4af37] focus:ring-[#d4af37] border-gray-300 rounded"
               />
-              <span className="text-lg text-gray-900">{checklistItemMap[item.title] || item.title}</span>
+              <span className="text-lg text-gray-900">
+                {checklistItemMap[item.title] || item.title}
+                {renderAuthBadges(item)}
+              </span>
               {item.is_required && <span className="text-red-600">*</span>}
             </label>
+            {item.authority_note && (
+              <p className="text-xs text-gray-400 mt-1 ml-9">{item.authority_note}</p>
+            )}
             <div className="mt-2">
               <PhotoButton
                 photos={itemPhotos[item.id] || []}
@@ -989,10 +1018,14 @@ export function Checklists() {
       case 'yes_no':
         return (
           <div>
-            <p className="text-lg text-gray-900 mb-3">
+            <p className="text-lg text-gray-900 mb-1">
               {checklistItemMap[item.title] || item.title}
+              {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </p>
+            {item.authority_note && (
+              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+            )}
             <div className="flex space-x-4">
               <button
                 type="button"
@@ -1045,10 +1078,14 @@ export function Checklists() {
       case 'temperature':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-3">
+            <label className="block text-lg text-gray-900 mb-1">
               {checklistItemMap[item.title] || item.title}
+              {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
+            {item.authority_note && (
+              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+            )}
             <input
               type="number"
               step="0.1"
@@ -1069,10 +1106,14 @@ export function Checklists() {
       case 'text_input':
         return (
           <div>
-            <label className="block text-lg text-gray-900 mb-3">
+            <label className="block text-lg text-gray-900 mb-1">
               {checklistItemMap[item.title] || item.title}
+              {renderAuthBadges(item)}
               {item.is_required && <span className="text-red-600 ml-1">*</span>}
             </label>
+            {item.authority_note && (
+              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+            )}
             <input
               type="text"
               value={response?.response_value || ''}
