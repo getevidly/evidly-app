@@ -934,6 +934,45 @@ function WidgetModuleStatus({ navigate, modules }: { navigate: (path: string) =>
 }
 
 // ================================================================
+// WIDGET: RECENT ACTIVITY
+// ================================================================
+
+function WidgetRecentActivity({ navigate, activity }: { navigate: (path: string) => void; activity: ActivityItem[] }) {
+  return (
+    <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Recent Activity</h4>
+        <Activity size={14} className="text-gray-400" />
+      </div>
+      <div className="space-y-1.5">
+        {activity.map((item, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => navigate(item.url)}
+            className="w-full flex items-center gap-3 p-2.5 rounded-lg text-left transition-colors hover:bg-gray-50"
+          >
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+              style={{ backgroundColor: item.borderColor, border: `2px solid ${item.borderColor}20` }}
+            >
+              {item.initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] text-gray-800 truncate">
+                <span className="font-medium">{item.name}</span>{' '}
+                {item.action}
+              </p>
+            </div>
+            <span className="text-[11px] text-gray-400 shrink-0">{item.time}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ================================================================
 // WIDGET CONFIG
 // ================================================================
 
@@ -951,6 +990,7 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: 'fire-safety', label: 'Fire Safety', icon: <Flame size={14} />, visible: true },
   { id: 'impact', label: 'Score Impact', icon: <Target size={14} />, visible: true },
   { id: 'trend', label: 'Compliance Trend', icon: <TrendingUp size={14} />, visible: true },
+  { id: 'activity', label: 'Recent Activity', icon: <Activity size={14} />, visible: true },
 ];
 
 // ================================================================
@@ -1083,6 +1123,7 @@ export default function OwnerOperatorDashboard() {
       case 'fire-safety': return <WidgetFireSafety navigate={navigate} fireScore={data.orgScores.fireSafety} />;
       case 'impact': return <WidgetScoreImpact navigate={navigate} impact={data.impact} />;
       case 'trend': return <WidgetTrend trendData={data.trendData} />;
+      case 'activity': return <WidgetRecentActivity navigate={navigate} activity={data.activity} />;
       default: return null;
     }
   };
