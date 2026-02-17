@@ -14,16 +14,20 @@ import {
 import {
   trainingCourses, trainingModules, trainingEnrollments, trainingCertificates,
   trainingSB476Log, trainingQuizAttempts,
+  certificationRequirements, trainingRecords,
   type TrainingCourse, type TrainingEnrollment, type TrainingCertificate,
   type TrainingSB476Entry, type TrainingCategory,
+  type CertificationRequirement,
 } from '../data/demoData';
 
-type Tab = 'catalog' | 'learning' | 'certifications' | 'sb476' | 'admin' | 'pricing';
+type Tab = 'catalog' | 'learning' | 'certifications' | 'requirements' | 'overview' | 'sb476' | 'admin' | 'pricing';
 
 const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
   { id: 'catalog', label: 'Course Catalog', icon: BookOpen },
   { id: 'learning', label: 'My Learning', icon: GraduationCap },
   { id: 'certifications', label: 'Certifications', icon: Award },
+  { id: 'requirements', label: 'Requirements', icon: Shield },
+  { id: 'overview', label: 'Compliance Overview', icon: Target },
   { id: 'sb476', label: 'SB 476 Tracker', icon: Scale },
   { id: 'admin', label: 'Admin', icon: Settings2 },
   { id: 'pricing', label: 'Pricing', icon: CreditCard },
@@ -1049,6 +1053,316 @@ export function TrainingDashboardWidget() {
   );
 }
 
+// ── Requirements Tab ─────────────────────────────────────────────────────────
+
+const ROLE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
+  kitchen: { bg: '#dcfce7', text: '#15803d' },
+  kitchen_manager: { bg: '#e0f2fe', text: '#0369a1' },
+  management: { bg: '#ede9fe', text: '#6d28d9' },
+  facilities: { bg: '#fef3c7', text: '#92400e' },
+  executive: { bg: '#f3f4f6', text: '#374151' },
+};
+
+function RequirementsTab() {
+  const requiredCount = certificationRequirements.filter(r => r.required).length;
+  const recommendedCount = certificationRequirements.filter(r => !r.required).length;
+
+  // Cross-reference with existing certs to compute compliance per requirement
+  const getComplianceForReq = (req: CertificationRequirement) => {
+    // Map cert types to trainingCertificates certificateType
+    const certTypeMap: Record<string, string> = {
+      food_handler: 'food_handler',
+      cfpm: 'food_manager_prep',
+      fire_extinguisher_training: 'fire_safety',
+      hood_safety: 'fire_safety',
+    };
+    const matchType = certTypeMap[req.certType];
+    if (!matchType) return { met: 0, total: req.requiredForRoles.length * 3 }; // estimate per location
+    const certs = trainingCertificates.filter(c => c.certificateType === matchType);
+    const records = trainingRecords.filter(r => r.trainingType === req.certType);
+    const total = Math.max(6, certs.length + records.length); // rough total needed
+    return { met: certs.length + records.length, total };
+  };
+
+  return (
+    <div>
+      {/* Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 24 }}>
+        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
+          <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Required Certifications</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#1e4d6b' }}>{requiredCount}</div>
+          <div style={{ fontSize: 12, color: '#6b7280' }}>mandated by law</div>
+        </div>
+        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
+          <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Recommended</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#d4af37' }}>{recommendedCount}</div>
+          <div style={{ fontSize: 12, color: '#6b7280' }}>best practice</div>
+        </div>
+        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
+          <div style={{ fontSize: 12, color: '#6b7280', fontWeight: 500 }}>Jurisdiction</div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#111827' }}>CA</div>
+          <div style={{ fontSize: 12, color: '#6b7280' }}>California</div>
+        </div>
+      </div>
+
+      {/* Requirements Table */}
+      <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Certification Requirements</div>
+          <button onClick={() => toast.info('Custom requirements available in full version')}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'DM Sans', sans-serif" }}>
+            <Plus size={14} /> Add Requirement
+          </button>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+                <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Certification</th>
+                <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Authority</th>
+                <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Required For</th>
+                <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Renewal</th>
+                <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Deadline</th>
+                <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {certificationRequirements.map(req => {
+                const comp = getComplianceForReq(req);
+                const pct = comp.total > 0 ? Math.round((comp.met / comp.total) * 100) : 0;
+                return (
+                  <tr key={req.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontWeight: 600, color: '#111827' }}>{req.certName}</div>
+                      {req.notes && <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2, maxWidth: 300 }}>{req.notes}</div>}
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontSize: 12, color: '#374151', fontWeight: 500 }}>{req.authority}</div>
+                      {req.authoritySection && <div style={{ fontSize: 11, color: '#6b7280', fontFamily: 'monospace' }}>{req.authoritySection}</div>}
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        {req.requiredForRoles.map(role => {
+                          const c = ROLE_BADGE_COLORS[role] || { bg: '#f3f4f6', text: '#374151' };
+                          return <span key={role} style={{ padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600, background: c.bg, color: c.text }}>{role.replace('_', ' ')}</span>;
+                        })}
+                      </div>
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 12, color: '#374151' }}>
+                      {req.renewalPeriodMonths ? `${req.renewalPeriodMonths} mo` : '—'}
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'center', fontSize: 12, color: '#374151' }}>
+                      {req.deadlineDays ? `${req.deadlineDays} days from hire` : '—'}
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                      <span style={{
+                        padding: '3px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                        background: req.required ? (pct >= 80 ? '#dcfce7' : pct >= 50 ? '#fef3c7' : '#fee2e2') : '#f3f4f6',
+                        color: req.required ? (pct >= 80 ? '#15803d' : pct >= 50 ? '#92400e' : '#dc2626') : '#6b7280',
+                      }}>
+                        {req.required ? `${pct}%` : 'Recommended'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Compliance Overview Tab ──────────────────────────────────────────────────
+
+function ComplianceOverviewTab() {
+  // Compute compliance metrics from demo data
+  const DEMO_EMPLOYEES = [
+    { id: '1', name: 'Marcus Johnson', role: 'management', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm', 'fire_extinguisher_training', 'haccp_training'] },
+    { id: '2', name: 'Sarah Chen', role: 'kitchen_manager', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm'] },
+    { id: '3', name: 'Maria Garcia', role: 'kitchen_manager', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler', 'cfpm'] },
+    { id: '4', name: 'David Park', role: 'kitchen', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
+    { id: '5', name: 'Michael Torres', role: 'kitchen', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
+    { id: '6', name: 'Emma Rodriguez', role: 'kitchen', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'allergen_awareness'] },
+    { id: '7', name: 'Alex Thompson', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+    { id: '8', name: 'Lisa Wang', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+    { id: '9', name: 'James Wilson', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+  ];
+
+  const requiredReqs = certificationRequirements.filter(r => r.required);
+
+  const getRequiredForEmployee = (emp: typeof DEMO_EMPLOYEES[0]) => {
+    return requiredReqs.filter(r => r.requiredForRoles.includes(emp.role));
+  };
+
+  const employeeCompliance = DEMO_EMPLOYEES.map(emp => {
+    const required = getRequiredForEmployee(emp);
+    const met = required.filter(r => emp.certs.includes(r.certType));
+    return { ...emp, required: required.length, met: met.length, fullyCompliant: met.length === required.length, missing: required.filter(r => !emp.certs.includes(r.certType)) };
+  });
+
+  const totalCompliant = employeeCompliance.filter(e => e.fullyCompliant).length;
+  const totalEmployees = employeeCompliance.length;
+  const compliancePct = Math.round((totalCompliant / totalEmployees) * 100);
+
+  // Per-location breakdown
+  const locations = [
+    { id: '1', name: 'Downtown Kitchen' },
+    { id: '2', name: 'Airport Cafe' },
+    { id: '3', name: 'University Dining' },
+  ];
+
+  const locationStats = locations.map(loc => {
+    const emps = employeeCompliance.filter(e => e.locationId === loc.id);
+    const compliant = emps.filter(e => e.fullyCompliant).length;
+    const hasCFPM = emps.some(e => e.certs.includes('cfpm'));
+    const gaps = emps.reduce((acc, e) => acc + e.missing.length, 0);
+    return { ...loc, total: emps.length, compliant, pct: emps.length > 0 ? Math.round((compliant / emps.length) * 100) : 0, hasCFPM, gaps };
+  });
+
+  // Upcoming expirations from trainingCertificates
+  const expirations = trainingCertificates
+    .filter(c => c.expiresAt)
+    .map(c => ({ ...c, daysLeft: Math.ceil((new Date(c.expiresAt!).getTime() - Date.now()) / 86400000) }))
+    .filter(c => c.daysLeft > 0 && c.daysLeft <= 90)
+    .sort((a, b) => a.daysLeft - b.daysLeft);
+
+  // All gaps
+  const allGaps = employeeCompliance.flatMap(emp =>
+    emp.missing.map(req => ({ employeeName: emp.name, locationName: emp.locationId === '1' ? 'Downtown Kitchen' : emp.locationId === '2' ? 'Airport Cafe' : 'University Dining', certName: req.certName, authority: req.authority, certType: req.certType }))
+  );
+
+  // In-progress enrollments filling gaps
+  const pipelineCount = trainingEnrollments.filter(e => e.status === 'in_progress').length;
+
+  return (
+    <div>
+      {/* Headline Metric */}
+      <div style={{ background: `linear-gradient(135deg, #1e4d6b, #2c5f7f)`, borderRadius: 12, padding: '24px 28px', color: '#fff', marginBottom: 24 }}>
+        <div style={{ fontSize: 13, fontWeight: 500, opacity: 0.8, marginBottom: 4 }}>Workforce Certification Compliance</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <span style={{ fontSize: 48, fontWeight: 700 }}>{compliancePct}%</span>
+          <span style={{ fontSize: 14, opacity: 0.8 }}>of employees fully certified</span>
+        </div>
+        <div style={{ fontSize: 13, opacity: 0.7, marginTop: 4 }}>{totalCompliant} of {totalEmployees} employees meet all required certifications</div>
+        <div style={{ display: 'flex', gap: 16, marginTop: 16 }}>
+          <div>
+            <div style={{ fontSize: 11, opacity: 0.7 }}>Training Pipeline</div>
+            <div style={{ fontSize: 18, fontWeight: 700 }}>{pipelineCount} in progress</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 11, opacity: 0.7 }}>Expiring (90 days)</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#fef3c7' }}>{expirations.length}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Per-Location Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginBottom: 24 }}>
+        {locationStats.map(loc => (
+          <div key={loc.id} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{loc.name}</div>
+              <span style={{ padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700, background: loc.pct >= 80 ? '#dcfce7' : loc.pct >= 50 ? '#fef3c7' : '#fee2e2', color: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#92400e' : '#dc2626' }}>
+                {loc.pct}%
+              </span>
+            </div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>{loc.compliant} of {loc.total} staff compliant</div>
+            {/* CFPM badge */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              {loc.hasCFPM ? <CheckCircle2 size={14} color="#15803d" /> : <XCircle size={14} color="#dc2626" />}
+              <span style={{ fontSize: 12, fontWeight: 600, color: loc.hasCFPM ? '#15803d' : '#dc2626' }}>
+                {loc.hasCFPM ? 'CFPM on staff' : 'No CFPM — CalCode violation'}
+              </span>
+            </div>
+            {loc.gaps > 0 && (
+              <div style={{ fontSize: 12, color: '#dc2626', fontWeight: 500 }}>{loc.gaps} certification gap{loc.gaps !== 1 ? 's' : ''}</div>
+            )}
+            {/* Mini progress bar */}
+            <div style={{ height: 4, background: '#f3f4f6', borderRadius: 2, overflow: 'hidden', marginTop: 8 }}>
+              <div style={{ width: `${loc.pct}%`, height: '100%', background: loc.pct >= 80 ? '#15803d' : loc.pct >= 50 ? '#d4af37' : '#dc2626', borderRadius: 2 }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Upcoming Expirations */}
+      {expirations.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden', marginBottom: 24 }}>
+          <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Upcoming Expirations (next 90 days)</div>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Employee</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Certificate</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Location</th>
+                  <th style={{ textAlign: 'center', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Days Left</th>
+                </tr>
+              </thead>
+              <tbody>
+                {expirations.map(c => (
+                  <tr key={c.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 500 }}>{c.employeeName}</td>
+                    <td style={{ padding: '10px 14px' }}>{c.courseTitle}</td>
+                    <td style={{ padding: '10px 14px', color: '#6b7280' }}>{c.locationName}</td>
+                    <td style={{ padding: '10px 14px', textAlign: 'center' }}>
+                      <span style={{
+                        padding: '2px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                        background: c.daysLeft <= 30 ? '#fee2e2' : '#fef3c7',
+                        color: c.daysLeft <= 30 ? '#dc2626' : '#92400e',
+                      }}>{c.daysLeft}d</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Gap Analysis */}
+      {allGaps.length > 0 && (
+        <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+          <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Certification Gaps</div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{allGaps.length} missing certification{allGaps.length !== 1 ? 's' : ''} across all locations</div>
+          </div>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Employee</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Missing Certification</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Location</th>
+                  <th style={{ textAlign: 'left', padding: '10px 14px', fontWeight: 600, color: '#374151' }}>Authority</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allGaps.map((gap, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                    <td style={{ padding: '10px 14px', fontWeight: 500 }}>{gap.employeeName}</td>
+                    <td style={{ padding: '10px 14px' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600, background: '#fee2e2', color: '#dc2626' }}>
+                        {gap.certName}
+                      </span>
+                    </td>
+                    <td style={{ padding: '10px 14px', color: '#6b7280' }}>{gap.locationName}</td>
+                    <td style={{ padding: '10px 14px', fontSize: 12, color: '#6b7280' }}>{gap.authority}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main TrainingHub Component ───────────────────────────────────────────────
 
 export function TrainingHub() {
@@ -1104,6 +1418,8 @@ export function TrainingHub() {
       {activeTab === 'catalog' && <CourseCatalogTab />}
       {activeTab === 'learning' && <MyLearningTab />}
       {activeTab === 'certifications' && <CertificationsTab />}
+      {activeTab === 'requirements' && <RequirementsTab />}
+      {activeTab === 'overview' && <ComplianceOverviewTab />}
       {activeTab === 'sb476' && <SB476TrackerTab />}
       {activeTab === 'admin' && <AdminTab />}
       {activeTab === 'pricing' && <PricingTab />}
