@@ -368,6 +368,26 @@ export function buildCertComplianceItem(data: {
   };
 }
 
+// --------------- Temperature Compliance Helper (FS-5) ---------------
+
+export function buildTempComplianceItems(data: {
+  totalLogs: number;
+  failedLogs: number;
+  iotCoverage: number; // 0-1, fraction of equipment with IoT sensors
+}): { score: number; weight: number; label: string } {
+  const complianceRate = data.totalLogs > 0
+    ? (data.totalLogs - data.failedLogs) / data.totalLogs
+    : 1;
+  // IoT coverage bonus: up to 5 points for full IoT deployment
+  const iotBonus = data.iotCoverage * 5;
+  const rawScore = Math.round(complianceRate * 95 + iotBonus);
+  return {
+    score: Math.min(100, Math.max(0, rawScore)),
+    weight: 0.30, // 30% of Food Safety pillar
+    label: 'Temperature Monitoring',
+  };
+}
+
 // --------------- Location Score ---------------
 
 export interface LocationScoreResult {

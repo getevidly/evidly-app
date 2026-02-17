@@ -226,6 +226,30 @@ export function Alerts() {
       location: 'All Locations',
       navigate_to: '/training',
     },
+    {
+      id: '16',
+      alert_type: 'temperature',
+      severity: 'critical',
+      title: 'Walk-in cooler at Airport Cafe reading 47°F — IoT sensor alert',
+      description: 'IoT sensor "SensorPush AP-01" detected walk-in cooler temperature at 47°F, exceeding the 41°F CalCode §113996 limit. Temperature has been out of range for 22 minutes. Immediate corrective action required.',
+      recommended_action: 'Check thermostat settings and door seal. Transfer perishable items to backup cooler if temperature does not drop within 30 minutes.',
+      status: 'active',
+      created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+      location: 'Airport Cafe',
+      navigate_to: '/iot-sensors',
+    },
+    {
+      id: '17',
+      alert_type: 'equipment',
+      severity: 'medium',
+      title: '3 equipment items at University Hub have no QR labels',
+      description: 'Walk-in Cooler #2, Prep Fridge, and Hot Holding Unit at University Hub do not have QR temperature labels. Staff cannot use QR scan workflow for quick temp logging on these units.',
+      recommended_action: 'Generate and print QR labels from Equipment Detail page for each unit.',
+      status: 'active',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      location: 'University Hub',
+      navigate_to: '/equipment',
+    },
   ]);
 
   const [showResolveModal, setShowResolveModal] = useState(false);
