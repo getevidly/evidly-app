@@ -90,6 +90,27 @@ const ITEM_TYPES = [
   { value: 'text_input', label: 'Text Input' },
 ];
 
+// ── Structured template item: string (legacy) or object (FS-2 CalCode) ──
+type TemplateItemDef = string | {
+  title: string;
+  item_type?: string;
+  authority_source?: string;
+  authority_section?: string | null;
+  authority_note?: string;
+  haccp_ccp?: string | null;
+  haccp_critical_limit?: string;
+  temp_min?: number | null;
+  temp_max?: number | null;
+  is_critical?: boolean;
+  requires_corrective_action?: boolean;
+};
+
+const getItemTitle = (item: TemplateItemDef): string =>
+  typeof item === 'string' ? item : item.title;
+
+const getItemDef = (item: TemplateItemDef) =>
+  typeof item === 'string' ? { title: item } : item;
+
 const TEMPLATE_CATEGORIES = [
   {
     category: 'Daily Operations',
@@ -97,69 +118,69 @@ const TEMPLATE_CATEGORIES = [
       {
         key: 'opening',
         name: 'Opening Checklist',
-        itemCount: 17,
+        itemCount: 9,
         estimatedTime: '15-20 min',
         role: 'Kitchen Staff',
         items: [
-          'Check sanitizer concentration',
-          'Verify hot water temp',
-          'Inspect handwash stations',
-          'Check first aid kit',
-          'Verify pest traps',
-          'Temp check walk-in cooler',
-          'Temp check walk-in freezer',
-          'Temp check prep cooler',
-          'Check dry storage',
-          'Inspect prep surfaces',
-          'Verify date labels',
-          'Check FIFO rotation',
-          'Review daily specials/allergens',
-          'Verify staff certifications on duty',
-          'Ice machine: verify ice quality (clear, odorless, no discoloration) — FDA §3-202.16',
-          'Ice machine: scoop stored in clean container outside bin — FDA §3-304.12',
-          'Ice machine: exterior and dispenser area clean',
-          'Exhaust fan: verify running when hood system is on — NFPA 96 §11.4',
-          'Exhaust fan: listen for abnormal noise (grinding, squealing, rattling)',
-        ],
+          { title: 'Handwashing station stocked (soap, towels, warm water)', item_type: 'checkbox', authority_source: 'calcode', authority_section: '§113953', authority_note: 'Handwashing facilities shall be provided with soap, single-use towels, and warm water' },
+          { title: 'Employee health screening completed (illness, symptoms)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113949.2', authority_note: 'Employees with symptoms of illness shall be excluded or restricted' },
+          { title: 'Sanitizer concentration verified (test strips, correct ppm)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113980', authority_note: 'Chemical sanitizer concentration must meet minimum requirements' },
+          { title: 'Prep surface sanitized and clean', item_type: 'checkbox', authority_source: 'calcode', authority_section: '§114097', authority_note: 'Food-contact surfaces shall be clean and sanitized' },
+          { title: 'Walk-in cooler temp check (must be ≤41°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', authority_note: 'Cold holding at 41°F or below', haccp_ccp: 'CCP-01', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Walk-in freezer temp check (must be ≤0°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', authority_note: 'Frozen food storage at 0°F or below', haccp_ccp: 'CCP-01', haccp_critical_limit: '≤0°F', temp_max: 0, is_critical: true },
+          { title: 'Hot holding equipment pre-heated (must reach ≥135°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', authority_note: 'Hot holding at 135°F or above', temp_min: 135 },
+          { title: 'Pest evidence check (droppings, gnaw marks, live pests)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114259', authority_note: 'Premises shall be maintained free of vermin' },
+          { title: 'Food storage order verified (raw below ready-to-eat)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114047', authority_note: 'Raw animal foods stored below ready-to-eat foods' },
+        ] as TemplateItemDef[],
       },
       {
         key: 'closing',
         name: 'Closing Checklist',
-        itemCount: 12,
-        estimatedTime: '20-25 min',
+        itemCount: 8,
+        estimatedTime: '15-20 min',
         role: 'Kitchen Staff',
         items: [
-          'Final temp check all units',
-          'Verify all active cooldowns on track (CA: 2hr from cooked temp to 70°F, then 4hr to 41°F)',
-          'Clean and sanitize all prep surfaces',
-          'Empty and clean grease traps',
-          'Check floor drains',
-          'Secure chemical storage',
-          'Set pest control devices',
-          'Check all doors/windows sealed',
-          'Equipment shut down properly',
-          'Waste removal complete',
-          'Closing manager sign-off',
-          'Ice machine: verify scoop stored properly, bin lid closed',
-          'Exhaust fan: confirm fan stops when hood system is shut off (interlock test)',
-        ],
+          { title: 'Final walk-in cooler temp (≤41°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-01', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Final walk-in freezer temp (≤0°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-01', haccp_critical_limit: '≤0°F', temp_max: 0, is_critical: true },
+          { title: 'All cooling items completed to 41°F', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114002', authority_note: 'Cooling to 41°F within required timeframe', haccp_ccp: 'CCP-03', haccp_critical_limit: '135→70°F in 2hrs, 70→41°F in 4hrs', requires_corrective_action: true },
+          { title: 'Food storage order verified', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114047' },
+          { title: 'Prep surfaces sanitized', item_type: 'checkbox', authority_source: 'calcode', authority_section: '§114097' },
+          { title: 'Floor drains cleared', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+          { title: 'Exterior doors/windows sealed', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+          { title: 'Equipment powered down or set for overnight', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+        ] as TemplateItemDef[],
       },
       {
         key: 'midday',
-        name: 'Mid-Day Food Safety Check',
-        itemCount: 8,
+        name: 'Mid-Shift Check',
+        itemCount: 6,
         estimatedTime: '10-15 min',
         role: 'Kitchen Staff',
         items: [
-          'Hot holding temps above 135°F',
-          'Cold holding temps below 41°F',
-          'Check sanitizer buckets refreshed',
-          'Handwashing compliance spot check',
-          'Cross-contamination check',
-          'Date label compliance',
-          'Employee hygiene check',
-          'Corrective action review',
-        ],
+          { title: 'Hot holding temps ≥135°F (every 2 hours)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-02', haccp_critical_limit: '≥135°F', temp_min: 135, is_critical: true },
+          { title: 'Cold holding temps ≤41°F (every 2 hours)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-02', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Cooling items progressing (135→70 in 2hrs, 70→41 in 4hrs)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '135→70°F in 2hrs, 70→41°F in 4hrs' },
+          { title: 'Handwashing observed', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113953' },
+          { title: 'Glove changes observed', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113961', authority_note: 'Gloves shall be changed between handling raw and ready-to-eat foods' },
+          { title: 'Cross-contamination prevention (separate boards, utensils)', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113986', authority_note: 'Food shall be protected from cross-contamination' },
+        ] as TemplateItemDef[],
+      },
+      {
+        key: 'receiving',
+        name: 'Receiving Checklist',
+        itemCount: 8,
+        estimatedTime: '10-15 min',
+        role: 'Manager',
+        items: [
+          { title: 'Delivery vehicle clean and at temp', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113980' },
+          { title: 'Poultry received ≤41°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113980', haccp_ccp: 'CCP-04', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Ground beef received ≤41°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113980', haccp_ccp: 'CCP-04', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Seafood received ≤41°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113980', haccp_ccp: 'CCP-04', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Frozen items received ≤0°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113980', haccp_ccp: 'CCP-04', haccp_critical_limit: '≤0°F', temp_max: 0, is_critical: true },
+          { title: 'Dairy received ≤41°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113980', haccp_ccp: 'CCP-04', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Reject and document any out-of-range items', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§113980', requires_corrective_action: true },
+          { title: 'Date-mark all TCS items', item_type: 'checkbox', authority_source: 'calcode', authority_section: '§114059', authority_note: 'Time/temperature control for safety foods must be date-marked' },
+        ] as TemplateItemDef[],
       },
     ],
   },
@@ -196,23 +217,6 @@ const TEMPLATE_CATEGORIES = [
           'Check temp at 6-hour mark (must be at or below 41°F)',
           'Document cooling method used (ice bath, blast chiller, shallow pans)',
           'Corrective action if temps not met — discard food or re-heat to 165°F and re-cool',
-        ],
-      },
-      {
-        key: 'receiving',
-        name: 'Receiving Inspection',
-        itemCount: 8,
-        estimatedTime: '10-15 min',
-        role: 'Manager',
-        items: [
-          'Check delivery truck temp',
-          'Inspect packaging integrity',
-          'Verify product temps (cold <41°F, frozen <0°F)',
-          'Check date codes and expiration',
-          'Inspect for pest evidence',
-          'Verify order matches invoice',
-          'Check for damaged goods',
-          'Sign delivery receipt',
         ],
       },
       {
@@ -329,8 +333,8 @@ const DEMO_TODAY_CHECKLISTS = [
   {
     id: 't1',
     name: 'Opening Checklist',
-    completed: 14,
-    total: 14,
+    completed: 9,
+    total: 9,
     status: 'complete' as const,
     assignee: 'Marcus J.',
     completedAt: '6:15 AM',
@@ -338,9 +342,9 @@ const DEMO_TODAY_CHECKLISTS = [
   },
   {
     id: 't2',
-    name: 'Mid-Day Food Safety Check',
-    completed: 5,
-    total: 8,
+    name: 'Mid-Shift Check',
+    completed: 4,
+    total: 6,
     status: 'in_progress' as const,
     assignee: 'Sarah T.',
     completedAt: '',
@@ -350,7 +354,7 @@ const DEMO_TODAY_CHECKLISTS = [
     id: 't3',
     name: 'Closing Checklist',
     completed: 0,
-    total: 10,
+    total: 8,
     status: 'not_started' as const,
     assignee: 'Evening Shift',
     completedAt: '',
@@ -422,19 +426,37 @@ const PREBUILT_TEMPLATES = {
     name: 'Opening Checklist',
     type: 'opening',
     frequency: 'daily',
-    items: TEMPLATE_CATEGORIES[0].templates[0].items.map(title => ({ title, type: 'checkbox', required: true })),
+    items: TEMPLATE_CATEGORIES[0].templates[0].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
   },
   closing: {
     name: 'Closing Checklist',
     type: 'closing',
     frequency: 'daily',
-    items: TEMPLATE_CATEGORIES[0].templates[1].items.map(title => ({ title, type: 'checkbox', required: true })),
+    items: TEMPLATE_CATEGORIES[0].templates[1].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  midday: {
+    name: 'Mid-Shift Check',
+    type: 'shift_change',
+    frequency: 'daily',
+    items: TEMPLATE_CATEGORIES[0].templates[2].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
   },
   receiving: {
-    name: 'Receiving Inspection',
+    name: 'Receiving Checklist',
     type: 'receiving',
     frequency: 'daily',
-    items: TEMPLATE_CATEGORIES[1].templates[2].items.map(title => ({ title, type: 'checkbox', required: true })),
+    items: TEMPLATE_CATEGORIES[0].templates[3].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
   },
 };
 
@@ -1234,12 +1256,32 @@ export function Checklists() {
                           </div>
                         </div>
                         <div className="space-y-1.5 mb-4 max-h-40 overflow-y-auto">
-                          {tmpl.items.map((item, idx) => (
-                            <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
-                              <span className="text-gray-400 flex-shrink-0 mt-0.5">○</span>
-                              <span>{checklistItemMap[item] || item}</span>
-                            </div>
-                          ))}
+                          {tmpl.items.map((item, idx) => {
+                            const title = getItemTitle(item);
+                            const def = getItemDef(item);
+                            return (
+                              <div key={idx} className="flex items-start space-x-2 text-sm text-gray-600">
+                                <span className="text-gray-400 flex-shrink-0 mt-0.5">○</span>
+                                <span>
+                                  {checklistItemMap[title] || title}
+                                  {def.authority_source && (() => {
+                                    const auth = AUTHORITY_LABELS[def.authority_source!];
+                                    return auth ? (
+                                      <span className="text-[9px] font-semibold px-1 py-0.5 rounded ml-1.5 inline-block"
+                                        style={{ color: auth.color, backgroundColor: auth.bg }}>
+                                        {auth.label}{def.authority_section ? ` ${def.authority_section}` : ''}
+                                      </span>
+                                    ) : null;
+                                  })()}
+                                  {def.haccp_ccp && (
+                                    <span className="text-[9px] font-semibold px-1 py-0.5 rounded bg-amber-100 text-amber-800 ml-1 inline-block">
+                                      {def.haccp_ccp}
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                            );
+                          })}
                         </div>
                         {PREBUILT_TEMPLATES[tmpl.key as keyof typeof PREBUILT_TEMPLATES] && (
                           <button
