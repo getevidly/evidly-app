@@ -4,8 +4,9 @@ import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, Shield, AlertTriangle, Clock,
   MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
-  Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed,
+  Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed, QrCode, Printer,
 } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts';
@@ -601,6 +602,7 @@ export function Equipment() {
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showQRLabel, setShowQRLabel] = useState(false);
   const [detailTab, setDetailTab] = useState<'overview' | 'warranty' | 'service' | 'schedule' | 'forecast' | 'costs' | 'vendors' | 'iot'>('overview');
 
   const { profile } = useAuth();
@@ -944,6 +946,7 @@ export function Equipment() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <button onClick={() => setShowQRLabel(true)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"><QrCode className="h-3.5 w-3.5" />QR Label</button>
                 <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">View Full Detail</button>
                 <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-gray-400" /></button>
               </div>
@@ -1717,6 +1720,50 @@ export function Equipment() {
           </div>
         )}
       </div>
+
+      {/* QR Label Modal */}
+      {showQRLabel && selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowQRLabel(false)}>
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 w-full max-w-xs p-6 text-center" onClick={e => e.stopPropagation()}>
+            <p className="text-xs font-bold text-gray-400 tracking-widest mb-3">EVIDLY</p>
+            <QRCodeSVG
+              value={`evidly://equipment/${selected.id}`}
+              size={160}
+              level="M"
+              className="mx-auto"
+            />
+            <h3 className="text-sm font-bold text-gray-900 mt-3">{selected.name}</h3>
+            <p className="text-xs text-gray-500 mt-0.5">ID: {selected.id}</p>
+            {selected.type && (
+              <p className="text-xs text-gray-500 mt-0.5">
+                Required: {selected.type.toLowerCase().includes('freezer') ? '≤0°F' : selected.type.toLowerCase().includes('hot') ? '≥135°F' : '≤41°F'}
+              </p>
+            )}
+            <p className="text-[10px] text-gray-400 mt-1">CalCode §113996</p>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => {
+                  const printWindow = window.open('', '_blank', 'width=400,height=500');
+                  if (!printWindow) { toast.error('Pop-up blocked — please allow pop-ups for printing.'); return; }
+                  printWindow.document.write(`<!DOCTYPE html><html><head><title>QR Label</title><style>body{font-family:sans-serif;text-align:center;padding:40px}h1{font-size:12px;letter-spacing:3px;color:#888;margin-bottom:16px}h2{font-size:14px;margin:12px 0 4px}p{font-size:11px;color:#666;margin:2px 0}.small{font-size:9px;color:#aaa;margin-top:8px}</style></head><body><h1>EVIDLY</h1><img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`evidly://equipment/${selected.id}`)}" width="200" height="200" /><h2>${selected.name}</h2><p>ID: ${selected.id}</p><p>${selected.type?.toLowerCase().includes('freezer') ? 'Required: ≤0°F' : selected.type?.toLowerCase().includes('hot') ? 'Required: ≥135°F' : 'Required: ≤41°F'}</p><p class="small">CalCode §113996</p><script>window.onload=function(){window.print();window.close()}</script></body></html>`);
+                  printWindow.document.close();
+                }}
+                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
+                style={{ backgroundColor: '#1A237E' }}
+              >
+                <Printer className="h-3.5 w-3.5" />
+                Print Label
+              </button>
+              <button
+                onClick={() => setShowQRLabel(false)}
+                className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
