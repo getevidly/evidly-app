@@ -1020,7 +1020,7 @@ function QuickActionsBar({ navigate }: { navigate: (path: string) => void }) {
           key={a.label}
           type="button"
           onClick={() => navigate(a.route)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[13px] transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-[13px] transition-colors min-h-[44px]"
           style={{ color: '#6b7280', backgroundColor: '#f9fafb' }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLElement).style.borderColor = GOLD;
@@ -1278,7 +1278,7 @@ export default function OwnerOperatorDashboard() {
             </p>
           </div>
 
-          <div className="flex gap-3" style={stagger(2)}>
+          <div className="flex flex-col sm:flex-row gap-3" style={stagger(2)}>
             <HeaderPillarCard
               icon={<UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />}
               label="Food Safety"
