@@ -1059,13 +1059,100 @@ function EvidlyFooter() {
 }
 
 // ================================================================
+// SKELETON LOADER
+// ================================================================
+
+function DashboardSkeleton() {
+  return (
+    <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh' }}>
+      {/* Header skeleton */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
+          padding: '20px 24px 40px',
+        }}
+      >
+        <div className="flex items-start gap-4 mb-6">
+          <div className="w-16 h-8 rounded bg-white/10 animate-pulse" />
+          <div className="flex-1">
+            <div className="w-40 h-5 rounded bg-white/10 animate-pulse mb-2" />
+            <div className="w-28 h-3 rounded bg-white/10 animate-pulse" />
+          </div>
+        </div>
+        <div className="flex items-center justify-center gap-6">
+          <div className="w-[110px] h-[110px] rounded-full bg-white/10 animate-pulse" />
+          <div className="flex gap-3">
+            <div className="w-[180px] h-[100px] rounded-xl bg-white/10 animate-pulse" />
+            <div className="w-[180px] h-[100px] rounded-xl bg-white/10 animate-pulse" />
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: GOLD }} />
+      </div>
+      {/* Content skeleton */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="bg-white rounded-xl p-5 animate-pulse" style={{ height: 220 }}>
+              <div className="w-24 h-4 bg-gray-200 rounded mb-3" />
+              <div className="w-16 h-16 mx-auto rounded-full bg-gray-200 mb-3" />
+              <div className="w-full h-3 bg-gray-100 rounded mb-2" />
+              <div className="w-full h-3 bg-gray-100 rounded" />
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="bg-white rounded-xl p-5 animate-pulse" style={{ height: 180 }}>
+              <div className="w-32 h-3 bg-gray-200 rounded mb-4" />
+              <div className="space-y-2">
+                <div className="w-full h-3 bg-gray-100 rounded" />
+                <div className="w-3/4 h-3 bg-gray-100 rounded" />
+                <div className="w-5/6 h-3 bg-gray-100 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ================================================================
+// ERROR BANNER
+// ================================================================
+
+function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div
+      className="flex items-center gap-3 px-4 py-3 rounded-lg"
+      style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
+    >
+      <AlertTriangle size={18} className="text-red-500 shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-[13px] font-semibold text-red-800">Dashboard data could not be loaded</p>
+        <p className="text-[11px] text-red-600">{message}</p>
+      </div>
+      <button
+        type="button"
+        onClick={onRetry}
+        className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0"
+        style={{ backgroundColor: '#dc2626' }}
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
+
+// ================================================================
 // MAIN COMPONENT
 // ================================================================
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { companyName } = useDemo();
-  const { data } = useDashboardData();
+  const { data, loading, error, refresh } = useDashboardData();
 
   // Drill-down modal
   const [modal, setModal] = useState<ModalType | null>(null);
@@ -1127,6 +1214,8 @@ export default function OwnerOperatorDashboard() {
       default: return null;
     }
   };
+
+  if (loading) return <DashboardSkeleton />;
 
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
@@ -1213,6 +1302,9 @@ export default function OwnerOperatorDashboard() {
       {/* CONTENT                                                       */}
       {/* ============================================================ */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+
+        {/* Error Banner */}
+        {error && <ErrorBanner message={error} onRetry={refresh} />}
 
         {/* Alert Banners */}
         <AlertBanners alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
