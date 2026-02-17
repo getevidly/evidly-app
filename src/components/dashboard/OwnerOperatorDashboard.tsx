@@ -20,6 +20,9 @@ import {
   calcPillar,
   getLocationScoreColor,
   getLocationStatusLabel,
+  locationScores,
+  locationScoresThirtyDaysAgo,
+  getTrend,
 } from '../../data/demoData';
 
 // ================================================================
@@ -840,6 +843,108 @@ function WidgetTrend() {
 }
 
 // ================================================================
+// WIDGET: FIRE SAFETY
+// ================================================================
+
+const FIRE_EQUIPMENT_ALERTS = [
+  { id: 'fa-1', label: 'Hood Ventilation — grease buildup above threshold', location: 'University Dining', severity: 'critical' as const, route: '/equipment/EQ-013' },
+  { id: 'fa-2', label: 'Ansul system annual cert expires in 12 days', location: 'Airport Cafe', severity: 'warning' as const, route: '/equipment/EQ-009' },
+  { id: 'fa-3', label: 'Exhaust fan belt replacement overdue', location: 'Downtown Kitchen', severity: 'warning' as const, route: '/equipment/EQ-017' },
+];
+
+function WidgetFireSafety({ navigate }: { navigate: (path: string) => void }) {
+  const orgScore = DEMO_ORG_SCORES.fireSafety;
+  const trend = getTrend(orgScore, 74); // 30-day ago org avg ~74
+  const scoreColor = orgScore >= 90 ? '#22c55e' : orgScore >= 75 ? '#eab308' : orgScore >= 60 ? '#f59e0b' : '#ef4444';
+  const locations = ['downtown', 'airport', 'university'] as const;
+
+  return (
+    <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Fire Safety</h4>
+        <Flame size={14} className="text-orange-400" />
+      </div>
+
+      {/* Org Score */}
+      <div className="flex items-center gap-3 mb-4">
+        <div
+          className="flex items-center justify-center rounded-xl text-white font-bold text-lg"
+          style={{ width: 52, height: 44, backgroundColor: scoreColor }}
+        >
+          {orgScore}
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-800">Org Average</p>
+          <p className="text-[11px]" style={{ color: trend.color }}>
+            {trend.icon} {trend.diff} pts (30d)
+          </p>
+        </div>
+      </div>
+
+      {/* Per-location bars */}
+      <div className="space-y-1.5 mb-4">
+        {locations.map(loc => {
+          const score = locationScores[loc]?.fireSafety ?? 0;
+          const prev = locationScoresThirtyDaysAgo[loc]?.fireSafety ?? 0;
+          const t = getTrend(score, prev);
+          const barColor = score >= 90 ? '#22c55e' : score >= 75 ? '#eab308' : score >= 60 ? '#f59e0b' : '#ef4444';
+          const locName = loc === 'downtown' ? 'Downtown' : loc === 'airport' ? 'Airport' : 'University';
+          return (
+            <div key={loc} className="flex items-center gap-2">
+              <span className="text-[11px] text-gray-500 w-[72px] shrink-0">{locName}</span>
+              <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, backgroundColor: barColor }} />
+              </div>
+              <span className="text-[11px] font-semibold w-7 text-right" style={{ color: barColor }}>{score}</span>
+              <span className="text-[10px] w-6 text-right" style={{ color: t.color }}>{t.icon}{Math.abs(score - prev)}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Alerts */}
+      {FIRE_EQUIPMENT_ALERTS.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Equipment Alerts</p>
+          {FIRE_EQUIPMENT_ALERTS.map(a => {
+            const isCritical = a.severity === 'critical';
+            return (
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => navigate(a.route)}
+                className="w-full flex items-center gap-2 p-2 rounded-lg text-left transition-colors hover:opacity-90"
+                style={{
+                  backgroundColor: isCritical ? '#fef2f2' : '#fffbeb',
+                  border: `1px solid ${isCritical ? '#fecaca' : '#fde68a'}`,
+                }}
+              >
+                <AlertTriangle size={12} className={isCritical ? 'text-red-500' : 'text-amber-500'} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-medium text-gray-800 truncate">{a.label}</p>
+                  <p className="text-[10px] text-gray-500">{a.location}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Footer */}
+      <button
+        type="button"
+        onClick={() => navigate('/fire-safety')}
+        className="mt-3 w-full flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-semibold transition-colors hover:opacity-90"
+        style={{ backgroundColor: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa' }}
+      >
+        <Flame size={12} /> View Fire Safety
+      </button>
+    </div>
+  );
+}
+
+// ================================================================
 // WIDGET CONFIG
 // ================================================================
 
@@ -853,6 +958,7 @@ interface WidgetConfig {
 const DEFAULT_WIDGETS: WidgetConfig[] = [
   { id: 'tasks', label: 'Today\'s Tasks', icon: <ClipboardList size={14} />, visible: true },
   { id: 'deadlines', label: 'Upcoming Deadlines', icon: <CalendarDays size={14} />, visible: true },
+  { id: 'fire-safety', label: 'Fire Safety', icon: <Flame size={14} />, visible: true },
   { id: 'impact', label: 'Score Impact', icon: <Target size={14} />, visible: true },
   { id: 'trend', label: 'Compliance Trend', icon: <TrendingUp size={14} />, visible: true },
 ];
@@ -982,6 +1088,7 @@ export default function OwnerOperatorDashboard() {
     switch (wid) {
       case 'tasks': return <WidgetTasks navigate={navigate} />;
       case 'deadlines': return <WidgetDeadlines navigate={navigate} />;
+      case 'fire-safety': return <WidgetFireSafety navigate={navigate} />;
       case 'impact': return <WidgetScoreImpact navigate={navigate} />;
       case 'trend': return <WidgetTrend />;
       default: return null;
