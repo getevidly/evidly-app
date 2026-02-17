@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, Shield, AlertTriangle, Clock,
   MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
-  Radio, Wifi, WifiOff, Battery, Signal,
+  Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -68,6 +69,7 @@ interface EquipmentItem {
   usefulLifeYears: number;
   replacementCost: number;
   status?: EquipmentStatus;
+  pillar?: 'fire_safety' | 'food_safety';
   notes: string;
   serviceHistory: ServiceRecord[];
   schedule: ScheduleItem[];
@@ -186,6 +188,12 @@ const DEFAULT_LIFESPANS: Record<string, number> = {
   'Commercial Oven': 12, 'Commercial Dishwasher': 8,
 };
 
+const FIRE_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
+
+function getEquipmentPillar(item: EquipmentItem): 'fire_safety' | 'food_safety' {
+  return item.pillar || (FIRE_SAFETY_TYPES.has(item.type) ? 'fire_safety' : 'food_safety');
+}
+
 // ── Demo Data ──────────────────────────────────────────────────────
 
 const DEMO_EQUIPMENT: EquipmentItem[] = [
@@ -200,6 +208,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Quarterly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 15, replacementCost: 11000,
     status: 'operational' as EquipmentStatus,
+    pillar: 'food_safety' as const,
     linkedVendors: [
       { vendor: 'CleanAir HVAC', serviceType: 'Repair & Maintenance', isPrimary: true },
     ],
@@ -585,7 +594,9 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
 // ── Component ──────────────────────────────────────────────────────
 
 export function Equipment() {
+  const navigate = useNavigate();
   const [locationFilter, setLocationFilter] = useState('all');
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'fire_safety' | 'food_safety'>('all');
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -682,6 +693,7 @@ export function Equipment() {
   const filtered = useMemo(() => {
     let items = allEquipment;
     if (locationFilter !== 'all') items = items.filter(e => e.location === locationFilter);
+    if (pillarFilter !== 'all') items = items.filter(e => getEquipmentPillar(e) === pillarFilter);
     if (search) {
       const q = search.toLowerCase();
       items = items.filter(e =>
@@ -691,7 +703,7 @@ export function Equipment() {
       );
     }
     return items;
-  }, [allEquipment, locationFilter, search]);
+  }, [allEquipment, locationFilter, pillarFilter, search]);
 
   // KPIs
   const kpis = useMemo(() => {
@@ -750,6 +762,15 @@ export function Equipment() {
             >
               <option value="all">All Locations</option>
               {LOCATIONS.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
+            </select>
+            <select
+              value={pillarFilter}
+              onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
+              className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+            >
+              <option value="all">All Pillars</option>
+              <option value="fire_safety">Fire Safety</option>
+              <option value="food_safety">Food Safety</option>
             </select>
             <button
               onClick={() => setShowForm(true)}
@@ -827,7 +848,19 @@ export function Equipment() {
                       <h3 className="font-bold text-gray-900 text-sm">{eq.name}</h3>
                       <p className="text-xs text-gray-500">{eq.make} {eq.model}</p>
                     </div>
-                    <span style={badge(eq.condition, c.color, c.bg)}>{eq.condition}</span>
+                    <div className="flex items-center gap-1.5">
+                      {(() => {
+                        const p = getEquipmentPillar(eq);
+                        const isF = p === 'fire_safety';
+                        return (
+                          <span style={{ ...badge(isF ? 'Fire' : 'Food', isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            {isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}
+                            {isF ? 'Fire' : 'Food'}
+                          </span>
+                        );
+                      })()}
+                      <span style={badge(eq.condition, c.color, c.bg)}>{eq.condition}</span>
+                    </div>
                   </div>
                   <div className="space-y-1.5 text-xs text-gray-600">
                     <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 text-gray-400" />{eq.location}</div>
@@ -900,6 +933,7 @@ export function Equipment() {
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
+                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'fire_safety'; return <span style={{ ...badge(isF ? 'Fire Safety' : 'Food Safety', isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? 'Fire Safety' : 'Food Safety'}</span>; })()}
                   <span style={badge(selected.condition, conditionStyle(selected.condition).color, conditionStyle(selected.condition).bg)}>{selected.condition}</span>
                   <span style={badge(warrantyInfo(selected.warrantyExpiry).label, warrantyInfo(selected.warrantyExpiry).color, warrantyInfo(selected.warrantyExpiry).bg)}>
                     Warranty: {warrantyInfo(selected.warrantyExpiry).label}
@@ -909,7 +943,10 @@ export function Equipment() {
                   </span>
                 </div>
               </div>
-              <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-gray-400" /></button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">View Full Detail</button>
+                <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-gray-400" /></button>
+              </div>
             </div>
 
             {/* Tabs */}
