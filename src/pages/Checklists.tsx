@@ -853,6 +853,16 @@ export function Checklists() {
   };
 
   const handleItemResponse = (itemId: string, value: string, isPass: boolean | null, correctiveAction = '') => {
+    // Auto-evaluate temperature items against temp_min/temp_max
+    const item = templateItems.find(i => i.id === itemId);
+    if (item?.item_type === 'temperature' && value) {
+      const numVal = parseFloat(value);
+      if (!isNaN(numVal)) {
+        if (item.temp_max != null && numVal > item.temp_max) isPass = false;
+        else if (item.temp_min != null && numVal < item.temp_min) isPass = false;
+        else if (item.temp_max != null || item.temp_min != null) isPass = true;
+      }
+    }
     setItemResponses({
       ...itemResponses,
       [itemId]: {
@@ -871,6 +881,17 @@ export function Checklists() {
 
     if (answeredRequired.length < requiredItems.length) {
       toast.warning('Please complete all required items');
+      return;
+    }
+
+    // Block if any CCP-tagged item failed without corrective action
+    const failedCCPsMissingCA = templateItems.filter(item => {
+      if (!item.haccp_ccp) return false;
+      const resp = itemResponses[item.id];
+      return resp?.is_pass === false && !resp.corrective_action?.trim();
+    });
+    if (failedCCPsMissingCA.length > 0) {
+      toast.warning('Corrective action required for all out-of-limit CCP items');
       return;
     }
 
@@ -1094,10 +1115,40 @@ export function Checklists() {
               className="w-full px-4 py-3 text-2xl font-bold border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               placeholder="00.0°F"
             />
+            {/* Pass/Fail feedback for temperature items */}
+            {response?.response_value && (item.temp_max != null || item.temp_min != null) && (() => {
+              const numVal = parseFloat(response.response_value);
+              if (isNaN(numVal)) return null;
+              const pass = response.is_pass !== false;
+              const limitStr = item.haccp_critical_limit || (item.temp_max != null ? `≤${item.temp_max}°F` : `≥${item.temp_min}°F`);
+              return (
+                <div className={`mt-2 flex items-center gap-2 text-sm font-semibold ${pass ? 'text-green-600' : 'text-red-600'}`}>
+                  {pass ? <CheckCircle size={16} /> : <AlertTriangle size={16} />}
+                  {pass ? `PASS — within limit (${limitStr})` : `FAIL — exceeds limit (${limitStr})`}
+                </div>
+              );
+            })()}
+            {/* Required corrective action for failed CCP items */}
+            {response?.is_pass === false && item.haccp_ccp && (
+              <div className="mt-3 border-l-4 border-red-500 pl-3 bg-red-50 rounded-r-lg py-2 pr-3">
+                <label className="text-sm font-semibold text-red-700 flex items-center gap-1 mb-1">
+                  <AlertTriangle size={14} /> Corrective Action Required *
+                </label>
+                <textarea
+                  value={response.corrective_action}
+                  onChange={(e) => handleItemResponse(item.id, response.response_value, false, e.target.value)}
+                  rows={2}
+                  className="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 text-sm"
+                  placeholder="Describe corrective action taken..."
+                />
+              </div>
+            )}
             <div className="mt-2">
               <PhotoButton
                 photos={itemPhotos[item.id] || []}
                 onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
+                highlight={response?.is_pass === false}
+                highlightText={response?.is_pass === false ? 'Photo evidence recommended' : undefined}
               />
             </div>
           </div>
