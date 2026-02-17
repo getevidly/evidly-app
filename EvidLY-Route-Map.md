@@ -74,3 +74,36 @@
 | `/checklists` | All (executive, management, kitchen_manager, kitchen, facilities) |
 | `/haccp` | All (executive, management, kitchen_manager, kitchen, facilities) |
 | Inspector Package export | management, executive, kitchen_manager only |
+
+---
+
+## Training & Certificates (FS-3)
+
+### Training Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/training` | `TrainingHub.tsx` | Training Hub — 8 tabs: Course Catalog, My Learning, Certifications, Requirements, Compliance Overview, SB 476 Tracker, Admin, Pricing |
+| `/training/course/:id` | `TrainingCourse.tsx` | Course viewer with lessons, quizzes, progress tracking |
+| `/training/courses/builder` | `CourseBuilder.tsx` | 6-step course creation wizard |
+| `/training/certificates` | `CertificateViewer.tsx` | Certificate grid viewer |
+| `/training/employee/:userId` | `EmployeeCertDetail.tsx` | Employee Cert Detail — cert cards, missing requirements, training history, quiz results |
+
+**Features:**
+- 7 CA certification requirements (food_handler, cfpm, fire_extinguisher_training, hood_safety, allergen_awareness, first_aid_cpr, haccp_training)
+- Requirements tab: authority citations (CalCode, OSHA, NFPA, FDA), role badges, renewal periods, compliance %
+- Compliance Overview tab: org-wide compliance %, per-location CFPM coverage, expiration windows (30/60/90d), gap analysis
+- Inspector View "Show Certs" quick-pull panel (CFPM, Food Handler, Fire Safety tables)
+- Scoring integration: cert data feeds into Vendor Compliance pillar via `buildCertComplianceItem()`
+- SB 476 cost/compensation tracking for food handler training
+
+### Role Access (FS-3)
+
+| Route | Roles |
+|-------|-------|
+| `/training` | All (executive, management, kitchen_manager, kitchen, facilities) |
+| `/training/employee/:userId` | All |
+| `/training/courses/builder` | management only |
+
+### Sidebar Position
+- Training appears in "Documents & Assets" section between Equipment and HACCP
