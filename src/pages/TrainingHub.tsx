@@ -379,7 +379,15 @@ function MyLearningTab() {
 
 // ── Certifications Tab ───────────────────────────────────────────────────────
 
+// Map LMS employeeId → EmployeeCertDetail userId
+const EMP_ID_MAP: Record<string, string> = {
+  'emp-01': '2', 'emp-02': '9', 'emp-03': '6',
+  'emp-04': '7', 'emp-05': '5', 'emp-06': '4',
+  'emp-07': '8', 'emp-08': '8', 'emp-09': '5',
+};
+
 function CertificationsTab() {
+  const navigate = useNavigate();
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
   const filtered = trainingCertificates.filter(c => typeFilter === 'all' || c.certificateType === typeFilter);
@@ -454,7 +462,12 @@ function CertificationsTab() {
                 return (
                   <tr key={cert.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                     <td style={{ padding: '12px 14px' }}>
-                      <div style={{ fontWeight: 600, color: '#111827' }}>{cert.employeeName}</div>
+                      <div style={{ fontWeight: 600, color: '#1e4d6b', cursor: 'pointer', textDecoration: 'none' }}
+                        onClick={() => { const uid = EMP_ID_MAP[cert.employeeId]; if (uid) navigate(`/training/employee/${uid}`); }}
+                        onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                        onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}>
+                        {cert.employeeName}
+                      </div>
                       <div style={{ fontSize: 12, color: '#9ca3af' }}>{cert.locationName}</div>
                     </td>
                     <td className="hidden sm:table-cell" style={{ padding: '12px 14px', color: '#374151' }}>{cert.courseTitle}</td>
