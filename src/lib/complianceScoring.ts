@@ -257,6 +257,73 @@ export function calculateFireSafetyScore(items: FireSafetyItem[]): number {
   return Math.round(Math.max(0, Math.min(100, totalScore)));
 }
 
+// --------------- Fire Safety Item Builders ---------------
+
+/**
+ * Build FireSafetyItem[] from checklist completion data + equipment service records.
+ *
+ * Fire Safety sub-components (weights sum to 1.0):
+ *   - Hood cleaning cert current:        0.30  (NFPA 96, semi-annual)
+ *   - Ansul/suppression system service:  0.25  (ANSI/UL 300, annual)
+ *   - Fire extinguisher annual inspect:  0.15  (NFPA 10, annual)
+ *   - Daily fire safety checks:          0.15  (completion rate → condition)
+ *   - Weekly/monthly fire checks:        0.10  (completion rate → condition)
+ *   - Grease trap service:               0.05  (CalFire, quarterly)
+ */
+export interface FireSafetyInputs {
+  hoodCleaningDaysUntilDue: number;
+  ansulServiceDaysUntilDue: number;
+  extinguisherDaysUntilDue: number;
+  dailyCheckCompletionRate: number;    // 0-100
+  weeklyMonthlyCompletionRate: number; // 0-100
+  greaseTrapDaysUntilDue: number;
+}
+
+export function buildFireSafetyItems(inputs: FireSafetyInputs): FireSafetyItem[] {
+  return [
+    { name: 'Hood Cleaning Certification', weight: 0.30, daysUntilDue: inputs.hoodCleaningDaysUntilDue },
+    { name: 'Ansul / Suppression Service', weight: 0.25, daysUntilDue: inputs.ansulServiceDaysUntilDue },
+    { name: 'Fire Extinguisher Inspection', weight: 0.15, daysUntilDue: inputs.extinguisherDaysUntilDue },
+    { name: 'Daily Fire Safety Checks', weight: 0.15, daysUntilDue: Infinity, conditionScore: inputs.dailyCheckCompletionRate },
+    { name: 'Weekly/Monthly Fire Checks', weight: 0.10, daysUntilDue: Infinity, conditionScore: inputs.weeklyMonthlyCompletionRate },
+    { name: 'Grease Trap Service', weight: 0.05, daysUntilDue: inputs.greaseTrapDaysUntilDue },
+  ];
+}
+
+/**
+ * Build demo FireSafetyItem[] for a location.
+ * Uses realistic demo values matching locationScores in demoData.
+ */
+export function buildFireSafetyItemsFromDemoData(locationId: string): FireSafetyItem[] {
+  const DEMO: Record<string, FireSafetyInputs> = {
+    downtown: {
+      hoodCleaningDaysUntilDue: 45,   // Excellent — well within window
+      ansulServiceDaysUntilDue: 90,
+      extinguisherDaysUntilDue: 120,
+      dailyCheckCompletionRate: 95,
+      weeklyMonthlyCompletionRate: 90,
+      greaseTrapDaysUntilDue: 30,
+    },
+    airport: {
+      hoodCleaningDaysUntilDue: 20,   // Good — approaching
+      ansulServiceDaysUntilDue: 40,
+      extinguisherDaysUntilDue: 60,
+      dailyCheckCompletionRate: 82,
+      weeklyMonthlyCompletionRate: 75,
+      greaseTrapDaysUntilDue: 10,
+    },
+    university: {
+      hoodCleaningDaysUntilDue: 5,    // Critical — nearly overdue
+      ansulServiceDaysUntilDue: 12,
+      extinguisherDaysUntilDue: 25,
+      dailyCheckCompletionRate: 60,
+      weeklyMonthlyCompletionRate: 50,
+      greaseTrapDaysUntilDue: -3,     // Overdue
+    },
+  };
+  return buildFireSafetyItems(DEMO[locationId] || DEMO.downtown);
+}
+
 // --------------- Vendor Compliance Pillar Score ---------------
 
 export function calculateVendorComplianceScore(items: VendorComplianceItem[]): number {
