@@ -4,7 +4,8 @@ import {
   UtensilsCrossed, Flame, ChevronRight, X, AlertTriangle, ShieldAlert,
   Thermometer, ClipboardList, FileUp, Bot, TrendingUp, TrendingDown,
   CheckCircle2, Hammer, Clock, AlertCircle, CalendarDays, Target,
-  Settings2, ArrowUp, ArrowDown, Eye, EyeOff,
+  Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Wrench, Shield,
+  GraduationCap, Activity, LayoutGrid,
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, Line,
@@ -27,7 +28,9 @@ import {
   type ImpactItem,
   type AlertItem as HookAlertItem,
   type LocationWithScores,
+  type ModuleStatus,
 } from '../../hooks/useDashboardData';
+import type { ActivityItem } from '../../lib/dashboardQueries';
 
 // ================================================================
 // CONSTANTS
@@ -876,6 +879,61 @@ function WidgetFireSafety({ navigate, fireScore }: { navigate: (path: string) =>
 }
 
 // ================================================================
+// WIDGET: MODULE STATUS
+// ================================================================
+
+const MODULE_ICONS: Record<string, React.ReactNode> = {
+  'mod-checklists': <ClipboardList size={18} />,
+  'mod-temp': <Thermometer size={18} />,
+  'mod-equipment': <Wrench size={18} />,
+  'mod-haccp': <Shield size={18} />,
+  'mod-training': <GraduationCap size={18} />,
+  'mod-fire': <Flame size={18} />,
+};
+
+const STATUS_DOT: Record<string, string> = {
+  good: '#22c55e',
+  warning: '#eab308',
+  critical: '#ef4444',
+};
+
+function WidgetModuleStatus({ navigate, modules }: { navigate: (path: string) => void; modules: ModuleStatus[] }) {
+  return (
+    <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Module Status</h4>
+        <LayoutGrid size={14} className="text-gray-400" />
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {modules.map(mod => (
+          <button
+            key={mod.id}
+            type="button"
+            onClick={() => navigate(mod.route)}
+            className="flex items-center gap-2.5 p-3 rounded-lg text-left transition-colors hover:bg-gray-50"
+            style={{ border: '1px solid #e5e7eb' }}
+          >
+            <div className="shrink-0" style={{ color: MUTED }}>
+              {MODULE_ICONS[mod.id] || <Activity size={18} />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium text-gray-800 truncate">{mod.label}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: STATUS_DOT[mod.status] || '#94a3b8' }}
+                />
+                <p className="text-[11px] text-gray-500 truncate">{mod.metric}</p>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ================================================================
 // WIDGET CONFIG
 // ================================================================
 
@@ -887,6 +945,7 @@ interface WidgetConfig {
 }
 
 const DEFAULT_WIDGETS: WidgetConfig[] = [
+  { id: 'modules', label: 'Module Status', icon: <LayoutGrid size={14} />, visible: true },
   { id: 'tasks', label: 'Today\'s Tasks', icon: <ClipboardList size={14} />, visible: true },
   { id: 'deadlines', label: 'Upcoming Deadlines', icon: <CalendarDays size={14} />, visible: true },
   { id: 'fire-safety', label: 'Fire Safety', icon: <Flame size={14} />, visible: true },
@@ -1018,6 +1077,7 @@ export default function OwnerOperatorDashboard() {
 
   const renderWidget = (wid: string) => {
     switch (wid) {
+      case 'modules': return <WidgetModuleStatus navigate={navigate} modules={data.moduleStatuses} />;
       case 'tasks': return <WidgetTasks navigate={navigate} tasks={data.tasks} />;
       case 'deadlines': return <WidgetDeadlines navigate={navigate} deadlines={data.deadlines} />;
       case 'fire-safety': return <WidgetFireSafety navigate={navigate} fireScore={data.orgScores.fireSafety} />;
