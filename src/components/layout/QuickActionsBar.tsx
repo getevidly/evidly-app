@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Thermometer, ClipboardCheck, FileUp, AlertTriangle, Camera, Brain, Wrench } from 'lucide-react';
+import { Thermometer, ClipboardCheck, FileUp, AlertTriangle, Camera, Brain, Wrench, Flame } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 
@@ -14,6 +14,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   management: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
     { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
+    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
     { icon: FileUp, label: 'Upload Doc', route: '/documents' },
     { icon: Camera, label: 'Photo', route: '/photo-evidence' },
     { icon: Brain, label: 'AI Advisor', route: '/copilot' },
@@ -22,10 +23,12 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   kitchen_manager: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
     { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
+    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
     { icon: FileUp, label: 'Upload Doc', route: '/documents' },
     { icon: AlertTriangle, label: 'Report Issue', route: '/incidents' },
   ],
   facilities: [
+    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
     { icon: FileUp, label: 'Upload Doc', route: '/documents' },
     { icon: AlertTriangle, label: 'Report Issue', route: '/incidents' },
     { icon: Wrench, label: 'Equipment Log', route: '/equipment' },
