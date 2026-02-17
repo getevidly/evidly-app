@@ -179,7 +179,7 @@ export function EquipmentDetail() {
             </div>
 
             {/* QR Code for Temperature Logging */}
-            {equipment.pillar === 'food_safety' && (
+            {getPillar(equipment) === 'food_safety' && (
               <div className="mt-6 border-t border-gray-100 pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">

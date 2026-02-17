@@ -2482,11 +2482,20 @@ export function TempLogs() {
                   <div className="space-y-2">
                     {equipment.filter(eq => eq.equipment_type === 'cooler' || eq.equipment_type === 'cold_holding').map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
+                      const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
+                      const isOverdue = lastCheckAge > 120;
+                      const isDueSoon = lastCheckAge > 90 && lastCheckAge <= 120;
                       return (
-                        <div key={eq.id} className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-gray-100">
+                        <div key={eq.id} className={`flex items-center justify-between py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : 'border-gray-100'}`}>
                           <div className="flex items-center gap-2">
                             {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
                             <span className="text-sm text-gray-900">{eq.name}</span>
+                            {isOverdue && (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">CHECK OVERDUE</span>
+                            )}
+                            {isDueSoon && (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">CHECK DUE SOON</span>
+                            )}
                           </div>
                           <div className="text-right">
                             <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
@@ -2519,11 +2528,20 @@ export function TempLogs() {
                   <div className="space-y-2">
                     {equipment.filter(eq => eq.equipment_type === 'hot_hold' || eq.equipment_type === 'hot_holding').map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
+                      const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
+                      const isOverdue = lastCheckAge > 120;
+                      const isDueSoon = lastCheckAge > 90 && lastCheckAge <= 120;
                       return (
-                        <div key={eq.id} className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-gray-100">
+                        <div key={eq.id} className={`flex items-center justify-between py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : 'border-gray-100'}`}>
                           <div className="flex items-center gap-2">
                             {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
                             <span className="text-sm text-gray-900">{eq.name}</span>
+                            {isOverdue && (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">CHECK OVERDUE</span>
+                            )}
+                            {isDueSoon && (
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">CHECK DUE SOON</span>
+                            )}
                           </div>
                           <div className="text-right">
                             <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
