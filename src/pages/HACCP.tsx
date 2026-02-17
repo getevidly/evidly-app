@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -35,8 +35,9 @@ interface CriticalControlPoint {
   isWithinLimit: boolean;
   lastMonitoredAt: string;
   lastMonitoredBy: string;
-  source: 'temp_log' | 'checklist';
+  source: 'temp_log' | 'checklist' | 'iot_sensor';
   equipmentName?: string;
+  sensorName?: string;
   locationId: string; // '1'=Downtown, '2'=Airport, '3'=University
 }
 
@@ -133,14 +134,15 @@ const HACCP_PLANS: HACCPPlan[] = [
         monitoringProcedure: 'Check and log temperature at opening, mid-shift, and closing',
         correctiveAction: 'Adjust thermostat. Transfer food to working unit. Call for repair.',
         verification: 'Manager reviews temperature logs daily',
-        lastReading: '38°F',
-        lastReadingValue: 38,
+        lastReading: '37.2°F',
+        lastReadingValue: 37.2,
         lastReadingUnit: '°F',
         isWithinLimit: true,
-        lastMonitoredAt: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
-        lastMonitoredBy: 'Mike Johnson',
-        source: 'temp_log',
+        lastMonitoredAt: new Date(now.getTime() - 3 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'IoT Sensor',
+        source: 'iot_sensor',
         equipmentName: 'Walk-in Cooler',
+        sensorName: 'TempStick WC-01',
         locationId: '1',
       },
       {
@@ -151,14 +153,15 @@ const HACCP_PLANS: HACCPPlan[] = [
         monitoringProcedure: 'Check and log temperature at opening and closing',
         correctiveAction: 'Adjust thermostat. Transfer food to working freezer. Call for repair.',
         verification: 'Manager reviews temperature logs daily',
-        lastReading: '-2°F',
-        lastReadingValue: -2,
+        lastReading: '-3.1°F',
+        lastReadingValue: -3.1,
         lastReadingUnit: '°F',
         isWithinLimit: true,
-        lastMonitoredAt: new Date(now.getTime() - 15 * 60 * 1000).toISOString(),
-        lastMonitoredBy: 'Mike Johnson',
-        source: 'temp_log',
+        lastMonitoredAt: new Date(now.getTime() - 3 * 60 * 1000).toISOString(),
+        lastMonitoredBy: 'IoT Sensor',
+        source: 'iot_sensor',
         equipmentName: 'Walk-in Freezer',
+        sensorName: 'TempStick WF-01',
         locationId: '1',
       },
     ],
@@ -825,7 +828,7 @@ export function HACCP() {
             isWithinLimit: log ? log.is_within_limit : true,
             lastMonitoredAt: log?.monitored_at || c.created_at,
             lastMonitoredBy: log?.monitored_by_name || 'System',
-            source: c.source as 'temp_log' | 'checklist',
+            source: c.source as 'temp_log' | 'checklist' | 'iot_sensor',
             equipmentName: c.equipment_name || undefined,
             locationId: c.location_id || '',
           };
@@ -1333,10 +1336,24 @@ export function HACCP() {
                           <span className="text-gray-700 font-medium">{ccp.equipmentName}</span>
                         </div>
                       )}
-                      <div className="flex justify-between">
+                      <div className="flex justify-between items-center">
                         <span className="text-gray-500">Source</span>
-                        <span className="text-gray-700 font-medium">{ccp.source === 'temp_log' ? 'Temperature Log' : 'Checklist'}</span>
+                        <span className="text-gray-700 font-medium inline-flex items-center gap-1">
+                          {ccp.source === 'iot_sensor' ? (
+                            <><Wifi className="h-3 w-3 text-green-600" /> IoT Auto-Logged</>
+                          ) : ccp.source === 'temp_log' ? (
+                            <><Pencil className="h-3 w-3 text-gray-500" /> Temperature Log</>
+                          ) : (
+                            <>Checklist</>
+                          )}
+                        </span>
                       </div>
+                      {ccp.source === 'iot_sensor' && ccp.sensorName && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Sensor</span>
+                          <span className="text-gray-700 font-medium">{ccp.sensorName}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between">
                         <span className="text-gray-500">Monitored By</span>
                         <span className="text-gray-700 font-medium">{ccp.lastMonitoredBy}</span>
