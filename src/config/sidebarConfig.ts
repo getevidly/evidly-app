@@ -100,7 +100,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
 
   // ── TEAM & ADMIN ──
   { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
-  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['management', 'kitchen_manager', 'kitchen'] },
+  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ALL },
   { id: 'system-admin',        label: 'System Admin',        icon: Cog,              route: '/admin/onboard-client',  roles: MGMT },
   { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'kitchen_manager', 'facilities'] },
   { id: 'help',                label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
@@ -169,7 +169,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'documents',
     label: 'Documents & Assets',
-    itemIds: ['equipment', 'haccp', 'documents', 'vendors', 'photos'],
+    itemIds: ['equipment', 'training', 'haccp', 'documents', 'vendors', 'photos'],
   },
   {
     id: 'compliance',
@@ -184,7 +184,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'admin',
     label: 'Admin',
-    itemIds: ['team', 'training', 'system-admin', 'settings', 'help', 'usage-analytics'],
+    itemIds: ['team', 'system-admin', 'settings', 'help', 'usage-analytics'],
   },
 ];
 
