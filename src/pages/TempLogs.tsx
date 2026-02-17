@@ -1500,8 +1500,8 @@ export function TempLogs() {
         {activeTab === 'receiving' && (
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Package className="h-6 w-6 text-green-600" />
+              <div className="p-3 rounded-lg" style={{ backgroundColor: '#E8EAF6' }}>
+                <Package className="h-6 w-6" style={{ color: '#1A237E' }} />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.logReceivingTemp')}</h2>
@@ -1639,7 +1639,10 @@ export function TempLogs() {
 
                 <button
                   type="submit"
-                  className="w-full px-4 py-3 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium"
+                  className="w-full px-4 py-3 text-white rounded-lg transition-colors font-medium"
+                  style={{ backgroundColor: '#1A237E' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D1652')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1A237E')}
                 >
                   {t('tempLogs.addItem')}
                 </button>
