@@ -347,6 +347,27 @@ export function calculateVendorComplianceScore(items: VendorComplianceItem[]): n
   return Math.round(Math.max(0, Math.min(100, totalScore)));
 }
 
+// --------------- Cert Compliance Helper ---------------
+
+/**
+ * Build a VendorComplianceItem for employee certifications (food handler, CFPM, etc.)
+ * Plugs into the existing vendor-compliance pillar scoring.
+ */
+export function buildCertComplianceItem(data: {
+  totalRequired: number;
+  expiredCount: number;
+  daysUntilNextExpiry: number;
+  weight?: number;
+}): VendorComplianceItem {
+  return {
+    name: 'Employee Certifications',
+    weight: data.weight ?? 0.20,
+    daysUntilExpiry: data.daysUntilNextExpiry,
+    count: data.totalRequired,
+    expiredCount: data.expiredCount,
+  };
+}
+
 // --------------- Location Score ---------------
 
 export interface LocationScoreResult {

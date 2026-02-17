@@ -499,7 +499,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '5', title: 'Hood Cleaning 5 Days OVERDUE', detail: 'ABC Fire — was due Feb 4 (−30 pts Equipment)', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
   { id: '6', title: 'Grease Trap Service Due Soon', detail: 'Grease Masters — due Mar 20', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
   { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Airport Cafe — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
-  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/team', roles: ['management', 'kitchen'], locationId: '2' },
+  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/training', roles: ['management', 'kitchen'], locationId: '2' },
   { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
   // University Dining - 12 items
   { id: '10', title: '8 Temperature Checks Missed', detail: 'University Dining — missed this week', color: 'red', url: '/temp-logs', roles: ['management', 'kitchen'], locationId: '3' },
@@ -510,7 +510,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '15', title: 'Hood Cleaning Due in 5 Days', detail: 'ABC Fire — due Feb 15', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
   { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
   { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/team', roles: ['management', 'kitchen'], locationId: '3' },
+  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/training', roles: ['management', 'kitchen'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
   { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 §7.8)', color: 'amber', url: '/equipment', roles: ['management', 'facilities'], locationId: '2' },
 ];
@@ -548,7 +548,7 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '1' },
   { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '1' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '1' },
-  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Vendor Compliance', locationId: '1' },
+  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Training', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '1' },
   { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '1' },
 
   // ─── Airport Cafe ─── Operational (72/100)
@@ -568,7 +568,7 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '2' },
   { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '2' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '2' },
-  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Team Certs', actionLink: '/team', pillar: 'Vendor Compliance', locationId: '2' },
+  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '2' },
   { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '2' },
 
   // ─── University Dining ─── Operational (62/100)
@@ -588,7 +588,7 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '3' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '3' },
   { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '3' },
-  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/team', pillar: 'Vendor Compliance', locationId: '3' },
+  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '3' },
   { status: 'current', label: 'Insurance Certificate', impact: '+8 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '3' },
 ];
 
