@@ -780,8 +780,46 @@ export function HACCP() {
     const hasFailures = plan.ccps.some((c) => !c.isWithinLimit);
     if (hasFailures) return 'critical';
     if (plan.status === 'needs_review') return 'review';
+    // Auto-detect if review is overdue (>90 days)
+    const daysSinceReview = Math.floor((Date.now() - new Date(plan.lastReviewed).getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSinceReview > 90) return 'review';
     return 'good';
   };
+
+  const handleMarkReviewed = (planId: string) => {
+    if (isDemoMode) {
+      const nowStr = new Date().toISOString();
+      if (selectedPlan?.id === planId) {
+        setSelectedPlan({ ...selectedPlan, lastReviewed: nowStr, status: 'active' });
+      }
+      toast.success('Plan marked as reviewed');
+    } else {
+      supabase.from('haccp_plans').update({ last_reviewed: new Date().toISOString(), status: 'active' }).eq('id', planId)
+        .then(() => toast.success('Plan marked as reviewed'));
+    }
+  };
+
+  const handleVerifyAction = (actionId: string) => {
+    if (isDemoMode) {
+      setLiveCorrectiveActions(prev => {
+        const base = prev.length > 0 ? prev : [...CORRECTIVE_ACTIONS];
+        return base.map(a =>
+          a.id === actionId ? { ...a, verifiedBy: 'Current User', status: 'resolved' as const, resolvedAt: new Date().toISOString() } : a
+        );
+      });
+      toast.success('Corrective action verified and resolved');
+    } else {
+      supabase.from('haccp_corrective_actions').update({
+        verified_by: profile?.full_name || 'Manager',
+        status: 'resolved',
+        resolved_at: new Date().toISOString(),
+      }).eq('id', actionId).then(() => toast.success('Corrective action verified'));
+    }
+  };
+
+  // New corrective action form state
+  const [showNewCAForm, setShowNewCAForm] = useState(false);
+  const [newCA, setNewCA] = useState({ planName: '', ccpNumber: '', deviation: '', criticalLimit: '', recordedValue: '', actionTaken: '' });
 
   return (
     <>
@@ -988,6 +1026,14 @@ export function HACCP() {
                           `${c.equipmentName || c.ccpNumber}: ${c.lastReading} (limit: ${c.criticalLimit})`
                         ).join('; ')}
                       </p>
+                    )}
+                    {planStatus === 'review' && ['management', 'executive'].includes(userRole) && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleMarkReviewed(plan.id); }}
+                        className="mt-2 text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] underline"
+                      >
+                        Mark as Reviewed
+                      </button>
                     )}
                   </div>
                 </div>
@@ -1255,10 +1301,111 @@ export function HACCP() {
                         <p className="text-gray-900">{action.actionTaken}</p>
                         <p className="text-xs text-gray-500 mt-1">By: {action.actionBy}</p>
                       </div>
+                      {!action.verifiedBy && ['management', 'executive', 'kitchen_manager'].includes(userRole) && (
+                        <button
+                          onClick={() => handleVerifyAction(action.id)}
+                          className="mt-3 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
+                          style={{ backgroundColor: '#1e4d6b' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" /> Mark Verified
+                        </button>
+                      )}
                     </div>
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* New Corrective Action Button + Form */}
+            {['management', 'executive'].includes(userRole) && (
+              <div className="mb-4">
+                {!showNewCAForm ? (
+                  <button
+                    onClick={() => setShowNewCAForm(true)}
+                    className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                    style={{ backgroundColor: '#1e4d6b' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> New Corrective Action
+                  </button>
+                ) : (
+                  <div className="bg-white rounded-xl shadow-sm p-5 border border-gray-200">
+                    <h4 className="font-semibold text-gray-900 mb-3">New Corrective Action</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Plan Name</label>
+                        <select value={newCA.planName} onChange={(e) => setNewCA({ ...newCA, planName: e.target.value })} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                          <option value="">Select plan...</option>
+                          {filteredPlans.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
+                        <input type="text" value={newCA.ccpNumber} onChange={(e) => setNewCA({ ...newCA, ccpNumber: e.target.value })} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
+                        <input type="text" value={newCA.criticalLimit} onChange={(e) => setNewCA({ ...newCA, criticalLimit: e.target.value })} placeholder="e.g., ≤41°F" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">Recorded Value</label>
+                        <input type="text" value={newCA.recordedValue} onChange={(e) => setNewCA({ ...newCA, recordedValue: e.target.value })} placeholder="e.g., 44°F" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Deviation Description</label>
+                      <textarea value={newCA.deviation} onChange={(e) => setNewCA({ ...newCA, deviation: e.target.value })} rows={2} placeholder="Describe the deviation from the critical limit..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">Action Taken</label>
+                      <textarea value={newCA.actionTaken} onChange={(e) => setNewCA({ ...newCA, actionTaken: e.target.value })} rows={2} placeholder="Describe the corrective action taken..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                    </div>
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={() => {
+                          if (!newCA.planName || !newCA.ccpNumber || !newCA.deviation || !newCA.actionTaken) {
+                            toast.warning('Please fill all required fields');
+                            return;
+                          }
+                          const record: CorrectiveActionRecord = {
+                            id: `ca-manual-${Date.now()}`,
+                            planName: newCA.planName,
+                            ccpNumber: newCA.ccpNumber,
+                            ccpHazard: newCA.deviation,
+                            deviation: newCA.deviation,
+                            criticalLimit: newCA.criticalLimit,
+                            recordedValue: newCA.recordedValue,
+                            actionTaken: newCA.actionTaken,
+                            actionBy: profile?.full_name || 'Current User',
+                            verifiedBy: null,
+                            status: 'open',
+                            createdAt: new Date().toISOString(),
+                            resolvedAt: null,
+                            source: 'Manual Entry',
+                            locationId: LOCATION_ID_MAP[selectedLocation] || '1',
+                          };
+                          setLiveCorrectiveActions(prev => [record, ...prev]);
+                          setNewCA({ planName: '', ccpNumber: '', deviation: '', criticalLimit: '', recordedValue: '', actionTaken: '' });
+                          setShowNewCAForm(false);
+                          toast.success('Corrective action created');
+                        }}
+                        className="px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                        style={{ backgroundColor: '#1e4d6b' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                      >
+                        Save
+                      </button>
+                      <button onClick={() => setShowNewCAForm(false)} className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
