@@ -86,6 +86,19 @@ interface CooldownCheck {
   time: Date;
 }
 
+// ── Receiving: Food category → temperature threshold config ──
+const CATEGORY_TEMP_CONFIG: Record<string, { tempRequired: boolean; maxTemp?: number; label: string }> = {
+  'refrigerated_meat_poultry': { tempRequired: true, maxTemp: 41, label: 'Refrigerated Meat & Poultry' },
+  'refrigerated_seafood':      { tempRequired: true, maxTemp: 41, label: 'Refrigerated Seafood' },
+  'refrigerated_dairy':        { tempRequired: true, maxTemp: 41, label: 'Refrigerated Dairy' },
+  'refrigerated_produce':      { tempRequired: true, maxTemp: 41, label: 'Refrigerated Produce' },
+  'refrigerated_other':        { tempRequired: true, maxTemp: 41, label: 'Refrigerated Other' },
+  'frozen':                    { tempRequired: true, maxTemp: 0,  label: 'Frozen' },
+  'dry_goods':                 { tempRequired: false, label: 'Dry Goods' },
+  'beverages':                 { tempRequired: false, label: 'Beverages (non-refrigerated)' },
+  'canned_shelf_stable':       { tempRequired: false, label: 'Canned / Shelf-Stable' },
+};
+
 export function TempLogs() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -682,12 +695,30 @@ export function TempLogs() {
   const handleSubmitReceiving = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const cfg = getCategoryConfig(foodCategory);
+    if (!cfg) return;
+
+    // Non-temp categories: auto-pass, no temperature needed
+    if (!cfg.tempRequired) {
+      const newItem: ReceivingItem = {
+        itemDescription,
+        temperature: 0,
+        isPass: true,
+      };
+      setReceivingItems([...receivingItems, newItem]);
+      setItemDescription('');
+      return;
+    }
+
+    // Temp-required: validate
+    if (!receivingTemp || receivingTemp.trim() === '') {
+      toast.error('Temperature is required for this food category.');
+      return;
+    }
+
     const tempValue = parseFloat(receivingTemp);
-    const isPass = getCategoryStandard(foodCategory) === 'check'
-      ? tempValue <= 41
-      : foodCategory === 'Frozen'
-      ? tempValue <= 0
-      : tempValue <= 41;
+    const maxTemp = cfg.maxTemp ?? 41;
+    const isPass = tempValue <= maxTemp;
 
     const newItem: ReceivingItem = {
       itemDescription,
@@ -773,16 +804,7 @@ export function TempLogs() {
     }
   };
 
-  const getCategoryStandard = (category: string) => {
-    switch (category) {
-      case 'Frozen':
-        return '≤ 0°F';
-      case 'Produce':
-        return 'No specific temp';
-      default:
-        return '≤ 41°F';
-    }
-  };
+  const getCategoryConfig = (category: string) => CATEGORY_TEMP_CONFIG[category] || null;
 
   const getEquipmentIcon = (type: string) => {
     return <Thermometer className="h-6 w-6" />;
@@ -1442,25 +1464,32 @@ export function TempLogs() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.foodCategory')}</label>
                 <select
                   value={foodCategory}
-                  onChange={(e) => setFoodCategory(e.target.value)}
+                  onChange={(e) => { setFoodCategory(e.target.value); setReceivingTemp(''); }}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 >
                   <option value="">Select category...</option>
-                  <option value="Meat/Poultry">{t('tempLogs.meatPoultry')}</option>
-                  <option value="Seafood">{t('tempLogs.seafood')}</option>
-                  <option value="Dairy">{t('tempLogs.dairy')}</option>
-                  <option value="Frozen">{t('tempLogs.frozen')}</option>
-                  <option value="Produce">{t('tempLogs.produce')}</option>
-                  <option value="Other">{t('tempLogs.other')}</option>
+                  {Object.entries(CATEGORY_TEMP_CONFIG).map(([key, cfg]) => (
+                    <option key={key} value={key}>{cfg.label}</option>
+                  ))}
                 </select>
-                {foodCategory && (
-                  <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
-                    <p className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
-                      {t('tempLogs.receivingStandard')} {getCategoryStandard(foodCategory)}
-                    </p>
-                  </div>
-                )}
+                {foodCategory && (() => {
+                  const cfg = getCategoryConfig(foodCategory);
+                  if (!cfg) return null;
+                  return cfg.tempRequired ? (
+                    <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #1A237E' }}>
+                      <p className="text-sm font-medium" style={{ color: '#1A237E' }}>
+                        Required: Must be ≤{cfg.maxTemp}°F
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-2 p-3 rounded-lg bg-gray-50 border border-gray-200">
+                      <p className="text-sm font-medium text-gray-500">
+                        No temperature check required for this category
+                      </p>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Vendor Name */}
@@ -1513,34 +1542,49 @@ export function TempLogs() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.temperatureF')}</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    inputMode="decimal"
-                    value={receivingTemp}
-                    onChange={(e) => setReceivingTemp(e.target.value)}
-                    required
-                    className={`w-full px-4 py-6 text-4xl font-bold text-center border-4 rounded-lg focus:outline-none focus:ring-4 transition-all ${
-                      receivingTemp && parseFloat(receivingTemp) <= 41
-                        ? 'border-green-500 focus:ring-green-200 bg-green-50'
-                        : receivingTemp
-                        ? 'border-red-500 focus:ring-red-200 bg-red-50'
-                        : 'border-gray-300 focus:ring-[#d4af37]'
-                    }`}
-                    placeholder="Enter temp"
-                  />
-                  {receivingTemp && (
-                    <div className="mt-2 text-center">
-                      {parseFloat(receivingTemp) <= 41 ? (
-                        <span className="text-green-600 font-bold text-xl">PASS ✓</span>
-                      ) : (
-                        <span className="text-red-600 font-bold text-xl">FAIL ✗</span>
+                {(() => {
+                  const cfg = getCategoryConfig(foodCategory);
+                  if (cfg && !cfg.tempRequired) return null; // Hide temp input for non-temp categories
+                  const maxTemp = cfg?.maxTemp ?? 41;
+                  const tempVal = receivingTemp ? parseFloat(receivingTemp) : null;
+                  const isPass = tempVal !== null && !isNaN(tempVal) ? tempVal <= maxTemp : null;
+                  return (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.temperatureF')}</label>
+                      <input
+                        type="number"
+                        step="0.1"
+                        inputMode="decimal"
+                        value={receivingTemp}
+                        onChange={(e) => setReceivingTemp(e.target.value)}
+                        required
+                        className={`w-full px-4 py-6 text-4xl font-bold text-center border-4 rounded-lg focus:outline-none focus:ring-4 transition-all ${
+                          isPass === true
+                            ? 'border-green-500 focus:ring-green-200 bg-green-50'
+                            : isPass === false
+                            ? 'border-red-500 focus:ring-red-200 bg-red-50'
+                            : 'border-gray-300 focus:ring-[#d4af37]'
+                        }`}
+                        placeholder="Enter temp"
+                      />
+                      {isPass === true && (
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <Check className="h-5 w-5" style={{ color: '#2E7D32' }} />
+                          <span className="font-bold text-lg" style={{ color: '#2E7D32' }}>PASS — Within acceptable range</span>
+                        </div>
+                      )}
+                      {isPass === false && (
+                        <div className="mt-3 flex items-center justify-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                          <AlertTriangle className="h-5 w-5" style={{ color: '#C62828' }} />
+                          <span className="font-bold text-lg" style={{ color: '#C62828' }}>FAIL — Exceeds {maxTemp}°F limit</span>
+                        </div>
+                      )}
+                      {!receivingTemp && foodCategory && cfg?.tempRequired && (
+                        <p className="mt-2 text-sm text-gray-400 text-center">Temperature is required for this food category</p>
                       )}
                     </div>
-                  )}
-                </div>
+                  );
+                })()}
 
                 <button
                   type="submit"
