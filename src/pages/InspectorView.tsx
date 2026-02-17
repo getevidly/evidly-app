@@ -16,6 +16,8 @@ import {
   ChevronRight,
   Clock,
   Shield,
+  GraduationCap,
+  X,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -201,7 +203,7 @@ const employeeSection: Section = {
       citation: '\u00A7113948',
       title: 'Food Handler Cards current',
       status: 'pass',
-      evidence: ['8/8 staff members have current California Food Handler Cards'],
+      evidence: ['8/9 staff members have current California Food Handler Cards (1 expiring within 30 days)'],
       detail: 'Earliest expiry: Maria Santos \u2014 expires Aug 15, 2026',
     },
     {
@@ -321,6 +323,8 @@ export function InspectorView() {
     upgradeFeature,
   } = useDemoGuard();
 
+  const [showCertPanel, setShowCertPanel] = useState(false);
+
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     temp: true,
     food: true,
@@ -429,6 +433,13 @@ export function InspectorView() {
                 >
                   <Share2 className="h-4 w-4" />
                   Share
+                </button>
+                <button
+                  onClick={() => setShowCertPanel(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-white bg-[#1e4d6b] border border-[#1e4d6b] rounded-xl hover:bg-[#163a52] transition-colors"
+                >
+                  <GraduationCap className="h-4 w-4" />
+                  Show Certs
                 </button>
               </div>
             </div>
@@ -619,6 +630,96 @@ export function InspectorView() {
           </div>
         </div>
       </div>
+
+      {/* Cert Quick-Pull Panel */}
+      {showCertPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 print:bg-white print:static print:inset-auto">
+          <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full mx-4 max-h-[85vh] flex flex-col print:shadow-none print:rounded-none print:max-h-none">
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 print:border-b-2">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-[#1e4d6b]" />
+                <h2 className="text-lg font-bold text-[#1e4d6b]">Employee Certifications — Quick Pull</h2>
+              </div>
+              <div className="flex items-center gap-2 print:hidden">
+                <button onClick={() => window.print()} className="text-sm text-gray-500 hover:text-[#1e4d6b] px-2 py-1 rounded-lg border border-gray-200">
+                  <Printer className="h-4 w-4" />
+                </button>
+                <button onClick={() => setShowCertPanel(false)} className="text-gray-400 hover:text-gray-600 p-1 rounded-lg">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+            {/* Panel body */}
+            <div className="overflow-y-auto px-6 py-4 space-y-5">
+              {/* CFPM */}
+              <div>
+                <h3 className="text-sm font-bold text-[#1e4d6b] uppercase tracking-wide mb-2">Certified Food Protection Managers (CFPM)</h3>
+                <div className="rounded-lg border border-gray-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead><tr className="bg-gray-50 border-b"><th className="text-left px-3 py-2 font-semibold text-gray-600">Name</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Cert #</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Issued</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Expires</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Status</th></tr></thead>
+                    <tbody>
+                      <tr className="border-b border-gray-100"><td className="px-3 py-2 font-medium">Marcus Johnson</td><td className="px-3 py-2"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">SM-2025-7721</code></td><td className="px-3 py-2 text-gray-600">Mar 10, 2025</td><td className="px-3 py-2 text-gray-600">Mar 10, 2030</td><td className="px-3 py-2"><span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Active</span></td></tr>
+                      <tr className="border-b border-gray-100"><td className="px-3 py-2 font-medium">Sarah Chen</td><td className="px-3 py-2"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">SM-2025-8832</code></td><td className="px-3 py-2 text-gray-600">Apr 5, 2025</td><td className="px-3 py-2 text-amber-600 font-medium">Mar 15, 2026</td><td className="px-3 py-2"><span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Expiring</span></td></tr>
+                      <tr><td className="px-3 py-2 font-medium">Maria Garcia</td><td className="px-3 py-2"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">SM-2025-6643</code></td><td className="px-3 py-2 text-gray-600">Jul 20, 2025</td><td className="px-3 py-2 text-gray-600">Jul 20, 2030</td><td className="px-3 py-2"><span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Active</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">CalCode §113947.1 — at least one CFPM required per establishment during operating hours</p>
+              </div>
+              {/* Food Handlers */}
+              <div>
+                <h3 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">Food Handler Cards</h3>
+                <div className="rounded-lg border border-gray-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead><tr className="bg-gray-50 border-b"><th className="text-left px-3 py-2 font-semibold text-gray-600">Name</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Location</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Cert #</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Expires</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Status</th></tr></thead>
+                    <tbody>
+                      {[
+                        { name: 'Marcus Johnson', loc: 'Downtown', num: 'FH-2025-4481', exp: 'Jun 15, 2028', ok: true },
+                        { name: 'Sarah Chen', loc: 'Downtown', num: 'FH-2025-5502', exp: 'Aug 20, 2028', ok: true },
+                        { name: 'Emma Rodriguez', loc: 'Downtown', num: 'FH-2025-9912', exp: 'Jul 10, 2028', ok: true },
+                        { name: 'Maria Garcia', loc: 'Airport', num: 'FH-2025-3390', exp: 'Sep 1, 2028', ok: true },
+                        { name: 'David Park', loc: 'Airport', num: 'FH-2024-2201', exp: 'Apr 2, 2027', ok: true },
+                        { name: 'Michael Torres', loc: 'Airport', num: 'FH-2023-1188', exp: 'Feb 26, 2026', ok: false },
+                        { name: 'Alex Thompson', loc: 'University', num: 'FH-2024-8834', exp: 'Dec 10, 2027', ok: true },
+                        { name: 'Lisa Wang', loc: 'University', num: 'FH-2025-1105', exp: 'Jan 25, 2028', ok: true },
+                      ].map((r, i) => (
+                        <tr key={i} className="border-b border-gray-100 last:border-0"><td className="px-3 py-2 font-medium">{r.name}</td><td className="px-3 py-2 text-gray-600">{r.loc}</td><td className="px-3 py-2"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{r.num}</code></td><td className={`px-3 py-2 ${r.ok ? 'text-gray-600' : 'text-red-600 font-medium'}`}>{r.exp}</td><td className="px-3 py-2"><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${r.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>{r.ok ? 'Active' : 'Expiring'}</span></td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">CalCode §113948 / SB 476 — food handler certification required within 30 days of hire</p>
+              </div>
+              {/* Fire Safety */}
+              <div>
+                <h3 className="text-sm font-bold text-red-600 uppercase tracking-wide mb-2">Fire Safety Training</h3>
+                <div className="rounded-lg border border-gray-200 overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead><tr className="bg-gray-50 border-b"><th className="text-left px-3 py-2 font-semibold text-gray-600">Name</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Training</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Completed</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Next Due</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Status</th></tr></thead>
+                    <tbody>
+                      {[
+                        { name: 'Marcus Johnson', tr: 'Fire Extinguisher', done: 'Nov 15, 2025', next: 'Nov 15, 2026', ok: true },
+                        { name: 'Sarah Chen', tr: 'Fire Extinguisher', done: 'Nov 15, 2025', next: 'Nov 15, 2026', ok: true },
+                        { name: 'Maria Garcia', tr: 'Fire Extinguisher', done: 'Nov 18, 2025', next: 'Nov 18, 2026', ok: true },
+                        { name: 'David Park', tr: 'Hood Suppression Awareness', done: 'Dec 1, 2025', next: 'Dec 1, 2026', ok: true },
+                      ].map((r, i) => (
+                        <tr key={i} className="border-b border-gray-100 last:border-0"><td className="px-3 py-2 font-medium">{r.name}</td><td className="px-3 py-2 text-gray-600">{r.tr}</td><td className="px-3 py-2 text-gray-600">{r.done}</td><td className="px-3 py-2 text-gray-600">{r.next}</td><td className="px-3 py-2"><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${r.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>{r.ok ? 'Current' : 'Overdue'}</span></td></tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">OSHA 29 CFR 1910.157 / NFPA 10 — annual fire extinguisher training required</p>
+              </div>
+            </div>
+            {/* Panel footer */}
+            <div className="px-6 py-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-400 print:border-t-2">
+              <span>8 food handlers · 3 CFPMs · 4 fire safety records</span>
+              <span>Generated by EvidLY &middot; {reportDate}</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Demo upgrade prompt */}
       {showUpgrade && (
