@@ -1018,6 +1018,20 @@ export function Checklists() {
       const failedCCPs = ccpResults.filter(r => !r.pass);
       if (failedCCPs.length > 0) {
         toast.warning('Out-of-limit CCP detected — manager notified');
+
+        // Insert alerts for out-of-limit CCPs
+        if (profile?.organization_id) {
+          const alertRows = failedCCPs.map(r => ({
+            organization_id: profile.organization_id,
+            alert_type: 'critical',
+            category: 'haccp_failure',
+            title: `HACCP CCP Failure: ${r.ccp} out of limit`,
+            description: `${r.ccp} recorded ${r.value} — critical limit is ${r.limit}. Corrective action required.`,
+            location_id: selectedTemplate?.id ? undefined : undefined,
+            is_resolved: false,
+          }));
+          await supabase.from('alerts').insert(alertRows);
+        }
       }
     }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
@@ -345,7 +346,9 @@ const CORRECTIVE_ACTIONS: CorrectiveActionRecord[] = [
 // ── Component ──────────────────────────────────────────────────────
 
 export function HACCP() {
-  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>('plans');
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get('tab') as 'plans' | 'monitoring' | 'corrective' | 'template') || 'plans';
+  const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>(initialTab);
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
   const { getAccessibleLocations, userRole } = useRole();
@@ -931,9 +934,11 @@ export function HACCP() {
     }
   };
 
-  // New corrective action form state
-  const [showNewCAForm, setShowNewCAForm] = useState(false);
-  const [newCA, setNewCA] = useState({ planName: '', ccpNumber: '', deviation: '', criticalLimit: '', recordedValue: '', actionTaken: '' });
+  // New corrective action form state — auto-open from URL params (e.g. ?tab=corrective&new=true&ccp=CCP-1)
+  const urlNewCA = searchParams.get('new') === 'true';
+  const urlCCP = searchParams.get('ccp') || '';
+  const [showNewCAForm, setShowNewCAForm] = useState(urlNewCA);
+  const [newCA, setNewCA] = useState({ planName: '', ccpNumber: urlCCP, deviation: '', criticalLimit: '', recordedValue: '', actionTaken: '' });
 
   // Inspector Package date range
   const [exportRange, setExportRange] = useState<'7' | '30' | '90' | 'all'>('30');

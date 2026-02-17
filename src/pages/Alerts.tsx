@@ -574,6 +574,15 @@ export function Alerts() {
                         <ExternalLink className="h-3.5 w-3.5" />
                       </button>
                     )}
+                    {alertItem.alert_type === 'haccp_failure' && alertItem.status === 'active' && (
+                      <button
+                        onClick={() => navigate('/haccp?tab=corrective&new=true&ccp=CCP-1')}
+                        className="px-4 py-2 min-h-[44px] bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-1"
+                      >
+                        <ShieldAlert className="h-4 w-4" />
+                        <span>Create Corrective Action</span>
+                      </button>
+                    )}
                     <div className="relative">
                       <button
                         onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
