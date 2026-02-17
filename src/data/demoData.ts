@@ -3740,3 +3740,103 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     createdAt: daysAgo(21),
   },
 ];
+
+// ── Unified Temperature Logs (FS-5) ──────────────────────────
+
+export interface TemperatureLog {
+  id: string;
+  facilityId: string;
+  equipmentId: string;
+  inputMethod: 'manual' | 'qr_scan' | 'iot_sensor';
+  temperature: number;
+  requiredMin: number | null;
+  requiredMax: number | null;
+  tempPass: boolean;
+  readingTime: string;
+  shift: 'morning' | 'afternoon' | 'evening' | null;
+  logType: 'equipment_check' | 'hot_holding' | 'cold_holding' | 'cooling' | 'pre_shift' | 'post_shift';
+  loggedBy: string | null;
+  sensorId: string | null;
+  qrCodeId: string | null;
+  notes: string | null;
+  correctiveAction: string | null;
+  haccpCcpNumber: string | null;
+  equipmentName: string;
+  locationName: string;
+}
+
+export const temperatureLogs: TemperatureLog[] = [
+  { id: 'tl-1', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 38.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Downtown Kitchen' },
+  { id: 'tl-2', facilityId: '1', equipmentId: 'eq-2', inputMethod: 'iot_sensor', temperature: -4.1, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-2', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Downtown Kitchen' },
+  { id: 'tl-3', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 142, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(1), shift: 'morning', logType: 'hot_holding', loggedBy: 'user-km-1', sensorId: null, qrCodeId: null, notes: 'Soup holding steady', correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Downtown Kitchen' },
+  { id: 'tl-4', facilityId: '1', equipmentId: 'eq-4', inputMethod: 'qr_scan', temperature: 39.5, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(1.5), shift: 'morning', logType: 'cold_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: 'qr-4', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Cold Holding Unit', locationName: 'Downtown Kitchen' },
+  { id: 'tl-5', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'manual', temperature: 44.8, requiredMin: null, requiredMax: 41, tempPass: false, readingTime: hoursAgo(2), shift: 'morning', logType: 'equipment_check', loggedBy: 'user-km-2', sensorId: null, qrCodeId: null, notes: 'Door was left open', correctiveAction: 'Closed door, rechecking in 30 min', haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Airport Cafe' },
+  { id: 'tl-6', facilityId: '2', equipmentId: 'eq-a2', inputMethod: 'iot_sensor', temperature: -2.3, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.25), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-ap-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Airport Cafe' },
+  { id: 'tl-7', facilityId: '3', equipmentId: 'eq-u1', inputMethod: 'qr_scan', temperature: 40.1, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(3), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-3', sensorId: null, qrCodeId: 'qr-5', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Reach-in Cooler', locationName: 'University Hub' },
+  { id: 'tl-8', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 131, requiredMin: 135, requiredMax: null, tempPass: false, readingTime: hoursAgo(4), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Reheated to 165°F', correctiveAction: 'Reheated to 165°F and returned to holding', haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Downtown Kitchen' },
+  { id: 'tl-9', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 39.0, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(4.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Downtown Kitchen' },
+  { id: 'tl-10', facilityId: '3', equipmentId: 'eq-u2', inputMethod: 'manual', temperature: 138, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(5), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-km-3', sensorId: null, qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'University Hub' },
+  { id: 'tl-11', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'qr_scan', temperature: 40.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(5.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-2', sensorId: null, qrCodeId: 'qr-4', notes: 'Recheck after door fix', correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Airport Cafe' },
+  { id: 'tl-12', facilityId: '1', equipmentId: 'eq-5', inputMethod: 'manual', temperature: 37.4, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(6), shift: 'evening', logType: 'pre_shift', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Evening shift check', correctiveAction: null, haccpCcpNumber: null, equipmentName: 'Prep Station Fridge', locationName: 'Downtown Kitchen' },
+];
+
+// ── Cooling Logs (FS-5) ─────────────────────────────────────
+
+export interface CoolingLogEntry {
+  id: string;
+  facilityId: string;
+  foodItem: string;
+  batchId: string | null;
+  startTemp: number;
+  startTime: string;
+  targetStage1Temp: number;
+  targetStage1Deadline: string;
+  stage1ActualTemp: number | null;
+  stage1ActualTime: string | null;
+  stage1Pass: boolean | null;
+  targetFinalTemp: number;
+  targetFinalDeadline: string;
+  finalActualTemp: number | null;
+  finalActualTime: string | null;
+  finalPass: boolean | null;
+  overallPass: boolean | null;
+  inputMethod: 'manual' | 'qr_scan' | 'iot_sensor';
+  correctiveAction: 'reheated' | 'discarded' | 'continued_cooling' | null;
+  loggedBy: string | null;
+  sensorId: string | null;
+  notes: string | null;
+  locationName: string;
+}
+
+export const coolingLogs: CoolingLogEntry[] = [
+  {
+    id: 'cool-1', facilityId: '1', foodItem: 'Chicken Noodle Soup', batchId: 'B-0217-A',
+    startTemp: 165, startTime: hoursAgo(5),
+    targetStage1Temp: 70, targetStage1Deadline: hoursAgo(3),
+    stage1ActualTemp: 68, stage1ActualTime: hoursAgo(3.5), stage1Pass: true,
+    targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-1),
+    finalActualTemp: 39, finalActualTime: hoursAgo(0.5), finalPass: true,
+    overallPass: true, inputMethod: 'manual', correctiveAction: null,
+    loggedBy: 'user-km-1', sensorId: null, notes: 'Ice bath cooling', locationName: 'Downtown Kitchen',
+  },
+  {
+    id: 'cool-2', facilityId: '1', foodItem: 'Beef Chili', batchId: 'B-0217-B',
+    startTemp: 170, startTime: hoursAgo(3),
+    targetStage1Temp: 70, targetStage1Deadline: hoursAgo(1),
+    stage1ActualTemp: 72, stage1ActualTime: hoursAgo(1.2), stage1Pass: false,
+    targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-3),
+    finalActualTemp: null, finalActualTime: null, finalPass: null,
+    overallPass: null, inputMethod: 'iot_sensor', correctiveAction: 'continued_cooling',
+    loggedBy: null, sensorId: 'sensor-dt-3', notes: 'Stage 1 missed by 2°F, split into shallow pans', locationName: 'Downtown Kitchen',
+  },
+  {
+    id: 'cool-3', facilityId: '2', foodItem: 'Rice Pilaf', batchId: 'B-0217-C',
+    startTemp: 160, startTime: hoursAgo(2),
+    targetStage1Temp: 70, targetStage1Deadline: hoursAgo(0),
+    stage1ActualTemp: null, stage1ActualTime: null, stage1Pass: null,
+    targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-4),
+    finalActualTemp: null, finalActualTime: null, finalPass: null,
+    overallPass: null, inputMethod: 'manual', correctiveAction: null,
+    loggedBy: 'user-km-2', sensorId: null, notes: 'Active cooling in progress', locationName: 'Airport Cafe',
+  },
+];
