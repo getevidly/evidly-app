@@ -25,7 +25,7 @@ import {
   BookOpen,
   Cog,
   Flame,
-  Wifi,
+  Radio,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
@@ -68,7 +68,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ALL },
   { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: OPS },
   { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
-  { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Wifi,             route: '/iot-sensors',           roles: ['executive', 'management', 'facilities'] },
+  { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['executive', 'management', 'facilities', 'kitchen_manager'] },
   { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: OPS },
   { id: 'incidents',           label: 'Incidents',           icon: AlertTriangle,    route: '/playbooks',             roles: OPS_FAC },
   { id: 'incident-reporting',  label: 'Incident Reporting',  icon: AlertTriangle,    route: '/incidents',             roles: OPS_FAC },
