@@ -8,6 +8,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { OfflineProvider } from './contexts/OfflineContext';
 import { InactivityProvider } from './contexts/InactivityContext';
 import { BrandingProvider } from './contexts/BrandingContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { reportError } from './lib/errorReporting';
@@ -227,29 +228,31 @@ function ProtectedLayout() {
   }
 
   return (
-    <Layout>
-      <ErrorBoundary level="page" resetKey={location.pathname}>
-        <Suspense fallback={
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
-              <p className="mt-3 text-sm text-gray-500">Loading...</p>
+    <NotificationProvider>
+      <Layout>
+        <ErrorBoundary level="page" resetKey={location.pathname}>
+          <Suspense fallback={
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#d4af37] mx-auto"></div>
+                <p className="mt-3 text-sm text-gray-500">Loading...</p>
+              </div>
             </div>
-          </div>
-        }>
-          <PageTransition key={location.pathname}>
-            <AutoBreadcrumb />
-            <PageExplanation />
-            <Outlet />
-          </PageTransition>
-        </Suspense>
-      </ErrorBoundary>
-      {isDemoMode && (
-        <Suspense fallback={null}>
-          <DemoBookingBanner />
-        </Suspense>
-      )}
-    </Layout>
+          }>
+            <PageTransition key={location.pathname}>
+              <AutoBreadcrumb />
+              <PageExplanation />
+              <Outlet />
+            </PageTransition>
+          </Suspense>
+        </ErrorBoundary>
+        {isDemoMode && (
+          <Suspense fallback={null}>
+            <DemoBookingBanner />
+          </Suspense>
+        )}
+      </Layout>
+    </NotificationProvider>
   );
 }
 
