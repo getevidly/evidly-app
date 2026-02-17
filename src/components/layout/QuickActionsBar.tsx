@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Thermometer, ClipboardCheck, FileUp, AlertTriangle, Camera, Brain, Wrench, Flame } from 'lucide-react';
+import { Thermometer, ClipboardCheck, FileUp, AlertTriangle, Camera, Brain, Wrench, Flame, QrCode } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 
@@ -13,6 +13,7 @@ interface QuickAction {
 const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   management: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
+    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
     { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
     { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
     { icon: FileUp, label: 'Upload Doc', route: '/documents' },
@@ -22,6 +23,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   executive: [], // Executive uses StrategicActionsBar in its own dashboard
   kitchen_manager: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
+    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
     { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
     { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
     { icon: FileUp, label: 'Upload Doc', route: '/documents' },
@@ -35,6 +37,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   ],
   kitchen: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
+    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
     { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
     { icon: Camera, label: 'Photo', route: '/photo-evidence' },
     { icon: AlertTriangle, label: 'Report Issue', route: '/playbooks' },
