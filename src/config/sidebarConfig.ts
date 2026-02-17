@@ -24,6 +24,7 @@ import {
   Calendar,
   BookOpen,
   Cog,
+  Flame,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
@@ -63,6 +64,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
 
   // ── DAILY OPERATIONS ──
   { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['management', 'kitchen_manager', 'kitchen'] },
+  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ALL },
   { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: OPS },
   { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
   { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: OPS },
@@ -73,7 +75,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
 
   // ── DOCUMENTS & EQUIPMENT ──
   { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'kitchen_manager', 'facilities'] },
-  { id: 'equipment',           label: 'Equipment',           icon: Wrench,           route: '/equipment',             roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['executive', 'management', 'kitchen_manager', 'facilities'] },
   { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'kitchen_manager', 'facilities'] },
   { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: OPS, dividerAfter: true },
 
@@ -162,17 +164,17 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'operations',
     label: 'Operations',
-    itemIds: ['checklists', 'temperatures', 'log-temp', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
+    itemIds: ['temperatures', 'log-temp', 'checklists', 'fire-safety', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
   },
   {
     id: 'documents',
     label: 'Documents & Assets',
-    itemIds: ['documents', 'equipment', 'vendors', 'haccp', 'photos'],
+    itemIds: ['equipment', 'haccp', 'documents', 'vendors', 'photos'],
   },
   {
     id: 'compliance',
     label: 'Compliance & Insights',
-    itemIds: ['compliance', 'ai-copilot', 'self-inspection', 'inspector', 'reporting', 'regulatory', 'alerts'],
+    itemIds: ['alerts', 'reporting', 'compliance', 'ai-copilot', 'self-inspection', 'inspector', 'regulatory'],
   },
   {
     id: 'enterprise',

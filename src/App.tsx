@@ -46,7 +46,10 @@ const UsageAnalytics = lazy(() => import('./pages/UsageAnalytics').then(m => ({ 
 const WeeklyDigest = lazy(() => import('./pages/WeeklyDigest').then(m => ({ default: m.WeeklyDigest })));
 const IncidentLog = lazy(() => import('./pages/IncidentLog').then(m => ({ default: m.IncidentLog })));
 const AuditReport = lazy(() => import('./pages/AuditReport').then(m => ({ default: m.AuditReport })));
+const FireSafety = lazy(() => import('./pages/FireSafety').then(m => ({ default: m.FireSafety })));
 const Equipment = lazy(() => import('./pages/Equipment').then(m => ({ default: m.Equipment })));
+const EquipmentDetail = lazy(() => import('./pages/EquipmentDetail').then(m => ({ default: m.EquipmentDetail })));
+const ServiceRecordEntry = lazy(() => import('./pages/ServiceRecordEntry').then(m => ({ default: m.ServiceRecordEntry })));
 const RegulatoryAlerts = lazy(() => import('./pages/RegulatoryAlerts').then(m => ({ default: m.RegulatoryAlerts })));
 const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').then(m => ({ default: m.JurisdictionSettings })));
 const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
@@ -127,6 +130,7 @@ import { Layout } from './components/layout/Layout';
 import { PageTransition } from './components/PageTransition';
 import { PageExplanation } from './components/PageExplanation';
 import { AutoBreadcrumb } from './components/layout/AutoBreadcrumb';
+import { useRole } from './contexts/RoleContext';
 
 function LandingPage() {
   return (
@@ -246,6 +250,13 @@ function ProtectedLayout() {
   );
 }
 
+/** Facilities managers default to Fire Safety view */
+function DashboardWithRedirect() {
+  const { userRole } = useRole();
+  if (userRole === 'facilities') return <Navigate to="/fire-safety" replace />;
+  return <Dashboard />;
+}
+
 function AppRoutes() {
   usePageTracking();
 
@@ -290,7 +301,7 @@ function AppRoutes() {
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardWithRedirect />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/checklists" element={<Checklists />} />
           <Route path="/documents" element={<Documents />} />
@@ -316,7 +327,10 @@ function AppRoutes() {
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
+          <Route path="/fire-safety" element={<FireSafety />} />
           <Route path="/equipment" element={<Equipment />} />
+          <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
+          <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
           <Route path="/jurisdiction" element={<JurisdictionSettings />} />
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
