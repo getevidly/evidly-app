@@ -67,6 +67,13 @@ interface ReceivingItem {
   itemDescription: string;
   temperature: number;
   isPass: boolean;
+  category: string;
+  maxTemp?: number;
+  ccpDeviation?: {
+    actionTaken: string;
+    notes: string;
+    reMeasuredTemp?: number;
+  };
 }
 
 interface Cooldown {
@@ -146,6 +153,13 @@ export function TempLogs() {
   const [receivingItems, setReceivingItems] = useState<ReceivingItem[]>([]);
   const [receivedBy, setReceivedBy] = useState('');
   const [showVendorOther, setShowVendorOther] = useState(false);
+
+  // CCP-04 corrective action state
+  const [showCcpModal, setShowCcpModal] = useState(false);
+  const [pendingFailItem, setPendingFailItem] = useState<ReceivingItem | null>(null);
+  const [ccpActionTaken, setCcpActionTaken] = useState('');
+  const [ccpNotes, setCcpNotes] = useState('');
+  const [ccpReMeasuredTemp, setCcpReMeasuredTemp] = useState('');
 
   // Cooldown state
   const [cooldowns, setCooldowns] = useState<Cooldown[]>([]);
@@ -704,6 +718,7 @@ export function TempLogs() {
         itemDescription,
         temperature: 0,
         isPass: true,
+        category: foodCategory,
       };
       setReceivingItems([...receivingItems, newItem]);
       setItemDescription('');
@@ -724,11 +739,47 @@ export function TempLogs() {
       itemDescription,
       temperature: tempValue,
       isPass,
+      category: foodCategory,
+      maxTemp,
     };
+
+    if (!isPass) {
+      // CCP-04 deviation — show corrective action prompt
+      setPendingFailItem(newItem);
+      setCcpActionTaken('');
+      setCcpNotes('');
+      setCcpReMeasuredTemp('');
+      setShowCcpModal(true);
+      return;
+    }
 
     setReceivingItems([...receivingItems, newItem]);
     setItemDescription('');
     setReceivingTemp('');
+  };
+
+  const handleCcpSave = () => {
+    if (!ccpActionTaken || !ccpNotes.trim()) {
+      toast.error('Action Taken and Notes are required for CCP-04 deviations.');
+      return;
+    }
+    if (!pendingFailItem) return;
+
+    const itemWithDeviation: ReceivingItem = {
+      ...pendingFailItem,
+      ccpDeviation: {
+        actionTaken: ccpActionTaken,
+        notes: ccpNotes,
+        reMeasuredTemp: ccpReMeasuredTemp ? parseFloat(ccpReMeasuredTemp) : undefined,
+      },
+    };
+
+    setReceivingItems([...receivingItems, itemWithDeviation]);
+    setItemDescription('');
+    setReceivingTemp('');
+    setShowCcpModal(false);
+    setPendingFailItem(null);
+    toast.success('Item added with CCP-04 corrective action recorded.');
   };
 
   const handleFinalizeReceiving = async () => {
@@ -1594,21 +1645,110 @@ export function TempLogs() {
                 </button>
               </form>
 
+              {/* CCP-04 Corrective Action Modal */}
+              {showCcpModal && pendingFailItem && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <AlertTriangle className="h-6 w-6" style={{ color: '#C62828' }} />
+                      <h3 className="text-lg font-bold" style={{ color: '#C62828' }}>CCP-04 Deviation — Corrective Action Required</h3>
+                    </div>
+                    <div className="p-3 bg-red-50 rounded-lg border border-red-200 mb-4 text-sm">
+                      <p className="font-medium text-red-800">
+                        {pendingFailItem.itemDescription} received at {pendingFailItem.temperature}°F — exceeds {pendingFailItem.maxTemp}°F limit
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Action Taken <span className="text-red-500">*</span></label>
+                        <select
+                          value={ccpActionTaken}
+                          onChange={(e) => setCcpActionTaken(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                        >
+                          <option value="">Select action...</option>
+                          <option value="Rejected Delivery">Rejected Delivery</option>
+                          <option value="Accepted with Condition">Accepted with Condition</option>
+                          <option value="Re-temped After Wait">Re-temped After Wait</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Notes <span className="text-red-500">*</span></label>
+                        <textarea
+                          value={ccpNotes}
+                          onChange={(e) => setCcpNotes(e.target.value)}
+                          rows={3}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                          placeholder="Describe the corrective action taken..."
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Re-measured Temperature (optional)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={ccpReMeasuredTemp}
+                          onChange={(e) => setCcpReMeasuredTemp(e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                          placeholder="°F"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 mt-6">
+                      <button
+                        onClick={() => { setShowCcpModal(false); setPendingFailItem(null); }}
+                        className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCcpSave}
+                        className="flex-1 px-4 py-3 text-white rounded-lg font-bold hover:opacity-90 transition-colors"
+                        style={{ backgroundColor: '#1A237E' }}
+                      >
+                        Save with Corrective Action
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Added Items List */}
               {receivingItems.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-900">{t('tempLogs.itemsAdded')} ({receivingItems.length})</h3>
                   {receivingItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <div>
-                        <p className="font-medium text-gray-900">{item.itemDescription}</p>
-                        <p className="text-sm text-gray-600">{item.temperature}°F</p>
+                    <div key={idx} className={`p-3 rounded-lg border ${item.ccpDeviation ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-900">{item.itemDescription}</p>
+                          <p className="text-sm text-gray-600">{item.temperature > 0 || item.category === 'frozen' ? `${item.temperature}°F` : 'N/A (no temp required)'}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {item.ccpDeviation && (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-200 text-red-800">CCP-04</span>
+                          )}
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            item.isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
+                            {item.isPass ? t('common.pass') : t('common.fail')}
+                          </span>
+                        </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        item.isPass ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {item.isPass ? t('common.pass') : t('common.fail')}
-                      </span>
+                      {item.ccpDeviation && (
+                        <div className="mt-2 pt-2 border-t border-red-200 text-xs text-red-700">
+                          <p><span className="font-semibold">Action:</span> {item.ccpDeviation.actionTaken}</p>
+                          <p><span className="font-semibold">Notes:</span> {item.ccpDeviation.notes}</p>
+                          {item.ccpDeviation.reMeasuredTemp !== undefined && (
+                            <p><span className="font-semibold">Re-measured:</span> {item.ccpDeviation.reMeasuredTemp}°F</p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
