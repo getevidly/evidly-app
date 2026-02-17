@@ -14,15 +14,18 @@ interface MatchedEquipment {
   qrCode: string;
   minTemp: number;
   maxTemp: number;
+  type: string;
+  ccp: string;
+  thresholdLabel: string;
 }
 
-// Equipment lookup with temp ranges (mirrors TempLogQuick DEMO_EQUIPMENT)
-const EQUIPMENT_RANGES: Record<string, { minTemp: number; maxTemp: number }> = {
-  'eq-1': { minTemp: 33, maxTemp: 41 },
-  'eq-2': { minTemp: -10, maxTemp: 0 },
-  'eq-3': { minTemp: 135, maxTemp: 165 },
-  'eq-4': { minTemp: 33, maxTemp: 41 },
-  'eq-5': { minTemp: 33, maxTemp: 41 },
+// Equipment lookup with temp ranges, type, and CCP mapping
+const EQUIPMENT_RANGES: Record<string, { minTemp: number; maxTemp: number; type: string; ccp: string; thresholdLabel: string }> = {
+  'eq-1': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
+  'eq-2': { minTemp: -10, maxTemp: 0, type: 'Freezer', ccp: 'CCP-01', thresholdLabel: '≤0°F' },
+  'eq-3': { minTemp: 135, maxTemp: 165, type: 'Hot Holding', ccp: 'CCP-02', thresholdLabel: '≥135°F' },
+  'eq-4': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
+  'eq-5': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
 };
 
 function lookupByQR(code: string): MatchedEquipment | null {
@@ -34,7 +37,7 @@ function lookupByQR(code: string): MatchedEquipment | null {
   }
   const match = equipmentQRCodes.find(q => q.qrCode === qrValue);
   if (!match) return null;
-  const range = EQUIPMENT_RANGES[match.equipmentId] || { minTemp: 33, maxTemp: 41 };
+  const range = EQUIPMENT_RANGES[match.equipmentId] || { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' };
   return {
     id: match.equipmentId,
     name: match.equipmentName,
@@ -58,6 +61,7 @@ export function TempLogScan() {
   const [manualInput, setManualInput] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
   const [demoScanIdx, setDemoScanIdx] = useState(0);
+  const [correctiveAction, setCorrectiveAction] = useState('');
 
   const isInRange = matched && temperature
     ? parseFloat(temperature) >= matched.minTemp && parseFloat(temperature) <= matched.maxTemp
@@ -91,6 +95,10 @@ export function TempLogScan() {
       toast.error('Please enter a temperature reading.');
       return;
     }
+    if (isInRange === false && !correctiveAction.trim()) {
+      toast.error(`${matched.ccp} deviation — corrective action required before submitting.`);
+      return;
+    }
     if (isDemoMode) {
       toast.success('Temperature logged via QR scan! (Demo mode — data not saved)');
     } else {
@@ -106,6 +114,7 @@ export function TempLogScan() {
     setNotes('');
     setManualInput('');
     setShowManualInput(false);
+    setCorrectiveAction('');
   };
 
   // ── Success screen ──
@@ -171,14 +180,14 @@ export function TempLogScan() {
               <QrCode className="h-7 w-7 text-[#d4af37]" />
               <div>
                 <h1 className="text-lg font-bold text-white">{matched.name}</h1>
-                <p className="text-xs text-gray-300">{matched.location} — QR: {matched.qrCode}</p>
+                <p className="text-xs text-gray-300">{matched.location} — {matched.type}</p>
               </div>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div className="bg-[#eef4f8] rounded-lg p-3 text-center">
-              <p className="text-xs text-gray-500 mb-1">Acceptable Range</p>
+              <p className="text-xs text-gray-500 mb-1">Required: {matched.thresholdLabel} ({matched.ccp})</p>
               <p className="text-lg font-bold" style={{ color: '#1e4d6b' }}>
                 {matched.minTemp}°F – {matched.maxTemp}°F
               </p>
@@ -200,16 +209,34 @@ export function TempLogScan() {
               {isInRange === false && (
                 <div className="flex items-center gap-1.5 mt-2 text-red-600">
                   <AlertTriangle className="h-3.5 w-3.5" />
-                  <p className="text-xs font-medium">Out of range! Corrective action required.</p>
+                  <p className="text-xs font-medium">FAIL — {matched.ccp} deviation detected</p>
                 </div>
               )}
               {isInRange === true && (
                 <div className="flex items-center gap-1.5 mt-2 text-green-600">
                   <CheckCircle className="h-3.5 w-3.5" />
-                  <p className="text-xs font-medium">Within acceptable range</p>
+                  <p className="text-xs font-medium">PASS — Within acceptable range</p>
                 </div>
               )}
             </div>
+
+            {isInRange === false && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <label className="block text-xs font-bold text-red-800 mb-1">
+                  {matched.ccp} Corrective Action Required
+                </label>
+                <textarea
+                  value={correctiveAction}
+                  onChange={e => setCorrectiveAction(e.target.value)}
+                  placeholder="Describe corrective action taken..."
+                  rows={2}
+                  className="w-full px-3 py-2 border border-red-200 rounded-lg text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 bg-white"
+                />
+                {!correctiveAction.trim() && (
+                  <p className="text-[10px] text-red-600 mt-1">Required — cannot submit without corrective action</p>
+                )}
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
