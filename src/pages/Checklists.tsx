@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User } from 'lucide-react';
+import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -29,7 +29,28 @@ interface ChecklistTemplateItem {
   item_type: string;
   order: number;
   is_required: boolean;
+  // FS-2: authority & HACCP CCP fields
+  authority_source?: string;
+  authority_section?: string | null;
+  authority_note?: string;
+  haccp_ccp?: string | null;
+  haccp_hazard?: string;
+  haccp_critical_limit?: string;
+  temp_min?: number | null;
+  temp_max?: number | null;
+  is_critical?: boolean;
+  requires_corrective_action?: boolean;
+  requires_photo_on_fail?: boolean;
 }
+
+// ── Authority Labels (matches FireSafety.tsx pattern) ────────────
+const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
+  calcode: { label: 'CalCode', color: '#0369a1', bg: '#e0f2fe' },
+  nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
+  nfpa_10: { label: 'NFPA 10', color: '#b91c1c', bg: '#fef2f2' },
+  cfc: { label: 'CalFire CFC', color: '#c2410c', bg: '#fff7ed' },
+  evidly_best_practice: { label: 'Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
+};
 
 interface ChecklistCompletion {
   id: string;
