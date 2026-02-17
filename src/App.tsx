@@ -106,7 +106,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ 
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
 const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ default: m.TempLogScan })));
-const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
+const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring').then(m => ({ default: m.IoTMonitoring })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -307,6 +307,7 @@ function AppRoutes() {
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<DashboardWithRedirect />} />
           <Route path="/temp-logs" element={<TempLogs />} />
+          <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
           <Route path="/documents" element={<Documents />} />
           <Route path="/document-checklist" element={<DocumentChecklist />} />
@@ -347,7 +348,6 @@ function AppRoutes() {
           <Route path="/insurance-settings" element={<InsuranceSettings />} />
           <Route path="/admin/onboard-client" element={<AdminClientOnboarding />} />
           <Route path="/admin/usage-analytics" element={<UsageAnalytics />} />
-          <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/iot-platform" element={<IoTSensorPlatform />} />
           <Route path="/sensors" element={<SensorHub />} />
           <Route path="/sensors/add" element={<SensorSetupWizard />} />
