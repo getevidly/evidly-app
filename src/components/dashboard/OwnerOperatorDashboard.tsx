@@ -12,11 +12,7 @@ import {
 } from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
 import {
-  LOCATIONS_WITH_SCORES,
   DEMO_ORG,
-  DEMO_ORG_SCORES,
-  DEMO_TREND_DATA,
-  DEMO_ATTENTION_ITEMS as EXEC_ATTENTION_ITEMS,
   calcPillar,
   getLocationScoreColor,
   getLocationStatusLabel,
@@ -24,6 +20,14 @@ import {
   locationScoresThirtyDaysAgo,
   getTrend,
 } from '../../data/demoData';
+import {
+  useDashboardData,
+  type TaskItem,
+  type DeadlineItem,
+  type ImpactItem,
+  type AlertItem as HookAlertItem,
+  type LocationWithScores,
+} from '../../hooks/useDashboardData';
 
 // ================================================================
 // CONSTANTS
@@ -61,89 +65,16 @@ function stagger(i: number): React.CSSProperties {
   return { animation: `fadeInUp 0.4s ease-out ${i * 0.1}s both` };
 }
 
-// ================================================================
-// DEMO DATA — Owner/Operator specific
-// ================================================================
-
-interface TaskItem {
-  id: string;
-  label: string;
-  status: 'done' | 'in_progress' | 'pending' | 'overdue';
-  time: string;
-  route: string;
-  reading?: string;
-}
-
-interface DeadlineItem {
-  id: string;
-  label: string;
-  location: string;
-  dueDate: string;
-  daysLeft: number;
-  severity: 'critical' | 'warning' | 'normal';
-  route: string;
-}
-
-interface ImpactItem {
-  id: string;
-  action: string;
-  points: number;
-  location: string;
-  pillar: string;
-  severity: 'critical' | 'warning';
-  route: string;
-}
-
-interface AlertItem {
-  id: string;
-  severity: 'critical' | 'warning';
-  message: string;
-  location: string;
-  pillar: string;
-  actionLabel: string;
-  route: string;
-}
-
-const DEMO_TASKS: TaskItem[] = [
-  { id: 't1', label: 'Opening checklist — Downtown Kitchen', status: 'done', time: '6:15 AM', route: '/checklists', reading: '12/12 items' },
-  { id: 't2', label: 'Cooler #1 temperature log', status: 'done', time: '7:02 AM', route: '/temp-logs', reading: '37.8\u00B0F' },
-  { id: 't3', label: 'Midday checklist — Downtown Kitchen', status: 'in_progress', time: '4/8 items', route: '/checklists' },
-  { id: 't4', label: 'Prep cooler manual temp log', status: 'overdue', time: 'Due by 10 AM', route: '/temp-logs' },
-  { id: 't5', label: 'Review incident report #247', status: 'pending', time: 'Due today', route: '/incidents' },
-  { id: 't6', label: 'Closing checklist — Downtown Kitchen', status: 'pending', time: 'Due by 10 PM', route: '/checklists' },
-];
-
-const DEMO_DEADLINES: DeadlineItem[] = [
-  { id: 'd1', label: 'Fire suppression certificate', location: 'University Dining', dueDate: 'Feb 26', daysLeft: 10, severity: 'critical', route: '/documents' },
-  { id: 'd2', label: 'Hood cleaning service', location: 'Airport Cafe', dueDate: 'Feb 19', daysLeft: 3, severity: 'critical', route: '/vendors' },
-  { id: 'd3', label: 'Food handler cert renewal', location: 'Airport Cafe', dueDate: 'Feb 28', daysLeft: 12, severity: 'warning', route: '/team' },
-  { id: 'd4', label: 'Pest control report upload', location: 'Airport Cafe', dueDate: 'Mar 1', daysLeft: 13, severity: 'warning', route: '/documents' },
-  { id: 'd5', label: 'Health permit renewal', location: 'Downtown Kitchen', dueDate: 'Apr 10', daysLeft: 53, severity: 'normal', route: '/documents' },
-];
-
-const DEMO_IMPACT: ImpactItem[] = [
-  { id: 'i1', action: 'Complete 8 missed temperature logs', points: 7, location: 'University Dining', pillar: 'Food Safety', severity: 'critical', route: '/temp-logs?location=university' },
-  { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Fire Safety', severity: 'critical', route: '/vendors' },
-  { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Fire Safety', severity: 'critical', route: '/documents' },
-  { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' },
-  { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' },
-];
-
-const DEMO_ALERTS: AlertItem[] = [
-  { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' },
-  { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' },
-  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Fire Safety', actionLabel: 'Schedule', route: '/equipment' },
-];
+// Types are imported from useDashboardData hook
 
 // Generate trend data for 7d / 30d / 90d
-function generateTrendData(days: number) {
+function generateTrendData(days: number, trendData: { date: string; overall: number; foodSafety: number; fireSafety: number }[]) {
   if (days <= 30) {
-    const d = DEMO_TREND_DATA;
-    if (days === 7) return d.slice(-7);
-    return d;
+    if (days === 7) return trendData.slice(-7);
+    return trendData;
   }
   // 90-day: extend backwards with lower scores
-  const base = DEMO_TREND_DATA;
+  const base = trendData;
   const extra: typeof base = [];
   for (let i = 60; i >= 1; i--) {
     const d = new Date();
@@ -260,8 +191,8 @@ type ModalType =
   | { kind: 'org-pillar'; pillar: 'food' | 'fire' }
   | { kind: 'location-pillar'; locationId: string; pillar: 'food' | 'fire' };
 
-function DrillDownModal({ modal, onClose }: { modal: ModalType; onClose: () => void }) {
-  const locs = LOCATIONS_WITH_SCORES;
+function DrillDownModal({ modal, onClose, locations }: { modal: ModalType; onClose: () => void; locations: LocationWithScores[] }) {
+  const locs = locations;
 
   let title = '';
   let content: React.ReactNode = null;
@@ -454,7 +385,7 @@ function HeaderPillarCard({ icon, label, score, onClick }: {
 // ================================================================
 
 function AlertBanners({ alerts, onDismiss, navigate }: {
-  alerts: AlertItem[];
+  alerts: HookAlertItem[];
   onDismiss: (id: string) => void;
   navigate: (path: string) => void;
 }) {
@@ -509,7 +440,7 @@ function AlertBanners({ alerts, onDismiss, navigate }: {
 // ================================================================
 
 function LocationCardNew({ loc, onPillarClick, onViewDetails }: {
-  loc: typeof LOCATIONS_WITH_SCORES[0];
+  loc: LocationWithScores;
   onPillarClick: (locationId: string, pillar: 'food' | 'fire') => void;
   onViewDetails: (locationId: string) => void;
 }) {
@@ -643,16 +574,16 @@ function FilterTabs({ value, onChange, total, attentionCount, criticalCount }: {
 // WIDGET: TODAY'S TASKS
 // ================================================================
 
-function WidgetTasks({ navigate }: { navigate: (path: string) => void }) {
-  const done = DEMO_TASKS.filter(t => t.status === 'done').length;
+function WidgetTasks({ navigate, tasks }: { navigate: (path: string) => void; tasks: TaskItem[] }) {
+  const done = tasks.filter(t => t.status === 'done').length;
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Today's Tasks</h4>
-        <span className="text-xs font-medium" style={{ color: NAVY }}>{done}/{DEMO_TASKS.length} complete</span>
+        <span className="text-xs font-medium" style={{ color: NAVY }}>{done}/{tasks.length} complete</span>
       </div>
       <div className="space-y-1.5">
-        {DEMO_TASKS.map(task => {
+        {tasks.map(task => {
           const isOverdue = task.status === 'overdue';
           const isDone = task.status === 'done';
           return (
@@ -689,7 +620,7 @@ function WidgetTasks({ navigate }: { navigate: (path: string) => void }) {
 // WIDGET: UPCOMING DEADLINES
 // ================================================================
 
-function WidgetDeadlines({ navigate }: { navigate: (path: string) => void }) {
+function WidgetDeadlines({ navigate, deadlines }: { navigate: (path: string) => void; deadlines: DeadlineItem[] }) {
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="flex items-center justify-between mb-3">
@@ -697,7 +628,7 @@ function WidgetDeadlines({ navigate }: { navigate: (path: string) => void }) {
         <CalendarDays size={14} className="text-gray-400" />
       </div>
       <div className="space-y-1.5">
-        {DEMO_DEADLINES.map(dl => {
+        {deadlines.map(dl => {
           const bg = dl.severity === 'critical' ? '#fef2f2' : dl.severity === 'warning' ? '#fffbeb' : undefined;
           const borderColor = dl.severity === 'critical' ? '#fecaca' : dl.severity === 'warning' ? '#fde68a' : '#e5e7eb';
           return (
@@ -732,7 +663,7 @@ function WidgetDeadlines({ navigate }: { navigate: (path: string) => void }) {
 // WIDGET: SCORE IMPACT
 // ================================================================
 
-function WidgetScoreImpact({ navigate }: { navigate: (path: string) => void }) {
+function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => void; impact: ImpactItem[] }) {
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="mb-3">
@@ -740,7 +671,7 @@ function WidgetScoreImpact({ navigate }: { navigate: (path: string) => void }) {
         <p className="text-[11px] text-gray-400 mt-0.5">Actions ranked by impact on Inspection Readiness</p>
       </div>
       <div className="space-y-2">
-        {DEMO_IMPACT.map(item => {
+        {impact.map(item => {
           const isCritical = item.severity === 'critical';
           const borderColor = isCritical ? '#dc2626' : '#d97706';
           const bgColor = isCritical ? '#fef2f2' : '#fffbeb';
@@ -780,9 +711,9 @@ function WidgetScoreImpact({ navigate }: { navigate: (path: string) => void }) {
 // WIDGET: COMPLIANCE TREND
 // ================================================================
 
-function WidgetTrend() {
+function WidgetTrend({ trendData }: { trendData: { date: string; overall: number; foodSafety: number; fireSafety: number }[] }) {
   const [range, setRange] = useState<7 | 30 | 90>(30);
-  const data = useMemo(() => generateTrendData(range), [range]);
+  const data = useMemo(() => generateTrendData(range, trendData), [range, trendData]);
 
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
@@ -852,8 +783,8 @@ const FIRE_EQUIPMENT_ALERTS = [
   { id: 'fa-3', label: 'Exhaust fan belt replacement overdue', location: 'Downtown Kitchen', severity: 'warning' as const, route: '/equipment/EQ-017' },
 ];
 
-function WidgetFireSafety({ navigate }: { navigate: (path: string) => void }) {
-  const orgScore = DEMO_ORG_SCORES.fireSafety;
+function WidgetFireSafety({ navigate, fireScore }: { navigate: (path: string) => void; fireScore: number }) {
+  const orgScore = fireScore;
   const trend = getTrend(orgScore, 74); // 30-day ago org avg ~74
   const scoreColor = orgScore >= 90 ? '#22c55e' : orgScore >= 75 ? '#eab308' : orgScore >= 60 ? '#f59e0b' : '#ef4444';
   const locations = ['downtown', 'airport', 'university'] as const;
@@ -1035,20 +966,21 @@ function EvidlyFooter() {
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { companyName } = useDemo();
+  const { data } = useDashboardData();
 
   // Drill-down modal
   const [modal, setModal] = useState<ModalType | null>(null);
 
   // Dismissed alerts (session-only)
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
-  const visibleAlerts = DEMO_ALERTS.filter(a => !dismissedAlerts.has(a.id));
+  const visibleAlerts = data.alerts.filter(a => !dismissedAlerts.has(a.id));
   const handleDismissAlert = useCallback((id: string) => {
     setDismissedAlerts(prev => new Set(prev).add(id));
   }, []);
 
   // Location filter
   const [filter, setFilter] = useState<DashboardFilter>('all');
-  const locs = LOCATIONS_WITH_SCORES;
+  const locs = data.locations;
 
   const attentionCount = locs.filter(l => l.score < 85 && l.score >= 70).length;
   const criticalCount = locs.filter(l => l.score < 70).length;
@@ -1086,11 +1018,11 @@ export default function OwnerOperatorDashboard() {
 
   const renderWidget = (wid: string) => {
     switch (wid) {
-      case 'tasks': return <WidgetTasks navigate={navigate} />;
-      case 'deadlines': return <WidgetDeadlines navigate={navigate} />;
-      case 'fire-safety': return <WidgetFireSafety navigate={navigate} />;
-      case 'impact': return <WidgetScoreImpact navigate={navigate} />;
-      case 'trend': return <WidgetTrend />;
+      case 'tasks': return <WidgetTasks navigate={navigate} tasks={data.tasks} />;
+      case 'deadlines': return <WidgetDeadlines navigate={navigate} deadlines={data.deadlines} />;
+      case 'fire-safety': return <WidgetFireSafety navigate={navigate} fireScore={data.orgScores.fireSafety} />;
+      case 'impact': return <WidgetScoreImpact navigate={navigate} impact={data.impact} />;
+      case 'trend': return <WidgetTrend trendData={data.trendData} />;
       default: return null;
     }
   };
@@ -1148,7 +1080,7 @@ export default function OwnerOperatorDashboard() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10" style={stagger(1)}>
           <div className="flex flex-col items-center">
             <ScoreRing
-              score={DEMO_ORG_SCORES.overall}
+              score={data.orgScores.overall}
               onClick={() => setModal({ kind: 'org-overall' })}
             />
             <p className="text-[10px] uppercase text-white mt-2" style={{ letterSpacing: '0.1em', opacity: 0.5 }}>
@@ -1160,13 +1092,13 @@ export default function OwnerOperatorDashboard() {
             <HeaderPillarCard
               icon={<UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />}
               label="Food Safety"
-              score={DEMO_ORG_SCORES.foodSafety}
+              score={data.orgScores.foodSafety}
               onClick={() => setModal({ kind: 'org-pillar', pillar: 'food' })}
             />
             <HeaderPillarCard
               icon={<Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />}
               label="Fire Safety"
-              score={DEMO_ORG_SCORES.fireSafety}
+              score={data.orgScores.fireSafety}
               onClick={() => setModal({ kind: 'org-pillar', pillar: 'fire' })}
             />
           </div>
@@ -1305,7 +1237,7 @@ export default function OwnerOperatorDashboard() {
       <QuickActionsBar navigate={navigate} />
 
       {/* Drill-Down Modal */}
-      {modal && <DrillDownModal modal={modal} onClose={() => setModal(null)} />}
+      {modal && <DrillDownModal modal={modal} onClose={() => setModal(null)} locations={data.locations} />}
     </div>
   );
 }
