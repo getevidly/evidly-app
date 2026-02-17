@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Thermometer, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Thermometer, CheckCircle, ArrowLeft, QrCode, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 
@@ -25,6 +25,7 @@ export function TempLogQuick() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
   const preselectedId = searchParams.get('equipment');
+  const inputMethod = (searchParams.get('method') as 'manual' | 'qr_scan') || 'manual';
 
   const [selectedEquipment, setSelectedEquipment] = useState<string>(preselectedId || '');
   const [temperature, setTemperature] = useState('');
@@ -59,6 +60,11 @@ export function TempLogQuick() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-sm w-full text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900 mb-2">Temperature Logged!</h2>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3"
+            style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+            {inputMethod === 'qr_scan' ? <QrCode className="h-3 w-3" /> : <Pencil className="h-3 w-3" />}
+            {inputMethod === 'qr_scan' ? 'Logged via QR Scan' : 'Logged via Manual Entry'}
+          </div>
           <p className="text-sm text-gray-600 mb-1">{selected?.name}</p>
           <p className="text-2xl font-bold mb-4" style={{ color: isInRange ? '#22c55e' : '#ef4444' }}>
             {temperature}°F

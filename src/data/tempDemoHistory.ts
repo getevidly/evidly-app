@@ -8,6 +8,7 @@ interface TempHistoryEntry {
   recorded_by_name: string;
   corrective_action: string | null;
   created_at: string;
+  input_method: 'manual' | 'qr_scan' | 'iot_sensor';
 }
 
 // Deterministic pseudo-random for consistent demo data
@@ -87,6 +88,13 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
         temp = Math.round(temp * 10) / 10;
         const isWithinRange = temp >= eq.min && temp <= eq.max;
 
+        // Assign input method: ~10% iot_sensor (coolers/freezers), ~8% qr_scan, rest manual
+        const methodRand = pRand(seed * 4 + 53);
+        const inputMethod: 'manual' | 'qr_scan' | 'iot_sensor' =
+          (eq.type === 'cooler' || eq.type === 'freezer') && methodRand < 0.10 ? 'iot_sensor'
+          : methodRand < 0.18 ? 'qr_scan'
+          : 'manual';
+
         history.push({
           id: String(id++),
           equipment_id: eq.id,
@@ -94,9 +102,10 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
           equipment_type: eq.type,
           temperature_value: temp,
           is_within_range: isWithinRange,
-          recorded_by_name: staff[Math.floor(pRand(seed * 2 + 31) * staff.length)],
+          recorded_by_name: inputMethod === 'iot_sensor' ? 'IoT Sensor' : staff[Math.floor(pRand(seed * 2 + 31) * staff.length)],
           corrective_action: !isWithinRange ? 'Adjusted temperature setting and monitoring closely' : null,
           created_at: readingTime.toISOString(),
+          input_method: inputMethod,
         });
 
         id++;

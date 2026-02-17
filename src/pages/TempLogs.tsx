@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -32,6 +32,8 @@ interface TemperatureEquipment {
   };
 }
 
+type InputMethod = 'manual' | 'qr_scan' | 'iot_sensor';
+
 interface TempCheckCompletion {
   id: string;
   equipment_id: string;
@@ -42,6 +44,7 @@ interface TempCheckCompletion {
   recorded_by_name: string;
   corrective_action: string | null;
   created_at: string;
+  input_method?: InputMethod;
 }
 
 interface User {
@@ -111,6 +114,7 @@ export function TempLogs() {
   const [historyDateRange, setHistoryDateRange] = useState('today');
   const [historyEquipment, setHistoryEquipment] = useState('all');
   const [historyStatus, setHistoryStatus] = useState('all');
+  const [historyMethod, setHistoryMethod] = useState<'all' | InputMethod>('all');
   const [historyView, setHistoryView] = useState<'table' | 'chart'>('table');
   const [customDateFrom, setCustomDateFrom] = useState('');
   const [customDateTo, setCustomDateTo] = useState('');
@@ -920,6 +924,11 @@ export function TempLogs() {
       filtered = filtered.filter(h => h.is_within_range === passFilter);
     }
 
+    // Method filter
+    if (historyMethod !== 'all') {
+      filtered = filtered.filter(h => (h.input_method || 'manual') === historyMethod);
+    }
+
     // Sorting
     filtered.sort((a, b) => {
       let comparison = 0;
@@ -1655,6 +1664,20 @@ export function TempLogs() {
                   </select>
                 </div>
 
+                <div className="flex-1 min-w-0 sm:min-w-[140px]">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Method</label>
+                  <select
+                    value={historyMethod}
+                    onChange={(e) => setHistoryMethod(e.target.value as 'all' | InputMethod)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="all">All Methods</option>
+                    <option value="manual">Manual</option>
+                    <option value="qr_scan">QR Scan</option>
+                    <option value="iot_sensor">IoT Sensor</option>
+                  </select>
+                </div>
+
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setHistoryView('table')}
@@ -1751,6 +1774,9 @@ export function TempLogs() {
                         </div>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Method
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('tempLogs.recordedBy')}
                       </th>
                     </tr>
@@ -1782,13 +1808,30 @@ export function TempLogs() {
                               {log.is_within_range ? t('common.pass') : t('common.fail')}
                             </span>
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {(() => {
+                              const m = log.input_method || 'manual';
+                              const cfg = m === 'qr_scan'
+                                ? { icon: QrCode, label: 'QR Scan', bg: '#eef4f8', fg: '#1e4d6b' }
+                                : m === 'iot_sensor'
+                                ? { icon: Wifi, label: 'IoT', bg: '#ecfdf5', fg: '#065f46' }
+                                : { icon: Pencil, label: 'Manual', bg: '#f3f4f6', fg: '#4b5563' };
+                              const Icon = cfg.icon;
+                              return (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                                  style={{ backgroundColor: cfg.bg, color: cfg.fg }}>
+                                  <Icon className="h-3 w-3" /> {cfg.label}
+                                </span>
+                              );
+                            })()}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {log.recorded_by_name}
                           </td>
                         </tr>
                         {showHistoryDetails && log.corrective_action && (
                           <tr key={`${log.id}-details`} className="bg-yellow-50">
-                            <td colSpan={5} className="px-6 py-3">
+                            <td colSpan={6} className="px-6 py-3">
                               <div className="text-sm">
                                 <span className="font-medium text-gray-700">Corrective Action: </span>
                                 <span className="text-gray-600">{log.corrective_action}</span>
