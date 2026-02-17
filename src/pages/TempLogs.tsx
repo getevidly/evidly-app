@@ -1529,7 +1529,7 @@ export function TempLogs() {
                         ? 'border-red-500 focus:ring-red-200 bg-red-50'
                         : 'border-gray-300 focus:ring-[#d4af37]'
                     }`}
-                    placeholder="00.0"
+                    placeholder="Enter temp"
                   />
                   {receivingTemp && (
                     <div className="mt-2 text-center">
