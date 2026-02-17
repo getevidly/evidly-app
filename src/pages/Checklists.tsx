@@ -887,6 +887,17 @@ export function Checklists() {
       return;
     }
 
+    // Block if any failed item requires photo evidence but none attached
+    const failedMissingPhoto = templateItems.filter(item => {
+      if (!item.requires_photo_on_fail) return false;
+      const resp = itemResponses[item.id];
+      return resp?.is_pass === false && !(itemPhotos[item.id]?.length > 0);
+    });
+    if (failedMissingPhoto.length > 0) {
+      toast.warning('Photo evidence required for failed items — please attach photos before submitting');
+      return;
+    }
+
     // Block if any CCP-tagged item failed without corrective action
     const failedCCPsMissingCA = templateItems.filter(item => {
       if (!item.haccp_ccp) return false;
@@ -1209,6 +1220,37 @@ export function Checklists() {
                 onChange={(photos) => setItemPhotos(prev => ({ ...prev, [item.id]: photos }))}
               />
             </div>
+          </div>
+        );
+
+      case 'photo':
+        return (
+          <div>
+            <p className="text-lg text-gray-900 mb-1">
+              {checklistItemMap[item.title] || item.title}
+              {renderAuthBadges(item)}
+              {item.is_required && <span className="text-red-600 ml-1">*</span>}
+            </p>
+            {item.authority_note && (
+              <p className="text-xs text-gray-400 mb-3">{item.authority_note}</p>
+            )}
+            <PhotoButton
+              photos={itemPhotos[item.id] || []}
+              onChange={(photos) => {
+                setItemPhotos(prev => ({ ...prev, [item.id]: photos }));
+                if (photos.length > 0) {
+                  handleItemResponse(item.id, `${photos.length} photo(s)`, true, '');
+                }
+              }}
+              highlight
+              highlightText="Capture photo evidence"
+            />
+            {(itemPhotos[item.id]?.length || 0) > 0 && (
+              <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-green-600">
+                <CheckCircle size={16} />
+                {itemPhotos[item.id].length} photo(s) captured
+              </div>
+            )}
           </div>
         );
 
