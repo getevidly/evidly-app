@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Users, Mail, Shield, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
@@ -149,6 +150,7 @@ function getTimeAgo(dateStr: string): string {
 }
 
 export function Team() {
+  const navigate = useNavigate();
   const { profile } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -724,8 +726,12 @@ export function Team() {
                       </td>
                       <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell">
                         {certCount > 0 ? (
-                          <div className="flex items-center gap-1">
-                            <span className="text-gray-900 font-medium">{certCount}</span>
+                          <div
+                            className="flex items-center gap-1 cursor-pointer hover:underline"
+                            onClick={(e) => { e.stopPropagation(); const idx = DEMO_MEMBERS.findIndex(m => m.id === member.id); if (idx >= 0) navigate(`/training/employee/${idx + 1}`); }}
+                            style={{ color: '#1e4d6b' }}
+                          >
+                            <span className="font-medium">{certCount}</span>
                             {expiringSoon > 0 && (
                               <span className="text-xs px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full font-semibold">
                                 {expiringSoon} expiring
@@ -959,6 +965,21 @@ export function Team() {
                 </div>
               ) : (
                 <p className="text-sm text-gray-500 italic">No certifications on file</p>
+              )}
+              {selectedMember && (
+                <button
+                  onClick={() => {
+                    const idx = DEMO_MEMBERS.findIndex(m => m.id === selectedMember.id);
+                    if (idx >= 0) {
+                      setShowDetailsModal(false);
+                      navigate(`/training/employee/${idx + 1}`);
+                    }
+                  }}
+                  className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-[#1e4d6b] hover:text-[#163a52] transition-colors"
+                >
+                  <GraduationCap className="h-4 w-4" />
+                  View Training Profile
+                </button>
               )}
             </div>
 
