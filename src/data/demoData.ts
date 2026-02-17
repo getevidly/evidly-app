@@ -3673,3 +3673,70 @@ export const copilotInsights: CopilotInsight[] = [
     expiresAt: daysAgo(-30),
   },
 ];
+
+// ============================================================
+// Equipment QR Codes — FS-5 Temperature Monitoring
+// ============================================================
+export interface EquipmentQRCode {
+  id: string;
+  equipmentId: string;
+  qrCode: string;
+  locationId: string;
+  locationName: string;
+  equipmentName: string;
+  labelPrintedAt: string | null;
+  createdAt: string;
+}
+
+export const equipmentQRCodes: EquipmentQRCode[] = [
+  {
+    id: 'qr-1',
+    equipmentId: 'eq-1',
+    qrCode: 'EVIDLY-EQ-WK1COOL3R',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    equipmentName: 'Walk-in Cooler',
+    labelPrintedAt: daysAgo(14),
+    createdAt: daysAgo(30),
+  },
+  {
+    id: 'qr-2',
+    equipmentId: 'eq-2',
+    qrCode: 'EVIDLY-EQ-WK1FR33Z',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    equipmentName: 'Walk-in Freezer',
+    labelPrintedAt: daysAgo(14),
+    createdAt: daysAgo(30),
+  },
+  {
+    id: 'qr-3',
+    equipmentId: 'eq-3',
+    qrCode: 'EVIDLY-EQ-H0TH0LD1',
+    locationId: '1',
+    locationName: 'Downtown Kitchen',
+    equipmentName: 'Hot Holding Unit',
+    labelPrintedAt: null,
+    createdAt: daysAgo(30),
+  },
+  {
+    id: 'qr-4',
+    equipmentId: 'eq-4',
+    qrCode: 'EVIDLY-EQ-C0LDH0L2',
+    locationId: '2',
+    locationName: 'Airport Cafe',
+    equipmentName: 'Cold Holding Unit',
+    labelPrintedAt: daysAgo(7),
+    createdAt: daysAgo(21),
+  },
+  {
+    id: 'qr-5',
+    equipmentId: 'eq-5',
+    qrCode: 'EVIDLY-EQ-PR3PFR1D',
+    locationId: '3',
+    locationName: 'University Hub',
+    equipmentName: 'Prep Station Fridge',
+    labelPrintedAt: null,
+    createdAt: daysAgo(21),
+  },
+];
