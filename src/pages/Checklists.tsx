@@ -981,23 +981,55 @@ export function Checklists() {
       return;
     }
 
-    const responsesToInsert = Object.entries(itemResponses).map(([itemId, response]) => ({
-      completion_id: completionData.id,
-      template_item_id: itemId,
-      response_value: response.response_value,
-      is_pass: response.is_pass,
-      corrective_action: response.corrective_action || null,
-    }));
+    const itemMap = new Map(templateItems.map(i => [i.id, i]));
+    const responsesToInsert = Object.entries(itemResponses).map(([itemId, response]) => {
+      const item = itemMap.get(itemId);
+      return {
+        completion_id: completionData.id,
+        template_item_id: itemId,
+        response_value: response.response_value,
+        is_pass: response.is_pass,
+        corrective_action: response.corrective_action || null,
+        response_type: item?.item_type || 'checkbox',
+        response_passed: response.is_pass,
+        temperature_reading: item?.item_type === 'temperature' ? parseFloat(response.response_value) || null : null,
+        responded_at: new Date().toISOString(),
+      };
+    });
 
     await supabase.from('checklist_responses').insert(responsesToInsert);
+
+    // Query auto-generated HACCP monitoring logs from DB trigger
+    const { data: ccpLogs } = await supabase
+      .from('haccp_monitoring_logs')
+      .select('*')
+      .eq('source_checklist_completion_id', completionData.id);
+
+    if (ccpLogs && ccpLogs.length > 0) {
+      const ccpResults = ccpLogs.map(log => ({
+        ccp: log.ccp_number || log.ccp_id || '',
+        value: log.monitored_value || '',
+        pass: log.is_within_limit !== false,
+        limit: log.critical_limit || '',
+      }));
+      setCcpMappingResults(ccpResults);
+      toast.success(`${ccpResults.length} CCP monitoring log(s) auto-populated`);
+
+      const failedCCPs = ccpResults.filter(r => !r.pass);
+      if (failedCCPs.length > 0) {
+        toast.warning('Out-of-limit CCP detected — manager notified');
+      }
+    }
 
     setLoading(false);
     setShowCompleteModal(false);
     setItemResponses({});
     fetchCompletions();
 
-    if (scorePercentage === 100) {
+    if ((!ccpLogs || ccpLogs.length === 0) && scorePercentage === 100) {
       setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
+    } else if (!ccpLogs || ccpLogs.length === 0) {
+      toast.success(`Checklist submitted — score: ${scorePercentage}%`);
     }
   };
 
