@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase';
 import { format, subDays, startOfDay, endOfDay, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
-import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
+import { generateTempDemoHistory, equipmentColors, type TempHistoryEntry } from '../data/tempDemoHistory';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
@@ -45,6 +45,8 @@ interface TempCheckCompletion {
   corrective_action: string | null;
   created_at: string;
   input_method?: InputMethod;
+  shift?: 'morning' | 'afternoon' | 'evening';
+  ccp_number?: string | null;
 }
 
 interface User {
@@ -115,6 +117,7 @@ export function TempLogs() {
   const [historyEquipment, setHistoryEquipment] = useState('all');
   const [historyStatus, setHistoryStatus] = useState('all');
   const [historyMethod, setHistoryMethod] = useState<'all' | InputMethod>('all');
+  const [historyShift, setHistoryShift] = useState<'all' | 'morning' | 'afternoon' | 'evening'>('all');
   const [historyView, setHistoryView] = useState<'table' | 'chart'>('table');
   const [customDateFrom, setCustomDateFrom] = useState('');
   const [customDateTo, setCustomDateTo] = useState('');
@@ -929,6 +932,11 @@ export function TempLogs() {
       filtered = filtered.filter(h => (h.input_method || 'manual') === historyMethod);
     }
 
+    // Shift filter
+    if (historyShift !== 'all') {
+      filtered = filtered.filter(h => h.shift === historyShift);
+    }
+
     // Sorting
     filtered.sort((a, b) => {
       let comparison = 0;
@@ -966,12 +974,15 @@ export function TempLogs() {
   const exportToCSV = () => {
     const filtered = getFilteredHistory();
 
-    const headers = ['Date & Time', 'Equipment', 'Temperature', 'Status', 'Recorded By', 'Corrective Action'];
+    const headers = ['Date & Time', 'Equipment', 'Temperature', 'Status', 'Method', 'Shift', 'CCP', 'Recorded By', 'Corrective Action'];
     const rows = filtered.map(log => [
       format(new Date(log.created_at), 'MMM d, yyyy h:mm a'),
       log.equipment_name,
       `${log.temperature_value}°F`,
       log.is_within_range ? 'Pass' : 'Fail',
+      log.input_method || 'manual',
+      log.shift || '',
+      log.ccp_number || '',
       log.recorded_by_name,
       log.corrective_action || '',
     ]);
@@ -1700,6 +1711,20 @@ export function TempLogs() {
                   </select>
                 </div>
 
+                <div className="flex-1 min-w-0 sm:min-w-[120px]">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Shift</label>
+                  <select
+                    value={historyShift}
+                    onChange={(e) => setHistoryShift(e.target.value as 'all' | 'morning' | 'afternoon' | 'evening')}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    <option value="all">All Shifts</option>
+                    <option value="morning">Morning</option>
+                    <option value="afternoon">Afternoon</option>
+                    <option value="evening">Evening</option>
+                  </select>
+                </div>
+
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setHistoryView('table')}
@@ -1799,6 +1824,12 @@ export function TempLogs() {
                         Method
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        Shift
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                        CCP
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                         {t('tempLogs.recordedBy')}
                       </th>
                     </tr>
@@ -1847,13 +1878,25 @@ export function TempLogs() {
                               );
                             })()}
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 capitalize">
+                            {log.shift || '—'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {log.ccp_number ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                                {log.ccp_number}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-gray-400">—</span>
+                            )}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {log.recorded_by_name}
                           </td>
                         </tr>
                         {showHistoryDetails && log.corrective_action && (
                           <tr key={`${log.id}-details`} className="bg-yellow-50">
-                            <td colSpan={6} className="px-6 py-3">
+                            <td colSpan={8} className="px-6 py-3">
                               <div className="text-sm">
                                 <span className="font-medium text-gray-700">Corrective Action: </span>
                                 <span className="text-gray-600">{log.corrective_action}</span>

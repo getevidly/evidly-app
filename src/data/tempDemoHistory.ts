@@ -1,4 +1,4 @@
-interface TempHistoryEntry {
+export interface TempHistoryEntry {
   id: string;
   equipment_id: string;
   equipment_name: string;
@@ -9,6 +9,8 @@ interface TempHistoryEntry {
   corrective_action: string | null;
   created_at: string;
   input_method: 'manual' | 'qr_scan' | 'iot_sensor';
+  shift: 'morning' | 'afternoon' | 'evening';
+  ccp_number: string | null;
 }
 
 // Deterministic pseudo-random for consistent demo data
@@ -95,6 +97,16 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
           : methodRand < 0.18 ? 'qr_scan'
           : 'manual';
 
+        // Shift from reading hour
+        const shift: 'morning' | 'afternoon' | 'evening' =
+          hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+
+        // CCP mapping from equipment type
+        const ccpNumber: string | null =
+          eq.type === 'cooler' || eq.type === 'freezer' ? 'CCP-01'
+          : eq.type === 'hot_hold' ? 'CCP-02'
+          : null;
+
         history.push({
           id: String(id++),
           equipment_id: eq.id,
@@ -106,6 +118,8 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
           corrective_action: !isWithinRange ? 'Adjusted temperature setting and monitoring closely' : null,
           created_at: readingTime.toISOString(),
           input_method: inputMethod,
+          shift,
+          ccp_number: ccpNumber,
         });
 
         id++;
