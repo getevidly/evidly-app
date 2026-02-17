@@ -119,7 +119,8 @@
 | `/temp-logs` | `TempLogs.tsx` | Temperature Logs — 7 tabs: Equipment, History, Receiving, Cooldown, IoT Live View, Hot/Cold Holding, Analytics |
 | `/temp/log` | `TempLogQuick.tsx` | Quick temp entry — standalone mobile form, URL param `?equipment=eq-1&method=qr_scan` |
 | `/temp-logs/scan` | `TempLogScan.tsx` | QR Scanner — camera viewfinder (demo: tap-to-scan), equipment lookup, inline temp entry |
-| `/iot-sensors` | `IoTSensorHub.tsx` | IoT Monitoring — 6-tab sensor management platform |
+| `/iot-monitoring` | `IoTMonitoring.tsx` | IoT Monitoring — 4-tab dashboard: Live Dashboard, Sensors, Alerts, Settings |
+| `/iot-sensors` | `IoTSensorHub.tsx` | IoT Sensor Hub — 6-tab sensor management platform |
 | `/iot/platform` | `IoTSensorPlatform.tsx` | IoT Platform — defrost, door events, cooling logs |
 | `/sensors` | `SensorHub.tsx` | Sensor Hub — 8 provider integrations |
 | `/sensors/:sensorId` | `SensorDetail.tsx` | Sensor Detail — history chart, calibration |
@@ -133,6 +134,9 @@
 - Analytics tab: method breakdown pie chart, weekly compliance trend, equipment heatmap, time-of-day distribution
 - HACCP IoT source integration: CCP-01 (cold storage) and CCP-02 (hot/cold holding) auto-logged from sensors
 - IoT process reading Edge Function with 15-min alert delay (prevents door-open false alarms)
+- History tab: CCP column (CCP-01/CCP-02), shift filter (morning/afternoon/evening), enhanced CSV export
+- Holding tab: 2-hour check reminder indicators (CHECK OVERDUE / CHECK DUE SOON badges)
+- Equipment Detail: QR code section uses `getPillar()` for correct visibility in demo
 
 ### Role Access (FS-5)
 
@@ -141,6 +145,7 @@
 | `/temp-logs` | management, kitchen_manager |
 | `/temp/log` | kitchen (also accessible via QR scan) |
 | `/temp-logs/scan` | All (standalone page, no layout) |
+| `/iot-monitoring` | executive, management, kitchen_manager, facilities |
 | `/iot-sensors` | executive, management, facilities |
 
 ### Quick Actions
