@@ -358,7 +358,7 @@ export function HACCP() {
   const [liveCorrectiveActions, setLiveCorrectiveActions] = useState<CorrectiveActionRecord[]>([]);
 
   // ── Template form state ──────────────────────────────────────────
-  const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 1: true });
+  const [expandedSections, setExpandedSections] = useState<Record<string, any>>({ 1: true });
   const toggleSection = (num: number) => setExpandedSections(prev => ({ ...prev, [num]: !prev[num] }));
 
   // Section 1: Food Product
@@ -413,11 +413,49 @@ export function HACCP() {
   const updateLimit = (idx: number, field: string, val: string) =>
     setTplCriticalLimits(prev => prev.map((l, i) => i === idx ? { ...l, [field]: val } : l));
 
-  const handleTemplateSave = () => {
+  const handleTemplateSave = async () => {
+    if (!tplProductName.trim()) {
+      toast.warning('Product name is required');
+      return;
+    }
+    if (tplCCPs.length === 0) {
+      toast.warning('At least one CCP is required');
+      return;
+    }
     if (isDemoMode) {
-      toast.success('Demo mode — template data is not saved');
-    } else {
-      toast.success('HACCP plan template saved');
+      toast.success('Demo mode — HACCP plan saved locally');
+      setActiveTab('plans');
+      return;
+    }
+    try {
+      const { data: planData, error: planError } = await supabase
+        .from('haccp_plans')
+        .insert({
+          name: tplProductName,
+          description: tplProductDesc || null,
+          organization_id: profile?.organization_id,
+          status: 'active',
+        })
+        .select()
+        .single();
+      if (planError || !planData) throw planError;
+
+      const ccpInserts = tplCCPs.map((ccp, idx) => ({
+        plan_id: planData.id,
+        ccp_number: ccp.ccpNum || `CCP-${idx + 1}`,
+        hazard: ccp.hazard || null,
+        critical_limit: ccp.criticalLimit || null,
+        monitoring_procedure: ccp.monitoring || null,
+        corrective_action: ccp.corrective || null,
+        verification: ccp.verification || null,
+        record_keeping: ccp.records || null,
+      }));
+      await supabase.from('haccp_critical_control_points').insert(ccpInserts);
+
+      toast.success('HACCP plan created');
+      setActiveTab('plans');
+    } catch {
+      toast.error('Error saving HACCP plan');
     }
   };
 
@@ -1461,384 +1499,374 @@ export function HACCP() {
           </div>
         )}
 
-        {/* ── Template Tab (HACCP Plan Template Form) ──────── */}
-        {!loading && activeTab === 'template' && (
+        {/* ── Template Tab (HACCP Plan Builder Wizard) ──────── */}
+        {!loading && activeTab === 'template' && (() => {
+          const WIZARD_STEPS = [
+            { id: 1, label: 'Product Info' },
+            { id: 2, label: 'Ingredients' },
+            { id: 3, label: 'Intended Use' },
+            { id: 4, label: 'Flow Diagram' },
+            { id: 5, label: 'Hazard Analysis' },
+            { id: 6, label: 'CCPs' },
+            { id: 7, label: 'Review & Save' },
+          ];
+          const wizardStepNum = expandedSections.__wizardStep ?? 1;
+          const setWizardStep = (n: number) => setExpandedSections(prev => ({ ...prev, __wizardStep: n }));
+          const canNext = () => {
+            if (wizardStepNum === 1 && !tplProductName.trim()) return false;
+            if (wizardStepNum === 6 && tplCCPs.length === 0) return false;
+            return true;
+          };
+          return (
           <div>
+            {/* Auto-Generate Option */}
             <div className="mb-4 flex items-start justify-between flex-wrap gap-2">
-              <div>
-                <p className="text-sm text-gray-600">
-                  Fill out this HACCP plan template to document hazard analysis and critical control points for your food products.
-                  Expand each section to complete the required fields.
-                </p>
-              </div>
+              <p className="text-sm text-gray-600">
+                Build a HACCP plan step by step, or auto-generate from your checklist templates.
+              </p>
               <button
-                onClick={handleTemplateSave}
-                className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                onClick={async () => {
+                  if (isDemoMode) {
+                    setTplProductName('Auto-Generated Plan');
+                    setTplProductDesc('Generated from existing checklist templates with CCP-tagged items.');
+                    toast.success('Demo: HACCP plan pre-populated from checklists');
+                    return;
+                  }
+                  try {
+                    const { data, error } = await supabase.functions.invoke('generate-haccp-from-checklists', {
+                      body: { facility_id: profile?.organization_id },
+                    });
+                    if (error) throw error;
+                    if (data?.plan_name) setTplProductName(data.plan_name);
+                    if (data?.ccps?.length) {
+                      setTplCCPs(data.ccps.map((c: any, i: number) => ({
+                        ccpNum: c.ccp_number || `CCP-${i + 1}`,
+                        step: c.process_step || '',
+                        hazard: c.hazard || '',
+                        criticalLimit: c.critical_limit || '',
+                        monitoring: c.monitoring_procedure || '',
+                        corrective: c.corrective_action || '',
+                        verification: c.verification || '',
+                        records: c.record_keeping || '',
+                      })));
+                    }
+                    toast.success('HACCP plan pre-populated from checklists');
+                  } catch {
+                    toast.error('Failed to auto-generate — please fill manually');
+                  }
+                }}
+                className="inline-flex items-center px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors"
+                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
               >
-                <Save className="h-4 w-4 mr-2" />
-                Save Template
+                <Activity className="h-4 w-4 mr-2" />
+                Auto-Generate from Checklists
               </button>
             </div>
 
-            <div className="space-y-3">
-
-              {/* ── Section 1: Describe the Food Product ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(1)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>1</span>
-                    <span className="font-semibold text-gray-900">Describe the Food Product</span>
+            {/* Wizard Step Indicator */}
+            <div className="mb-6 overflow-x-auto">
+              <div className="flex items-center justify-between min-w-[600px]">
+                {WIZARD_STEPS.map((step, i) => (
+                  <div key={step.id} className="flex items-center" style={{ flex: i < WIZARD_STEPS.length - 1 ? 1 : 'none' }}>
+                    <div className="flex flex-col items-center">
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold cursor-pointer transition-colors ${
+                          step.id < wizardStepNum ? 'bg-green-500 text-white' :
+                          step.id === wizardStepNum ? 'text-white' :
+                          'bg-gray-300 text-gray-500'
+                        }`}
+                        style={step.id === wizardStepNum ? { backgroundColor: '#1e4d6b' } : undefined}
+                        onClick={() => setWizardStep(step.id)}
+                      >
+                        {step.id < wizardStepNum ? '✓' : step.id}
+                      </div>
+                      <span className={`text-xs mt-1 whitespace-nowrap ${step.id <= wizardStepNum ? 'text-gray-900 font-medium' : 'text-gray-400'}`}>{step.label}</span>
+                    </div>
+                    {i < WIZARD_STEPS.length - 1 && (
+                      <div className={`h-0.5 flex-1 mx-2 mt-[-14px] ${step.id < wizardStepNum ? 'bg-green-500' : 'bg-gray-300'}`} />
+                    )}
                   </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[1] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[1] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                      <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Product Description</label>
-                      <textarea value={tplProductDesc} onChange={(e) => setTplProductDesc(e.target.value)} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
-                      <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Distribution Method</label>
-                      <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Consumer</label>
-                      <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
+            </div>
 
-              {/* ── Section 2: Ingredients and Materials ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(2)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>2</span>
-                    <span className="font-semibold text-gray-900">List All Ingredients and Materials</span>
-                  </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[2] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[2] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Raw Materials</label>
-                      <textarea value={tplRawMaterials} onChange={(e) => setTplRawMaterials(e.target.value)} placeholder="List all raw materials and ingredients (one per line)&#10;e.g.,&#10;Chicken breast (fresh, boneless)&#10;Lettuce (iceberg)&#10;Tomatoes (sliced)&#10;Bread rolls (sesame)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Processing Aids</label>
-                      <textarea value={tplProcessingAids} onChange={(e) => setTplProcessingAids(e.target.value)} placeholder="List any processing aids used (e.g., cooking oil, marinade, sanitizer for produce wash)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Packaging Materials</label>
-                      <textarea value={tplPackagingMaterials} onChange={(e) => setTplPackagingMaterials(e.target.value)} placeholder="List packaging materials (e.g., food-grade cling wrap, takeout containers, paper bags)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                  </div>
-                )}
-              </div>
+            {/* Step Content */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
 
-              {/* ── Section 3: Intended Use and Consumers ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(3)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>3</span>
-                    <span className="font-semibold text-gray-900">Identify Intended Use and Consumers</span>
+              {/* Step 1: Product Info */}
+              {wizardStepNum === 1 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900">Describe the Food Product</h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
+                    <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
                   </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[3] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[3] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
-                      <textarea value={tplUseDescription} onChange={(e) => setTplUseDescription(e.target.value)} placeholder="Describe how the product is intended to be used by the end consumer (e.g., consumed immediately after purchase, reheated before serving)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Target Population</label>
-                      <textarea value={tplTargetPopulation} onChange={(e) => setTplTargetPopulation(e.target.value)} placeholder="Identify the target population (e.g., general public, hospital patients, school children, elderly care facility residents)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Special Considerations</label>
-                      <textarea value={tplSpecialConsiderations} onChange={(e) => setTplSpecialConsiderations(e.target.value)} placeholder="Note any special considerations (e.g., allergen concerns, vulnerable populations such as immunocompromised individuals, religious dietary requirements)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Description</label>
+                    <textarea value={tplProductDesc} onChange={(e) => setTplProductDesc(e.target.value)} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
                   </div>
-                )}
-              </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
+                    <input type="text" value={tplIntendedUse} onChange={(e) => setTplIntendedUse(e.target.value)} placeholder="e.g., Ready-to-eat, served hot" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Distribution Method</label>
+                    <input type="text" value={tplDistribution} onChange={(e) => setTplDistribution(e.target.value)} placeholder="e.g., On-site consumption, catering delivery, retail" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Target Consumer</label>
+                    <input type="text" value={tplTargetConsumer} onChange={(e) => setTplTargetConsumer(e.target.value)} placeholder="e.g., General public, including children and elderly" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                </div>
+              )}
 
-              {/* ── Section 4: Construct Flow Diagram ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(4)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>4</span>
-                    <span className="font-semibold text-gray-900">Construct Flow Diagram</span>
+              {/* Step 2: Ingredients */}
+              {wizardStepNum === 2 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900">Ingredients and Materials</h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Raw Materials</label>
+                    <textarea value={tplRawMaterials} onChange={(e) => setTplRawMaterials(e.target.value)} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
                   </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[4] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[4] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
-                    <p className="text-sm text-gray-600 mb-4">Define the process steps from receiving raw materials through to serving the final product. Steps are displayed in order.</p>
-                    <div className="space-y-2">
-                      {tplFlowSteps.map((step, idx) => (
-                        <div key={idx} className="flex items-center space-x-2">
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#d4af37' }}>{idx + 1}</div>
-                          {idx > 0 && <div className="absolute ml-4 -mt-4 w-0.5 h-3 bg-gray-300" />}
-                          <input
-                            type="text"
-                            value={step}
-                            onChange={(e) => updateFlowStep(idx, e.target.value)}
-                            placeholder={`Step ${idx + 1}`}
-                            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
-                          />
-                          {tplFlowSteps.length > 1 && (
-                            <button onClick={() => removeFlowStep(idx)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Remove step">
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Processing Aids</label>
+                    <textarea value={tplProcessingAids} onChange={(e) => setTplProcessingAids(e.target.value)} placeholder="List any processing aids used" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Packaging Materials</label>
+                    <textarea value={tplPackagingMaterials} onChange={(e) => setTplPackagingMaterials(e.target.value)} placeholder="List packaging materials" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Intended Use */}
+              {wizardStepNum === 3 && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-900">Intended Use and Consumers</h3>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
+                    <textarea value={tplUseDescription} onChange={(e) => setTplUseDescription(e.target.value)} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Target Population</label>
+                    <textarea value={tplTargetPopulation} onChange={(e) => setTplTargetPopulation(e.target.value)} placeholder="Identify the target population" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Special Considerations</label>
+                    <textarea value={tplSpecialConsiderations} onChange={(e) => setTplSpecialConsiderations(e.target.value)} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Flow Diagram */}
+              {wizardStepNum === 4 && (
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Process Flow Diagram</h3>
+                  <p className="text-sm text-gray-600 mb-4">Define the process steps from receiving raw materials through to serving the final product.</p>
+                  <div className="space-y-2">
+                    {tplFlowSteps.map((step, idx) => (
+                      <div key={idx} className="flex items-center space-x-2">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: '#d4af37' }}>{idx + 1}</div>
+                        <input type="text" value={step} onChange={(e) => updateFlowStep(idx, e.target.value)} placeholder={`Step ${idx + 1}`} className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                        {tplFlowSteps.length > 1 && (
+                          <button onClick={() => removeFlowStep(idx)} className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="h-4 w-4" /></button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={addFlowStep} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Step
+                  </button>
+                </div>
+              )}
+
+              {/* Step 5: Hazard Analysis */}
+              {wizardStepNum === 5 && (
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Hazard Analysis</h3>
+                  <p className="text-sm text-gray-600 mb-4">Identify all potential biological, chemical, and physical hazards.</p>
+                  <div className="space-y-4">
+                    {tplHazards.map((hazard, idx) => (
+                      <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-semibold text-gray-700">Hazard #{idx + 1}</span>
+                          {tplHazards.length > 1 && (
+                            <button onClick={() => removeHazardRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"><Trash2 className="h-4 w-4" /></button>
                           )}
                         </div>
-                      ))}
-                    </div>
-                    <button
-                      onClick={addFlowStep}
-                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
-                      style={{ color: '#1e4d6b' }}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Step
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* ── Section 5: Hazard Analysis ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(5)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>5</span>
-                    <span className="font-semibold text-gray-900">Hazard Analysis</span>
-                  </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[5] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[5] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
-                    <p className="text-sm text-gray-600 mb-4">Identify all potential biological, chemical, and physical hazards. Assess their significance and list preventive measures.</p>
-                    <div className="space-y-4">
-                      {tplHazards.map((hazard, idx) => (
-                        <div key={idx} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-sm font-semibold text-gray-700">Hazard #{idx + 1}</span>
-                            {tplHazards.length > 1 && (
-                              <button onClick={() => removeHazardRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors" title="Remove hazard">
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            )}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Type</label>
+                            <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                              <option value="">Select type...</option>
+                              <option value="Biological">Biological</option>
+                              <option value="Chemical">Chemical</option>
+                              <option value="Physical">Physical</option>
+                            </select>
                           </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Significance</label>
+                            <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
+                              <option value="">Select...</option>
+                              <option value="High">High</option>
+                              <option value="Medium">Medium</option>
+                              <option value="Low">Low</option>
+                            </select>
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+                            <textarea value={hazard.description} onChange={(e) => updateHazard(idx, 'description', e.target.value)} placeholder="Describe the specific hazard" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Preventive Measures</label>
+                            <textarea value={hazard.preventive} onChange={(e) => updateHazard(idx, 'preventive', e.target.value)} placeholder="Describe preventive measures" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={addHazardRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Hazard
+                  </button>
+                </div>
+              )}
+
+              {/* Step 6: CCPs */}
+              {wizardStepNum === 6 && (
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Critical Control Points *</h3>
+                  <p className="text-sm text-gray-600 mb-4">At least one CCP is required. Define monitoring, limits, and corrective actions for each.</p>
+                  <div className="space-y-4">
+                    {tplCCPs.map((ccp, idx) => (
+                      <div key={idx} className="rounded-lg border-2 border-[#1e4d6b]/20 overflow-hidden">
+                        <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#eef4f8' }}>
+                          <span className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
+                          {tplCCPs.length > 1 && (
+                            <button onClick={() => removeCCPRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded"><Trash2 className="h-4 w-4" /></button>
+                          )}
+                        </div>
+                        <div className="p-4 space-y-3">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Type</label>
-                              <select value={hazard.type} onChange={(e) => updateHazard(idx, 'type', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent">
-                                <option value="">Select type...</option>
-                                <option value="Biological">Biological</option>
-                                <option value="Chemical">Chemical</option>
-                                <option value="Physical">Physical</option>
-                              </select>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
+                              <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                             </div>
                             <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Significance (High / Medium / Low)</label>
-                              <select value={hazard.significance} onChange={(e) => updateHazard(idx, 'significance', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent">
-                                <option value="">Select...</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                              </select>
+                              <label className="block text-xs font-medium text-gray-600 mb-1">Process Step</label>
+                              <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                             </div>
-                            <div className="md:col-span-2">
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard Description</label>
-                              <textarea value={hazard.description} onChange={(e) => updateHazard(idx, 'description', e.target.value)} placeholder="Describe the specific hazard (e.g., Salmonella in raw poultry, metal fragments from processing equipment)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div className="md:col-span-2">
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Preventive Measures</label>
-                              <textarea value={hazard.preventive} onChange={(e) => updateHazard(idx, 'preventive', e.target.value)} placeholder="Describe preventive measures (e.g., cook to 165F internal temp, use metal detectors, supplier certification)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Hazard</label>
+                            <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
+                            <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Monitoring Procedure</label>
+                            <textarea value={ccp.monitoring} onChange={(e) => updateCCP(idx, 'monitoring', e.target.value)} placeholder="What, how, frequency, who" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Corrective Action</label>
+                            <textarea value={ccp.corrective} onChange={(e) => updateCCP(idx, 'corrective', e.target.value)} placeholder="Actions when limit not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Verification</label>
+                            <textarea value={ccp.verification} onChange={(e) => updateCCP(idx, 'verification', e.target.value)} placeholder="Verification activities" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Records</label>
+                            <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    <button
-                      onClick={addHazardRow}
-                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
-                      style={{ color: '#1e4d6b' }}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Hazard
-                    </button>
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                  <button onClick={addCCPRow} className="mt-3 inline-flex items-center text-sm font-medium" style={{ color: '#1e4d6b' }}>
+                    <Plus className="h-4 w-4 mr-1" /> Add Critical Control Point
+                  </button>
+                </div>
+              )}
 
-              {/* ── Section 6: Determine Critical Control Points ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(6)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>6</span>
-                    <span className="font-semibold text-gray-900">Determine Critical Control Points</span>
-                  </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[6] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[6] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
-                    <p className="text-sm text-gray-600 mb-4">For each CCP, document the process step, associated hazard, critical limits, monitoring procedures, corrective actions, verification activities, and record-keeping requirements.</p>
-                    <div className="space-y-4">
-                      {tplCCPs.map((ccp, idx) => (
-                        <div key={idx} className="rounded-lg border-2 border-[#1e4d6b]/20 overflow-hidden">
-                          <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#eef4f8' }}>
-                            <span className="text-sm font-bold" style={{ color: '#1e4d6b' }}>{ccp.ccpNum || `CCP-${idx + 1}`}</span>
-                            {tplCCPs.length > 1 && (
-                              <button onClick={() => removeCCPRow(idx)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-100 rounded transition-colors" title="Remove CCP">
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                          <div className="p-4 space-y-3">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">CCP Number</label>
-                                <input type="text" value={ccp.ccpNum} onChange={(e) => updateCCP(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                              </div>
-                              <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">Process Step</label>
-                                <input type="text" value={ccp.step} onChange={(e) => updateCCP(idx, 'step', e.target.value)} placeholder="e.g., Cooking" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                              </div>
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Hazard</label>
-                              <input type="text" value={ccp.hazard} onChange={(e) => updateCCP(idx, 'hazard', e.target.value)} placeholder="e.g., Survival of bacterial pathogens" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit</label>
-                              <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., Internal temperature >= 165F for poultry" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Monitoring Procedure</label>
-                              <textarea value={ccp.monitoring} onChange={(e) => updateCCP(idx, 'monitoring', e.target.value)} placeholder="Describe what is monitored, how, frequency, and who is responsible" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Corrective Action</label>
-                              <textarea value={ccp.corrective} onChange={(e) => updateCCP(idx, 'corrective', e.target.value)} placeholder="Describe actions taken when critical limit is not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Verification</label>
-                              <textarea value={ccp.verification} onChange={(e) => updateCCP(idx, 'verification', e.target.value)} placeholder="Describe verification activities (e.g., supervisor review, equipment calibration)" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-medium text-gray-600 mb-1">Records</label>
-                              <input type="text" value={ccp.records} onChange={(e) => updateCCP(idx, 'records', e.target.value)} placeholder="e.g., Cooking temperature log, corrective action report" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+              {/* Step 7: Review & Save */}
+              {wizardStepNum === 7 && (
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Review & Save</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="font-semibold text-gray-700">Product</p>
+                      <p className="text-gray-900">{tplProductName || '(not set)'}</p>
+                      {tplProductDesc && <p className="text-gray-600 mt-1">{tplProductDesc}</p>}
                     </div>
-                    <button
-                      onClick={addCCPRow}
-                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
-                      style={{ color: '#1e4d6b' }}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Critical Control Point
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* ── Section 7: Establish Critical Limits ──── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <button
-                  onClick={() => toggleSection(7)}
-                  className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full text-white text-xs font-bold" style={{ backgroundColor: '#1e4d6b' }}>7</span>
-                    <span className="font-semibold text-gray-900">Establish Critical Limits</span>
-                  </div>
-                  <ChevronDown className={`h-5 w-5 text-gray-400 transition-transform ${expandedSections[7] ? 'rotate-180' : ''}`} />
-                </button>
-                {expandedSections[7] && (
-                  <div className="px-5 pb-5 border-t border-gray-100 pt-4">
-                    <p className="text-sm text-gray-600 mb-4">Summarize the critical limits for each CCP. Critical limits are the maximum or minimum values to which a biological, chemical, or physical parameter must be controlled.</p>
-                    <div className="space-y-3">
-                      {tplCriticalLimits.map((limit, idx) => (
-                        <div key={idx} className="flex items-start space-x-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                          <div className="flex-shrink-0 w-24">
-                            <label className="block text-xs font-medium text-gray-600 mb-1">CCP #</label>
-                            <input type="text" value={limit.ccpNum} onChange={(e) => updateLimit(idx, 'ccpNum', e.target.value)} placeholder="CCP-1" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                          </div>
-                          <div className="flex-1">
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Critical Limit Description</label>
-                            <input type="text" value={limit.limitDesc} onChange={(e) => updateLimit(idx, 'limitDesc', e.target.value)} placeholder="e.g., Internal temperature >= 165F for 15 seconds (poultry)" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
-                          </div>
-                          {tplCriticalLimits.length > 1 && (
-                            <button onClick={() => removeLimitRow(idx)} className="mt-5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-100 rounded-lg transition-colors flex-shrink-0" title="Remove limit">
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
-                      ))}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="font-semibold text-gray-700">Flow Diagram</p>
+                      <p className="text-gray-900">{tplFlowSteps.filter(s => s.trim()).join(' → ') || '(not set)'}</p>
                     </div>
-                    <button
-                      onClick={addLimitRow}
-                      className="mt-3 inline-flex items-center text-sm font-medium transition-colors"
-                      style={{ color: '#1e4d6b' }}
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Critical Limit
-                    </button>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="font-semibold text-gray-700">Hazards</p>
+                      <p className="text-gray-900">{tplHazards.filter(h => h.type).length} hazard(s) identified</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="font-semibold text-gray-700">Critical Control Points</p>
+                      <p className="text-gray-900">{tplCCPs.length} CCP(s): {tplCCPs.map(c => c.ccpNum).join(', ')}</p>
+                    </div>
+                    {tplCriticalLimits.filter(l => l.limitDesc.trim()).length > 0 && (
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <p className="font-semibold text-gray-700">Critical Limits</p>
+                        {tplCriticalLimits.filter(l => l.limitDesc.trim()).map((l, i) => (
+                          <p key={i} className="text-gray-900">{l.ccpNum}: {l.limitDesc}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-
+                </div>
+              )}
             </div>
 
-            {/* Bottom save button */}
-            <div className="mt-6 flex justify-end">
+            {/* Wizard Navigation */}
+            <div className="mt-6 flex items-center justify-between">
               <button
-                onClick={handleTemplateSave}
-                className="inline-flex items-center px-6 py-3 rounded-lg text-white text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#1e4d6b' }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                onClick={() => wizardStepNum > 1 && setWizardStep(wizardStepNum - 1)}
+                disabled={wizardStepNum === 1}
+                className="px-5 py-2.5 rounded-lg border-2 text-sm font-medium transition-colors disabled:opacity-40"
+                style={{ borderColor: '#1e4d6b', color: '#1e4d6b' }}
               >
-                <Save className="h-4 w-4 mr-2" />
-                Save HACCP Plan Template
+                Previous
               </button>
+              {wizardStepNum < 7 ? (
+                <button
+                  onClick={() => {
+                    if (!canNext()) {
+                      toast.warning(wizardStepNum === 1 ? 'Product name is required' : 'At least one CCP is required');
+                      return;
+                    }
+                    setWizardStep(wizardStepNum + 1);
+                  }}
+                  className="px-5 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
+                  style={{ backgroundColor: '#1e4d6b' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  onClick={handleTemplateSave}
+                  className="inline-flex items-center px-6 py-2.5 rounded-lg text-white text-sm font-medium transition-colors"
+                  style={{ backgroundColor: '#1e4d6b' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save HACCP Plan
+                </button>
+              )}
             </div>
           </div>
-        )}
+          );
+        })()}
       </div>
 
     </>
