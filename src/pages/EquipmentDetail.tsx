@@ -3,8 +3,9 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, Wrench, Shield, Clock, MapPin, Calendar, Flame, UtensilsCrossed,
   Truck, AlertTriangle, Plus, CheckCircle, XCircle, ChevronRight, Package,
-  DollarSign, TrendingUp,
+  DollarSign, TrendingUp, QrCode, Printer,
 } from 'lucide-react';
+import { EquipmentQRCode } from '../components/EquipmentQRCode';
 import { format } from 'date-fns';
 
 // ── Brand ─────────────────────────────────────────────────────────
@@ -152,7 +153,7 @@ export function EquipmentDetail() {
         {/* Tab content */}
         <div className="p-5">
           {/* Overview */}
-          {activeTab === 'overview' && (
+          {activeTab === 'overview' && (<>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Equipment Info</h3>
@@ -176,7 +177,38 @@ export function EquipmentDetail() {
                 </div>
               </div>
             </div>
-          )}
+
+            {/* QR Code for Temperature Logging */}
+            {equipment.pillar === 'food_safety' && (
+              <div className="mt-6 border-t border-gray-100 pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <QrCode size={16} style={{ color: NAVY }} />
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">QR Temperature Label</h3>
+                  </div>
+                  <button
+                    onClick={() => alert('Batch printing QR labels for all equipment at this location. (Demo)')}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border hover:bg-gray-50 transition-colors"
+                    style={{ color: NAVY, borderColor: '#b8d4e8' }}
+                  >
+                    <Printer size={12} />
+                    Batch Print Labels
+                  </button>
+                </div>
+                <div className="max-w-xs mx-auto">
+                  <EquipmentQRCode
+                    equipmentId={equipment.id}
+                    equipmentName={equipment.name}
+                    locationName={equipment.location}
+                    size={140}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 text-center mt-3">
+                  Staff scan this label to instantly log a temperature reading — CalCode §113996
+                </p>
+              </div>
+            )}
+          </>)}
 
           {/* Service History */}
           {activeTab === 'service' && (
