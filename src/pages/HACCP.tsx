@@ -1,10 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { jsPDF } from 'jspdf';
+import { toast } from 'sonner';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -346,7 +348,7 @@ export function HACCP() {
   const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>('plans');
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
   const [selectedLocation, setSelectedLocation] = useState('all');
-  const { getAccessibleLocations } = useRole();
+  const { getAccessibleLocations, userRole } = useRole();
   const haccpAccessibleLocs = getAccessibleLocations();
 
   const { profile } = useAuth();
@@ -354,12 +356,6 @@ export function HACCP() {
   const [loading, setLoading] = useState(false);
   const [livePlans, setLivePlans] = useState<HACCPPlan[]>([]);
   const [liveCorrectiveActions, setLiveCorrectiveActions] = useState<CorrectiveActionRecord[]>([]);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = useCallback((msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  }, []);
 
   // ── Template form state ──────────────────────────────────────────
   const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 1: true });
@@ -419,10 +415,234 @@ export function HACCP() {
 
   const handleTemplateSave = () => {
     if (isDemoMode) {
-      showToast('Demo mode — template data is not saved');
+      toast.success('Demo mode — template data is not saved');
     } else {
-      showToast('HACCP plan template saved');
+      toast.success('HACCP plan template saved');
     }
+  };
+
+  const canExportPackage = ['management', 'executive', 'kitchen_manager'].includes(userRole);
+
+  const handleExportInspectorPackage = () => {
+    const doc = new jsPDF();
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const m = 20; // margin
+    const cw = pageW - m * 2; // content width
+    let y = 0;
+
+    const checkPage = (need: number) => {
+      if (y + need > pageH - 25) { doc.addPage(); y = 25; }
+    };
+
+    // ── Page 1: Cover ──
+    y = 55;
+    doc.setFontSize(26);
+    doc.setFont('helvetica', 'bold');
+    doc.text('HACCP Documentation', pageW / 2, y, { align: 'center' });
+    y += 12;
+    doc.text('Inspector Package', pageW / 2, y, { align: 'center' });
+    y += 25;
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'normal');
+    const facilityName = selectedLocation === 'all'
+      ? 'All Locations'
+      : selectedLocation.charAt(0).toUpperCase() + selectedLocation.slice(1);
+    doc.text(`Facility: ${facilityName}`, pageW / 2, y, { align: 'center' });
+    y += 9;
+    doc.text(`Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, pageW / 2, y, { align: 'center' });
+    y += 9;
+    doc.text('Prepared by: EvidLY Food Safety Platform', pageW / 2, y, { align: 'center' });
+    y += 25;
+    doc.setDrawColor(212, 175, 55);
+    doc.setLineWidth(0.8);
+    doc.line(m, y, pageW - m, y);
+    y += 15;
+    doc.setFontSize(11);
+    doc.text('This package contains:', m, y);
+    y += 8;
+    ['1. HACCP Plans with Critical Control Points',
+     '2. CCP Monitoring Log (latest readings)',
+     '3. Corrective Action Records',
+     '4. Verification Statement',
+    ].forEach(line => { doc.text(line, m + 5, y); y += 7; });
+
+    // ── Pages: HACCP Plans + CCPs ──
+    doc.addPage();
+    y = 25;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('HACCP Plans & Critical Control Points', m, y);
+    y += 12;
+
+    filteredPlans.forEach(plan => {
+      checkPage(25);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text(plan.name, m, y);
+      y += 6;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      const descLines = doc.splitTextToSize(plan.description, cw);
+      doc.text(descLines, m, y);
+      y += descLines.length * 4.5 + 3;
+      doc.text(
+        `Status: ${plan.status === 'active' ? 'Active' : 'Needs Review'}  |  Last Reviewed: ${new Date(plan.lastReviewed).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`,
+        m, y
+      );
+      y += 8;
+
+      plan.ccps.forEach(ccp => {
+        checkPage(45);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${ccp.ccpNumber}: ${ccp.hazard}`, m + 3, y);
+        y += 6;
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+
+        const fields: [string, string][] = [
+          ['Critical Limit', ccp.criticalLimit],
+          ['Monitoring', ccp.monitoringProcedure],
+          ['Corrective Action', ccp.correctiveAction],
+          ['Verification', ccp.verification],
+          ['Last Reading', `${ccp.lastReading || 'N/A'} — ${ccp.isWithinLimit ? 'PASS' : 'FAIL'}`],
+        ];
+
+        fields.forEach(([label, value]) => {
+          checkPage(14);
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${label}:`, m + 5, y);
+          doc.setFont('helvetica', 'normal');
+          const valLines = doc.splitTextToSize(value, cw - 45);
+          doc.text(valLines, m + 42, y);
+          y += Math.max(valLines.length * 4, 5) + 1;
+        });
+        y += 4;
+      });
+      y += 4;
+    });
+
+    // ── CCP Monitoring Log ──
+    doc.addPage();
+    y = 25;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('CCP Monitoring Log', m, y);
+    y += 12;
+
+    // Table header
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    const cols = [m, m + 18, m + 80, m + 115, m + 135];
+    doc.text('CCP #', cols[0], y);
+    doc.text('Hazard', cols[1], y);
+    doc.text('Reading', cols[2], y);
+    doc.text('Status', cols[3], y);
+    doc.text('Monitored By', cols[4], y);
+    y += 2;
+    doc.setDrawColor(200, 200, 200);
+    doc.line(m, y, pageW - m, y);
+    y += 5;
+    doc.setFont('helvetica', 'normal');
+
+    allCCPs.forEach(ccp => {
+      checkPage(10);
+      doc.text(ccp.ccpNumber, cols[0], y);
+      const hShort = ccp.hazard.length > 28 ? ccp.hazard.substring(0, 28) + '...' : ccp.hazard;
+      doc.text(hShort, cols[1], y);
+      doc.text(ccp.lastReading || 'N/A', cols[2], y);
+      doc.text(ccp.isWithinLimit ? 'PASS' : 'FAIL', cols[3], y);
+      doc.text(ccp.lastMonitoredBy, cols[4], y);
+      y += 6;
+    });
+
+    // ── Corrective Actions ──
+    doc.addPage();
+    y = 25;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Corrective Action Records', m, y);
+    y += 12;
+
+    if (filteredCorrectiveActions.length === 0) {
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text('No corrective actions recorded for this period.', m, y);
+      y += 10;
+    } else {
+      filteredCorrectiveActions.forEach(action => {
+        checkPage(40);
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${action.planName} — ${action.ccpNumber}`, m, y);
+        y += 5;
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Date: ${new Date(action.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}  |  Status: ${action.status.charAt(0).toUpperCase() + action.status.slice(1)}`, m + 3, y);
+        y += 5;
+
+        const rows: [string, string][] = [
+          ['Deviation', action.deviation],
+          ['Critical Limit', action.criticalLimit],
+          ['Recorded Value', action.recordedValue],
+          ['Action Taken', action.actionTaken],
+          ['Action By', action.actionBy],
+          ['Verified By', action.verifiedBy || 'Pending'],
+        ];
+
+        rows.forEach(([label, value]) => {
+          checkPage(10);
+          doc.setFont('helvetica', 'bold');
+          doc.text(`${label}:`, m + 3, y);
+          doc.setFont('helvetica', 'normal');
+          const valLines = doc.splitTextToSize(value, cw - 40);
+          doc.text(valLines, m + 38, y);
+          y += Math.max(valLines.length * 4, 5) + 1;
+        });
+        y += 6;
+      });
+    }
+
+    // ── Verification Statement ──
+    doc.addPage();
+    y = 25;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Verification Statement', m, y);
+    y += 15;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const verificationText = [
+      'I certify that the information contained in this HACCP Inspector Package is accurate and',
+      'complete to the best of my knowledge. All Critical Control Points have been monitored in',
+      'accordance with established procedures, and corrective actions have been documented',
+      'for all deviations from critical limits.',
+      '',
+      'This documentation has been generated by the EvidLY Food Safety Platform, which',
+      'continuously monitors temperature logs, daily checklists, and equipment status to maintain',
+      'HACCP compliance across all facility locations.',
+    ];
+    verificationText.forEach(line => { doc.text(line, m, y); y += 6; });
+    y += 15;
+    doc.text('Signature: ___________________________', m, y);
+    y += 10;
+    doc.text('Name: ___________________________', m, y);
+    y += 10;
+    doc.text('Title: ___________________________', m, y);
+    y += 10;
+    doc.text(`Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, m, y);
+    y += 30;
+
+    // EvidLY branding
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Generated by EvidLY — Food Safety Compliance Platform', pageW / 2, pageH - 15, { align: 'center' });
+    doc.setTextColor(0, 0, 0);
+
+    const dateStr = new Date().toISOString().split('T')[0];
+    doc.save(`HACCP-Inspector-Package-${dateStr}.pdf`);
+    toast.success('Inspector Package exported');
   };
 
   // Fetch HACCP data from Supabase in live mode
@@ -576,6 +796,18 @@ export function HACCP() {
             </p>
           </div>
           <div className="flex items-center space-x-2">
+            {canExportPackage && (
+              <button
+                onClick={handleExportInspectorPackage}
+                className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Inspector Package
+              </button>
+            )}
             <MapPin className="h-4 w-4 text-gray-500" />
             <select
               value={selectedLocation}
@@ -1462,13 +1694,6 @@ export function HACCP() {
         )}
       </div>
 
-      {/* Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-2">
-          <CheckCircle className="h-4 w-4" />
-          <span className="font-medium text-sm">{toastMessage}</span>
-        </div>
-      )}
     </>
   );
 }
