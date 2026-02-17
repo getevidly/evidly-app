@@ -26,6 +26,7 @@ import {
   Cog,
   Flame,
   Radio,
+  QrCode,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
@@ -68,6 +69,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ALL },
   { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: OPS },
   { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
+  { id: 'qr-scan',             label: 'QR Scan',             icon: QrCode,           route: '/temp-logs/scan',        roles: ALL },
   { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['executive', 'management', 'facilities', 'kitchen_manager'] },
   { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: OPS },
   { id: 'incidents',           label: 'Incidents',           icon: AlertTriangle,    route: '/playbooks',             roles: OPS_FAC },
@@ -166,7 +168,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'operations',
     label: 'Operations',
-    itemIds: ['temperatures', 'log-temp', 'iot-monitoring', 'checklists', 'fire-safety', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
+    itemIds: ['temperatures', 'log-temp', 'qr-scan', 'iot-monitoring', 'checklists', 'fire-safety', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
   },
   {
     id: 'documents',

@@ -1,4 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -107,6 +108,7 @@ const CATEGORY_TEMP_CONFIG: Record<string, { tempRequired: boolean; maxTemp?: nu
 };
 
 export function TempLogs() {
+  const navigate = useNavigate();
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
@@ -1282,9 +1284,19 @@ export function TempLogs() {
       )}
 
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('tempLogs.title')}</h1>
-          <p className="text-sm text-gray-600 mt-1">{t('tempLogs.subtitle')}</p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{t('tempLogs.title')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('tempLogs.subtitle')}</p>
+          </div>
+          <button
+            onClick={() => navigate('/temp-logs/scan')}
+            className="flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
+            style={{ backgroundColor: '#1A237E' }}
+          >
+            <QrCode className="h-4 w-4" />
+            Scan QR Code
+          </button>
         </div>
 
         {/* Tabs */}
