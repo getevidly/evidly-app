@@ -137,6 +137,9 @@
 - History tab: CCP column (CCP-01/CCP-02), shift filter (morning/afternoon/evening), enhanced CSV export
 - Holding tab: 2-hour check reminder indicators (CHECK OVERDUE / CHECK DUE SOON badges)
 - Equipment Detail: QR code section uses `getPillar()` for correct visibility in demo
+- Equipment page: "QR Label" button in detail panel — generates printable QR label with equipment ID, name, temp threshold, CalCode §113996
+- QR Scan entry points: navy button on TempLogs header + "QR Scan" sidebar item in Operations section
+- QR scan workflow: equipment type display, CCP mapping (CCP-01/CCP-02), corrective action required for failed readings
 
 ### Role Access (FS-5)
 
@@ -153,4 +156,5 @@
 - **Management/Kitchen Manager:** Log Temp → `/temp-logs`
 
 ### Sidebar Position
-- IoT Monitoring appears in "Operations" section after Log Temp
+- QR Scan appears in "Operations" section after Log Temp (all roles)
+- IoT Monitoring appears in "Operations" section after QR Scan
