@@ -56,7 +56,7 @@ function MiniSparkline({ sensorId }: { sensorId: string }) {
   );
 }
 
-export function IoTMonitoring() {
+export default function IoTMonitoring() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [locationFilter, setLocationFilter] = useState('all');
   const [expandedSensor, setExpandedSensor] = useState<string | null>(null);

@@ -106,7 +106,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ 
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
 const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ default: m.TempLogScan })));
-const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring').then(m => ({ default: m.IoTMonitoring })));
+const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
