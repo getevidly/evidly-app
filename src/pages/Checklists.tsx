@@ -12,6 +12,7 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useNotifications } from '../contexts/NotificationContext';
 
 interface ChecklistTemplate {
   id: string;
@@ -468,6 +469,8 @@ export function Checklists() {
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
+  const [ccpMappingResults, setCcpMappingResults] = useState<{ ccp: string; value: string; pass: boolean; limit: string }[]>([]);
+  const { notifications, setNotifications } = useNotifications();
   const [historyRange, setHistoryRange] = useState('7days');
   const [historyFrom, setHistoryFrom] = useState('');
   const [historyTo, setHistoryTo] = useState('');
@@ -902,9 +905,37 @@ export function Checklists() {
 
     // Demo mode: update local state only
     if (isDemoMode || !profile?.organization_id) {
+      // Simulate CCP auto-mapping
+      const ccpResults = templateItems
+        .filter(item => item.haccp_ccp && itemResponses[item.id])
+        .map(item => ({
+          ccp: item.haccp_ccp!,
+          value: itemResponses[item.id].response_value,
+          pass: itemResponses[item.id].is_pass !== false,
+          limit: item.haccp_critical_limit || '',
+        }));
+
       setShowCompleteModal(false);
       setItemResponses({});
-      if (scorePercentage === 100) {
+
+      if (ccpResults.length > 0) {
+        setCcpMappingResults(ccpResults);
+        toast.success(`${ccpResults.length} CCP monitoring log(s) auto-populated`);
+        // Create alerts for out-of-limit CCPs
+        const failedCCPs = ccpResults.filter(r => !r.pass);
+        if (failedCCPs.length > 0) {
+          const newNotifs = failedCCPs.map(r => ({
+            id: `ccp-alert-${Date.now()}-${r.ccp}`,
+            title: `CCP Out of Limit: ${r.ccp} — ${r.value}°F (limit: ${r.limit})`,
+            time: new Date().toISOString(),
+            link: '/haccp',
+            type: 'alert' as const,
+            locationId: '1',
+          }));
+          setNotifications([...newNotifs, ...notifications]);
+          toast.warning('Out-of-limit CCP detected — manager notified');
+        }
+      } else if (scorePercentage === 100) {
         setTimeout(() => toast.success('Checklist completed with 100% score'), 100);
       } else {
         toast.success(`Checklist submitted — score: ${scorePercentage}%`);
@@ -1232,6 +1263,32 @@ export function Checklists() {
         {/* Today's Checklists View */}
         {activeView === 'today' && (
           <div className="space-y-6">
+            {/* CCP Auto-Mapping Results Banner */}
+            {ccpMappingResults.length > 0 && (
+              <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-[#1e4d6b] flex items-center gap-1.5">
+                    <Shield size={14} /> HACCP Logs Auto-Populated
+                  </h3>
+                  <button onClick={() => setCcpMappingResults([])} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
+                </div>
+                <div className="space-y-1">
+                  {ccpMappingResults.map((r, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      {r.pass
+                        ? <CheckCircle size={14} className="text-green-600 shrink-0" />
+                        : <AlertTriangle size={14} className="text-red-600 shrink-0" />}
+                      <span className="font-semibold text-[#1e4d6b]">{r.ccp}</span>
+                      <span className="text-gray-600">
+                        {r.value}°F — {r.pass ? 'Within limit' : <span className="text-red-600 font-semibold">OUT OF LIMIT</span>}
+                        {r.limit && <span className="text-gray-400 ml-1">({r.limit})</span>}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-between items-center flex-wrap gap-2">
               <h2 className="text-xl font-bold text-gray-900">{t('checklists.todaysChecklists')}</h2>
               <span className="text-sm text-gray-500">{format(new Date(), 'EEEE, MMMM d, yyyy')}</span>
