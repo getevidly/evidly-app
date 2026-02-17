@@ -1,13 +1,13 @@
 import { useState, useEffect, Fragment } from 'react';
 import { toast } from 'sonner';
-import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil } from 'lucide-react';
+import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { format, subDays, startOfDay, endOfDay, formatDistanceToNow } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Area, AreaChart, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { generateTempDemoHistory, equipmentColors } from '../data/tempDemoHistory';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
@@ -97,7 +97,7 @@ export function TempLogs() {
   const [temperature, setTemperature] = useState('');
   const [correctiveAction, setCorrectiveAction] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot'>('equipment');
+  const [activeTab, setActiveTab] = useState<'equipment' | 'receiving' | 'history' | 'cooldown' | 'iot' | 'holding' | 'analytics'>('equipment');
   const [showHistoryDetails, setShowHistoryDetails] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -1256,6 +1256,28 @@ export function TempLogs() {
             <Radio className="h-3.5 w-3.5" />
             IoT Live View
           </button>
+          <button
+            onClick={() => setActiveTab('holding')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'holding'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Thermometer className="h-3.5 w-3.5" />
+            Hot/Cold Holding
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'analytics'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <BarChart3 className="h-3.5 w-3.5" />
+            Analytics
+          </button>
         </div>
 
         {/* Equipment Tab */}
@@ -2382,6 +2404,271 @@ export function TempLogs() {
                       {p.status === 'connected' && <Check className="h-3 w-3 text-green-500" />}
                     </span>
                   ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Hot/Cold Holding Tab */}
+        {activeTab === 'holding' && (
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Hot/Cold Holding Status</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">CalCode §113996 — Temperature holding compliance</p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                  {equipment.filter(eq => eq.last_check?.is_within_range !== false).length}/{equipment.length} Compliant
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Cold Holding */}
+                <div className="border border-blue-200 rounded-xl p-4 bg-blue-50/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <Thermometer className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">Cold Holding</h3>
+                      <p className="text-xs text-gray-500">Must remain ≤ 41°F</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {equipment.filter(eq => eq.equipment_type === 'cooler' || eq.equipment_type === 'cold_holding').map(eq => {
+                      const inRange = eq.last_check?.is_within_range ?? true;
+                      return (
+                        <div key={eq.id} className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-gray-100">
+                          <div className="flex items-center gap-2">
+                            {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
+                            <span className="text-sm text-gray-900">{eq.name}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
+                              {eq.last_check?.temperature_value ?? '--'}°F
+                            </span>
+                            {eq.last_check && (
+                              <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {equipment.filter(eq => eq.equipment_type === 'cooler' || eq.equipment_type === 'cold_holding').length === 0 && (
+                      <p className="text-sm text-gray-400 text-center py-4">No cold holding equipment</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Hot Holding */}
+                <div className="border border-orange-200 rounded-xl p-4 bg-orange-50/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                      <Thermometer className="h-4 w-4 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900">Hot Holding</h3>
+                      <p className="text-xs text-gray-500">Must remain ≥ 135°F</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {equipment.filter(eq => eq.equipment_type === 'hot_hold' || eq.equipment_type === 'hot_holding').map(eq => {
+                      const inRange = eq.last_check?.is_within_range ?? true;
+                      return (
+                        <div key={eq.id} className="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-gray-100">
+                          <div className="flex items-center gap-2">
+                            {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
+                            <span className="text-sm text-gray-900">{eq.name}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
+                              {eq.last_check?.temperature_value ?? '--'}°F
+                            </span>
+                            {eq.last_check && (
+                              <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {equipment.filter(eq => eq.equipment_type === 'hot_hold' || eq.equipment_type === 'hot_holding').length === 0 && (
+                      <p className="text-sm text-gray-400 text-center py-4">No hot holding equipment</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Compliance Reference */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Regulatory Reference</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-gray-600">
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <span className="font-semibold text-blue-800">CalCode §113996(a)</span> — Cold potentially hazardous food shall be held at 41°F or below
+                </div>
+                <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
+                  <span className="font-semibold text-orange-800">CalCode §113996(b)</span> — Hot potentially hazardous food shall be held at 135°F or above
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (() => {
+          const allHistory = history;
+          const manualCount = allHistory.filter(h => (h.input_method || 'manual') === 'manual').length;
+          const qrCount = allHistory.filter(h => h.input_method === 'qr_scan').length;
+          const iotCount = allHistory.filter(h => h.input_method === 'iot_sensor').length;
+          const totalCount = allHistory.length;
+          const passCount = allHistory.filter(h => h.is_within_range).length;
+          const complianceRate = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 0;
+
+          const methodData = [
+            { name: 'Manual', value: manualCount, color: '#6b7280' },
+            { name: 'QR Scan', value: qrCount, color: '#1e4d6b' },
+            { name: 'IoT Sensor', value: iotCount, color: '#059669' },
+          ].filter(d => d.value > 0);
+
+          // Weekly compliance trend
+          const weeklyData: { week: string; rate: number; count: number }[] = [];
+          for (let w = 3; w >= 0; w--) {
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - (w + 1) * 7);
+            const weekEnd = new Date();
+            weekEnd.setDate(weekEnd.getDate() - w * 7);
+            const weekLogs = allHistory.filter(h => {
+              const d = new Date(h.created_at);
+              return d >= weekStart && d < weekEnd;
+            });
+            const weekPass = weekLogs.filter(h => h.is_within_range).length;
+            weeklyData.push({
+              week: `Week ${4 - w}`,
+              rate: weekLogs.length > 0 ? Math.round((weekPass / weekLogs.length) * 100) : 0,
+              count: weekLogs.length,
+            });
+          }
+
+          // Equipment compliance
+          const eqNames = [...new Set(allHistory.map(h => h.equipment_name))];
+          const eqComplianceData = eqNames.slice(0, 8).map(name => {
+            const logs = allHistory.filter(h => h.equipment_name === name);
+            const pass = logs.filter(h => h.is_within_range).length;
+            return { name: name.length > 15 ? name.slice(0, 15) + '...' : name, rate: logs.length > 0 ? Math.round((pass / logs.length) * 100) : 0, total: logs.length };
+          });
+
+          // Time of day distribution
+          const hourBuckets: Record<string, number> = {};
+          for (const h of allHistory) {
+            const hour = new Date(h.created_at).getHours();
+            const label = hour < 10 ? `0${hour}:00` : `${hour}:00`;
+            hourBuckets[label] = (hourBuckets[label] || 0) + 1;
+          }
+          const timeData = Object.entries(hourBuckets)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([time, count]) => ({ time, count }));
+
+          return (
+            <div className="space-y-4">
+              {/* Summary Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                  <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{totalCount.toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">Total Readings</p>
+                </div>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                  <p className={`text-2xl font-bold ${complianceRate >= 95 ? 'text-green-600' : complianceRate >= 85 ? 'text-yellow-600' : 'text-red-600'}`}>
+                    {complianceRate}%
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Compliance Rate</p>
+                </div>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                  <p className="text-2xl font-bold text-gray-900">{manualCount}</p>
+                  <p className="text-xs text-gray-500 mt-1">Manual Entries</p>
+                </div>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+                  <p className="text-2xl font-bold" style={{ color: '#059669' }}>{iotCount + qrCount}</p>
+                  <p className="text-xs text-gray-500 mt-1">QR + IoT Entries</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Method Breakdown */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Input Method Breakdown</h3>
+                  <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={methodData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                          {methodData.map((entry, i) => (
+                            <Cell key={i} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="flex justify-center gap-4 mt-2">
+                    {methodData.map(d => (
+                      <div key={d.name} className="flex items-center gap-1.5 text-xs">
+                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                        {d.name}: {d.value}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Weekly Compliance Trend */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Weekly Compliance Rate</h3>
+                  <div className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={weeklyData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="week" tick={{ fontSize: 11 }} />
+                        <YAxis domain={[80, 100]} tick={{ fontSize: 11 }} />
+                        <Tooltip formatter={(v: number) => `${v}%`} />
+                        <ReferenceLine y={95} stroke="#d4af37" strokeDasharray="5 5" label={{ value: 'Target 95%', fill: '#d4af37', fontSize: 10 }} />
+                        <Line type="monotone" dataKey="rate" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Equipment Compliance */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Equipment Compliance</h3>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={eqComplianceData} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis type="number" domain={[80, 100]} tick={{ fontSize: 10 }} />
+                        <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 10 }} />
+                        <Tooltip formatter={(v: number) => `${v}%`} />
+                        <Bar dataKey="rate" fill="#1e4d6b" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Time of Day Distribution */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-4">Time of Day Distribution</h3>
+                  <div className="h-56">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={timeData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="time" tick={{ fontSize: 10 }} />
+                        <YAxis tick={{ fontSize: 10 }} />
+                        <Tooltip />
+                        <Bar dataKey="count" fill="#d4af37" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
             </div>
