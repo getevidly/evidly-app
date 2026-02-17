@@ -956,7 +956,7 @@ export function HACCP() {
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            {canExportPackage && (
+            {canExportPackage && (<>
               <select
                 value={exportRange}
                 onChange={(e) => setExportRange(e.target.value as typeof exportRange)}
@@ -977,7 +977,7 @@ export function HACCP() {
                 <Download className="h-4 w-4 mr-2" />
                 Export Inspector Package
               </button>
-            )}
+            </>)}
             <MapPin className="h-4 w-4 text-gray-500" />
             <select
               value={selectedLocation}
