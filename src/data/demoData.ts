@@ -117,11 +117,12 @@ export const locations: Location[] = [
 //   Defaults below are placeholders until Jurisdiction Intelligence is loaded.
 // ============================================================
 
+// Equal-weight defaults — real weights come from jurisdiction data (JIE)
 export const DEFAULT_WEIGHTS = {
-  foodSafetyWeight: 0.60,
-  fireSafetyWeight: 0.40,
-  opsWeight: 0.60,
-  docsWeight: 0.40,
+  foodSafetyWeight: 0.50,
+  fireSafetyWeight: 0.50,
+  opsWeight: 0.50,
+  docsWeight: 0.50,
 };
 
 export function calcPillar(
@@ -240,7 +241,7 @@ export const DEMO_TREND_DATA = (() => {
     const fr = fire[i];
     return {
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round(f * 0.6 + fr * 0.4),
+      overall: Math.round((f + fr) / 2),
       foodSafety: f,
       fireSafety: fr,
     };

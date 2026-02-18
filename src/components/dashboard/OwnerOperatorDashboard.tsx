@@ -31,6 +31,9 @@ import {
   type ModuleStatus,
 } from '../../hooks/useDashboardData';
 import type { ActivityItem } from '../../lib/dashboardQueries';
+import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
+import { useAllComplianceScores } from '../../hooks/useComplianceScore';
+import type { LocationScore } from '../../types/jurisdiction';
 
 // ================================================================
 // CONSTANTS
@@ -44,6 +47,13 @@ const MUTED = '#94a3b8';
 const BODY_TEXT = '#1e293b';
 
 const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
+
+// Maps dashboard location IDs → JIE dual-authority location IDs
+const JIE_LOC_MAP: Record<string, string> = {
+  'downtown': 'demo-loc-downtown',
+  'airport': 'demo-loc-airport',
+  'university': 'demo-loc-university',
+};
 
 // ================================================================
 // KEYFRAMES
@@ -88,7 +98,7 @@ function generateTrendData(days: number, trendData: { date: string; overall: num
     const fr = fireBase - (i % 4);
     extra.push({
       date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round(f * 0.6 + fr * 0.4),
+      overall: Math.round((f + fr) / 2),
       foodSafety: f,
       fireSafety: fr,
     });
@@ -442,10 +452,11 @@ function AlertBanners({ alerts, onDismiss, navigate }: {
 // LOCATION CARD
 // ================================================================
 
-function LocationCardNew({ loc, onPillarClick, onViewDetails }: {
+function LocationCardNew({ loc, onPillarClick, onViewDetails, jieScore }: {
   loc: LocationWithScores;
   onPillarClick: (locationId: string, pillar: 'food' | 'fire') => void;
   onViewDetails: (locationId: string) => void;
+  jieScore?: LocationScore | null;
 }) {
   const statusLabel = getLocationStatusLabel(loc.score);
   const statusColor = scoreColor(loc.score);
@@ -492,8 +503,10 @@ function LocationCardNew({ loc, onPillarClick, onViewDetails }: {
       {/* Pillar Rows */}
       <div className="space-y-2">
         {([
-          { key: 'food' as const, icon: <UtensilsCrossed size={14} />, label: 'Food Safety', score: loc.foodScore },
-          { key: 'fire' as const, icon: <Flame size={14} />, label: 'Fire Safety', score: loc.fireScore },
+          { key: 'food' as const, icon: <UtensilsCrossed size={14} />, label: 'Food Safety', score: loc.foodScore,
+            grade: jieScore?.foodSafety?.gradeDisplay ?? null },
+          { key: 'fire' as const, icon: <Flame size={14} />, label: 'Fire Safety', score: loc.fireScore,
+            grade: jieScore?.fireSafety?.gradeDisplay ?? null },
         ]).map(p => (
           <button
             key={p.key}
@@ -502,7 +515,12 @@ function LocationCardNew({ loc, onPillarClick, onViewDetails }: {
             className="w-full flex items-center gap-2 p-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
           >
             <span style={{ color: MUTED }}>{p.icon}</span>
-            <span className="text-[13px] text-gray-700 flex-1">{p.label}</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-[13px] text-gray-700">{p.label}</span>
+              {p.grade && (
+                <p className="text-[11px] text-gray-500 truncate">{p.grade}</p>
+              )}
+            </div>
             <span className="text-sm font-bold" style={{ color: scoreColor(p.score) }}>{p.score}</span>
             <ChevronRight size={14} className="text-gray-300" />
           </button>
@@ -1151,8 +1169,16 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
-  const { companyName } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
   const { data, loading, error, refresh } = useDashboardData();
+
+  // JIE: Dual-authority jurisdiction data per location
+  const jieLocIds = useMemo(
+    () => data.locations.map(l => JIE_LOC_MAP[l.id] || l.id),
+    [data.locations],
+  );
+  const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
+  const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
   // Drill-down modal
   const [modal, setModal] = useState<ModalType | null>(null);
@@ -1326,6 +1352,7 @@ export default function OwnerOperatorDashboard() {
                 <LocationCardNew
                   key={loc.id}
                   loc={loc}
+                  jieScore={jieScores[JIE_LOC_MAP[loc.id]] || null}
                   onPillarClick={(locId, pillar) => setModal({ kind: 'location-pillar', locationId: locId, pillar })}
                   onViewDetails={(locId) => navigate(`/dashboard?location=${locId}`)}
                 />

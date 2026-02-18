@@ -13,10 +13,10 @@ interface JurisdictionMatch {
   gradingType: string;
   gradingConfig: Record<string, any>;
   passThreshold: number | null;
-  foodSafetyWeight: number;
-  fireSafetyWeight: number;
-  opsWeight: number;
-  docsWeight: number;
+  foodSafetyWeight: number | null;
+  fireSafetyWeight: number | null;
+  opsWeight: number | null;
+  docsWeight: number | null;
   fireAhjName: string;
   layer: string; // food_primary | fire_primary | federal_overlay
 }
@@ -131,10 +131,10 @@ function mapToMatch(row: any, layer: string): JurisdictionMatch {
     gradingType: row.grading_type,
     gradingConfig: row.grading_config,
     passThreshold: row.pass_threshold,
-    foodSafetyWeight: row.food_safety_weight || 60,
-    fireSafetyWeight: row.fire_safety_weight || 40,
-    opsWeight: row.ops_weight || 60,
-    docsWeight: row.docs_weight || 40,
+    foodSafetyWeight: row.food_safety_weight ?? null,
+    fireSafetyWeight: row.fire_safety_weight ?? null,
+    opsWeight: row.ops_weight ?? null,
+    docsWeight: row.docs_weight ?? null,
     fireAhjName: row.fire_ahj_name,
     layer,
   };
@@ -162,10 +162,10 @@ function checkFederalOverlay(
         gradingType: 'pass_reinspect',
         gradingConfig: {},
         passThreshold: null,
-        foodSafetyWeight: 50,
-        fireSafetyWeight: 50,
-        opsWeight: 60,
-        docsWeight: 40,
+        foodSafetyWeight: null,
+        fireSafetyWeight: null,
+        opsWeight: null,
+        docsWeight: null,
         fireAhjName: 'NPS Fire (Yosemite)',
         layer: 'federal_overlay',
       };

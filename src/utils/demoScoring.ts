@@ -9,7 +9,7 @@
 // for non-grading counties. Letter grades for grading counties.
 // ═══════════════════════════════════════════════════════════
 
-import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade } from '../data/demoJurisdictions';
+import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade, demoLocationJurisdictions } from '../data/demoJurisdictions';
 import { DEMO_SCORE_BREAKDOWN } from '../data/demoCalcodeMap';
 
 export interface DemoScoreResult {
@@ -44,17 +44,22 @@ export function calculateDemoScore(
 
   const gradeResult = calculateDemoGrade(location.score, jurisdiction);
 
+  // Read ops/docs weights from jurisdiction data — no hardcoded weights
+  const locJurisdiction = demoLocationJurisdictions[location.id];
+  const opsW = locJurisdiction?.ops_weight ?? 0.5;
+  const docsW = locJurisdiction?.docs_weight ?? (1 - opsW);
+
   return {
     locationId: location.id,
     locationName: location.name,
     overallScore: location.score,
     foodSafety: {
-      score: Math.round((location.foodSafety.ops * 0.6) + (location.foodSafety.docs * 0.4)),
+      score: Math.round(location.foodSafety.ops * opsW + location.foodSafety.docs * docsW),
       ops: location.foodSafety.ops,
       docs: location.foodSafety.docs,
     },
     fireSafety: {
-      score: Math.round((location.fireSafety.ops * 0.6) + (location.fireSafety.docs * 0.4)),
+      score: Math.round(location.fireSafety.ops * opsW + location.fireSafety.docs * docsW),
       ops: location.fireSafety.ops,
       docs: location.fireSafety.docs,
     },

@@ -4,6 +4,8 @@
 // NEVER import this in live mode code paths
 // ═══════════════════════════════════════════════════════════
 
+import type { LocationJurisdiction } from '../types/jurisdiction';
+
 export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'report_only';
 export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'report_only';
 
@@ -187,6 +189,48 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'Pass (Dual Jurisdiction)',
     demoPassFail: 'pass',
   },
+  {
+    id: 'demo-merced',
+    county: 'Merced',
+    agencyName: 'Merced County Department of Public Health',
+    scoringType: 'violation_point_accumulation',
+    gradingType: 'three_tier_rating',
+    gradingConfig: { tiers: { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] } },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'City of Merced Fire Department',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 1200,
+    dataSourceTier: 4,
+    gradeLabel: 'Good',
+    gradeExplanation: 'Three-Tier Rating — Good (0-6 pts) / Satisfactory (7-13 pts) / Unsatisfactory (14+ pts)',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'Satisfactory',
+    demoPassFail: 'pass',
+  },
+  {
+    id: 'demo-stanislaus',
+    county: 'Stanislaus',
+    agencyName: 'Stanislaus County Environmental Resources',
+    scoringType: 'major_minor_reinspect',
+    gradingType: 'pass_reinspect',
+    gradingConfig: {},
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Modesto Fire Department',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 2500,
+    dataSourceTier: 3,
+    gradeLabel: 'Pass',
+    gradeExplanation: 'Pass / Reinspection Required — CalCode ORFIR standard. No numeric grade.',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'Pass',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -228,22 +272,22 @@ export const DEMO_LOCATIONS = [
   {
     id: 'demo-loc-airport',
     name: 'Airport Cafe',
-    jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-sacramento')!,
+    jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-merced')!,
     score: 85,
     foodSafety: { ops: 88, docs: 80 },
     fireSafety: { ops: 75, docs: 82 },
-    gradeDisplay: '\u{1F7E2} Green \u2014 PASS',
-    tagline: 'Placard posted at entrance',
+    gradeDisplay: 'Unsatisfactory',
+    tagline: 'Three-tier point accumulation',
   },
   {
     id: 'demo-loc-university',
     name: 'University Dining',
-    jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-riverside')!,
+    jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-stanislaus')!,
     score: 88,
     foodSafety: { ops: 91, docs: 86 },
     fireSafety: { ops: 84, docs: 88 },
-    gradeDisplay: 'B \u2014 FAIL',
-    tagline: 'Same score, different outcome',
+    gradeDisplay: 'Pass',
+    tagline: 'CalCode pass/reinspect standard',
   },
 ];
 
@@ -495,3 +539,136 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Sierra', agencyName: 'Sierra County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 40, tier: 4 },
   { county: 'Alpine', agencyName: 'Alpine County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 20, tier: 4 },
 ];
+
+// ═══════════════════════════════════════════════════════════
+// DUAL-AUTHORITY JURISDICTION DATA PER DEMO LOCATION
+// Each location has TWO independent authorities:
+//   1. Food Safety (county health dept / CalCode)
+//   2. Fire Safety (city fire dept / 2025 CFC)
+// These CANNOT be combined into a single score.
+// ═══════════════════════════════════════════════════════════
+
+export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
+  'demo-loc-downtown': {
+    location_id: 'demo-loc-downtown',
+    county: 'Fresno',
+    foodSafety: {
+      id: 'fresno-food',
+      pillar: 'food_safety',
+      agency_name: 'Fresno County Department of Public Health',
+      agency_phone: '(559) 600-3357',
+      agency_website: 'https://www.co.fresno.ca.us/departments/public-health',
+      code_basis: 'CalCode (updated Jan 1, 2025)',
+      code_references: ['CalCode \u00A7113700+', 'Fresno County local requirements'],
+      scoring_method: 'major_minor_reinspect',
+      grading_type: 'pass_reinspect',
+      grading_config: {},
+      inspection_frequency: null, // TODO: verify Fresno inspection frequency
+      is_verified: true,
+      local_amendments: null, // TODO: research Fresno-specific additions to CalCode
+    },
+    fireSafety: {
+      id: 'fresno-fire',
+      pillar: 'fire_safety',
+      agency_name: 'City of Fresno Fire Department',
+      agency_phone: '(559) 621-4120',
+      agency_website: 'https://www.fresno.gov/fire/',
+      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
+      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      scoring_method: 'pass_fail',
+      grading_type: 'pass_fail',
+      grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
+      inspection_frequency: 1, // annual per CFC 105.1.1
+      is_verified: false, // using CFC baseline — individual AHJ grading not yet verified
+      local_amendments: null, // TODO: verify Fresno local fire amendments
+    },
+    federalFoodOverlay: null,
+    federalFireOverlay: null,
+    food_safety_weight: null, // from jurisdictions table — null until verified
+    fire_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
+  },
+
+  'demo-loc-airport': {
+    location_id: 'demo-loc-airport',
+    county: 'Merced',
+    foodSafety: {
+      id: 'merced-food',
+      pillar: 'food_safety',
+      agency_name: 'Merced County Department of Public Health',
+      agency_phone: '(209) 381-1100',
+      agency_website: 'https://www.countyofmerced.com/departments/public-health',
+      code_basis: 'CalCode (updated Jan 1, 2025)',
+      code_references: ['CalCode \u00A7113700+', 'Merced County local requirements'],
+      scoring_method: 'violation_point_accumulation',
+      grading_type: 'three_tier_rating',
+      grading_config: { tiers: { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] } },
+      inspection_frequency: null, // TODO: verify Merced inspection frequency
+      is_verified: true,
+      local_amendments: null, // TODO: research Merced-specific additions to CalCode
+    },
+    fireSafety: {
+      id: 'merced-fire',
+      pillar: 'fire_safety',
+      agency_name: 'City of Merced Fire Department',
+      agency_phone: '(209) 385-6891',
+      agency_website: 'https://www.cityofmerced.org/departments/fire',
+      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
+      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      scoring_method: 'pass_fail',
+      grading_type: 'pass_fail',
+      grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
+      inspection_frequency: 1,
+      is_verified: false,
+      local_amendments: 'Merced County Fire Prevention Ordinance Sections 9.24.020-9.24.360',
+    },
+    federalFoodOverlay: null,
+    federalFireOverlay: null,
+    food_safety_weight: null,
+    fire_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
+  },
+
+  'demo-loc-university': {
+    location_id: 'demo-loc-university',
+    county: 'Stanislaus',
+    foodSafety: {
+      id: 'stanislaus-food',
+      pillar: 'food_safety',
+      agency_name: 'Stanislaus County Environmental Resources',
+      agency_phone: '(209) 525-6700',
+      agency_website: 'https://www.stancounty.com/er/',
+      code_basis: 'CalCode (updated Jan 1, 2025)',
+      code_references: ['CalCode \u00A7113700+', 'Stanislaus County local requirements'],
+      scoring_method: 'major_minor_reinspect',
+      grading_type: 'pass_reinspect',
+      grading_config: {},
+      inspection_frequency: null, // TODO: verify Stanislaus inspection frequency
+      is_verified: true,
+      local_amendments: null, // TODO: research Stanislaus-specific additions to CalCode
+    },
+    fireSafety: {
+      id: 'modesto-fire',
+      pillar: 'fire_safety',
+      agency_name: 'Modesto Fire Department, Fire Prevention Division',
+      agency_phone: '(209) 577-5232',
+      agency_website: 'https://www.modestogov.com/170/Fire-Prevention',
+      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
+      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      scoring_method: 'pass_fail',
+      grading_type: 'pass_fail',
+      grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
+      inspection_frequency: 1,
+      is_verified: false,
+      local_amendments: null, // TODO: verify Modesto local fire amendments
+    },
+    federalFoodOverlay: null,
+    federalFireOverlay: null,
+    food_safety_weight: null,
+    fire_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
+  },
+};
