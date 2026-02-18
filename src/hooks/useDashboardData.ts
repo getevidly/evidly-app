@@ -12,6 +12,7 @@ import {
   DEMO_TREND_DATA,
   DEMO_ATTENTION_ITEMS,
   DEFAULT_WEIGHTS,
+  locationScoresThirtyDaysAgo,
   calcPillar,
   calcReadiness,
 } from '../data/demoData';
@@ -94,6 +95,7 @@ export interface DashboardWeights {
 export interface DashboardPayload {
   orgScores: { overall: number; foodSafety: number; fireSafety: number };
   locations: LocationWithScores[];
+  locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }>;
   tasks: TaskItem[];
   deadlines: DeadlineItem[];
   alerts: AlertItem[];
@@ -155,9 +157,16 @@ const DEMO_MODULE_STATUSES: ModuleStatus[] = [
 ];
 
 function buildDemoPayload(): DashboardPayload {
+  // Build 30-day-ago per-location scores for trend comparisons
+  const locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }> = {};
+  for (const [locId, prev] of Object.entries(locationScoresThirtyDaysAgo)) {
+    locationScoresPrev[locId] = { foodSafety: prev.foodSafety, fireSafety: prev.fireSafety };
+  }
+
   return {
     orgScores: DEMO_ORG_SCORES,
     locations: LOCATIONS_WITH_SCORES,
+    locationScoresPrev,
     tasks: DEMO_TASKS,
     deadlines: DEMO_DEADLINES,
     alerts: DEMO_ALERTS,
@@ -224,6 +233,11 @@ export function useDashboardData(): {
           fireSafety: result.complianceData.scores.fireSafety,
         },
         locations,
+        locationScoresPrev: Object.fromEntries(
+          Object.entries(result.complianceData.locationScoresThirtyDaysAgo).map(
+            ([id, s]) => [id, { foodSafety: s.foodSafety, fireSafety: s.fireSafety }],
+          ),
+        ),
         tasks: DEMO_TASKS, // Real task wiring deferred to production
         deadlines: DEMO_DEADLINES,
         alerts: DEMO_ALERTS,

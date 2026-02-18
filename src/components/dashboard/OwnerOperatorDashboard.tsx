@@ -17,8 +17,6 @@ import {
   calcPillar,
   getLocationScoreColor,
   getLocationStatusLabel,
-  locationScores,
-  locationScoresThirtyDaysAgo,
   getTrend,
 } from '../../data/demoData';
 import {
@@ -804,11 +802,20 @@ const FIRE_EQUIPMENT_ALERTS = [
   { id: 'fa-3', label: 'Exhaust fan belt replacement overdue', location: 'Downtown Kitchen', severity: 'warning' as const, route: '/equipment/EQ-017' },
 ];
 
-function WidgetFireSafety({ navigate, fireScore }: { navigate: (path: string) => void; fireScore: number }) {
+function WidgetFireSafety({ navigate, fireScore, locations, locationScoresPrev }: {
+  navigate: (path: string) => void;
+  fireScore: number;
+  locations: LocationWithScores[];
+  locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }>;
+}) {
   const orgScore = fireScore;
-  const trend = getTrend(orgScore, 74); // 30-day ago org avg ~74
+  // Compute 30-day-ago org average from per-location prev scores
+  const prevEntries = Object.values(locationScoresPrev);
+  const orgPrev = prevEntries.length > 0
+    ? Math.round(prevEntries.reduce((s, p) => s + p.fireSafety, 0) / prevEntries.length)
+    : orgScore;
+  const trend = getTrend(orgScore, orgPrev);
   const scoreColor = orgScore >= 90 ? '#22c55e' : orgScore >= 75 ? '#eab308' : orgScore >= 60 ? '#f59e0b' : '#ef4444';
-  const locations = ['downtown', 'airport', 'university'] as const;
 
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
@@ -837,14 +844,13 @@ function WidgetFireSafety({ navigate, fireScore }: { navigate: (path: string) =>
       {/* Per-location bars */}
       <div className="space-y-1.5 mb-4">
         {locations.map(loc => {
-          const score = locationScores[loc]?.fireSafety ?? 0;
-          const prev = locationScoresThirtyDaysAgo[loc]?.fireSafety ?? 0;
+          const score = loc.fireScore;
+          const prev = locationScoresPrev[loc.id]?.fireSafety ?? score;
           const t = getTrend(score, prev);
           const barColor = score >= 90 ? '#22c55e' : score >= 75 ? '#eab308' : score >= 60 ? '#f59e0b' : '#ef4444';
-          const locName = loc === 'downtown' ? 'Downtown' : loc === 'airport' ? 'Airport' : 'University';
           return (
-            <div key={loc} className="flex items-center gap-2">
-              <span className="text-[11px] text-gray-500 w-[72px] shrink-0">{locName}</span>
+            <div key={loc.id} className="flex items-center gap-2">
+              <span className="text-[11px] text-gray-500 w-[72px] shrink-0 truncate">{loc.name.split(' ')[0]}</span>
               <div className="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${score}%`, backgroundColor: barColor }} />
               </div>
@@ -1233,7 +1239,7 @@ export default function OwnerOperatorDashboard() {
       case 'modules': return <WidgetModuleStatus navigate={navigate} modules={data.moduleStatuses} />;
       case 'tasks': return <WidgetTasks navigate={navigate} tasks={data.tasks} />;
       case 'deadlines': return <WidgetDeadlines navigate={navigate} deadlines={data.deadlines} />;
-      case 'fire-safety': return <WidgetFireSafety navigate={navigate} fireScore={data.orgScores.fireSafety} />;
+      case 'fire-safety': return <WidgetFireSafety navigate={navigate} fireScore={data.orgScores.fireSafety} locations={data.locations} locationScoresPrev={data.locationScoresPrev} />;
       case 'impact': return <WidgetScoreImpact navigate={navigate} impact={data.impact} />;
       case 'trend': return <WidgetTrend trendData={data.trendData} />;
       case 'activity': return <WidgetRecentActivity navigate={navigate} activity={data.activity} />;
