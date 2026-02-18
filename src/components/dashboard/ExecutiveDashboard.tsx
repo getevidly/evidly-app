@@ -14,6 +14,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
+import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import {
   LOCATIONS_WITH_SCORES,
   DEMO_ORG,
@@ -102,56 +103,7 @@ const EXEC_ALERTS: AlertItem[] = [
   { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' },
 ];
 
-function AlertBanners({ alerts, onDismiss, navigate }: {
-  alerts: AlertItem[];
-  onDismiss: (id: string) => void;
-  navigate: (path: string) => void;
-}) {
-  if (alerts.length === 0) return null;
-  return (
-    <div className="space-y-2" style={{ animation: 'slideDown 0.3s ease-out' }}>
-      {alerts.map(alert => {
-        const isCritical = alert.severity === 'critical';
-        return (
-          <div
-            key={alert.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-[10px]"
-            style={{
-              backgroundColor: isCritical ? '#fef2f2' : '#fffbeb',
-              border: `1px solid ${isCritical ? '#fecaca' : '#fde68a'}`,
-            }}
-          >
-            {isCritical
-              ? <ShieldAlert size={18} className="text-red-500 shrink-0" />
-              : <AlertTriangle size={18} className="text-amber-500 shrink-0" />
-            }
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold" style={{ color: isCritical ? '#991b1b' : '#92400e' }}>
-                {alert.message}
-              </p>
-              <p className="text-[11px] text-gray-500">{alert.location} &middot; {alert.pillar}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate(alert.route)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0"
-              style={{ backgroundColor: isCritical ? '#dc2626' : '#d97706' }}
-            >
-              {alert.actionLabel}
-            </button>
-            <button
-              type="button"
-              onClick={() => onDismiss(alert.id)}
-              className="p-1 rounded hover:bg-black/5 shrink-0 transition-colors"
-            >
-              <X size={14} className="text-gray-400" />
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+// AlertBanners — now uses shared component from ../shared/AlertBanner
 
 // ================================================================
 // WIDGET: KPIs — This Week's Performance
@@ -564,7 +516,7 @@ export default function ExecutiveDashboard() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
+          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
           padding: '20px 24px 40px',
           boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
           ...stagger(0),
@@ -676,7 +628,7 @@ export default function ExecutiveDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
 
         {/* Alert Banners (locked) */}
-        <AlertBanners alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
+        <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Customizable Widget Section */}
         <div>

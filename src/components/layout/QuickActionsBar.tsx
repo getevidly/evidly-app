@@ -21,6 +21,12 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { icon: Brain, label: 'AI Advisor', route: '/copilot' },
   ],
   executive: [], // Executive uses StrategicActionsBar in its own dashboard
+  compliance_manager: [
+    { icon: ClipboardCheck, label: 'Self-Inspect', route: '/self-inspection' },
+    { icon: Brain, label: 'AI Advisor', route: '/copilot' },
+    { icon: FileUp, label: 'Upload Doc', route: '/documents' },
+    { icon: AlertTriangle, label: 'Alerts', route: '/analysis' },
+  ],
   kitchen_manager: [
     { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
     { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },

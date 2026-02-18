@@ -51,9 +51,10 @@ export interface SidebarNavItem {
 //   kitchen_staff → 'kitchen'
 //   facilities_manager → 'facilities'
 
-const ALL: UserRole[] = ['executive', 'management', 'kitchen_manager', 'kitchen', 'facilities'];
+const ALL: UserRole[] = ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'kitchen', 'facilities'];
 const MGMT: UserRole[] = ['management'];
 const MGMT_EXEC: UserRole[] = ['management', 'executive'];
+const COMPLIANCE: UserRole[] = ['management', 'compliance_manager'];
 const OPS: UserRole[] = ['management', 'kitchen_manager'];
 const OPS_FAC: UserRole[] = ['management', 'kitchen_manager', 'facilities'];
 
@@ -61,7 +62,7 @@ const OPS_FAC: UserRole[] = ['management', 'kitchen_manager', 'facilities'];
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   // ── PRIMARY ──
-  { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['executive', 'management', 'kitchen_manager', 'facilities'] },
+  { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'my-tasks',            label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen'], dividerAfter: true },
 
   // ── DAILY OPERATIONS ──
@@ -78,27 +79,27 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'report-issue',        label: 'Report Issue',        icon: AlertTriangle,    route: '/playbooks',             roles: ['kitchen'], dividerAfter: true },
 
   // ── DOCUMENTS & EQUIPMENT ──
-  { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['management', 'kitchen_manager', 'facilities'] },
-  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: OPS, dividerAfter: true },
 
   // ── PHOTOS ──
   { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['management', 'kitchen'], dividerAfter: true },
 
   // ── INSIGHTS & COMPLIANCE ──
-  { id: 'compliance',          label: 'Compliance Score',    icon: Scale,            route: '/scoring-breakdown',     roles: MGMT_EXEC },
-  { id: 'self-inspection',     label: 'Self-Inspection',     icon: ClipboardCheck,   route: '/self-inspection',       roles: MGMT },
-  { id: 'inspector',           label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: MGMT },
-  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: OPS },
-  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: [...OPS, 'executive'] },
-  { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['management', 'executive', 'facilities', 'kitchen_manager'] },
-  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'facilities'], dividerAfter: true },
+  { id: 'compliance',          label: 'Compliance Score',    icon: Scale,            route: '/scoring-breakdown',     roles: ['management', 'executive', 'compliance_manager'] },
+  { id: 'self-inspection',     label: 'Self-Inspection',     icon: ClipboardCheck,   route: '/self-inspection',       roles: COMPLIANCE },
+  { id: 'inspector',           label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: COMPLIANCE },
+  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['management', 'kitchen_manager', 'compliance_manager'] },
+  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['management', 'kitchen_manager', 'compliance_manager', 'executive'] },
+  { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['management', 'executive', 'compliance_manager', 'facilities', 'kitchen_manager'] },
+  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'compliance_manager', 'facilities'], dividerAfter: true },
 
   // ── ENTERPRISE & STRATEGIC ──
   { id: 'locations',           label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: ['executive', 'management'] },
-  { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
-  { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
+  { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: ['management', 'executive', 'compliance_manager'] },
+  { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: ['management', 'executive', 'compliance_manager'] },
   { id: 'leaderboard',         label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
   { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT, dividerAfter: true },
 
@@ -106,7 +107,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
   { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['management', 'kitchen_manager', 'kitchen'] },
   { id: 'system-admin',        label: 'System Admin',        icon: Cog,              route: '/admin/onboard-client',  roles: MGMT },
-  { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'kitchen_manager', 'facilities'] },
+  { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'help',                label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
 
   // ── EVIDLY ADMIN ONLY (not customer-facing) ──
@@ -137,11 +138,11 @@ export function checkTestMode(): boolean {
 
 // ── Roles that see the bottom Locations section ──────────
 
-export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'executive', 'kitchen_manager', 'kitchen'];
+export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'executive', 'compliance_manager', 'kitchen_manager', 'kitchen'];
 
 // ── Roles that can book meetings / see Calendly CTAs ─────
 
-export const BOOKING_ROLES: UserRole[] = ['executive', 'management', 'facilities'];
+export const BOOKING_ROLES: UserRole[] = ['executive', 'management', 'compliance_manager', 'facilities'];
 
 export function canBookMeeting(role: UserRole): boolean {
   return BOOKING_ROLES.includes(role);
@@ -207,6 +208,12 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
     label: 'Executive View',
     description: 'Org-wide analytics, benchmarks, and strategic reports',
     i18nKey: 'topBar.executiveView',
+  },
+  {
+    role: 'compliance_manager',
+    label: 'Compliance Manager',
+    description: 'Food safety scoring, self-inspections, regulatory tracking',
+    i18nKey: 'topBar.complianceManager',
   },
   {
     role: 'facilities',

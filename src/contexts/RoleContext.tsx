@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-export type UserRole = 'executive' | 'management' | 'kitchen_manager' | 'kitchen' | 'facilities';
+export type UserRole = 'executive' | 'management' | 'compliance_manager' | 'kitchen_manager' | 'kitchen' | 'facilities';
 
 export interface LocationAssignment {
   locationId: string;
@@ -31,6 +31,7 @@ const ALL_LOCATIONS: LocationAssignment[] = [
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
   executive: ALL_LOCATIONS,
   management: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
+  compliance_manager: ALL_LOCATIONS,                // All locations — compliance spans org
   kitchen_manager: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
   kitchen: [ALL_LOCATIONS[0]],    // Downtown only
   facilities: ALL_LOCATIONS,      // All locations — facilities services entire org
@@ -70,7 +71,7 @@ interface RoleContextType {
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
-const VALID_ROLES: UserRole[] = ['executive', 'management', 'kitchen_manager', 'kitchen', 'facilities'];
+const VALID_ROLES: UserRole[] = ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'kitchen', 'facilities'];
 
 export function RoleProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRoleRaw] = useState<UserRole>(() => {

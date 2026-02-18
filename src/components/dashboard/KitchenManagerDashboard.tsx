@@ -10,7 +10,10 @@ import {
   ClipboardCheck,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
+import { DEMO_ORG } from '../../data/demoData';
+import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
 
 // --------------- Demo Data ---------------
 
@@ -118,9 +121,17 @@ function getChecklistBgTint(status: DemoChecklist['status']): string {
 // KITCHEN MANAGER DASHBOARD
 // ===============================================
 
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
+  const { companyName } = useDemo();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const hasMultipleLocations = accessibleLocations.length > 1;
@@ -150,29 +161,56 @@ export default function KitchenManagerDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
+  const formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <MapPin size={18} style={{ color: '#1e4d6b' }} />
-          <h2 className="text-lg font-semibold text-gray-900">{locationName}</h2>
+      {/* Steel-Slate Hero Banner */}
+      <div
+        className="relative overflow-hidden rounded-xl"
+        style={{
+          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
+          padding: '20px 24px 24px',
+        }}
+      >
+        <div className="flex items-start gap-4 relative z-10">
+          <div className="flex-shrink-0">
+            <div className="flex items-baseline">
+              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>E</span>
+              <span className="text-[20px] font-bold text-white">vid</span>
+              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>LY</span>
+            </div>
+          </div>
+          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-base font-medium">{getGreeting()}, Chef.</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{formattedDate}</p>
+          </div>
+          <div className="text-right flex-shrink-0 hidden sm:block">
+            <p className="text-white font-semibold text-sm">{locationName}</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>
+              {companyName || DEMO_ORG.name}
+            </p>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">Today: {today}</span>
+
+        {/* Grade badges on hero */}
+        <div className="flex items-center gap-2 mt-3 relative z-10">
           <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            foodStatus === 'passing' ? 'bg-green-50 text-green-700'
-              : foodStatus === 'failing' ? 'bg-red-50 text-red-700'
-              : 'bg-amber-50 text-amber-700'
+            foodStatus === 'passing' ? 'bg-green-500/20 text-green-300'
+              : foodStatus === 'failing' ? 'bg-red-500/20 text-red-300'
+              : 'bg-amber-500/20 text-amber-300'
           }`}>
             {foodGrade}
           </span>
           <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            fireStatus === 'passing' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+            fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
           }`}>
             Fire: {fireGrade}
           </span>
         </div>
+
+        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: '#C49A2B' }} />
       </div>
 
       {/* Location tabs (if multiple locations) */}

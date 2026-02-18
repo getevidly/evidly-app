@@ -63,6 +63,7 @@ import KitchenManagerDashboard from '../components/dashboard/KitchenManagerDashb
 import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
 import OwnerOperatorDashboard from '../components/dashboard/OwnerOperatorDashboard';
+import ComplianceManagerDashboard from '../components/dashboard/ComplianceManagerDashboard';
 
 // --------------- Role-Based Dashboard Router ---------------
 
@@ -74,6 +75,8 @@ export function Dashboard() {
       return <OwnerOperatorDashboard />;
     case 'executive':
       return <ExecutiveDashboard />;
+    case 'compliance_manager':
+      return <ComplianceManagerDashboard />;
     case 'kitchen_manager':
       return <KitchenManagerDashboard />;
     case 'kitchen':

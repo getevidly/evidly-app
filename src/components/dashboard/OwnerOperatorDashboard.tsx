@@ -26,6 +26,8 @@ import type { ActivityItem } from '../../lib/dashboardQueries';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
+import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
+import { FireStatusBars } from '../shared/FireStatusBars';
 
 // ================================================================
 // CONSTANTS
@@ -128,70 +130,18 @@ function gradingTypeLabel(gradingType: string | null): string {
   }
 }
 
-// ================================================================
-// ALERT BANNERS
-// ================================================================
-
-function AlertBanners({ alerts, onDismiss, navigate }: {
-  alerts: HookAlertItem[];
-  onDismiss: (id: string) => void;
-  navigate: (path: string) => void;
-}) {
-  if (alerts.length === 0) return null;
-  return (
-    <div className="space-y-2" style={{ animation: 'slideDown 0.3s ease-out' }}>
-      {alerts.map(alert => {
-        const isCritical = alert.severity === 'critical';
-        return (
-          <div
-            key={alert.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg"
-            style={{
-              backgroundColor: isCritical ? '#fef2f2' : '#fffbeb',
-              border: `1px solid ${isCritical ? '#fecaca' : '#fde68a'}`,
-            }}
-          >
-            {isCritical
-              ? <ShieldAlert size={18} className="text-red-500 shrink-0" />
-              : <AlertTriangle size={18} className="text-amber-500 shrink-0" />
-            }
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-semibold" style={{ color: isCritical ? '#991b1b' : '#92400e' }}>
-                {alert.message}
-              </p>
-              <p className="text-[11px] text-gray-500">{alert.location} &middot; {alert.pillar}</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate(alert.route)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0"
-              style={{ backgroundColor: isCritical ? '#dc2626' : '#d97706' }}
-            >
-              {alert.actionLabel}
-            </button>
-            <button
-              type="button"
-              onClick={() => onDismiss(alert.id)}
-              className="p-1 rounded hover:bg-black/5 shrink-0 transition-colors"
-            >
-              <span className="text-gray-400 text-sm">&times;</span>
-            </button>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+// AlertBanners — now uses shared component from ../shared/AlertBanner
 
 // ================================================================
 // LOCATION CARD — JURISDICTION-NATIVE
 // ================================================================
 
-function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, onViewDetails }: {
+function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, onToggleExpand }: {
   loc: LocationWithScores;
   jieScore: LocationScore | null;
   jurisdictionData: LocationJurisdiction | null;
-  onViewDetails: (id: string) => void;
+  expanded: boolean;
+  onToggleExpand: () => void;
 }) {
   const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
   const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
@@ -200,6 +150,16 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, onViewDetai
   const foodGradingType = jurisdictionData?.foodSafety?.grading_type ?? null;
   const fireAHJName = jurisdictionData?.fireSafety?.agency_name ?? 'Fire AHJ';
   const county = jurisdictionData?.county ?? '';
+
+  // Agency contact data
+  const foodAgencyName = jurisdictionData?.foodSafety?.agency_name ?? '';
+  const foodAgencyPhone = jurisdictionData?.foodSafety?.agency_phone ?? '';
+  const foodAgencyWebsite = jurisdictionData?.foodSafety?.agency_website ?? '';
+  const fireAgencyPhone = jurisdictionData?.fireSafety?.agency_phone ?? '';
+  const fireAgencyWebsite = jurisdictionData?.fireSafety?.agency_website ?? '';
+
+  // Fire equipment status from jieScore details (populated from DEMO_LOCATION_GRADE_OVERRIDES)
+  const fireDetails = jieScore?.fireSafety?.details as Record<string, any> | null;
 
   return (
     <div
@@ -269,14 +229,64 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, onViewDetai
         </div>
       </div>
 
-      {/* View Details */}
+      {/* Expandable Details */}
+      {expanded && (
+        <div className="mb-3 space-y-3 pt-2 border-t border-gray-100" style={{ animation: 'slideDown 0.2s ease-out' }}>
+          {/* Food Safety Agency Contact */}
+          {foodAgencyName && (
+            <div className="p-3 rounded-lg" style={{ backgroundColor: '#f8fafb' }}>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Food Safety Authority</p>
+              <p className="text-[12px] font-medium text-gray-700">{foodAgencyName}</p>
+              {foodAgencyPhone && (
+                <a href={`tel:${foodAgencyPhone}`} className="text-[11px] block mt-0.5" style={{ color: '#1e4d6b' }}>
+                  {foodAgencyPhone}
+                </a>
+              )}
+              {foodAgencyWebsite && (
+                <a href={foodAgencyWebsite} target="_blank" rel="noopener noreferrer" className="text-[11px] block mt-0.5 hover:underline" style={{ color: '#1e4d6b' }}>
+                  Agency Website &rarr;
+                </a>
+              )}
+            </div>
+          )}
+
+          {/* Fire Safety Agency Contact + Equipment Status */}
+          <div className="p-3 rounded-lg" style={{ backgroundColor: '#f8fafb' }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Fire Safety Authority</p>
+            <p className="text-[12px] font-medium text-gray-700">{fireAHJName}</p>
+            {fireAgencyPhone && (
+              <a href={`tel:${fireAgencyPhone}`} className="text-[11px] block mt-0.5" style={{ color: '#1e4d6b' }}>
+                {fireAgencyPhone}
+              </a>
+            )}
+            {fireAgencyWebsite && (
+              <a href={fireAgencyWebsite} target="_blank" rel="noopener noreferrer" className="text-[11px] block mt-0.5 hover:underline" style={{ color: '#1e4d6b' }}>
+                Agency Website &rarr;
+              </a>
+            )}
+            {fireDetails?.permitStatus && (
+              <div className="mt-2">
+                <FireStatusBars
+                  permitStatus={fireDetails.permitStatus}
+                  hoodStatus={fireDetails.hoodStatus}
+                  extinguisherStatus={fireDetails.extinguisherStatus}
+                  ansulStatus={fireDetails.ansulStatus}
+                  compact
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Toggle Details */}
       <button
         type="button"
-        onClick={() => onViewDetails(loc.id)}
+        onClick={onToggleExpand}
         className="w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
         style={{ color: NAVY }}
       >
-        View Details &rarr;
+        {expanded ? 'Hide Details \u25B2' : 'View Details \u25BC'}
       </button>
     </div>
   );
@@ -549,27 +559,16 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>Unknown</span>
                 )}
               </div>
-              {/* Equipment status dots */}
-              {details && (
-                <div className="flex items-center gap-3 mt-1.5">
-                  {([
-                    { key: 'permitStatus', label: 'Permit' },
-                    { key: 'hoodStatus', label: 'Hood' },
-                    { key: 'extinguisherStatus', label: 'Ext' },
-                    { key: 'ansulStatus', label: 'Ansul' },
-                  ] as const).map(item => {
-                    const itemStatus = details[item.key] as string | undefined;
-                    if (itemStatus === undefined) return null;
-                    return (
-                      <span key={item.key} className="flex items-center gap-1 text-[10px] text-gray-500">
-                        {item.label}
-                        <span
-                          className="w-2 h-2 rounded-full inline-block"
-                          style={{ backgroundColor: fireEquipDotColor(itemStatus) }}
-                        />
-                      </span>
-                    );
-                  })}
+              {/* Equipment status bars */}
+              {details?.permitStatus && (
+                <div className="mt-1.5">
+                  <FireStatusBars
+                    permitStatus={details.permitStatus}
+                    hoodStatus={details.hoodStatus}
+                    extinguisherStatus={details.extinguisherStatus}
+                    ansulStatus={details.ansulStatus}
+                    compact
+                  />
                 </div>
               )}
             </div>
@@ -809,7 +808,7 @@ function DashboardSkeleton() {
       <div
         className="relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
+          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
           padding: '20px 24px 40px',
         }}
       >
@@ -900,6 +899,8 @@ export default function OwnerOperatorDashboard() {
 
   // Dismissed alerts (session-only)
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
+  // Expanded location cards
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
   const visibleAlerts = data.alerts.filter(a => !dismissedAlerts.has(a.id));
   const handleDismissAlert = useCallback((id: string) => {
     setDismissedAlerts(prev => new Set(prev).add(id));
@@ -976,7 +977,7 @@ export default function OwnerOperatorDashboard() {
       <div
         className="relative overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #0d2847 0%, #1a3d6d 50%, #0d2847 100%)',
+          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
           padding: '20px 24px 40px',
           ...stagger(0),
         }}
@@ -1123,7 +1124,7 @@ export default function OwnerOperatorDashboard() {
         {error && <ErrorBanner message={error} onRetry={refresh} />}
 
         {/* Alert Banners */}
-        <AlertBanners alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
+        <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Location Cards — only if multi-location */}
         {isMultiLocation && (
@@ -1140,7 +1141,13 @@ export default function OwnerOperatorDashboard() {
                     loc={loc}
                     jieScore={jieScores[jieLocId] || null}
                     jurisdictionData={jurisdictions[jieLocId] || null}
-                    onViewDetails={(locId) => navigate(`/dashboard?location=${locId}`)}
+                    expanded={expandedCards.has(loc.id)}
+                    onToggleExpand={() => setExpandedCards(prev => {
+                      const next = new Set(prev);
+                      if (next.has(loc.id)) next.delete(loc.id);
+                      else next.add(loc.id);
+                      return next;
+                    })}
                   />
                 );
               })}

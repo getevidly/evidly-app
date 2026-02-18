@@ -10,7 +10,10 @@ import {
   MapPin,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
+import { DEMO_ORG } from '../../data/demoData';
+import { FireStatusBars } from '../shared/FireStatusBars';
 
 // --------------- Demo Data ---------------
 
@@ -155,9 +158,17 @@ const FAC_LOC_NAMES: Record<string, string> = {
   university: 'University Dining',
 };
 
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
+  const { companyName } = useDemo();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const defaultLoc = accessibleLocations[0]?.locationUrlId || 'downtown';
@@ -173,17 +184,37 @@ export default function FacilitiesDashboardNew() {
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
+  const formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          <MapPin size={18} style={{ color: '#1e4d6b' }} />
-          <h2 className="text-lg font-semibold text-gray-900">
-            {locationName}
-          </h2>
+      {/* Steel-Slate Hero Banner */}
+      <div
+        className="relative overflow-hidden rounded-xl"
+        style={{
+          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
+          padding: '20px 24px 24px',
+        }}
+      >
+        <div className="flex items-start gap-4 relative z-10">
+          <div className="flex-shrink-0">
+            <div className="flex items-baseline">
+              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>E</span>
+              <span className="text-[20px] font-bold text-white">vid</span>
+              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>LY</span>
+            </div>
+          </div>
+          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
+          <div className="flex-1 min-w-0">
+            <p className="text-white text-base font-medium">{getGreeting()}, Mike.</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{formattedDate}</p>
+          </div>
+          <div className="text-right flex-shrink-0 hidden sm:block">
+            <p className="text-white font-semibold text-sm">{companyName || DEMO_ORG.name}</p>
+            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{locationName}</p>
+          </div>
         </div>
-        <span className="text-sm text-gray-500">Today: {today}</span>
+        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: '#C49A2B' }} />
       </div>
 
       {/* Fire Safety Hero — Jurisdiction-Native */}
@@ -216,28 +247,12 @@ export default function FacilitiesDashboardNew() {
 
         {/* Status indicators */}
         {override && (
-          <div className="grid grid-cols-4 gap-2">
-            {([
-              { label: 'Permit', status: override.fireSafety.permitStatus },
-              { label: 'Hood', status: override.fireSafety.hoodStatus },
-              { label: 'Extinguishers', status: override.fireSafety.extinguisherStatus },
-              { label: 'Ansul', status: override.fireSafety.ansulStatus },
-            ] as const).map(item => {
-              const dotColor = item.status === 'current' ? '#16a34a'
-                : item.status === 'due_soon' || item.status === 'expiring' ? '#d97706'
-                : '#dc2626';
-              const label = item.status === 'current' ? 'Current'
-                : item.status === 'due_soon' || item.status === 'expiring' ? 'Due Soon'
-                : 'Overdue';
-              return (
-                <div key={item.label} className="text-center p-2 rounded-lg bg-gray-50">
-                  <span className="inline-block w-2.5 h-2.5 rounded-full mb-1" style={{ backgroundColor: dotColor }} />
-                  <p className="text-[11px] font-medium text-gray-700">{item.label}</p>
-                  <p className="text-[10px] text-gray-400">{label}</p>
-                </div>
-              );
-            })}
-          </div>
+          <FireStatusBars
+            permitStatus={override.fireSafety.permitStatus}
+            hoodStatus={override.fireSafety.hoodStatus}
+            extinguisherStatus={override.fireSafety.extinguisherStatus}
+            ansulStatus={override.fireSafety.ansulStatus}
+          />
         )}
       </Card>
 

@@ -48,6 +48,12 @@ export function MobileTabBar() {
       { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
       { path: '/org-hierarchy', icon: Network, label: 'Locations' },
     ],
+    compliance_manager: [
+      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
+      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
+      { path: '/reports', icon: BarChart3, label: 'Reports' },
+    ],
     management: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
@@ -77,6 +83,15 @@ export function MobileTabBar() {
 
   // Role-specific "More" items (kitchen has none — all 5 tabs are primary)
   const moreByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
+    compliance_manager: [
+      { path: '/copilot', icon: Brain, label: 'Copilot' },
+      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
+      { path: '/documents', icon: FileText, label: 'Documents' },
+      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
+      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
     executive: [
       { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
       { path: '/copilot', icon: Brain, label: 'Copilot' },
