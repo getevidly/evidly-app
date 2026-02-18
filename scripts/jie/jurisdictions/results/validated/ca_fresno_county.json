@@ -1,0 +1,76 @@
+{
+  "jurisdiction_name": "Fresno County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Fresno County Department of Public Health - Environmental Health Division",
+  "department_url": "https://www.fresnocountyca.gov/Departments/Public-Health/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "No letter grading system identified - uses major/minor violation classification system only",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Based on risk assessment and facility type - routine inspections conducted at unannounced intervals",
+    "risk_categories": null,
+    "reinspection_trigger": "Major violations require reinspection unless immediately corrected during routine inspection",
+    "public_disclosure": "Inspection reports available online at fresnohealthinspections.com; facilities required to post notice that reports available for public review and maintain copy on-site"
+  },
+  "fire_safety_authority": {
+    "department_name": "Fresno County Fire Protection District",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Fire-suppression systems must be inspected and certified by C-16 Fire Protection Contractor or State Fire Marshal 'A' License holder every 6 months with NFPA 17 or 17a certificate of completion",
+    "inspection_frequency": "Semi-annual (every 6 months)"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode)",
+    "state_vs_local_authority": "County level inspections conducted by Fresno County Environmental Health Division",
+    "local_ordinances": "County-specific requirements for food facility construction, mobile food vendors, commissary authorization",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card (CalCard)"
+    ]
+  },
+  "data_sources": [
+    "https://www.fresnohealthinspections.com/inspection-information",
+    "https://www.fresnocountyca.gov/Departments/Public-Health/Environmental-Health",
+    "https://www.fresno.courts.ca.gov/system/files/general/report-4-eat-your-own-risk-quiet-reality-health-inspections-fresno-county.pdf",
+    "https://www.fresnocountyca.gov/files/assets/county/v/1/public-health/environmental-health/food-safety/fire-suppression-system-upgrade.pdf",
+    "https://www.fresnocountyfire.org/protection-and-planning"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Clear documentation on regulatory framework, fire safety requirements, and inspection processes. However, no definitive grading/scoring system found despite extensive search - Grand Jury report explicitly notes Fresno County does not use letter grades unlike many CA counties.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to verify specific grading methodology if any exists beyond major/minor violation classification. Grand Jury report from 2023-2024 indicates system deficiencies and lack of letter grading, but should confirm current practices and any recent changes to inspection scoring methodology.",
+  "_meta": {
+    "crawled_at": "2026-02-18T19:10:28.845268+00:00",
+    "duration_seconds": 36.938476,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 132241,
+    "output_tokens": 1160,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-18T19:09:51.906792+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-18T19:31:35.258685+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "medium",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

@@ -80,6 +80,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
   expanded: boolean;
   onToggleExpand: () => void;
 }) {
+  const navigate = useNavigate();
   const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
   const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
   const foodGradeDisplay = jieScore?.foodSafety?.gradeDisplay ?? 'Not assessed';
@@ -116,7 +117,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
     >
       {/* Name + County badge */}
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>{loc.name}</h4>
+        <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="text-sm font-semibold text-left hover:opacity-70 transition-opacity" style={{ color: BODY_TEXT }}>{loc.name}</button>
         {county && (
           <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
             style={{ backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}>
@@ -126,8 +127,10 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
       </div>
 
       {/* Food Safety row */}
-      <div
-        className="p-3 rounded-lg mb-3"
+      <button
+        type="button"
+        onClick={() => navigate('/compliance')}
+        className="w-full p-3 rounded-lg mb-3 text-left transition-colors hover:opacity-90"
         style={{ borderLeft: `3px solid ${statusColor(foodStatus)}`, backgroundColor: '#fafafa' }}
       >
         <div className="flex items-start gap-2">
@@ -142,11 +145,13 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
             )}
           </div>
         </div>
-      </div>
+      </button>
 
       {/* Fire Safety row */}
-      <div
-        className="p-3 rounded-lg mb-4"
+      <button
+        type="button"
+        onClick={() => navigate('/fire-safety')}
+        className="w-full p-3 rounded-lg mb-4 text-left transition-colors hover:opacity-90"
         style={{ backgroundColor: '#f8f8f8' }}
       >
         <div className="flex items-start gap-2">
@@ -164,7 +169,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
             <p className="text-[11px] text-gray-500 mt-0.5">{fireAHJName}</p>
           </div>
         </div>
-      </div>
+      </button>
 
       {/* Expandable Details */}
       {expanded && (
@@ -335,9 +340,11 @@ function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => v
           const borderColor = isCritical ? '#dc2626' : '#d97706';
           const bgColor = isCritical ? '#fef2f2' : '#fffbeb';
           return (
-            <div
+            <button
               key={item.id}
-              className="flex items-start gap-3 p-3 rounded-lg"
+              type="button"
+              onClick={() => navigate(item.route)}
+              className="w-full flex items-start gap-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
               style={{ borderLeft: `3px solid ${borderColor}`, backgroundColor: bgColor }}
             >
               <div
@@ -350,15 +357,13 @@ function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => v
                 <p className="text-[13px] font-medium text-gray-800">{item.action}</p>
                 <p className="text-[11px] text-gray-500">{item.location} &middot; {item.pillar}</p>
               </div>
-              <button
-                type="button"
-                onClick={() => navigate(item.route)}
-                className="text-xs font-medium shrink-0 hover:underline"
+              <span
+                className="text-xs font-medium shrink-0"
                 style={{ color: NAVY }}
               >
                 Do It &rarr;
-              </button>
-            </div>
+              </span>
+            </button>
           );
         })}
       </div>
@@ -477,7 +482,13 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
           const details = score?.fireSafety?.details as Record<string, any> | null;
 
           return (
-            <div key={loc.id} className="p-3 rounded-lg" style={{ backgroundColor: '#fafafa', border: '1px solid #f0f0f0' }}>
+            <button
+              key={loc.id}
+              type="button"
+              onClick={() => navigate(`/fire-safety?location=${loc.id}`)}
+              className="w-full p-3 rounded-lg text-left transition-colors hover:bg-gray-100"
+              style={{ backgroundColor: '#fafafa', border: '1px solid #f0f0f0' }}
+            >
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold text-gray-800 truncate">{loc.name}</p>
@@ -508,7 +519,7 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
                   />
                 </div>
               )}
-            </div>
+            </button>
           );
         })}
       </div>
@@ -882,7 +893,12 @@ export default function OwnerOperatorDashboard() {
                   const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
 
                   return (
-                    <div key={loc.id} className="flex items-center gap-2">
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => navigate(`/locations/${loc.id}`)}
+                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+                    >
                       <span
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: statusColor(foodStatus) }}
@@ -898,7 +914,7 @@ export default function OwnerOperatorDashboard() {
                       <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
                         {gradeDisp}
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -914,7 +930,7 @@ export default function OwnerOperatorDashboard() {
                 <span className="text-[13px] text-white font-semibold">Fire Safety</span>
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — 2025 CFC operational permits
+                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — NFPA 96 (2024) operational permits
               </p>
               <div className="space-y-2">
                 {locs.map(loc => {
@@ -925,7 +941,12 @@ export default function OwnerOperatorDashboard() {
                   const fireAHJ = jur?.fireSafety?.agency_name ?? '';
 
                   return (
-                    <div key={loc.id} className="flex items-center gap-2">
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => navigate(`/locations/${loc.id}`)}
+                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+                    >
                       <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
                         {loc.name}
                       </span>
@@ -944,7 +965,7 @@ export default function OwnerOperatorDashboard() {
                       {fireStatus === 'unknown' && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>

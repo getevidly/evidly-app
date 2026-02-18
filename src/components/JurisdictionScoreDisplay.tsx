@@ -37,7 +37,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           )}
         </div>
         <div className="mt-3 text-center">
-          <div className="text-lg font-bold text-gray-700">{result.numericScore}/100</div>
+          <div className="text-lg font-bold text-gray-700">Score: {result.numericScore}</div>
           {result.grade.special && (
             <div className="text-xs font-semibold text-yellow-600 mt-1">{result.grade.special}</div>
           )}
@@ -72,7 +72,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           <span className="text-sm font-medium text-white/80 mt-1">Placard</span>
         </div>
         <div className="mt-3 text-center">
-          <div className="text-lg font-bold text-gray-700">{result.numericScore}/100</div>
+          <div className="text-lg font-bold text-gray-700">Score: {result.numericScore}</div>
           {!result.grade.passing && (
             <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
               <AlertTriangle className="w-3 h-3" />
@@ -139,7 +139,6 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
         <span className="text-sm font-bold text-white text-center px-2 leading-tight">{result.grade.label}</span>
       </div>
       <div className="mt-3 text-center">
-        <div className="text-lg font-bold text-gray-700">{result.numericScore}/100</div>
         {!result.grade.passing && (
           <div className="flex items-center gap-1 text-xs text-red-600 mt-1">
             <AlertTriangle className="w-3 h-3" />

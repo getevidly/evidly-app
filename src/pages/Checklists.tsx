@@ -49,7 +49,7 @@ const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: strin
   calcode: { label: 'CalCode', color: '#0369a1', bg: '#e0f2fe' },
   nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
   nfpa_10: { label: 'NFPA 10', color: '#b91c1c', bg: '#fef2f2' },
-  cfc: { label: 'CalFire CFC', color: '#c2410c', bg: '#fff7ed' },
+  cfc: { label: 'NFPA 96 (2024)', color: '#c2410c', bg: '#fff7ed' },
   evidly_best_practice: { label: 'Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
 };
 
@@ -297,7 +297,7 @@ const TEMPLATE_CATEGORIES = [
       },
       {
         key: 'exhaust_fan_quarterly',
-        name: 'Exhaust Fan Quarterly Service (NFPA 96 §11.4)',
+        name: 'Exhaust Fan Quarterly Service (NFPA 96 §12.4)',
         itemCount: 6,
         estimatedTime: '30-45 min',
         role: 'Manager',

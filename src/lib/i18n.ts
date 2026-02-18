@@ -38,7 +38,7 @@ const en = {
     incidentLog: 'Incident Log',
     reporting: 'Reporting',
     auditReport: 'Inspection Report',
-    scoreBreakdown: 'Score Breakdown',
+    scoreBreakdown: 'Compliance Overview',
     benchmarks: 'Benchmarks',
     orgHierarchy: 'Org Hierarchy',
     leaderboard: 'Leaderboard',

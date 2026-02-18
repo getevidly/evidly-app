@@ -335,7 +335,7 @@ export function ImproveScore() {
                         </span>
                         {item.currentScore !== undefined && (
                           <span className="flex items-center gap-1">
-                            <span>Current: {item.currentScore}/100</span>
+                            <span>Current: {item.currentScore}</span>
                             <ScoreMiniBar score={item.currentScore} />
                           </span>
                         )}

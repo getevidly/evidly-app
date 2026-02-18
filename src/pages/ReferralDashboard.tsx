@@ -469,7 +469,7 @@ export function ReferralDashboard() {
                         </div>
                         <div className="flex items-center gap-3 text-xs text-gray-500">
                           <span>{story.locationName}</span>
-                          <span>Score: {story.score}/100</span>
+                          <span>Score: {story.score}</span>
                           <span>{new Date(story.inspectionDate).toLocaleDateString()}</span>
                         </div>
                       </div>

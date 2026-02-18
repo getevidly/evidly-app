@@ -42,7 +42,7 @@
  * 4. supabase/functions/ai-corrective-action-draft/index.ts
  *    - Identity: Food safety & fire safety compliance expert ✅
  *    - Categorization: Equipment = fire safety, ice = food safety ✅
- *    - NFPA 96 (2025 Edition) reference ✅
+ *    - NFPA 96 (2024) reference ✅
  *    - FDA §4-602.11 reference ✅
  *    - Model: claude-sonnet-4-5-20250929 ✅
  *    - Hallucination guard: Added ✅
@@ -57,7 +57,7 @@
  * 6. supabase/functions/ai-weekly-digest/index.ts
  *    - Identity: Weekly compliance digest generator ✅
  *    - Categorization: Equipment = fire safety, ice = food safety ✅
- *    - NFPA 96 (2025 Edition) reference ✅
+ *    - NFPA 96 (2024) reference ✅
  *    - FDA §4-602.11 reference ✅
  *    - Model: claude-sonnet-4-5-20250929 ✅
  *    - Hallucination guard: Added ✅
@@ -138,7 +138,7 @@
  * - §114419 — HACCP plan monitoring ✅
  *
  * NFPA standards verified:
- * - NFPA 96 (2025 Edition) — Hood/exhaust cleaning ✅
+ * - NFPA 96 (2024) — Hood/exhaust cleaning ✅
  * - NFPA 10 (2025) — Fire extinguisher inspection ✅
  * - NFPA 17A (2025) — Fire suppression systems ✅
  * - NFPA 72 (2025) — Fire alarm systems ✅

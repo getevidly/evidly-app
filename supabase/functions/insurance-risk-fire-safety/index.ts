@@ -166,8 +166,8 @@ Deno.serve(async (req: Request) => {
         improvement_action: f.improvement_action,
       })),
       nfpa_compliance: {
-        nfpa_96_hood_duct: getNfpaStatus("NFPA 96-2025"),
-        nfpa_96_exhaust_fan: getNfpaStatus("NFPA 96-2025 §7.8"),
+        nfpa_96_hood_duct: getNfpaStatus("NFPA 96-2024"),
+        nfpa_96_exhaust_fan: getNfpaStatus("NFPA 96-2024 §7.8"),
         nfpa_17a_suppression: getNfpaStatus("NFPA 17A-2025"),
         nfpa_10_extinguisher: getNfpaStatus("NFPA 10-2025"),
         nfpa_72_alarm: getNfpaStatus("NFPA 72-2025"),

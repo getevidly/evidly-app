@@ -325,9 +325,9 @@ export function OrgHierarchy() {
               </div>
             </div>
 
-            {/* Score Breakdown */}
+            {/* Pillar Breakdown */}
             <div className="space-y-3 mb-4">
-              <h4 className="text-xs font-semibold text-gray-700">Score Breakdown</h4>
+              <h4 className="text-xs font-semibold text-gray-700">Pillar Breakdown</h4>
               {([
                 { label: 'Food Safety', value: displayNode.foodSafety, pillar: 'foodSafety' as const },
                 { label: 'Fire Safety', value: displayNode.fireSafety, pillar: 'fireSafety' as const },

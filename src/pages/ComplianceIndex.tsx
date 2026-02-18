@@ -293,7 +293,7 @@ export function ComplianceIndex() {
             <div className="prose prose-sm max-w-none">
               <p className="text-sm text-gray-700 leading-relaxed">
                 California's commercial kitchen compliance landscape continued its upward trajectory in Q4 2025,
-                with the industry average score reaching <strong>79 out of 100</strong> — up 2 points from Q3 and
+                with the industry average score reaching <strong>79% compliance</strong> — up 2 points from Q3 and
                 5 points higher than the same period last year. This marks the third consecutive quarter of improvement,
                 driven primarily by advances in <strong>temperature monitoring technology</strong> and increased adoption
                 of <strong>digital compliance platforms</strong>.

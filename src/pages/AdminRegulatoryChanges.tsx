@@ -90,7 +90,7 @@ const DEMO_CHANGES: RegChange[] = [
     sourceShort: 'nfpa_96',
     sourceName: 'NFPA 96 (Ventilation & Fire Protection)',
     changeType: 'amendment',
-    title: 'NFPA 96 §11.4 — Exhaust fan inspection frequency clarified',
+    title: 'NFPA 96 §12.4 — Exhaust fan inspection frequency clarified',
     summary: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately from cleaning.',
     impactDescription: 'Ensure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
     impactLevel: 'moderate',

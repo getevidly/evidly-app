@@ -83,11 +83,11 @@ function buildFireSafetyScore(
       authority: jurisdiction.fireSafety,
       grade: override.fireSafety.grade,
       gradeDisplay: override.fireSafety.gradeDisplay,
-      numericScore: null, // fire is pass/fail per 2025 CFC — no numeric score
+      numericScore: null, // fire is pass/fail per NFPA 96 (2024) — no numeric score
       status: override.fireSafety.status,
       details: {
         summary: override.fireSafety.summary,
-        codeEdition: '2025 CFC',
+        codeEdition: 'NFPA 96 (2024)',
         permitStatus: override.fireSafety.permitStatus,
         hoodStatus: override.fireSafety.hoodStatus,
         extinguisherStatus: override.fireSafety.extinguisherStatus,
@@ -111,7 +111,7 @@ function buildFireSafetyScore(
     status: operationalPermitValid ? 'passing' : 'failing',
     details: {
       operationalPermitValid,
-      codeEdition: '2025 CFC',
+      codeEdition: 'NFPA 96 (2024)',
     },
   };
 }

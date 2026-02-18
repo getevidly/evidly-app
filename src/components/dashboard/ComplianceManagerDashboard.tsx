@@ -121,7 +121,7 @@ const DEMO_SELF_INSPECTIONS = [
 
 const DEMO_REGULATORY = [
   { date: 'Feb 12, 2026', title: 'CalCode Amendment AB-1228 \u2014 Allergen Labeling', summary: 'New allergen labeling requirements for commercial kitchens effective March 1.', impact: 'high' as const },
-  { date: 'Feb 5, 2026', title: 'CFC 2025 Operational Permit Updates', summary: 'Revised operational fire permit requirements for commercial kitchen hoods.', impact: 'medium' as const },
+  { date: 'Feb 5, 2026', title: 'NFPA 96 (2024) Operational Permit Updates', summary: 'Revised operational fire permit requirements for commercial kitchen hoods.', impact: 'medium' as const },
   { date: 'Jan 20, 2026', title: 'HACCP Plan Verification Schedule Change', summary: 'Annual HACCP plan verification now required within 60 days of license renewal.', impact: 'low' as const },
 ];
 
@@ -201,9 +201,11 @@ export default function ComplianceManagerDashboard() {
           </div>
           <div className="space-y-2">
             {DEMO_INSPECTIONS.map((insp, idx) => (
-              <div
+              <button
                 key={idx}
-                className="flex items-center gap-3 p-3 rounded-lg"
+                type="button"
+                onClick={() => navigate('/calendar')}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
                 style={{
                   backgroundColor: insp.status === 'urgent' ? '#fef2f2' : '#fafafa',
                   border: `1px solid ${insp.status === 'urgent' ? '#fecaca' : '#f0f0f0'}`,
@@ -228,7 +230,7 @@ export default function ComplianceManagerDashboard() {
                     </span>
                   )}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -253,9 +255,11 @@ export default function ComplianceManagerDashboard() {
               { name: 'Fire Suppression Cert — Airport', status: 'expiring', expires: 'Mar 15, 2026' },
               { name: 'Health Permit — University Dining', status: 'current', expires: 'Dec 2026' },
             ].map((doc, idx) => (
-              <div
+              <button
                 key={idx}
-                className="flex items-center gap-3 p-3 rounded-lg"
+                type="button"
+                onClick={() => navigate('/documents')}
+                className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
                 style={{
                   backgroundColor: doc.status === 'expiring' ? '#fffbeb' : '#fafafa',
                   border: `1px solid ${doc.status === 'expiring' ? '#fde68a' : '#f0f0f0'}`,
@@ -274,7 +278,7 @@ export default function ComplianceManagerDashboard() {
                 >
                   {doc.status === 'current' ? 'Current' : 'Expiring Soon'}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -315,9 +319,11 @@ export default function ComplianceManagerDashboard() {
                 : 'Low Impact';
 
               return (
-                <div
+                <button
                   key={idx}
-                  className="p-3 rounded-lg"
+                  type="button"
+                  onClick={() => navigate('/regulatory-alerts')}
+                  className="w-full p-3 rounded-lg text-left transition-colors hover:opacity-90"
                   style={{ backgroundColor: '#fafafa', border: '1px solid #f0f0f0' }}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -333,7 +339,7 @@ export default function ComplianceManagerDashboard() {
                       {impactLabel}
                     </span>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -365,9 +371,11 @@ export default function ComplianceManagerDashboard() {
                 : '#fef2f2';
 
               return (
-                <div
+                <button
                   key={idx}
-                  className="flex items-center gap-3 p-3 rounded-lg"
+                  type="button"
+                  onClick={() => navigate('/self-inspection')}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
                   style={{
                     backgroundColor: si.status === 'overdue' ? '#fef2f2' : '#fafafa',
                     border: `1px solid ${si.status === 'overdue' ? '#fecaca' : '#f0f0f0'}`,
@@ -387,16 +395,14 @@ export default function ComplianceManagerDashboard() {
                     >
                       {selfStatusLabel}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => navigate('/self-inspection')}
-                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-md transition-colors hover:opacity-90"
+                    <span
+                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-md"
                       style={{ backgroundColor: NAVY, color: '#fff' }}
                     >
                       Start Inspection &rarr;
-                    </button>
+                    </span>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -441,7 +447,12 @@ export default function ComplianceManagerDashboard() {
                   const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
 
                   return (
-                    <div key={loc.id} className="flex items-center gap-2">
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => navigate(`/locations/${loc.id}`)}
+                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+                    >
                       <span
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: statusColor(foodStatus) }}
@@ -452,7 +463,7 @@ export default function ComplianceManagerDashboard() {
                       <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
                         {gradeDisp}
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -468,7 +479,7 @@ export default function ComplianceManagerDashboard() {
                 <span className="text-[13px] text-white font-semibold">Fire Safety</span>
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} &mdash; 2025 CFC operational permits
+                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} &mdash; NFPA 96 (2024) operational permits
               </p>
               <div className="space-y-2">
                 {locs.map(loc => {
@@ -477,7 +488,12 @@ export default function ComplianceManagerDashboard() {
                   const fireStatus = score?.fireSafety?.status ?? 'unknown';
 
                   return (
-                    <div key={loc.id} className="flex items-center gap-2">
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => navigate(`/locations/${loc.id}`)}
+                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+                    >
                       <span
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: statusColor(fireStatus) }}
@@ -497,7 +513,7 @@ export default function ComplianceManagerDashboard() {
                       {fireStatus === 'unknown' && (
                         <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -549,7 +565,7 @@ export default function ComplianceManagerDashboard() {
                 >
                   {/* Name + County badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>{loc.name}</h4>
+                    <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="text-sm font-semibold text-left hover:opacity-70 transition-opacity" style={{ color: BODY_TEXT }}>{loc.name}</button>
                     {county && (
                       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
                         style={{ backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #e2e8f0' }}>
@@ -559,15 +575,22 @@ export default function ComplianceManagerDashboard() {
                   </div>
 
                   {/* Food Safety Widget */}
-                  <FoodSafetyWidget
-                    gradeDisplay={foodGradeDisplay}
-                    summary={foodSummary}
-                    status={foodStatus}
-                    gradingTypeLabel={gradingTypeLabel(foodGradingType) || undefined}
-                  />
+                  <button type="button" onClick={() => navigate('/compliance')} className="w-full text-left transition-opacity hover:opacity-90">
+                    <FoodSafetyWidget
+                      gradeDisplay={foodGradeDisplay}
+                      summary={foodSummary}
+                      status={foodStatus}
+                      gradingTypeLabel={gradingTypeLabel(foodGradingType) || undefined}
+                    />
+                  </button>
 
                   {/* Fire Safety row */}
-                  <div className="mt-3 p-3 rounded-lg" style={{ backgroundColor: '#f8f8f8' }}>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/fire-safety')}
+                    className="w-full mt-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
+                    style={{ backgroundColor: '#f8f8f8' }}
+                  >
                     <div className="flex items-center gap-2">
                       <Flame size={14} style={{ color: '#ea580c', flexShrink: 0 }} />
                       <span className="text-[13px] font-semibold flex-1" style={{ color: BODY_TEXT }}>{fireAHJName}</span>
@@ -596,7 +619,7 @@ export default function ComplianceManagerDashboard() {
                         />
                       </div>
                     )}
-                  </div>
+                  </button>
 
                   {/* Expandable Details toggle */}
                   <button

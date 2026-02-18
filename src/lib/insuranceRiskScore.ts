@@ -117,7 +117,7 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
   const hoodVendor = getVendor(locationId, 'Hood Cleaning');
   const fireVendor = getVendor(locationId, 'Fire Suppression');
 
-  // Factor 1: Hood cleaning per NFPA 96 (2025)
+  // Factor 1: Hood cleaning per NFPA 96 (2024)
   const hoodItem = equipItems.find(i => i.label.toLowerCase().includes('hood'));
   const hoodImpact = hoodItem ? parseImpact(hoodItem.impact) : { pct: 50 };
   const hoodScore = hoodImpact.pct;
@@ -163,15 +163,15 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
   const docScore = locScores ? Math.round(locScores.vendorCompliance * 0.95) : 50;
 
   const factors: InsuranceRiskFactor[] = [
-    { name: 'Hood cleaning current per NFPA 96 (2025 Edition) schedule', score: hoodScore, weight: 0.18, status: factorStatus(hoodScore), detail: hoodDetail, reference: 'NFPA 96-2025' },
+    { name: 'Hood cleaning current per NFPA 96 (2024) schedule', score: hoodScore, weight: 0.18, status: factorStatus(hoodScore), detail: hoodDetail, reference: 'NFPA 96-2024' },
     { name: 'Fire suppression system inspected (semi-annual)', score: fireScore, weight: 0.16, status: factorStatus(fireScore), detail: fireDetail, reference: 'NFPA 17A-2025' },
     { name: 'Fire extinguisher inspected (annual)', score: extScore, weight: 0.14, status: factorStatus(extScore), detail: extScore >= 90 ? 'Annual inspection current' : 'Inspection approaching or overdue', reference: 'NFPA 10-2025' },
     { name: 'Monthly visual checks documented', score: visualCheckScore, weight: 0.10, status: factorStatus(visualCheckScore), detail: visualCheckScore >= 80 ? 'Visual inspection logs up to date' : 'Documentation gaps in visual checks', reference: 'NFPA 10-2025 §7.2' },
-    { name: 'Cleaning to bare metal verified', score: bareMetalScore, weight: 0.10, status: factorStatus(bareMetalScore), detail: bareMetalScore >= 90 ? 'Bare metal cleaning documented by vendor' : 'Cleaning verification records incomplete', reference: 'NFPA 96-2025 §11.4' },
-    { name: 'Automatic fuel/electric shutoff tested', score: shutoffScore, weight: 0.10, status: factorStatus(shutoffScore), detail: shutoffScore >= 80 ? 'Shutoff systems tested and documented' : 'Shutoff testing overdue or undocumented', reference: 'NFPA 96-2025 §10.1' },
+    { name: 'Cleaning to bare metal verified', score: bareMetalScore, weight: 0.10, status: factorStatus(bareMetalScore), detail: bareMetalScore >= 90 ? 'Bare metal cleaning documented by vendor' : 'Cleaning verification records incomplete', reference: 'NFPA 96 (2024) §12.4' },
+    { name: 'Automatic fuel/electric shutoff tested', score: shutoffScore, weight: 0.10, status: factorStatus(shutoffScore), detail: shutoffScore >= 80 ? 'Shutoff systems tested and documented' : 'Shutoff testing overdue or undocumented', reference: 'NFPA 96-2024 §10.1' },
     { name: 'Manual pull station accessible and tested', score: pullStationScore, weight: 0.08, status: factorStatus(pullStationScore), detail: pullStationScore >= 80 ? 'Pull station accessible and tested' : 'Pull station testing needed', reference: 'NFPA 17A-2025' },
     { name: 'Fire alarm system current', score: alarmScore, weight: 0.08, status: factorStatus(alarmScore), detail: alarmScore >= 80 ? 'Fire alarm monitoring current' : 'Fire alarm inspection needed', reference: 'NFPA 72-2025' },
-    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All fire safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96-2025 §14.2' },
+    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All fire safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96-2024 §14.2' },
   ];
 
   const score = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0));

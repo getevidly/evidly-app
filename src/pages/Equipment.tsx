@@ -544,7 +544,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { date: '2025-07-20', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood service. Moderate grease on blades. Hinge kit good.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §11.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-15', nextDue: '2026-02-15' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-12-10', nextDue: '2026-03-10' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-10-20', nextDue: '2026-04-20' },
@@ -564,7 +564,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { date: '2025-08-22', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned. Grease containment drain cleared.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §11.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-22', nextDue: '2026-02-22' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-11-22', nextDue: '2026-02-22' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-08-22', nextDue: '2026-02-22' },
@@ -584,7 +584,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { date: '2025-05-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning + Belt Replace', cost: 165, notes: 'Belt replaced (glazed). Bearings lubricated. Airflow tested — within spec.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §11.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-15', nextDue: '2026-02-15' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-11-15', nextDue: '2026-02-15' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-05-15', nextDue: '2026-11-15' },

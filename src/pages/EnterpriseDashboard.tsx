@@ -858,9 +858,9 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                   </div>
                 </div>
 
-                {/* Score Breakdown */}
+                {/* Pillar Breakdown */}
                 <div className="space-y-3 mb-4">
-                  <h4 className="text-xs font-semibold text-gray-700">Score Breakdown</h4>
+                  <h4 className="text-xs font-semibold text-gray-700">Pillar Breakdown</h4>
                   {[
                     { label: 'Food Safety', value: selectedNode.foodSafety, trend: nodeTrend(selectedNode.id + '-op') },
                     { label: 'Fire Safety', value: selectedNode.fireSafety, trend: nodeTrend(selectedNode.id + '-eq') },

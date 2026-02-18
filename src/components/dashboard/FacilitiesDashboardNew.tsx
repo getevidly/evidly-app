@@ -194,22 +194,30 @@ export default function FacilitiesDashboardNew() {
             <Flame size={24} style={{ color: fireStatus === 'passing' ? '#16a34a' : '#dc2626' }} />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-gray-700">Fire Safety</span>
-                <span className={`text-sm font-bold px-2.5 py-0.5 rounded-full ${
-                  fireStatus === 'passing'
-                    ? 'bg-green-50 text-green-700'
-                    : 'bg-red-50 text-red-700'
-                }`}>
+                <button type="button" onClick={() => navigate('/fire-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Fire Safety</button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/fire-safety')}
+                  className={`text-sm font-bold px-2.5 py-0.5 rounded-full hover:opacity-80 transition-opacity ${
+                    fireStatus === 'passing'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-red-50 text-red-700'
+                  }`}
+                >
                   {fireGrade}
-                </span>
+                </button>
               </div>
               <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-full">
+          <button
+            type="button"
+            onClick={() => navigate('/equipment')}
+            className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-full hover:bg-gray-200 transition-colors"
+          >
             <Wrench size={14} className="text-gray-500" />
             <span className="text-xs font-medium text-gray-600">Equipment: {DEMO_EQUIPMENT_COUNT} units</span>
-          </div>
+          </button>
         </div>
 
         {/* Fire AHJ */}

@@ -123,7 +123,7 @@ function buildSections(): AuditSection[] {
     },
     {
       name: 'Fire Safety & Suppression',
-      citation: 'NFPA 96-2025 \u00A711.4',
+      citation: 'NFPA 96 (2024) \u00A712.4',
       items: [
         'Hood suppression system inspection current',
         'Fire extinguishers accessible and tagged',

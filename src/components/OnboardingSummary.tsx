@@ -19,7 +19,7 @@ const STEPS: OnboardingStep[] = [
   { id: 'checklist', title: 'Complete Your First Daily Checklist', description: 'Run through the Opening Checklist to see how daily compliance tracking works.', link: '/checklists' },
   { id: 'vendors', title: 'Add Your Vendors', description: 'Register your hood cleaning company, pest control, and other service providers.', link: '/vendors' },
   { id: 'team', title: 'Invite Your Team', description: 'Add kitchen staff so they can log temps and complete checklists from their phones.', link: '/team' },
-  { id: 'score', title: 'Review Your Compliance Score', description: 'See how your kitchen stacks up. Your goal: 90%+.', link: '/scoring-breakdown' },
+  { id: 'score', title: 'Review Your Compliance Status', description: 'See your jurisdiction status and operational readiness across all locations.', link: '/scoring-breakdown' },
 ];
 
 function loadProgress(): string[] {

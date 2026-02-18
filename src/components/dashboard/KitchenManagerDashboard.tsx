@@ -164,18 +164,26 @@ export default function KitchenManagerDashboard() {
       >
         {/* Grade badges */}
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            foodStatus === 'passing' ? 'bg-green-500/20 text-green-300'
-              : foodStatus === 'failing' ? 'bg-red-500/20 text-red-300'
-              : 'bg-amber-500/20 text-amber-300'
-          }`}>
+          <button
+            type="button"
+            onClick={() => navigate('/compliance')}
+            className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
+              foodStatus === 'passing' ? 'bg-green-500/20 text-green-300'
+                : foodStatus === 'failing' ? 'bg-red-500/20 text-red-300'
+                : 'bg-amber-500/20 text-amber-300'
+            }`}
+          >
             {foodGrade}
-          </span>
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-          }`}>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/fire-safety')}
+            className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
+              fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+            }`}
+          >
             Fire: {fireGrade}
-          </span>
+          </button>
         </div>
       </DashboardHero>
 
@@ -288,7 +296,7 @@ export default function KitchenManagerDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {DEMO_TEMPERATURES.map((t) => (
-                        <tr key={t.id}>
+                        <tr key={t.id} onClick={() => navigate('/temp-logs')} className="cursor-pointer hover:bg-gray-50 transition-colors">
                           <td className="py-2.5 text-gray-900 font-medium">{t.name}</td>
                           <td className="py-2.5 text-right tabular-nums">
                             {t.temp !== null ? (
@@ -335,7 +343,7 @@ export default function KitchenManagerDashboard() {
               content: (
                 <div className="space-y-3">
                   {DEMO_TEAM.map((member) => (
-                    <div key={member.name} className="flex items-start gap-3">
+                    <button key={member.name} type="button" onClick={() => navigate('/team')} className="flex items-start gap-3 w-full text-left rounded-lg p-1 -m-1 hover:bg-gray-50 transition-colors">
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
                         style={{ backgroundColor: '#1e4d6b' }}
@@ -346,7 +354,7 @@ export default function KitchenManagerDashboard() {
                         <p className="text-sm font-medium text-gray-900">{member.name}</p>
                         <p className="text-xs text-gray-500">{member.activities.join(', ')}</p>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ),

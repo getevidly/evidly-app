@@ -9,10 +9,10 @@
 // TODO: Verify Fresno County food safety grading_type from actual health department data
 // TODO: Verify Merced County food safety grading_type from actual health department data
 // TODO: Verify Stanislaus County food safety grading_type from actual health department data
-// TODO: Verify if Fresno County/City has formally adopted 2025 CFC or still on prior edition
-// TODO: Verify if Merced County/City has formally adopted 2025 CFC or still on prior edition
-// TODO: Verify if Stanislaus County / City of Modesto has formally adopted 2025 CFC
-// TODO: Research individual fire AHJ grading methodology beyond CFC pass/fail for each demo jurisdiction
+// TODO: Verify if Fresno County/City has formally adopted NFPA 96 (2024) or still on prior edition
+// TODO: Verify if Merced County/City has formally adopted NFPA 96 (2024) or still on prior edition
+// TODO: Verify if Stanislaus County / City of Modesto has formally adopted NFPA 96 (2024)
+// TODO: Research individual fire AHJ grading methodology beyond NFPA 96 pass/fail for each demo jurisdiction
 // TODO: Research Fresno County local requirements added on top of CalCode
 // TODO: Research Merced County local requirements added on top of CalCode
 // TODO: Research Stanislaus County local requirements added on top of CalCode

@@ -273,10 +273,10 @@ const fireSection: Section = {
   key: 'fire',
   title: 'Ventilation & Fire Safety',
   icon: Flame,
-  calCode: 'CFC / NFPA 96-2025',
+  calCode: 'NFPA 96 (2024)',
   items: [
     {
-      citation: 'NFPA 96-2025 \u00A711.4',
+      citation: 'NFPA 96 (2024) \u00A712.4',
       title: 'Hood system cleaning current',
       status: 'pass',
       evidence: ['Last hood cleaning: Jan 15, 2026 by ABC Fire Protection'],
@@ -284,7 +284,7 @@ const fireSection: Section = {
         'Quarterly schedule. Cleaned to bare metal. Before/after photos on file.',
     },
     {
-      citation: 'NFPA 96-2025 \u00A711.2.2',
+      citation: 'NFPA 96-2024 \u00A711.2.2',
       title: 'Fire suppression system inspected',
       status: 'pass',
       evidence: ['Semi-annual inspection: Dec 12, 2025 by Valley Fire Systems'],

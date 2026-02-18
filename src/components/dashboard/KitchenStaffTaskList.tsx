@@ -148,7 +148,7 @@ export default function KitchenStaffTaskList() {
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">{DEMO_STAFF_LOCATION}</h2>
+            <button type="button" onClick={() => navigate('/dashboard')} className="text-lg font-semibold text-gray-900 hover:opacity-70 transition-opacity">{DEMO_STAFF_LOCATION}</button>
             <div className="flex items-center gap-1.5">
               <ClipboardCheck size={18} style={{ color: '#1e4d6b' }} />
               <span className="text-sm font-medium text-gray-700">{DEMO_STAFF_NAME}</span>
@@ -283,9 +283,11 @@ export default function KitchenStaffTaskList() {
             {doneExpanded && (
               <div className="mt-2 space-y-1">
                 {doneTasks.map((task) => (
-                  <div
+                  <button
                     key={task.id}
-                    className="flex items-center gap-3 p-3 rounded-lg"
+                    type="button"
+                    onClick={() => task.type === 'temp_log' ? navigate('/temp-logs') : alert('Task already completed')}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-100 transition-colors"
                     style={{ backgroundColor: '#f9fafb' }}
                   >
                     <CheckCircle2 size={20} className="text-green-400 shrink-0" />
@@ -295,7 +297,7 @@ export default function KitchenStaffTaskList() {
                       </p>
                     </div>
                     <span className="text-xs text-gray-400 shrink-0">{task.completedAt}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}

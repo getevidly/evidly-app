@@ -159,7 +159,7 @@ function InsuranceRiskScoreSample() {
       </div>
       <div style={{ flex: 1, minWidth: 180 }}>
         <p style={{ margin: '0 0 12px', fontWeight: 600, color: '#1e4d6b', fontSize: 14 }}>
-          Risk Score: 74/100
+          Risk Assessment: Medium
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {factors.map((f) => (

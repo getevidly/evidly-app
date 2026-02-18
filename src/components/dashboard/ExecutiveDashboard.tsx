@@ -82,7 +82,14 @@ const EXEC_PRIORITY_ITEMS: PriorityItem[] = [
 // WIDGET: KPIs — This Week's Performance
 // ================================================================
 
-function WidgetKPIs() {
+function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
+  const kpiRoutes: Record<string, string> = {
+    'Temp Checks': '/temp-logs',
+    'Checklists': '/checklists',
+    'Documents': '/documents',
+    'Incidents': '/incidents',
+    'Team Activity': '/team',
+  };
   const act = DEMO_WEEKLY_ACTIVITY;
   const kpis = [
     { icon: <Thermometer size={18} />, label: 'Temp Checks', value: act.tempChecks.total, unit: 'logged', bar: act.tempChecks.onTimePercent, metric: String(act.tempChecks.onTimePercent), metricLabel: 'on time', trend: '\u2191 1.4 vs last week', status: 'good' as const },
@@ -100,9 +107,11 @@ function WidgetKPIs() {
         {kpis.map(kpi => {
           const borderColor = statusColors[kpi.status];
           return (
-            <div
+            <button
               key={kpi.label}
-              className="rounded-xl p-3.5 transition-all hover:shadow-md cursor-pointer"
+              type="button"
+              onClick={() => navigate(kpiRoutes[kpi.label] || '/dashboard')}
+              className="rounded-xl p-3.5 transition-all hover:shadow-md cursor-pointer text-left"
               style={{ borderTop: `3px solid ${borderColor}`, backgroundColor: '#fafbfc' }}
             >
               <div className="flex items-center gap-2 mb-2">
@@ -123,7 +132,7 @@ function WidgetKPIs() {
                 </div>
                 <span className="text-[10px] text-gray-400">{kpi.trend}</span>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -168,7 +177,7 @@ function WidgetLocations({ jieScores, jurisdictions, navigate }: {
             >
               {/* Name + County */}
               <div className="flex items-center justify-between mb-3">
-                <h5 className="text-sm font-bold" style={{ color: BODY_TEXT }}>{loc.name}</h5>
+                <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="text-sm font-bold text-left hover:opacity-70 transition-opacity" style={{ color: BODY_TEXT }}>{loc.name}</button>
                 {jur?.county && (
                   <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
                     {jur.county} County
@@ -177,7 +186,12 @@ function WidgetLocations({ jieScores, jurisdictions, navigate }: {
               </div>
 
               {/* Food Safety */}
-              <div className="p-3 rounded-lg mb-2" style={{ borderLeft: `3px solid ${foodStatusColor}`, backgroundColor: '#fafbfc' }}>
+              <button
+                type="button"
+                onClick={() => navigate('/compliance')}
+                className="w-full p-3 rounded-lg mb-2 text-left transition-colors hover:opacity-90"
+                style={{ borderLeft: `3px solid ${foodStatusColor}`, backgroundColor: '#fafbfc' }}
+              >
                 <div className="flex items-center gap-2 mb-1">
                   <UtensilsCrossed size={14} style={{ color: MUTED }} />
                   <span className="text-[13px] text-gray-700 flex-1">Food Safety</span>
@@ -188,10 +202,15 @@ function WidgetLocations({ jieScores, jurisdictions, navigate }: {
                 {score?.foodSafety?.details?.summary && (
                   <p className="text-[11px] text-gray-500 ml-6">{score.foodSafety.details.summary}</p>
                 )}
-              </div>
+              </button>
 
               {/* Fire Safety */}
-              <div className="p-3 rounded-lg mb-3" style={{ backgroundColor: '#f8fafc' }}>
+              <button
+                type="button"
+                onClick={() => navigate('/fire-safety')}
+                className="w-full p-3 rounded-lg mb-3 text-left transition-colors hover:opacity-90"
+                style={{ backgroundColor: '#f8fafc' }}
+              >
                 <div className="flex items-center gap-2">
                   <Flame size={14} style={{ color: MUTED }} />
                   <span className="text-[13px] text-gray-700 flex-1">Fire Safety</span>
@@ -206,7 +225,7 @@ function WidgetLocations({ jieScores, jurisdictions, navigate }: {
                 {jur?.fireSafety?.agency_name && (
                   <p className="text-[10px] text-gray-400 ml-6 mt-0.5">{jur.fireSafety.agency_name}</p>
                 )}
-              </div>
+              </button>
 
               {/* View Details */}
               <button
@@ -303,9 +322,11 @@ function WidgetTrendChart({ navigate, jieScores }: {
             const borderColor = loc.statusType === 'critical' ? '#dc2626' : loc.statusType === 'attention' ? '#d97706' : '#16a34a';
             const bgColor = loc.statusType === 'critical' ? '#fef2f2' : loc.statusType === 'attention' ? '#fffbeb' : '#f0fdf4';
             return (
-              <div
+              <button
                 key={loc.id}
-                className="rounded-xl p-4"
+                type="button"
+                onClick={() => loc.route ? navigate(loc.route) : navigate(`/locations/${loc.id}`)}
+                className={`w-full rounded-xl p-4 text-left transition-colors hover:opacity-90 ${loc.route ? 'cursor-pointer' : ''}`}
                 style={{ borderLeft: `4px solid ${borderColor}`, backgroundColor: bgColor }}
               >
                 <div className="flex items-center justify-between mb-1">
@@ -317,16 +338,14 @@ function WidgetTrendChart({ navigate, jieScores }: {
                 </div>
                 <p className="text-[12px] text-gray-600 leading-relaxed mb-2">{loc.description}</p>
                 {loc.actionLabel && (
-                  <button
-                    type="button"
+                  <span
                     className="text-xs font-medium"
                     style={{ color: NAVY }}
-                    onClick={() => navigate(loc.route)}
                   >
                     {loc.actionLabel} &rarr;
-                  </button>
+                  </span>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
@@ -373,9 +392,11 @@ function StrategicActionsBar({ navigate }: { navigate: (path: string) => void })
     >
       <div className="max-w-[1100px] mx-auto px-4 py-2.5 flex flex-col md:flex-row items-stretch md:items-center gap-2 md:gap-3">
         {actions.map(a => (
-          <div
+          <button
             key={a.title}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-[10px] flex-1 transition-all"
+            type="button"
+            onClick={() => navigate(a.route)}
+            className="flex items-center gap-3 px-4 py-2.5 rounded-[10px] flex-1 transition-all text-left cursor-pointer"
             style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.borderColor = GOLD;
@@ -388,15 +409,13 @@ function StrategicActionsBar({ navigate }: { navigate: (path: string) => void })
           >
             <span style={{ color: NAVY }}>{a.icon}</span>
             <span className="text-[13px] font-semibold flex-1" style={{ color: BODY_TEXT }}>{a.title}</span>
-            <button
-              type="button"
-              onClick={() => navigate(a.route)}
-              className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
+            <span
+              className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0"
               style={{ border: `1px solid ${NAVY}`, color: NAVY }}
             >
               {a.cta}
-            </button>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
     </div>
@@ -424,9 +443,10 @@ function EvidlyFooter() {
 // HERO CHILDREN: Dual-Authority Jurisdiction Summary
 // ================================================================
 
-function HeroJurisdictionSummary({ jieScores, jurisdictions }: {
+function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate }: {
   jieScores: Record<string, LocationScore>;
   jurisdictions: Record<string, LocationJurisdiction>;
+  navigate: (path: string) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
@@ -448,15 +468,20 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions }: {
               : score?.foodSafety?.status === 'failing' ? '#ef4444'
               : score?.foodSafety?.status === 'at_risk' ? '#f59e0b' : '#6b7280';
             return (
-              <div key={loc.id} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sColor }} />
-                <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                  {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
-                </span>
-                <span className="text-xs font-semibold text-white">
+              <div
+                key={loc.id}
+                className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+              >
+                <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="flex items-center gap-2 flex-1 min-w-0">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sColor }} />
+                  <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                  <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                    {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
+                  </span>
+                </button>
+                <button type="button" onClick={() => navigate('/compliance')} className="text-xs font-semibold text-white hover:opacity-70 transition-opacity shrink-0">
                   {score?.foodSafety?.gradeDisplay || 'Pending'}
-                </span>
+                </button>
               </div>
             );
           })}
@@ -468,7 +493,7 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions }: {
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
           <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
-          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>2025 CFC</span>
+          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>NFPA 96 (2024)</span>
         </div>
         <div className="space-y-2">
           {LOCATIONS_WITH_SCORES.map(loc => {
@@ -477,15 +502,20 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions }: {
             const jur = jurisdictions[jieLocId];
             const isPassing = score?.fireSafety?.status === 'passing';
             return (
-              <div key={loc.id} className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
-                <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                  {jur?.fireSafety?.agency_name || ''}
-                </span>
-                <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+              <div
+                key={loc.id}
+                className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
+              >
+                <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="flex items-center gap-2 flex-1 min-w-0">
+                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
+                  <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                  <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                    {jur?.fireSafety?.agency_name || ''}
+                  </span>
+                </button>
+                <button type="button" onClick={() => navigate('/fire-safety')} className={`text-xs font-semibold px-1.5 py-0.5 rounded hover:opacity-70 transition-opacity shrink-0 ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
                   {score?.fireSafety?.grade || 'Pending'}
-                </span>
+                </button>
               </div>
             );
           })}
@@ -547,7 +577,7 @@ export default function ExecutiveDashboard() {
     {
       id: 'keyMetrics',
       label: 'Key Metrics',
-      content: <WidgetKPIs />,
+      content: <WidgetKPIs navigate={navigate} />,
     },
   ], [navigate, jieScores]);
 
@@ -578,7 +608,7 @@ export default function ExecutiveDashboard() {
         subtitle="3 locations &middot; California"
         onSubtitleClick={() => navigate('/org-hierarchy')}
       >
-        <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} />
+        <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} />
       </DashboardHero>
 
       {/* ============================================================ */}

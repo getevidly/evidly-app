@@ -1,0 +1,88 @@
+{
+  "jurisdiction_name": "Merced County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Merced County Environmental Health",
+  "department_url": "https://www.countyofmerced.com/1637/Food-Protection-and-Inspection",
+  "grading_system": {
+    "type": "other",
+    "description": "Point-based system with good/satisfactory/unsatisfactory ratings",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Good": {
+        "min": null,
+        "max": 6
+      },
+      "Satisfactory": {
+        "min": 7,
+        "max": 13
+      },
+      "Unsatisfactory": {
+        "min": 14,
+        "max": null
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Routine inspections conducted, frequency not specified",
+    "risk_categories": null,
+    "reinspection_trigger": "Unsatisfactory ratings require follow-up inspection",
+    "public_disclosure": "Inspection results available online at county website database"
+  },
+  "fire_safety_authority": {
+    "department_name": "Merced County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial cooking systems shall be operated and maintained in accordance to Title 19 California Code of Regulations Chapter 5",
+    "inspection_frequency": "Semi-annual (every 6 months) per NFPA 96 standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Health and Safety Code Division 104 Part 7 (California Retail Food Code)",
+    "state_vs_local_authority": "County level inspections conducted by Merced County Environmental Health",
+    "local_ordinances": "Merced County Code Title 9 General Health and Safety",
+    "permit_types": [
+      "Retail Food Facility Permit",
+      "Temporary Food Facility Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.countyofmerced.com/1637/Food-Protection-and-Inspection",
+    "https://apps.co.merced.ca.us/PublicApplets/pages/FoodInspect/FoodInspect.aspx",
+    "https://web2.co.merced.ca.us/pdfs/fire/prevention/hood_systems.pdf",
+    "https://ecode360.com/43016570"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Grading system confirmed through news source reporting county's point-based system with good/satisfactory/unsatisfactory ratings. California Retail Food Code basis confirmed. Fire safety requirements confirmed through county documents.",
+  "needs_manual_verification": true,
+  "verification_notes": "Should verify exact inspection frequency schedule and confirm if there are numerical score ranges associated with the good/satisfactory/unsatisfactory ratings. Fire safety inspection requirements confirmed but frequency should be verified with county fire marshal.",
+  "_meta": {
+    "crawled_at": "2026-02-18T19:10:20.210145+00:00",
+    "duration_seconds": 28.257394,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 81076,
+    "output_tokens": 1024,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-18T19:09:51.952751+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-18T19:31:35.259685+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 95,
+    "llm_confidence": "medium",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

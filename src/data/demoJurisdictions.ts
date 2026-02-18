@@ -629,7 +629,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
 // DUAL-AUTHORITY JURISDICTION DATA PER DEMO LOCATION
 // Each location has TWO independent authorities:
 //   1. Food Safety (county health dept / CalCode)
-//   2. Fire Safety (city fire dept / 2025 CFC)
+//   2. Fire Safety (city fire dept / NFPA 96)
 // These CANNOT be combined into a single score.
 // ═══════════════════════════════════════════════════════════
 
@@ -658,13 +658,13 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       agency_name: 'City of Fresno Fire Department',
       agency_phone: '(559) 621-4120',
       agency_website: 'https://www.fresno.gov/fire/',
-      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
-      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      code_basis: 'NFPA 96 (2024)',
+      code_references: ['NFPA 96 (2024)', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
       scoring_method: 'pass_fail',
       grading_type: 'pass_fail',
       grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
-      inspection_frequency: 1, // annual per CFC 105.1.1
-      is_verified: false, // using CFC baseline — individual AHJ grading not yet verified
+      inspection_frequency: 1, // annual per NFPA 96
+      is_verified: false, // using NFPA 96 baseline — individual AHJ grading not yet verified
       local_amendments: null, // TODO: verify Fresno local fire amendments
     },
     federalFoodOverlay: null,
@@ -699,8 +699,8 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       agency_name: 'City of Merced Fire Department',
       agency_phone: '(209) 385-6891',
       agency_website: 'https://www.cityofmerced.org/departments/fire',
-      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
-      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      code_basis: 'NFPA 96 (2024)',
+      code_references: ['NFPA 96 (2024)', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
       scoring_method: 'pass_fail',
       grading_type: 'pass_fail',
       grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
@@ -740,8 +740,8 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       agency_name: 'Modesto Fire Department, Fire Prevention Division',
       agency_phone: '(209) 577-5232',
       agency_website: 'https://www.modestogov.com/170/Fire-Prevention',
-      code_basis: '2025 California Fire Code (effective Jan 1, 2026)',
-      code_references: ['2025 CFC', 'NFPA 96', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
+      code_basis: 'NFPA 96 (2024)',
+      code_references: ['NFPA 96 (2024)', 'NFPA 17A', 'NFPA 10', 'NFPA 25', 'NFPA 72'],
       scoring_method: 'pass_fail',
       grading_type: 'pass_fail',
       grading_config: { pass: 'Operational Permit Issued', fail: 'Operational Permit Denied/Revoked' },
