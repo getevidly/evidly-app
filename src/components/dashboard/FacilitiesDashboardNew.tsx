@@ -10,11 +10,7 @@ import {
   MapPin,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
-import {
-  DEMO_LOCATION_SCORES,
-  calculateInspectionReadiness,
-  getReadinessColor,
-} from '../../utils/inspectionReadiness';
+import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 
 // --------------- Demo Data ---------------
 
@@ -146,24 +142,34 @@ const SEVERITY_BORDER: Record<string, string> = {
 // FACILITIES MANAGER DASHBOARD
 // ===============================================
 
+// Map facilities locationUrlId → JIE override key
+const FAC_LOC_MAP: Record<string, string> = {
+  downtown: 'demo-loc-downtown',
+  airport: 'demo-loc-airport',
+  university: 'demo-loc-university',
+};
+
+const FAC_LOC_NAMES: Record<string, string> = {
+  downtown: 'Downtown Kitchen',
+  airport: 'Airport Cafe',
+  university: 'University Dining',
+};
+
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
-  // Default to downtown
   const defaultLoc = accessibleLocations[0]?.locationUrlId || 'downtown';
 
-  const locationData = DEMO_LOCATION_SCORES[defaultLoc];
-  const locationScore = useMemo(() => {
-    if (!locationData) return null;
-    return calculateInspectionReadiness(locationData.foodOps, locationData.foodDocs, locationData.fireOps, locationData.fireDocs);
-  }, [locationData]);
+  const jieKey = FAC_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
+  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen';
 
-  const locationName = locationData?.name || 'Downtown Kitchen';
-  const fireScore = locationScore?.fireSafety.score ?? 0;
-  const fireOps = locationScore?.fireSafety.ops ?? 0;
-  const fireDocs = locationScore?.fireSafety.docs ?? 0;
+  const fireGrade = override?.fireSafety?.grade || 'Pending';
+  const fireDisplay = override?.fireSafety?.gradeDisplay || 'Pending Verification';
+  const fireSummary = override?.fireSafety?.summary || '';
+  const fireStatus = override?.fireSafety?.status || 'unknown';
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -180,15 +186,24 @@ export default function FacilitiesDashboardNew() {
         <span className="text-sm text-gray-500">Today: {today}</span>
       </div>
 
-      {/* Fire Safety Hero */}
+      {/* Fire Safety Hero — Jurisdiction-Native */}
       <Card>
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <Flame size={24} style={{ color: getReadinessColor(fireScore) }} />
-            <span className="font-bold" style={{ fontSize: 28, color: getReadinessColor(fireScore) }}>
-              {fireScore}
-            </span>
-            <span className="text-sm font-semibold text-gray-700 ml-1">Fire Safety</span>
+          <div className="flex items-center gap-3">
+            <Flame size={24} style={{ color: fireStatus === 'passing' ? '#16a34a' : '#dc2626' }} />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-gray-700">Fire Safety</span>
+                <span className={`text-sm font-bold px-2.5 py-0.5 rounded-full ${
+                  fireStatus === 'passing'
+                    ? 'bg-green-50 text-green-700'
+                    : 'bg-red-50 text-red-700'
+                }`}>
+                  {fireGrade}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
+            </div>
           </div>
           <div className="flex items-center gap-1.5 bg-gray-100 px-2.5 py-1 rounded-full">
             <Wrench size={14} className="text-gray-500" />
@@ -196,19 +211,34 @@ export default function FacilitiesDashboardNew() {
           </div>
         </div>
 
-        {/* Main progress bar */}
-        <div className="w-full bg-gray-200 rounded-full mb-4" style={{ height: 10 }}>
-          <div
-            className="rounded-full"
-            style={{
-              width: `${fireScore}%`,
-              height: 10,
-              backgroundColor: getReadinessColor(fireScore),
-            }}
-          />
-        </div>
+        {/* Fire AHJ */}
+        <p className="text-xs text-gray-400 mb-3">{fireSummary}</p>
 
-        {/* Sub-scores hidden from main surface — visible only in drill-down */}
+        {/* Status indicators */}
+        {override && (
+          <div className="grid grid-cols-4 gap-2">
+            {([
+              { label: 'Permit', status: override.fireSafety.permitStatus },
+              { label: 'Hood', status: override.fireSafety.hoodStatus },
+              { label: 'Extinguishers', status: override.fireSafety.extinguisherStatus },
+              { label: 'Ansul', status: override.fireSafety.ansulStatus },
+            ] as const).map(item => {
+              const dotColor = item.status === 'current' ? '#16a34a'
+                : item.status === 'due_soon' || item.status === 'expiring' ? '#d97706'
+                : '#dc2626';
+              const label = item.status === 'current' ? 'Current'
+                : item.status === 'due_soon' || item.status === 'expiring' ? 'Due Soon'
+                : 'Overdue';
+              return (
+                <div key={item.label} className="text-center p-2 rounded-lg bg-gray-50">
+                  <span className="inline-block w-2.5 h-2.5 rounded-full mb-1" style={{ backgroundColor: dotColor }} />
+                  <p className="text-[11px] font-medium text-gray-700">{item.label}</p>
+                  <p className="text-[10px] text-gray-400">{label}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </Card>
 
       {/* Needs Attention */}

@@ -292,6 +292,91 @@ export const DEMO_LOCATIONS = [
 ];
 
 // ═══════════════════════════════════════════════════════════
+// VERIFIED DEMO DISPLAY OVERRIDES
+// Spec-exact display strings for the 3 demo locations.
+// These bypass calculateDemoGrade() math — used by the
+// dashboard components to show jurisdiction-native grades.
+// ═══════════════════════════════════════════════════════════
+
+export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
+  foodSafety: {
+    grade: string;
+    gradeDisplay: string;
+    summary: string;
+    status: 'passing' | 'failing' | 'at_risk';
+    details: Record<string, any>;
+  };
+  fireSafety: {
+    grade: string;
+    gradeDisplay: string;
+    summary: string;
+    status: 'passing' | 'failing' | 'at_risk';
+    permitStatus: 'current' | 'expiring' | 'expired';
+    hoodStatus: 'current' | 'due_soon' | 'overdue';
+    extinguisherStatus: 'current' | 'due_soon' | 'expired';
+    ansulStatus: 'current' | 'due_soon' | 'overdue';
+  };
+}> = {
+  'demo-loc-downtown': {
+    foodSafety: {
+      grade: 'Pass',
+      gradeDisplay: 'No Open Majors',
+      summary: '2 minor — corrected on-site',
+      status: 'passing',
+      details: { majorViolations: 0, minorViolations: 2, uncorrectedMajors: 0 },
+    },
+    fireSafety: {
+      grade: 'Pass',
+      gradeDisplay: 'Pass — Operational Permit Current',
+      summary: 'City of Fresno Fire Department',
+      status: 'passing',
+      permitStatus: 'current',
+      hoodStatus: 'current',
+      extinguisherStatus: 'current',
+      ansulStatus: 'current',
+    },
+  },
+  'demo-loc-airport': {
+    foodSafety: {
+      grade: 'Satisfactory',
+      gradeDisplay: 'Satisfactory',
+      summary: '9 violation points · Good: 0–6 · Satisfactory: 7–13 · Unsatisfactory: 14+',
+      status: 'passing',
+      details: { totalPoints: 9, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0 },
+    },
+    fireSafety: {
+      grade: 'Pass',
+      gradeDisplay: 'Pass — Operational Permit Current',
+      summary: 'Merced County Fire Dept (CAL FIRE MMU)',
+      status: 'passing',
+      permitStatus: 'current',
+      hoodStatus: 'due_soon',
+      extinguisherStatus: 'current',
+      ansulStatus: 'due_soon',
+    },
+  },
+  'demo-loc-university': {
+    foodSafety: {
+      grade: 'Reinspection Required',
+      gradeDisplay: '3 Major Open',
+      summary: '3 major violations — reinspection required',
+      status: 'failing',
+      details: { majorViolations: 3, minorViolations: 1, uncorrectedMajors: 3 },
+    },
+    fireSafety: {
+      grade: 'Pass',
+      gradeDisplay: 'Pass — Operational Permit Current',
+      summary: 'Modesto Fire Department',
+      status: 'passing',
+      permitStatus: 'current',
+      hoodStatus: 'overdue',
+      extinguisherStatus: 'current',
+      ansulStatus: 'current',
+    },
+  },
+};
+
+// ═══════════════════════════════════════════════════════════
 // SCORING HELPER — Demo mode score calculator
 // Mirrors the live scoring engine but runs 100% locally
 // ═══════════════════════════════════════════════════════════

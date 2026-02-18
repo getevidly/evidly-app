@@ -10,10 +10,7 @@ import {
   ClipboardCheck,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
-import {
-  DEMO_LOCATION_SCORES,
-  calculateInspectionReadiness,
-} from '../../utils/inspectionReadiness';
+import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 
 // --------------- Demo Data ---------------
 
@@ -129,15 +126,20 @@ export default function KitchenManagerDashboard() {
   const hasMultipleLocations = accessibleLocations.length > 1;
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
-  // Get scores for the selected location
-  const locationData = DEMO_LOCATION_SCORES[selectedLocationUrlId];
-  const locationScore = useMemo(() => {
-    if (!locationData) return null;
-    return calculateInspectionReadiness(locationData.foodOps, locationData.foodDocs, locationData.fireOps, locationData.fireDocs);
-  }, [locationData]);
+  // Jurisdiction-native grades for selected location
+  const jieKey = `demo-loc-${selectedLocationUrlId}`;
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
+  const foodGrade = override?.foodSafety?.gradeDisplay || 'Pending';
+  const foodStatus = override?.foodSafety?.status || 'unknown';
+  const fireGrade = override?.fireSafety?.grade || 'Pending';
+  const fireStatus = override?.fireSafety?.status || 'unknown';
 
-  const locationName = locationData?.name || 'Downtown Kitchen';
-  const readinessScore = locationScore?.overall ?? 0;
+  const KM_LOC_NAMES: Record<string, string> = {
+    downtown: 'Downtown Kitchen',
+    airport: 'Airport Cafe',
+    university: 'University Dining',
+  };
+  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -156,10 +158,19 @@ export default function KitchenManagerDashboard() {
           <MapPin size={18} style={{ color: '#1e4d6b' }} />
           <h2 className="text-lg font-semibold text-gray-900">{locationName}</h2>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <span className="text-sm text-gray-500">Today: {today}</span>
-          <span className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
-            Readiness: {readinessScore}
+          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+            foodStatus === 'passing' ? 'bg-green-50 text-green-700'
+              : foodStatus === 'failing' ? 'bg-red-50 text-red-700'
+              : 'bg-amber-50 text-amber-700'
+          }`}>
+            {foodGrade}
+          </span>
+          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+            fireStatus === 'passing' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+          }`}>
+            Fire: {fireGrade}
           </span>
         </div>
       </div>

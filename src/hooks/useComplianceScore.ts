@@ -11,7 +11,7 @@
 
 import { useState, useEffect } from 'react';
 import type { LocationScore, LocationJurisdiction, AuthorityScore } from '../types/jurisdiction';
-import { DEMO_LOCATIONS, calculateDemoGrade } from '../data/demoJurisdictions';
+import { DEMO_LOCATIONS, DEMO_LOCATION_GRADE_OVERRIDES, calculateDemoGrade } from '../data/demoJurisdictions';
 
 // SUGGESTION: In live mode, call the calculate-compliance-score Edge Function
 
@@ -19,6 +19,24 @@ function buildFoodSafetyScore(
   locationId: string,
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
+  // Check for verified override first (spec-exact display strings)
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
+  if (override) {
+    return {
+      pillar: 'food_safety',
+      authority: jurisdiction.foodSafety,
+      grade: override.foodSafety.grade,
+      gradeDisplay: override.foodSafety.gradeDisplay,
+      numericScore: null, // jurisdiction-native — no fabricated numeric score
+      status: override.foodSafety.status,
+      details: {
+        summary: override.foodSafety.summary,
+        ...override.foodSafety.details,
+      },
+    };
+  }
+
+  // Fallback: derive from calculateDemoGrade (for jurisdiction switcher demo)
   const loc = DEMO_LOCATIONS.find(l => l.id === locationId);
   if (!loc) {
     return {
@@ -39,7 +57,7 @@ function buildFoodSafetyScore(
     authority: jurisdiction.foodSafety,
     grade: gradeResult.grade,
     gradeDisplay: gradeResult.display,
-    numericScore: loc.score,
+    numericScore: null,
     status: gradeResult.passFail === 'pass' ? 'passing'
       : gradeResult.passFail === 'fail' ? 'failing'
       : gradeResult.passFail === 'warning' ? 'at_risk'
@@ -57,9 +75,29 @@ function buildFireSafetyScore(
   locationId: string,
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
+  // Check for verified override first
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
+  if (override) {
+    return {
+      pillar: 'fire_safety',
+      authority: jurisdiction.fireSafety,
+      grade: override.fireSafety.grade,
+      gradeDisplay: override.fireSafety.gradeDisplay,
+      numericScore: null, // fire is pass/fail per 2025 CFC — no numeric score
+      status: override.fireSafety.status,
+      details: {
+        summary: override.fireSafety.summary,
+        codeEdition: '2025 CFC',
+        permitStatus: override.fireSafety.permitStatus,
+        hoodStatus: override.fireSafety.hoodStatus,
+        extinguisherStatus: override.fireSafety.extinguisherStatus,
+        ansulStatus: override.fireSafety.ansulStatus,
+      },
+    };
+  }
+
+  // Fallback for non-overridden locations
   const loc = DEMO_LOCATIONS.find(l => l.id === locationId);
-  // Demo: all fire AHJ inspections pass (operational permit current)
-  // Fire safety is pass/fail per 2025 CFC — no numeric score
   const operationalPermitValid = loc ? loc.fireSafety.ops >= 70 : true;
 
   return {
@@ -69,7 +107,7 @@ function buildFireSafetyScore(
     gradeDisplay: operationalPermitValid
       ? 'Pass \u2014 Operational Permit Current'
       : 'Fail \u2014 Permit Expired/Denied',
-    numericScore: null, // fire is pass/fail per 2025 CFC — no numeric score
+    numericScore: null,
     status: operationalPermitValid ? 'passing' : 'failing',
     details: {
       operationalPermitValid,

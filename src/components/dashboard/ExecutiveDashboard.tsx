@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  UtensilsCrossed, Flame, ChevronRight, X, AlertTriangle, ShieldAlert,
+  UtensilsCrossed, Flame, X, AlertTriangle, ShieldAlert,
   Thermometer, ClipboardList,
   CheckCircle2, BarChart3, LineChart as LineChartIcon, Shield,
   Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
@@ -11,16 +11,14 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 } from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
+import { useAllComplianceScores } from '../../hooks/useComplianceScore';
+import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import {
   LOCATIONS_WITH_SCORES,
   DEMO_ORG,
-  DEMO_ORG_SCORES,
   DEMO_WEEKLY_ACTIVITY,
-  DEMO_ATTENTION_ITEMS,
   DEMO_TREND_DATA,
-  calcPillar,
-  getLocationScoreColor,
-  getLocationStatusLabel,
 } from '../../data/demoData';
 
 // ================================================================
@@ -34,6 +32,16 @@ const BODY_TEXT = '#1e293b';
 const MUTED = '#94a3b8';
 
 const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
+
+// ================================================================
+// JIE LOCATION MAP
+// ================================================================
+
+const JIE_LOC_MAP: Record<string, string> = {
+  'downtown': 'demo-loc-downtown',
+  'airport': 'demo-loc-airport',
+  'university': 'demo-loc-university',
+};
 
 // ================================================================
 // KEYFRAMES
@@ -73,278 +81,6 @@ function getFormattedDate(): string {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   });
-}
-
-function scoreColor(s: number): string {
-  return getLocationScoreColor(s);
-}
-
-// ================================================================
-// SCORE RING — DARK BG (header, 120px)
-// ================================================================
-
-function ScoreRing({ score, size = 120, stroke = 8, fontSize = 40, onClick }: {
-  score: number; size?: number; stroke?: number; fontSize?: number; onClick?: () => void;
-}) {
-  const r = (size - stroke) / 2;
-  const C = 2 * Math.PI * r;
-  const off = C - (score / 100) * C;
-  const color = score >= 85 ? GOLD : score >= 70 ? '#d97706' : '#dc2626';
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="relative group"
-      style={{ width: size, height: size, cursor: onClick ? 'pointer' : 'default' }}
-      title={onClick ? 'View org-wide breakdown' : undefined}
-    >
-      <svg width={size} height={size} className="transform -rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="rgba(255,255,255,0.10)" strokeWidth={stroke} fill="none" />
-        <circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none"
-          strokeLinecap="round"
-          style={{
-            '--circ': `${C}`, '--off': `${off}`,
-            strokeDasharray: C, strokeDashoffset: off,
-            animation: 'ringDraw 1s ease-out 0.3s both',
-          } as React.CSSProperties}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-white" style={{ fontSize, fontWeight: 800, letterSpacing: '-1px' }}>{score}</span>
-      </div>
-      {onClick && (
-        <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-white/20 transition-colors" />
-      )}
-    </button>
-  );
-}
-
-// ================================================================
-// SCORE RING — LIGHT BG (location cards, 80px)
-// ================================================================
-
-function ScoreRingLight({ score, size = 80, stroke = 6, fontSize = 24 }: {
-  score: number; size?: number; stroke?: number; fontSize?: number;
-}) {
-  const r = (size - stroke) / 2;
-  const C = 2 * Math.PI * r;
-  const off = C - (score / 100) * C;
-  const c = scoreColor(score);
-
-  return (
-    <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="transform -rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="#e2e8f0" strokeWidth={stroke} fill="none" />
-        <circle cx={size / 2} cy={size / 2} r={r} stroke={c} strokeWidth={stroke} fill="none"
-          strokeLinecap="round" strokeDasharray={C} strokeDashoffset={off}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span style={{ fontSize, fontWeight: 700, color: c }}>{score}</span>
-      </div>
-    </div>
-  );
-}
-
-// ================================================================
-// DRILL-DOWN MODALS
-// ================================================================
-
-type ModalType =
-  | { kind: 'org-overall' }
-  | { kind: 'org-pillar'; pillar: 'food' | 'fire' }
-  | { kind: 'location-pillar'; locationId: string; pillar: 'food' | 'fire' };
-
-function DrillDownModal({ modal, onClose }: { modal: ModalType; onClose: () => void }) {
-  const locs = LOCATIONS_WITH_SCORES;
-
-  let title = '';
-  let content: React.ReactNode = null;
-
-  if (modal.kind === 'org-overall') {
-    title = 'Inspection Readiness — All Locations';
-    content = (
-      <div className="space-y-4">
-        {locs.map(loc => (
-          <div key={loc.id} className="flex items-center gap-4 p-3 rounded-lg bg-gray-50">
-            <ScoreRingLight score={loc.score} size={56} stroke={4} fontSize={18} />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold" style={{ color: BODY_TEXT }}>{loc.name}</p>
-              <div className="flex gap-4 mt-1 text-xs text-gray-500">
-                <span>Food Safety: <strong style={{ color: scoreColor(loc.foodScore) }}>{loc.foodScore}</strong></span>
-                <span>Fire Safety: <strong style={{ color: scoreColor(loc.fireScore) }}>{loc.fireScore}</strong></span>
-              </div>
-            </div>
-            <span className="text-xs font-medium px-2 py-1 rounded-full"
-              style={{ backgroundColor: scoreColor(loc.score) + '18', color: scoreColor(loc.score) }}>
-              {getLocationStatusLabel(loc.score)}
-            </span>
-          </div>
-        ))}
-      </div>
-    );
-  } else if (modal.kind === 'org-pillar') {
-    const isFood = modal.pillar === 'food';
-    title = isFood ? 'Food Safety — All Locations' : 'Fire Safety — All Locations';
-    content = (
-      <div className="space-y-4">
-        {locs.map(loc => {
-          const pillarData = isFood ? loc.foodSafety : loc.fireSafety;
-          const pillarScore = isFood ? loc.foodScore : loc.fireScore;
-          return (
-            <div key={loc.id} className="p-3 rounded-lg bg-gray-50">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold" style={{ color: BODY_TEXT }}>{loc.name}</p>
-                <span className="text-lg font-bold" style={{ color: scoreColor(pillarScore) }}>{pillarScore}</span>
-              </div>
-              <div className="h-2 rounded-full bg-gray-200 overflow-hidden mb-3">
-                <div className="h-full rounded-full" style={{ width: `${pillarScore}%`, backgroundColor: scoreColor(pillarScore) }} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-2 rounded bg-white">
-                  <p className="text-xs text-gray-500 mb-1">Operations</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold" style={{ color: scoreColor(pillarData.ops) }}>{pillarData.ops}</span>
-                    <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: `${pillarData.ops}%`, backgroundColor: scoreColor(pillarData.ops) }} />
-                    </div>
-                  </div>
-                </div>
-                <div className="p-2 rounded bg-white">
-                  <p className="text-xs text-gray-500 mb-1">Documentation</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold" style={{ color: scoreColor(pillarData.docs) }}>{pillarData.docs}</span>
-                    <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
-                      <div className="h-full rounded-full" style={{ width: `${pillarData.docs}%`, backgroundColor: scoreColor(pillarData.docs) }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  } else if (modal.kind === 'location-pillar') {
-    const loc = locs.find(l => l.id === modal.locationId) || locs[0];
-    const isFood = modal.pillar === 'food';
-    const pillarData = isFood ? loc.foodSafety : loc.fireSafety;
-    const pillarScore = isFood ? loc.foodScore : loc.fireScore;
-    const pillarIcon = isFood ? '\uD83C\uDF7D\uFE0F' : '\uD83D\uDD25';
-    title = `${pillarIcon} ${isFood ? 'Food Safety' : 'Fire Safety'} — ${loc.name}`;
-
-    const opsItems = isFood
-      ? ['Temperature logging compliance', 'Daily checklists completion', 'Incident response time', 'HACCP monitoring']
-      : ['Hood cleaning schedule', 'Fire suppression system', 'Fire extinguisher inspections', 'Equipment maintenance'];
-    const docsItems = isFood
-      ? ['Food handler certifications', 'Health permits', 'HACCP plans', 'Training records']
-      : ['Fire suppression certificates', 'Insurance COIs', 'Inspection reports', 'Service contracts'];
-
-    content = (
-      <div className="space-y-4">
-        <div className="text-center mb-2">
-          <span className="text-4xl font-bold" style={{ color: scoreColor(pillarScore) }}>{pillarScore}</span>
-          <p className="text-xs text-gray-500 mt-1">{isFood ? 'Food Safety' : 'Fire Safety'} Score</p>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-lg bg-gray-50">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-gray-700">Operations</p>
-              <span className="text-lg font-bold" style={{ color: scoreColor(pillarData.ops) }}>{pillarData.ops}</span>
-            </div>
-            <div className="h-2 rounded-full bg-gray-200 overflow-hidden mb-3">
-              <div className="h-full rounded-full" style={{ width: `${pillarData.ops}%`, backgroundColor: scoreColor(pillarData.ops) }} />
-            </div>
-            <ul className="space-y-1.5">
-              {opsItems.map((item, i) => (
-                <li key={i} className="text-xs text-gray-500 flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="p-4 rounded-lg bg-gray-50">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-semibold text-gray-700">Documentation</p>
-              <span className="text-lg font-bold" style={{ color: scoreColor(pillarData.docs) }}>{pillarData.docs}</span>
-            </div>
-            <div className="h-2 rounded-full bg-gray-200 overflow-hidden mb-3">
-              <div className="h-full rounded-full" style={{ width: `${pillarData.docs}%`, backgroundColor: scoreColor(pillarData.docs) }} />
-            </div>
-            <ul className="space-y-1.5">
-              {docsItems.map((item, i) => (
-                <li key={i} className="text-xs text-gray-500 flex items-center gap-1.5">
-                  <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/40" />
-      <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-[500px] max-h-[85vh] overflow-y-auto"
-        onClick={e => e.stopPropagation()}
-        style={{ animation: 'fadeInUp 0.25s ease-out' }}
-      >
-        <div className="sticky top-0 flex items-center justify-between p-4 border-b bg-white rounded-t-2xl z-10">
-          <h3 className="text-base font-semibold" style={{ color: BODY_TEXT }}>{title}</h3>
-          <button type="button" onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 transition-colors">
-            <X size={18} className="text-gray-400" />
-          </button>
-        </div>
-        <div className="p-4">{content}</div>
-      </div>
-    </div>
-  );
-}
-
-// ================================================================
-// HEADER PILLAR CARD (clickable)
-// ================================================================
-
-function HeaderPillarCard({ icon, label, score, onClick }: {
-  icon: React.ReactNode; label: string; score: number; onClick: () => void;
-}) {
-  const barColor = score >= 85 ? '#16a34a' : score >= 70 ? '#d97706' : '#dc2626';
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-xl p-4 transition-all"
-      style={{
-        backgroundColor: 'rgba(255,255,255,0.08)',
-        width: 180,
-        textAlign: 'center',
-        border: '1px solid transparent',
-      }}
-      onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.12)';
-        (e.currentTarget as HTMLElement).style.borderColor = GOLD + '40';
-      }}
-      onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.08)';
-        (e.currentTarget as HTMLElement).style.borderColor = 'transparent';
-      }}
-    >
-      <div className="flex items-center justify-center gap-1.5 mb-2">
-        {icon}
-        <span className="text-[13px] text-white" style={{ opacity: 0.7 }}>{label}</span>
-      </div>
-      <div className="text-white leading-none mb-2" style={{ fontSize: 32, fontWeight: 800 }}>{score}</div>
-      <div className="h-[3px] rounded-full overflow-hidden mx-4" style={{ backgroundColor: 'rgba(255,255,255,0.12)' }}>
-        <div className="h-full rounded-full" style={{ width: `${score}%`, backgroundColor: barColor }} />
-      </div>
-    </button>
-  );
 }
 
 // ================================================================
@@ -472,21 +208,26 @@ function WidgetKPIs() {
 }
 
 // ================================================================
-// WIDGET: Location Performance
+// WIDGET: Location Status
 // ================================================================
 
-function WidgetLocations({ onPillarClick, navigate }: {
-  onPillarClick: (locationId: string, pillar: 'food' | 'fire') => void;
+function WidgetLocations({ jieScores, jurisdictions, navigate }: {
+  jieScores: Record<string, LocationScore>;
+  jurisdictions: Record<string, LocationJurisdiction>;
   navigate: (path: string) => void;
 }) {
   return (
     <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Location Performance</h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Location Status</h4>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {LOCATIONS_WITH_SCORES.map(loc => {
-          const statusLabel = getLocationStatusLabel(loc.score);
-          const c = scoreColor(loc.score);
-          const trendSign = loc.trend >= 0 ? '+' : '';
+          const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+          const score = jieScores[jieLocId];
+          const jur = jurisdictions[jieLocId];
+
+          const foodStatus = score?.foodSafety?.status || 'unknown';
+          const foodStatusColor = foodStatus === 'passing' ? '#16a34a' : foodStatus === 'failing' ? '#dc2626' : foodStatus === 'at_risk' ? '#d97706' : '#6b7280';
+
           return (
             <div
               key={loc.id}
@@ -501,46 +242,46 @@ function WidgetLocations({ onPillarClick, navigate }: {
                 (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
               }}
             >
-              {/* Name + Status */}
+              {/* Name + County */}
               <div className="flex items-center justify-between mb-3">
                 <h5 className="text-sm font-bold" style={{ color: BODY_TEXT }}>{loc.name}</h5>
-                <span className="text-[11px] font-medium px-2 py-0.5 rounded-full"
-                  style={{ backgroundColor: c + '18', color: c }}>
-                  {statusLabel}
-                </span>
+                {jur?.county && (
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                    {jur.county} County
+                  </span>
+                )}
               </div>
 
-              {/* Score Ring */}
-              <div className="flex flex-col items-center mb-3">
-                <ScoreRingLight score={loc.score} />
-                <p className="text-xs text-gray-400 mt-2">{trendSign}{loc.trend} vs last week</p>
-              </div>
-
-              {/* Two pillar rows — clickable */}
-              <div className="space-y-1.5 mb-3">
-                {([
-                  { key: 'food' as const, icon: <UtensilsCrossed size={14} />, label: 'Food Safety', score: loc.foodScore },
-                  { key: 'fire' as const, icon: <Flame size={14} />, label: 'Fire Safety', score: loc.fireScore },
-                ]).map(p => (
-                  <button
-                    key={p.key}
-                    type="button"
-                    onClick={() => onPillarClick(loc.id, p.key)}
-                    className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors text-left"
-                  >
-                    <span style={{ color: MUTED }}>{p.icon}</span>
-                    <span className="text-[13px] text-gray-700 flex-1">{p.label}</span>
-                    <span className="text-sm font-bold" style={{ color: scoreColor(p.score) }}>{p.score}</span>
-                    <ChevronRight size={14} className="text-gray-300" />
-                  </button>
-                ))}
-                <div className="grid grid-cols-2 gap-2 px-2 pt-1">
-                  {[loc.foodScore, loc.fireScore].map((s, i) => (
-                    <div key={i} className="h-1.5 rounded-full overflow-hidden bg-gray-100">
-                      <div className="h-full rounded-full" style={{ width: `${s}%`, backgroundColor: scoreColor(s) }} />
-                    </div>
-                  ))}
+              {/* Food Safety */}
+              <div className="p-3 rounded-lg mb-2" style={{ borderLeft: `3px solid ${foodStatusColor}`, backgroundColor: '#fafbfc' }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <UtensilsCrossed size={14} style={{ color: MUTED }} />
+                  <span className="text-[13px] text-gray-700 flex-1">Food Safety</span>
+                  <span className="text-sm font-bold" style={{ color: foodStatusColor }}>
+                    {score?.foodSafety?.gradeDisplay || 'Pending'}
+                  </span>
                 </div>
+                {score?.foodSafety?.details?.summary && (
+                  <p className="text-[11px] text-gray-500 ml-6">{score.foodSafety.details.summary}</p>
+                )}
+              </div>
+
+              {/* Fire Safety */}
+              <div className="p-3 rounded-lg mb-3" style={{ backgroundColor: '#f8fafc' }}>
+                <div className="flex items-center gap-2">
+                  <Flame size={14} style={{ color: MUTED }} />
+                  <span className="text-[13px] text-gray-700 flex-1">Fire Safety</span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    score?.fireSafety?.status === 'passing'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-red-50 text-red-700'
+                  }`}>
+                    {score?.fireSafety?.grade || 'Pending'}
+                  </span>
+                </div>
+                {jur?.fireSafety?.agency_name && (
+                  <p className="text-[10px] text-gray-400 ml-6 mt-0.5">{jur.fireSafety.agency_name}</p>
+                )}
               </div>
 
               {/* View Details */}
@@ -564,20 +305,32 @@ function WidgetLocations({ onPillarClick, navigate }: {
 // WIDGET: Trend & Attention (2-column)
 // ================================================================
 
-function WidgetTrendAttention({ navigate }: { navigate: (path: string) => void }) {
+function WidgetTrendAttention({ navigate, jieScores }: {
+  navigate: (path: string) => void;
+  jieScores: Record<string, LocationScore>;
+}) {
   const trendData = useMemo(() => DEMO_TREND_DATA, []);
 
-  const allLocations = LOCATIONS_WITH_SCORES.map(loc => ({
-    ...loc,
-    statusType: loc.score >= 85 ? 'good' as const : loc.score >= 70 ? 'attention' as const : 'critical' as const,
-    description: loc.score < 70
-      ? 'Score below 70. 3 equipment inspections overdue. Fire suppression certificate expires in 12 days.'
-      : loc.score < 85
-        ? '3 out-of-range temperature readings this week. Walk-in cooler trending warm.'
-        : 'All pillars above threshold. Operations running smoothly.',
-    actionLabel: loc.score < 70 ? 'Take Action' : loc.score < 85 ? 'View Details' : '',
-    route: loc.score < 85 ? `/dashboard?location=${loc.id}` : '',
-  })).sort((a, b) => a.score - b.score);
+  const allLocations = LOCATIONS_WITH_SCORES.map(loc => {
+    const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+    const score = jieScores[jieLocId];
+    const foodStatus = score?.foodSafety?.status || 'unknown';
+    const statusType = foodStatus === 'failing' ? 'critical' as const
+      : foodStatus === 'at_risk' ? 'attention' as const
+      : 'good' as const;
+    const gradeDisplay = score?.foodSafety?.gradeDisplay || 'Pending';
+    const description = statusType === 'critical'
+      ? 'Reinspection required. Uncorrected major violations found during last inspection.'
+      : statusType === 'attention'
+        ? 'At risk. Review operational items and address flagged concerns.'
+        : 'All authorities passing. Operations running smoothly.';
+    const actionLabel = statusType === 'critical' ? 'Take Action' : statusType === 'attention' ? 'View Details' : '';
+    const route = statusType !== 'good' ? `/dashboard?location=${loc.id}` : '';
+    return { ...loc, statusType, gradeDisplay, description, actionLabel, route };
+  }).sort((a, b) => {
+    const order = { critical: 0, attention: 1, good: 2 };
+    return order[a.statusType] - order[b.statusType];
+  });
 
   return (
     <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
@@ -585,7 +338,8 @@ function WidgetTrendAttention({ navigate }: { navigate: (path: string) => void }
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Trend Chart */}
         <div>
-          <p className="text-[11px] font-medium text-gray-500 mb-3">Inspection Readiness — 30 Days</p>
+          <p className="text-[11px] font-medium text-gray-500 mb-1">EvidLY Operational Readiness — 30 Days</p>
+          <p className="text-[10px] text-gray-400 mb-3">EvidLY Operational Readiness (internal tracking)</p>
           <div className="flex items-center gap-4 mb-2 text-[11px]">
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: GOLD }} /> Overall</span>
             <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#16a34a' }} /> Food Safety</span>
@@ -606,10 +360,10 @@ function WidgetTrendAttention({ navigate }: { navigate: (path: string) => void }
                 <RechartsTooltip
                   contentStyle={{ backgroundColor: '#0d2847', border: 'none', borderRadius: 8, fontSize: 12, color: '#fff' }}
                   labelStyle={{ color: MUTED, fontSize: 11 }}
-                  formatter={(v: number, name: string) => {
+                  formatter={((v: number | undefined, name: string) => {
                     const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
-                    return [String(v), labels[name] || name];
-                  }}
+                    return [String(v ?? ''), labels[name] || name];
+                  }) as any}
                 />
                 <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#execGoldGrad)" dot={false} activeDot={{ r: 4, fill: GOLD }} name="overall" />
                 <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="foodSafety" />
@@ -636,7 +390,7 @@ function WidgetTrendAttention({ navigate }: { navigate: (path: string) => void }
                     <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
                     <span className="text-xs font-bold px-2 py-0.5 rounded-full"
                       style={{ color: borderColor, backgroundColor: borderColor + '15' }}>
-                      {loc.score}
+                      {loc.gradeDisplay}
                     </span>
                   </div>
                   <p className="text-[12px] text-gray-600 leading-relaxed mb-2">{loc.description}</p>
@@ -673,7 +427,7 @@ interface WidgetConfig {
 
 const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
   { id: 'kpis', label: "This Week's Performance", icon: <BarChart3 size={14} />, visible: true },
-  { id: 'locations', label: 'Location Performance', icon: <Users size={14} />, visible: true },
+  { id: 'locations', label: 'Location Status', icon: <Users size={14} />, visible: true },
   { id: 'trendAttention', label: 'Trend & Attention', icon: <LineChartIcon size={14} />, visible: true },
 ];
 
@@ -752,10 +506,14 @@ function EvidlyFooter() {
 
 export default function ExecutiveDashboard() {
   const navigate = useNavigate();
-  const { companyName } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
 
-  // Drill-down modal
-  const [modal, setModal] = useState<ModalType | null>(null);
+  const jieLocIds = useMemo(
+    () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
+    [],
+  );
+  const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
+  const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
   // Dismissed alerts (session-only)
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
@@ -787,8 +545,8 @@ export default function ExecutiveDashboard() {
   const renderWidget = (wid: string) => {
     switch (wid) {
       case 'kpis': return <WidgetKPIs />;
-      case 'locations': return <WidgetLocations onPillarClick={(locId, pillar) => setModal({ kind: 'location-pillar', locationId: locId, pillar })} navigate={navigate} />;
-      case 'trendAttention': return <WidgetTrendAttention navigate={navigate} />;
+      case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} />;
+      case 'trendAttention': return <WidgetTrendAttention navigate={navigate} jieScores={jieScores} />;
       default: return null;
     }
   };
@@ -843,35 +601,68 @@ export default function ExecutiveDashboard() {
           </div>
         </div>
 
-        {/* Center: Score Ring + Pillar Cards */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10" style={stagger(1)}>
-          <div className="flex flex-col items-center">
-            <ScoreRing
-              score={DEMO_ORG_SCORES.overall}
-              onClick={() => setModal({ kind: 'org-overall' })}
-            />
-            <div className="flex items-center gap-1.5 mt-3">
-              <span className="text-sm" style={{ color: '#22c55e' }}>&uarr;</span>
-              <span className="text-sm text-blue-100">2.3 vs last week</span>
+        {/* Dual-Authority Jurisdiction Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 mt-2" style={stagger(1)}>
+          {/* Food Safety */}
+          <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center gap-2 mb-3">
+              <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
+              <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Food Safety</span>
+              <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>
+                {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
+              </span>
             </div>
-            <p className="text-[10px] uppercase text-white mt-1" style={{ letterSpacing: '0.1em', opacity: 0.5 }}>
-              Inspection Readiness
-            </p>
+            <div className="space-y-2">
+              {LOCATIONS_WITH_SCORES.map(loc => {
+                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+                const score = jieScores[jieLocId];
+                const jur = jurisdictions[jieLocId];
+                const statusColor = score?.foodSafety?.status === 'passing' ? '#22c55e'
+                  : score?.foodSafety?.status === 'failing' ? '#ef4444'
+                  : score?.foodSafety?.status === 'at_risk' ? '#f59e0b' : '#6b7280';
+                return (
+                  <div key={loc.id} className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: statusColor }} />
+                    <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                    <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                      {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
+                    </span>
+                    <span className="text-xs font-semibold text-white">
+                      {score?.foodSafety?.gradeDisplay || 'Pending'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="flex gap-3" style={stagger(2)}>
-            <HeaderPillarCard
-              icon={<UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />}
-              label="Food Safety"
-              score={DEMO_ORG_SCORES.foodSafety}
-              onClick={() => setModal({ kind: 'org-pillar', pillar: 'food' })}
-            />
-            <HeaderPillarCard
-              icon={<Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />}
-              label="Fire Safety"
-              score={DEMO_ORG_SCORES.fireSafety}
-              onClick={() => setModal({ kind: 'org-pillar', pillar: 'fire' })}
-            />
+          {/* Fire Safety */}
+          <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+            <div className="flex items-center gap-2 mb-3">
+              <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
+              <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
+              <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>2025 CFC</span>
+            </div>
+            <div className="space-y-2">
+              {LOCATIONS_WITH_SCORES.map(loc => {
+                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+                const score = jieScores[jieLocId];
+                const jur = jurisdictions[jieLocId];
+                const isPassing = score?.fireSafety?.status === 'passing';
+                return (
+                  <div key={loc.id} className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
+                    <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                    <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                      {jur?.fireSafety?.agency_name || ''}
+                    </span>
+                    <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                      {score?.fireSafety?.grade || 'Pending'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -979,9 +770,6 @@ export default function ExecutiveDashboard() {
 
       {/* Strategic Actions Bar (fixed bottom — NOT customizable) */}
       <StrategicActionsBar navigate={navigate} />
-
-      {/* Drill-Down Modal */}
-      {modal && <DrillDownModal modal={modal} onClose={() => setModal(null)} />}
     </div>
   );
 }

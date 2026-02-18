@@ -5,7 +5,8 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
-import { locations as demoLocations, locationScores } from '../../data/demoData';
+import { locations as demoLocations } from '../../data/demoData';
+import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import {
   getNavItemsForRole,
   checkTestMode,
@@ -15,12 +16,17 @@ import {
   type SidebarNavItem,
 } from '../../config/sidebarConfig';
 
-// ── Score color helper ───────────────────────────────────
+// ── Jurisdiction status dot color ─────────────────────────
 
-function getScoreColor(score: number): string {
-  if (score >= 85) return '#16a34a';
-  if (score >= 70) return '#d97706';
-  return '#dc2626';
+function getStatusDotColor(locUrlId: string): string {
+  const overrideKey = `demo-loc-${locUrlId}`;
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
+  if (!override) return '#6b7280'; // gray for unknown
+  const foodStatus = override.foodSafety.status;
+  if (foodStatus === 'failing') return '#dc2626';
+  if (foodStatus === 'at_risk') return '#d97706';
+  if (foodStatus === 'passing') return '#16a34a';
+  return '#6b7280';
 }
 
 const STORAGE_KEY = 'evidly-sidebar-collapsed';
@@ -225,8 +231,7 @@ export function Sidebar() {
               )}
             </div>
             {visibleLocations.map(loc => {
-              const score = locationScores[loc.urlId]?.overall ?? 0;
-              const scoreColor = getScoreColor(score);
+              const dotColor = getStatusDotColor(loc.urlId);
               const params = new URLSearchParams(window.location.search);
               const currentLoc = params.get('location');
               const isActive = currentLoc === loc.urlId;
@@ -234,24 +239,16 @@ export function Sidebar() {
                 <div
                   key={loc.id}
                   onClick={() => navigate(`/dashboard?location=${loc.urlId}`)}
-                  className={`flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer transition-colors duration-150 ${
+                  className={`flex items-center px-2 py-1.5 rounded-md cursor-pointer transition-colors duration-150 ${
                     isActive ? 'bg-[#163a52] text-white' : 'text-gray-300 hover:bg-[#163a52] hover:text-white'
                   }`}
                   {...(isTestMode ? { 'data-testid': `nav-location-${loc.urlId}` } : {})}
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: scoreColor }}
-                    />
-                    <span className="text-xs font-medium truncate">{loc.name}</span>
-                  </div>
                   <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded flex-shrink-0 text-white"
-                    style={{ backgroundColor: scoreColor }}
-                  >
-                    {score}
-                  </span>
+                    className="w-2 h-2 rounded-full flex-shrink-0 mr-2"
+                    style={{ backgroundColor: dotColor }}
+                  />
+                  <span className="text-xs font-medium truncate">{loc.name}</span>
                 </div>
               );
             })}
