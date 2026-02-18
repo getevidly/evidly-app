@@ -6,8 +6,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRole } from '../contexts/RoleContext';
-import { locationScores } from '../data/demoData';
-import { getScoreColor } from '../lib/complianceScoring';
+import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
+import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 
 // ── Brand ─────────────────────────────────────────────────────────
@@ -139,9 +139,12 @@ export function FireSafety() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const scores = locationScores[locationParam] || locationScores['downtown'];
-  const fireScore = scores.fireSafety;
-  const scoreColor = getScoreColor(fireScore);
+  const jieKey = `demo-loc-${locationParam}`;
+  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
+  const fireGrade = override?.fireSafety?.grade || 'Pending';
+  const fireDisplay = override?.fireSafety?.gradeDisplay || 'Pending Verification';
+  const fireSummary = override?.fireSafety?.summary || '';
+  const fireStatus = override?.fireSafety?.status || 'unknown';
   const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen';
 
   const items = useMemo(() => {
@@ -233,16 +236,15 @@ export function FireSafety() {
         </div>
       </div>
 
-      {/* Score Summary Card */}
-      <div
-        className="rounded-xl border p-4 mb-6"
-        style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}
-      >
+      {/* Fire Safety Status Card */}
+      <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold" style={{ color: scoreColor }}>{fireScore}</div>
-              <div className="text-xs text-gray-500 mt-0.5">Fire Safety Score</div>
+              <div className={`text-xl font-bold px-3 py-1 rounded-full ${
+                fireStatus === 'passing' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}>{fireGrade}</div>
+              <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
             </div>
             <div className="h-10 w-px bg-gray-300" />
             <div className="flex gap-6 text-sm">
@@ -263,17 +265,22 @@ export function FireSafety() {
           <div className="text-right">
             <div className="text-xs text-gray-500 mb-1">Progress</div>
             <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
-              <div
-                className="h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${progressPercent}%`,
-                  backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY,
-                }}
-              />
+              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
             </div>
             <div className="text-xs text-gray-500 mt-0.5">{progressPercent}%</div>
           </div>
         </div>
+        {/* Fire status bars below */}
+        {override && (
+          <div className="mt-3 pt-3 border-t border-gray-200">
+            <FireStatusBars
+              permitStatus={override.fireSafety.permitStatus}
+              hoodStatus={override.fireSafety.hoodStatus}
+              extinguisherStatus={override.fireSafety.extinguisherStatus}
+              ansulStatus={override.fireSafety.ansulStatus}
+            />
+          </div>
+        )}
       </div>
 
       {/* Tab Bar */}

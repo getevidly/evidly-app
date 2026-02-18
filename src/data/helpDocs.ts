@@ -34,13 +34,13 @@ export const helpDocs: Record<string, HelpDoc> = {
   },
   compliance: {
     id: 'compliance',
-    title: 'Compliance Score',
+    title: 'Compliance Overview',
     steps: [
       'Your score is calculated automatically from three pillars',
       'Food Safety (45%): temperature logs, checklists, corrective actions',
       'Fire Safety (35%): hood cleaning, fire suppression, extinguisher records',
       'Vendor Compliance (20%): vendor certifications and service schedules',
-      'View the breakdown on the Compliance Score page',
+      'View the breakdown on the Compliance Overview page',
       'Click "Improve Score" for specific recommendations',
     ],
     tips: 'Scores above 90% mean you are inspection-ready. Focus on the lowest-scoring pillar for the biggest improvement.',

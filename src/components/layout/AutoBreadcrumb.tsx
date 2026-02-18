@@ -28,7 +28,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/regulatory-alerts': 'Regulatory Updates',
   '/jurisdiction': 'Jurisdiction Settings',
   '/health-dept-report': 'Health Dept Report',
-  '/scoring-breakdown': 'Compliance Score',
+  '/scoring-breakdown': 'Compliance Overview',
   '/benchmarks': 'Benchmarks',
   '/org-hierarchy': 'Locations',
   '/compliance-index': 'Compliance Index',

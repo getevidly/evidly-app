@@ -31,7 +31,7 @@ const pages: QuickItem[] = [
   { id: 'documents', label: 'Fire Safety Docs', href: '/documents', type: 'page', icon: FileText },
   { id: 'temp-logs', label: 'Temperature Logs', href: '/temp-logs', type: 'page', icon: Thermometer },
   { id: 'checklists', label: 'Daily Checklists', href: '/checklists', type: 'page', icon: CheckSquare },
-  { id: 'scoring', label: 'Compliance Score', href: '/scoring-breakdown', type: 'page', icon: ShieldCheck },
+  { id: 'scoring', label: 'Compliance Overview', href: '/scoring-breakdown', type: 'page', icon: ShieldCheck },
   { id: 'vendors', label: 'Vendor Management', href: '/vendors', type: 'page', icon: Truck },
   { id: 'analysis', label: 'Predictive Alerts', href: '/analysis', type: 'page', icon: Brain },
   { id: 'benchmarks', label: 'Benchmarks', href: '/benchmarks', type: 'page', icon: BarChart3 },
