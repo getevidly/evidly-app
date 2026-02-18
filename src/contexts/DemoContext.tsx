@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, ReactNode } from 'react';
 import { trackEvent } from '../utils/analytics';
+import { setDemoWriteGuard } from '../lib/supabaseGuard';
 
 export interface DemoLead {
   fullName: string;
@@ -54,6 +55,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [demoLead, setDemoLeadState] = useState<DemoLead | null>(loadLead);
   const [tourActive, setTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
+
+  // ── Sync demo mode → Supabase write guard ─────────
+  useEffect(() => {
+    setDemoWriteGuard(isDemoMode);
+  }, [isDemoMode]);
 
   // ── Presenter Mode ──────────────────────────────────
   const [presenterMode, setPresenterMode] = useState(() => {
