@@ -22,16 +22,20 @@ import {
   Newspaper,
   Store,
   Calendar,
-  BookOpen,
   Cog,
   Flame,
   Radio,
-  QrCode,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
 
 // ── Types ────────────────────────────────────────────────
+
+export interface SidebarSubItem {
+  id: string;
+  label: string;
+  route: string;
+}
 
 export interface SidebarNavItem {
   id: string;
@@ -40,77 +44,84 @@ export interface SidebarNavItem {
   route: string;
   roles: UserRole[];
   dividerAfter?: boolean;
-  requiresAdmin?: boolean; // EvidLY platform admin only (not a customer role)
+  requiresAdmin?: boolean;
+  subItems?: SidebarSubItem[];
 }
 
 // ── Role shorthands ──────────────────────────────────────
-// Mapping from spec roles to existing UserRole values:
-//   owner/operator → 'management'
-//   executive → 'executive'
-//   kitchen_manager → 'kitchen_manager'
-//   kitchen_staff → 'kitchen'
-//   facilities_manager → 'facilities'
+// owner/operator → 'management'
+// executive → 'executive'
+// compliance_manager → 'compliance_manager'
+// kitchen_manager → 'kitchen_manager'
+// kitchen_staff → 'kitchen'
+// facilities_manager → 'facilities'
 
 const ALL: UserRole[] = ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'kitchen', 'facilities'];
 const MGMT: UserRole[] = ['management'];
 const MGMT_EXEC: UserRole[] = ['management', 'executive'];
 const COMPLIANCE: UserRole[] = ['management', 'compliance_manager'];
 const OPS: UserRole[] = ['management', 'kitchen_manager'];
-const OPS_FAC: UserRole[] = ['management', 'kitchen_manager', 'facilities'];
 
-// ── Master Nav Items (flat, ordered, with dividerAfter) ──
+// ── Master Nav Items ─────────────────────────────────────
+// QR Scan REMOVED (now on bottom bar only)
+// Incidents CONSOLIDATED with sub-items (replaces incident-reporting, incident-playbook, report-issue)
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
-  // ── PRIMARY ──
+  // ── UNGROUPED (always visible at top) ──
   { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'my-tasks',            label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen'], dividerAfter: true },
+  { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: ALL },
 
   // ── DAILY OPERATIONS ──
-  { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['management', 'kitchen_manager', 'kitchen'] },
-  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ['management', 'facilities'] },
-  { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: OPS },
+  { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['management', 'compliance_manager', 'kitchen_manager', 'kitchen'] },
+  { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: ['management', 'compliance_manager', 'kitchen_manager'] },
   { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
-  { id: 'qr-scan',             label: 'QR Scan',             icon: QrCode,           route: '/temp-logs/scan',        roles: ['management', 'kitchen_manager', 'kitchen'] },
   { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['management', 'kitchen_manager'] },
-  { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: ALL },
-  { id: 'incidents',           label: 'Incidents',           icon: AlertTriangle,    route: '/playbooks',             roles: OPS_FAC },
-  { id: 'incident-reporting',  label: 'Incident Reporting',  icon: AlertTriangle,    route: '/incidents',             roles: OPS_FAC },
-  { id: 'incident-playbook',   label: 'Incident Playbook',   icon: BookOpen,         route: '/playbooks',             roles: OPS_FAC },
-  { id: 'report-issue',        label: 'Report Issue',        icon: AlertTriangle,    route: '/playbooks',             roles: ['kitchen'], dividerAfter: true },
+  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ['management', 'compliance_manager', 'facilities'] },
+  {
+    id: 'incidents',
+    label: 'Incidents',
+    icon: AlertTriangle,
+    route: '/incidents',
+    roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'],
+    subItems: [
+      { id: 'incident-report',    label: 'Report',    route: '/incidents' },
+      { id: 'incident-playbooks', label: 'Playbooks', route: '/playbooks' },
+      { id: 'incident-history',   label: 'History',   route: '/playbooks?tab=analytics' },
+    ],
+  },
 
-  // ── DOCUMENTS & EQUIPMENT ──
+  // ── RECORDS & ASSETS ──
   { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
-  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['management', 'kitchen_manager', 'facilities'] },
-  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
-  { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: OPS, dividerAfter: true },
+  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
+  { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: ['management', 'compliance_manager', 'kitchen_manager'] },
+  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'kitchen_manager', 'facilities'] },
+  { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['management', 'kitchen'] },
+  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['management', 'kitchen_manager', 'kitchen'] },
 
-  // ── PHOTOS ──
-  { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['management', 'kitchen'], dividerAfter: true },
-
-  // ── INSIGHTS & COMPLIANCE ──
+  // ── COMPLIANCE & INSIGHTS ──
   { id: 'compliance',          label: 'Compliance Score',    icon: Scale,            route: '/scoring-breakdown',     roles: ['management', 'executive', 'compliance_manager'] },
   { id: 'self-inspection',     label: 'Self-Inspection',     icon: ClipboardCheck,   route: '/self-inspection',       roles: COMPLIANCE },
   { id: 'inspector',           label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: COMPLIANCE },
-  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['management', 'kitchen_manager', 'compliance_manager'] },
-  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['management', 'kitchen_manager', 'compliance_manager', 'executive'] },
+  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['management', 'kitchen_manager'] },
+  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['management', 'executive', 'compliance_manager'] },
   { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['management', 'executive', 'compliance_manager', 'facilities', 'kitchen_manager'] },
-  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'compliance_manager', 'facilities'], dividerAfter: true },
+  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'compliance_manager', 'facilities'] },
 
-  // ── ENTERPRISE & STRATEGIC ──
-  { id: 'locations',           label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: ['executive', 'management'] },
-  { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: ['management', 'executive', 'compliance_manager'] },
-  { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: ['management', 'executive', 'compliance_manager'] },
+  // ── ENTERPRISE ──
+  { id: 'locations',           label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: MGMT_EXEC },
+  { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
+  { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
   { id: 'leaderboard',         label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
-  { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT, dividerAfter: true },
+  { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT },
 
-  // ── TEAM & ADMIN ──
+  // ── ADMIN ──
   { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
-  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['management', 'kitchen_manager', 'kitchen'] },
   { id: 'system-admin',        label: 'System Admin',        icon: Cog,              route: '/admin/onboard-client',  roles: MGMT },
   { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'compliance_manager', 'kitchen_manager', 'facilities'] },
   { id: 'help',                label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
 
-  // ── EVIDLY ADMIN ONLY (not customer-facing) ──
+  // ── EVIDLY ADMIN ONLY ──
   { id: 'usage-analytics',     label: 'Usage Analytics',     icon: BarChart3,        route: '/admin/usage-analytics', roles: MGMT, requiresAdmin: true },
 ];
 
@@ -168,18 +179,18 @@ export interface SidebarSection {
 export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'operations',
-    label: 'Operations',
-    itemIds: ['temperatures', 'log-temp', 'qr-scan', 'iot-monitoring', 'checklists', 'fire-safety', 'incidents', 'incident-reporting', 'incident-playbook', 'report-issue'],
+    label: 'Daily Operations',
+    itemIds: ['checklists', 'temperatures', 'log-temp', 'iot-monitoring', 'fire-safety', 'incidents'],
   },
   {
-    id: 'documents',
-    label: 'Documents & Assets',
-    itemIds: ['equipment', 'training', 'haccp', 'documents', 'vendors', 'photos'],
+    id: 'records',
+    label: 'Records & Assets',
+    itemIds: ['documents', 'equipment', 'haccp', 'vendors', 'photos', 'training'],
   },
   {
     id: 'compliance',
     label: 'Compliance & Insights',
-    itemIds: ['alerts', 'reporting', 'compliance', 'ai-copilot', 'self-inspection', 'inspector', 'regulatory'],
+    itemIds: ['compliance', 'self-inspection', 'inspector', 'ai-copilot', 'regulatory', 'reporting', 'alerts'],
   },
   {
     id: 'enterprise',

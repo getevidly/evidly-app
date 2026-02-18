@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '../../contexts/LanguageContext';
 import type { Locale } from '../../lib/i18n';
+import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 
 // --------------- Demo Data ---------------
 
@@ -97,12 +98,34 @@ export default function KitchenStaffTaskList() {
 
   const [tasks, setTasks] = useState<StaffTask[]>(INITIAL_TASKS);
   const [doneExpanded, setDoneExpanded] = useState(false);
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
 
   const todoTasks = useMemo(() => tasks.filter(t => t.status === 'todo'), [tasks]);
   const doneTasks = useMemo(() => tasks.filter(t => t.status === 'done'), [tasks]);
   const totalTasks = tasks.length;
   const doneCount = doneTasks.length;
   const progressPct = Math.round((doneCount / totalTasks) * 100);
+
+  const staffAlerts: AlertBannerItem[] = useMemo(() => {
+    const overdueTasks = todoTasks.filter(t => t.type === 'temp_log');
+    if (overdueTasks.length === 0) return [];
+    return [{
+      id: 'staff-overdue',
+      severity: 'warning' as const,
+      message: `${overdueTasks.length} temperature log${overdueTasks.length > 1 ? 's' : ''} due`,
+      actionLabel: 'Log Now',
+      route: '/temp-logs',
+    }];
+  }, [todoTasks]);
+
+  const visibleAlerts = useMemo(
+    () => staffAlerts.filter(a => !dismissedAlerts.has(a.id)),
+    [staffAlerts, dismissedAlerts],
+  );
+
+  const handleDismissAlert = useCallback((id: string) => {
+    setDismissedAlerts(prev => new Set(prev).add(id));
+  }, []);
 
   const handleMarkDone = useCallback((taskId: string) => {
     setTasks(prev => prev.map(t => {
@@ -131,6 +154,9 @@ export default function KitchenStaffTaskList() {
               <span className="text-sm font-medium text-gray-700">{DEMO_STAFF_NAME}</span>
             </div>
           </div>
+
+          {/* Alert Banner */}
+          <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
 
           {/* My Shift Progress */}
           <div>

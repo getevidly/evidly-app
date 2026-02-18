@@ -4,16 +4,17 @@ import {
   Flame,
   Wrench,
   AlertTriangle,
-  Calendar,
-  FileText,
   CheckCircle2,
-  MapPin,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FireStatusBars } from '../shared/FireStatusBars';
+import { FONT, JIE_LOC_MAP, getGreeting } from './shared/constants';
+import { DashboardHero } from './shared/DashboardHero';
+import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
+import { TabbedDetailSection } from './shared/TabbedDetailSection';
 
 // --------------- Demo Data ---------------
 
@@ -145,25 +146,11 @@ const SEVERITY_BORDER: Record<string, string> = {
 // FACILITIES MANAGER DASHBOARD
 // ===============================================
 
-// Map facilities locationUrlId → JIE override key
-const FAC_LOC_MAP: Record<string, string> = {
-  downtown: 'demo-loc-downtown',
-  airport: 'demo-loc-airport',
-  university: 'demo-loc-university',
-};
-
 const FAC_LOC_NAMES: Record<string, string> = {
   downtown: 'Downtown Kitchen',
   airport: 'Airport Cafe',
   university: 'University Dining',
 };
-
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
 
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
@@ -173,7 +160,7 @@ export default function FacilitiesDashboardNew() {
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const defaultLoc = accessibleLocations[0]?.locationUrlId || 'downtown';
 
-  const jieKey = FAC_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
+  const jieKey = JIE_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
   const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen';
 
@@ -182,40 +169,23 @@ export default function FacilitiesDashboardNew() {
   const fireSummary = override?.fireSafety?.summary || '';
   const fireStatus = override?.fireSafety?.status || 'unknown';
 
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-
-  const formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const priorityItems: PriorityItem[] = DEMO_FACILITIES_ATTENTION.map(item => ({
+    id: item.id,
+    severity: item.severity,
+    title: item.title,
+    detail: item.detail,
+    actionLabel: item.actionLabel,
+    route: item.actionRoute,
+  }));
 
   return (
-    <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="space-y-6" style={FONT}>
       {/* Steel-Slate Hero Banner */}
-      <div
-        className="relative overflow-hidden rounded-xl"
-        style={{
-          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
-          padding: '20px 24px 24px',
-        }}
-      >
-        <div className="flex items-start gap-4 relative z-10">
-          <div className="flex-shrink-0">
-            <div className="flex items-baseline">
-              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>E</span>
-              <span className="text-[20px] font-bold text-white">vid</span>
-              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>LY</span>
-            </div>
-          </div>
-          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-base font-medium">{getGreeting()}, Mike.</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{formattedDate}</p>
-          </div>
-          <div className="text-right flex-shrink-0 hidden sm:block">
-            <p className="text-white font-semibold text-sm">{companyName || DEMO_ORG.name}</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{locationName}</p>
-          </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: '#C49A2B' }} />
-      </div>
+      <DashboardHero
+        greeting={`${getGreeting()}, Mike.`}
+        orgName={companyName || DEMO_ORG.name}
+        locationName={locationName}
+      />
 
       {/* Fire Safety Hero — Jurisdiction-Native */}
       <Card>
@@ -256,107 +226,94 @@ export default function FacilitiesDashboardNew() {
         )}
       </Card>
 
-      {/* Needs Attention */}
-      <Card>
-        <SectionHeader icon={AlertTriangle}>Needs Attention</SectionHeader>
-        <div className="space-y-2">
-          {DEMO_FACILITIES_ATTENTION.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-start gap-3 p-3 rounded-lg bg-white"
-              style={{ borderLeft: `4px solid ${SEVERITY_BORDER[item.severity]}` }}
-            >
-              <Flame size={16} className="text-gray-500 shrink-0 mt-0.5" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{item.detail}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate(item.actionRoute)}
-                className="text-xs font-medium shrink-0 px-3 py-1.5 rounded-lg text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: '#1e4d6b' }}
-              >
-                {item.actionLabel} →
-              </button>
-            </div>
-          ))}
-        </div>
-      </Card>
+      {/* Where Do I Start */}
+      <WhereDoIStartSection items={priorityItems} staggerOffset={1} />
 
-      {/* Vendor Schedule */}
+      {/* Tabbed Detail Section: Equipment | Service Schedule | Vendors */}
       <Card>
-        <SectionHeader icon={Calendar}>This Week's Vendor Schedule</SectionHeader>
-        <div className="space-y-1">
-          {DEMO_VENDOR_SCHEDULE.map((visit, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => navigate('/vendors')}
-              className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
-            >
-              <span className="text-sm font-semibold text-gray-500 w-10 shrink-0">{visit.day}</span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">{visit.service}</p>
-                <p className="text-xs text-gray-500">{visit.vendor}</p>
-              </div>
-              <StatusBadge status={visit.status} />
-            </button>
-          ))}
-        </div>
-      </Card>
-
-      {/* Document Status */}
-      <Card>
-        <SectionHeader icon={FileText}>Document Status</SectionHeader>
-        <div className="space-y-1">
-          {DEMO_FACILITIES_DOCS.map((doc, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => navigate('/documents')}
-              className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900">{doc.name}</p>
-              </div>
-              <StatusBadge status={doc.status} />
-              <span className="text-xs text-gray-400 shrink-0 ml-1">Exp: {doc.expires}</span>
-            </button>
-          ))}
-        </div>
-      </Card>
-
-      {/* Equipment Alerts */}
-      <Card>
-        <SectionHeader icon={Wrench}>Equipment Alerts</SectionHeader>
-        <div className="space-y-1">
-          {DEMO_EQUIPMENT_ALERTS.map((eq, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => navigate('/equipment')}
-              className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
-              style={eq.alert ? { borderLeft: `3px solid ${SEVERITY_BORDER[eq.severity || 'warning']}` } : undefined}
-            >
-              <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium ${eq.alert ? 'text-gray-900' : 'text-gray-500'}`}>
-                  {eq.name}
-                </p>
-                {eq.alert ? (
-                  <p className="text-xs mt-0.5" style={{ color: '#b45309' }}>{eq.alert}</p>
-                ) : (
-                  <p className="text-xs text-gray-400 mt-0.5">{eq.status}</p>
-                )}
-              </div>
-              {eq.alert ? (
-                <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#b45309' }} />
-              ) : (
-                <CheckCircle2 size={16} className="text-green-400 shrink-0 mt-0.5" />
-              )}
-            </button>
-          ))}
-        </div>
+        <TabbedDetailSection
+          tabs={[
+            {
+              id: 'equipment',
+              label: 'Equipment',
+              content: (
+                <div className="space-y-1">
+                  {DEMO_EQUIPMENT_ALERTS.map((eq, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => navigate('/equipment')}
+                      className="w-full flex items-start gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                      style={eq.alert ? { borderLeft: `3px solid ${SEVERITY_BORDER[eq.severity || 'warning']}` } : undefined}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${eq.alert ? 'text-gray-900' : 'text-gray-500'}`}>
+                          {eq.name}
+                        </p>
+                        {eq.alert ? (
+                          <p className="text-xs mt-0.5" style={{ color: '#b45309' }}>{eq.alert}</p>
+                        ) : (
+                          <p className="text-xs text-gray-400 mt-0.5">{eq.status}</p>
+                        )}
+                      </div>
+                      {eq.alert ? (
+                        <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: '#b45309' }} />
+                      ) : (
+                        <CheckCircle2 size={16} className="text-green-400 shrink-0 mt-0.5" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              ),
+            },
+            {
+              id: 'schedule',
+              label: 'Service Schedule',
+              content: (
+                <div className="space-y-1">
+                  {DEMO_VENDOR_SCHEDULE.map((visit, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => navigate('/vendors')}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                    >
+                      <span className="text-sm font-semibold text-gray-500 w-10 shrink-0">{visit.day}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{visit.service}</p>
+                        <p className="text-xs text-gray-500">{visit.vendor}</p>
+                      </div>
+                      <StatusBadge status={visit.status} />
+                    </button>
+                  ))}
+                </div>
+              ),
+            },
+            {
+              id: 'vendors',
+              label: 'Vendors',
+              content: (
+                <div className="space-y-1">
+                  {DEMO_FACILITIES_DOCS.map((doc, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => navigate('/documents')}
+                      className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{doc.name}</p>
+                      </div>
+                      <StatusBadge status={doc.status} />
+                      <span className="text-xs text-gray-400 shrink-0 ml-1">Exp: {doc.expires}</span>
+                    </button>
+                  ))}
+                </div>
+              ),
+            },
+          ]}
+          defaultTab="equipment"
+        />
       </Card>
     </div>
   );

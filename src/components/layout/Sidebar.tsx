@@ -14,7 +14,9 @@ import {
   SIDEBAR_SECTIONS,
   UNGROUPED_IDS,
   type SidebarNavItem,
+  type SidebarSubItem,
 } from '../../config/sidebarConfig';
+import { checkPermission } from '../../hooks/usePermission';
 
 // ── Jurisdiction status dot color ─────────────────────────
 
@@ -42,8 +44,15 @@ export function Sidebar() {
 
   const isTestMode = useMemo(() => checkTestMode(), []);
   const isEvidlyAdmin = false;
-  const navItems = useMemo(() => getNavItemsForRole(userRole, isEvidlyAdmin), [userRole, isEvidlyAdmin]);
+  const navItems = useMemo(() => {
+    const roleFiltered = getNavItemsForRole(userRole, isEvidlyAdmin);
+    // Permission system runs alongside role check (identical results in demo mode)
+    return roleFiltered.filter(item => checkPermission(userRole, `sidebar.${item.id}`));
+  }, [userRole, isEvidlyAdmin]);
   const navItemMap = useMemo(() => new Map(navItems.map(item => [item.id, item])), [navItems]);
+
+  // ── Sub-item expansion state ──
+  const [expandedNavItem, setExpandedNavItem] = useState<string | null>(null);
 
   // ── Collapsible section state ──
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
@@ -110,28 +119,71 @@ export function Sidebar() {
     };
   }, [isTestMode, navItems, userRole]);
 
+  // ── Render a sub-item ──
+  const renderSubItem = (sub: SidebarSubItem) => {
+    const active = location.pathname === sub.route || location.pathname + location.search === sub.route;
+    return (
+      <div
+        key={sub.id}
+        onClick={() => navigate(sub.route)}
+        className={`flex items-center pl-10 pr-3 py-1.5 text-[13px] font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+          active
+            ? 'text-[#d4af37] bg-[#163a52]'
+            : 'text-gray-300 hover:bg-[#163a52] hover:text-white'
+        }`}
+      >
+        <span className="truncate">{sub.label}</span>
+      </div>
+    );
+  };
+
   // ── Render a single nav item ──
   const renderNavItem = (item: SidebarNavItem) => {
     const active = location.pathname === item.route;
+    const hasSubItems = item.subItems && item.subItems.length > 0;
+    const isExpanded = expandedNavItem === item.id;
     const testId = isTestMode ? `nav-${item.id}` : undefined;
+
     return (
-      <div
-        key={item.id}
-        onClick={() => navigate(item.route)}
-        className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-          active
-            ? 'text-[#d4af37] bg-[#163a52]'
-            : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
-        }`}
-        style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-        {...(testId ? { 'data-testid': testId } : {})}
-      >
-        <item.icon
-          className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
-            active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
+      <div key={item.id}>
+        <div
+          onClick={() => {
+            if (hasSubItems) {
+              setExpandedNavItem(isExpanded ? null : item.id);
+            }
+            navigate(item.route);
+          }}
+          className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+            active
+              ? 'text-[#d4af37] bg-[#163a52]'
+              : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
           }`}
-        />
-        <span className="flex-1 truncate">{item.label}</span>
+          style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+          {...(testId ? { 'data-testid': testId } : {})}
+        >
+          <item.icon
+            className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
+              active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
+            }`}
+          />
+          <span className="flex-1 truncate">{item.label}</span>
+          {hasSubItems && (
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpandedNavItem(isExpanded ? null : item.id);
+              }}
+              className="ml-1 p-0.5 rounded hover:bg-white/10 transition-colors"
+            >
+              {isExpanded ? (
+                <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+              )}
+            </span>
+          )}
+        </div>
+        {hasSubItems && isExpanded && item.subItems!.map(sub => renderSubItem(sub))}
       </div>
     );
   };
@@ -197,7 +249,7 @@ export function Sidebar() {
                   className="w-full flex items-center justify-between px-3 py-1.5 mt-1 group cursor-pointer"
                 >
                   <span
-                    className="text-[11px] uppercase font-semibold tracking-wider"
+                    className="text-[10px] uppercase font-semibold tracking-wider"
                     style={{ color: '#94a3b8' }}
                   >
                     {section.label}

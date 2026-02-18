@@ -5,15 +5,16 @@ import {
   Hammer,
   Clock,
   Radio,
-  MapPin,
-  Thermometer,
-  ClipboardCheck,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
+import { getGreeting, getFormattedDate, GOLD } from './shared/constants';
+import { DashboardHero } from './shared/DashboardHero';
+import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
+import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
 // --------------- Demo Data ---------------
 
@@ -48,11 +49,6 @@ const DEMO_TEMPERATURES: DemoTemperature[] = [
   { id: 'cooler-2', name: 'Walk-in Cooler #2', temp: 39.5, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '4 min ago' },
   { id: 'freezer', name: 'Walk-in Freezer', temp: -2, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '6 min ago' },
   { id: 'prep', name: 'Prep Cooler', temp: null, unit: '\u00B0F', status: 'needs_log', source: 'manual', lastReading: '4 hours ago' },
-];
-
-const DEMO_NEXT_UP = [
-  { icon: ClipboardCheck, text: 'Complete midday checklist (4 items remaining)', actionLabel: 'View', actionRoute: '/checklists' },
-  { icon: Thermometer, text: 'Log Prep Cooler temp (last logged 4 hours ago)', actionLabel: 'Log Temp', actionRoute: '/temp-logs' },
 ];
 
 const DEMO_TEAM = [
@@ -121,13 +117,6 @@ function getChecklistBgTint(status: DemoChecklist['status']): string {
 // KITCHEN MANAGER DASHBOARD
 // ===============================================
 
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
 export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
@@ -152,8 +141,6 @@ export default function KitchenManagerDashboard() {
   };
   const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
 
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);
   useEffect(() => {
@@ -161,41 +148,22 @@ export default function KitchenManagerDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  const formattedDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  // Priority items for "Where Do I Start" section
+  const priorityItems: PriorityItem[] = [
+    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
+    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
+  ];
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
-      {/* Steel-Slate Hero Banner */}
-      <div
-        className="relative overflow-hidden rounded-xl"
-        style={{
-          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
-          padding: '20px 24px 24px',
-        }}
+      {/* Hero Banner */}
+      <DashboardHero
+        greeting={`${getGreeting()}, Chef.`}
+        orgName={companyName || DEMO_ORG.name}
+        locationName={locationName}
       >
-        <div className="flex items-start gap-4 relative z-10">
-          <div className="flex-shrink-0">
-            <div className="flex items-baseline">
-              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>E</span>
-              <span className="text-[20px] font-bold text-white">vid</span>
-              <span className="text-[20px] font-bold" style={{ color: '#C49A2B' }}>LY</span>
-            </div>
-          </div>
-          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-base font-medium">{getGreeting()}, Chef.</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{formattedDate}</p>
-          </div>
-          <div className="text-right flex-shrink-0 hidden sm:block">
-            <p className="text-white font-semibold text-sm">{locationName}</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>
-              {companyName || DEMO_ORG.name}
-            </p>
-          </div>
-        </div>
-
-        {/* Grade badges on hero */}
-        <div className="flex items-center gap-2 mt-3 relative z-10">
+        {/* Grade badges */}
+        <div className="flex items-center gap-2">
           <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
             foodStatus === 'passing' ? 'bg-green-500/20 text-green-300'
               : foodStatus === 'failing' ? 'bg-red-500/20 text-red-300'
@@ -209,9 +177,7 @@ export default function KitchenManagerDashboard() {
             Fire: {fireGrade}
           </span>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: '#C49A2B' }} />
-      </div>
+      </DashboardHero>
 
       {/* Location tabs (if multiple locations) */}
       {hasMultipleLocations && (
@@ -297,110 +263,97 @@ export default function KitchenManagerDashboard() {
         </div>
       </div>
 
-      {/* Temperatures */}
+      {/* Where Do I Start */}
+      <WhereDoIStartSection items={priorityItems} />
+
+      {/* Temperatures & Team Activity */}
       <Card>
-        <SectionHeader>Temperatures</SectionHeader>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
-                <th className="text-left pb-2 font-medium">Equipment</th>
-                <th className="text-right pb-2 font-medium">Temp</th>
-                <th className="text-center pb-2 font-medium">Status</th>
-                <th className="text-center pb-2 font-medium">Source</th>
-                <th className="text-right pb-2 font-medium">Last</th>
-                <th className="pb-2"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {DEMO_TEMPERATURES.map((t) => (
-                <tr key={t.id}>
-                  <td className="py-2.5 text-gray-900 font-medium">{t.name}</td>
-                  <td className="py-2.5 text-right tabular-nums">
-                    {t.temp !== null ? (
-                      <span style={{ color: t.status === 'alert' ? '#dc2626' : '#374151' }}>
-                        {t.temp}{t.unit}
-                      </span>
-                    ) : (
-                      <span className="text-gray-300">&mdash;</span>
-                    )}
-                  </td>
-                  <td className="py-2.5 text-center">
-                    <TempStatusDot status={t.status} />
-                  </td>
-                  <td className="py-2.5 text-center">
-                    {t.source === 'iot' ? (
-                      <Radio size={14} className="inline text-blue-500" />
-                    ) : (
-                      <span className="text-xs text-gray-400">Manual</span>
-                    )}
-                  </td>
-                  <td className="py-2.5 text-right text-gray-500 text-xs">{t.lastReading}</td>
-                  <td className="py-2.5 text-right">
-                    {t.status === 'needs_log' && (
-                      <button
-                        type="button"
-                        onClick={() => navigate('/temp-logs')}
-                        className="text-xs font-medium px-2 py-1 rounded hover:bg-gray-50 transition-colors"
-                        style={{ color: '#1e4d6b' }}
+        <TabbedDetailSection
+          tabs={[
+            {
+              id: 'temperatures',
+              label: 'Temperatures',
+              content: (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
+                        <th className="text-left pb-2 font-medium">Equipment</th>
+                        <th className="text-right pb-2 font-medium">Temp</th>
+                        <th className="text-center pb-2 font-medium">Status</th>
+                        <th className="text-center pb-2 font-medium">Source</th>
+                        <th className="text-right pb-2 font-medium">Last</th>
+                        <th className="pb-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50">
+                      {DEMO_TEMPERATURES.map((t) => (
+                        <tr key={t.id}>
+                          <td className="py-2.5 text-gray-900 font-medium">{t.name}</td>
+                          <td className="py-2.5 text-right tabular-nums">
+                            {t.temp !== null ? (
+                              <span style={{ color: t.status === 'alert' ? '#dc2626' : '#374151' }}>
+                                {t.temp}{t.unit}
+                              </span>
+                            ) : (
+                              <span className="text-gray-300">&mdash;</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 text-center">
+                            <TempStatusDot status={t.status} />
+                          </td>
+                          <td className="py-2.5 text-center">
+                            {t.source === 'iot' ? (
+                              <Radio size={14} className="inline text-blue-500" />
+                            ) : (
+                              <span className="text-xs text-gray-400">Manual</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 text-right text-gray-500 text-xs">{t.lastReading}</td>
+                          <td className="py-2.5 text-right">
+                            {t.status === 'needs_log' && (
+                              <button
+                                type="button"
+                                onClick={() => navigate('/temp-logs')}
+                                className="text-xs font-medium px-2 py-1 rounded hover:bg-gray-50 transition-colors"
+                                style={{ color: '#1e4d6b' }}
+                              >
+                                Log Temp &rarr;
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ),
+            },
+            {
+              id: 'team-activity',
+              label: 'Team Activity',
+              content: (
+                <div className="space-y-3">
+                  {DEMO_TEAM.map((member) => (
+                    <div key={member.name} className="flex items-start gap-3">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
+                        style={{ backgroundColor: '#1e4d6b' }}
                       >
-                        Log Temp &rarr;
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-
-      {/* Next Up */}
-      <Card>
-        <SectionHeader>Next Up</SectionHeader>
-        <div className="space-y-2">
-          {DEMO_NEXT_UP.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-3 rounded-lg"
-                style={{ backgroundColor: '#eef4f8' }}
-              >
-                <Icon size={20} style={{ color: '#1e4d6b' }} className="shrink-0" />
-                <p className="text-sm text-gray-700 flex-1">{item.text}</p>
-                <button
-                  onClick={() => navigate(item.actionRoute)}
-                  className="text-xs font-medium shrink-0 px-3 py-1.5 rounded-lg text-white transition-opacity hover:opacity-90"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                >
-                  {item.actionLabel} &rarr;
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-
-      {/* Team Activity Today */}
-      <Card>
-        <SectionHeader>Team Activity Today</SectionHeader>
-        <div className="space-y-3">
-          {DEMO_TEAM.map((member) => (
-            <div key={member.name} className="flex items-start gap-3">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
-                style={{ backgroundColor: '#1e4d6b' }}
-              >
-                {member.name.charAt(0)}
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900">{member.name}</p>
-                <p className="text-xs text-gray-500">{member.activities.join(', ')}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+                        {member.name.charAt(0)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{member.name}</p>
+                        <p className="text-xs text-gray-500">{member.activities.join(', ')}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ),
+            },
+          ] satisfies TabDef[]}
+          defaultTab="temperatures"
+        />
       </Card>
     </div>
   );

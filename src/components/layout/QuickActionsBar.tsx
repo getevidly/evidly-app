@@ -1,52 +1,59 @@
+import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Thermometer, ClipboardCheck, FileUp, AlertTriangle, Camera, Brain, Wrench, Flame, QrCode } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
+import { checkPermission } from '../../hooks/usePermission';
 
 interface QuickAction {
-  icon: typeof Thermometer;
+  emoji: string;
   label: string;
   route: string;
+  permission: string;
 }
 
-// Role-specific quick actions
+// 5 emoji buttons per role (per DASHBOARD-8 v2 spec)
 const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
   management: [
-    { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
-    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
-    { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
-    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
-    { icon: FileUp, label: 'Upload Doc', route: '/documents' },
-    { icon: Camera, label: 'Photo', route: '/photo-evidence' },
-    { icon: Brain, label: 'AI Advisor', route: '/copilot' },
+    { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
+    { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
+    { emoji: '🔥', label: 'Fire Safety', route: '/fire-safety', permission: 'bottom.fire-safety' },
+    { emoji: '📊', label: 'Reports', route: '/reports', permission: 'bottom.reports' },
+    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
   ],
-  executive: [], // Executive uses StrategicActionsBar in its own dashboard
+  executive: [
+    { emoji: '📊', label: 'Reports', route: '/reports', permission: 'bottom.reports' },
+    { emoji: '📍', label: 'Locations', route: '/org-hierarchy', permission: 'bottom.locations' },
+    { emoji: '📈', label: 'Benchmarks', route: '/benchmarks', permission: 'bottom.benchmarks' },
+    { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },
+    { emoji: '⚙️', label: 'Settings', route: '/settings', permission: 'bottom.settings' },
+  ],
   compliance_manager: [
-    { icon: ClipboardCheck, label: 'Self-Inspect', route: '/self-inspection' },
-    { icon: Brain, label: 'AI Advisor', route: '/copilot' },
-    { icon: FileUp, label: 'Upload Doc', route: '/documents' },
-    { icon: AlertTriangle, label: 'Alerts', route: '/analysis' },
-  ],
-  kitchen_manager: [
-    { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
-    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
-    { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
-    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
-    { icon: FileUp, label: 'Upload Doc', route: '/documents' },
-    { icon: AlertTriangle, label: 'Report Issue', route: '/incidents' },
+    { emoji: '✅', label: 'Compliance', route: '/scoring-breakdown', permission: 'bottom.compliance' },
+    { emoji: '🔎', label: 'Self-Inspect', route: '/self-inspection', permission: 'bottom.self-inspect' },
+    { emoji: '⚠️', label: 'Violations', route: '/analysis', permission: 'bottom.violations' },
+    { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },
+    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
   ],
   facilities: [
-    { icon: Flame, label: 'Fire Check', route: '/fire-safety' },
-    { icon: FileUp, label: 'Upload Doc', route: '/documents' },
-    { icon: AlertTriangle, label: 'Report Issue', route: '/incidents' },
-    { icon: Wrench, label: 'Equipment Log', route: '/equipment' },
+    { emoji: '🔥', label: 'Fire Safety', route: '/fire-safety', permission: 'bottom.fire-safety' },
+    { emoji: '🔧', label: 'Equipment', route: '/equipment', permission: 'bottom.equipment' },
+    { emoji: '📅', label: 'Schedule', route: '/calendar', permission: 'bottom.schedule' },
+    { emoji: '👷', label: 'Vendors', route: '/vendors', permission: 'bottom.vendors' },
+    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
+  ],
+  kitchen_manager: [
+    { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
+    { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
+    { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
+    { emoji: '👥', label: 'Team', route: '/team', permission: 'bottom.team' },
+    { emoji: '⚠️', label: 'Incidents', route: '/incidents', permission: 'bottom.incidents' },
   ],
   kitchen: [
-    { icon: Thermometer, label: 'Log Temp', route: '/temp-logs' },
-    { icon: QrCode, label: 'Scan QR', route: '/temp-logs/scan' },
-    { icon: ClipboardCheck, label: 'Checklist', route: '/checklists' },
-    { icon: Camera, label: 'Photo', route: '/photo-evidence' },
-    { icon: AlertTriangle, label: 'Report Issue', route: '/playbooks' },
+    { emoji: '📋', label: 'Tasks', route: '/dashboard', permission: 'bottom.tasks' },
+    { emoji: '🌡️', label: 'Temp', route: '/temp-logs', permission: 'bottom.temps' },
+    { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
+    { emoji: '📷', label: 'Photo', route: '/photo-evidence', permission: 'bottom.photo' },
+    { emoji: '⚠️', label: 'Report', route: '/incidents', permission: 'bottom.report' },
   ],
 };
 
@@ -55,37 +62,47 @@ export function QuickActionsBar() {
   const location = useLocation();
   const { userRole } = useRole();
 
-  const actions = ROLE_ACTIONS[userRole] || [];
+  const actions = useMemo(() => {
+    const roleActions = ROLE_ACTIONS[userRole] || [];
+    // Permission system runs alongside role-based action list
+    return roleActions.filter(a => checkPermission(userRole, a.permission));
+  }, [userRole]);
+
   if (actions.length === 0) return null;
+
+  // Kitchen staff: full-width (no sidebar offset)
+  const isKitchenStaff = userRole === 'kitchen';
 
   return (
     <>
-      {/* Desktop — position: fixed, bottom: 0, offset by sidebar at lg */}
+      {/* Desktop — fixed bottom bar */}
       <div
-        className="hidden md:flex fixed bottom-0 left-0 lg:left-60 right-0 z-[100] bg-white border-t justify-center items-center gap-3"
+        className={`hidden md:flex fixed bottom-0 ${isKitchenStaff ? 'left-0' : 'left-0 lg:left-60'} right-0 z-[100] bg-white border-t justify-center items-center gap-6`}
         style={{
-          padding: '10px 32px',
+          padding: '8px 32px',
           borderColor: '#e2e8f0',
           boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
-          fontFamily: 'Inter, sans-serif',
         }}
       >
         {actions.map((action) => {
-          const Icon = action.icon;
           const isActive = location.pathname === action.route;
           return (
             <button
-              key={action.route + action.label}
+              key={action.label}
               onClick={() => navigate(action.route)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-1 rounded-lg transition-colors cursor-pointer ${
                 isActive
-                  ? 'text-white'
-                  : 'text-gray-700 hover:bg-gray-100 border border-gray-200'
+                  ? 'bg-[#eef4f8]'
+                  : 'hover:bg-gray-50'
               }`}
-              style={isActive ? { backgroundColor: '#1e4d6b' } : undefined}
             >
-              <Icon size={18} />
-              {action.label}
+              <span className="text-lg leading-none">{action.emoji}</span>
+              <span
+                className="text-[9px] font-bold leading-tight"
+                style={{ color: isActive ? '#1e4d6b' : '#6b7280' }}
+              >
+                {action.label}
+              </span>
             </button>
           );
         })}
@@ -98,25 +115,23 @@ export function QuickActionsBar() {
           height: 56,
           borderColor: '#e2e8f0',
           boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
-          fontFamily: 'Inter, sans-serif',
         }}
       >
         <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${actions.length}, 1fr)` }}>
           {actions.map((action) => {
-            const Icon = action.icon;
             const isActive = location.pathname === action.route;
             return (
               <button
-                key={action.route + action.label}
+                key={action.label}
                 onClick={() => navigate(action.route)}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
                   isActive ? '' : 'active:bg-gray-50'
                 }`}
                 style={isActive ? { backgroundColor: 'rgba(30,77,107,0.1)' } : undefined}
               >
-                <Icon size={18} style={{ color: isActive ? '#1e4d6b' : '#6b7280' }} />
+                <span className="text-base leading-none">{action.emoji}</span>
                 <span
-                  className="text-[10px] font-medium"
+                  className="text-[9px] font-bold"
                   style={{ color: isActive ? '#1e4d6b' : '#6b7280' }}
                 >
                   {action.label}

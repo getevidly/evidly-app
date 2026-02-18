@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  UtensilsCrossed, Flame, X, AlertTriangle, ShieldAlert,
+  UtensilsCrossed, Flame,
   Thermometer, ClipboardList,
   CheckCircle2, BarChart3, LineChart as LineChartIcon, Shield,
   Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
@@ -21,68 +21,10 @@ import {
   DEMO_WEEKLY_ACTIVITY,
   DEMO_TREND_DATA,
 } from '../../data/demoData';
-
-// ================================================================
-// CONSTANTS
-// ================================================================
-
-const GOLD = '#C49A2B';
-const NAVY = '#163a5f';
-const PAGE_BG = '#f4f6f9';
-const BODY_TEXT = '#1e293b';
-const MUTED = '#94a3b8';
-
-const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
-
-// ================================================================
-// JIE LOCATION MAP
-// ================================================================
-
-const JIE_LOC_MAP: Record<string, string> = {
-  'downtown': 'demo-loc-downtown',
-  'airport': 'demo-loc-airport',
-  'university': 'demo-loc-university',
-};
-
-// ================================================================
-// KEYFRAMES
-// ================================================================
-
-const KEYFRAMES = `
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes ringDraw {
-  from { stroke-dashoffset: var(--circ); }
-  to   { stroke-dashoffset: var(--off); }
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-`;
-
-function stagger(i: number): React.CSSProperties {
-  return { animation: `fadeInUp 0.4s ease-out ${i * 0.1}s both` };
-}
-
-// ================================================================
-// HELPERS
-// ================================================================
-
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function getFormattedDate(): string {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-  });
-}
+import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, getGreeting, getFormattedDate, STEEL_SLATE_GRADIENT, statusColor } from './shared/constants';
+import { DashboardHero } from './shared/DashboardHero';
+import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
+import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
 // ================================================================
 // ALERT BANNERS
@@ -101,6 +43,37 @@ interface AlertItem {
 const EXEC_ALERTS: AlertItem[] = [
   { id: 'ea1', severity: 'critical', message: 'University Dining Fire Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Fire Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' },
   { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' },
+];
+
+// ================================================================
+// EXECUTIVE PRIORITY ITEMS
+// ================================================================
+
+const EXEC_PRIORITY_ITEMS: PriorityItem[] = [
+  {
+    id: 'ep1',
+    severity: 'critical',
+    title: 'University location needs attention',
+    detail: 'Fire Safety dropped below 65 — 3 equipment inspections overdue',
+    actionLabel: 'Take Action',
+    route: '/dashboard?location=university',
+  },
+  {
+    id: 'ep2',
+    severity: 'warning',
+    title: 'Review Airport location scoring',
+    detail: 'Walk-in cooler trending warm — 3 out-of-range readings this week',
+    actionLabel: 'View Details',
+    route: '/dashboard?location=airport',
+  },
+  {
+    id: 'ep3',
+    severity: 'info',
+    title: '3 documents expiring this month',
+    detail: 'Health permits and vendor certifications need renewal',
+    actionLabel: 'Review Docs',
+    route: '/documents',
+  },
 ];
 
 // AlertBanners — now uses shared component from ../shared/AlertBanner
@@ -122,8 +95,7 @@ function WidgetKPIs() {
   const statusColors = { good: '#16a34a', warning: '#d97706', attention: '#dc2626' };
 
   return (
-    <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">This Week's Performance</h4>
+    <div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {kpis.map(kpi => {
           const borderColor = statusColors[kpi.status];
@@ -254,10 +226,10 @@ function WidgetLocations({ jieScores, jurisdictions, navigate }: {
 }
 
 // ================================================================
-// WIDGET: Trend & Attention (2-column)
+// WIDGET: Trend Chart (extracted for tabbed section)
 // ================================================================
 
-function WidgetTrendAttention({ navigate, jieScores }: {
+function WidgetTrendChart({ navigate, jieScores }: {
   navigate: (path: string) => void;
   jieScores: Record<string, LocationScore>;
 }) {
@@ -285,81 +257,78 @@ function WidgetTrendAttention({ navigate, jieScores }: {
   });
 
   return (
-    <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Trend & Attention</h4>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Trend Chart */}
-        <div>
-          <p className="text-[11px] font-medium text-gray-500 mb-1">EvidLY Operational Readiness — 30 Days</p>
-          <p className="text-[10px] text-gray-400 mb-3">EvidLY Operational Readiness (internal tracking)</p>
-          <div className="flex items-center gap-4 mb-2 text-[11px]">
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: GOLD }} /> Overall</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#16a34a' }} /> Food Safety</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#ea580c' }} /> Fire Safety</span>
-          </div>
-          <div style={{ width: '100%', height: 240 }}>
-            <ResponsiveContainer>
-              <AreaChart data={trendData} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
-                <defs>
-                  <linearGradient id="execGoldGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={GOLD} stopOpacity={0.15} />
-                    <stop offset="100%" stopColor={GOLD} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} interval={4} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} />
-                <RechartsTooltip
-                  contentStyle={{ backgroundColor: '#0d2847', border: 'none', borderRadius: 8, fontSize: 12, color: '#fff' }}
-                  labelStyle={{ color: MUTED, fontSize: 11 }}
-                  formatter={((v: number | undefined, name: string) => {
-                    const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
-                    return [String(v ?? ''), labels[name] || name];
-                  }) as any}
-                />
-                <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#execGoldGrad)" dot={false} activeDot={{ r: 4, fill: GOLD }} name="overall" />
-                <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="foodSafety" />
-                <Line type="monotone" dataKey="fireSafety" stroke="#ea580c" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="fireSafety" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Left: Trend Chart */}
+      <div>
+        <p className="text-[11px] font-medium text-gray-500 mb-1">EvidLY Operational Readiness — 30 Days</p>
+        <p className="text-[10px] text-gray-400 mb-3">EvidLY Operational Readiness (internal tracking)</p>
+        <div className="flex items-center gap-4 mb-2 text-[11px]">
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: GOLD }} /> Overall</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#16a34a' }} /> Food Safety</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#ea580c' }} /> Fire Safety</span>
         </div>
+        <div style={{ width: '100%', height: 240 }}>
+          <ResponsiveContainer>
+            <AreaChart data={trendData} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
+              <defs>
+                <linearGradient id="execGoldGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={GOLD} stopOpacity={0.15} />
+                  <stop offset="100%" stopColor={GOLD} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} interval={4} />
+              <YAxis domain={[60, 100]} tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} />
+              <RechartsTooltip
+                contentStyle={{ backgroundColor: '#0d2847', border: 'none', borderRadius: 8, fontSize: 12, color: '#fff' }}
+                labelStyle={{ color: MUTED, fontSize: 11 }}
+                formatter={((v: number | undefined, name: string) => {
+                  const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
+                  return [String(v ?? ''), labels[name] || name];
+                }) as any}
+              />
+              <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#execGoldGrad)" dot={false} activeDot={{ r: 4, fill: GOLD }} name="overall" />
+              <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="foodSafety" />
+              <Line type="monotone" dataKey="fireSafety" stroke="#ea580c" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="fireSafety" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
 
-        {/* Right: Attention Required */}
-        <div>
-          <p className="text-[11px] font-medium text-gray-500 mb-3">Attention Required</p>
-          <div className="space-y-3">
-            {allLocations.map(loc => {
-              const borderColor = loc.statusType === 'critical' ? '#dc2626' : loc.statusType === 'attention' ? '#d97706' : '#16a34a';
-              const bgColor = loc.statusType === 'critical' ? '#fef2f2' : loc.statusType === 'attention' ? '#fffbeb' : '#f0fdf4';
-              return (
-                <div
-                  key={loc.id}
-                  className="rounded-xl p-4"
-                  style={{ borderLeft: `4px solid ${borderColor}`, backgroundColor: bgColor }}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                      style={{ color: borderColor, backgroundColor: borderColor + '15' }}>
-                      {loc.gradeDisplay}
-                    </span>
-                  </div>
-                  <p className="text-[12px] text-gray-600 leading-relaxed mb-2">{loc.description}</p>
-                  {loc.actionLabel && (
-                    <button
-                      type="button"
-                      className="text-xs font-medium"
-                      style={{ color: NAVY }}
-                      onClick={() => navigate(loc.route)}
-                    >
-                      {loc.actionLabel} &rarr;
-                    </button>
-                  )}
+      {/* Right: Attention Required */}
+      <div>
+        <p className="text-[11px] font-medium text-gray-500 mb-3">Attention Required</p>
+        <div className="space-y-3">
+          {allLocations.map(loc => {
+            const borderColor = loc.statusType === 'critical' ? '#dc2626' : loc.statusType === 'attention' ? '#d97706' : '#16a34a';
+            const bgColor = loc.statusType === 'critical' ? '#fef2f2' : loc.statusType === 'attention' ? '#fffbeb' : '#f0fdf4';
+            return (
+              <div
+                key={loc.id}
+                className="rounded-xl p-4"
+                style={{ borderLeft: `4px solid ${borderColor}`, backgroundColor: bgColor }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                    style={{ color: borderColor, backgroundColor: borderColor + '15' }}>
+                    {loc.gradeDisplay}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
+                <p className="text-[12px] text-gray-600 leading-relaxed mb-2">{loc.description}</p>
+                {loc.actionLabel && (
+                  <button
+                    type="button"
+                    className="text-xs font-medium"
+                    style={{ color: NAVY }}
+                    onClick={() => navigate(loc.route)}
+                  >
+                    {loc.actionLabel} &rarr;
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -378,9 +347,8 @@ interface WidgetConfig {
 }
 
 const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
-  { id: 'kpis', label: "This Week's Performance", icon: <BarChart3 size={14} />, visible: true },
+  { id: 'tabbedDetails', label: 'Trend & Key Metrics', icon: <LineChartIcon size={14} />, visible: true },
   { id: 'locations', label: 'Location Status', icon: <Users size={14} />, visible: true },
-  { id: 'trendAttention', label: 'Trend & Attention', icon: <LineChartIcon size={14} />, visible: true },
 ];
 
 // ================================================================
@@ -453,6 +421,81 @@ function EvidlyFooter() {
 }
 
 // ================================================================
+// HERO CHILDREN: Dual-Authority Jurisdiction Summary
+// ================================================================
+
+function HeroJurisdictionSummary({ jieScores, jurisdictions }: {
+  jieScores: Record<string, LocationScore>;
+  jurisdictions: Record<string, LocationJurisdiction>;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+      {/* Food Safety */}
+      <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
+          <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Food Safety</span>
+          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>
+            {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
+          </span>
+        </div>
+        <div className="space-y-2">
+          {LOCATIONS_WITH_SCORES.map(loc => {
+            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+            const score = jieScores[jieLocId];
+            const jur = jurisdictions[jieLocId];
+            const sColor = score?.foodSafety?.status === 'passing' ? '#22c55e'
+              : score?.foodSafety?.status === 'failing' ? '#ef4444'
+              : score?.foodSafety?.status === 'at_risk' ? '#f59e0b' : '#6b7280';
+            return (
+              <div key={loc.id} className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sColor }} />
+                <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                  {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
+                </span>
+                <span className="text-xs font-semibold text-white">
+                  {score?.foodSafety?.gradeDisplay || 'Pending'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Fire Safety */}
+      <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
+          <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
+          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>2025 CFC</span>
+        </div>
+        <div className="space-y-2">
+          {LOCATIONS_WITH_SCORES.map(loc => {
+            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+            const score = jieScores[jieLocId];
+            const jur = jurisdictions[jieLocId];
+            const isPassing = score?.fireSafety?.status === 'passing';
+            return (
+              <div key={loc.id} className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
+                <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
+                <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
+                  {jur?.fireSafety?.agency_name || ''}
+                </span>
+                <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
+                  {score?.fireSafety?.grade || 'Pending'}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ================================================================
 // MAIN COMPONENT
 // ================================================================
 
@@ -494,11 +537,29 @@ export default function ExecutiveDashboard() {
 
   const visibleWidgets = widgets.filter(w => w.visible);
 
+  // Tabbed detail section: Trend | Key Metrics
+  const tabbedTabs: TabDef[] = useMemo(() => [
+    {
+      id: 'trend',
+      label: 'Trend',
+      content: <WidgetTrendChart navigate={navigate} jieScores={jieScores} />,
+    },
+    {
+      id: 'keyMetrics',
+      label: 'Key Metrics',
+      content: <WidgetKPIs />,
+    },
+  ], [navigate, jieScores]);
+
   const renderWidget = (wid: string) => {
     switch (wid) {
-      case 'kpis': return <WidgetKPIs />;
+      case 'tabbedDetails':
+        return (
+          <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+            <TabbedDetailSection tabs={tabbedTabs} defaultTab="trend" />
+          </div>
+        );
       case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} />;
-      case 'trendAttention': return <WidgetTrendAttention navigate={navigate} jieScores={jieScores} />;
       default: return null;
     }
   };
@@ -508,119 +569,17 @@ export default function ExecutiveDashboard() {
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
-      {/* DARK NAVY HEADER (locked)                                     */}
+      {/* HERO (shared DashboardHero + exec-specific children)         */}
       {/* ============================================================ */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
-          padding: '20px 24px 40px',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
-          ...stagger(0),
-        }}
+      <DashboardHero
+        greeting={getGreeting()}
+        firstName="Sarah"
+        orgName={companyName || DEMO_ORG.name}
+        subtitle="3 locations &middot; California"
+        onSubtitleClick={() => navigate('/org-hierarchy')}
       >
-        {/* Gold radial glow */}
-        <div className="absolute pointer-events-none" style={{
-          top: -80, right: -40, width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(196,154,43,0.10) 0%, transparent 55%)',
-        }} />
-
-        {/* Row 1: Logo | Divider | Greeting | Org */}
-        <div className="flex items-start gap-4 mb-6 relative z-10">
-          <div className="flex-shrink-0">
-            <div className="flex items-baseline">
-              <span className="text-[22px]" style={{ color: GOLD, fontWeight: 800 }}>E</span>
-              <span className="text-[22px] text-white" style={{ fontWeight: 800 }}>vid</span>
-              <span className="text-[22px]" style={{ color: GOLD, fontWeight: 800 }}>LY</span>
-            </div>
-            <p className="text-[9px] uppercase text-white mt-0.5" style={{ opacity: 0.45, letterSpacing: '0.12em' }}>
-              Compliance Simplified
-            </p>
-          </div>
-          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-base font-medium">{getGreeting()}, Sarah.</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{getFormattedDate()}</p>
-          </div>
-          <div className="text-right flex-shrink-0 hidden sm:block">
-            <p className="text-white font-semibold text-sm">{companyName || DEMO_ORG.name}</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>
-              {DEMO_ORG.locationCount} locations &middot; California
-            </p>
-          </div>
-        </div>
-
-        {/* Dual-Authority Jurisdiction Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10 mt-2" style={stagger(1)}>
-          {/* Food Safety */}
-          <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-            <div className="flex items-center gap-2 mb-3">
-              <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
-              <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Food Safety</span>
-              <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>
-                {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
-              </span>
-            </div>
-            <div className="space-y-2">
-              {LOCATIONS_WITH_SCORES.map(loc => {
-                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                const score = jieScores[jieLocId];
-                const jur = jurisdictions[jieLocId];
-                const statusColor = score?.foodSafety?.status === 'passing' ? '#22c55e'
-                  : score?.foodSafety?.status === 'failing' ? '#ef4444'
-                  : score?.foodSafety?.status === 'at_risk' ? '#f59e0b' : '#6b7280';
-                return (
-                  <div key={loc.id} className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: statusColor }} />
-                    <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                    <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                      {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
-                    </span>
-                    <span className="text-xs font-semibold text-white">
-                      {score?.foodSafety?.gradeDisplay || 'Pending'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Fire Safety */}
-          <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-            <div className="flex items-center gap-2 mb-3">
-              <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
-              <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
-              <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>2025 CFC</span>
-            </div>
-            <div className="space-y-2">
-              {LOCATIONS_WITH_SCORES.map(loc => {
-                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                const score = jieScores[jieLocId];
-                const jur = jurisdictions[jieLocId];
-                const isPassing = score?.fireSafety?.status === 'passing';
-                return (
-                  <div key={loc.id} className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
-                    <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                    <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                      {jur?.fireSafety?.agency_name || ''}
-                    </span>
-                    <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                      {score?.fireSafety?.grade || 'Pending'}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Gold accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: GOLD }} />
-      </div>
+        <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} />
+      </DashboardHero>
 
       {/* ============================================================ */}
       {/* CONTENT                                                       */}
@@ -629,6 +588,9 @@ export default function ExecutiveDashboard() {
 
         {/* Alert Banners (locked) */}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
+
+        {/* Where Do I Start? — executive-focused priorities */}
+        <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} />
 
         {/* Customizable Widget Section */}
         <div>

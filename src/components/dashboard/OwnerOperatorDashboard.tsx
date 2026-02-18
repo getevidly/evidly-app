@@ -1,11 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  UtensilsCrossed, Flame, ChevronRight, AlertTriangle, ShieldAlert,
-  Thermometer, ClipboardList, FileUp, Bot, TrendingUp,
-  CheckCircle2, Hammer, Clock, AlertCircle, CalendarDays, Target,
-  Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Wrench, Shield,
-  GraduationCap, Activity, LayoutGrid,
+  UtensilsCrossed, Flame, ChevronRight, AlertTriangle,
+  Thermometer, ClipboardList, FileUp, Bot,
+  CheckCircle2, Hammer, Clock, AlertCircle, CalendarDays,
+  Activity,
 } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area, Line,
@@ -18,9 +17,7 @@ import {
   type TaskItem,
   type DeadlineItem,
   type ImpactItem,
-  type AlertItem as HookAlertItem,
   type LocationWithScores,
-  type ModuleStatus,
 } from '../../hooks/useDashboardData';
 import type { ActivityItem } from '../../lib/dashboardQueries';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
@@ -28,44 +25,10 @@ import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { FireStatusBars } from '../shared/FireStatusBars';
-
-// ================================================================
-// CONSTANTS
-// ================================================================
-
-const GOLD = '#C49A2B';
-const NAVY = '#163a5f';
-const PAGE_BG = '#f4f6f9';
-const MUTED = '#94a3b8';
-const BODY_TEXT = '#1e293b';
-
-const FONT: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
-
-// Maps dashboard location IDs -> JIE dual-authority location IDs
-const JIE_LOC_MAP: Record<string, string> = {
-  'downtown': 'demo-loc-downtown',
-  'airport': 'demo-loc-airport',
-  'university': 'demo-loc-university',
-};
-
-// ================================================================
-// KEYFRAMES
-// ================================================================
-
-const KEYFRAMES = `
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-`;
-
-function stagger(i: number): React.CSSProperties {
-  return { animation: `fadeInUp 0.4s ease-out ${i * 0.1}s both` };
-}
+import { GOLD, NAVY, PAGE_BG, MUTED, BODY_TEXT, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, statusColor } from './shared/constants';
+import { DashboardHero } from './shared/DashboardHero';
+import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
+import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
 // Generate trend data for 7d / 30d / 90d
 function generateTrendData(days: number, trendData: { date: string; overall: number; foodSafety: number; fireSafety: number }[]) {
@@ -91,32 +54,6 @@ function generateTrendData(days: number, trendData: { date: string; overall: num
     });
   }
   return [...extra, ...base];
-}
-
-// ================================================================
-// HELPERS
-// ================================================================
-
-function getGreeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
-}
-
-function getFormattedDate(): string {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric',
-  });
-}
-
-function statusColor(status: 'passing' | 'failing' | 'at_risk' | 'unknown'): string {
-  switch (status) {
-    case 'passing': return '#16a34a';
-    case 'failing': return '#dc2626';
-    case 'at_risk': return '#d97706';
-    default: return '#94a3b8';
-  }
 }
 
 function gradingTypeLabel(gradingType: string | null): string {
@@ -618,61 +555,6 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
 }
 
 // ================================================================
-// WIDGET: MODULE STATUS
-// ================================================================
-
-const MODULE_ICONS: Record<string, React.ReactNode> = {
-  'mod-checklists': <ClipboardList size={18} />,
-  'mod-temp': <Thermometer size={18} />,
-  'mod-equipment': <Wrench size={18} />,
-  'mod-haccp': <Shield size={18} />,
-  'mod-training': <GraduationCap size={18} />,
-  'mod-fire': <Flame size={18} />,
-};
-
-const STATUS_DOT: Record<string, string> = {
-  good: '#22c55e',
-  warning: '#eab308',
-  critical: '#ef4444',
-};
-
-function WidgetModuleStatus({ navigate, modules }: { navigate: (path: string) => void; modules: ModuleStatus[] }) {
-  return (
-    <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Module Status</h4>
-        <LayoutGrid size={14} className="text-gray-400" />
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {modules.map(mod => (
-          <button
-            key={mod.id}
-            type="button"
-            onClick={() => navigate(mod.route)}
-            className="flex items-center gap-2.5 p-3 rounded-lg text-left transition-colors hover:bg-gray-50"
-            style={{ border: '1px solid #e5e7eb' }}
-          >
-            <div className="shrink-0" style={{ color: MUTED }}>
-              {MODULE_ICONS[mod.id] || <Activity size={18} />}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-medium text-gray-800 truncate">{mod.label}</p>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0"
-                  style={{ backgroundColor: STATUS_DOT[mod.status] || '#94a3b8' }}
-                />
-                <p className="text-[11px] text-gray-500 truncate">{mod.metric}</p>
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ================================================================
 // WIDGET: RECENT ACTIVITY
 // ================================================================
 
@@ -710,27 +592,6 @@ function WidgetRecentActivity({ navigate, activity }: { navigate: (path: string)
     </div>
   );
 }
-
-// ================================================================
-// WIDGET CONFIG
-// ================================================================
-
-interface WidgetConfig {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  visible: boolean;
-}
-
-const DEFAULT_WIDGETS: WidgetConfig[] = [
-  { id: 'modules', label: 'Module Status', icon: <LayoutGrid size={14} />, visible: true },
-  { id: 'tasks', label: 'Today\'s Tasks', icon: <ClipboardList size={14} />, visible: true },
-  { id: 'deadlines', label: 'Upcoming Deadlines', icon: <CalendarDays size={14} />, visible: true },
-  { id: 'fire-safety', label: 'Fire Safety', icon: <Flame size={14} />, visible: true },
-  { id: 'impact', label: 'Score Impact', icon: <Target size={14} />, visible: true },
-  { id: 'trend', label: 'Compliance Trend', icon: <TrendingUp size={14} />, visible: true },
-  { id: 'activity', label: 'Recent Activity', icon: <Activity size={14} />, visible: true },
-];
 
 // ================================================================
 // QUICK ACTIONS BAR
@@ -886,7 +747,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
-  const { companyName, isDemoMode } = useDemo();
+  const { companyName, firstName, isDemoMode } = useDemo();
   const { data, loading, error, refresh } = useDashboardData();
 
   // JIE: Dual-authority jurisdiction data per location
@@ -907,26 +768,6 @@ export default function OwnerOperatorDashboard() {
   }, []);
 
   const locs = data.locations;
-
-  // Widget customization
-  const [widgets, setWidgets] = useState<WidgetConfig[]>(DEFAULT_WIDGETS);
-  const [customizing, setCustomizing] = useState(false);
-
-  const moveWidget = useCallback((index: number, dir: -1 | 1) => {
-    setWidgets(prev => {
-      const next = [...prev];
-      const target = index + dir;
-      if (target < 0 || target >= next.length) return prev;
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
-  }, []);
-
-  const toggleWidget = useCallback((id: string) => {
-    setWidgets(prev => prev.map(w => w.id === id ? { ...w, visible: !w.visible } : w));
-  }, []);
-
-  const visibleWidgets = widgets.filter(w => w.visible);
 
   // Multi-location check
   const isMultiLocation = locs.length > 1;
@@ -952,18 +793,52 @@ export default function OwnerOperatorDashboard() {
     return ahjs.size;
   }, [locs, jurisdictions]);
 
-  const renderWidget = (wid: string) => {
-    switch (wid) {
-      case 'modules': return <WidgetModuleStatus navigate={navigate} modules={data.moduleStatuses} />;
-      case 'tasks': return <WidgetTasks navigate={navigate} tasks={data.tasks} />;
-      case 'deadlines': return <WidgetDeadlines navigate={navigate} deadlines={data.deadlines} />;
-      case 'fire-safety': return <WidgetFireSafety navigate={navigate} locations={data.locations} jieScores={jieScores} jurisdictions={jurisdictions} />;
-      case 'impact': return <WidgetScoreImpact navigate={navigate} impact={data.impact} />;
-      case 'trend': return <WidgetTrend trendData={data.trendData} />;
-      case 'activity': return <WidgetRecentActivity navigate={navigate} activity={data.activity} />;
-      default: return null;
-    }
-  };
+  // Build priority items from impact data for WhereDoIStartSection
+  const priorityItems: PriorityItem[] = useMemo(
+    () => data.impact.map(item => ({
+      id: item.id,
+      severity: item.severity === 'critical' ? 'critical' as const : 'warning' as const,
+      title: item.action,
+      detail: `${item.location} \u00b7 ${item.pillar} \u00b7 +${item.points} pts`,
+      actionLabel: 'Fix Now',
+      route: item.route,
+    })),
+    [data.impact],
+  );
+
+  // Build tabs for TabbedDetailSection
+  const detailTabs: TabDef[] = useMemo(() => [
+    {
+      id: 'tasks',
+      label: "Today's Tasks",
+      content: <WidgetTasks navigate={navigate} tasks={data.tasks} />,
+    },
+    {
+      id: 'deadlines',
+      label: 'Deadlines',
+      content: <WidgetDeadlines navigate={navigate} deadlines={data.deadlines} />,
+    },
+    {
+      id: 'food-safety',
+      label: 'Food Safety',
+      content: <WidgetScoreImpact navigate={navigate} impact={data.impact} />,
+    },
+    {
+      id: 'fire-safety',
+      label: 'Fire Safety',
+      content: <WidgetFireSafety navigate={navigate} locations={data.locations} jieScores={jieScores} jurisdictions={jurisdictions} />,
+    },
+    {
+      id: 'trend',
+      label: 'Trend',
+      content: <WidgetTrend trendData={data.trendData} />,
+    },
+    {
+      id: 'activity',
+      label: 'Activity',
+      content: <WidgetRecentActivity navigate={navigate} activity={data.activity} />,
+    },
+  ], [navigate, data, jieScores, jurisdictions]);
 
   if (loading) return <DashboardSkeleton />;
 
@@ -972,147 +847,110 @@ export default function OwnerOperatorDashboard() {
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
-      {/* DARK NAVY HEADER                                             */}
+      {/* HERO — shared DashboardHero with dual-authority panels       */}
       {/* ============================================================ */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
-          padding: '20px 24px 40px',
-          ...stagger(0),
-        }}
-      >
-        {/* Gold radial glow */}
-        <div className="absolute pointer-events-none" style={{
-          top: -80, right: -40, width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(196,154,43,0.10) 0%, transparent 55%)',
-        }} />
+      <div style={stagger(0)} className="px-4 sm:px-6 pt-4">
+        <DashboardHero
+          firstName={firstName}
+          orgName={companyName || DEMO_ORG.name}
+          subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
+          onSubtitleClick={() => navigate('/org-hierarchy')}
+        >
+          {/* Dual-Authority Jurisdiction Summary — Food + Fire panels */}
+          <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto" style={stagger(1)}>
+            {/* Food Safety Panel */}
+            <div
+              className="flex-1 rounded-xl p-4"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-1.5 mb-1">
+                <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
+                <span className="text-[13px] text-white font-semibold">Food Safety</span>
+              </div>
+              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
+                {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} — each grades differently
+              </p>
+              <div className="space-y-2">
+                {locs.map(loc => {
+                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+                  const score = jieScores[jieLocId];
+                  const jur = jurisdictions[jieLocId];
+                  const foodStatus = score?.foodSafety?.status ?? 'unknown';
+                  const agencyShort = jur?.foodSafety?.agency_name
+                    ? jur.foodSafety.agency_name.split(' ').slice(0, 3).join(' ')
+                    : '';
+                  const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
 
-        {/* Row 1: Logo | Divider | Greeting | Org */}
-        <div className="flex items-start gap-4 mb-6 relative z-10">
-          <div className="flex-shrink-0">
-            <div className="flex items-baseline">
-              <span className="text-[22px] font-bold" style={{ color: GOLD }}>E</span>
-              <span className="text-[22px] font-bold text-white">vid</span>
-              <span className="text-[22px] font-bold" style={{ color: GOLD }}>LY</span>
-            </div>
-            <p className="text-[9px] uppercase text-white mt-0.5" style={{ opacity: 0.45, letterSpacing: '0.12em' }}>
-              Compliance Simplified
-            </p>
-          </div>
-
-          <div className="w-px self-stretch" style={{ backgroundColor: 'rgba(255,255,255,0.18)' }} />
-
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-base font-medium">{getGreeting()}, James.</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>{getFormattedDate()}</p>
-          </div>
-
-          <div className="text-right flex-shrink-0 hidden sm:block">
-            <p className="text-white font-semibold text-sm">{companyName || DEMO_ORG.name}</p>
-            <p className="text-blue-200 text-xs mt-0.5" style={{ opacity: 0.7 }}>
-              {DEMO_ORG.locationCount} locations &middot; CA
-            </p>
-          </div>
-        </div>
-
-        {/* Center: Dual-Authority Jurisdiction Summary */}
-        <div className="flex flex-col sm:flex-row gap-3 relative z-10 max-w-3xl mx-auto" style={stagger(1)}>
-          {/* Food Safety Panel */}
-          <div
-            className="flex-1 rounded-xl p-4"
-            style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-          >
-            <div className="flex items-center gap-1.5 mb-1">
-              <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-              <span className="text-[13px] text-white font-semibold">Food Safety</span>
-            </div>
-            <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-              {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} — each grades differently
-            </p>
-            <div className="space-y-2">
-              {locs.map(loc => {
-                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                const score = jieScores[jieLocId];
-                const jur = jurisdictions[jieLocId];
-                const foodStatus = score?.foodSafety?.status ?? 'unknown';
-                const agencyShort = jur?.foodSafety?.agency_name
-                  ? jur.foodSafety.agency_name.split(' ').slice(0, 3).join(' ')
-                  : '';
-                const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
-
-                return (
-                  <div key={loc.id} className="flex items-center gap-2">
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: statusColor(foodStatus) }}
-                    />
-                    <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                      {loc.name}
-                    </span>
-                    {agencyShort && (
-                      <span className="text-[9px] text-white shrink-0" style={{ opacity: 0.45 }}>
-                        {agencyShort}
+                  return (
+                    <div key={loc.id} className="flex items-center gap-2">
+                      <span
+                        className="w-2 h-2 rounded-full shrink-0"
+                        style={{ backgroundColor: statusColor(foodStatus) }}
+                      />
+                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
+                        {loc.name}
                       </span>
-                    )}
-                    <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
-                      {gradeDisp}
-                    </span>
-                  </div>
-                );
-              })}
+                      {agencyShort && (
+                        <span className="text-[9px] text-white shrink-0" style={{ opacity: 0.45 }}>
+                          {agencyShort}
+                        </span>
+                      )}
+                      <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
+                        {gradeDisp}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Fire Safety Panel */}
+            <div
+              className="flex-1 rounded-xl p-4"
+              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-1.5 mb-1">
+                <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
+                <span className="text-[13px] text-white font-semibold">Fire Safety</span>
+              </div>
+              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
+                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — 2025 CFC operational permits
+              </p>
+              <div className="space-y-2">
+                {locs.map(loc => {
+                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+                  const score = jieScores[jieLocId];
+                  const jur = jurisdictions[jieLocId];
+                  const fireStatus = score?.fireSafety?.status ?? 'unknown';
+                  const fireAHJ = jur?.fireSafety?.agency_name ?? '';
+
+                  return (
+                    <div key={loc.id} className="flex items-center gap-2">
+                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
+                        {loc.name}
+                      </span>
+                      <span className="text-[9px] text-white shrink-0 truncate max-w-[100px]" style={{ opacity: 0.45 }}>
+                        {fireAHJ}
+                      </span>
+                      {fireStatus === 'passing' && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(34,197,94,0.25)', color: '#86efac' }}>Pass</span>
+                      )}
+                      {fireStatus === 'failing' && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(239,68,68,0.25)', color: '#fca5a5' }}>Fail</span>
+                      )}
+                      {fireStatus === 'at_risk' && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(234,179,8,0.25)', color: '#fde68a' }}>At Risk</span>
+                      )}
+                      {fireStatus === 'unknown' && (
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-
-          {/* Fire Safety Panel */}
-          <div
-            className="flex-1 rounded-xl p-4"
-            style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-          >
-            <div className="flex items-center gap-1.5 mb-1">
-              <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-              <span className="text-[13px] text-white font-semibold">Fire Safety</span>
-            </div>
-            <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-              {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — 2025 CFC operational permits
-            </p>
-            <div className="space-y-2">
-              {locs.map(loc => {
-                const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                const score = jieScores[jieLocId];
-                const jur = jurisdictions[jieLocId];
-                const fireStatus = score?.fireSafety?.status ?? 'unknown';
-                const fireAHJ = jur?.fireSafety?.agency_name ?? '';
-
-                return (
-                  <div key={loc.id} className="flex items-center gap-2">
-                    <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                      {loc.name}
-                    </span>
-                    <span className="text-[9px] text-white shrink-0 truncate max-w-[100px]" style={{ opacity: 0.45 }}>
-                      {fireAHJ}
-                    </span>
-                    {fireStatus === 'passing' && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(34,197,94,0.25)', color: '#86efac' }}>Pass</span>
-                    )}
-                    {fireStatus === 'failing' && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(239,68,68,0.25)', color: '#fca5a5' }}>Fail</span>
-                    )}
-                    {fireStatus === 'at_risk' && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(234,179,8,0.25)', color: '#fde68a' }}>At Risk</span>
-                    )}
-                    {fireStatus === 'unknown' && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Gold accent line */}
-        <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ backgroundColor: GOLD }} />
+        </DashboardHero>
       </div>
 
       {/* ============================================================ */}
@@ -1125,6 +963,9 @@ export default function OwnerOperatorDashboard() {
 
         {/* Alert Banners */}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
+
+        {/* Where Do I Start — priority actions from impact data */}
+        <WhereDoIStartSection items={priorityItems} staggerOffset={2} />
 
         {/* Location Cards — only if multi-location */}
         {isMultiLocation && (
@@ -1155,92 +996,9 @@ export default function OwnerOperatorDashboard() {
           </div>
         )}
 
-        {/* Customizable Widgets */}
+        {/* Tabbed Detail Section — replaces customizable widget grid */}
         <div style={stagger(4)}>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-700">Your Dashboard</h3>
-            <button
-              type="button"
-              onClick={() => setCustomizing(prev => !prev)}
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-              style={{
-                color: customizing ? '#92400e' : NAVY,
-                backgroundColor: customizing ? '#fefce8' : '#f1f5f9',
-                border: customizing ? `1px solid ${GOLD}` : '1px solid transparent',
-              }}
-            >
-              {customizing ? <CheckCircle2 size={13} /> : <Settings2 size={13} />}
-              {customizing ? 'Done Customizing' : 'Customize Dashboard'}
-            </button>
-          </div>
-
-          {/* Customization instruction banner */}
-          {customizing && (
-            <div className="mb-4 p-2.5 rounded-lg text-[12px] font-medium text-center"
-              style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a', color: '#92400e' }}>
-              Reorder with arrows &middot; Click to show/hide
-            </div>
-          )}
-
-          {/* Widget pills */}
-          {customizing && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {widgets.map(w => (
-                <button
-                  key={w.id}
-                  type="button"
-                  onClick={() => toggleWidget(w.id)}
-                  className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
-                  style={w.visible ? {
-                    backgroundColor: '#fefce8',
-                    color: '#92400e',
-                    border: `1px solid ${GOLD}`,
-                  } : {
-                    backgroundColor: '#f9fafb',
-                    color: MUTED,
-                    border: '1px solid #e5e7eb',
-                    textDecoration: 'line-through',
-                  }}
-                >
-                  {w.visible ? <Eye size={12} /> : <EyeOff size={12} />}
-                  {w.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Widget grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {visibleWidgets.map((w, idx) => (
-              <div key={w.id} className="relative">
-                {customizing && (
-                  <div
-                    className="absolute -top-1 -right-1 z-10 flex items-center gap-0.5 bg-white rounded-lg shadow-sm border border-gray-200 p-0.5"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => moveWidget(widgets.findIndex(wi => wi.id === w.id), -1)}
-                      className="p-1 rounded hover:bg-gray-100 transition-colors"
-                      disabled={idx === 0}
-                    >
-                      <ArrowUp size={12} className={idx === 0 ? 'text-gray-200' : 'text-gray-500'} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveWidget(widgets.findIndex(wi => wi.id === w.id), 1)}
-                      className="p-1 rounded hover:bg-gray-100 transition-colors"
-                      disabled={idx === visibleWidgets.length - 1}
-                    >
-                      <ArrowDown size={12} className={idx === visibleWidgets.length - 1 ? 'text-gray-200' : 'text-gray-500'} />
-                    </button>
-                  </div>
-                )}
-                <div style={customizing ? { border: `2px dashed ${GOLD}`, borderRadius: 16, padding: 2 } : undefined}>
-                  {renderWidget(w.id)}
-                </div>
-              </div>
-            ))}
-          </div>
+          <TabbedDetailSection tabs={detailTabs} defaultTab="tasks" />
         </div>
 
         {/* Footer */}
