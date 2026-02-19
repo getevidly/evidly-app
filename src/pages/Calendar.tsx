@@ -202,11 +202,13 @@ function hourLabel(h: number) {
 
 // ── Role-based event type visibility ─────────────────────────
 const ROLE_EVENT_TYPES: Record<UserRole, string[] | 'all'> = {
-  management: 'all', // Owner/Operator sees everything
+  owner_operator: 'all',
   executive: ['inspection', 'certification', 'meeting', 'corrective'],
+  compliance_manager: ['inspection', 'certification', 'meeting', 'corrective', 'checklist'],
+  chef: ['temp-check', 'checklist', 'corrective'],
+  facilities_manager: ['vendor', 'inspection', 'certification', 'corrective'],
   kitchen_manager: ['temp-check', 'checklist', 'vendor', 'inspection', 'meeting', 'corrective'],
-  kitchen: ['temp-check', 'checklist', 'corrective'],
-  facilities: ['vendor', 'inspection', 'certification', 'corrective'],
+  kitchen_staff: ['temp-check', 'checklist', 'corrective'],
 };
 
 // ── Component ────────────────────────────────────────────────

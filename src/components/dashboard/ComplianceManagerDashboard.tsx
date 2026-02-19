@@ -27,6 +27,9 @@ import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
+import { CalendarCard } from './shared/CalendarCard';
+import { COMPLIANCE_EVENTS, COMPLIANCE_CALENDAR } from '../../data/calendarDemoEvents';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 // ================================================================
 // HELPERS (component-specific)
@@ -589,6 +592,19 @@ export default function ComplianceManagerDashboard() {
               );
             })}
           </div>
+        </div>
+
+        {/* Schedule Calendar */}
+        <div style={stagger(5)}>
+          <ErrorBoundary level="widget">
+            <CalendarCard
+              events={COMPLIANCE_EVENTS}
+              typeColors={COMPLIANCE_CALENDAR.typeColors}
+              typeLabels={COMPLIANCE_CALENDAR.typeLabels}
+              navigate={navigate}
+              tooltipContent={useTooltip('scheduleCalendar', userRole)}
+            />
+          </ErrorBoundary>
         </div>
 
         {/* ============================================================ */}

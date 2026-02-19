@@ -27,6 +27,9 @@ import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
+import { CalendarCard } from './shared/CalendarCard';
+import { EXECUTIVE_EVENTS, EXECUTIVE_CALENDAR } from '../../data/calendarDemoEvents';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 // ================================================================
 // ALERT BANNERS
@@ -429,6 +432,17 @@ export default function ExecutiveDashboard() {
 
         {/* Where Do I Start? — executive-focused priorities */}
         <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+
+        {/* Schedule Calendar */}
+        <ErrorBoundary level="widget">
+          <CalendarCard
+            events={EXECUTIVE_EVENTS}
+            typeColors={EXECUTIVE_CALENDAR.typeColors}
+            typeLabels={EXECUTIVE_CALENDAR.typeLabels}
+            navigate={navigate}
+            tooltipContent={useTooltip('scheduleCalendar', userRole)}
+          />
+        </ErrorBoundary>
 
         {/* Customizable Widget Section */}
         <div>

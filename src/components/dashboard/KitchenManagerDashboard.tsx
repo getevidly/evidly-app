@@ -17,6 +17,9 @@ import { getGreeting, getFormattedDate, GOLD, DEMO_ROLE_NAMES } from './shared/c
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
+import { CalendarCard } from './shared/CalendarCard';
+import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/calendarDemoEvents';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 // --------------- Demo Data ---------------
 
@@ -277,6 +280,17 @@ export default function KitchenManagerDashboard() {
 
       {/* Where Do I Start */}
       <WhereDoIStartSection items={priorityItems} tooltipContent={useTooltip('urgentItems', userRole)} />
+
+      {/* Schedule Calendar */}
+      <ErrorBoundary level="widget">
+        <CalendarCard
+          events={KITCHEN_MANAGER_EVENTS}
+          typeColors={KITCHEN_MANAGER_CALENDAR.typeColors}
+          typeLabels={KITCHEN_MANAGER_CALENDAR.typeLabels}
+          navigate={navigate}
+          tooltipContent={useTooltip('scheduleCalendar', userRole)}
+        />
+      </ErrorBoundary>
 
       {/* Temperatures & Team Activity */}
       <Card>

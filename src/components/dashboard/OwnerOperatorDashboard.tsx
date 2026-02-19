@@ -29,6 +29,9 @@ import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
+import { CalendarCard } from './shared/CalendarCard';
+import { OWNER_OPERATOR_EVENTS, OWNER_OPERATOR_CALENDAR } from '../../data/calendarDemoEvents';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 
 function gradingTypeLabel(gradingType: string | null): string {
@@ -800,8 +803,21 @@ export default function OwnerOperatorDashboard() {
           </div>
         )}
 
-        {/* Tabbed Detail Section — replaces customizable widget grid */}
+        {/* Schedule Calendar */}
         <div style={stagger(4)}>
+          <ErrorBoundary level="widget">
+            <CalendarCard
+              events={OWNER_OPERATOR_EVENTS}
+              typeColors={OWNER_OPERATOR_CALENDAR.typeColors}
+              typeLabels={OWNER_OPERATOR_CALENDAR.typeLabels}
+              navigate={navigate}
+              tooltipContent={useTooltip('scheduleCalendar', userRole)}
+            />
+          </ErrorBoundary>
+        </div>
+
+        {/* Tabbed Detail Section — replaces customizable widget grid */}
+        <div style={stagger(5)}>
           <TabbedDetailSection tabs={detailTabs} defaultTab="tasks" />
         </div>
 
