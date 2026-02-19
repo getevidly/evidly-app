@@ -13,7 +13,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
-import { getGreeting, getFormattedDate, GOLD } from './shared/constants';
+import { getGreeting, getFormattedDate, GOLD, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
@@ -160,7 +160,7 @@ export default function KitchenManagerDashboard() {
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Hero Banner */}
       <DashboardHero
-        greeting={`${getGreeting()}, Chef.`}
+        greeting={`${getGreeting()}, ${DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}.`}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       >
@@ -175,17 +175,19 @@ export default function KitchenManagerDashboard() {
                 : 'bg-amber-500/20 text-amber-300'
             }`}
           >
-            {foodGrade}
+            Food: {foodGrade}
           </button>
-          <button
-            type="button"
-            onClick={() => navigate('/fire-safety')}
-            className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
-              fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-            }`}
-          >
-            Fire: {fireGrade}
-          </button>
+          {userRole !== 'chef' && (
+            <button
+              type="button"
+              onClick={() => navigate('/fire-safety')}
+              className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
+                fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
+              }`}
+            >
+              Fire: {fireGrade}
+            </button>
+          )}
         </div>
       </DashboardHero>
 
@@ -230,7 +232,7 @@ export default function KitchenManagerDashboard() {
 
       {/* Checklists — HERO SECTION */}
       <div>
-        <SectionHeader>Checklists</SectionHeader>
+        <SectionHeader>Checklists<SectionTooltip content={useTooltip('checklistCard', userRole)} /></SectionHeader>
         <div className="space-y-3">
           {DEMO_CHECKLISTS.map((cl) => (
             <button

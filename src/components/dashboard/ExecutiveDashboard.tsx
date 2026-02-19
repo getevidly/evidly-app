@@ -6,10 +6,6 @@ import {
   CheckCircle2, BarChart3, LineChart as LineChartIcon, Shield,
   Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
 } from 'lucide-react';
-import {
-  ResponsiveContainer, AreaChart, Area, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-} from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
@@ -19,14 +15,16 @@ import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
+import { FireStatusBars } from '../shared/FireStatusBars';
+import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import {
   LOCATIONS_WITH_SCORES,
   DEMO_ORG,
   DEMO_WEEKLY_ACTIVITY,
-  DEMO_TREND_DATA,
 } from '../../data/demoData';
-import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, getGreeting, getFormattedDate, STEEL_SLATE_GRADIENT, statusColor } from './shared/constants';
+import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, getGreeting, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
+import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
@@ -249,115 +247,6 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
   );
 }
 
-// ================================================================
-// WIDGET: Trend Chart (extracted for tabbed section)
-// ================================================================
-
-function WidgetTrendChart({ navigate, jieScores }: {
-  navigate: (path: string) => void;
-  jieScores: Record<string, LocationScore>;
-}) {
-  const trendData = useMemo(() => DEMO_TREND_DATA, []);
-
-  const allLocations = LOCATIONS_WITH_SCORES.map(loc => {
-    const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-    const score = jieScores[jieLocId];
-    const foodStatus = score?.foodSafety?.status || 'unknown';
-    const statusType = foodStatus === 'failing' ? 'critical' as const
-      : foodStatus === 'at_risk' ? 'attention' as const
-      : 'good' as const;
-    const gradeDisplay = score?.foodSafety?.gradeDisplay || 'Pending';
-    const description = statusType === 'critical'
-      ? 'Reinspection required. Uncorrected major violations found during last inspection.'
-      : statusType === 'attention'
-        ? 'At risk. Review operational items and address flagged concerns.'
-        : 'All authorities passing. Operations running smoothly.';
-    const actionLabel = statusType === 'critical' ? 'Take Action' : statusType === 'attention' ? 'View Details' : '';
-    const route = statusType !== 'good' ? `/dashboard?location=${loc.id}` : '';
-    return { ...loc, statusType, gradeDisplay, description, actionLabel, route };
-  }).sort((a, b) => {
-    const order = { critical: 0, attention: 1, good: 2 };
-    return order[a.statusType] - order[b.statusType];
-  });
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Left: Trend Chart */}
-      <div>
-        <p className="text-[11px] font-medium text-gray-500 mb-1">EvidLY Operational Readiness — 30 Days</p>
-        <p className="text-[10px] text-gray-400 mb-3">EvidLY Operational Readiness (internal tracking)</p>
-        <div className="flex items-center gap-4 mb-2 text-[11px]">
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: GOLD }} /> Overall</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#16a34a' }} /> Food Safety</span>
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full inline-block" style={{ backgroundColor: '#ea580c' }} /> Fire Safety</span>
-        </div>
-        <div style={{ width: '100%', height: 240 }}>
-          <ResponsiveContainer>
-            <AreaChart data={trendData} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
-              <defs>
-                <linearGradient id="execGoldGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={GOLD} stopOpacity={0.15} />
-                  <stop offset="100%" stopColor={GOLD} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} interval={4} />
-              <YAxis domain={[60, 100]} tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} />
-              <RechartsTooltip
-                contentStyle={{ backgroundColor: '#0d2847', border: 'none', borderRadius: 8, fontSize: 12, color: '#fff' }}
-                labelStyle={{ color: MUTED, fontSize: 11 }}
-                formatter={((v: number | undefined, name: string) => {
-                  const labels: Record<string, string> = { overall: 'Overall', foodSafety: 'Food Safety', fireSafety: 'Fire Safety' };
-                  return [String(v ?? ''), labels[name] || name];
-                }) as any}
-              />
-              <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#execGoldGrad)" dot={false} activeDot={{ r: 4, fill: GOLD }} name="overall" />
-              <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="foodSafety" />
-              <Line type="monotone" dataKey="fireSafety" stroke="#ea580c" strokeWidth={1.5} dot={false} activeDot={{ r: 3 }} name="fireSafety" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Right: Attention Required */}
-      <div>
-        <p className="text-[11px] font-medium text-gray-500 mb-3">Attention Required</p>
-        <div className="space-y-3">
-          {allLocations.map(loc => {
-            const borderColor = loc.statusType === 'critical' ? '#dc2626' : loc.statusType === 'attention' ? '#d97706' : '#16a34a';
-            const bgColor = loc.statusType === 'critical' ? '#fef2f2' : loc.statusType === 'attention' ? '#fffbeb' : '#f0fdf4';
-            return (
-              <button
-                key={loc.id}
-                type="button"
-                onClick={() => loc.route ? navigate(loc.route) : navigate(`/locations/${loc.id}`)}
-                className={`w-full rounded-xl p-4 text-left transition-colors hover:opacity-90 ${loc.route ? 'cursor-pointer' : ''}`}
-                style={{ borderLeft: `4px solid ${borderColor}`, backgroundColor: bgColor }}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                    style={{ color: borderColor, backgroundColor: borderColor + '15' }}>
-                    {loc.gradeDisplay}
-                  </span>
-                </div>
-                <p className="text-[12px] text-gray-600 leading-relaxed mb-2">{loc.description}</p>
-                {loc.actionLabel && (
-                  <span
-                    className="text-xs font-medium"
-                    style={{ color: NAVY }}
-                  >
-                    {loc.actionLabel} &rarr;
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ================================================================
 // WIDGET CONFIG
@@ -371,7 +260,7 @@ interface WidgetConfig {
 }
 
 const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
-  { id: 'tabbedDetails', label: 'Trend & Key Metrics', icon: <LineChartIcon size={14} />, visible: true },
+  { id: 'tabbedDetails', label: 'Key Metrics', icon: <LineChartIcon size={14} />, visible: true },
   { id: 'locations', label: 'Location Status', icon: <Users size={14} />, visible: true },
 ];
 
@@ -444,94 +333,6 @@ function EvidlyFooter() {
   );
 }
 
-// ================================================================
-// HERO CHILDREN: Dual-Authority Jurisdiction Summary
-// ================================================================
-
-function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, userRole }: {
-  jieScores: Record<string, LocationScore>;
-  jurisdictions: Record<string, LocationJurisdiction>;
-  navigate: (path: string) => void;
-  userRole: UserRole;
-}) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-      {/* Food Safety */}
-      <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-        <div className="flex items-center gap-2 mb-3">
-          <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
-          <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Food Safety</span>
-          <SectionTooltip content={useTooltip('overallScore', userRole)} light />
-          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>
-            {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
-          </span>
-        </div>
-        <div className="space-y-2">
-          {LOCATIONS_WITH_SCORES.map(loc => {
-            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-            const score = jieScores[jieLocId];
-            const jur = jurisdictions[jieLocId];
-            const sColor = score?.foodSafety?.status === 'passing' ? '#22c55e'
-              : score?.foodSafety?.status === 'failing' ? '#ef4444'
-              : score?.foodSafety?.status === 'at_risk' ? '#f59e0b' : '#6b7280';
-            return (
-              <div
-                key={loc.id}
-                className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-              >
-                <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="flex items-center gap-2 flex-1 min-w-0">
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: sColor }} />
-                  <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                  <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                    {jur?.foodSafety?.agency_name ? jur.foodSafety.agency_name.split(' ').slice(0, 2).join(' ') : ''}
-                  </span>
-                </button>
-                <button type="button" onClick={() => navigate('/compliance')} className="text-xs font-semibold text-white hover:opacity-70 transition-opacity shrink-0">
-                  {score?.foodSafety?.gradeDisplay || 'Pending'}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Fire Safety */}
-      <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
-        <div className="flex items-center gap-2 mb-3">
-          <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
-          <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
-          <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
-          <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>NFPA 96 (2024)</span>
-        </div>
-        <div className="space-y-2">
-          {LOCATIONS_WITH_SCORES.map(loc => {
-            const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-            const score = jieScores[jieLocId];
-            const jur = jurisdictions[jieLocId];
-            const isPassing = score?.fireSafety?.status === 'passing';
-            return (
-              <div
-                key={loc.id}
-                className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-              >
-                <button type="button" onClick={() => navigate(`/locations/${loc.id}`)} className="flex items-center gap-2 flex-1 min-w-0">
-                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }} />
-                  <span className="text-xs text-white flex-1 truncate" style={{ opacity: 0.85 }}>{loc.name}</span>
-                  <span className="text-[10px] text-white" style={{ opacity: 0.5 }}>
-                    {jur?.fireSafety?.agency_name || ''}
-                  </span>
-                </button>
-                <button type="button" onClick={() => navigate('/fire-safety')} className={`text-xs font-semibold px-1.5 py-0.5 rounded hover:opacity-70 transition-opacity shrink-0 ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                  {score?.fireSafety?.grade || 'Pending'}
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ================================================================
 // MAIN COMPONENT
@@ -579,16 +380,11 @@ export default function ExecutiveDashboard() {
   // Tabbed detail section: Trend | Key Metrics
   const tabbedTabs: TabDef[] = useMemo(() => [
     {
-      id: 'trend',
-      label: 'Trend',
-      content: <WidgetTrendChart navigate={navigate} jieScores={jieScores} />,
-    },
-    {
       id: 'keyMetrics',
       label: 'Key Metrics',
       content: <WidgetKPIs navigate={navigate} />,
     },
-  ], [navigate, jieScores]);
+  ], [navigate]);
 
   const renderWidget = (wid: string) => {
     switch (wid) {
@@ -612,7 +408,7 @@ export default function ExecutiveDashboard() {
       {/* ============================================================ */}
       <DashboardHero
         greeting={getGreeting()}
-        firstName="Sarah"
+        firstName={DEMO_ROLE_NAMES.executive.firstName}
         orgName={companyName || DEMO_ORG.name}
         subtitle="3 locations &middot; California"
         onSubtitleClick={() => navigate('/org-hierarchy')}
@@ -626,6 +422,9 @@ export default function ExecutiveDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
 
         {/* Alert Banners (locked) */}
+        {visibleAlerts.length > 0 && (
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+        )}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Where Do I Start? — executive-focused priorities */}

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe, Search } from 'lucide-react';
+import { ChevronDown, MapPin, User, ShieldCheck, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe, Search, Settings, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
@@ -9,6 +9,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../../lib/i18n';
 import { DEMO_ROLES, checkTestMode } from '../../config/sidebarConfig';
+import { usePermission } from '../../hooks/usePermission';
 
 interface LocationOption {
   id: string;
@@ -43,13 +44,17 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
 
   const isTestMode = useMemo(() => checkTestMode(), []);
   const showRoleSwitcher = isDemoMode || isTestMode;
+  const canAccessSettings = usePermission('settings_access');
+  const canAccessHelp = usePermission('help_access');
 
   const roleLabels: Record<string, string> = {
-    management: t('topBar.ownerOperator'),
+    owner_operator: t('topBar.ownerOperator'),
     executive: t('topBar.executiveView'),
+    compliance_manager: t('topBar.complianceManager'),
+    chef: t('topBar.chef'),
+    facilities_manager: t('topBar.facilitiesManager'),
     kitchen_manager: t('topBar.kitchenManager'),
-    kitchen: t('topBar.kitchenStaff'),
-    facilities: t('topBar.facilitiesManager'),
+    kitchen_staff: t('topBar.kitchenStaff'),
   };
 
   const handleChangePassword = () => {
@@ -231,6 +236,26 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               )}
             </div>
 
+            {/* Help & Settings icons */}
+            {canAccessHelp && (
+              <button
+                onClick={() => navigate('/help')}
+                className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-150"
+                title="Help & Support"
+              >
+                <HelpCircle className="h-5 w-5 text-gray-500" />
+              </button>
+            )}
+            {canAccessSettings && (
+              <button
+                onClick={() => navigate('/settings')}
+                className="p-2 rounded-md hover:bg-gray-100 transition-colors duration-150"
+                title="Settings"
+              >
+                <Settings className="h-5 w-5 text-gray-500" />
+              </button>
+            )}
+
             {/* Role switcher - visible in demo mode and test mode */}
             {showRoleSwitcher && (
             <div className="relative">
@@ -262,6 +287,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         onClick={() => {
                           setUserRole(role);
                           setShowRoleMenu(false);
+                          navigate('/dashboard', { replace: true });
                           if (isTestMode) {
                             console.log(`[EvidLY Test] Role switched to: ${role} (${label})`);
                           }

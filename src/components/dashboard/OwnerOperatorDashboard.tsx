@@ -6,10 +6,6 @@ import {
   CheckCircle2, Hammer, Clock, AlertCircle, CalendarDays,
   Activity,
 } from 'lucide-react';
-import {
-  ResponsiveContainer, AreaChart, Area, Line,
-  XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-} from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
 import { useTooltip } from '../../hooks/useTooltip';
@@ -30,34 +26,10 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { FireStatusBars } from '../shared/FireStatusBars';
 import { GOLD, NAVY, PAGE_BG, MUTED, BODY_TEXT, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, statusColor } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
+import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
-// Generate trend data for 7d / 30d / 90d
-function generateTrendData(days: number, trendData: { date: string; overall: number; foodSafety: number; fireSafety: number }[]) {
-  if (days <= 30) {
-    if (days === 7) return trendData.slice(-7);
-    return trendData;
-  }
-  // 90-day: extend backwards with lower scores
-  const base = trendData;
-  const extra: typeof base = [];
-  for (let i = 60; i >= 1; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - (29 + i));
-    const foodBase = 74 + Math.floor(i / 12);
-    const fireBase = 68 + Math.floor(i / 15);
-    const f = foodBase - (i % 3);
-    const fr = fireBase - (i % 4);
-    extra.push({
-      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      overall: Math.round((f + fr) / 2),
-      foodSafety: f,
-      fireSafety: fr,
-    });
-  }
-  return [...extra, ...base];
-}
 
 function gradingTypeLabel(gradingType: string | null): string {
   if (!gradingType) return '';
@@ -374,73 +346,6 @@ function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => v
   );
 }
 
-// ================================================================
-// WIDGET: COMPLIANCE TREND
-// ================================================================
-
-function WidgetTrend({ trendData }: { trendData: { date: string; overall: number; foodSafety: number; fireSafety: number }[] }) {
-  const [range, setRange] = useState<7 | 30 | 90>(30);
-  const data = useMemo(() => generateTrendData(range, trendData), [range, trendData]);
-
-  return (
-    <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <div className="flex items-center justify-between mb-1">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Compliance Trend</h4>
-        <div className="flex items-center gap-1">
-          {([7, 30, 90] as const).map(d => (
-            <button
-              key={d}
-              type="button"
-              onClick={() => setRange(d)}
-              className="px-2 py-1 text-[11px] font-medium rounded transition-colors"
-              style={{
-                backgroundColor: range === d ? '#eef4f8' : undefined,
-                color: range === d ? '#1e4d6b' : '#94a3b8',
-                border: range === d ? '1px solid #1e4d6b' : '1px solid transparent',
-              }}
-            >
-              {d}d
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <p className="text-[10px] text-gray-400 mb-2">EvidLY Operational Readiness (internal tracking)</p>
-
-      {/* Legend */}
-      <div className="flex items-center gap-4 mb-2 text-[11px]">
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: GOLD, display: 'inline-block' }} /> Overall</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: '#16a34a', display: 'inline-block' }} /> Food Safety</span>
-        <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: '#ea580c', display: 'inline-block' }} /> Fire Safety</span>
-      </div>
-
-      <div style={{ width: '100%', height: 200 }}>
-        <ResponsiveContainer>
-          <AreaChart data={data} margin={{ top: 5, right: 5, bottom: 5, left: -20 }}>
-            <defs>
-              <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={GOLD} stopOpacity={0.25} />
-                <stop offset="100%" stopColor={GOLD} stopOpacity={0.02} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false}
-              interval={range === 7 ? 0 : range === 30 ? 4 : 14} />
-            <YAxis domain={[60, 100]} tick={{ fontSize: 10, fill: MUTED }} tickLine={false} axisLine={false} />
-            <RechartsTooltip
-              contentStyle={{ backgroundColor: '#0d2847', border: 'none', borderRadius: 8, fontSize: 12, color: '#fff' }}
-              labelStyle={{ color: '#94a3b8', fontSize: 11 }}
-              itemStyle={{ color: '#fff' }}
-            />
-            <Area type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} fill="url(#goldGrad)" dot={false} />
-            <Line type="monotone" dataKey="foodSafety" stroke="#16a34a" strokeWidth={1.5} dot={false} />
-            <Line type="monotone" dataKey="fireSafety" stroke="#ea580c" strokeWidth={1.5} dot={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
 
 // ================================================================
 // WIDGET: FIRE SAFETY — JURISDICTION-NATIVE
@@ -787,27 +692,6 @@ export default function OwnerOperatorDashboard() {
   // Multi-location check
   const isMultiLocation = locs.length > 1;
 
-  // Compute unique counties and fire AHJs for header summary
-  const uniqueCounties = useMemo(() => {
-    const counties = new Set<string>();
-    for (const loc of locs) {
-      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-      const jur = jurisdictions[jieLocId];
-      if (jur?.county) counties.add(jur.county);
-    }
-    return counties.size;
-  }, [locs, jurisdictions]);
-
-  const uniqueFireAHJs = useMemo(() => {
-    const ahjs = new Set<string>();
-    for (const loc of locs) {
-      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-      const jur = jurisdictions[jieLocId];
-      if (jur?.fireSafety?.agency_name) ahjs.add(jur.fireSafety.agency_name);
-    }
-    return ahjs.size;
-  }, [locs, jurisdictions]);
-
   // Build priority items from impact data for WhereDoIStartSection
   const priorityItems: PriorityItem[] = useMemo(
     () => data.impact.map(item => ({
@@ -844,11 +728,6 @@ export default function OwnerOperatorDashboard() {
       content: <WidgetFireSafety navigate={navigate} locations={data.locations} jieScores={jieScores} jurisdictions={jurisdictions} />,
     },
     {
-      id: 'trend',
-      label: 'Trend',
-      content: <WidgetTrend trendData={data.trendData} />,
-    },
-    {
       id: 'activity',
       label: 'Activity',
       content: <WidgetRecentActivity navigate={navigate} activity={data.activity} />,
@@ -871,112 +750,7 @@ export default function OwnerOperatorDashboard() {
           subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
           onSubtitleClick={() => navigate('/org-hierarchy')}
         >
-          {/* Dual-Authority Jurisdiction Summary — Food + Fire panels */}
-          <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto" style={stagger(1)}>
-            {/* Food Safety Panel */}
-            <div
-              className="flex-1 rounded-xl p-4"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-                <span className="text-[13px] text-white font-semibold">Food Safety</span>
-                <SectionTooltip content={useTooltip('overallScore', userRole)} light />
-              </div>
-              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} — each grades differently
-              </p>
-              <div className="space-y-2">
-                {locs.map(loc => {
-                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                  const score = jieScores[jieLocId];
-                  const jur = jurisdictions[jieLocId];
-                  const foodStatus = score?.foodSafety?.status ?? 'unknown';
-                  const agencyShort = jur?.foodSafety?.agency_name
-                    ? jur.foodSafety.agency_name.split(' ').slice(0, 3).join(' ')
-                    : '';
-                  const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
-
-                  return (
-                    <button
-                      key={loc.id}
-                      type="button"
-                      onClick={() => navigate(`/locations/${loc.id}`)}
-                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-                    >
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: statusColor(foodStatus) }}
-                      />
-                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                        {loc.name}
-                      </span>
-                      {agencyShort && (
-                        <span className="text-[9px] text-white shrink-0" style={{ opacity: 0.45 }}>
-                          {agencyShort}
-                        </span>
-                      )}
-                      <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
-                        {gradeDisp}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Fire Safety Panel */}
-            <div
-              className="flex-1 rounded-xl p-4"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-                <span className="text-[13px] text-white font-semibold">Fire Safety</span>
-                <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
-              </div>
-              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — NFPA 96 (2024) operational permits
-              </p>
-              <div className="space-y-2">
-                {locs.map(loc => {
-                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                  const score = jieScores[jieLocId];
-                  const jur = jurisdictions[jieLocId];
-                  const fireStatus = score?.fireSafety?.status ?? 'unknown';
-                  const fireAHJ = jur?.fireSafety?.agency_name ?? '';
-
-                  return (
-                    <button
-                      key={loc.id}
-                      type="button"
-                      onClick={() => navigate(`/locations/${loc.id}`)}
-                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-                    >
-                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                        {loc.name}
-                      </span>
-                      <span className="text-[9px] text-white shrink-0 truncate max-w-[100px]" style={{ opacity: 0.45 }}>
-                        {fireAHJ}
-                      </span>
-                      {fireStatus === 'passing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(34,197,94,0.25)', color: '#86efac' }}>Pass</span>
-                      )}
-                      {fireStatus === 'failing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(239,68,68,0.25)', color: '#fca5a5' }}>Fail</span>
-                      )}
-                      {fireStatus === 'at_risk' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(234,179,8,0.25)', color: '#fde68a' }}>At Risk</span>
-                      )}
-                      {fireStatus === 'unknown' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
         </DashboardHero>
       </div>
 
@@ -989,6 +763,9 @@ export default function OwnerOperatorDashboard() {
         {error && <ErrorBanner message={error} onRetry={refresh} />}
 
         {/* Alert Banners */}
+        {visibleAlerts.length > 0 && (
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+        )}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Where Do I Start — priority actions from impact data */}

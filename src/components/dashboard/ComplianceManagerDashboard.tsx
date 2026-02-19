@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  UtensilsCrossed, Flame, CalendarDays, ClipboardCheck,
+  Flame, CalendarDays, ClipboardCheck,
   ChevronDown, ChevronUp, ExternalLink, Phone,
   AlertCircle, BookOpen,
 } from 'lucide-react';
@@ -21,9 +21,10 @@ import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
 import {
   GOLD, NAVY, PAGE_BG, BODY_TEXT, FONT,
   JIE_LOC_MAP, KEYFRAMES,
-  stagger, getGreeting, getFormattedDate, statusColor,
+  stagger, getGreeting, DEMO_ROLE_NAMES,
 } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
+import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 
@@ -164,27 +165,6 @@ export default function ComplianceManagerDashboard() {
   };
 
   const locs = LOCATIONS_WITH_SCORES;
-
-  // Compute unique counties for header summary
-  const uniqueCounties = useMemo(() => {
-    const counties = new Set<string>();
-    for (const loc of locs) {
-      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-      const jur = jurisdictions[jieLocId];
-      if (jur?.county) counties.add(jur.county);
-    }
-    return counties.size;
-  }, [locs, jurisdictions]);
-
-  const uniqueFireAHJs = useMemo(() => {
-    const ahjs = new Set<string>();
-    for (const loc of locs) {
-      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-      const jur = jurisdictions[jieLocId];
-      if (jur?.fireSafety?.agency_name) ahjs.add(jur.fireSafety.agency_name);
-    }
-    return ahjs.size;
-  }, [locs, jurisdictions]);
 
   // ================================================================
   // TABBED BOTTOM SECTION — tab definitions
@@ -425,106 +405,12 @@ export default function ComplianceManagerDashboard() {
       <div style={{ padding: '20px 24px 0' }}>
         <DashboardHero
           greeting={getGreeting()}
-          firstName="Sarah"
+          firstName={DEMO_ROLE_NAMES.compliance_manager.firstName}
           orgName={companyName || DEMO_ORG.name}
-          subtitle="Compliance Command Center"
+          subtitle="3 locations &middot; California"
+          onSubtitleClick={() => navigate('/org-hierarchy')}
         >
-          {/* Dual-Authority Jurisdiction Summary */}
-          <div className="flex flex-col sm:flex-row gap-3 max-w-3xl mx-auto" style={stagger(1)}>
-            {/* Food Safety Panel */}
-            <div
-              className="flex-1 rounded-xl p-4"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-                <span className="text-[13px] text-white font-semibold">Food Safety</span>
-                <SectionTooltip content={useTooltip('overallScore', userRole)} light />
-              </div>
-              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} &mdash; each grades differently
-              </p>
-              <div className="space-y-2">
-                {locs.map(loc => {
-                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                  const score = jieScores[jieLocId];
-                  const foodStatus = score?.foodSafety?.status ?? 'unknown';
-                  const gradeDisp = score?.foodSafety?.gradeDisplay ?? 'N/A';
-
-                  return (
-                    <button
-                      key={loc.id}
-                      type="button"
-                      onClick={() => navigate(`/locations/${loc.id}`)}
-                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-                    >
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: statusColor(foodStatus) }}
-                      />
-                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                        {loc.name}
-                      </span>
-                      <span className="text-[11px] text-white font-medium shrink-0 truncate max-w-[120px]" style={{ opacity: 0.85 }}>
-                        {gradeDisp}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Fire Safety Panel */}
-            <div
-              className="flex-1 rounded-xl p-4"
-              style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
-                <span className="text-[13px] text-white font-semibold">Fire Safety</span>
-                <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
-              </div>
-              <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
-                {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} &mdash; NFPA 96 (2024) operational permits
-              </p>
-              <div className="space-y-2">
-                {locs.map(loc => {
-                  const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
-                  const score = jieScores[jieLocId];
-                  const fireStatus = score?.fireSafety?.status ?? 'unknown';
-
-                  return (
-                    <button
-                      key={loc.id}
-                      type="button"
-                      onClick={() => navigate(`/locations/${loc.id}`)}
-                      className="flex items-center gap-2 w-full text-left rounded px-1 -mx-1 transition-colors hover:bg-white/10"
-                    >
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: statusColor(fireStatus) }}
-                      />
-                      <span className="text-[11px] text-white truncate flex-1" style={{ opacity: 0.9 }}>
-                        {loc.name}
-                      </span>
-                      {fireStatus === 'passing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(34,197,94,0.25)', color: '#86efac' }}>Pass</span>
-                      )}
-                      {fireStatus === 'failing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(239,68,68,0.25)', color: '#fca5a5' }}>Fail</span>
-                      )}
-                      {fireStatus === 'at_risk' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(234,179,8,0.25)', color: '#fde68a' }}>At Risk</span>
-                      )}
-                      {fireStatus === 'unknown' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={{ backgroundColor: 'rgba(148,163,184,0.25)', color: '#cbd5e1' }}>--</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
         </DashboardHero>
       </div>
 
@@ -535,6 +421,9 @@ export default function ComplianceManagerDashboard() {
 
         {/* Alert Banners */}
         <div style={stagger(2)}>
+          {visibleAlerts.length > 0 && (
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+          )}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
         </div>
 
