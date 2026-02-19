@@ -16,9 +16,9 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Demo benchmark data ──────────────────────────────────────────────
 
-const INDUSTRY_AVG = { overall: 79, foodSafety: 79, fireSafety: 76, vendorCompliance: 81 };
-const VERTICAL_AVG = { overall: 82, foodSafety: 82, fireSafety: 78, vendorCompliance: 84 };
-const GEOGRAPHIC_AVG = { overall: 81, foodSafety: 80, fireSafety: 77, vendorCompliance: 83 };
+const INDUSTRY_AVG = { overall: 79, foodSafety: 79, fireSafety: 76 };
+const VERTICAL_AVG = { overall: 82, foodSafety: 82, fireSafety: 78 };
+const GEOGRAPHIC_AVG = { overall: 81, foodSafety: 80, fireSafety: 77 };
 
 function percentile(yourScore: number, avg: number): number {
   const diff = yourScore - avg;
@@ -93,9 +93,9 @@ const BADGE_TIERS = [
 ];
 
 const LOCATION_RANKS = [
-  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, fireSafety: 88, vendorCompliance: 91, badge: 'excellence' },
-  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, fireSafety: 62, vendorCompliance: 74, badge: null },
-  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, fireSafety: 55, vendorCompliance: 42, badge: null },
+  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, fireSafety: 88, badge: 'excellence' },
+  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, fireSafety: 62, badge: null },
+  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, fireSafety: 55, badge: null },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -416,7 +416,6 @@ export function Benchmarks() {
                   {[
                     { cat: 'Food Safety', yours: complianceScores.foodSafety, vert: VERTICAL_AVG.foodSafety, ind: INDUSTRY_AVG.foodSafety },
                     { cat: 'Fire Safety', yours: complianceScores.fireSafety, vert: VERTICAL_AVG.fireSafety, ind: INDUSTRY_AVG.fireSafety },
-                    { cat: 'Vendor Compliance', yours: complianceScores.vendorCompliance, vert: VERTICAL_AVG.vendorCompliance, ind: INDUSTRY_AVG.vendorCompliance },
                     { cat: 'Overall', yours: complianceScores.overall, vert: VERTICAL_AVG.overall, ind: INDUSTRY_AVG.overall },
                   ].map((row) => {
                     const pct = percentile(row.yours, row.ind);
@@ -609,7 +608,6 @@ export function Benchmarks() {
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Industry Pct</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Food Safety</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Fire Safety</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Vendor Compliance</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Badge</th>
                   </tr>
                 </thead>
@@ -627,7 +625,6 @@ export function Benchmarks() {
                       <td className="py-3 text-center"><PercentileBadge pct={loc.industryPct} /></td>
                       <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.foodSafety}</td>
                       <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.fireSafety}</td>
-                      <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.vendorCompliance}</td>
                       <td className="py-3 text-center hidden sm:table-cell">
                         {loc.badge ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#64748b' }}>
@@ -653,10 +650,6 @@ export function Benchmarks() {
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-600 mt-0.5 flex-shrink-0" />
                   <span><strong>Downtown Kitchen</strong> leads in all 3 categories — consistent management practices are the key differentiator.</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="h-3.5 w-3.5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span><strong>Vendor Compliance</strong> is the weakest category across all locations (systemic issue) — vendor cert follow-up process needs standardization.</span>
                 </div>
                 <div className="flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />

@@ -17,7 +17,7 @@ export interface ViolationMapping {
   /** County-specific severity overrides (county slug → severity) */
   countyOverrides?: Partial<Record<string, ViolationSeverity>>;
   /** Which pillar this maps to */
-  pillar: 'Food Safety' | 'Fire Safety' | 'Vendor Compliance';
+  pillar: 'Food Safety' | 'Fire Safety';
 }
 
 /**
@@ -52,14 +52,14 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§113947.1',
     description: 'No certified food protection manager on duty',
     defaultSeverity: 'major',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'food_handler',
     calCodeSection: '§113948',
     description: 'Expired or missing food handler card',
     defaultSeverity: 'minor',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'handwash',
@@ -97,7 +97,7 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§114259',
     description: 'Pest control records missing or service overdue',
     defaultSeverity: 'major',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'cooling',
@@ -111,14 +111,14 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§113949.5',
     description: 'Employee health certification gap',
     defaultSeverity: 'minor',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'health_permit',
     calCodeSection: '§114381',
     description: 'Health permit expired or not displayed',
     defaultSeverity: 'critical',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'haccp',
@@ -139,7 +139,7 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§114065',
     description: 'Vendor certificate of insurance expired',
     defaultSeverity: 'minor',
-    pillar: 'Vendor Compliance',
+    pillar: 'Food Safety',
   },
   {
     evidlyItem: 'grease_trap',

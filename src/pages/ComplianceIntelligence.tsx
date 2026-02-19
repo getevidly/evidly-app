@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import {
   ShieldCheck, AlertTriangle, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
   Minus, Search, Download, ChevronRight, ExternalLink, Share2,
-  Flame, UtensilsCrossed, FileText, BarChart3, Users, Target, Zap,
+  Flame, UtensilsCrossed, BarChart3, Users, Target, Zap,
   Clock, Activity, Eye, Shield, CalendarDays, DollarSign, FileBarChart,
   Radar, Brain, AlertCircle, ClipboardCheck, Info, Send, Plus, CheckCircle,
   Database, Server, CreditCard, Layers, Star,
@@ -16,7 +16,7 @@ import {
 } from 'recharts';
 import {
   enterpriseTenant, TOTAL_LOCATIONS, TOTAL_ENROLLED, ORG_SCORE,
-  FIRE_SCORE, FOOD_SCORE, DOCS_SCORE, FIRE_TREND, FOOD_TREND, DOCS_TREND,
+  FIRE_SCORE, FOOD_SCORE, FIRE_TREND, FOOD_TREND,
   DATA_POINTS_THIS_MONTH,
   urgentLocations, expiringThisQuarter, incidentVelocity, complianceMomentum,
   incidentSparkline, weeklyInsights,
@@ -208,7 +208,6 @@ function CommandCenterTab() {
           {[
             { label: 'Fire Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
             { label: 'Food Safety', score: FOOD_SCORE, trend: FOOD_TREND, icon: UtensilsCrossed, status: FOOD_SCORE >= 90 ? 'green' : FOOD_SCORE >= 80 ? 'yellow' : 'red' },
-            { label: 'Vendor Compliance', score: DOCS_SCORE, trend: DOCS_TREND, icon: FileText, status: DOCS_SCORE >= 90 ? 'green' : DOCS_SCORE >= 80 ? 'yellow' : 'red' },
           ].map(cat => (
             <div key={cat.label} className="flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${cat.status === 'green' ? 'bg-green-500' : cat.status === 'yellow' ? 'bg-yellow-500' : 'bg-red-500'}`} />
@@ -319,7 +318,6 @@ function CommandCenterTab() {
             <Line type="monotone" dataKey="overall" name="Overall" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
             <Line type="monotone" dataKey="fire" name="Fire Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="food" name="Food Safety" stroke="#22c55e" strokeWidth={1.5} dot={false} />
-            <Line type="monotone" dataKey="docs" name="Vendor Compliance" stroke="#6b21a8" strokeWidth={1.5} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>

@@ -12,7 +12,6 @@ interface VerificationData {
   overallPercentile: number;
   foodSafetyPercentile: number;
   fireSafetyPercentile: number;
-  vendorCompliancePercentile: number;
   verifiedSince: string;
 }
 
@@ -26,7 +25,6 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     overallPercentile: 89,
     foodSafetyPercentile: 92,
     fireSafetyPercentile: 87,
-    vendorCompliancePercentile: 71,
     verifiedSince: 'September 2025',
   },
   'DWN-2024-VRFD': {
@@ -38,7 +36,6 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     overallPercentile: 82,
     foodSafetyPercentile: 85,
     fireSafetyPercentile: 80,
-    vendorCompliancePercentile: 68,
     verifiedSince: 'June 2025',
   },
 };
@@ -139,7 +136,6 @@ export default function PublicVerification() {
             <div className="space-y-3">
               <PercentileBar label="Food Safety" value={data.foodSafetyPercentile} />
               <PercentileBar label="Fire Safety" value={data.fireSafetyPercentile} />
-              <PercentileBar label="Vendor Compliance" value={data.vendorCompliancePercentile} />
             </div>
           </div>
 

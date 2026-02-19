@@ -16,7 +16,6 @@ import {
   Building2,
   Flame,
   UtensilsCrossed,
-  Truck,
   TrendingDown,
   Wrench,
 } from 'lucide-react';
@@ -177,18 +176,14 @@ function LegacyDashboard() {
   const complianceScore = currentScores.overall;
   const foodSafetyScore = currentScores.foodSafety;
   const fireSafetyScore = currentScores.fireSafety;
-  const vendorComplianceScore = currentScores.vendorCompliance;
-
   const overallTrend = getTrend(currentScores.overall, currentScoresThirtyDaysAgo.overall);
   const foodSafetyTrend = getTrend(currentScores.foodSafety, currentScoresThirtyDaysAgo.foodSafety);
   const fireSafetyTrend = getTrend(currentScores.fireSafety, currentScoresThirtyDaysAgo.fireSafety);
-  const vendorComplianceTrend = getTrend(currentScores.vendorCompliance, currentScoresThirtyDaysAgo.vendorCompliance);
 
   const weights = getWeights();
   const pillarScores = [
     { name: t('dashboard.foodSafety'), weight: Math.round(weights.foodSafety * 100), score: foodSafetyScore, tooltip: t('dashboard.foodSafetyTooltip'), trend: foodSafetyTrend },
     { name: t('dashboard.fireSafety'), weight: Math.round(weights.fireSafety * 100), score: fireSafetyScore, tooltip: t('dashboard.fireSafetyTooltip'), trend: fireSafetyTrend },
-    { name: t('dashboard.vendorCompliance'), weight: Math.round(weights.vendorCompliance * 100), score: vendorComplianceScore, tooltip: t('dashboard.vendorComplianceTooltip'), trend: vendorComplianceTrend },
   ];
 
   const scoreInfo = getGrade(complianceScore);
@@ -291,14 +286,14 @@ function LegacyDashboard() {
           (window as any).dashboardMap = map;
 
           resolvedLocations.forEach((loc) => {
-            const color = loc.score >= 90 ? '#22c55e' : loc.score >= 75 ? '#eab308' : loc.score >= 60 ? '#f59e0b' : '#ef4444';
+            const color = loc.actionItems <= 2 ? '#22c55e' : loc.actionItems <= 5 ? '#eab308' : '#ef4444';
             const icon = L.divIcon({
               className: 'custom-marker',
               html: `<div style="background: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); cursor: pointer;"></div>`,
             });
 
             const marker = L.marker([loc.lat, loc.lng], { icon }).addTo(map);
-            marker.bindTooltip(`<strong>${loc.name}</strong><br/>Score: ${loc.score}<br/>Status: ${loc.status}<br/>Action Items: ${loc.actionItems}`, {
+            marker.bindTooltip(`<strong>${loc.name}</strong><br/>Action Items: ${loc.actionItems}`, {
               permanent: false,
               direction: 'top',
             });
@@ -830,11 +825,6 @@ function LegacyDashboard() {
                               <div className="flex items-center justify-center gap-1"><Flame className="h-3 w-3" /> Fire Safety</div>
                             </InfoTooltip>
                           </th>
-                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <InfoTooltip text="Based on vendor certifications and service schedules">
-                              <div className="flex items-center justify-center gap-1"><Truck className="h-3 w-3" /> Vendors</div>
-                            </InfoTooltip>
-                          </th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
                         </tr>
                       </thead>
@@ -857,9 +847,6 @@ function LegacyDashboard() {
                               </td>
                               <td className="px-3 py-2.5 text-center">
                                 <span className="inline-block px-2 py-0.5 rounded text-xs font-bold" style={cellStyle(locScores.fireSafety)}>{locScores.fireSafety}</span>
-                              </td>
-                              <td className="px-3 py-2.5 text-center">
-                                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold" style={cellStyle(locScores.vendorCompliance)}>{locScores.vendorCompliance}</span>
                               </td>
                               <td className="px-3 py-2.5 text-center">
                                 <span className="inline-block px-2.5 py-0.5 rounded text-sm font-bold" style={cellStyle(locScores.overall)}>{locScores.overall}</span>
@@ -959,9 +946,6 @@ function LegacyDashboard() {
                         <InfoTooltip text="Based on hood cleaning, fire suppression, and extinguisher records">{t('dashboard.fireSafety')}</InfoTooltip>
                       </th>
                       <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
-                        <InfoTooltip text="Based on vendor certifications and service schedules">{t('dashboard.vendorCompliance')}</InfoTooltip>
-                      </th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                         <InfoTooltip text="Score change compared to 30 days ago">{t('dashboard.trend')}</InfoTooltip>
                       </th>
                       <th className="px-3 sm:px-6 py-3 text-sm font-medium text-gray-500 uppercase tracking-wider" style={{ textAlign: 'center', minWidth: '100px' }}>{t('common.status')}</th>
@@ -998,9 +982,6 @@ function LegacyDashboard() {
                           </td>
                           <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.fireSafety) }}>{locScores.fireSafety}</span>
-                          </td>
-                          <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
-                            <span className="text-sm font-bold" style={{ color: getScoreHexColor(locScores.vendorCompliance) }}>{locScores.vendorCompliance}</span>
                           </td>
                           <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap" style={{ textAlign: 'center' }}>
                             <InfoTooltip text="Score change compared to 30 days ago">
@@ -1102,15 +1083,14 @@ function LegacyDashboard() {
               priority: item.color === 'red' ? 'high' as const : item.color === 'amber' ? 'medium' as const : 'low' as const,
               pillar: (() => {
                 if (item.url === '/temp-logs' || item.url === '/checklists' || item.url === '/haccp') return 'Food Safety';
-                if (item.url === '/vendors') return 'Fire Safety';
-                return 'Vendor Compliance';
+                return 'Fire Safety';
               })(),
               title: item.title,
               desc: item.detail,
               link: item.url,
             }));
             const filteredItems = pillarFilter ? allActionItems.filter(item => item.pillar === pillarFilter) : allActionItems;
-            const pillarCounts: Record<string, number> = { 'Food Safety': 0, 'Fire Safety': 0, 'Vendor Compliance': 0 };
+            const pillarCounts: Record<string, number> = { 'Food Safety': 0, 'Fire Safety': 0 };
             allActionItems.forEach(item => { if (pillarCounts[item.pillar] !== undefined) pillarCounts[item.pillar]++; });
 
             return (
@@ -1121,7 +1101,6 @@ function LegacyDashboard() {
                     { key: null, label: t('common.all'), count: allActionItems.length },
                     { key: 'Food Safety', label: t('dashboard.foodSafety'), count: pillarCounts['Food Safety'] },
                     { key: 'Fire Safety', label: t('dashboard.fireSafety'), count: pillarCounts['Fire Safety'] },
-                    { key: 'Vendor Compliance', label: t('dashboard.vendorCompliance'), count: pillarCounts['Vendor Compliance'] },
                   ].map(chip => (
                     <button
                       key={chip.label}

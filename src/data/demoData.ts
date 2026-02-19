@@ -5,7 +5,6 @@ import {
   getScoreStatus,
   getScoreInfo,
   getGraduatedPenalty,
-  computeWeightedOverall,
   type PillarWeights,
   type IndustryVertical,
 } from '../lib/complianceScoring';
@@ -25,62 +24,45 @@ export function getWeights(): PillarWeights {
   return INDUSTRY_WEIGHTS[currentIndustry] || PILLAR_WEIGHTS;
 }
 
-export function computeOverall(
-  scores: { foodSafety: number; fireSafety: number; vendorCompliance: number },
-  weights?: PillarWeights,
-): number {
-  return computeWeightedOverall(scores, weights || getWeights());
-}
-
 // Backwards-compatible wrapper — delegates to scoring engine
 export const getGrade = (score: number) => getScoreInfo(score);
 
 // ============================================================
-// Location Scores — SINGLE SOURCE OF TRUTH
+// Location Jurisdiction Status — replaces legacy numeric scores
 // ============================================================
-// Weights: Food Safety 45%, Fire Safety 35%, Vendor Compliance 20%
-// Downtown Kitchen: Strong across all pillars
-//   Food Safety 96, Fire Safety 92, Vendor Compliance 94 → Overall 94
-// Airport Cafe: Moderate — some fire and vendor gaps
-//   Food Safety 84, Fire Safety 80, Vendor Compliance 82 → Overall 82
-// University Dining: At risk — multiple overdue items
-//   Food Safety 70, Fire Safety 64, Vendor Compliance 68 → Overall 68
-// Org Average: (94+82+68)/3 = 81
+// Status comes from jurisdiction-verified data only.
+// Food Safety: county health dept grade/status
+// Fire Safety: NFPA 96 (2024) pass/fail
+// NO numeric overall scores. NO Vendor Compliance pillar.
 // ============================================================
 
-export const locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
-  'downtown': { foodSafety: 96, fireSafety: 92, vendorCompliance: 94, overall: 94 },
-  'airport':  { foodSafety: 84, fireSafety: 80, vendorCompliance: 82, overall: 82 },
-  'university': { foodSafety: 70, fireSafety: 64, vendorCompliance: 68, overall: 68 },
-};
-
-export const locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
-  'downtown':   { foodSafety: 91, fireSafety: 88, vendorCompliance: 90, overall: 90 },
-  'airport':    { foodSafety: 78, fireSafety: 74, vendorCompliance: 76, overall: 76 },
-  'university': { foodSafety: 64, fireSafety: 58, vendorCompliance: 62, overall: 62 },
-};
-
-// Company-level scores = average of all location scores
-function computeCompanyScores(locScores: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }>) {
-  const locs = Object.values(locScores);
-  const count = locs.length;
-  if (count === 0) return { overall: 0, foodSafety: 0, fireSafety: 0, vendorCompliance: 0 };
-  return {
-    foodSafety: Math.round(locs.reduce((s, l) => s + l.foodSafety, 0) / count),
-    fireSafety: Math.round(locs.reduce((s, l) => s + l.fireSafety, 0) / count),
-    vendorCompliance: Math.round(locs.reduce((s, l) => s + l.vendorCompliance, 0) / count),
-    overall: Math.round(locs.reduce((s, l) => s + l.overall, 0) / count),
+export interface LocationJurisdictionStatus {
+  foodSafety: {
+    status: 'passing' | 'at_risk' | 'failing';
+    gradeDisplay: string;
+    authority: string;
+    model: 'violation_based' | 'three_tier_points';
+  };
+  fireSafety: {
+    status: 'passing' | 'failing';
+    gradeDisplay: string;
+    authority: string;
   };
 }
 
-export const complianceScores = computeCompanyScores(locationScores);
-export const complianceScoresThirtyDaysAgo = computeCompanyScores(locationScoresThirtyDaysAgo);
-
-export const getTrend = (current: number, thirtyDaysAgo: number) => {
-  const diff = current - thirtyDaysAgo;
-  if (diff > 0) return { direction: 'up', color: '#22c55e', icon: '▲', diff: '+' + diff };
-  if (diff < 0) return { direction: 'down', color: '#ef4444', icon: '▼', diff: String(diff) };
-  return { direction: 'flat', color: '#94a3b8', icon: '—', diff: '0' };
+export const LOCATION_JURISDICTION_STATUS: Record<string, LocationJurisdictionStatus> = {
+  downtown: {
+    foodSafety: { status: 'passing', gradeDisplay: 'Compliant', authority: 'Fresno County DPH', model: 'violation_based' },
+    fireSafety: { status: 'passing', gradeDisplay: 'Pass', authority: 'NFPA 96 (2024)' },
+  },
+  airport: {
+    foodSafety: { status: 'at_risk', gradeDisplay: 'Satisfactory', authority: 'Merced County DPH', model: 'three_tier_points' },
+    fireSafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96 (2024)' },
+  },
+  university: {
+    foodSafety: { status: 'failing', gradeDisplay: 'Action Required', authority: 'Stanislaus County DER', model: 'violation_based' },
+    fireSafety: { status: 'failing', gradeDisplay: 'Fail', authority: 'NFPA 96 (2024)' },
+  },
 };
 
 export interface Location {
@@ -90,16 +72,14 @@ export interface Location {
   address: string;
   lat: number;
   lng: number;
-  score: number;
-  status: string;
   actionItems: number;
   stateCode?: string;
 }
 
 export const locations: Location[] = [
-  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '742 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, score: locationScores['downtown'].overall, status: getScoreStatus(locationScores['downtown'].overall), actionItems: 2, stateCode: 'CA' },
-  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '5175 E Clinton Way, Fresno, CA 93727', lat: 37.2847, lng: -120.5139, score: locationScores['airport'].overall, status: getScoreStatus(locationScores['airport'].overall), actionItems: 5, stateCode: 'CA' },
-  { id: '3', urlId: 'university', name: 'University Dining', address: '1600 University Ave, Turlock, CA 95382', lat: 37.6393, lng: -120.9969, score: locationScores['university'].overall, status: getScoreStatus(locationScores['university'].overall), actionItems: 12, stateCode: 'CA' },
+  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '742 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, actionItems: 2, stateCode: 'CA' },
+  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '5175 E Clinton Way, Fresno, CA 93727', lat: 37.2847, lng: -120.5139, actionItems: 5, stateCode: 'CA' },
+  { id: '3', urlId: 'university', name: 'University Dining', address: '1600 University Ave, Turlock, CA 95382', lat: 37.6393, lng: -120.9969, actionItems: 12, stateCode: 'CA' },
 ];
 
 // ============================================================
@@ -190,6 +170,33 @@ export const DEMO_ORG_SCORES = {
   fireSafety: Math.round(_locs.reduce((s, l) => s + l.fireScore, 0) / _locs.length),
 };
 
+// ── Backwards-compatible 2-pillar score lookups ──────────────
+// Derived from the exec 2-pillar model above. NO vendorCompliance.
+// Consumers that previously imported the old 3-pillar locationScores
+// should migrate to LOCATION_JURISDICTION_STATUS for display.
+export const locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number }> =
+  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { overall: loc.score, foodSafety: loc.foodScore, fireSafety: loc.fireScore }]));
+
+export const locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number }> = {
+  downtown: { foodSafety: 93, fireSafety: 89, overall: 91 },
+  airport: { foodSafety: 82, fireSafety: 76, overall: 79 },
+  university: { foodSafety: 67, fireSafety: 59, overall: 63 },
+};
+
+export const complianceScores = DEMO_ORG_SCORES;
+export const complianceScoresThirtyDaysAgo = {
+  overall: Math.round((91 + 79 + 63) / 3),
+  foodSafety: Math.round((93 + 82 + 67) / 3),
+  fireSafety: Math.round((89 + 76 + 59) / 3),
+};
+
+export const getTrend = (current: number, thirtyDaysAgo: number) => {
+  const diff = current - thirtyDaysAgo;
+  if (diff > 0) return { direction: 'up', color: '#22c55e', icon: '▲', diff: '+' + diff };
+  if (diff < 0) return { direction: 'down', color: '#ef4444', icon: '▼', diff: String(diff) };
+  return { direction: 'flat', color: '#94a3b8', icon: '—', diff: '0' };
+};
+
 export function getLocationScoreColor(score: number): string {
   if (score >= 85) return '#16a34a';
   if (score >= 70) return '#d97706';
@@ -214,16 +221,14 @@ export const DEMO_ATTENTION_ITEMS = [
   {
     locationId: 'university',
     locationName: 'University Dining',
-    score: 68,
     status: 'critical' as const,
-    summary: 'Score below 70%. 3 equipment inspections overdue. Fire suppression certificate expires in 12 days.',
+    summary: '3 equipment inspections overdue. Fire suppression certificate expires in 12 days. Action Required.',
     action: 'Take Action',
     route: '/dashboard?location=university',
   },
   {
     locationId: 'airport',
     locationName: 'Airport Cafe',
-    score: 82,
     status: 'attention' as const,
     summary: '3 out-of-range temperature readings this week. Walk-in cooler trending warm \u2014 schedule service.',
     action: 'View Temps',
@@ -522,14 +527,13 @@ export interface ScoreImpactItem {
   impact: string;
   action: string | null;
   actionLink: string | null;
-  pillar: 'Food Safety' | 'Fire Safety' | 'Vendor Compliance';
+  pillar: 'Food Safety' | 'Fire Safety';
   locationId: string;
 }
 
-// Sub-component weights (of 100-point pillar):
-// Operational: Temp checks 35, Checklists 30, Incidents 20, HACCP 15
-// Equipment: Hood cleaning 30, Fire suppression 25, Fire extinguisher 20, Equip maintenance (incl. exhaust fan) 15, Equip condition 10
-// Documentation: Vendor certs 25, Health permit 25, Business license 15, Food handler certs 20, Insurance 15
+// Line-item status tracking per pillar per location
+// Food Safety: Temp checks, Checklists, Incidents, HACCP + Documentation items
+// Fire Safety: Hood cleaning, Fire suppression, Fire extinguisher, Equip maintenance, Equip condition
 
 export const scoreImpactData: ScoreImpactItem[] = [
   // ─── Downtown Kitchen ─── Operational (94/100)
@@ -545,12 +549,12 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
   { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '1' },
 
-  // ─── Downtown Kitchen ─── Documentation (91/100)
-  { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '1' },
-  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '1' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '1' },
-  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Training', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '1' },
-  { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '1' },
+  // ─── Downtown Kitchen ─── Documentation (folds into Food Safety)
+  { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
+  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
+  { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '1' },
+  { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
 
   // ─── Airport Cafe ─── Operational (72/100)
   { status: 'overdue', label: 'Temperature Logs (3 missed this week)', impact: '+23 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '2' },
@@ -565,12 +569,12 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
   { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '2' },
 
-  // ─── Airport Cafe ─── Documentation (74/100)
-  { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '2' },
-  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '2' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '2' },
-  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '2' },
-  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '2' },
+  // ─── Airport Cafe ─── Documentation (folds into Food Safety)
+  { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
+  { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
+  { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '2' },
+  { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
 
   // ─── University Dining ─── Operational (62/100)
   { status: 'overdue', label: '8 Temperature Checks Missed This Week', impact: '0 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },
@@ -585,12 +589,12 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Fire Safety', locationId: '3' },
   { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Fire Safety', locationId: '3' },
 
-  // ─── University Dining ─── Documentation (42/100)
-  { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Vendor Compliance', locationId: '3' },
-  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '3' },
-  { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Vendor Compliance', locationId: '3' },
-  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/training', pillar: 'Vendor Compliance', locationId: '3' },
-  { status: 'current', label: 'Insurance Certificate', impact: '+8 of 15', action: null, actionLink: null, pillar: 'Vendor Compliance', locationId: '3' },
+  // ─── University Dining ─── Documentation (folds into Food Safety)
+  { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Food Safety', locationId: '3' },
+  { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
+  { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Food Safety', locationId: '3' },
+  { status: 'expired', label: '2 Food Handler Certs EXPIRED (−10 full penalty)', impact: '0 of 20', action: 'Notify Staff', actionLink: '/training', pillar: 'Food Safety', locationId: '3' },
+  { status: 'current', label: 'Insurance Certificate', impact: '+8 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
 ];
 
 // ============================================================
@@ -1320,7 +1324,6 @@ export interface EnterpriseHierarchyNode {
   locationCount: number;
   foodSafety: number;
   fireSafety: number;
-  vendorCompliance: number;
   children?: EnterpriseHierarchyNode[];
 }
 
@@ -1492,113 +1495,113 @@ export const enterpriseTenants: EnterpriseTenant[] = [
 
 export const enterpriseHierarchy: EnterpriseHierarchyNode = {
   id: 'h-corp', tenantId: 'ent-pcdining', parentId: null, level: 'corporate', name: 'Pacific Coast Dining Corporation', code: 'PCD',
-  complianceScore: 90, locationCount: 1847, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
+  complianceScore: 90, locationCount: 1847, foodSafety: 92, fireSafety: 88,
   children: [
     {
       id: 'h-higher-ed', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Higher Education', code: 'PCD-HE',
-      complianceScore: 91, locationCount: 847, foodSafety: 93, fireSafety: 89, vendorCompliance: 90,
+      complianceScore: 91, locationCount: 847, foodSafety: 93, fireSafety: 89,
       children: [
         {
           id: 'h-he-west', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Western Region', code: 'PCD-HE-W',
-          complianceScore: 90, locationCount: 254, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
+          complianceScore: 90, locationCount: 254, foodSafety: 92, fireSafety: 88,
           children: [
-            { id: 'h-he-w-pac', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-HE-W-PNW', complianceScore: 91, locationCount: 86, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
-            { id: 'h-he-w-cal', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'California', code: 'PCD-HE-W-CA', complianceScore: 89, locationCount: 102, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
-            { id: 'h-he-w-sw', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Southwest', code: 'PCD-HE-W-SW', complianceScore: 90, locationCount: 66, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
+            { id: 'h-he-w-pac', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-HE-W-PNW', complianceScore: 91, locationCount: 86, foodSafety: 93, fireSafety: 89 },
+            { id: 'h-he-w-cal', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'California', code: 'PCD-HE-W-CA', complianceScore: 89, locationCount: 102, foodSafety: 91, fireSafety: 87 },
+            { id: 'h-he-w-sw', tenantId: 'ent-pcdining', parentId: 'h-he-west', level: 'district', name: 'Southwest', code: 'PCD-HE-W-SW', complianceScore: 90, locationCount: 66, foodSafety: 92, fireSafety: 88 },
           ],
         },
         {
           id: 'h-he-central', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Central Region', code: 'PCD-HE-C',
-          complianceScore: 92, locationCount: 298, foodSafety: 94, fireSafety: 90, vendorCompliance: 91,
+          complianceScore: 92, locationCount: 298, foodSafety: 94, fireSafety: 90,
         },
         {
           id: 'h-he-east', tenantId: 'ent-pcdining', parentId: 'h-higher-ed', level: 'region', name: 'Eastern Region', code: 'PCD-HE-E',
-          complianceScore: 91, locationCount: 295, foodSafety: 93, fireSafety: 89, vendorCompliance: 90,
+          complianceScore: 91, locationCount: 295, foodSafety: 93, fireSafety: 89,
           children: [
-            { id: 'h-he-e-ne', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'New England', code: 'PCD-HE-E-NE', complianceScore: 93, locationCount: 98, foodSafety: 95, fireSafety: 91, vendorCompliance: 92 },
-            { id: 'h-he-e-ma', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Mid-Atlantic', code: 'PCD-HE-E-MA', complianceScore: 90, locationCount: 112, foodSafety: 92, fireSafety: 88, vendorCompliance: 89,
+            { id: 'h-he-e-ne', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'New England', code: 'PCD-HE-E-NE', complianceScore: 93, locationCount: 98, foodSafety: 95, fireSafety: 91 },
+            { id: 'h-he-e-ma', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Mid-Atlantic', code: 'PCD-HE-E-MA', complianceScore: 90, locationCount: 112, foodSafety: 92, fireSafety: 88,
               children: [
-                { id: 'h-he-e-ma-temple', tenantId: 'ent-pcdining', parentId: 'h-he-e-ma', level: 'location', name: 'Temple University', code: 'PCD-TU-001', complianceScore: 68, locationCount: 1, foodSafety: 72, fireSafety: 64, vendorCompliance: 66 },
+                { id: 'h-he-e-ma-temple', tenantId: 'ent-pcdining', parentId: 'h-he-e-ma', level: 'location', name: 'Temple University', code: 'PCD-TU-001', complianceScore: 68, locationCount: 1, foodSafety: 72, fireSafety: 64 },
               ],
             },
-            { id: 'h-he-e-se', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Southeast', code: 'PCD-HE-E-SE', complianceScore: 91, locationCount: 85, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
+            { id: 'h-he-e-se', tenantId: 'ent-pcdining', parentId: 'h-he-east', level: 'district', name: 'Southeast', code: 'PCD-HE-E-SE', complianceScore: 91, locationCount: 85, foodSafety: 93, fireSafety: 89 },
           ],
         },
       ],
     },
     {
       id: 'h-healthcare', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Healthcare', code: 'PCD-HC',
-      complianceScore: 95, locationCount: 312, foodSafety: 96, fireSafety: 93, vendorCompliance: 94,
+      complianceScore: 95, locationCount: 312, foodSafety: 96, fireSafety: 93,
       children: [
-        { id: 'h-hc-west', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'PCD-HC-W', complianceScore: 94, locationCount: 94, foodSafety: 95, fireSafety: 92, vendorCompliance: 93 },
-        { id: 'h-hc-central', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'PCD-HC-C', complianceScore: 95, locationCount: 112, foodSafety: 97, fireSafety: 93, vendorCompliance: 94 },
-        { id: 'h-hc-east', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'PCD-HC-E', complianceScore: 95, locationCount: 106, foodSafety: 96, fireSafety: 94, vendorCompliance: 95 },
+        { id: 'h-hc-west', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Western Region', code: 'PCD-HC-W', complianceScore: 94, locationCount: 94, foodSafety: 95, fireSafety: 92 },
+        { id: 'h-hc-central', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Central Region', code: 'PCD-HC-C', complianceScore: 95, locationCount: 112, foodSafety: 97, fireSafety: 93 },
+        { id: 'h-hc-east', tenantId: 'ent-pcdining', parentId: 'h-healthcare', level: 'region', name: 'Eastern Region', code: 'PCD-HC-E', complianceScore: 95, locationCount: 106, foodSafety: 96, fireSafety: 94 },
       ],
     },
     {
       id: 'h-destinations', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Destinations', code: 'PCD-DEST',
-      complianceScore: 88, locationCount: 89, foodSafety: 90, fireSafety: 86, vendorCompliance: 87,
+      complianceScore: 88, locationCount: 89, foodSafety: 90, fireSafety: 86,
       children: [
         {
           id: 'h-dest-parks', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'National Parks', code: 'PCD-DEST-NP',
-          complianceScore: 89, locationCount: 32, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
+          complianceScore: 89, locationCount: 32, foodSafety: 91, fireSafety: 87,
           children: [
             {
               id: 'h-dest-np-coastal', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Coastal District', code: 'PCD-DEST-CST',
-              complianceScore: 89, locationCount: 7, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
+              complianceScore: 89, locationCount: 7, foodSafety: 91, fireSafety: 87,
               children: [
-                { id: 'h-yos-lodge', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Oceanview Lodge', code: 'CST-001', complianceScore: 92, locationCount: 1, foodSafety: 94, fireSafety: 90, vendorCompliance: 91 },
-                { id: 'h-yos-ahwahnee', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'The Bayshore Dining Room', code: 'CST-002', complianceScore: 94, locationCount: 1, foodSafety: 96, fireSafety: 92, vendorCompliance: 93 },
-                { id: 'h-yos-curry', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Harbor Village Pavilion', code: 'CST-003', complianceScore: 87, locationCount: 1, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
-                { id: 'h-yos-tuolumne', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Redwood Meadows Grill', code: 'CST-004', complianceScore: 83, locationCount: 1, foodSafety: 85, fireSafety: 81, vendorCompliance: 82 },
-                { id: 'h-yos-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
-                { id: 'h-yos-village', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
-                { id: 'h-yos-white-wolf', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+                { id: 'h-yos-lodge', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Oceanview Lodge', code: 'CST-001', complianceScore: 92, locationCount: 1, foodSafety: 94, fireSafety: 90 },
+                { id: 'h-yos-ahwahnee', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'The Bayshore Dining Room', code: 'CST-002', complianceScore: 94, locationCount: 1, foodSafety: 96, fireSafety: 92 },
+                { id: 'h-yos-curry', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Harbor Village Pavilion', code: 'CST-003', complianceScore: 87, locationCount: 1, foodSafety: 89, fireSafety: 85 },
+                { id: 'h-yos-tuolumne', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Redwood Meadows Grill', code: 'CST-004', complianceScore: 83, locationCount: 1, foodSafety: 85, fireSafety: 81 },
+                { id: 'h-yos-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Glacier Point Snack Stand', code: 'YOS-005', complianceScore: 86, locationCount: 1, foodSafety: 88, fireSafety: 84 },
+                { id: 'h-yos-village', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'Village Grill & Pizza Deck', code: 'YOS-006', complianceScore: 90, locationCount: 1, foodSafety: 92, fireSafety: 88 },
+                { id: 'h-yos-white-wolf', tenantId: 'ent-pcdining', parentId: 'h-dest-np-coastal', level: 'location', name: 'White Wolf Lodge Dining', code: 'YOS-007', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86 },
               ],
             },
-            { id: 'h-dest-np-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Glacier National Park', code: 'PCD-DEST-GNP', complianceScore: 88, locationCount: 8, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
-            { id: 'h-dest-np-grandcanyon', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Grand Canyon District', code: 'PCD-DEST-GC', complianceScore: 91, locationCount: 6, foodSafety: 93, fireSafety: 89, vendorCompliance: 90 },
-            { id: 'h-dest-np-other', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Other National Parks', code: 'PCD-DEST-ONP', complianceScore: 90, locationCount: 11, foodSafety: 92, fireSafety: 88, vendorCompliance: 89 },
+            { id: 'h-dest-np-glacier', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Glacier National Park', code: 'PCD-DEST-GNP', complianceScore: 88, locationCount: 8, foodSafety: 90, fireSafety: 86 },
+            { id: 'h-dest-np-grandcanyon', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Grand Canyon District', code: 'PCD-DEST-GC', complianceScore: 91, locationCount: 6, foodSafety: 93, fireSafety: 89 },
+            { id: 'h-dest-np-other', tenantId: 'ent-pcdining', parentId: 'h-dest-parks', level: 'district', name: 'Other National Parks', code: 'PCD-DEST-ONP', complianceScore: 90, locationCount: 11, foodSafety: 92, fireSafety: 88 },
           ],
         },
         {
           id: 'h-dest-ski', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'Ski Resorts', code: 'PCD-DEST-SKI',
-          complianceScore: 87, locationCount: 28, foodSafety: 89, fireSafety: 85, vendorCompliance: 86,
+          complianceScore: 87, locationCount: 28, foodSafety: 89, fireSafety: 85,
           children: [
-            { id: 'h-dest-ski-badger', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Badger Pass Ski Area', code: 'PCD-DEST-BP', complianceScore: 74, locationCount: 1, foodSafety: 78, fireSafety: 70, vendorCompliance: 72 },
-            { id: 'h-dest-ski-mammoth', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Mammoth Mountain Lodge', code: 'PCD-DEST-MM', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+            { id: 'h-dest-ski-badger', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Badger Pass Ski Area', code: 'PCD-DEST-BP', complianceScore: 74, locationCount: 1, foodSafety: 78, fireSafety: 70 },
+            { id: 'h-dest-ski-mammoth', tenantId: 'ent-pcdining', parentId: 'h-dest-ski', level: 'location', name: 'Mammoth Mountain Lodge', code: 'PCD-DEST-MM', complianceScore: 88, locationCount: 1, foodSafety: 90, fireSafety: 86 },
           ],
         },
         {
           id: 'h-dest-conv', tenantId: 'ent-pcdining', parentId: 'h-destinations', level: 'region', name: 'Convention Centers', code: 'PCD-DEST-CC',
-          complianceScore: 89, locationCount: 29, foodSafety: 91, fireSafety: 87, vendorCompliance: 88,
+          complianceScore: 89, locationCount: 29, foodSafety: 91, fireSafety: 87,
         },
       ],
     },
     {
       id: 'h-corrections', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Corrections', code: 'PCD-CR',
-      complianceScore: 86, locationCount: 156, foodSafety: 88, fireSafety: 84, vendorCompliance: 85,
+      complianceScore: 86, locationCount: 156, foodSafety: 88, fireSafety: 84,
       children: [
-        { id: 'h-cr-federal', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'Federal Facilities', code: 'PCD-CR-FED', complianceScore: 87, locationCount: 42, foodSafety: 89, fireSafety: 85, vendorCompliance: 86 },
-        { id: 'h-cr-state', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'State Facilities', code: 'PCD-CR-ST', complianceScore: 85, locationCount: 78, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
-        { id: 'h-cr-county', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'County Facilities', code: 'PCD-CR-CTY', complianceScore: 86, locationCount: 36, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
+        { id: 'h-cr-federal', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'Federal Facilities', code: 'PCD-CR-FED', complianceScore: 87, locationCount: 42, foodSafety: 89, fireSafety: 85 },
+        { id: 'h-cr-state', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'State Facilities', code: 'PCD-CR-ST', complianceScore: 85, locationCount: 78, foodSafety: 87, fireSafety: 83 },
+        { id: 'h-cr-county', tenantId: 'ent-pcdining', parentId: 'h-corrections', level: 'region', name: 'County Facilities', code: 'PCD-CR-CTY', complianceScore: 86, locationCount: 36, foodSafety: 88, fireSafety: 84 },
       ],
     },
     {
       id: 'h-sports', tenantId: 'ent-pcdining', parentId: 'h-corp', level: 'division', name: 'Sports & Entertainment', code: 'PCD-SE',
-      complianceScore: 88, locationCount: 443, foodSafety: 90, fireSafety: 86, vendorCompliance: 87,
+      complianceScore: 88, locationCount: 443, foodSafety: 90, fireSafety: 86,
       children: [
         {
           id: 'h-se-west', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Western Region', code: 'PCD-SE-W',
-          complianceScore: 87, locationCount: 133, foodSafety: 89, fireSafety: 85, vendorCompliance: 86,
+          complianceScore: 87, locationCount: 133, foodSafety: 89, fireSafety: 85,
           children: [
-            { id: 'h-se-w-bay', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Bay Area District', code: 'PCD-SE-W-BAY', complianceScore: 86, locationCount: 42, foodSafety: 88, fireSafety: 84, vendorCompliance: 85 },
-            { id: 'h-se-w-socal', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'SoCal District', code: 'PCD-SE-W-SC', complianceScore: 85, locationCount: 48, foodSafety: 87, fireSafety: 83, vendorCompliance: 84 },
-            { id: 'h-se-w-pnw', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-SE-W-PNW', complianceScore: 89, locationCount: 43, foodSafety: 91, fireSafety: 87, vendorCompliance: 88 },
+            { id: 'h-se-w-bay', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Bay Area District', code: 'PCD-SE-W-BAY', complianceScore: 86, locationCount: 42, foodSafety: 88, fireSafety: 84 },
+            { id: 'h-se-w-socal', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'SoCal District', code: 'PCD-SE-W-SC', complianceScore: 85, locationCount: 48, foodSafety: 87, fireSafety: 83 },
+            { id: 'h-se-w-pnw', tenantId: 'ent-pcdining', parentId: 'h-se-west', level: 'district', name: 'Pacific Northwest', code: 'PCD-SE-W-PNW', complianceScore: 89, locationCount: 43, foodSafety: 91, fireSafety: 87 },
           ],
         },
-        { id: 'h-se-central', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'PCD-SE-C', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
-        { id: 'h-se-east', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'PCD-SE-E', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86, vendorCompliance: 87 },
+        { id: 'h-se-central', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Central Region', code: 'PCD-SE-C', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86 },
+        { id: 'h-se-east', tenantId: 'ent-pcdining', parentId: 'h-sports', level: 'region', name: 'Eastern Region', code: 'PCD-SE-E', complianceScore: 88, locationCount: 155, foodSafety: 90, fireSafety: 86 },
       ],
     },
   ],
@@ -1770,22 +1773,21 @@ export interface EnterpriseTrendPoint {
   overall: number;
   foodSafety: number;
   fireSafety: number;
-  vendorCompliance: number;
 }
 
 export const enterpriseTrendData: EnterpriseTrendPoint[] = [
-  { month: 'Mar 25', overall: 82.1, foodSafety: 84.0, fireSafety: 80.2, vendorCompliance: 81.5 },
-  { month: 'Apr 25', overall: 83.4, foodSafety: 85.1, fireSafety: 81.0, vendorCompliance: 83.2 },
-  { month: 'May 25', overall: 83.8, foodSafety: 85.6, fireSafety: 81.5, vendorCompliance: 83.8 },
-  { month: 'Jun 25', overall: 84.5, foodSafety: 86.2, fireSafety: 82.1, vendorCompliance: 84.4 },
-  { month: 'Jul 25', overall: 83.9, foodSafety: 85.8, fireSafety: 81.8, vendorCompliance: 83.5 },
-  { month: 'Aug 25', overall: 84.8, foodSafety: 86.5, fireSafety: 82.6, vendorCompliance: 84.8 },
-  { month: 'Sep 25', overall: 85.6, foodSafety: 87.2, fireSafety: 83.4, vendorCompliance: 85.6 },
-  { month: 'Oct 25', overall: 86.2, foodSafety: 87.8, fireSafety: 84.1, vendorCompliance: 86.1 },
-  { month: 'Nov 25', overall: 86.8, foodSafety: 88.2, fireSafety: 84.8, vendorCompliance: 86.9 },
-  { month: 'Dec 25', overall: 85.9, foodSafety: 87.5, fireSafety: 84.0, vendorCompliance: 85.8 },
-  { month: 'Jan 26', overall: 87.1, foodSafety: 88.8, fireSafety: 85.2, vendorCompliance: 86.8 },
-  { month: 'Feb 26', overall: 90.0, foodSafety: 92.0, fireSafety: 88.0, vendorCompliance: 89.0 },
+  { month: 'Mar 25', overall: 82.1, foodSafety: 84.0, fireSafety: 80.2 },
+  { month: 'Apr 25', overall: 83.4, foodSafety: 85.1, fireSafety: 81.0 },
+  { month: 'May 25', overall: 83.8, foodSafety: 85.6, fireSafety: 81.5 },
+  { month: 'Jun 25', overall: 84.5, foodSafety: 86.2, fireSafety: 82.1 },
+  { month: 'Jul 25', overall: 83.9, foodSafety: 85.8, fireSafety: 81.8 },
+  { month: 'Aug 25', overall: 84.8, foodSafety: 86.5, fireSafety: 82.6 },
+  { month: 'Sep 25', overall: 85.6, foodSafety: 87.2, fireSafety: 83.4 },
+  { month: 'Oct 25', overall: 86.2, foodSafety: 87.8, fireSafety: 84.1 },
+  { month: 'Nov 25', overall: 86.8, foodSafety: 88.2, fireSafety: 84.8 },
+  { month: 'Dec 25', overall: 85.9, foodSafety: 87.5, fireSafety: 84.0 },
+  { month: 'Jan 26', overall: 87.1, foodSafety: 88.8, fireSafety: 85.2 },
+  { month: 'Feb 26', overall: 90.0, foodSafety: 92.0, fireSafety: 88.0 },
 ];
 
 export interface EnterpriseBulkOp {

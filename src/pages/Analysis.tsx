@@ -472,44 +472,31 @@ export function Analysis() {
     { week: '6w', score: 74 }, { week: '5w', score: 75 }, { week: '4w', score: 76 },
     { week: '3w', score: 77 }, { week: '2w', score: 78 }, { week: 'Now', score: 79 },
   ];
-  const vendorComplianceTrend = [
-    { week: '12w', score: 55 }, { week: '11w', score: 58 }, { week: '10w', score: 60 },
-    { week: '9w', score: 61 }, { week: '8w', score: 63 }, { week: '7w', score: 64 },
-    { week: '6w', score: 65 }, { week: '5w', score: 66 }, { week: '4w', score: 65 },
-    { week: '3w', score: 66 }, { week: '2w', score: 67 }, { week: 'Now', score: 68 },
-  ];
-
   const downtownTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
     fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
-    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 20) })),
   };
   const airportTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
     fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
-    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.max(0, d.score + 3) })),
   };
   const universityTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
     fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
-    vendorCompliance: vendorComplianceTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 15) })),
   };
   const allTrends = {
     foodSafety: foodSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.foodSafety[i].score + airportTrends.foodSafety[i].score + universityTrends.foodSafety[i].score) / 3) })),
     fireSafety: fireSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.fireSafety[i].score + airportTrends.fireSafety[i].score + universityTrends.fireSafety[i].score) / 3) })),
-    vendorCompliance: vendorComplianceTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.vendorCompliance[i].score + airportTrends.vendorCompliance[i].score + universityTrends.vendorCompliance[i].score) / 3) })),
   };
   const locationTrends = {
     'all': allTrends, 'downtown': downtownTrends, 'airport': airportTrends, 'university': universityTrends,
-  } as Record<string, { foodSafety: typeof foodSafetyTrend; fireSafety: typeof fireSafetyTrend; vendorCompliance: typeof vendorComplianceTrend }>;
+  } as Record<string, { foodSafety: typeof foodSafetyTrend; fireSafety: typeof fireSafetyTrend }>;
 
   const currentTrends = locationTrends[selectedLocation] || locationTrends['all'];
   const opStart = currentTrends.foodSafety[0].score;
   const opEnd = currentTrends.foodSafety[currentTrends.foodSafety.length - 1].score;
   const eqStart = currentTrends.fireSafety[0].score;
   const eqEnd = currentTrends.fireSafety[currentTrends.fireSafety.length - 1].score;
-  const docStart = currentTrends.vendorCompliance[0].score;
-  const docEnd = currentTrends.vendorCompliance[currentTrends.vendorCompliance.length - 1].score;
 
   // ── Actions to improve score (existing table) ─────────────────
   const getRecoverablePoints = (impact: string): number => {
@@ -912,7 +899,7 @@ export function Analysis() {
             {/* Compliance Trends */}
             <div>
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
                   <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety ({Math.round(getWeights().foodSafety * 100)}% weight)</h3>
                   <ResponsiveContainer width="100%" height={150}>
@@ -943,22 +930,6 @@ export function Analysis() {
                   <p className={`text-xs mt-2 flex items-center ${eqEnd >= eqStart ? 'text-green-600' : 'text-red-600'}`}>
                     {eqEnd >= eqStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                     {eqEnd >= eqStart ? '+' : ''}{eqEnd - eqStart} points over 12 weeks
-                  </p>
-                </div>
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}% weight)</h3>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.vendorCompliance}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="week" tick={{ fontSize: 10 }} />
-                      <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />
-                      <Tooltip />
-                      <Line type="monotone" dataKey="score" stroke="#d4af37" strokeWidth={2} dot={{ r: 2 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <p className={`text-xs mt-2 flex items-center ${docEnd >= docStart ? 'text-green-600' : 'text-red-600'}`}>
-                    {docEnd >= docStart ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
-                    {docEnd >= docStart ? '+' : ''}{docEnd - docStart} points over 12 weeks
                   </p>
                 </div>
               </div>

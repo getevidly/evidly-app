@@ -19,7 +19,7 @@ export interface AiMessage {
 
 export interface ComplianceContext {
   orgName: string;
-  locations: { name: string; score: number; foodSafety: number; fireSafety: number; vendorCompliance: number; stateCode?: string; county?: string; jurisdictionChain?: string[] }[];
+  locations: { name: string; score: number; foodSafety: number; fireSafety: number; stateCode?: string; county?: string; jurisdictionChain?: string[] }[];
   overallScore: number;
   recentAlerts: string[];
   overdueItems: string[];
@@ -31,9 +31,9 @@ const DEMO_CONTEXT: ComplianceContext = {
   orgName: 'Pacific Coast Dining',
   overallScore: 76,
   locations: [
-    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, fireSafety: 88, vendorCompliance: 91, stateCode: 'CA', county: 'Fresno County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Fresno County'] },
-    { name: 'Airport Cafe', score: 69, foodSafety: 72, fireSafety: 62, vendorCompliance: 74, stateCode: 'CA', county: 'Merced County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Merced County'] },
-    { name: 'University Dining', score: 56, foodSafety: 62, fireSafety: 55, vendorCompliance: 42, stateCode: 'CA', county: 'Stanislaus County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Stanislaus County', 'City of Modesto'] },
+    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, fireSafety: 88, stateCode: 'CA', county: 'Fresno County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Fresno County'] },
+    { name: 'Airport Cafe', score: 69, foodSafety: 72, fireSafety: 62, stateCode: 'CA', county: 'Merced County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Merced County'] },
+    { name: 'University Dining', score: 56, foodSafety: 62, fireSafety: 55, stateCode: 'CA', county: 'Stanislaus County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Stanislaus County', 'City of Modesto'] },
   ],
   recentAlerts: [
     'Airport Cafe Walk-in Cooler #2 above 41°F',
@@ -79,13 +79,13 @@ IMPORTANT GUARDRAILS:
 
   const locSummary = context.locations
     .map((l) => {
-      let line = `  - ${l.name}${l.stateCode ? ` [${l.stateCode}]` : ''}: Overall ${l.score}% (Food Safety ${l.foodSafety}%, Fire Safety ${l.fireSafety}%, Vendor Compliance ${l.vendorCompliance}%)`;
+      let line = `  - ${l.name}${l.stateCode ? ` [${l.stateCode}]` : ''}: Overall ${l.score}% (Food Safety ${l.foodSafety}%, Fire Safety ${l.fireSafety}%)`;
       if (l.county) line += `\n    Jurisdiction: ${l.jurisdictionChain?.join(' → ') || l.county}`;
       return line;
     })
     .join('\n');
 
-  return `You are EvidLY's AI Compliance Advisor. You help commercial kitchen managers with food safety, fire safety, and vendor compliance. You have access to the user's compliance data, temperature logs, checklists, corrective actions, and vendor records. Be specific, actionable, and reference their actual data. Keep responses concise and professional. When recommending actions, format them as clear steps. If you identify action items, format each one on its own line starting with "Action:" followed by the action description.
+  return `You are EvidLY's AI Compliance Advisor. You help commercial kitchen managers with food safety and fire safety. You have access to the user's compliance data, temperature logs, checklists, corrective actions, and vendor records. Be specific, actionable, and reference their actual data. Keep responses concise and professional. When recommending actions, format them as clear steps. If you identify action items, format each one on its own line starting with "Action:" followed by the action description.
 
 CRITICAL CATEGORIZATION RULE: Equipment cleaning (hoods, exhaust systems, grease traps, fire suppression systems, fire extinguishers) and equipment inspections are ALWAYS categorized as FIRE SAFETY issues under NFPA 96 (2024) — never as health/food safety. Hood cleaning, fire suppression inspection, grease trap service, and fire extinguisher checks fall under the Fire Safety compliance pillar and NFPA 96 (2024) regulatory standards.
 

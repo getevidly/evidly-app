@@ -141,7 +141,6 @@ export function getDemoBenchmark(
     pillarComparison: [
       { pillar: 'Food Safety', yourScore: locScores.foodSafety, industryAvg: vertBench.avgFoodSafety, percentile: estimatePercentile(locScores.foodSafety, vertBench.avgFoodSafety) },
       { pillar: 'Fire Safety', yourScore: locScores.fireSafety, industryAvg: vertBench.avgFireSafety, percentile: estimatePercentile(locScores.fireSafety, vertBench.avgFireSafety) },
-      { pillar: 'Vendor Compliance', yourScore: locScores.vendorCompliance, industryAvg: vertBench.avgVendorCompliance, percentile: estimatePercentile(locScores.vendorCompliance, vertBench.avgVendorCompliance) },
     ],
     operationalComparison: [
       { metric: 'Temp Compliance', yourValue: (LOCATION_SUBCATEGORY_SCORES[locationUrlId]?.temp_compliance ?? 80), industryAvg: 82, unit: '%', better: (LOCATION_SUBCATEGORY_SCORES[locationUrlId]?.temp_compliance ?? 80) > 82 },
@@ -163,7 +162,6 @@ function getDefaultBenchmark(): BenchmarkResult {
     pillarComparison: [
       { pillar: 'Food Safety', yourScore: complianceScores.foodSafety, industryAvg: 76, percentile: 65 },
       { pillar: 'Fire Safety', yourScore: complianceScores.fireSafety, industryAvg: 70, percentile: 55 },
-      { pillar: 'Vendor Compliance', yourScore: complianceScores.vendorCompliance, industryAvg: 72, percentile: 60 },
     ],
     operationalComparison: [
       { metric: 'Temp Compliance', yourValue: 85, industryAvg: 82, unit: '%', better: true },

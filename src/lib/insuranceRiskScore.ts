@@ -157,10 +157,10 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
   const pullStationScore = locScores ? Math.min(100, Math.round(locScores.fireSafety * 1.02)) : 50;
 
   // Factor 8: Fire alarm system current
-  const alarmScore = locScores ? Math.min(100, Math.round((locScores.fireSafety + locScores.vendorCompliance) / 2 * 1.05)) : 50;
+  const alarmScore = locScores ? Math.min(100, Math.round((locScores.fireSafety + locScores.fireSafety) / 2 * 1.05)) : 50;
 
   // Factor 9: Documentation of all above on file
-  const docScore = locScores ? Math.round(locScores.vendorCompliance * 0.95) : 50;
+  const docScore = locScores ? Math.round(locScores.foodSafety * 0.95) : 50;
 
   const factors: InsuranceRiskFactor[] = [
     { name: 'Hood cleaning current per NFPA 96 (2024) schedule', score: hoodScore, weight: 0.18, status: factorStatus(hoodScore), detail: hoodDetail, reference: 'NFPA 96-2024' },
@@ -182,7 +182,7 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
 
 export function calculateFoodSafetyScore(locationId: string): InsuranceRiskCategory {
   const opItems = getImpactItems(locationId, 'Food Safety');
-  const docItems = getImpactItems(locationId, 'Vendor Compliance');
+  const docItems = getImpactItems(locationId, 'Food Safety');
   const locScores = locationScores[locationId];
 
   // Factor 1: Temperature log compliance rate
@@ -245,7 +245,7 @@ export function calculateFoodSafetyScore(locationId: string): InsuranceRiskCateg
 // --------------- Documentation & Compliance (20%) ---------------
 
 export function calculateDocComplianceScore(locationId: string): InsuranceRiskCategory {
-  const docItems = getImpactItems(locationId, 'Vendor Compliance');
+  const docItems = getImpactItems(locationId, 'Food Safety');
   const locScores = locationScores[locationId];
 
   // Factor 1: Vendor certificates current
@@ -322,7 +322,7 @@ export function calculateOperationalRiskScore(locationId: string): InsuranceRisk
   const correctiveScore = incImpact.pct;
 
   // Factor 5: Staff training completion rate
-  const trainingScore = locScores ? Math.min(100, Math.round((locScores.foodSafety * 0.6 + locScores.vendorCompliance * 0.4))) : 50;
+  const trainingScore = locScores ? Math.min(100, Math.round((locScores.foodSafety * 0.6 + locScores.foodSafety * 0.4))) : 50;
 
   const factors: InsuranceRiskFactor[] = [
     { name: 'Checklist consistency (no gaps)', score: checkScore, weight: 0.25, status: factorStatus(checkScore), detail: checkScore >= 90 ? 'No gaps in daily/weekly routines' : `${checkScore}% completion — gaps detected`, reference: 'Operational SOP' },

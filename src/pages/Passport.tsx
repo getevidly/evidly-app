@@ -17,7 +17,6 @@ export default function Passport() {
     overall: 92,
     foodSafety: 95,
     fireSafety: 89,
-    vendorCompliance: 88,
   };
 
   const recentActivity = [
@@ -141,18 +140,6 @@ export default function Passport() {
               </div>
             </div>
 
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Vendor Compliance</span>
-                <span className="font-bold" style={{ color: locationData.vendorCompliance >= 90 ? '#22c55e' : locationData.vendorCompliance >= 75 ? '#eab308' : locationData.vendorCompliance >= 60 ? '#f59e0b' : '#ef4444' }}>{locationData.vendorCompliance}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${locationData.vendorCompliance}%` }}
-                />
-              </div>
-            </div>
           </div>
         </div>
 

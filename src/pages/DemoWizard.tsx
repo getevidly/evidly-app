@@ -15,12 +15,12 @@ const INDUSTRIES = [
   { code: 'HIGHER_EDUCATION', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
 ];
 
-const WEIGHTS: Record<string, { foodSafety: number; fireSafety: number; vendorCompliance: number }> = {
-  RESTAURANT: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 },
-  HEALTHCARE: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 },
-  SENIOR_LIVING: { foodSafety: 35, fireSafety: 25, vendorCompliance: 40 },
-  K12_EDUCATION: { foodSafety: 40, fireSafety: 20, vendorCompliance: 40 },
-  HIGHER_EDUCATION: { foodSafety: 45, fireSafety: 30, vendorCompliance: 25 },
+const WEIGHTS: Record<string, { foodSafety: number; fireSafety: number }> = {
+  RESTAURANT: { foodSafety: 60, fireSafety: 40 },
+  HEALTHCARE: { foodSafety: 60, fireSafety: 40 },
+  SENIOR_LIVING: { foodSafety: 60, fireSafety: 40 },
+  K12_EDUCATION: { foodSafety: 65, fireSafety: 35 },
+  HIGHER_EDUCATION: { foodSafety: 60, fireSafety: 40 },
 };
 
 interface DemoLead {
@@ -278,7 +278,6 @@ export function DemoWizard() {
                     <div className="flex gap-4 text-sm">
                       <span>Food Safety: <strong>{weights.foodSafety}%</strong></span>
                       <span>Fire Safety: <strong>{weights.fireSafety}%</strong></span>
-                      <span>Vendor Compliance: <strong>{weights.vendorCompliance}%</strong></span>
                     </div>
                   </div>
                 )}
@@ -506,7 +505,7 @@ export function DemoWizard() {
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Compliance dashboard with your {selectedIndustry?.label} scoring weights ({weights.foodSafety}/{weights.fireSafety}/{weights.vendorCompliance})</span>
+                    <span>Compliance dashboard with your {selectedIndustry?.label} scoring weights ({weights.foodSafety}/{weights.fireSafety})</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />

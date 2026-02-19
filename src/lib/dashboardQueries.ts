@@ -19,10 +19,10 @@ import {
 // ────────────────────────────────────────────────────────
 
 export interface ComplianceScoresResult {
-  scores: { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number };
-  locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }>;
-  scoresThirtyDaysAgo: { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number };
-  locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number; vendorCompliance: number }>;
+  scores: { overall: number; foodSafety: number; fireSafety: number };
+  locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number }>;
+  scoresThirtyDaysAgo: { overall: number; foodSafety: number; fireSafety: number };
+  locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number }>;
 }
 
 export interface ProgressData {
@@ -99,8 +99,6 @@ export async function fetchLocations(organizationId?: string): Promise<Location[
       address: loc.address || '',
       lat: 0,
       lng: 0,
-      score: 0,
-      status: loc.status || 'active',
       actionItems: 0,
     }));
   } catch {

@@ -9,7 +9,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
 
-type TabType = 'executive' | 'operational' | 'equipment' | 'vendorCompliance' | 'team';
+type TabType = 'executive' | 'operational' | 'equipment' | 'team';
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; text: string; border: string }> = {
@@ -153,7 +153,6 @@ export function Reports() {
       score: scores?.overall || 0,
       foodSafety: scores?.foodSafety || 0,
       fireSafety: scores?.fireSafety || 0,
-      vendorCompliance: scores?.vendorCompliance || 0,
       change: '+5%',
       status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 70 ? 'Needs Attention' : 'Critical',
     };
@@ -430,12 +429,6 @@ export function Reports() {
           csvContent += `"${r.equipment}","${r.location}","${r.status}","${r.expires}"\n`;
         });
         filename = `evidly-equipment-report-${dateRange}.csv`;
-      } else if (activeTab === 'vendorCompliance') {
-        csvContent = 'Type,Total,Current,Expiring,Expired\n';
-        documentInventory.forEach(r => {
-          csvContent += `"${r.type}",${r.total},${r.current},${r.expiring},${r.expired}\n`;
-        });
-        filename = `evidly-vendor-compliance-report-${dateRange}.csv`;
       } else {
         csvContent = 'Employee,Completed,Missed,Rate\n';
         taskCompletionByEmployee.forEach(r => {
@@ -517,7 +510,6 @@ export function Reports() {
             { id: 'executive', label: 'Executive Summary' },
             { id: 'operational', label: 'Food Safety' },
             { id: 'equipment', label: 'Fire Safety' },
-            { id: 'vendorCompliance', label: 'Vendor Compliance' },
             { id: 'team', label: 'Team' },
           ].map((tab) => (
             <button
@@ -557,17 +549,14 @@ export function Reports() {
                   <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% from last month</span>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 {(() => {
                   const opScore = selectedLocation !== 'all' && locationScores[selectedLocation]
                     ? locationScores[selectedLocation].foodSafety : complianceScores.foodSafety;
                   const eqScore = selectedLocation !== 'all' && locationScores[selectedLocation]
                     ? locationScores[selectedLocation].fireSafety : complianceScores.fireSafety;
-                  const docScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].vendorCompliance : complianceScores.vendorCompliance;
                   const opColor = getScoreColor(opScore);
                   const eqColor = getScoreColor(eqScore);
-                  const docColor = getScoreColor(docScore);
                   return (
                     <>
                       <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
@@ -583,13 +572,6 @@ export function Reports() {
                           <span className="text-sm text-gray-500 font-medium">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
-                      </div>
-                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${docColor}` }}>
-                        <div className="flex items-center justify-center gap-1.5 mb-1">
-                          <FileText className="h-3.5 w-3.5" style={{ color: docColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}%)</span>
-                        </div>
-                        <p className="text-xl font-bold text-center" style={{ color: docColor }}>{docScore}</p>
                       </div>
                     </>
                   );
@@ -618,7 +600,6 @@ export function Reports() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Vendor Compliance ({Math.round(getWeights().vendorCompliance * 100)}%)</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
@@ -629,7 +610,6 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: getScoreColor(loc.score) }}>{loc.score}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: getScoreColor(loc.foodSafety) }}>{loc.foodSafety}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: getScoreColor(loc.fireSafety) }}>{loc.fireSafety}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden lg:table-cell" style={{ color: getScoreColor(loc.vendorCompliance) }}>{loc.vendorCompliance}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <StatusBadge status={loc.status} />
                         </td>
@@ -910,142 +890,6 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.category}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold" style={{ color: '#1e4d6b' }}>{item.amount}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{item.services}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'vendorCompliance' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Document Inventory</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Current</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Expiring</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Expired</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '120px' }}>Health</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {documentInventory.map((item, idx) => {
-                      const healthPct = Math.round((item.current / item.total) * 100);
-                      return (
-                        <tr key={idx} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.type}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{item.total}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium hidden sm:table-cell">{item.current}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: '#d4af37' }}>{item.expiring || '-'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium hidden sm:table-cell">{item.expired || '-'}</td>
-                          <td className="px-6 py-4 text-sm">
-                            <ProgressBar value={healthPct} color={healthPct >= 90 ? '#22c55e' : healthPct >= 75 ? '#eab308' : healthPct >= 60 ? '#f59e0b' : '#ef4444'} />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Expiration Timeline</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Expires</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Left</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {expirationTimeline.map((item, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{item.document}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{item.type}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">{item.expires}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span style={{
-                            fontWeight: '600',
-                            color: item.daysLeft <= 14 ? '#ef4444' : item.daysLeft <= 30 ? '#d4af37' : '#22c55e'
-                          }}>
-                            {item.daysLeft} days
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{item.location}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Missing Required Documents</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Category</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Overdue</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {missingDocs.map((doc, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{doc.document}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{doc.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{doc.category}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600">{doc.daysOverdue > 0 ? doc.daysOverdue : 'Due today'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Vendor Document Compliance</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">COI</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Certifications</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Insurance</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {vendorDocCompliance.map((vendor, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{vendor.vendor}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.coi} /></td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell"><StatusBadge status={vendor.certs} /></td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell"><StatusBadge status={vendor.insurance} /></td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm"><StatusBadge status={vendor.status} /></td>
                       </tr>
                     ))}
                   </tbody>

@@ -385,9 +385,8 @@ export function AuditReport() {
     const eqFair = reportData.equipment.filter((e: any) => e.condition === 'Fair').length;
     const eqAttention = reportData.equipment.filter((e: any) => e.condition === 'Needs Attention').length;
     const complianceScore = Math.round(
-      (passTemps / Math.max(totalTemps, 1)) * 45 +
-      (avgScore / 100) * 30 +
-      (currentDocs / Math.max(reportData.documents.length, 1)) * 25
+      (passTemps / Math.max(totalTemps, 1)) * 55 +
+      (avgScore / 100) * 45
     );
     // Per-location scores
     const locationStats = (loc ? [loc] : LOCATIONS).map(locName => {
@@ -397,7 +396,7 @@ export function AuditReport() {
       const cas = lc.length > 0 ? Math.round(lc.reduce((s: number, c: any) => s + c.score, 0) / lc.length) : 100;
       const ld = reportData.documents.filter((d: any) => d.location === locName);
       const cdr = ld.length > 0 ? Math.round(ld.filter((d: any) => d.status === 'Current').length / ld.length * 100) : 100;
-      const score = Math.round(tpr * 0.45 + cas * 0.30 + cdr * 0.25);
+      const score = Math.round(tpr * 0.55 + cas * 0.45);
       return { name: locName, score };
     });
     return {
@@ -767,7 +766,7 @@ export function AuditReport() {
                         </div>
                         <div>
                           <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
-                          <p className="text-sm text-gray-600">Weighted: Food Safety (45%) + Fire Safety (30%) + Vendor Compliance (25%)</p>
+                          <p className="text-sm text-gray-600">Weighted: Food Safety (55%) + Fire Safety (45%)</p>
                           <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
                             {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
                           </p>

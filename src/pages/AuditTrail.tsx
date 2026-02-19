@@ -277,7 +277,6 @@ function generateComplianceScores(location: string | null) {
     overall: rnd(72, 96),
     foodSafety: rnd(75, 98),
     fireSafety: rnd(68, 95),
-    vendorCompliance: rnd(70, 94),
     trend: pick(['up', 'stable', 'down'] as const),
     lastUpdated: format(new Date(now - rnd(0, 3) * 86400000), 'MMM d, yyyy'),
   }));
@@ -377,7 +376,7 @@ export function AuditTrail() {
     { id: 'equipment', label: 'Equipment', icon: Wrench, enabled: true, description: 'Equipment condition, warranty, service history' },
     { id: 'vendors', label: 'Vendor Services', icon: Truck, enabled: true, description: 'Service records and certifications' },
     { id: 'documents', label: 'Documents', icon: FileText, enabled: true, description: 'Licenses, permits, certifications' },
-    { id: 'compliance', label: 'Compliance Scores', icon: ShieldCheck, enabled: true, description: 'Food safety, fire safety, vendor compliance' },
+    { id: 'compliance', label: 'Compliance Scores', icon: ShieldCheck, enabled: true, description: 'Food safety and fire safety scores' },
     { id: 'audit_activity', label: 'Inspection Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
     { id: 'photos', label: 'Photo Evidence', icon: Camera, enabled: false, description: 'Photographic documentation' },
     { id: 'training', label: 'Training Records', icon: GraduationCap, enabled: false, description: 'Staff certifications and course completions' },
@@ -452,7 +451,7 @@ export function AuditTrail() {
     const expiringDocs = reportData.documents.filter((d: any) => d.status === 'Expiring').length;
     const expiredDocs = reportData.documents.filter((d: any) => d.status === 'Expired').length;
     const complianceScore = totalTemps > 0
-      ? Math.round((passTemps / totalTemps) * 45 + (avgScore / 100) * 30 + (currentDocs / Math.max(reportData.documents.length, 1)) * 25)
+      ? Math.round((passTemps / totalTemps) * 55 + (avgScore / 100) * 45)
       : 85;
     return {
       complianceScore,
@@ -983,7 +982,6 @@ export function AuditTrail() {
                           <div className="flex gap-2 text-xs text-gray-500">
                             <span>Food: {cs.foodSafety}</span>
                             <span>Fire: {cs.fireSafety}</span>
-                            <span>Vendor: {cs.vendorCompliance}</span>
                           </div>
                         </div>
                       </div>
@@ -1245,7 +1243,6 @@ export function AuditTrail() {
                             <th style={thStyle}>Overall</th>
                             <th style={thStyle}>Food Safety</th>
                             <th style={thStyle}>Fire Safety</th>
-                            <th style={thStyle}>Vendor Compliance</th>
                             <th style={thStyle}>Trend</th>
                             <th style={thStyle}>Last Updated</th>
                           </tr>
@@ -1259,7 +1256,6 @@ export function AuditTrail() {
                               </td>
                               <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.foodSafety) }}>{cs.foodSafety}</span></td>
                               <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.fireSafety) }}>{cs.fireSafety}</span></td>
-                              <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.vendorCompliance) }}>{cs.vendorCompliance}</span></td>
                               <td style={tdStyle}>
                                 <span style={badge(
                                   cs.trend === 'up' ? '↑ Up' : cs.trend === 'down' ? '↓ Down' : '→ Stable',

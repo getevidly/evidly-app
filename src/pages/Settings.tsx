@@ -172,7 +172,7 @@ export function Settings() {
     t('settings.upTo10Locations'),
     t('settings.aiComplianceAdvisor'),
     t('settings.haccpPlanManagement'),
-    t('settings.vendorComplianceTracking'),
+    t('settings.vendorServiceTracking'),
     t('settings.customReports'),
     t('settings.emailSmsNotifications'),
     t('settings.prioritySupport'),

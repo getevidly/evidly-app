@@ -33,7 +33,6 @@ export interface BusinessUnitScorecard {
   criticalItems: number;
   foodSafety: number;
   fireSafety: number;
-  vendorCompliance: number;
 }
 
 export interface RegulatoryOverlay {
@@ -50,7 +49,7 @@ export interface PredictedScore {
   confidence: 'high' | 'medium' | 'low';
 }
 
-export type ComplianceCategory = 'overall' | 'foodSafety' | 'fireSafety' | 'vendorCompliance';
+export type ComplianceCategory = 'overall' | 'foodSafety' | 'fireSafety';
 
 // ── Enterprise tenant ────────────────────────────────────────────
 export const enterpriseTenant = enterpriseTenants.find(t => t.id === 'ent-pcdining')!;
@@ -70,7 +69,6 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     criticalItems: 3,
     foodSafety: 93.1,
     fireSafety: 89.4,
-    vendorCompliance: 90.8,
   },
   {
     id: 'h-healthcare',
@@ -82,7 +80,6 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     criticalItems: 0,
     foodSafety: 96.2,
     fireSafety: 93.0,
-    vendorCompliance: 94.1,
   },
   {
     id: 'h-destinations',
@@ -94,7 +91,6 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     criticalItems: 1,
     foodSafety: 90.1,
     fireSafety: 86.2,
-    vendorCompliance: 87.5,
   },
   {
     id: 'h-corrections',
@@ -106,7 +102,6 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     criticalItems: 0,
     foodSafety: 88.3,
     fireSafety: 83.7,
-    vendorCompliance: 85.4,
   },
   {
     id: 'h-sports',
@@ -118,7 +113,6 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     criticalItems: 2,
     foodSafety: 90.2,
     fireSafety: 85.8,
-    vendorCompliance: 87.1,
   },
 ];
 

@@ -154,7 +154,6 @@ export function EnterpriseExecutive() {
       criticalItems: countCriticalBelow(c, 75),
       foodSafety: c.foodSafety,
       fireSafety: c.fireSafety,
-      vendorCompliance: c.vendorCompliance,
     }));
   }, [drillDownNodeId, activeNode]);
 
@@ -298,7 +297,7 @@ export function EnterpriseExecutive() {
                 <p className="text-[10px] text-gray-500">Organization Score</p>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div>
                 <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety) }}>
                   {drillDownNodeId ? activeNode.foodSafety : latestTrend.foodSafety}%
@@ -310,12 +309,6 @@ export function EnterpriseExecutive() {
                   {drillDownNodeId ? activeNode.fireSafety : latestTrend.fireSafety}%
                 </p>
                 <p className="text-[10px] text-gray-400">Fire Safety</p>
-              </div>
-              <div>
-                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.vendorCompliance : latestTrend.vendorCompliance) }}>
-                  {drillDownNodeId ? activeNode.vendorCompliance : latestTrend.vendorCompliance}%
-                </p>
-                <p className="text-[10px] text-gray-400">Vendor Compliance</p>
               </div>
             </div>
           </div>
@@ -346,7 +339,6 @@ export function EnterpriseExecutive() {
                 { key: 'overall', label: 'Overall' },
                 { key: 'foodSafety', label: 'Food Safety' },
                 { key: 'fireSafety', label: 'Fire Safety' },
-                { key: 'vendorCompliance', label: 'Vendor Compliance' },
               ] as { key: ComplianceCategory; label: string }[]).map(cat => (
                 <button
                   key={cat.key}
@@ -390,11 +382,10 @@ export function EnterpriseExecutive() {
                       <span className="text-2xl font-bold" style={{ color: scoreColor(score) }}>{score}%</span>
                       <TrendBadge value={nodeTrend(node.id)} />
                     </div>
-                    <div className="mt-2 grid grid-cols-3 gap-1">
+                    <div className="mt-2 grid grid-cols-2 gap-1">
                       {[
                         { label: 'FS', val: node.foodSafety },
                         { label: 'Fire', val: node.fireSafety },
-                        { label: 'VC', val: node.vendorCompliance },
                       ].map(p => (
                         <div key={p.label} className="text-center">
                           <p className="text-[8px] text-gray-400">{p.label}</p>

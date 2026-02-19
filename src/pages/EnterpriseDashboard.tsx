@@ -393,7 +393,6 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                 { label: 'Current', value: latestTrend.overall, color: '#1e4d6b' },
                 { label: 'Food Safety', value: latestTrend.foodSafety, color: '#22c55e' },
                 { label: 'Fire Safety', value: latestTrend.fireSafety, color: '#d4af37' },
-                { label: 'Vendor Compliance', value: latestTrend.vendorCompliance, color: '#6b21a8' },
               ].map(m => (
                 <div key={m.label} className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: m.color }} />
@@ -864,7 +863,6 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
                   {[
                     { label: 'Food Safety', value: selectedNode.foodSafety, trend: nodeTrend(selectedNode.id + '-op') },
                     { label: 'Fire Safety', value: selectedNode.fireSafety, trend: nodeTrend(selectedNode.id + '-eq') },
-                    { label: 'Vendor Compliance', value: selectedNode.vendorCompliance, trend: nodeTrend(selectedNode.id + '-doc') },
                   ].map(item => (
                     <div key={item.label}>
                       <div className="flex items-center justify-between mb-1">

@@ -10,8 +10,7 @@ export default function PassportDemo() {
   const complianceData = {
     overall: 92,
     foodSafety: 95,
-    fireSafety: 89,
-    vendorCompliance: 88
+    fireSafety: 89
   };
 
   const recentActivity = [
@@ -126,18 +125,6 @@ export default function PassportDemo() {
               </div>
             </div>
 
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Vendor Compliance</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.vendorCompliance}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${complianceData.vendorCompliance}%` }}
-                />
-              </div>
-            </div>
           </div>
         </div>
 

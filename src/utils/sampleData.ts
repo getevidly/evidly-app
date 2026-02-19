@@ -13,7 +13,6 @@ export const SAMPLE_DATA = {
   complianceBreakdown: {
     foodSafety: 91,
     fireSafety: 73,
-    vendorCompliance: 65,
   },
   locations: [
     {

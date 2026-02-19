@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import {
-  Thermometer, Users, Package, Wrench, Flame, Building2, FileText, Truck,
+  Thermometer, Users, Package, Wrench, Flame, Building2, FileText,
   CheckCircle2, XCircle, MinusCircle, ChevronLeft, ChevronRight,
   Play, RotateCcw, Printer, Share2, Trash2, TrendingUp, AlertTriangle,
   ClipboardList, ArrowLeft, History,
@@ -70,7 +70,6 @@ const SECTION_ICONS = [
   <Flame className="h-5 w-5" />,
   <Building2 className="h-5 w-5" />,
   <FileText className="h-5 w-5" />,
-  <Truck className="h-5 w-5" />,
 ];
 
 function buildSections(): AuditSection[] {
@@ -153,17 +152,9 @@ function buildSections(): AuditSection[] {
         'Manager food safety certification valid',
         'HACCP plan available (if applicable)',
         'Vendor service records current',
-      ],
-    },
-    {
-      name: 'Vendor Compliance',
-      citation: `${stateLabel} \u00A7114021`,
-      items: [
-        'Vendor certificates of insurance current',
         'Food supplier licenses verified',
         'Delivery temperature logs maintained',
         'Receiving inspection procedures followed',
-        'Vendor corrective action records on file',
       ],
     },
   ];
@@ -520,7 +511,7 @@ export function SelfAudit() {
           <h2 className="text-xl font-bold text-[#1e4d6b]">Self-Inspection Checklist</h2>
         </div>
         <p className="text-sm text-gray-600 mb-4">
-          Walk through 8 compliance sections covering {total} checklist items. Score your location,
+          Walk through 7 compliance sections covering {total} checklist items. Score your location,
           identify gaps, and generate a corrective action plan.
         </p>
         <div className="flex flex-wrap gap-3">
@@ -589,7 +580,7 @@ export function SelfAudit() {
         <div className="bg-white rounded-xl border border-[#b8d4e8] p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">
-              {completedSections} of 8 sections &mdash; {sectionPct}% complete
+              {completedSections} of 7 sections &mdash; {sectionPct}% complete
             </span>
             <span className={`text-sm font-bold ${getScoreColor(score)}`}>Score: {score}%</span>
           </div>
@@ -743,9 +734,9 @@ export function SelfAudit() {
             <ChevronLeft className="h-4 w-4" />
             Previous Section
           </button>
-          {currentSection < 7 ? (
+          {currentSection < 6 ? (
             <button
-              onClick={() => setCurrentSection((p) => Math.min(7, p + 1))}
+              onClick={() => setCurrentSection((p) => Math.min(6, p + 1))}
               className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-[#1e4d6b] hover:bg-[#2a6a8f] transition-colors"
               style={{ minHeight: 44 }}
             >
