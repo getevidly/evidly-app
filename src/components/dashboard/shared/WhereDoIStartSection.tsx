@@ -9,6 +9,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, AlertCircle, Info, ChevronRight } from 'lucide-react';
 import { FONT, BODY_TEXT, stagger } from './constants';
+import { SectionTooltip } from '../../ui/SectionTooltip';
 
 export interface PriorityItem {
   id: string;
@@ -23,6 +24,8 @@ interface WhereDoIStartSectionProps {
   items: PriorityItem[];
   /** Stagger animation start index */
   staggerOffset?: number;
+  /** Optional tooltip content for the section header */
+  tooltipContent?: string;
 }
 
 const SEVERITY_CONFIG = {
@@ -55,7 +58,7 @@ const SEVERITY_CONFIG = {
   },
 };
 
-export function WhereDoIStartSection({ items, staggerOffset = 0 }: WhereDoIStartSectionProps) {
+export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent }: WhereDoIStartSectionProps) {
   const navigate = useNavigate();
 
   if (items.length === 0) return null;
@@ -63,10 +66,11 @@ export function WhereDoIStartSection({ items, staggerOffset = 0 }: WhereDoIStart
   return (
     <div style={{ ...FONT, animation: `fadeInUp 0.4s ease-out ${staggerOffset * 0.1}s both` }}>
       <h3
-        className="text-base font-bold mb-3"
+        className="text-base font-bold mb-3 flex items-center"
         style={{ color: BODY_TEXT }}
       >
         Where Do I Start?
+        {tooltipContent && <SectionTooltip content={tooltipContent} />}
       </h3>
       <div className="space-y-2">
         {items.map((item, i) => {

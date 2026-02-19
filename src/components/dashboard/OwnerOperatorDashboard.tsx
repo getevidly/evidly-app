@@ -11,6 +11,9 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 } from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
+import { useRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { DEMO_ORG } from '../../data/demoData';
 import {
   useDashboardData,
@@ -759,6 +762,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { companyName, firstName, isDemoMode } = useDemo();
+  const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
 
   // JIE: Dual-authority jurisdiction data per location
@@ -877,6 +881,7 @@ export default function OwnerOperatorDashboard() {
               <div className="flex items-center gap-1.5 mb-1">
                 <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
                 <span className="text-[13px] text-white font-semibold">Food Safety</span>
+                <SectionTooltip content={useTooltip('overallScore', userRole)} light />
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
                 {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} — each grades differently
@@ -928,6 +933,7 @@ export default function OwnerOperatorDashboard() {
               <div className="flex items-center gap-1.5 mb-1">
                 <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
                 <span className="text-[13px] text-white font-semibold">Fire Safety</span>
+                <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
                 {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} — NFPA 96 (2024) operational permits
@@ -986,13 +992,13 @@ export default function OwnerOperatorDashboard() {
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Where Do I Start — priority actions from impact data */}
-        <WhereDoIStartSection items={priorityItems} staggerOffset={2} />
+        <WhereDoIStartSection items={priorityItems} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
 
         {/* Location Cards — only if multi-location */}
         {isMultiLocation && (
           <div style={stagger(3)}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-700">Locations ({locs.length})</h3>
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center">Locations ({locs.length})<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {locs.map(loc => {

@@ -6,6 +6,9 @@ import {
   AlertCircle, BookOpen,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
+import { useRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { DEMO_ORG, LOCATIONS_WITH_SCORES } from '../../data/demoData';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
@@ -132,6 +135,7 @@ const DEMO_REGULATORY = [
 export default function ComplianceManagerDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
+  const { userRole } = useRole();
 
   // JIE: Dual-authority jurisdiction data per location
   const jieLocIds = useMemo(
@@ -435,6 +439,7 @@ export default function ComplianceManagerDashboard() {
               <div className="flex items-center gap-1.5 mb-1">
                 <UtensilsCrossed size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
                 <span className="text-[13px] text-white font-semibold">Food Safety</span>
+                <SectionTooltip content={useTooltip('overallScore', userRole)} light />
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
                 {uniqueCounties} County Health Dept{uniqueCounties !== 1 ? 's' : ''} &mdash; each grades differently
@@ -477,6 +482,7 @@ export default function ComplianceManagerDashboard() {
               <div className="flex items-center gap-1.5 mb-1">
                 <Flame size={14} style={{ color: 'rgba(255,255,255,0.7)' }} />
                 <span className="text-[13px] text-white font-semibold">Fire Safety</span>
+                <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
               </div>
               <p className="text-[10px] text-white mb-3" style={{ opacity: 0.5 }}>
                 {uniqueFireAHJs} Fire AHJ{uniqueFireAHJs !== 1 ? 's' : ''} &mdash; NFPA 96 (2024) operational permits
@@ -533,13 +539,13 @@ export default function ComplianceManagerDashboard() {
         </div>
 
         {/* Where Do I Start? */}
-        <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} />
+        <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} tooltipContent={useTooltip('urgentItems', userRole)} />
 
         {/* ============================================================ */}
         {/* 1. LOCATION COMPLIANCE OVERVIEW                              */}
         {/* ============================================================ */}
         <div style={stagger(4)}>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Location Compliance Overview</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">Location Compliance Overview<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {locs.map(loc => {
               const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;

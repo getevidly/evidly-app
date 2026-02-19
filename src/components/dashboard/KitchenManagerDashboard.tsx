@@ -7,6 +7,8 @@ import {
   Radio,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
@@ -75,7 +77,7 @@ function Card({ children, className = '' }: { children: React.ReactNode; classNa
 function SectionHeader({ children }: { children: React.ReactNode }) {
   return (
     <h3
-      className="text-xs font-semibold uppercase mb-3"
+      className="text-xs font-semibold uppercase mb-3 flex items-center"
       style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
     >
       {children}
@@ -119,7 +121,7 @@ function getChecklistBgTint(status: DemoChecklist['status']): string {
 
 export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
-  const { getAccessibleLocations } = useRole();
+  const { getAccessibleLocations, userRole } = useRole();
   const { companyName } = useDemo();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -208,7 +210,7 @@ export default function KitchenManagerDashboard() {
 
       {/* Today's Progress */}
       <Card>
-        <SectionHeader>Today's Progress</SectionHeader>
+        <SectionHeader>Today's Progress<SectionTooltip content={useTooltip('todaysProgress', userRole)} /></SectionHeader>
         <div className="space-y-2">
           <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
             <div
@@ -272,7 +274,7 @@ export default function KitchenManagerDashboard() {
       </div>
 
       {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} />
+      <WhereDoIStartSection items={priorityItems} tooltipContent={useTooltip('urgentItems', userRole)} />
 
       {/* Temperatures & Team Activity */}
       <Card>

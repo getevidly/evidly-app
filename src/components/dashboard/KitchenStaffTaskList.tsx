@@ -10,6 +10,9 @@ import {
   ClipboardCheck,
   Globe,
 } from 'lucide-react';
+import { useRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { useTranslation } from '../../contexts/LanguageContext';
 import type { Locale } from '../../lib/i18n';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
@@ -92,6 +95,7 @@ function getProgressColor(pct: number): string {
 export default function KitchenStaffTaskList() {
   const navigate = useNavigate();
   const { locale, setLocale } = useTranslation();
+  const { userRole } = useRole();
 
   const lang = (locale === 'es' ? 'es' : 'en') as 'en' | 'es';
   const s = STRINGS[lang];
@@ -161,10 +165,10 @@ export default function KitchenStaffTaskList() {
           {/* My Shift Progress */}
           <div>
             <p
-              className="text-xs font-semibold uppercase mb-2"
+              className="text-xs font-semibold uppercase mb-2 flex items-center"
               style={{ letterSpacing: '0.1em', color: '#6b7280' }}
             >
-              {s.myShift}
+              {s.myShift}<SectionTooltip content={useTooltip('todaysProgress', userRole)} />
             </p>
             <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
               <div
@@ -184,10 +188,10 @@ export default function KitchenStaffTaskList() {
           {/* TO DO NOW */}
           <div>
             <p
-              className="text-xs font-semibold uppercase mb-3"
+              className="text-xs font-semibold uppercase mb-3 flex items-center"
               style={{ letterSpacing: '0.1em', color: '#6b7280' }}
             >
-              {s.todoNow}
+              {s.todoNow}<SectionTooltip content={useTooltip('urgentItems', userRole)} />
             </p>
 
             {todoTasks.length === 0 ? (

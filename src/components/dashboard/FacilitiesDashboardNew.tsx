@@ -7,6 +7,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
@@ -154,7 +156,7 @@ const FAC_LOC_NAMES: Record<string, string> = {
 
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
-  const { getAccessibleLocations } = useRole();
+  const { getAccessibleLocations, userRole } = useRole();
   const { companyName } = useDemo();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -195,6 +197,7 @@ export default function FacilitiesDashboardNew() {
             <div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={() => navigate('/fire-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Fire Safety</button>
+                <SectionTooltip content={useTooltip('fireSafety', userRole)} />
                 <button
                   type="button"
                   onClick={() => navigate('/fire-safety')}
@@ -235,7 +238,7 @@ export default function FacilitiesDashboardNew() {
       </Card>
 
       {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} staggerOffset={1} />
+      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
 
       {/* Tabbed Detail Section: Equipment | Service Schedule | Vendors */}
       <Card>

@@ -11,6 +11,10 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
 } from 'recharts';
 import { useDemo } from '../../contexts/DemoContext';
+import { useRole } from '../../contexts/RoleContext';
+import type { UserRole } from '../../contexts/RoleContext';
+import { useTooltip } from '../../hooks/useTooltip';
+import { SectionTooltip } from '../ui/SectionTooltip';
 import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
@@ -144,14 +148,15 @@ function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
 // WIDGET: Location Status
 // ================================================================
 
-function WidgetLocations({ jieScores, jurisdictions, navigate }: {
+function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
   jieScores: Record<string, LocationScore>;
   jurisdictions: Record<string, LocationJurisdiction>;
   navigate: (path: string) => void;
+  userRole: UserRole;
 }) {
   return (
     <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Location Status</h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">Location Status<SectionTooltip content={useTooltip('locationCards', userRole)} /></h4>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {LOCATIONS_WITH_SCORES.map(loc => {
           const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -443,10 +448,11 @@ function EvidlyFooter() {
 // HERO CHILDREN: Dual-Authority Jurisdiction Summary
 // ================================================================
 
-function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate }: {
+function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, userRole }: {
   jieScores: Record<string, LocationScore>;
   jurisdictions: Record<string, LocationJurisdiction>;
   navigate: (path: string) => void;
+  userRole: UserRole;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
@@ -455,6 +461,7 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate }: {
         <div className="flex items-center gap-2 mb-3">
           <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
           <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Food Safety</span>
+          <SectionTooltip content={useTooltip('overallScore', userRole)} light />
           <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>
             {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
           </span>
@@ -493,6 +500,7 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate }: {
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
           <span className="text-sm font-semibold text-white" style={{ opacity: 0.9 }}>Fire Safety</span>
+          <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
           <span className="text-[10px] text-white ml-auto" style={{ opacity: 0.5 }}>NFPA 96 (2024)</span>
         </div>
         <div className="space-y-2">
@@ -532,6 +540,7 @@ function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate }: {
 export default function ExecutiveDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
+  const { userRole } = useRole();
 
   const jieLocIds = useMemo(
     () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
@@ -589,7 +598,7 @@ export default function ExecutiveDashboard() {
             <TabbedDetailSection tabs={tabbedTabs} defaultTab="trend" />
           </div>
         );
-      case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} />;
+      case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />;
       default: return null;
     }
   };
@@ -608,7 +617,7 @@ export default function ExecutiveDashboard() {
         subtitle="3 locations &middot; California"
         onSubtitleClick={() => navigate('/org-hierarchy')}
       >
-        <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} />
+        <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
       </DashboardHero>
 
       {/* ============================================================ */}
@@ -620,7 +629,7 @@ export default function ExecutiveDashboard() {
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
         {/* Where Do I Start? — executive-focused priorities */}
-        <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} />
+        <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
 
         {/* Customizable Widget Section */}
         <div>
