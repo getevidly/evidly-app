@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
+import { EvidlyLogo } from '../ui/EvidlyLogo';
+import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
@@ -291,20 +293,25 @@ export function Sidebar() {
       <div className="flex flex-col h-full" style={{ backgroundColor: branding.colors.sidebarBg }}>
         {/* Logo */}
         <div className="flex items-center flex-shrink-0 px-6 py-5">
-          <ShieldCheck className="h-8 w-8" style={{ color: branding.colors.accent }} />
-          <div className="ml-3">
-            {branding.brandName === 'EvidLY' ? (
-              <span className="text-xl font-bold">
-                <span style={{ color: branding.colors.sidebarText }}>Evid</span>
-                <span style={{ color: branding.colors.accent }}>LY</span>
-              </span>
-            ) : (
-              <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
-                {branding.brandName}
-              </span>
-            )}
-            <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
-          </div>
+          {branding.brandName === 'EvidLY' ? (
+            <>
+              <EvidlyIcon size={36} />
+              <div className="ml-3">
+                <EvidlyLogo height={24} />
+                <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <EvidlyIcon size={36} />
+              <div className="ml-3">
+                <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
+                  {branding.brandName}
+                </span>
+                <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Presenter mode badge */}
@@ -414,7 +421,7 @@ export function Sidebar() {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-gray-300 transition-colors"
             >
-              <ShieldCheck className="h-3 w-3" style={{ color: '#d4af37' }} />
+              <EvidlyIcon size={14} />
               <span>Powered by <span className="font-semibold text-gray-300">EvidLY</span></span>
             </a>
           </div>

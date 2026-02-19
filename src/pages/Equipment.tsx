@@ -1749,7 +1749,7 @@ export function Equipment() {
                   printWindow.document.close();
                 }}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
-                style={{ backgroundColor: '#1A237E' }}
+                style={{ backgroundColor: '#1E2D4D' }}
               >
                 <Printer className="h-3.5 w-3.5" />
                 Print Label

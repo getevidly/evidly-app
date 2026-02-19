@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
 import { Menu, X } from 'lucide-react';
 import AuthModal from './AuthModal';
+import { EvidlyIcon } from './ui/EvidlyIcon';
+import { EvidlyLogo } from './ui/EvidlyLogo';
 
 export default function Navigation() {
   const navigate = useNavigate();
@@ -21,17 +23,8 @@ export default function Navigation() {
       <nav className="fixed top-0 left-0 right-0 z-[1000] bg-white/95 backdrop-blur-[20px] border-b border-[var(--color-gray-200)]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 sm:gap-3 no-underline">
-            <div className="w-9 h-[42px] sm:w-11 sm:h-[50px] relative">
-              <svg viewBox="0 0 56 65" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                <path d="M28 0L56 10V28C56 47.33 44.12 58.17 28 65C11.88 58.17 0 47.33 0 28V10L28 0Z" fill="#d4af37"/>
-                <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
-                <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="font-['Outfit'] text-[1.5rem] sm:text-[1.75rem] font-bold tracking-tight">
-              <span className="text-[var(--color-gold)]">Evid</span>
-              <span className="text-[var(--color-blue)]">LY</span>
-            </span>
+            <EvidlyIcon size={42} />
+            <EvidlyLogo height={28} />
           </a>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="no-underline text-[var(--color-text-light)] font-medium text-[0.95rem] transition-colors hover:text-[var(--color-blue)]">Features</a>
