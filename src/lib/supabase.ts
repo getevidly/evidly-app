@@ -1,20 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { createDemoGuardProxy } from './supabaseGuard';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn(
-    '⚠️ Missing Supabase environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY).',
-    'Auth features will not work. Copy .env.example to .env and fill in your Supabase project values.'
+  throw new Error(
+    'Missing Supabase environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY). '
+    + 'Copy .env.example to .env.local and fill in your Supabase project values.'
   );
 }
 
-const rawClient = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
-);
+const rawClient = createClient(supabaseUrl, supabaseAnonKey);
 
 /** Guarded client — blocks writes when demo mode is active */
 export const supabase = createDemoGuardProxy(rawClient);

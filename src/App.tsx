@@ -11,6 +11,7 @@ import { BrandingProvider } from './contexts/BrandingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { EnvBadge } from './components/ui/EnvBadge';
 import { reportError } from './lib/errorReporting';
 
 const Login = lazy(() => import('./pages/Login').then(m => ({ default: m.Login })));
@@ -250,6 +251,7 @@ function ProtectedLayout() {
           <DemoBookingBanner />
         </Suspense>
       )}
+      <EnvBadge />
     </Layout>
   );
 }
