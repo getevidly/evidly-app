@@ -56,7 +56,7 @@ export function DashboardHero({
             <ShieldCheck className="w-5 h-5" style={{ color: GOLD }} />
           </div>
           <div>
-            <h2 className="text-lg font-bold leading-tight">{greetingText}</h2>
+            <h2 className="text-xl font-bold leading-tight">{greetingText}</h2>
             <p className="text-sm text-gray-300">{dateText}</p>
           </div>
         </div>
@@ -64,14 +64,14 @@ export function DashboardHero({
           <p className="text-sm font-semibold text-white">{orgName}</p>
           {subtitle && (
             <p
-              className={`text-xs text-gray-400 mt-0.5 ${onSubtitleClick ? 'cursor-pointer hover:text-gray-300 transition-colors' : ''}`}
+              className={`text-xs text-gray-300 mt-0.5 ${onSubtitleClick ? 'cursor-pointer hover:text-white transition-colors' : ''}`}
               onClick={onSubtitleClick}
             >
               {subtitle}
             </p>
           )}
           {locationName && (
-            <p className="text-xs text-gray-400 mt-0.5">{locationName}</p>
+            <p className="text-xs text-gray-300 mt-0.5">{locationName}</p>
           )}
         </div>
       </div>

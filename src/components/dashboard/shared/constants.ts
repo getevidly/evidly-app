@@ -60,6 +60,17 @@ export function getFormattedDate(): string {
   });
 }
 
+// ── Per-role demo user names ─────────────────────────────
+export const DEMO_ROLE_NAMES: Record<string, { firstName: string; fullName: string }> = {
+  owner_operator: { firstName: 'James', fullName: 'James Wilson' },
+  executive: { firstName: 'David', fullName: 'David Chen' },
+  compliance_manager: { firstName: 'Sarah', fullName: 'Sarah Martinez' },
+  chef: { firstName: 'Maria', fullName: 'Maria Santos' },
+  facilities_manager: { firstName: 'Mike', fullName: 'Mike Thompson' },
+  kitchen_manager: { firstName: 'Alex', fullName: 'Alex Rivera' },
+  kitchen_staff: { firstName: 'Carlos', fullName: 'Carlos Mendez' },
+};
+
 // ── Status color helper ──────────────────────────────────
 export function statusColor(status: 'passing' | 'failing' | 'at_risk' | 'unknown'): string {
   switch (status) {

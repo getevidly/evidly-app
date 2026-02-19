@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { toast } from 'sonner';
 
-export type UserRole = 'executive' | 'management' | 'compliance_manager' | 'kitchen_manager' | 'kitchen' | 'facilities';
+export type UserRole = 'owner_operator' | 'executive' | 'compliance_manager' | 'chef' | 'facilities_manager' | 'kitchen_manager' | 'kitchen_staff';
 
 export interface LocationAssignment {
   locationId: string;
@@ -29,12 +29,13 @@ const ALL_LOCATIONS: LocationAssignment[] = [
 ];
 
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
+  owner_operator: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
   executive: ALL_LOCATIONS,
-  management: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
   compliance_manager: ALL_LOCATIONS,                // All locations — compliance spans org
+  chef: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]],       // Downtown + Airport (same as kitchen_manager)
+  facilities_manager: ALL_LOCATIONS,                // All locations — facilities services entire org
   kitchen_manager: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
-  kitchen: [ALL_LOCATIONS[0]],    // Downtown only
-  facilities: ALL_LOCATIONS,      // All locations — facilities services entire org
+  kitchen_staff: [ALL_LOCATIONS[0]],                // Downtown only
 };
 
 const INITIAL_TEMP_COVERAGE: TempCoverageAssignment[] = [
@@ -71,7 +72,7 @@ interface RoleContextType {
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
-const VALID_ROLES: UserRole[] = ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'kitchen', 'facilities'];
+const VALID_ROLES: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager', 'kitchen_staff'];
 
 export function RoleProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRoleRaw] = useState<UserRole>(() => {
@@ -79,7 +80,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       const saved = localStorage.getItem('evidly-demo-role');
       if (saved && VALID_ROLES.includes(saved as UserRole)) return saved as UserRole;
     } catch {}
-    return 'management';
+    return 'owner_operator';
   });
   const setUserRole = useCallback((role: UserRole) => {
     setUserRoleRaw(role);
@@ -101,7 +102,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [getAccessibleLocations, getAccessibleLocationUrlIds]);
 
   const canManageTeam = useCallback((): boolean => {
-    return userRole === 'executive' || userRole === 'management';
+    return userRole === 'executive' || userRole === 'owner_operator';
   }, [userRole]);
 
   const canAccessBilling = useCallback((): boolean => {
@@ -109,7 +110,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [userRole]);
 
   const canAssignTempCoverage = useCallback((): boolean => {
-    return userRole === 'executive' || userRole === 'management';
+    return userRole === 'executive' || userRole === 'owner_operator';
   }, [userRole]);
 
   const hasMultipleLocations = useCallback((): boolean => {
@@ -122,8 +123,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
 
   const addTempCoverage = useCallback((assignment: Omit<TempCoverageAssignment, 'id' | 'createdAt'>) => {
     // Validate management can only assign locations they have access to
-    if (userRole === 'management') {
-      const accessible = ROLE_LOCATION_ASSIGNMENTS.management.map(l => l.locationId);
+    if (userRole === 'owner_operator') {
+      const accessible = ROLE_LOCATION_ASSIGNMENTS.owner_operator.map(l => l.locationId);
       if (!accessible.includes(assignment.locationId)) {
         toast.warning('You can only assign coverage for your locations');
         return;

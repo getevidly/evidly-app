@@ -1,10 +1,13 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame,
   Wrench,
   AlertTriangle,
   CheckCircle2,
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useTooltip } from '../../hooks/useTooltip';
@@ -13,7 +16,7 @@ import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FireStatusBars } from '../shared/FireStatusBars';
-import { FONT, JIE_LOC_MAP, getGreeting } from './shared/constants';
+import { FONT, JIE_LOC_MAP, getGreeting, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection } from './shared/TabbedDetailSection';
@@ -92,6 +95,58 @@ const DEMO_EQUIPMENT_ALERTS: EquipmentAlert[] = [
   { name: 'Walk-in Cooler #2', alert: null, status: 'All normal' },
 ];
 
+// --------------- Calendar Demo Data ---------------
+
+interface FacilitiesCalendarEvent {
+  date: string; // YYYY-MM-DD
+  type: 'maintenance' | 'vendor' | 'permit' | 'inspection';
+  title: string;
+  location: string;
+  priority: 'critical' | 'high' | 'medium';
+}
+
+const DEMO_FACILITIES_CALENDAR: FacilitiesCalendarEvent[] = [
+  { date: '2026-02-20', type: 'maintenance', title: 'Hood Cleaning — Downtown Kitchen', location: 'Downtown Kitchen', priority: 'high' },
+  { date: '2026-02-24', type: 'vendor', title: 'Ansul Inspection — Airport Cafe', location: 'Airport Cafe', priority: 'high' },
+  { date: '2026-02-28', type: 'permit', title: 'Operational Permit Renewal — University Dining', location: 'University Dining', priority: 'critical' },
+  { date: '2026-03-05', type: 'vendor', title: 'Grease Trap Service — Downtown Kitchen', location: 'Downtown Kitchen', priority: 'medium' },
+  { date: '2026-03-12', type: 'inspection', title: 'Fire Safety Self-Inspection — Airport Cafe', location: 'Airport Cafe', priority: 'medium' },
+  { date: '2026-03-18', type: 'maintenance', title: 'Extinguisher Annual Inspection — All Locations', location: 'All Locations', priority: 'high' },
+  { date: '2026-03-25', type: 'vendor', title: 'Pest Control — University Dining', location: 'University Dining', priority: 'medium' },
+];
+
+const EVENT_TYPE_COLORS: Record<FacilitiesCalendarEvent['type'], string> = {
+  maintenance: '#d97706',
+  vendor: '#2563eb',
+  permit: '#dc2626',
+  inspection: '#7c3aed',
+};
+
+const EVENT_TYPE_LABELS: Record<FacilitiesCalendarEvent['type'], string> = {
+  maintenance: 'Maintenance',
+  vendor: 'Vendor',
+  permit: 'Permit',
+  inspection: 'Inspection',
+};
+
+const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfMonth(year: number, month: number) {
+  return new Date(year, month, 1).getDay();
+}
+
+function formatMonthYear(year: number, month: number) {
+  return new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function toDateKey(year: number, month: number, day: number): string {
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
 // --------------- Helpers ---------------
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -145,6 +200,199 @@ const SEVERITY_BORDER: Record<string, string> = {
 };
 
 // ===============================================
+// FACILITIES CALENDAR CARD
+// ===============================================
+
+function FacilitiesCalendarCard({ navigate, userRole }: { navigate: (path: string) => void; userRole: string }) {
+  const today = new Date();
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+
+  const daysInMonth = getDaysInMonth(viewYear, viewMonth);
+  const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
+  const todayKey = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // Group events by date key
+  const eventsByDate = useMemo(() => {
+    const map: Record<string, FacilitiesCalendarEvent[]> = {};
+    for (const evt of DEMO_FACILITIES_CALENDAR) {
+      if (!map[evt.date]) map[evt.date] = [];
+      map[evt.date].push(evt);
+    }
+    return map;
+  }, []);
+
+  // Events for selected day
+  const selectedDateKey = selectedDay ? toDateKey(viewYear, viewMonth, selectedDay) : null;
+  const selectedEvents = selectedDateKey ? (eventsByDate[selectedDateKey] || []) : [];
+
+  const prevMonth = () => {
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
+    else setViewMonth(m => m - 1);
+    setSelectedDay(null);
+  };
+
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
+    else setViewMonth(m => m + 1);
+    setSelectedDay(null);
+  };
+
+  // Build day cells
+  const dayCells: (number | null)[] = [];
+  for (let i = 0; i < firstDay; i++) dayCells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) dayCells.push(d);
+
+  return (
+    <Card>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <CalendarDays size={16} className="text-gray-400" />
+          <h3
+            className="text-xs font-semibold uppercase"
+            style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
+          >
+            Schedule
+          </h3>
+          <SectionTooltip content={useTooltip('scheduleCalendar', userRole as any)} />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth)}</span>
+          <button type="button" onClick={prevMonth} className="p-1 rounded hover:bg-gray-100 transition-colors">
+            <ChevronLeft size={16} className="text-gray-500" />
+          </button>
+          <button type="button" onClick={nextMonth} className="p-1 rounded hover:bg-gray-100 transition-colors">
+            <ChevronRight size={16} className="text-gray-500" />
+          </button>
+        </div>
+      </div>
+
+      {/* Weekday headers */}
+      <div className="grid grid-cols-7 gap-0 mb-1">
+        {WEEKDAY_LABELS.map(d => (
+          <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
+        ))}
+      </div>
+
+      {/* Day grid */}
+      <div className="grid grid-cols-7 gap-0">
+        {dayCells.map((day, idx) => {
+          if (day === null) return <div key={`empty-${idx}`} className="py-1.5" />;
+          const dateKey = toDateKey(viewYear, viewMonth, day);
+          const events = eventsByDate[dateKey] || [];
+          const isToday = dateKey === todayKey;
+          const isSelected = selectedDay === day;
+
+          return (
+            <button
+              key={day}
+              type="button"
+              onClick={() => setSelectedDay(isSelected ? null : day)}
+              className={`relative flex flex-col items-center py-1.5 rounded-md transition-colors ${
+                isSelected ? 'bg-[#eef4f8]' : 'hover:bg-gray-50'
+              }`}
+            >
+              <span
+                className={`text-xs font-medium leading-none ${
+                  isToday ? 'text-white' : isSelected ? 'text-[#1e4d6b]' : 'text-gray-700'
+                }`}
+                style={isToday ? {
+                  backgroundColor: '#1e4d6b',
+                  borderRadius: '50%',
+                  width: 20,
+                  height: 20,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                } : undefined}
+              >
+                {day}
+              </span>
+              {/* Event dots */}
+              {events.length > 0 && (
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  {events.slice(0, 3).map((evt, i) => (
+                    <span
+                      key={i}
+                      className="rounded-full"
+                      style={{
+                        width: 5,
+                        height: 5,
+                        backgroundColor: EVENT_TYPE_COLORS[evt.type],
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100">
+        {(Object.keys(EVENT_TYPE_COLORS) as FacilitiesCalendarEvent['type'][]).map(type => (
+          <div key={type} className="flex items-center gap-1">
+            <span className="rounded-full" style={{ width: 6, height: 6, backgroundColor: EVENT_TYPE_COLORS[type] }} />
+            <span className="text-[10px] text-gray-500">{EVENT_TYPE_LABELS[type]}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Selected day events */}
+      {selectedDay !== null && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <p className="text-[11px] font-semibold text-gray-500 mb-2">
+            {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+          </p>
+          {selectedEvents.length === 0 ? (
+            <p className="text-xs text-gray-400">No events scheduled</p>
+          ) : (
+            <div className="space-y-1.5">
+              {selectedEvents.map((evt, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => navigate('/calendar')}
+                  className="w-full flex items-center gap-2.5 p-2.5 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                  style={{ borderLeft: `3px solid ${EVENT_TYPE_COLORS[evt.type]}` }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-medium text-gray-800 truncate">{evt.title}</p>
+                    <p className="text-[11px] text-gray-500">{evt.location}</p>
+                  </div>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0"
+                    style={{
+                      backgroundColor: evt.priority === 'critical' ? '#fef2f2' : evt.priority === 'high' ? '#fef3c7' : '#f1f5f9',
+                      color: evt.priority === 'critical' ? '#dc2626' : evt.priority === 'high' ? '#b45309' : '#6b7280',
+                    }}
+                  >
+                    {evt.priority === 'critical' ? 'Critical' : evt.priority === 'high' ? 'High' : 'Medium'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* View Full Calendar link */}
+      <button
+        type="button"
+        onClick={() => navigate('/calendar')}
+        className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
+        style={{ color: '#1e4d6b' }}
+      >
+        View Full Calendar &rarr;
+      </button>
+    </Card>
+  );
+}
+
+// ===============================================
 // FACILITIES MANAGER DASHBOARD
 // ===============================================
 
@@ -184,7 +432,7 @@ export default function FacilitiesDashboardNew() {
     <div className="space-y-6" style={FONT}>
       {/* Steel-Slate Hero Banner */}
       <DashboardHero
-        greeting={`${getGreeting()}, Mike.`}
+        greeting={`${getGreeting()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
@@ -240,7 +488,11 @@ export default function FacilitiesDashboardNew() {
       {/* Where Do I Start */}
       <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
 
+      {/* Schedule Calendar */}
+      <FacilitiesCalendarCard navigate={navigate} userRole={userRole} />
+
       {/* Tabbed Detail Section: Equipment | Service Schedule | Vendors */}
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center">Equipment &amp; Services<SectionTooltip content={useTooltip('equipmentCard', userRole)} /></h4>
       <Card>
         <TabbedDetailSection
           tabs={[

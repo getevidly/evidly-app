@@ -71,18 +71,20 @@ export function Dashboard() {
   const { userRole } = useRole();
 
   switch (userRole) {
-    case 'management':
+    case 'owner_operator':
       return <OwnerOperatorDashboard />;
     case 'executive':
       return <ExecutiveDashboard />;
     case 'compliance_manager':
       return <ComplianceManagerDashboard />;
+    case 'chef':
+      return <KitchenManagerDashboard />;
+    case 'facilities_manager':
+      return <FacilitiesDashboardNew />;
     case 'kitchen_manager':
       return <KitchenManagerDashboard />;
-    case 'kitchen':
+    case 'kitchen_staff':
       return <KitchenStaffTaskList />;
-    case 'facilities':
-      return <FacilitiesDashboardNew />;
     default:
       return <OwnerOperatorDashboard />;
   }
@@ -506,7 +508,7 @@ function LegacyDashboard() {
           );
         })()}
 
-        {['executive', 'management'].includes(userRole) && (
+        {['executive', 'owner_operator'].includes(userRole) && (
           <>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('dashboard.complianceOverview')}</h2>
 
@@ -1323,7 +1325,7 @@ function LegacyDashboard() {
         )}
 
         {/* AI Insights Widget */}
-        {['executive', 'management'].includes(userRole) && (
+        {['executive', 'owner_operator'].includes(userRole) && (
           <ErrorBoundary level="section">
           <FeatureGate featureId="ai-predictive-insights">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mt-4">
@@ -1382,7 +1384,7 @@ function LegacyDashboard() {
         )}
 
         {/* Compliance Copilot Card */}
-        {['executive', 'management'].includes(userRole) && (
+        {['executive', 'owner_operator'].includes(userRole) && (
           <ErrorBoundary level="section">
             <div className="mt-4">
               <CopilotCard locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
@@ -1391,7 +1393,7 @@ function LegacyDashboard() {
         )}
 
         {/* Industry Benchmark Widget */}
-        {['executive', 'management'].includes(userRole) && (
+        {['executive', 'owner_operator'].includes(userRole) && (
           <ErrorBoundary level="section">
             <FeatureGate featureId="industry-benchmarks">
               <div className="mt-4">
@@ -1402,7 +1404,7 @@ function LegacyDashboard() {
         )}
 
         {/* Insurance Risk Score Widget */}
-        {['executive', 'management'].includes(userRole) && (
+        {['executive', 'owner_operator'].includes(userRole) && (
           <ErrorBoundary level="section">
             <FeatureGate featureId="insurance-risk-score">
               <div className="mt-4">
@@ -1413,7 +1415,7 @@ function LegacyDashboard() {
         )}
 
         {/* Equipment Health Widget */}
-        {['executive', 'management', 'facilities'].includes(userRole) && (
+        {['executive', 'owner_operator', 'facilities_manager'].includes(userRole) && (
           <ErrorBoundary level="section">
             <div className="mt-4">
               <EquipmentHealthWidget locationId={selectedLocation === 'all' ? 'all' : selectedLocation} />
@@ -1422,7 +1424,7 @@ function LegacyDashboard() {
         )}
 
         {/* Live Sensor Monitor Widget */}
-        {['executive', 'management', 'kitchen'].includes(userRole) && (
+        {['executive', 'owner_operator', 'kitchen_staff'].includes(userRole) && (
           <ErrorBoundary level="section">
             <div className="mt-4">
               <SensorMonitorWidget locationFilter={selectedLocation === 'all' ? 'all' : selectedLocation} />

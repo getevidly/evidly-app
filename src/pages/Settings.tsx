@@ -19,9 +19,9 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
-  management: { name: 'Sarah Chen', role: 'Management', email: 'sarah.chen@pacificcoastdining.com' },
-  kitchen: { name: 'Marcus Johnson', role: 'Kitchen Staff', email: 'marcus.johnson@pacificcoastdining.com' },
-  facilities: { name: 'Mike Thompson', role: 'Facilities', email: 'mike.thompson@pacificcoastdining.com' },
+  owner_operator: { name: 'Sarah Chen', role: 'Management', email: 'sarah.chen@pacificcoastdining.com' },
+  kitchen_staff: { name: 'Marcus Johnson', role: 'Kitchen Staff', email: 'marcus.johnson@pacificcoastdining.com' },
+  facilities_manager: { name: 'Mike Thompson', role: 'Facilities', email: 'mike.thompson@pacificcoastdining.com' },
 };
 
 export function Settings() {
@@ -31,7 +31,7 @@ export function Settings() {
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
-  const canEditHours = userRole === 'executive' || userRole === 'management';
+  const canEditHours = userRole === 'executive' || userRole === 'owner_operator';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
   const [pwError, setPwError] = useState('');
@@ -72,18 +72,18 @@ export function Settings() {
   };
 
   const allTabs = [
-    { id: 'profile', icon: User, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'organization', icon: Building2, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'operating-hours', icon: Clock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'notifications', icon: Bell, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
-    { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'jurisdiction', icon: Globe, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'integrations', icon: Plug, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'privacy', icon: Shield, roles: ['executive', 'management'] as UserRole[] },
-    { id: 'security', icon: Lock, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'profile', icon: User, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
+    { id: 'organization', icon: Building2, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'operating-hours', icon: Clock, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
+    { id: 'notifications', icon: Bell, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
+    { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'jurisdiction', icon: Globe, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'integrations', icon: Plug, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'privacy', icon: Shield, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'security', icon: Lock, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
     { id: 'enterprise', icon: Layers, roles: ['executive'] as UserRole[] },
-    { id: 'sync', icon: RefreshCw, roles: ['executive', 'management', 'kitchen', 'facilities'] as UserRole[] },
+    { id: 'sync', icon: RefreshCw, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
   ];
 
   const tabs = allTabs.filter(tab => tab.roles.includes(userRole));

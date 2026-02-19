@@ -492,28 +492,28 @@ export interface NeedsAttentionItem {
 
 export const needsAttentionItems: NeedsAttentionItem[] = [
   // Downtown Kitchen - 2 items
-  { id: '1', title: '1 Closing Checklist Submitted Late', detail: 'Downtown Kitchen — Feb 4', color: 'amber', url: '/checklists', roles: ['management', 'kitchen'], locationId: '1' },
-  { id: '2', title: 'Fire Suppression Due in 15 Days', detail: 'Valley Fire — due Feb 24 (−3.75 pts graduated)', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '1' },
+  { id: '1', title: '1 Closing Checklist Submitted Late', detail: 'Downtown Kitchen — Feb 4', color: 'amber', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '1' },
+  { id: '2', title: 'Fire Suppression Due in 15 Days', detail: 'Valley Fire — due Feb 24 (−3.75 pts graduated)', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '1' },
   // Airport Cafe - 7 items
-  { id: '3', title: '3 Temperature Checks Missed', detail: 'Airport Cafe — missed this week', color: 'red', url: '/temp-logs', roles: ['management', 'kitchen'], locationId: '2' },
-  { id: '4', title: 'Opening Checklist Late 2 Days This Week', detail: 'Airport Cafe — Feb 4, Feb 5', color: 'red', url: '/checklists', roles: ['management', 'kitchen'], locationId: '2' },
-  { id: '5', title: 'Hood Cleaning 5 Days OVERDUE', detail: 'ABC Fire — was due Feb 4 (−30 pts Equipment)', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
-  { id: '6', title: 'Grease Trap Service Due Soon', detail: 'Grease Masters — due Mar 20', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '2' },
-  { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Airport Cafe — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
-  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/training', roles: ['management', 'kitchen'], locationId: '2' },
-  { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['management', 'facilities'], locationId: '2' },
+  { id: '3', title: '3 Temperature Checks Missed', detail: 'Airport Cafe — missed this week', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  { id: '4', title: 'Opening Checklist Late 2 Days This Week', detail: 'Airport Cafe — Feb 4, Feb 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  { id: '5', title: 'Hood Cleaning 5 Days OVERDUE', detail: 'ABC Fire — was due Feb 4 (−30 pts Equipment)', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '6', title: 'Grease Trap Service Due Soon', detail: 'Grease Masters — due Mar 20', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Airport Cafe — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
   // University Dining - 12 items
-  { id: '10', title: '8 Temperature Checks Missed', detail: 'University Dining — missed this week', color: 'red', url: '/temp-logs', roles: ['management', 'kitchen'], locationId: '3' },
-  { id: '11', title: 'Opening Checklists Missed 3 Days', detail: 'University Dining — Feb 3, 4, 5', color: 'red', url: '/checklists', roles: ['management', 'kitchen'], locationId: '3' },
-  { id: '12', title: 'HACCP Monitoring Overdue', detail: 'University Dining — no logs this month', color: 'red', url: '/haccp', roles: ['management', 'kitchen'], locationId: '3' },
-  { id: '13', title: 'Fire Suppression 4 Months Overdue', detail: 'Valley Fire — due Jan 10', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '14', title: 'Grease Trap 2 Months Overdue', detail: 'Grease Masters — due Jan 20', color: 'red', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '15', title: 'Hood Cleaning Due in 5 Days', detail: 'ABC Fire — due Feb 15', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/training', roles: ['management', 'kitchen'], locationId: '3' },
-  { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['management', 'facilities'], locationId: '3' },
-  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 §7.8)', color: 'amber', url: '/equipment', roles: ['management', 'facilities'], locationId: '2' },
+  { id: '10', title: '8 Temperature Checks Missed', detail: 'University Dining — missed this week', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '11', title: 'Opening Checklists Missed 3 Days', detail: 'University Dining — Feb 3, 4, 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '12', title: 'HACCP Monitoring Overdue', detail: 'University Dining — no logs this month', color: 'red', url: '/haccp', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '13', title: 'Fire Suppression 4 Months Overdue', detail: 'Valley Fire — due Jan 10', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '14', title: 'Grease Trap 2 Months Overdue', detail: 'Grease Masters — due Jan 20', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '15', title: 'Hood Cleaning Due in 5 Days', detail: 'ABC Fire — due Feb 15', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 §7.8)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
 ];
 
 export interface ScoreImpactItem {
@@ -2627,13 +2627,13 @@ export interface CertificationRequirement {
 }
 
 export const certificationRequirements: CertificationRequirement[] = [
-  { id: 'cr-01', certType: 'food_handler', certName: 'California Food Handler Card', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: 30, authority: 'California Health & Safety Code', authoritySection: '§113948', renewalPeriodMonths: 36, notes: 'All food handlers must obtain within 30 days of hire (SB 476). Valid for 3 years.' },
-  { id: 'cr-02', certType: 'cfpm', certName: 'Certified Food Protection Manager', required: true, requiredForRoles: ['kitchen_manager', 'management'], deadlineDays: null, authority: 'California Health & Safety Code', authoritySection: '§113947.1', renewalPeriodMonths: 60, notes: 'At least one CFPM required per establishment during all operating hours.' },
-  { id: 'cr-03', certType: 'fire_extinguisher_training', certName: 'Fire Extinguisher Training', required: true, requiredForRoles: ['kitchen', 'kitchen_manager', 'facilities'], deadlineDays: null, authority: 'OSHA 29 CFR 1910.157 / NFPA 10', authoritySection: null, renewalPeriodMonths: 12, notes: 'Annual training on portable extinguisher use required for all employees.' },
-  { id: 'cr-04', certType: 'hood_safety', certName: 'Hood Suppression System Awareness', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: null, authority: 'NFPA 96 / EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 12, notes: 'Kitchen staff must know manual pull station location and activation procedure.' },
-  { id: 'cr-05', certType: 'allergen_awareness', certName: 'Allergen Awareness Training', required: true, requiredForRoles: ['kitchen', 'kitchen_manager'], deadlineDays: null, authority: 'FDA Food Code 2-102.11', authoritySection: null, renewalPeriodMonths: 24, notes: 'Recommended; becoming mandatory in many jurisdictions.' },
-  { id: 'cr-06', certType: 'first_aid_cpr', certName: 'First Aid / CPR Certification', required: false, requiredForRoles: ['kitchen_manager', 'management', 'facilities'], deadlineDays: null, authority: 'EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 24, notes: 'At least one certified per shift recommended.' },
-  { id: 'cr-07', certType: 'haccp_training', certName: 'HACCP Training', required: false, requiredForRoles: ['kitchen_manager', 'management'], deadlineDays: null, authority: 'FDA 21 CFR Part 120/123', authoritySection: null, renewalPeriodMonths: null, notes: 'Required for specialized processes (juice, seafood).' },
+  { id: 'cr-01', certType: 'food_handler', certName: 'California Food Handler Card', required: true, requiredForRoles: ['kitchen_staff', 'kitchen_manager'], deadlineDays: 30, authority: 'California Health & Safety Code', authoritySection: '§113948', renewalPeriodMonths: 36, notes: 'All food handlers must obtain within 30 days of hire (SB 476). Valid for 3 years.' },
+  { id: 'cr-02', certType: 'cfpm', certName: 'Certified Food Protection Manager', required: true, requiredForRoles: ['kitchen_manager', 'owner_operator'], deadlineDays: null, authority: 'California Health & Safety Code', authoritySection: '§113947.1', renewalPeriodMonths: 60, notes: 'At least one CFPM required per establishment during all operating hours.' },
+  { id: 'cr-03', certType: 'fire_extinguisher_training', certName: 'Fire Extinguisher Training', required: true, requiredForRoles: ['kitchen_staff', 'kitchen_manager', 'facilities_manager'], deadlineDays: null, authority: 'OSHA 29 CFR 1910.157 / NFPA 10', authoritySection: null, renewalPeriodMonths: 12, notes: 'Annual training on portable extinguisher use required for all employees.' },
+  { id: 'cr-04', certType: 'hood_safety', certName: 'Hood Suppression System Awareness', required: true, requiredForRoles: ['kitchen_staff', 'kitchen_manager'], deadlineDays: null, authority: 'NFPA 96 / EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 12, notes: 'Kitchen staff must know manual pull station location and activation procedure.' },
+  { id: 'cr-05', certType: 'allergen_awareness', certName: 'Allergen Awareness Training', required: true, requiredForRoles: ['kitchen_staff', 'kitchen_manager'], deadlineDays: null, authority: 'FDA Food Code 2-102.11', authoritySection: null, renewalPeriodMonths: 24, notes: 'Recommended; becoming mandatory in many jurisdictions.' },
+  { id: 'cr-06', certType: 'first_aid_cpr', certName: 'First Aid / CPR Certification', required: false, requiredForRoles: ['kitchen_manager', 'owner_operator', 'facilities_manager'], deadlineDays: null, authority: 'EvidLY Best Practice', authoritySection: null, renewalPeriodMonths: 24, notes: 'At least one certified per shift recommended.' },
+  { id: 'cr-07', certType: 'haccp_training', certName: 'HACCP Training', required: false, requiredForRoles: ['kitchen_manager', 'owner_operator'], deadlineDays: null, authority: 'FDA 21 CFR Part 120/123', authoritySection: null, renewalPeriodMonths: null, notes: 'Required for specialized processes (juice, seafood).' },
 ];
 
 // ── Training Records (FS-3) ──────────────────────────────────────────────────

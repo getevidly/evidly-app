@@ -49,18 +49,12 @@ export interface SidebarNavItem {
 }
 
 // ── Role shorthands ──────────────────────────────────────
-// owner/operator → 'management'
-// executive → 'executive'
-// compliance_manager → 'compliance_manager'
-// kitchen_manager → 'kitchen_manager'
-// kitchen_staff → 'kitchen'
-// facilities_manager → 'facilities'
 
-const ALL: UserRole[] = ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'kitchen', 'facilities'];
-const MGMT: UserRole[] = ['management'];
-const MGMT_EXEC: UserRole[] = ['management', 'executive'];
-const COMPLIANCE: UserRole[] = ['management', 'compliance_manager'];
-const OPS: UserRole[] = ['management', 'kitchen_manager'];
+const ALL: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager', 'kitchen_staff'];
+const MGMT: UserRole[] = ['owner_operator'];
+const MGMT_EXEC: UserRole[] = ['owner_operator', 'executive'];
+const COMPLIANCE: UserRole[] = ['owner_operator', 'compliance_manager'];
+const OPS: UserRole[] = ['owner_operator', 'chef', 'kitchen_manager'];
 
 // ── Master Nav Items ─────────────────────────────────────
 // QR Scan REMOVED (now on bottom bar only)
@@ -68,22 +62,22 @@ const OPS: UserRole[] = ['management', 'kitchen_manager'];
 
 export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   // ── UNGROUPED (always visible at top) ──
-  { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['executive', 'management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
-  { id: 'my-tasks',            label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen'], dividerAfter: true },
+  { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager'] },
+  { id: 'my-tasks',            label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen_staff'], dividerAfter: true },
   { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: ALL },
 
   // ── DAILY OPERATIONS ──
-  { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['management', 'compliance_manager', 'kitchen_manager', 'kitchen'] },
-  { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: ['management', 'compliance_manager', 'kitchen_manager'] },
-  { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen'] },
-  { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['management', 'kitchen_manager'] },
-  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ['management', 'compliance_manager', 'facilities'] },
+  { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'kitchen_staff'] },
+  { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager'] },
+  { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen_staff'] },
+  { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['owner_operator', 'chef', 'kitchen_manager'] },
+  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ['owner_operator', 'compliance_manager', 'facilities_manager'] },
   {
     id: 'incidents',
     label: 'Incidents',
     icon: AlertTriangle,
     route: '/incidents',
-    roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'],
+    roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'],
     subItems: [
       { id: 'incident-report',    label: 'Report',    route: '/incidents' },
       { id: 'incident-playbooks', label: 'Playbooks', route: '/playbooks' },
@@ -92,21 +86,21 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   },
 
   // ── RECORDS & ASSETS ──
-  { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
-  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['management', 'compliance_manager', 'kitchen_manager', 'facilities'] },
-  { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: ['management', 'compliance_manager', 'kitchen_manager'] },
-  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['management', 'kitchen_manager', 'facilities'] },
-  { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['management', 'kitchen'] },
-  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['management', 'kitchen_manager', 'kitchen'] },
+  { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
+  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
+  { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager'] },
+  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['owner_operator', 'chef', 'kitchen_manager', 'facilities_manager'] },
+  { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['owner_operator', 'kitchen_staff'] },
+  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['owner_operator', 'chef', 'kitchen_manager', 'kitchen_staff'] },
 
   // ── COMPLIANCE & INSIGHTS ──
-  { id: 'compliance',          label: 'Compliance Overview',  icon: Scale,            route: '/scoring-breakdown',     roles: ['management', 'executive', 'compliance_manager'] },
+  { id: 'compliance',          label: 'Compliance Overview',  icon: Scale,            route: '/scoring-breakdown',     roles: ['owner_operator', 'executive', 'compliance_manager'] },
   { id: 'self-inspection',     label: 'Self-Inspection',     icon: ClipboardCheck,   route: '/self-inspection',       roles: COMPLIANCE },
   { id: 'inspector',           label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: COMPLIANCE },
-  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['management', 'kitchen_manager'] },
-  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['management', 'executive', 'compliance_manager'] },
-  { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['management', 'executive', 'compliance_manager', 'facilities', 'kitchen_manager'] },
-  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['management', 'compliance_manager', 'facilities'] },
+  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['owner_operator', 'chef', 'kitchen_manager'] },
+  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['owner_operator', 'executive', 'compliance_manager'] },
+  { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'chef', 'kitchen_manager'] },
+  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['owner_operator', 'compliance_manager', 'facilities_manager'] },
 
   // ── ENTERPRISE ──
   { id: 'locations',           label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: MGMT_EXEC },
@@ -116,9 +110,9 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT },
 
   // ── ADMIN ──
-  { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['management', 'executive', 'kitchen_manager'] },
+  { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['owner_operator', 'executive', 'chef', 'kitchen_manager'] },
   { id: 'system-admin',        label: 'System Admin',        icon: Cog,              route: '/admin/onboard-client',  roles: MGMT },
-  { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['management', 'executive', 'compliance_manager', 'kitchen_manager', 'facilities'] },
+  { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
   { id: 'help',                label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
 
   // ── EVIDLY ADMIN ONLY ──
@@ -149,11 +143,11 @@ export function checkTestMode(): boolean {
 
 // ── Roles that see the bottom Locations section ──────────
 
-export const LOCATION_VISIBLE_ROLES: UserRole[] = ['management', 'executive', 'compliance_manager', 'kitchen_manager', 'kitchen'];
+export const LOCATION_VISIBLE_ROLES: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'kitchen_staff'];
 
 // ── Roles that can book meetings / see Calendly CTAs ─────
 
-export const BOOKING_ROLES: UserRole[] = ['executive', 'management', 'compliance_manager', 'facilities'];
+export const BOOKING_ROLES: UserRole[] = ['executive', 'owner_operator', 'compliance_manager', 'facilities_manager'];
 
 export function canBookMeeting(role: UserRole): boolean {
   return BOOKING_ROLES.includes(role);
@@ -200,7 +194,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'admin',
     label: 'Admin',
-    itemIds: ['team', 'system-admin', 'settings', 'help', 'usage-analytics'],
+    itemIds: ['team', 'system-admin', 'usage-analytics'],
   },
 ];
 
@@ -209,7 +203,7 @@ export const UNGROUPED_IDS = ['dashboard', 'my-tasks', 'calendar'];
 
 export const DEMO_ROLES: DemoRoleDefinition[] = [
   {
-    role: 'management',
+    role: 'owner_operator',
     label: 'Owner / Operator',
     description: 'Full access to all locations, settings, and compliance tools',
     i18nKey: 'topBar.ownerOperator',
@@ -227,7 +221,13 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
     i18nKey: 'topBar.complianceManager',
   },
   {
-    role: 'facilities',
+    role: 'chef',
+    label: 'Chef',
+    description: 'Kitchen operations, checklists, temps, and team oversight',
+    i18nKey: 'topBar.chef',
+  },
+  {
+    role: 'facilities_manager',
     label: 'Facilities Manager',
     description: 'Equipment, vendors, fire safety, and maintenance alerts',
     i18nKey: 'topBar.facilitiesManager',
@@ -239,7 +239,7 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
     i18nKey: 'topBar.kitchenManager',
   },
   {
-    role: 'kitchen',
+    role: 'kitchen_staff',
     label: 'Kitchen Staff',
     description: 'Task-focused: checklists, temp logs, and issue reporting',
     i18nKey: 'topBar.kitchenStaff',

@@ -13,7 +13,7 @@ interface QuickAction {
 
 // 5 emoji buttons per role (per DASHBOARD-8 v2 spec)
 const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
-  management: [
+  owner_operator: [
     { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '🔥', label: 'Fire Safety', route: '/fire-safety', permission: 'bottom.fire-safety' },
@@ -34,7 +34,14 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },
     { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
   ],
-  facilities: [
+  chef: [
+    { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
+    { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
+    { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
+    { emoji: '👥', label: 'Team', route: '/team', permission: 'bottom.team' },
+    { emoji: '⚠️', label: 'Incidents', route: '/incidents', permission: 'bottom.incidents' },
+  ],
+  facilities_manager: [
     { emoji: '🔥', label: 'Fire Safety', route: '/fire-safety', permission: 'bottom.fire-safety' },
     { emoji: '🔧', label: 'Equipment', route: '/equipment', permission: 'bottom.equipment' },
     { emoji: '📅', label: 'Schedule', route: '/calendar', permission: 'bottom.schedule' },
@@ -48,7 +55,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '👥', label: 'Team', route: '/team', permission: 'bottom.team' },
     { emoji: '⚠️', label: 'Incidents', route: '/incidents', permission: 'bottom.incidents' },
   ],
-  kitchen: [
+  kitchen_staff: [
     { emoji: '📋', label: 'Tasks', route: '/dashboard', permission: 'bottom.tasks' },
     { emoji: '🌡️', label: 'Temp', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '📱', label: 'QR Scan', route: '/temp-logs/scan', permission: 'bottom.qr-scan' },
@@ -71,7 +78,7 @@ export function QuickActionsBar() {
   if (actions.length === 0) return null;
 
   // Kitchen staff: full-width (no sidebar offset)
-  const isKitchenStaff = userRole === 'kitchen';
+  const isKitchenStaff = userRole === 'kitchen_staff';
 
   return (
     <>

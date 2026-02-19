@@ -395,7 +395,7 @@ export function IncidentLog() {
   const { userRole } = useRole();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-  const canVerify = userRole === 'executive' || userRole === 'management';
+  const canVerify = userRole === 'executive' || userRole === 'owner_operator';
 
   // ── Lookup maps for module-level data arrays ──────────────────
   const typeLabels: Record<string, string> = {

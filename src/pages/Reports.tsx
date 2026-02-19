@@ -97,7 +97,7 @@ export function Reports() {
   const [dateRange, setDateRange] = useState('this-month');
   const [selectedLocation, setSelectedLocation] = useState('all');
 
-  if (!['executive', 'management'].includes(userRole)) {
+  if (!['executive', 'owner_operator'].includes(userRole)) {
     return (
       <div className="p-6">
         <Breadcrumb items={[{ label: 'Reporting' }]} />

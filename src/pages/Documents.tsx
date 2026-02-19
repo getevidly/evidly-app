@@ -172,8 +172,8 @@ export function Documents() {
 
   // Role-based document visibility: kitchen sees operational docs, facilities sees equipment/vendor docs
   const roleFilteredDocuments = useMemo(() => {
-    if (userRole === 'kitchen') return documents.filter(isKitchenDoc);
-    if (userRole === 'facilities') return documents.filter(isFacilitiesDoc);
+    if (userRole === 'kitchen_staff') return documents.filter(isKitchenDoc);
+    if (userRole === 'facilities_manager') return documents.filter(isFacilitiesDoc);
     return documents; // executive & management see all
   }, [documents, userRole]);
 

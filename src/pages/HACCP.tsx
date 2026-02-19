@@ -465,7 +465,7 @@ export function HACCP() {
     }
   };
 
-  const canExportPackage = ['management', 'executive', 'kitchen_manager'].includes(userRole);
+  const canExportPackage = ['owner_operator', 'executive', 'kitchen_manager'].includes(userRole);
 
   const handleExportInspectorPackage = () => {
     const doc = new jsPDF();
@@ -1162,7 +1162,7 @@ export function HACCP() {
                         ).join('; ')}
                       </p>
                     )}
-                    {planStatus === 'review' && ['management', 'executive'].includes(userRole) && (
+                    {planStatus === 'review' && ['owner_operator', 'executive'].includes(userRole) && (
                       <button
                         onClick={(e) => { e.stopPropagation(); handleMarkReviewed(plan.id); }}
                         className="mt-2 text-xs font-medium text-[#1e4d6b] hover:text-[#2a6a8f] underline"
@@ -1450,7 +1450,7 @@ export function HACCP() {
                         <p className="text-gray-900">{action.actionTaken}</p>
                         <p className="text-xs text-gray-500 mt-1">By: {action.actionBy}</p>
                       </div>
-                      {!action.verifiedBy && ['management', 'executive', 'kitchen_manager'].includes(userRole) && (
+                      {!action.verifiedBy && ['owner_operator', 'executive', 'kitchen_manager'].includes(userRole) && (
                         <button
                           onClick={() => handleVerifyAction(action.id)}
                           className="mt-3 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors"
@@ -1469,7 +1469,7 @@ export function HACCP() {
             )}
 
             {/* New Corrective Action Button + Form */}
-            {['management', 'executive'].includes(userRole) && (
+            {['owner_operator', 'executive'].includes(userRole) && (
               <div className="mb-4">
                 {!showNewCAForm ? (
                   <button

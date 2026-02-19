@@ -1192,15 +1192,15 @@ function RequirementsTab() {
 function ComplianceOverviewTab() {
   // Compute compliance metrics from demo data
   const DEMO_EMPLOYEES = [
-    { id: '1', name: 'Marcus Johnson', role: 'management', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm', 'fire_extinguisher_training', 'haccp_training'] },
+    { id: '1', name: 'Marcus Johnson', role: 'owner_operator', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm', 'fire_extinguisher_training', 'haccp_training'] },
     { id: '2', name: 'Sarah Chen', role: 'kitchen_manager', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm'] },
     { id: '3', name: 'Maria Garcia', role: 'kitchen_manager', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler', 'cfpm'] },
-    { id: '4', name: 'David Park', role: 'kitchen', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
-    { id: '5', name: 'Michael Torres', role: 'kitchen', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
-    { id: '6', name: 'Emma Rodriguez', role: 'kitchen', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'allergen_awareness'] },
-    { id: '7', name: 'Alex Thompson', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
-    { id: '8', name: 'Lisa Wang', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
-    { id: '9', name: 'James Wilson', role: 'kitchen', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+    { id: '4', name: 'David Park', role: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
+    { id: '5', name: 'Michael Torres', role: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] },
+    { id: '6', name: 'Emma Rodriguez', role: 'kitchen_staff', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'allergen_awareness'] },
+    { id: '7', name: 'Alex Thompson', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+    { id: '8', name: 'Lisa Wang', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
+    { id: '9', name: 'James Wilson', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] },
   ];
 
   const requiredReqs = certificationRequirements.filter(r => r.required);

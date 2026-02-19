@@ -36,12 +36,18 @@ export function MobileTabBar() {
   const { signOut } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
-  const isKitchen = userRole === 'kitchen';
+  const isKitchen = userRole === 'kitchen_staff';
 
   // Role-specific primary tabs
   // Kitchen staff: 5 dedicated tabs, no More button
   // All other roles: 4 tabs + More button
   const tabsByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
+    owner_operator: [
+      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+    ],
     executive: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/reports', icon: BarChart3, label: 'Reporting' },
@@ -54,11 +60,17 @@ export function MobileTabBar() {
       { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
       { path: '/reports', icon: BarChart3, label: 'Reports' },
     ],
-    management: [
+    chef: [
       { path: '/dashboard', icon: Home, label: 'Home' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/checklists', icon: ClipboardList, label: 'Lists' },
       { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+    ],
+    facilities_manager: [
+      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/documents', icon: FileText, label: 'Docs' },
+      { path: '/analysis', icon: Bell, label: 'Alerts' },
     ],
     kitchen_manager: [
       { path: '/dashboard', icon: Home, label: 'Home' },
@@ -66,44 +78,18 @@ export function MobileTabBar() {
       { path: '/checklists', icon: ClipboardList, label: 'Lists' },
       { path: '/documents', icon: FileText, label: 'Docs' },
     ],
-    kitchen: [
+    kitchen_staff: [
       { path: '/dashboard', icon: ClipboardCheck, label: 'Tasks' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temp' },
       { path: '/photo-evidence', icon: Camera, label: 'Photo' },
       { path: '/playbooks', icon: AlertTriangle, label: 'Report' },
       { path: '/training', icon: GraduationCap, label: 'Train' },
     ],
-    facilities: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/analysis', icon: Bell, label: 'Alerts' },
-    ],
   };
 
   // Role-specific "More" items (kitchen has none — all 5 tabs are primary)
   const moreByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
-    compliance_manager: [
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
-      { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
-      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    executive: [
-      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
-      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
-      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-      { path: '/team', icon: Users, label: 'Team' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    management: [
+    owner_operator: [
       { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
@@ -120,6 +106,42 @@ export function MobileTabBar() {
       { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
+    executive: [
+      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
+      { path: '/copilot', icon: Brain, label: 'Copilot' },
+      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
+      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
+      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
+      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
+      { path: '/team', icon: Users, label: 'Team' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
+    compliance_manager: [
+      { path: '/copilot', icon: Brain, label: 'Copilot' },
+      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
+      { path: '/documents', icon: FileText, label: 'Documents' },
+      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
+      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
+    chef: [
+      { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
+      { path: '/copilot', icon: Brain, label: 'Copilot' },
+      { path: '/training', icon: GraduationCap, label: 'Training' },
+      { path: '/team', icon: Users, label: 'Team' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
+    facilities_manager: [
+      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
+      { path: '/equipment', icon: Store, label: 'Equipment' },
+      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
     kitchen_manager: [
       { path: '/vendors', icon: Store, label: 'Vendors' },
       { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
@@ -129,14 +151,7 @@ export function MobileTabBar() {
       { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
-    kitchen: [],
-    facilities: [
-      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/equipment', icon: Store, label: 'Equipment' },
-      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
+    kitchen_staff: [],
   };
 
   const mainTabs = tabsByRole[userRole];

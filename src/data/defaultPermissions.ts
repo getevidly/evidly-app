@@ -18,12 +18,14 @@ import type { UserRole } from '../contexts/RoleContext';
 
 export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Owner / Operator — full access ──────────────────────────
-  management: [
+  owner_operator: [
     'sidebar.*',
     'dashboard.*',
     'bottom.*',
     'action.*',
     'page.*',
+    'settings_access',
+    'help_access',
   ],
 
   // ── Executive — org-wide analytics & strategy ───────────────
@@ -50,6 +52,8 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.benchmarks',
     'bottom.regulatory',
     'bottom.settings',
+    'settings_access',
+    'help_access',
   ],
 
   // ── Compliance Manager — food safety, regulatory, inspections ─
@@ -80,10 +84,42 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.violations',
     'bottom.regulatory',
     'bottom.alerts',
+    'settings_access',
+    'help_access',
+  ],
+
+  // ── Chef — kitchen operations, checklists, temps, team ───────
+  chef: [
+    'sidebar.dashboard',
+    'sidebar.calendar',
+    'sidebar.checklists',
+    'sidebar.temperatures',
+    'sidebar.iot-monitoring',
+    'sidebar.incidents',
+    'sidebar.documents',
+    'sidebar.equipment',
+    'sidebar.haccp',
+    'sidebar.vendors',
+    'sidebar.training',
+    'sidebar.ai-copilot',
+    'sidebar.reporting',
+    'sidebar.team',
+    'sidebar.settings',
+    'sidebar.help',
+    'dashboard.hero',
+    'dashboard.alerts',
+    'dashboard.tasks',
+    'bottom.checklists',
+    'bottom.temps',
+    'bottom.qr-scan',
+    'bottom.team',
+    'bottom.incidents',
+    'settings_access',
+    'help_access',
   ],
 
   // ── Facilities Manager — equipment, vendors, fire safety ─────
-  facilities: [
+  facilities_manager: [
     'sidebar.dashboard',
     'sidebar.calendar',
     'sidebar.fire-safety',
@@ -103,6 +139,8 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.schedule',
     'bottom.vendors',
     'bottom.alerts',
+    'settings_access',
+    'help_access',
   ],
 
   // ── Kitchen Manager — daily operations, checklists, team ─────
@@ -131,10 +169,12 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.qr-scan',
     'bottom.team',
     'bottom.incidents',
+    'settings_access',
+    'help_access',
   ],
 
   // ── Kitchen Staff — task-focused, minimal sidebar ────────────
-  kitchen: [
+  kitchen_staff: [
     'sidebar.my-tasks',
     'sidebar.calendar',
     'sidebar.checklists',
@@ -154,5 +194,6 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.qr-scan',
     'bottom.photo',
     'bottom.report',
+    'help_access',
   ],
 };

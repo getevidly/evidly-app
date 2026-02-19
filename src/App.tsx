@@ -254,13 +254,6 @@ function ProtectedLayout() {
   );
 }
 
-/** Facilities managers default to Fire Safety view */
-function DashboardWithRedirect() {
-  const { userRole } = useRole();
-  if (userRole === 'facilities') return <Navigate to="/fire-safety" replace />;
-  return <Dashboard />;
-}
-
 function AppRoutes() {
   usePageTracking();
 
@@ -306,7 +299,7 @@ function AppRoutes() {
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
-          <Route path="/dashboard" element={<DashboardWithRedirect />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />

@@ -17,6 +17,8 @@ import {
   type SidebarSubItem,
 } from '../../config/sidebarConfig';
 import { checkPermission } from '../../hooks/usePermission';
+import { SidebarTooltip } from '../ui/SidebarTooltip';
+import { sidebarTooltipContent } from '../../data/tooltipContent';
 
 // ── Jurisdiction status dot color ─────────────────────────
 
@@ -95,7 +97,7 @@ export function Sidebar() {
   const showLocations = LOCATION_VISIBLE_ROLES.includes(userRole);
   const visibleLocations = useMemo(() => {
     if (!showLocations) return [];
-    if (userRole === 'kitchen') {
+    if (userRole === 'kitchen_staff') {
       return demoLocations.filter(loc => loc.urlId === 'downtown');
     }
     return demoLocations;
@@ -167,6 +169,9 @@ export function Sidebar() {
             }`}
           />
           <span className="flex-1 truncate">{item.label}</span>
+          {sidebarTooltipContent[item.id] && (
+            <SidebarTooltip content={sidebarTooltipContent[item.id].description} />
+          )}
           {hasSubItems && (
             <span
               onClick={(e) => {
@@ -273,7 +278,7 @@ export function Sidebar() {
           <div className="flex-shrink-0 border-t border-white/10 px-3 py-3">
             <div className="flex items-center justify-between px-2 mb-2">
               <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Locations</span>
-              {userRole === 'management' && (
+              {userRole === 'owner_operator' && (
                 <span
                   onClick={() => navigate('/org-hierarchy')}
                   className="text-[10px] text-gray-500 hover:text-[#d4af37] cursor-pointer transition-colors"

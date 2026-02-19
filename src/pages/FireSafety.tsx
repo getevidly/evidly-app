@@ -148,7 +148,7 @@ export function FireSafety() {
   const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen';
 
   const items = useMemo(() => {
-    if (userRole === 'kitchen' && activeTab !== 'daily') return [];
+    if (userRole === 'kitchen_staff' && activeTab !== 'daily') return [];
     return ITEMS_BY_FREQUENCY[activeTab];
   }, [activeTab, userRole]);
 
@@ -288,7 +288,7 @@ export function FireSafety() {
         {(Object.keys(TAB_LABELS) as Frequency[]).map(freq => {
           const isActive = activeTab === freq;
           const count = ITEMS_BY_FREQUENCY[freq].length;
-          const isDisabled = userRole === 'kitchen' && freq !== 'daily';
+          const isDisabled = userRole === 'kitchen_staff' && freq !== 'daily';
           return (
             <button
               key={freq}
@@ -490,7 +490,7 @@ export function FireSafety() {
       </div>
 
       {/* Kitchen role message for non-daily tabs */}
-      {userRole === 'kitchen' && activeTab !== 'daily' && (
+      {userRole === 'kitchen_staff' && activeTab !== 'daily' && (
         <div className="text-center py-12 text-gray-500">
           <Shield size={32} className="mx-auto mb-2 text-gray-300" />
           <p className="text-sm font-medium">{TAB_LABELS[activeTab]} checks are managed by your Kitchen Manager</p>
