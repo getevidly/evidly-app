@@ -55,7 +55,6 @@ export function PageExplanation() {
           title="What is this page?"
         >
           <Info className="h-3.5 w-3.5" />
-          <span>What is this?</span>
         </button>
       )}
       {show && (

@@ -3,11 +3,9 @@ import { Info } from 'lucide-react';
 
 interface SectionTooltipProps {
   content: string;
-  /** Use on dark backgrounds (hero panels) */
-  light?: boolean;
 }
 
-export function SectionTooltip({ content, light }: SectionTooltipProps) {
+export function SectionTooltip({ content }: SectionTooltipProps) {
   const [visible, setVisible] = useState(false);
   const tooltipId = useId();
 
@@ -22,11 +20,8 @@ export function SectionTooltip({ content, light }: SectionTooltipProps) {
         onMouseLeave={() => setVisible(false)}
       >
         <Info
-          size={14}
-          className={light
-            ? 'text-white/50 hover:text-white/80 transition-colors'
-            : 'text-gray-400 hover:text-gray-600 transition-colors'
-          }
+          size={11}
+          className="text-slate-400 hover:text-slate-300 transition-colors"
         />
       </span>
       {visible && (

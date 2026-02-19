@@ -32,7 +32,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
         <div className="flex items-center gap-2 mb-3">
           <UtensilsCrossed size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
           <span className="text-sm font-semibold text-white">Food Safety</span>
-          <SectionTooltip content={useTooltip('overallScore', userRole)} light />
+          <SectionTooltip content={useTooltip('overallScore', userRole)} />
           <span className="text-[10px] text-white/70 ml-auto">
             {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
           </span>
@@ -87,7 +87,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: 'rgba(255,255,255,0.7)' }} />
           <span className="text-sm font-semibold text-white">Fire Safety</span>
-          <SectionTooltip content={useTooltip('fireSafety', userRole)} light />
+          <SectionTooltip content={useTooltip('fireSafety', userRole)} />
           <span className="text-[10px] text-white/70 ml-auto">NFPA 96 (2024)</span>
         </div>
         <div className="space-y-3">

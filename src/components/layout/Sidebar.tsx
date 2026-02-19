@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ChevronRight, ChevronDown } from 'lucide-react';
+import { ShieldCheck, ChevronRight, ChevronDown, Info } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
@@ -17,7 +17,6 @@ import {
   type SidebarSubItem,
 } from '../../config/sidebarConfig';
 import { checkPermission } from '../../hooks/usePermission';
-import { SidebarTooltip } from '../ui/SidebarTooltip';
 import { sidebarTooltipContent } from '../../data/tooltipContent';
 
 // ── Jurisdiction status dot color ─────────────────────────
@@ -34,6 +33,51 @@ function getStatusDotColor(locUrlId: string): string {
 }
 
 const STORAGE_KEY = 'evidly-sidebar-collapsed';
+
+// ── Inline sidebar tooltip ──────────────────────────────
+
+function SidebarNavTooltip({ itemId }: { itemId: string }) {
+  const [visible, setVisible] = useState(false);
+  const tip = sidebarTooltipContent[itemId];
+  if (!tip) return null;
+
+  return (
+    <span className="relative inline-flex items-center ml-1">
+      <span
+        className="cursor-help inline-flex items-center"
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Info size={11} className="text-slate-400 hover:text-slate-300 transition-colors" />
+      </span>
+      {visible && (
+        <span
+          role="tooltip"
+          className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-[10000] rounded-md px-3 py-2 text-xs leading-relaxed shadow-lg pointer-events-none"
+          style={{
+            width: 260,
+            backgroundColor: '#1e293b',
+            border: '1px solid #334155',
+            color: '#e2e8f0',
+          }}
+        >
+          {tip.description}
+          <span
+            className="absolute top-1/2 -translate-y-1/2 right-full"
+            style={{
+              width: 0,
+              height: 0,
+              borderTop: '6px solid transparent',
+              borderBottom: '6px solid transparent',
+              borderRight: '6px solid #334155',
+            }}
+          />
+        </span>
+      )}
+    </span>
+  );
+}
 
 // ── Sidebar component ───────────────────────────────────
 
@@ -169,9 +213,7 @@ export function Sidebar() {
             }`}
           />
           <span className="flex-1 truncate">{item.label}</span>
-          {sidebarTooltipContent[item.id] && (
-            <SidebarTooltip content={sidebarTooltipContent[item.id].description} />
-          )}
+          <SidebarNavTooltip itemId={item.id} />
           {hasSubItems && (
             <span
               onClick={(e) => {

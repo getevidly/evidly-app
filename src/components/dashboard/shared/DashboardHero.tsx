@@ -57,21 +57,21 @@ export function DashboardHero({
           </div>
           <div>
             <h2 className="text-xl font-bold leading-tight">{greetingText}</h2>
-            <p className="text-sm text-gray-300">{dateText}</p>
+            <p className="text-sm text-slate-200">{dateText}</p>
           </div>
         </div>
         <div className="text-right">
           <p className="text-sm font-semibold text-white">{orgName}</p>
           {subtitle && (
             <p
-              className={`text-xs text-gray-300 mt-0.5 ${onSubtitleClick ? 'cursor-pointer hover:text-white transition-colors' : ''}`}
+              className={`text-xs text-slate-200 mt-0.5 ${onSubtitleClick ? 'cursor-pointer hover:text-white transition-colors' : ''}`}
               onClick={onSubtitleClick}
             >
               {subtitle}
             </p>
           )}
           {locationName && (
-            <p className="text-xs text-gray-300 mt-0.5">{locationName}</p>
+            <p className="text-xs text-slate-200 mt-0.5">{locationName}</p>
           )}
         </div>
       </div>
