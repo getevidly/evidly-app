@@ -1,0 +1,76 @@
+{
+  "jurisdiction_name": "Madera County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Madera County Environmental Health Division",
+  "department_url": "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system not definitively verified from official sources. California Retail Food Code compliance required but specific grading methodology not found.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Annual permits required (January 1 to December 31)",
+    "risk_categories": null,
+    "reinspection_trigger": "Not specified in available sources",
+    "public_disclosure": "Not specified in available sources"
+  },
+  "fire_safety_authority": {
+    "department_name": "Madera County Fire Division / Madera County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems required per California Fire Code and NFPA standards - semi-annual inspections typically required",
+    "inspection_frequency": "Semi-annual for fire suppression systems (per NFPA 96 standards)"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode)",
+    "state_vs_local_authority": "County level - Madera County Environmental Health conducts inspections",
+    "local_ordinances": "Madera County Ordinance referenced in addition to CalCode",
+    "permit_types": [
+      "Health Permit",
+      "Food Safety Certification",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/food-safety-consumer-protection-program/food-program",
+    "https://www.maderacounty.com/government/community-economic-development-department/divisions/environmental-health-division/food-safety-consumer-protection-program",
+    "https://www.maderacounty.com/government/community-economic-development-department/divisions/fire-division",
+    "https://www.maderacounty.com/government/fire-department"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "While official Madera County Environmental Health website confirmed California Retail Food Code compliance and permit requirements, no specific grading system (letter grades, numerical scores, pass/fail) was found documented. Fire safety requirements confirmed but specific inspection procedures not detailed.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Madera County Environmental Health Division needed to verify: 1) Specific grading/scoring system used (A/B/C, numerical, pass/fail, or other), 2) Inspection frequency and risk-based scheduling, 3) Public disclosure requirements, 4) Specific fire department inspection procedures for commercial kitchen equipment",
+  "_meta": {
+    "crawled_at": "2026-02-18T20:00:14.131307+00:00",
+    "duration_seconds": 31.980007,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 107662,
+    "output_tokens": 1058,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-18T19:59:42.151300+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.184575+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 55,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

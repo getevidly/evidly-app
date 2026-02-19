@@ -1,0 +1,67 @@
+{
+  "jurisdiction_name": "El Dorado County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Environmental Management Department - Environmental Health Division",
+  "department_url": "https://www.eldoradocounty.ca.gov/County-Government/County-Departments/Environmental-Management/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "El Dorado County conducts routine inspections and provides inspection reports, but specific grading methodology (letter grades, numerical scores, or pass/fail) could not be verified from available sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Routine inspections of permitted food facilities conducted by Environmental Health Division",
+    "risk_categories": null,
+    "reinspection_trigger": "Food facility complaints and compliance issues trigger investigations and follow-up inspections",
+    "public_disclosure": "Inspection reports available for review at facilities; copies obtainable through Records Request to Environmental Management Division"
+  },
+  "fire_safety_authority": {
+    "department_name": "El Dorado County Fire Protection District and multiple local fire agencies including El Dorado Hills Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood fire suppression systems required per NFPA standards - semi-annual inspections required",
+    "inspection_frequency": "Semi-annual (every 6 months) per NFPA 96 requirements for commercial kitchen hood suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) - California Health and Safety Code, Division 104, Part 7",
+    "state_vs_local_authority": "County level - El Dorado County Environmental Health Division conducts inspections",
+    "local_ordinances": "County follows California Retail Food Code with local permit requirements through Environmental Management Department",
+    "permit_types": [
+      "Health Permit",
+      "Food Safety Certificate",
+      "Business License"
+    ]
+  },
+  "data_sources": [
+    "https://www.eldoradocounty.ca.gov/Public-Safety-Justice/Food-Safety/Inspection-Reports",
+    "https://www.eldoradocounty.ca.gov/Public-Safety-Justice/Food-Safety/Food-Facilities/Food-Facilities-Food-Establishments",
+    "https://www.eldoradocounty.ca.gov/County-Government/County-Departments/Environmental-Management/Environmental-Health",
+    "https://www.eldoradocountyfire.com/fire-and-life-safety-inspections",
+    "https://www.edhfire.com/fire-prevention/request-an-inspection"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Verified county-level authority, department structure, regulatory framework, and fire safety requirements. However, specific grading methodology (letter grades vs numerical scores vs pass/fail) could not be determined from available sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Manual verification needed for: 1) Specific grading system type and methodology, 2) Score ranges and grade thresholds if applicable, 3) Detailed inspection frequency schedules, 4) Risk-based categorization system if used. Contact Environmental Health Division at 530-621-5300 for definitive grading system information.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:36:28.558893+00:00",
+    "duration_seconds": 38.590477,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 96240,
+    "output_tokens": 1387,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:35:49.968416+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

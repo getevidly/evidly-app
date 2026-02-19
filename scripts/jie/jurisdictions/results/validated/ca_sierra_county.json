@@ -1,0 +1,74 @@
+{
+  "jurisdiction_name": "Sierra County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Sierra County Department of Environmental Health",
+  "department_url": "https://www.sierracounty.ca.gov/231/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "No specific grading system information found on official websites",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unknown - specific frequency not documented on official site",
+    "risk_categories": null,
+    "reinspection_trigger": "Unknown",
+    "public_disclosure": "Unknown"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unknown - specific fire authority not identified",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchens in California require semi-annual hood fire suppression system inspections per NFPA standards",
+    "inspection_frequency": "Every 6 months for hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (part of CA Health and Safety Code Division 104, Part 7)",
+    "state_vs_local_authority": "County level - Sierra County Environmental Health Department conducts inspections",
+    "local_ordinances": "Legal authority includes California Health and Safety Code, California Code of Regulations, California Water Code, California Building Code, and local ordinances",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card per CA Retail Food Code Section 113948"
+    ]
+  },
+  "data_sources": [
+    "https://www.sierracounty.ca.gov/231/Environmental-Health",
+    "https://www.sierracounty.ca.gov/232/Food-Safety",
+    "https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram/RetailFoodProgram.aspx"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Limited specific information available on Sierra County's official website regarding grading methodology, inspection frequency, or specific protocols. Found general food safety program information but no detailed operational procedures.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Sierra County Environmental Health Department at 530-993-6716 needed to verify: (1) specific grading/scoring system used if any, (2) inspection frequency protocols, (3) fire department authority for hood systems, (4) any local ordinances beyond state requirements. The county website provides minimal operational details about their food inspection program.",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:00:30.692649+00:00",
+    "duration_seconds": 49.386729,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 136993,
+    "output_tokens": 1102,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:59:41.305920+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.203278+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "jurisdiction_name": "Tulare County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Tulare County Division of Environmental Health",
+  "department_url": "https://tularecountyeh.org",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system not clearly documented in available sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based inspections - specific frequency not documented",
+    "risk_categories": null,
+    "reinspection_trigger": "Not specified in available sources",
+    "public_disclosure": "Inspection results available online at tularecountyeh.org/food-facilities-inspection-results"
+  },
+  "fire_safety_authority": {
+    "department_name": "Tulare County Fire Department / Local Fire Authorities",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Semi-annual inspections required per NFPA standards",
+    "inspection_frequency": "Every 6 months for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (portion of California Health and Safety Code)",
+    "state_vs_local_authority": "County level - Tulare County Environmental Health conducts inspections",
+    "local_ordinances": "Compliance with California State laws and local ordinances relating to construction, building materials, equipment, equipment installation, and ventilation systems",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card",
+      "Cottage Food License",
+      "Catering Permit",
+      "Mobile Food Permit"
+    ]
+  },
+  "data_sources": [
+    "https://tularecountyeh.org/eh/our-services/food",
+    "https://tularecountyeh.org/eh/our-services/inspection-results",
+    "https://tularecountyeh.org/food-facilities-inspection-results",
+    "https://tularecountyeh.org/eh/our-services/food/food-facility-plan-review/",
+    "https://www.tulare.ca.gov/government/departments/fire/prevention-and-programs/prevention-bureau"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "While I verified the department name, website, and regulatory framework, the specific grading system (letter grades, numerical scores, pass/fail) is not clearly documented in the publicly available sources",
+  "needs_manual_verification": true,
+  "verification_notes": "Manual verification needed to determine specific grading methodology, inspection frequency schedules, risk categorization system, and detailed fire safety inspection requirements for commercial kitchen operations in Tulare County.",
+  "_meta": {
+    "crawled_at": "2026-02-19T02:33:11.571381+00:00",
+    "duration_seconds": 32,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T02:33:11.571381+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.210285+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

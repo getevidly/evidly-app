@@ -1,0 +1,66 @@
+{
+  "jurisdiction_name": "San Luis Obispo County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "County of San Luis Obispo Health Agency Environmental Health Services Division",
+  "department_url": "https://www.slocounty.ca.gov/departments/health-agency/public-health/environmental-health-services",
+  "grading_system": {
+    "type": "numerical_score",
+    "description": "As of May 5, 2025, uses a negative scoring scale starting from zero with points deducted for violations. Previously used 100-point system (max 100 points) with deductions for violations.",
+    "letter_grades": null,
+    "score_range_min": -100,
+    "score_range_max": 0,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Annual health permit includes one routine inspection and one reinspection",
+    "risk_categories": null,
+    "reinspection_trigger": "Follow up inspections conducted when health inspector determines during regular inspection that compliance verification is required",
+    "public_disclosure": "Inspection reports are public record, must be maintained onsite and available upon request. Full results posted online via EatSafeSLO interactive map and MyHealthDepartment database"
+  },
+  "fire_safety_authority": {
+    "department_name": "CAL FIRE San Luis Obispo County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "NFPA 96 standards require kitchen fire suppression system inspection by licensed fire protection contractor at least every six months",
+    "inspection_frequency": "Semi-annual inspections required for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (California Health and Safety Code \u00a7113700-114437)",
+    "state_vs_local_authority": "County-level enforcement by San Luis Obispo County Environmental Health Services Division, with state oversight from California Department of Public Health Food and Drug Branch",
+    "local_ordinances": "County follows California Retail Food Code requirements with local implementation",
+    "permit_types": [
+      "Health Permit to Operate Food Facility",
+      "Food Safety Manager Certification",
+      "Food Handler Cards"
+    ]
+  },
+  "data_sources": [
+    "https://www.slocounty.ca.gov/departments/health-agency/public-health/environmental-health-services/all-environmental-health-services/food-facilities-and-operations/food-facility-inspection-results",
+    "https://www.slocounty.ca.gov/departments/health-agency/public-health/environmental-health-services/division-articles/better-safeslo-apps-12b5d260fb2c5ce422f85cd185d520a2",
+    "https://calfireslo.org/fire-marshal/",
+    "https://inspections.myhealthdepartment.com/ca-san-luis-county"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Information verified from official county website and recent system updates documented. New negative scoring system implemented May 2025 is clearly documented.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information confirmed from official sources. Note that San Luis Obispo County recently transitioned to a new negative scoring system effective May 5, 2025, replacing their previous 100-point system.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:40:39.030931+00:00",
+    "duration_seconds": 34.712426,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 150033,
+    "output_tokens": 1206,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:40:04.318505+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

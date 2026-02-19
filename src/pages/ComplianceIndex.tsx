@@ -61,7 +61,7 @@ const COUNTY_SCORES = [
 const CATEGORY_SCORES = [
   { category: 'Operational (Food Safety)', score: 79, prev: 77, change: +2, weakest: false },
   { category: 'Equipment (Fire Safety)', score: 76, prev: 74, change: +2, weakest: true },
-  { category: 'Documentation (Vendor/Certs)', score: 81, prev: 80, change: +1, weakest: false },
+  { category: 'Documentation & Permits', score: 81, prev: 80, change: +1, weakest: false },
 ];
 
 const TRENDING_AREAS = {
@@ -101,14 +101,14 @@ const REGULATORY_IMPACT = [
   {
     law: 'AB 660 — Food Safety Modernization',
     status: 'Effective January 1, 2026',
-    impact: 'Pre-compliance adoption already visible: locations aware of AB 660 show 8% higher documentation scores than unaware peers. Requires digital record-keeping for temperature logs and corrective actions.',
+    impact: 'Pre-compliance adoption already visible: locations aware of AB 660 show 8% higher documentation readiness than unaware peers. Requires digital record-keeping for temperature logs and corrective actions.',
     scoreEffect: '+3 pts for prepared locations',
     preparedness: 67,
   },
   {
     law: 'SB 68 — Commercial Kitchen Equipment Standards',
     status: 'Effective July 1, 2026',
-    impact: 'New maintenance documentation requirements for commercial kitchen equipment. Early adopters of equipment tracking systems score 12 points higher on equipment compliance.',
+    impact: 'New maintenance documentation requirements for commercial kitchen equipment. Early adopters of equipment tracking systems rank 12 points higher on equipment readiness.',
     scoreEffect: '+5 pts projected for early adopters',
     preparedness: 42,
   },
@@ -123,15 +123,15 @@ const REGULATORY_IMPACT = [
 
 const PREDICTIONS = [
   { metric: 'Overall Industry Score', current: 79, predicted: 81, direction: 'up', reason: 'AB 660 preparation driving documentation improvements' },
-  { metric: 'Equipment Compliance', current: 76, predicted: 78, direction: 'up', reason: 'SB 68 awareness increasing preventive maintenance adoption' },
-  { metric: 'Operational Compliance', current: 79, predicted: 80, direction: 'up', reason: 'IoT sensor adoption continuing to improve temperature monitoring' },
-  { metric: 'Documentation Compliance', current: 81, predicted: 83, direction: 'up', reason: 'Digital record-keeping mandates accelerating paper-to-digital transition' },
+  { metric: 'Equipment Readiness', current: 76, predicted: 78, direction: 'up', reason: 'SB 68 awareness increasing preventive maintenance adoption' },
+  { metric: 'Operational Readiness', current: 79, predicted: 80, direction: 'up', reason: 'IoT sensor adoption continuing to improve temperature monitoring' },
+  { metric: 'Documentation Readiness', current: 81, predicted: 83, direction: 'up', reason: 'Digital record-keeping mandates accelerating paper-to-digital transition' },
 ];
 
 const BLOG_IDEAS = [
   { title: 'Top 5 compliance gaps California restaurants need to fix in 2026', type: 'Listicle', targetAudience: 'Restaurant operators' },
   { title: 'Healthcare kitchens outperform restaurants in documentation — here\'s why', type: 'Analysis', targetAudience: 'Cross-vertical operators' },
-  { title: 'How AB 660 is already changing compliance scores before it takes effect', type: 'Regulatory', targetAudience: 'Industry leaders, media' },
+  { title: 'How AB 660 is already changing readiness levels before it takes effect', type: 'Regulatory', targetAudience: 'Industry leaders, media' },
   { title: 'The summer compliance dip: why Q3 is every kitchen\'s weakest quarter', type: 'Seasonal', targetAudience: 'Operations managers' },
   { title: 'County-by-county: where California kitchens rank on food safety', type: 'Geographic', targetAudience: 'Local media, health depts' },
   { title: '2,340 kitchens, one trend: temperature monitoring is getting better', type: 'Trend', targetAudience: 'Technology buyers' },
@@ -265,7 +265,7 @@ export function ComplianceIndex() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-6">
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-xl sm:text-3xl font-bold">{REPORT.overallScore}</div>
-              <div className="text-xs text-gray-300">Industry Avg Score</div>
+              <div className="text-xs text-gray-300">Industry Index</div>
             </div>
             <div className="bg-white/10 rounded-lg p-3 text-center">
               <div className="text-2xl font-bold text-green-400">+{REPORT.quarterChange}</div>
@@ -293,7 +293,7 @@ export function ComplianceIndex() {
             <div className="prose prose-sm max-w-none">
               <p className="text-sm text-gray-700 leading-relaxed">
                 California's commercial kitchen compliance landscape continued its upward trajectory in Q4 2025,
-                with the industry average score reaching <strong>79% compliance</strong> — up 2 points from Q3 and
+                with the industry readiness index reaching <strong>79 points</strong> — up 2 points from Q3 and
                 5 points higher than the same period last year. This marks the third consecutive quarter of improvement,
                 driven primarily by advances in <strong>temperature monitoring technology</strong> and increased adoption
                 of <strong>digital compliance platforms</strong>.
@@ -306,7 +306,7 @@ export function ComplianceIndex() {
               </p>
               <p className="text-sm text-gray-700 leading-relaxed mt-3">
                 Looking ahead, <strong>AB 660</strong> (Food Safety Modernization, effective January 2026) is already
-                influencing behavior — locations aware of the upcoming mandate show 8% higher documentation scores.
+                influencing behavior — locations aware of the upcoming mandate show 8% higher documentation readiness.
                 We project the industry average will reach <strong>81 by Q1 2026</strong> as compliance efforts
                 accelerate ahead of the new regulatory requirements.
               </p>
@@ -460,8 +460,8 @@ export function ComplianceIndex() {
               ))}
             </div>
             <p className="text-sm text-gray-600">
-              <strong>Equipment compliance</strong> remains the weakest domain at 76, primarily driven by overdue fire suppression
-              inspections and deferred maintenance scheduling. Documentation leads at 81, benefiting from the industry's shift
+              <strong>Equipment readiness</strong> remains the weakest domain at 76 index points, primarily driven by overdue fire suppression
+              inspections and deferred maintenance scheduling. Documentation leads at 81 index points, benefiting from the industry's shift
               toward digital record-keeping platforms.
             </p>
           </div>

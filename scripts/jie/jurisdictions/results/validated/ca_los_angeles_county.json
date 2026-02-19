@@ -1,0 +1,96 @@
+{
+  "jurisdiction_name": "Los Angeles County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Los Angeles County Department of Public Health - Environmental Health Division",
+  "department_url": "http://publichealth.lacounty.gov/eh/",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Uses letter grades A, B, C for scores 70% and above; facilities scoring below 70% receive numerical score cards instead of letter grades",
+    "letter_grades": [
+      "A",
+      "B",
+      "C"
+    ],
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": 70,
+    "grade_thresholds": {
+      "A": {
+        "min": 90,
+        "max": 100
+      },
+      "B": {
+        "min": 80,
+        "max": 89
+      },
+      "C": {
+        "min": 70,
+        "max": 79
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "1 to 3 times per year based on risk level - frequency determined by food products served, preparation methods, and operational history",
+    "risk_categories": [
+      "High",
+      "Moderate",
+      "Low"
+    ],
+    "reinspection_trigger": "Major Critical Risk Factor violations, facilities scoring below 70% twice in 12 months subject to closure",
+    "public_disclosure": "Grade/score cards must be posted in area visible to patrons; inspection reports available upon public request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Los Angeles County Fire Department and local fire authorities",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Semi-annual inspection and certification required every 6 months per NFPA 96; UL-300 compliance required for all systems",
+    "inspection_frequency": "Every 6 months for hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) - part of California Health and Safety Code",
+    "state_vs_local_authority": "County level enforcement - Los Angeles County Environmental Health Division serves as local enforcement agency with delegated state authority",
+    "local_ordinances": "Los Angeles County Code Title 8 - Consumer Protection, Business and Wage Regulations; exceptions for cities of Long Beach, Pasadena, and Vernon which have own health departments",
+    "permit_types": [
+      "Public Health Permit/License",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "http://publichealth.lacounty.gov/eh/inspection/grading-posting-requirements-retail-food-facilities.htm",
+    "http://lacounty-ca.elaws.us/code/coor_title8_div1_ch8.04_pt1_sec8.04.225",
+    "http://publichealth.lacounty.gov/eh/inspection/retail-food-inspection-guide.htm",
+    "http://publichealth.lacounty.gov/eh/business/restaurants-retail-food-stores.htm"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Official county ordinance and health department documentation clearly confirms hybrid grading system with letter grades A/B/C for scores 70%+ and numerical score cards for below 70%. Fire safety requirements verified through multiple commercial fire protection sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official Los Angeles County sources including specific ordinance text defining grading thresholds and inspection procedures.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:18:13.687873+00:00",
+    "duration_seconds": 45.742289,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 113211,
+    "output_tokens": 1097,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:17:27.945584+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.184575+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 100,
+    "llm_confidence": "high",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

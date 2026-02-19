@@ -64,10 +64,10 @@ export function getFormattedDate(): string {
 export const DEMO_ROLE_NAMES: Record<string, { firstName: string; fullName: string }> = {
   owner_operator: { firstName: 'James', fullName: 'James Wilson' },
   executive: { firstName: 'David', fullName: 'David Chen' },
-  compliance_manager: { firstName: 'Sarah', fullName: 'Sarah Martinez' },
+  compliance_manager: { firstName: 'Sarah', fullName: 'Sarah Kim' },
   chef: { firstName: 'Maria', fullName: 'Maria Santos' },
   facilities_manager: { firstName: 'Mike', fullName: 'Mike Thompson' },
-  kitchen_manager: { firstName: 'Alex', fullName: 'Alex Rivera' },
+  kitchen_manager: { firstName: 'Carlos', fullName: 'Carlos Rivera' },
   kitchen_staff: { firstName: 'Carlos', fullName: 'Carlos Mendez' },
 };
 

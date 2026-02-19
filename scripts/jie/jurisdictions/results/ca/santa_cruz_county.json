@@ -1,0 +1,77 @@
+{
+  "jurisdiction_name": "Santa Cruz County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Santa Cruz County Environmental Health Division",
+  "department_url": "https://scceh.com/",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Santa Cruz County uses a hybrid system with both colored placards (Green/Yellow/Red) based on major violations AND numerical scores from 0-100 calculated by deducting points for violations",
+    "letter_grades": null,
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "GREEN": {
+        "description": "PASS - No more than one major violation observed and corrected during inspection"
+      },
+      "YELLOW": {
+        "description": "CONDITIONAL PASS - Two or more major violations observed but corrected during inspection"
+      },
+      "RED": {
+        "description": "CLOSURE - Facility closed due to imminent threat to health and safety"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Two to four times per year depending on the type of facility",
+    "risk_categories": null,
+    "reinspection_trigger": "Yellow placards may trigger reinspection within 3 business days to ensure major violations remain permanently corrected",
+    "public_disclosure": "All inspection results and scores are publicly available online through the County's inspection database and mobile app"
+  },
+  "fire_safety_authority": {
+    "department_name": "Santa Cruz County Fire Department and independent Fire Districts",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Hood suppression systems for commercial kitchens require separate fire department permits and inspections per California Fire Code and local amendments",
+    "inspection_frequency": "Semi-annual inspections required for kitchen hood fire suppression systems per NFPA 96 standards, conducted by Fire Department or licensed fire protection companies"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Part 7 of Division 104 of California Health and Safety Code)",
+    "state_vs_local_authority": "County Environmental Health Division conducts inspections under state authority",
+    "local_ordinances": "Santa Cruz County Code Chapter 7.04 governs food facilities with local amendments for nonprofit food facilities at occasional events",
+    "permit_types": [
+      "Food Facility Health Permit",
+      "Host Facility Permit",
+      "Microenterprise Home Kitchen Operation (MEHKO) Permit"
+    ]
+  },
+  "data_sources": [
+    "https://scceh.com/NewHome/Programs/ConsumerProtection/Food/AboutRestaurantInspections.aspx",
+    "https://eservices.sccgov.org/facilityinspection",
+    "https://scceh.com/NewHome/Programs/ConsumerProtection/Food.aspx",
+    "https://www.codepublishing.com/CA/SantaCruzCounty/html/SantaCruzCounty07/SantaCruzCounty0792.html",
+    "https://www.codepublishing.com/CA/SantaCruzCounty/html/SantaCruzCounty07/SantaCruzCounty0704.html"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Information verified from official Santa Cruz County Environmental Health website, county code documents, and inspection database. Scoring system clearly documented with specific point deductions: Major violations (8 points), Moderate violations (3 points), Minor violations (2 points) deducted from perfect score of 100.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information confirmed through official county sources. Fire safety requirements verified through County Fire Code. Placard system and scoring methodology clearly defined in official documentation.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:51:37.553266+00:00",
+    "duration_seconds": 33.968964,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 96197,
+    "output_tokens": 1231,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:51:03.584302+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "jurisdiction_name": "Inyo County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Inyo County Environmental Health Department",
+  "department_url": "https://www.inyocounty.us/services/environmental-health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Could not verify specific grading system used by Inyo County. California counties may use letter grades (A/B/C), numerical scores, or pass/fail systems, but Inyo County's specific system was not found in official sources.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Regular inspections conducted by Registered Environmental Health Specialists - specific frequency not verified",
+    "risk_categories": null,
+    "reinspection_trigger": "Not specified in available sources",
+    "public_disclosure": "Inspection reports must be made available upon request per California Retail Food Code"
+  },
+  "fire_safety_authority": {
+    "department_name": "Local fire departments - specific AHJ not identified",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Semi-annual inspections required per California Fire Code and NFPA 96 standards",
+    "inspection_frequency": "Every 6 months for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections conducted by Inyo County Environmental Health Department",
+    "local_ordinances": "County fee schedule and permitting requirements per Municipal Code Chapter 7.52",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Certification",
+      "Cottage Food Operation Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.inyocounty.us/services/environmental-health",
+    "https://www.inyocounty.us/services/environmental-health/environmental-health-programs",
+    "https://www.inyocounty.us/residents/info-center/directory",
+    "https://ecode360.com/44462342",
+    "https://www.inyocounty.us/sites/default/files/2019-06/CalCode.pdf"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "While I confirmed Inyo County Environmental Health Department exists and conducts food facility inspections using California Retail Food Code, I could not verify their specific grading/scoring system from official county sources. Earlier search results showing letter grades were from Imperial County, not Inyo County.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Inyo County Environmental Health Department (760-878-0238) is recommended to verify: (1) specific grading system used (letter grades, numerical scores, or pass/fail), (2) inspection frequency and risk-based scheduling, (3) grade thresholds if applicable, (4) public posting requirements, and (5) local fire department inspection authority for commercial kitchen systems.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:52:49.978389+00:00",
+    "duration_seconds": 36.375656,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 174738,
+    "output_tokens": 1294,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:52:13.602733+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.180539+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 55,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

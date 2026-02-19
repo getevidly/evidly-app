@@ -1,0 +1,67 @@
+{
+  "jurisdiction_name": "Kings County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Kings County Department of Public Health - Division of Environmental Health Services",
+  "department_url": "https://www.kcdph.com/ehs",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Kings County conducts routine food facility inspections and makes inspection reports publicly available, but specific grading methodology not verified from official sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "All food and beverage facilities are inspected on a routine basis throughout the year",
+    "risk_categories": null,
+    "reinspection_trigger": "Investigations of complaints about food service operations and reported cases of foodborne illness",
+    "public_disclosure": "Inspection reports are public records and available online. All retail food businesses are required by law to make a copy of their most recent inspection report available for review by interested parties on request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Kings County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems required by NFPA standards, semi-annual inspections by licensed technicians required",
+    "inspection_frequency": "Semi-annual inspections required for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Part 7 of California Health and Safety Code)",
+    "state_vs_local_authority": "County level inspection authority - Kings County Division of Environmental Health Services conducts inspections",
+    "local_ordinances": "Local fire safety ordinances in addition to state codes",
+    "permit_types": [
+      "Food Facility Permit",
+      "Fire Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.kcdph.com/ehsfoodinspectionreports",
+    "https://www.kcdph.com/ehs",
+    "https://www.kcdph.com/ehs-food-safety",
+    "https://firepermits.countyofkings.com/",
+    "https://www.countyofkingsca.gov/departments/public-safety/fire-department",
+    "https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram/RetailFoodProgram.aspx"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Verified department structure, inspection authority, public disclosure requirements, and regulatory framework. However, specific grading system methodology (letter grades, numerical scores, thresholds) not found on official county sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to contact Kings County Division of Environmental Health Services directly at (559) 584-1411 to verify specific grading methodology, score ranges, and inspection frequency schedules. Fire department contact available at blake.adney@co.kings.ca.us for hood system requirements.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:57:49.341039+00:00",
+    "duration_seconds": 98.239614,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 155620,
+    "output_tokens": 1351,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:56:11.101425+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

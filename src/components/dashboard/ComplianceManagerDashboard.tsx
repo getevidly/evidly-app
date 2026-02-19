@@ -21,7 +21,7 @@ import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
 import {
   GOLD, NAVY, PAGE_BG, BODY_TEXT, FONT,
   JIE_LOC_MAP, KEYFRAMES,
-  stagger, getGreeting, DEMO_ROLE_NAMES,
+  stagger, DEMO_ROLE_NAMES,
 } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
@@ -407,10 +407,9 @@ export default function ComplianceManagerDashboard() {
       {/* ============================================================ */}
       <div style={{ padding: '20px 24px 0' }}>
         <DashboardHero
-          greeting={getGreeting()}
           firstName={DEMO_ROLE_NAMES.compliance_manager.firstName}
           orgName={companyName || DEMO_ORG.name}
-          subtitle="3 locations &middot; California"
+          subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
           onSubtitleClick={() => navigate('/org-hierarchy')}
         >
           <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />

@@ -1,0 +1,66 @@
+{
+  "jurisdiction_name": "Colusa County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Colusa County Environmental Health",
+  "department_url": "https://www.countyofcolusaca.gov/101/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system not clearly defined in available sources. County enforces California Retail Food Code but specific grading methodology not documented.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based inspections required under California Retail Food Code",
+    "risk_categories": null,
+    "reinspection_trigger": "Violations requiring correction and follow-up verification",
+    "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request per California Health and Safety Code"
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple fire districts serve Colusa County including Sacramento River Fire Protection District and City of Colusa Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood suppression systems require semi-annual inspections per NFPA 96 standards",
+    "inspection_frequency": "Every 6 months for kitchen hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (commonly called Cal Code) - part of California Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections conducted by Colusa County Environmental Health Department",
+    "local_ordinances": "County follows California Retail Food Code standards with potential local ordinances not specifically documented",
+    "permit_types": [
+      "Health Permit for Food Facilities",
+      "Temporary Food Facility Permits",
+      "Mobile Food Facility Permits"
+    ]
+  },
+  "data_sources": [
+    "https://www.countyofcolusaca.gov/425/Retail-Food-Safety",
+    "https://www.countyofcolusaca.gov/101/Environmental-Health",
+    "https://www.countyofcolusaca.gov/1063/18455",
+    "https://www.cdph.ca.gov/Programs/CEH/DRSEM/CDPH%20Document%20Library/EMB/REHS/EH_Dept_Contact_List_050925.pdf"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Verified county department, regulatory framework, and basic inspection requirements. However, specific grading system methodology and detailed fire safety authority structure not clearly documented in available sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to contact Colusa County Environmental Health directly at (530) 458-0888 to verify: 1) Specific grading/scoring system used (letter grades vs numerical vs pass/fail), 2) Detailed fire department authority structure for commercial kitchen inspections, 3) Local ordinances beyond state requirements, 4) Risk-based inspection frequency categories, 5) Public disclosure mechanisms beyond state requirements.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:21:37.882233+00:00",
+    "duration_seconds": 34.086091,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 156424,
+    "output_tokens": 1190,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:21:03.796142+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

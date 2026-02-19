@@ -1,0 +1,77 @@
+{
+  "jurisdiction_name": "Tehama County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Tehama County Department of Environmental Health",
+  "department_url": "https://www.tehama.gov/government/departments/environmental-health/",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Uses 'Meets Standards' or 'Does Not Meet Standards' result system based on inspection reports, but specific letter grades or numerical scoring not verified in official sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unknown - specific risk-based scheduling not documented in available sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Major violations require follow-up inspection - facilities may be closed for imminent health hazards",
+    "public_disclosure": "Inspection reports made available to public on county website"
+  },
+  "fire_safety_authority": {
+    "department_name": "Tehama County Fire Department",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - effective July 1, 2007",
+    "state_vs_local_authority": "County-level inspections conducted by Tehama County Environmental Health Department",
+    "local_ordinances": "Unknown - specific local ordinances beyond state code not documented in available sources",
+    "permit_types": [
+      "Food Facility Permit",
+      "Cottage Food Operations Registration/Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.tehama.gov/government/departments/environmental-health/",
+    "https://www.tehama.gov/government/departments/environmental-health/food-inspection-reports/",
+    "https://co.tehama.ca.us/images/stories/environhealth/Cal_Code_rev_1_16_07.pdf",
+    "https://www.co.tehama.ca.us/images/stories/environhealth/Constuction%20Guidelines%20revised%202%2011.pdf"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "While department structure and basic regulatory framework are verified, specific grading methodology, inspection frequency schedules, and fire safety inspection requirements are not clearly documented in available official sources",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Tehama County Environmental Health Department needed to verify: 1) Specific grading/scoring system used (letter grades, numerical scores, or pass/fail), 2) Risk-based inspection frequency schedules, 3) Fire department hood system inspection requirements, 4) Local ordinances beyond state CalCode requirements",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:26:19.258463+00:00",
+    "duration_seconds": 27.548073,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 84212,
+    "output_tokens": 1034,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:25:51.710390+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.208286+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 47,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 1,
+    "warnings": [
+      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+    ],
+    "import_eligible": true
+  }
+}

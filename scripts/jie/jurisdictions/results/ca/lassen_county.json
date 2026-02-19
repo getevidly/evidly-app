@@ -1,0 +1,64 @@
+{
+  "jurisdiction_name": "Lassen County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Lassen County Environmental Health Department",
+  "department_url": "https://www.lassencounty.org/dept/environmental-health/food-safety",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Information about specific grading system not found on official website. County follows California Retail Food Code but specific grading methodology not publicly documented.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Not specified on county website - likely risk-based per California standards",
+    "risk_categories": null,
+    "reinspection_trigger": "Critical violations must be corrected at time of inspection and may require follow-up inspection; re-inspection not usually required for minor violations only",
+    "public_disclosure": "Inspection reports available online at county website; official records maintained by Environmental Health Department"
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple fire departments - 33 Fire Departments serve Lassen County",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood fire suppression systems require semi-annual inspections per NFPA 96 standards; Class K fire extinguishers required within 30 feet of grease cooking operations",
+    "inspection_frequency": "Every 6 months for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code, effective July 1, 2007",
+    "state_vs_local_authority": "County level enforcement - Lassen County Environmental Health Department conducts inspections of permanent, mobile and temporary food facilities",
+    "local_ordinances": "Not specified beyond state CalCode requirements",
+    "permit_types": [
+      "Health Permit to Operate Food Facility",
+      "Food Handler Cards likely required per state law"
+    ]
+  },
+  "data_sources": [
+    "https://www.lassencounty.org/dept/environmental-health/food-safety",
+    "https://www.lassencounty.org/dept/environmental-health/food-safety/food-facility-inspection-reports",
+    "https://www.lassencountychamber.org/newpage2693e7cb"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Limited specific information available on Lassen County's official website regarding grading methodology, inspection frequency schedules, and detailed operational procedures. Fire safety information based on general California/NFPA standards.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Lassen County Environmental Health Department needed to verify: 1) Specific grading system used (letter grades, numerical scores, or pass/fail), 2) Inspection frequency schedules and risk categorization, 3) Local ordinances beyond state requirements, 4) Specific fire department authority for commercial kitchens, 5) Fee schedules and permit requirements. Contact: ehe@co.lassen.ca.us or (530) 251-8373.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:08:22.477095+00:00",
+    "duration_seconds": 87.922484,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 148587,
+    "output_tokens": 1370,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:06:54.554611+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

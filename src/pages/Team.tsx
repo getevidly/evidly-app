@@ -394,10 +394,10 @@ export function Team() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="h-4 w-4 text-[#1e4d6b]" />
-              <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
+              <span className="text-sm text-gray-500 font-medium">Training Progress</span>
             </div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">
-              {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + (m.compliance_score || 0), 0) / filteredMembers.length) : 0}%
+              {filteredMembers.length > 0 ? Math.round(filteredMembers.reduce((sum, m) => sum + ((m.training_completed || 0) / (m.training_total || 1) * 100), 0) / filteredMembers.length) : 0}%
             </div>
           </div>
         </div>
@@ -882,19 +882,13 @@ export function Team() {
             )}
 
             {/* Performance Metrics */}
-            {selectedMember.compliance_score !== undefined && (
+            {selectedMember.temp_logs_completed !== undefined && (
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <h4 className="font-semibold text-gray-900 flex items-center gap-2 mb-3">
                   <TrendingUp className="h-5 w-5 text-[#1e4d6b]" />
-                  Performance Metrics
+                  Activity Metrics
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold" style={{ color: selectedMember.compliance_score >= 90 ? '#22c55e' : selectedMember.compliance_score >= 75 ? '#eab308' : selectedMember.compliance_score >= 60 ? '#f59e0b' : '#ef4444' }}>
-                      {selectedMember.compliance_score}%
-                    </div>
-                    <div className="text-xs text-gray-500">Compliance</div>
-                  </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.temp_logs_completed || 0}</div>
                     <div className="text-xs text-gray-500">Temp Logs</div>

@@ -1,0 +1,74 @@
+{
+  "jurisdiction_name": "Stanislaus County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Stanislaus County Department of Environmental Resources - Environmental Health",
+  "department_url": "https://www.stancounty.com/er/environmentalhealth/",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system methodology not found in official sources. Inspections are documented with violation reports but no specific letter grades, numerical scores, or pass/fail thresholds were identified.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "The majority of the 2,400 permitted food service establishments receive two unannounced routine food safety inspections per year",
+    "risk_categories": null,
+    "reinspection_trigger": "Facilities with three or more violations or major violations are subject to reinspection",
+    "public_disclosure": "All inspections are posted online at secure.stancounty.com/FoodFacilities/ with inspection notices from past three years available. Facilities must keep most recent inspection report on-site for public viewing upon request."
+  },
+  "fire_safety_authority": {
+    "department_name": "Stanislaus County Fire Prevention Bureau",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood fire protection systems require separate plan submittals to Fire Prevention Bureau. NFPA 96 standards require semi-annual inspections every six months by licensed fire protection companies.",
+    "inspection_frequency": "Semi-annual (every 6 months) for commercial kitchen hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code",
+    "state_vs_local_authority": "County level inspections conducted by Stanislaus County Department of Environmental Resources",
+    "local_ordinances": "Stanislaus County does not allow Micro Enterprise Home Kitchen operations (AB 626) - foods cannot be cooked at home unless specifically listed in approved categories",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://www.stancounty.com/er/environmentalhealth/food-program.shtm",
+    "https://secure.stancounty.com/FoodFacilities/",
+    "https://oes.stancounty.gov/divisions/fire-warden/fire-prevention-bureau/understanding-the-process"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Official department information found, regulatory framework confirmed, fire safety requirements identified. However, specific grading system methodology could not be verified from publicly available sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to verify specific grading methodology if any exists beyond violation-based reporting. Should confirm inspection frequency for different risk categories and detailed fire safety inspection requirements for commercial kitchens.",
+  "_meta": {
+    "crawled_at": "2026-02-19T02:22:07.722554+00:00",
+    "duration_seconds": 32,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T02:22:07.722554+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.206286+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "medium",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

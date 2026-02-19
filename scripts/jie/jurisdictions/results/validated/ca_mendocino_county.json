@@ -1,0 +1,76 @@
+{
+  "jurisdiction_name": "Mendocino County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Mendocino County Environmental Health Division",
+  "department_url": "https://www.mendocinocounty.gov/departments/public-health/environmental-health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Unable to verify specific grading system details from official sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unable to verify specific inspection frequency from official sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Unknown",
+    "public_disclosure": "Inspection results available through online database at mendocino-ca.healthinspections.us"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unable to verify specific fire department authority from sources",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspections per California fire code requirements",
+    "inspection_frequency": "Semi-annual (every 6 months)"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code Division 104, Part 7",
+    "state_vs_local_authority": "County-level Environmental Health Specialists conduct inspections under state authority",
+    "local_ordinances": "Mendocino County has Hood Plan Check Guide and local permit requirements beyond state code",
+    "permit_types": [
+      "Food Facility Operating Permit",
+      "Food Handler Certification",
+      "Food Safety Manager Certification"
+    ]
+  },
+  "data_sources": [
+    "https://www.mendocinocounty.gov/departments/public-health/environmental-health",
+    "https://www.mendocinocounty.gov/departments/public-health/environmental-health/consumer-protection",
+    "https://mendocino-ca.healthinspections.us/",
+    "https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram/RetailFoodProgram.aspx"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Unable to locate specific grading system information (letter grades vs numerical scores) on official county websites. Found references to inspection database but no details on grading methodology.",
+  "needs_manual_verification": true,
+  "verification_notes": "Requires direct contact with Mendocino County Environmental Health Division at enviroh@mendocinocounty.gov or (707) 234-6636 to verify specific grading system, inspection frequency schedules, and detailed permit requirements. Official inspection database exists but grading methodology not publicly documented.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:45:30.780196+00:00",
+    "duration_seconds": 36.082202,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 130974,
+    "output_tokens": 1246,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:44:54.697994+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.186885+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

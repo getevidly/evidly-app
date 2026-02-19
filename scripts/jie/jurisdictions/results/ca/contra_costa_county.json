@@ -1,0 +1,81 @@
+{
+  "jurisdiction_name": "Contra Costa County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Contra Costa Health - Environmental Health Division",
+  "department_url": "https://www.cchealth.org/health-and-safety-information/food-safety-permits/",
+  "grading_system": {
+    "type": "other",
+    "description": "Color-coded placarding system with green, yellow, red, and white placards",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Green": {
+        "description": "No or minimal health violations found at most recent inspection"
+      },
+      "Yellow": {
+        "description": "Major health violations found but corrected during inspection, reinspection required"
+      },
+      "Red": {
+        "description": "Imminent health hazard resulting in facility closure"
+      },
+      "White": {
+        "description": "Permit holders waiting for renewal or reopening after closure"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Inspections can occur at any time, with facilities subject to surprise inspections twice a year",
+    "risk_categories": null,
+    "reinspection_trigger": "Follow-up within the week if violations found during inspection; facilities with two yellow placards in a row require food safety course attendance",
+    "public_disclosure": "Color-coded placards must be displayed prominently; inspection results available online through food facility inspection database and mobile app"
+  },
+  "fire_safety_authority": {
+    "department_name": "Contra Costa County Fire Protection District",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial cooking hood fire suppression systems required every six months per NFPA 96 by licensed fire protection companies",
+    "inspection_frequency": "Every six months for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) - implemented July 1, 2007, modeled after FDA Food Code",
+    "state_vs_local_authority": "County Environmental Health Division conducts inspections under California Retail Food Code",
+    "local_ordinances": "Alcoholic Beverage Sales Commercial Activities Ordinance for unincorporated areas; BAAQMD Commercial Cooking Operation Registration required for some facilities",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card",
+      "Food Safety Manager Certification",
+      "Catering Permit",
+      "Production Kitchen Health Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.cchealth.org/health-and-safety-information/restaurant-inspections",
+    "https://www.cchealth.org/health-and-safety-information/food-safety-permits",
+    "https://www.contracosta.ca.gov/7542/Food-and-Restaurants",
+    "https://www.cccfpd.org/code-enforcement-and-inspections/"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Official Contra Costa Health website clearly describes color-coded placarding system with specific definitions for each color. California Retail Food Code basis confirmed. Fire safety requirements verified through CCCFPD sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "Color-coded placarding system is well-documented on official county health department website. Fire suppression system requirements confirmed through county fire district documentation. CRFC implementation verified from multiple sources.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:11:47.830145+00:00",
+    "duration_seconds": 31.028676,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 81345,
+    "output_tokens": 1132,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:11:16.801469+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

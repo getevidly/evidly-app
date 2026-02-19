@@ -1,0 +1,91 @@
+{
+  "jurisdiction_name": "San Mateo County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "San Mateo County Environmental Health Services",
+  "department_url": "https://www.smchealth.org/food-safety",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Color-coded placard system (Green/Yellow/Red) based on CDC risk factors, plus numerical scoring from 0-100 with point deductions for violations",
+    "letter_grades": null,
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Green": {
+        "description": "Pass - No more than one major violation corrected during inspection"
+      },
+      "Yellow": {
+        "description": "Conditional Pass - Two or more major violations corrected during inspection"
+      },
+      "Red": {
+        "description": "Closure - Major violations pose imminent health hazard"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Risk-based: Category 1 (1x/year), Category 2 (2x/year), Category 3 (3x/year)",
+    "risk_categories": [
+      "Category 1",
+      "Category 2",
+      "Category 3"
+    ],
+    "reinspection_trigger": "Conditional pass (yellow placard) may require reinspection within 3 business days; closure (red placard) requires correction and reinspection",
+    "public_disclosure": "Placards must be posted in clear view of customers; inspection reports available online; approximately 50% compliance with posting requirements"
+  },
+  "fire_safety_authority": {
+    "department_name": "San Mateo County Fire Department - Fire Marshal's Office",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Semi-annual inspections required every 6 months per NFPA standards",
+    "inspection_frequency": "Every 6 months for commercial kitchen hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC), Division 104, Part 7 of CA Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections conducted by San Mateo County Environmental Health Services",
+    "local_ordinances": "Food facility permits and fees approved by County Board of Supervisors; placard posting requirements; plan check requirements for new/remodeled facilities",
+    "permit_types": [
+      "Food Facility Permit",
+      "Food Manager Certification",
+      "Plan Check Approval"
+    ]
+  },
+  "data_sources": [
+    "https://www.smchealth.org/food-safety",
+    "https://www.smchealth.org/sites/main/files/file-attachments/placarding_faq_for_operators_final_1.pdf",
+    "https://www.smcgov.org/ceo/news/what-does-restaurant-inspector-actually-do",
+    "https://www.smdailyjournal.com/news/local/san-mateo-county-food-inspections-revamped/article_b53c4485-86c6-5a0e-9740-f38d753db35e.html",
+    "https://www.smcgov.org/san-mateo-county-fire/fire-marshal-services"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Verified information from official San Mateo County health department documents and websites. Color-coded placard system and numerical scoring system confirmed. Risk-based inspection frequency verified. Fire safety inspection requirements confirmed from county fire department sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official county sources. The hybrid grading system uses both color-coded placards (Green/Yellow/Red) based on CDC critical risk factors and numerical scores (0-100) with point deductions for violations (Major: 8 points, Moderate: 3 points, Minor: 2 points).",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:35:09.035975+00:00",
+    "duration_seconds": 53.058087,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 65163,
+    "output_tokens": 1218,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:34:15.977888+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.199719+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 100,
+    "llm_confidence": "high",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

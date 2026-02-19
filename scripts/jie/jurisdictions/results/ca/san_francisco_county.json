@@ -1,0 +1,71 @@
+{
+  "jurisdiction_name": "San Francisco",
+  "jurisdiction_type": "city",
+  "state": "CA",
+  "department_name": "San Francisco Department of Public Health - Environmental Health Branch",
+  "department_url": "https://www.sfdph.org/dph/EH/default.asp",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "San Francisco uses both numerical scores (1-100) and color-coded placards. Facilities receive numerical scores based on point deductions for violations, but display color-coded placards (green, yellow, red) based on major violations rather than score ranges.",
+    "letter_grades": null,
+    "score_range_min": 1,
+    "score_range_max": 100,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based: High-risk facilities like full-service restaurants inspected up to 3 times annually, lower-risk operations 1-3 times per year",
+    "risk_categories": [
+      "High",
+      "Moderate",
+      "Low"
+    ],
+    "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days; red placard facilities closed until violations corrected",
+    "public_disclosure": "Color-coded placards (green/yellow/red) must be posted where public can see them; numerical scores available through online database"
+  },
+  "fire_safety_authority": {
+    "department_name": "San Francisco Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "All commercial cooking equipment must be protected by UL 300-compliant fire extinguishing systems; system serviced every 6 months and after activation",
+    "inspection_frequency": "Every 6 months for kitchen hood fire suppression systems per California fire code"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Health and Safety Code Division 104, Part 7)",
+    "state_vs_local_authority": "City/county level - San Francisco DPH conducts all inspections under state authority",
+    "local_ordinances": "San Francisco follows California Retail Food Code with local implementation through SFDPH",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card",
+      "Food Safety Manager Certificate"
+    ]
+  },
+  "data_sources": [
+    "https://www.sfdph.org/dph/EH/default.asp",
+    "https://www.sf.gov/information--restaurant-health-inspection-posters-and-what-they-mean",
+    "https://sf-fire.org/202-submittal-requirements-kitchen-hood-and-duct-extinguishing-systems",
+    "https://www.sfgov.org/services/food-safety-scores",
+    "https://xnet.sfdph.org:8443/ords/eeop/f?p=132:1"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Found conflicting information about scoring thresholds - one source indicated GOOD (91-100), ADEQUATE (86-90), NEEDS IMPROVEMENT (71-85), POOR (70 or less), but primary SF sources emphasize placard colors based on major violations rather than score ranges. Placard system is clearly documented.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to clarify exact relationship between numerical scores and placard colors, as sources show conflicting information about whether placards are based on score ranges or solely on major violation counts. Fire department inspection requirements clearly documented.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:31:03.392701+00:00",
+    "duration_seconds": 80.095405,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 123221,
+    "output_tokens": 1261,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:29:43.297296+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

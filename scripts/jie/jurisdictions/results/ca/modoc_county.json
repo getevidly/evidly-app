@@ -1,0 +1,64 @@
+{
+  "jurisdiction_name": "Modoc County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Modoc County Environmental Health",
+  "department_url": "https://environmentalhealth.co.modoc.ca.us/",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Cannot verify specific grading methodology. County issues written inspection reports and Permits to Operate for facilities meeting minimum state requirements but specific grading system not documented.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Routine inspections and complaint-based inspections",
+    "risk_categories": null,
+    "reinspection_trigger": "Complaint basis or routine schedule - specific triggers not documented",
+    "public_disclosure": "Written inspection reports can be viewed upon request at the food facility or Environmental Health Department"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unknown - information not found",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - State retail food laws",
+    "state_vs_local_authority": "County level inspections conducted by Modoc County Environmental Health for compliance with State retail food laws",
+    "local_ordinances": "California Health and Safety Code, California Code of Regulations Titles 17 and 22, and local ordinances",
+    "permit_types": [
+      "Permit to Operate",
+      "Food Safety Certificate (valid for 5 years)"
+    ]
+  },
+  "data_sources": [
+    "https://environmentalhealth.co.modoc.ca.us/nav/food_sanitation_program.php",
+    "https://environmentalhealth.co.modoc.ca.us/nav/frequently_asked_questions.php",
+    "https://environmentalhealth.co.modoc.ca.us/"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Limited information available on official website. Cannot verify specific grading system, inspection frequencies, or fire safety authority. No specific documentation found regarding letter grades, numerical scoring, or pass/fail systems.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Modoc County Environmental Health required to verify: 1) Specific grading/scoring system used 2) Inspection frequency schedule 3) Fire department contact and commercial kitchen fire safety requirements 4) Specific local ordinances beyond state code 5) Risk-based inspection categories",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:25:18.616117+00:00",
+    "duration_seconds": 33.214951,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 153496,
+    "output_tokens": 1185,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:24:45.401166+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "jurisdiction_name": "San Benito County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "San Benito County Health and Human Services Agency - Environmental Health",
+  "department_url": "https://hhsa.sanbenitocountyca.gov/environmental-health-2-2/",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Unable to verify specific grading system from available sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unknown - not specified in available documents",
+    "risk_categories": null,
+    "reinspection_trigger": "Unknown",
+    "public_disclosure": "Unknown"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unknown - likely San Benito County Fire Department or local fire districts",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC)",
+    "state_vs_local_authority": "County conducts inspections under California authority",
+    "local_ordinances": "Must comply with fire, building, and zoning codes per CRFC 113715",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card (implied)"
+    ]
+  },
+  "data_sources": [
+    "https://hhsa.sanbenitocountyca.gov/environmental-health-2-2/",
+    "https://hhsa.sanbenitocountyca.gov/wp-content/uploads/2025/07/Food-Facility-Plan-Check-Application.pdf",
+    "https://hhsa.sanbenitocountyca.gov/wp-content/uploads/2025/08/Microenterprise-Home-Kitchen-Operation-Application.pdf"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Very limited information available on official websites. No specific grading system documentation found. Only plan check application and MHKO documents located.",
+  "needs_manual_verification": true,
+  "verification_notes": "Requires direct contact with San Benito County Environmental Health Department to verify inspection grading system, frequency, and procedures. Website lacks detailed information about food facility inspection protocols and scoring systems.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:19:14.024435+00:00",
+    "duration_seconds": 48.865154,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 124192,
+    "output_tokens": 1125,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:18:25.159281+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -11,14 +11,33 @@ interface LocationLeaderboard {
   total_temp_logs: number;
   total_checklists: number;
   total_documents: number;
-  compliance_score: number;
+  compliance_status: string;
   total_points: number;
 }
 
+function getComplianceStatus(locationName: string): string {
+  switch (locationName) {
+    case 'Downtown Kitchen': return 'Compliant';
+    case 'Airport Cafe': return 'Action Required';
+    case 'University Dining': return 'Unsatisfactory';
+    default: return 'Pending';
+  }
+}
+
+function getStatusColor(status: string): string {
+  switch (status) {
+    case 'Compliant': return '#22c55e';
+    case 'Satisfactory': return '#22c55e';
+    case 'Action Required': return '#f59e0b';
+    case 'Unsatisfactory': return '#ef4444';
+    default: return '#6b7280';
+  }
+}
+
 const DEMO_LEADERBOARD: LocationLeaderboard[] = [
-  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_score: 92, total_points: 4520 },
-  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_score: 70, total_points: 3640 },
-  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_score: 54, total_points: 2285 },
+  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_status: 'Compliant', total_points: 4520 },
+  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_status: 'Action Required', total_points: 3640 },
+  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_status: 'Unsatisfactory', total_points: 2285 },
 ];
 
 function HorizontalBar({ label, value, max, color, suffix }: { label: string; value: number; max: number; color: string; suffix?: string }) {
@@ -98,16 +117,19 @@ export function Leaderboard() {
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {(() => {
-            const avgScore = locations.length > 0 ? Math.round(locations.reduce((sum, l) => sum + l.compliance_score, 0) / locations.length) : 0;
-            const avgColor = avgScore >= 90 ? '#22c55e' : avgScore >= 75 ? '#eab308' : avgScore >= 60 ? '#f59e0b' : '#ef4444';
+            // Show the best status across locations
+            const hasUnsatisfactory = locations.some(l => l.compliance_status === 'Unsatisfactory');
+            const hasActionRequired = locations.some(l => l.compliance_status === 'Action Required');
+            const overallStatus = hasUnsatisfactory ? 'Action Required' : hasActionRequired ? 'Action Required' : 'Compliant';
+            const statusColor = getStatusColor(overallStatus);
             return (
-              <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${avgColor}` }}>
+              <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${statusColor}` }}>
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <TrendingUp className="h-4 w-4" style={{ color: avgColor }} />
-                  <span className="text-sm text-gray-500 font-medium">Avg Compliance</span>
+                  <TrendingUp className="h-4 w-4" style={{ color: statusColor }} />
+                  <span className="text-sm text-gray-500 font-medium">Overall Status</span>
                 </div>
-                <div className="text-3xl font-bold text-center" style={{ color: avgColor }}>
-                  {avgScore}
+                <div className="text-lg font-bold text-center" style={{ color: statusColor }}>
+                  {overallStatus}
                 </div>
               </div>
             );
@@ -154,7 +176,7 @@ export function Leaderboard() {
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: 500, color: '#111827' }}>{location.location_name}</div>
                       <div style={{ fontSize: '14px', color: '#6b7280' }}>
-                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_score} compliance
+                        {location.total_temp_logs} logs · {location.total_checklists} checklists · {location.compliance_status}
                       </div>
                     </div>
                   </div>
@@ -171,24 +193,23 @@ export function Leaderboard() {
         {/* Two side-by-side charts */}
         {locations.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            {/* Compliance Scores Chart */}
+            {/* Compliance Status */}
             <div style={{ background: 'white', borderRadius: '12px', padding: '24px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Compliance Score</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#111827', marginBottom: '20px' }}>Compliance Status</h3>
               {locations.map((loc) => (
-                <HorizontalBar
-                  key={loc.location_id}
-                  label={loc.location_name}
-                  value={loc.compliance_score}
-                  max={100}
-                  color={loc.compliance_score >= 90 ? '#22c55e' : loc.compliance_score >= 75 ? '#eab308' : loc.compliance_score >= 60 ? '#f59e0b' : '#ef4444'}
-                  suffix="%"
-                />
+                <div key={loc.location_id} style={{ marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '14px', color: '#374151', fontWeight: 500 }}>{loc.location_name}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: getStatusColor(loc.compliance_status), padding: '1px 10px', borderRadius: '12px', backgroundColor: loc.compliance_status === 'Compliant' ? '#f0fdf4' : loc.compliance_status === 'Action Required' ? '#fffbeb' : '#fef2f2' }}>
+                      {loc.compliance_status}
+                    </span>
+                  </div>
+                </div>
               ))}
               <div style={{ display: 'flex', gap: '16px', marginTop: '16px', fontSize: '11px', color: '#6b7280' }}>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#22c55e', marginRight: '4px' }} />90+</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#eab308', marginRight: '4px' }} />75-89</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#f59e0b', marginRight: '4px' }} />60-74</span>
-                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ef4444', marginRight: '4px' }} />&lt;60</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#22c55e', marginRight: '4px' }} />Compliant</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#f59e0b', marginRight: '4px' }} />Action Required</span>
+                <span><span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '2px', backgroundColor: '#ef4444', marginRight: '4px' }} />Unsatisfactory</span>
               </div>
             </div>
 
@@ -251,7 +272,7 @@ export function Leaderboard() {
                 <Star className="h-8 w-8" style={{ color: '#9ca3af' }} />
               </div>
               <h4 style={{ fontWeight: 700, color: '#9ca3af', marginBottom: '4px' }}>Gold Standard</h4>
-              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>90%+ compliance score for 90 days</p>
+              <p style={{ fontSize: '13px', color: '#9ca3af', marginBottom: '8px' }}>Compliant status maintained for 90 days</p>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#e5e7eb', padding: '3px 10px', borderRadius: '4px' }}>LOCKED</span>
             </div>
           </div>

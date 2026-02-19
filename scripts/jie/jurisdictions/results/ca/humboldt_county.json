@@ -1,0 +1,64 @@
+{
+  "jurisdiction_name": "Humboldt County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Humboldt County Department of Health and Human Services Division of Environmental Health",
+  "department_url": "https://humboldtgov.org/564/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system not definitively identified in official sources - violations are categorized as Critical Risk Factors (1-24), Major Violations, and Minor Violations, but specific scoring/grading methodology not found",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based inspections occurring 1-3 times per year depending on facility type - DEH performs 1,400-1,500 routine inspections annually",
+    "risk_categories": null,
+    "reinspection_trigger": "Non-routine inspections occur as needed, complaint-driven or at owner request",
+    "public_disclosure": "Inspection reports available online within one week of inspection date with up to 1 year of history - available through online database and at physical locations"
+  },
+  "fire_safety_authority": {
+    "department_name": "Local Fire Marshal/Authority Having Jurisdiction (AHJ)",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood fire suppression systems required per NFPA 17A standard - semi-annual inspections required",
+    "inspection_frequency": "Every 6 months per NFPA 96 standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - became effective July 1, 2007",
+    "state_vs_local_authority": "County-level inspections conducted by Humboldt County Division of Environmental Health - excludes Ferndale city limits and tribal lands",
+    "local_ordinances": "Follows state CalCode requirements - construction plans review required through Environmental Health",
+    "permit_types": [
+      "Health Permit",
+      "Food Safety Manager Certification (required per CalCode 113947.1)"
+    ]
+  },
+  "data_sources": [
+    "https://humboldtgov.org/696/Retail-Food-Facility-Safety",
+    "https://humboldtgov.org/564/Environmental-Health",
+    "https://humboldtonline.envisionconnect.com/PressAgent/PressAgentSearch/3f9318c1-b7df-4a5e-a616-aae000c72561"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Clear information available on inspection frequency, food code basis, and department structure. However, specific grading methodology (letter grades vs numerical scores vs pass/fail) could not be definitively determined from official sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Requires manual verification of: 1) Specific grading system methodology (A/B/C grades vs numerical scoring), 2) Exact point deduction system if numerical, 3) Grade posting requirements, 4) Re-inspection triggers for poor grades, 5) Specific fire department inspection requirements for commercial kitchens in Humboldt County",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:32:51.872987+00:00",
+    "duration_seconds": 33.146059,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 98007,
+    "output_tokens": 1162,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:32:18.726928+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "jurisdiction_name": "Kern County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Kern County Public Health Services Department, Environmental Health Division",
+  "department_url": "https://www.kernpublichealth.com/permitting-compliance/food",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "100-point deduction system with letter grades (A/B/C) and closure below 75 points. Each inspection starts with 100 points and violations deduct points (major: 5 points, minor: 3 points, non-critical: 1 point).",
+    "letter_grades": [
+      "A",
+      "B",
+      "C"
+    ],
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": 75,
+    "grade_thresholds": {
+      "A": {
+        "min": 90,
+        "max": 100
+      },
+      "B": {
+        "min": 80,
+        "max": 89
+      },
+      "C": {
+        "min": 75,
+        "max": 79
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Risk-based: Low-risk 1x/year, medium-risk 2x/year, high-risk 3x/year",
+    "risk_categories": [
+      "High",
+      "Medium",
+      "Low"
+    ],
+    "reinspection_trigger": "B and C grades can request rescore inspection; mandatory closure and reinspection for scores below 75",
+    "public_disclosure": "Letter grade cards must be posted conspicuously in facility windows during all hours of operation; inspection reports available for public review"
+  },
+  "fire_safety_authority": {
+    "department_name": "Kern County Fire Department - Fire Prevention Division",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial Fire Suppression Hood Systems require permits and inspections",
+    "inspection_frequency": "Annual fire and life safety inspections"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) based on FDA Food Code",
+    "state_vs_local_authority": "County conducts inspections - Kern County Environmental Health Division performs all food facility inspections",
+    "local_ordinances": "Chapter 8.58 of Kern County Code establishes grading ordinance; implemented in 2007",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card",
+      "Certified Food Safety Manager"
+    ]
+  },
+  "data_sources": [
+    "https://www.kernpublichealth.com/permitting-compliance/food/restaurants-markets-kitchens",
+    "https://www.naccho.org/uploads/card-images/environmental-health/casestudy_retailfoodinspectionscoring_kernco.pdf",
+    "https://bakersfield.municipal.codes/Code/8.04.030",
+    "https://kerncountyfire.org/fire-prevention/building-codes/"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Comprehensive official documentation found including NACCHO case study with detailed grading system information, official Kern County health department website, and municipal code references. Letter grading system verified with specific point values and thresholds.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key aspects verified through official sources including the detailed NACCHO case study specifically examining Kern County's food facility grading ordinance and official county websites.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:49:09.630838+00:00",
+    "duration_seconds": 30.670089,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 91283,
+    "output_tokens": 1094,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:48:38.960749+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

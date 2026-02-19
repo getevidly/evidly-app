@@ -1,0 +1,88 @@
+{
+  "jurisdiction_name": "San Bernardino County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "San Bernardino County Department of Public Health, Division of Environmental Health Services",
+  "department_url": "https://ehs.sbcounty.gov/",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Uses both numerical scores (0-100) and letter grades (A/B/C). Points are subtracted from 100 based on violations. Critical violations deduct 4 points, minor violations deduct 1-3 points.",
+    "letter_grades": [
+      "A",
+      "B",
+      "C"
+    ],
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": 70,
+    "grade_thresholds": {
+      "A": {
+        "min": 90,
+        "max": 100
+      },
+      "B": {
+        "min": 80,
+        "max": 89
+      },
+      "C": {
+        "min": 70,
+        "max": 79
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Two yearly inspections for permitted facilities, with risk-based scheduling for high-risk facilities",
+    "risk_categories": [
+      "High",
+      "Moderate",
+      "Low"
+    ],
+    "reinspection_trigger": "C grade (70-79) requires mandatory follow-up inspection. Facilities scoring below 70 are temporarily closed. High-risk facilities include those with C grades, multiple B grades, or repeated 4-point violations.",
+    "public_disclosure": "Letter grade cards must be posted in front window or approved location. Inspection reports available online since 2006 and on Yelp partnership."
+  },
+  "fire_safety_authority": {
+    "department_name": "San Bernardino County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Kitchen hood and duct extinguishing systems must be connected to fire alarm systems. Semi-annual inspections required per NFPA 96 standards.",
+    "inspection_frequency": "Semi-annual inspections for kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Cal Code) - part of California Health & Safety Code, modeled after FDA Food Code",
+    "state_vs_local_authority": "County conducts inspections. EHS is responsible for enforcing all food protection laws of the state within San Bernardino County per CA H&S Code \u00a7113713",
+    "local_ordinances": "San Bernardino County Code (SBCC) supplements state requirements. County has authority over wholesale food operations requiring state registration.",
+    "permit_types": [
+      "Health Permit from EHS",
+      "Food Handler Card (required within 14 days of hire)",
+      "Manager's Food Safety Certification"
+    ]
+  },
+  "data_sources": [
+    "https://ehs.sbcounty.gov/programs/food-facilities/",
+    "https://ehs.sbcounty.gov/wp-content/uploads/sites/97/Programs/Food/FoodFacilities/abc-retail-food-inspection-guide.pdf",
+    "https://www.sbsun.com/2022/09/02/unsafe-food-temperatures-bugs-san-bernardino-county-restaurant-inspections-aug-26-sept-1/",
+    "https://sbcfire.org/constructioninspections/",
+    "https://main.sbcounty.gov/2015/10/14/health-inspection-scores-now-available-on-yelp/"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Clear documentation of A/B/C grading system with specific score thresholds (A: 90-100, B: 80-89, C: 70-79). Detailed information on inspection frequency, risk categorization, and regulatory framework verified from multiple official sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official San Bernardino County sources including EHS website, inspection guides, county fire department, and local news coverage of inspection results.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:17:07.087789+00:00",
+    "duration_seconds": 38.840202,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 94978,
+    "output_tokens": 1411,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:16:28.247587+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

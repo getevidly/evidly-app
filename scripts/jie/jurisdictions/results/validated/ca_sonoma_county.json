@@ -1,0 +1,80 @@
+{
+  "jurisdiction_name": "Sonoma County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Sonoma County Department of Health Services, Environmental Health & Safety Section",
+  "department_url": "https://sonomacounty.gov/health-and-human-services/health-services/divisions/public-health/environmental-health",
+  "grading_system": {
+    "type": "pass_fail",
+    "description": "Color-coded placard system implemented June 1, 2016. Green for Pass (no more than 1 major violation correctable during inspection), Yellow for Conditional Pass (2+ major violations), Red for Closed (immediate health threat).",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "All food facilities inspected once or twice per year. Facilities with moderate/extensive food prep inspected twice yearly, minimal prep once yearly.",
+    "risk_categories": [
+      "Minimal",
+      "Moderate",
+      "Extensive"
+    ],
+    "reinspection_trigger": "Yellow or red placards require follow-up inspection. Major violations and permit suspensions trigger reinspections.",
+    "public_disclosure": "Placards posted visibly at facility entrance. Inspection reports available online within 72 hours. Color-coded search available on county website."
+  },
+  "fire_safety_authority": {
+    "department_name": "Permit Sonoma Fire Prevention and Hazardous Materials Division",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "NFPA 96 compliance required. Commercial kitchen fire suppression systems must be inspected every 6 months by licensed fire protection company.",
+    "inspection_frequency": "Semi-annual (every 6 months) by certified technician"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - Part of California Health and Safety Code, based on FDA Food Code",
+    "state_vs_local_authority": "County-level inspections conducted by Sonoma County Environmental Health specialists",
+    "local_ordinances": "Sonoma County Code supplements CalCode. Color-coded placard system is local ordinance approved March 1, 2016.",
+    "permit_types": [
+      "Food Facility Operating Permit",
+      "Food Safety Certification",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://sonomacounty.gov/health-and-human-services/health-services/divisions/public-health/environmental-health/programs-and-services/food-safety-program/food-facility-inspections",
+    "https://www.pressdemocrat.com/article/news/new-color-coded-placards-at-sonoma-county-restaurants-show-health-inspectio/",
+    "https://sonomacounty.gov/Main%20County%20Site/Health%20and%20Human%20Services/Health%20Services/Documents/_Documents/food-facility-field-inspection-guide.pdf",
+    "https://permitsonoma.org/divisions/firepreventionandhazmat"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Comprehensive information found from official Sonoma County sources and local news coverage. Grading system clearly documented as color-coded pass/fail rather than letter grades or numerical scores.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official county sources. CalCode basis confirmed. Fire safety requirements follow standard NFPA protocols.",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:28:20.963920+00:00",
+    "duration_seconds": 54.686275,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 107971,
+    "output_tokens": 1162,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:27:26.277645+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.205285+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 100,
+    "llm_confidence": "high",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

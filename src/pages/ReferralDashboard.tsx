@@ -354,7 +354,7 @@ export function ReferralDashboard() {
                           )}
                         </div>
                         <div className="flex items-center gap-3 text-xs text-gray-400 mt-0.5">
-                          <span>{org.complianceScore}% compliance</span>
+                          <span>{org.complianceScore >= 90 ? 'Compliant' : org.complianceScore >= 75 ? 'Satisfactory' : 'Action Required'}</span>
                           <span>{org.badgesEarned} badges</span>
                           <span>{org.successfulReferrals}/{org.totalReferrals} referrals</span>
                           {org.k2cDonations > 0 && <span>${org.k2cDonations} K2C</span>}

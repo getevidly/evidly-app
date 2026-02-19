@@ -48,13 +48,13 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   const canAccessHelp = usePermission('help_access');
 
   const roleLabels: Record<string, string> = {
-    owner_operator: t('topBar.ownerOperator'),
-    executive: t('topBar.executiveView'),
-    compliance_manager: t('topBar.complianceManager'),
-    chef: t('topBar.chef'),
-    facilities_manager: t('topBar.facilitiesManager'),
-    kitchen_manager: t('topBar.kitchenManager'),
-    kitchen_staff: t('topBar.kitchenStaff'),
+    owner_operator: 'Owner / Operator',
+    executive: 'Executive',
+    compliance_manager: 'Compliance Manager',
+    chef: 'Chef',
+    facilities_manager: 'Facilities Manager',
+    kitchen_manager: 'Kitchen Manager',
+    kitchen_staff: 'Kitchen Staff',
   };
 
   const handleChangePassword = () => {

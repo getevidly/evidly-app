@@ -1,0 +1,65 @@
+{
+  "jurisdiction_name": "Calaveras County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Calaveras County Environmental Management Agency (EMA) - Environmental Health Division",
+  "department_url": "https://ema.calaverasgov.us/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Unable to verify specific grading/scoring system used by Calaveras County. No official documentation found showing letter grades, numerical scores, or other specific grading methodology.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unable to verify specific inspection frequency from official sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Re-inspection fees are charged for violations requiring follow-up, temporary food facilities subject to re-inspection and/or closure if requirements not met at initial inspection",
+    "public_disclosure": "Unable to verify public disclosure requirements from available sources"
+  },
+  "fire_safety_authority": {
+    "department_name": "CAL FIRE (California Department of Forestry and Fire Protection) Tuolumne-Calaveras Unit and local fire departments",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems required per NFPA 96, inspected every 6 months by licensed fire protection companies per industry standards",
+    "inspection_frequency": "Semi-annual (every 6 months) per NFPA 96 requirements"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - referenced in temporary food facility applications",
+    "state_vs_local_authority": "County level - Calaveras County Environmental Management Agency Environmental Health Division conducts inspections",
+    "local_ordinances": "Unable to verify specific local ordinances beyond state CalCode requirements",
+    "permit_types": [
+      "Health Permit",
+      "Temporary Food Facility Permit"
+    ]
+  },
+  "data_sources": [
+    "https://ema.calaverasgov.us/Environmental-Health/Food-Facility-Program",
+    "https://visitmurphys.com/wp-content/uploads/2022/12/Temporary-Food-Facility-Application.pdf",
+    "https://www.cdph.ca.gov/Programs/CEH/DRSEM/CDPH%20Document%20Library/EMB/REHS/EH_Dept_Contact_List_070124_ADA.pdf",
+    "https://ema.calaverasgov.us/"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Official Calaveras County EMA website pages have minimal content loading, preventing access to detailed food facility inspection procedures, grading systems, and specific requirements. Contact information verified (209) 754-6399, address at 891 Mountain Ranch Road, San Andreas, CA 95249. Fire safety requirements based on standard California NFPA requirements rather than county-specific documentation.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Calaveras County Environmental Health Department at (209) 754-6399 required to verify: 1) Specific grading/scoring system used for food facility inspections, 2) Inspection frequency and risk-based scheduling, 3) Public disclosure requirements, 4) Local ordinances beyond CalCode, 5) Specific fire department(s) conducting commercial kitchen inspections, 6) Complete permit requirements and fees. Website technical issues prevent access to detailed program information.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:12:05.346706+00:00",
+    "duration_seconds": 45.167671,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 157886,
+    "output_tokens": 1606,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:11:20.179035+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

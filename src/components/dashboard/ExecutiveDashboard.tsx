@@ -22,7 +22,7 @@ import {
   DEMO_ORG,
   DEMO_WEEKLY_ACTIVITY,
 } from '../../data/demoData';
-import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, getGreeting, DEMO_ROLE_NAMES } from './shared/constants';
+import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
@@ -394,7 +394,7 @@ export default function ExecutiveDashboard() {
       case 'tabbedDetails':
         return (
           <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-            <TabbedDetailSection tabs={tabbedTabs} defaultTab="trend" />
+            <TabbedDetailSection tabs={tabbedTabs} defaultTab="keyMetrics" />
           </div>
         );
       case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />;
@@ -410,10 +410,9 @@ export default function ExecutiveDashboard() {
       {/* HERO (shared DashboardHero + exec-specific children)         */}
       {/* ============================================================ */}
       <DashboardHero
-        greeting={getGreeting()}
         firstName={DEMO_ROLE_NAMES.executive.firstName}
         orgName={companyName || DEMO_ORG.name}
-        subtitle="3 locations &middot; California"
+        subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
         onSubtitleClick={() => navigate('/org-hierarchy')}
       >
         <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />

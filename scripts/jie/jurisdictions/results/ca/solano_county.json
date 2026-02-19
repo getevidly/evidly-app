@@ -1,0 +1,65 @@
+{
+  "jurisdiction_name": "Solano County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Solano County Department of Resource Management - Environmental Health Division",
+  "department_url": "https://www.solanocounty.gov/government/resource-management/environmental-health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Cannot definitively verify grading system type - no clear evidence of letter grades, numerical scores, or pass/fail system found on official county sources. California counties have varying systems, but Solano County's specific methodology is not clearly documented in available resources.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based inspection program with annual routine inspections per state statute",
+    "risk_categories": null,
+    "reinspection_trigger": "Complaint investigations or suspected health hazards",
+    "public_disclosure": "Inspection reports for food facilities from October 2021 to present available through public records request - results from last two inspections for all facilities tracked"
+  },
+  "fire_safety_authority": {
+    "department_name": "Not specifically identified - likely local fire departments within Solano County cities",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standard - 6 month intervals for commercial kitchen fire suppression systems",
+    "inspection_frequency": "Semi-annual (every 6 months)"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode)",
+    "state_vs_local_authority": "County-level authority - Solano County EH Division conducts inspections for cities of Benicia, Dixon, Fairfield, Rio Vista, Suisun City, Vacaville, Vallejo, and unincorporated areas",
+    "local_ordinances": "Not specifically documented in available sources",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Certificate requirements per state law"
+    ]
+  },
+  "data_sources": [
+    "https://www.solanocounty.gov/government/resource-management/environmental-health",
+    "https://www.solanocounty.com/depts/rm/environmental_health/consumer/food_program/risk_based_inspection_program.asp",
+    "https://www.solanocounty.com/depts/rm/food_facility_faq.asp",
+    "https://solanocounty.com/depts/rm/food_facility/"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Unable to find specific documentation of Solano County's food facility grading/scoring methodology despite searching official county websites. While program structure and regulatory framework are documented, the actual grading system (letter grades vs. numerical scores vs. pass/fail) is not clearly specified in available public sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Recommend direct contact with Solano County Environmental Health Division at (707) 784-6765 to verify: 1) Specific grading system methodology, 2) Whether they use letter grades, numerical scores, or pass/fail, 3) Public posting requirements for grades/scores, 4) Current online inspection report access system. County appears to have inspection results available but grading system details not published online.",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:17:25.114438+00:00",
+    "duration_seconds": 75.853044,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 159833,
+    "output_tokens": 1247,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:16:09.261394+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

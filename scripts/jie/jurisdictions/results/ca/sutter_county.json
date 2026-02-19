@@ -1,0 +1,65 @@
+{
+  "jurisdiction_name": "Sutter County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Sutter County Development Services Department - Environmental Health Division",
+  "department_url": "https://www.suttercounty.org/government/county-departments/development-services/environmental-health",
+  "grading_system": {
+    "type": "other",
+    "description": "Color-coded placard system with Green (Pass), Yellow (Conditional Pass), and Red (Closure) placards based on CDC critical risk factors and major violations. No letter grades or numerical scores assigned by the county.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Routine inspections conducted on approximately 500 restaurants per year",
+    "risk_categories": null,
+    "reinspection_trigger": "Yellow Conditional Pass placard may trigger reinspection within 3 business days to ensure major violations remain corrected",
+    "public_disclosure": "Inspection reports posted online and placards displayed at establishments. Facilities required to keep latest inspection report on-site and make available to customers upon request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Sutter County Fire Department",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) - part of California Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections conducted by Sutter County Environmental Health Division",
+    "local_ordinances": "Unable to verify specific local ordinances beyond state code requirements",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://www.suttercounty.org/government/county-departments/development-services/environmental-health",
+    "https://www.suttercounty.org/government/county-departments/development-services/environmental-health/food-facility-inspection-reports",
+    "https://www.appeal-democrat.com/news/a-glimpse-into-sutter-county-inspections/article_fa483970-3f24-11ef-b666-2f4bae8bcde0.html",
+    "https://www.suttercounty.org/government/county-departments/office-of-emergency-services/sutter-county-fire-department"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Verified color-coded placarding system and basic inspection framework through official county sources and local news reports. However, specific details about fire safety inspection requirements, inspection frequency schedules, and detailed local ordinances could not be fully verified.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to verify: 1) Specific fire department hood/suppression system inspection requirements and frequency, 2) Detailed inspection scheduling and risk-based frequency, 3) Local ordinances beyond state code, 4) Complete permit fee structure and requirements",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:17:22.547383+00:00",
+    "duration_seconds": 31.510903,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 87121,
+    "output_tokens": 1052,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:16:51.035806+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

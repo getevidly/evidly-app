@@ -1,0 +1,80 @@
+{
+  "jurisdiction_name": "Imperial County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Imperial County Public Health Department - Environmental Health Division",
+  "department_url": "https://www.icphd.org/environmental-health/food",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Uses letter grades A, B, C based on numerical score (100-point system with deductions). Scores below 70 result in closure without grade issuance.",
+    "letter_grades": [
+      "A",
+      "B",
+      "C"
+    ],
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": 70,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Routine inspections conducted by Environmental Health Specialists, with annual permit renewal required by December 31st",
+    "risk_categories": null,
+    "reinspection_trigger": "C grade facilities must request written re-inspection within 30 days or face closure. B grade facilities can request one re-score inspection per calendar year with fee.",
+    "public_disclosure": "Letter Grade Cards must be posted in easily visible location, inspection reports available on-site upon request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Imperial County Fire Department",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems required per California Fire Code and NFPA standards",
+    "inspection_frequency": "Semi-annual (every 6 months) per NFPA 96 requirements"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - Part of California Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections conducted by Imperial County Environmental Health Division",
+    "local_ordinances": "Imperial County implements California Retail Food Code with local enforcement through Environmental Health Division",
+    "permit_types": [
+      "Food Facility Permit",
+      "California Food Handler Cards",
+      "Food Safety Manager Certification"
+    ]
+  },
+  "data_sources": [
+    "https://www.icphd.org/assets/Environmental-Health/Food/Food-Inspection-and-Grading-Guide-10.12-23.pdf",
+    "https://www.icphd.org/environmental-health/food",
+    "https://firedept.imperialcounty.org/",
+    "http://inspections.icphd.org/facilities"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Letter grade system (A/B/C) is confirmed from official Imperial County documents. Specific numerical grade thresholds are mentioned but not fully detailed in the available documentation. Fire inspection requirements are verified through Imperial County Fire Department sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to verify exact numerical score thresholds for A/B/C grades. The Imperial County inspection guide mentions the grading system but specific score ranges for each letter grade are not explicitly stated in the documents found.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:39:03.787042+00:00",
+    "duration_seconds": 82.894971,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 159250,
+    "output_tokens": 1231,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:37:40.892071+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.179535+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 95,
+    "llm_confidence": "medium",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

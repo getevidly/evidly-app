@@ -52,7 +52,6 @@ export function PageExplanation() {
         <button
           onClick={() => setShow(true)}
           className="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          title="What is this page?"
         >
           <Info className="h-3.5 w-3.5" />
         </button>

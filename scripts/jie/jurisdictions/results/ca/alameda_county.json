@@ -1,0 +1,75 @@
+{
+  "jurisdiction_name": "Alameda County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Alameda County Department of Environmental Health",
+  "department_url": "https://deh.acgov.org/",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Numerical scoring system (0-100 points) with color-coded placard display. Each inspection starts with 100 points, violations deduct points based on food safety risk level. Major CDC Risk Factor violations are 2-4 points each, minor violations are 1 point each.",
+    "letter_grades": null,
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Green (Pass)": {
+        "description": "Pass score"
+      },
+      "Yellow (Conditional Pass)": {
+        "description": "Conditional pass score"
+      },
+      "Red (Closed)": {
+        "description": "Failed inspection - facility closed"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Risk-based routine inspections conducted on unannounced basis, frequency determined by facility risk assessment",
+    "risk_categories": null,
+    "reinspection_trigger": "Conditional pass requires reinspection; imminent health hazards require immediate closure and reinspection for reopening",
+    "public_disclosure": "Results posted online at Alameda County Department of Environmental Health Online Inspection Results; placards displayed at facilities"
+  },
+  "fire_safety_authority": {
+    "department_name": "Alameda County Fire Department - Fire Prevention Bureau",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspection and maintenance by qualified professionals per NFPA 96",
+    "inspection_frequency": "Semi-annual (every 6 months) for kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code 2022",
+    "state_vs_local_authority": "County level inspections conducted by Alameda County DEH (excludes City of Berkeley which has its own health department)",
+    "local_ordinances": "Alameda County DEH Grading System Ordinance and Penalty Schedule provides local implementation framework",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Certification"
+    ]
+  },
+  "data_sources": [
+    "https://deh.acgov.org/operations/food-safety.page",
+    "https://deh.acgov.org/operations-assets/docs/foodsafety/GRADING%20POLICY.pdf",
+    "https://deh.acgov.org/operations-assets/docs/foodsafety/CALIFORNIA%20RETAIL%20FOOD%20CODE%202022.pdf",
+    "https://fire.acgov.org/fire-prevention/"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Found detailed official documentation of the grading system, scoring methodology, and placard system from Alameda County DEH. Verified hybrid numerical/color-coded placard system with specific point deduction structure. Fire department information confirmed through official ACFD website.",
+  "needs_manual_verification": false,
+  "verification_notes": "All information verified from official Alameda County sources. System uses 100-point scoring with color-coded placards (Green=Pass, Yellow=Conditional Pass, Red=Closed). Major violations worth 2-4 points, minor violations worth 1 point each.",
+  "_meta": {
+    "crawled_at": "2026-02-19T03:39:14.381832+00:00",
+    "duration_seconds": 35.304197,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 125965,
+    "output_tokens": 1196,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T03:38:39.076636+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

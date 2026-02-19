@@ -1,0 +1,77 @@
+{
+  "jurisdiction_name": "Trinity County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Trinity County Environmental Health Division",
+  "department_url": "https://www.trinitycounty.org/255/Environmental-Health-Division",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Trinity County publishes food facility inspection reports but specific grading methodology not found in official sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Not specified in available sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Reinspection fees charged for subsequent reinspections unless acceptable corrective time schedule submitted and approved",
+    "public_disclosure": "Trinity County publishes food facility inspections online for public viewing with inspection reports available by facility"
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple local volunteer fire departments serve different areas - no central county fire authority identified",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode)",
+    "state_vs_local_authority": "County level - Trinity County Environmental Health Division conducts inspections",
+    "local_ordinances": "Must coordinate with Trinity County Planning Division and Building Division for permits",
+    "permit_types": [
+      "Food Facility Permit",
+      "Food Handler Certification"
+    ]
+  },
+  "data_sources": [
+    "https://www.trinitycounty.org/255/Environmental-Health-Division",
+    "https://www.trinitycounty.org/488/Food-Facility-Inspections",
+    "https://www.trinitycounty.org/486/Food-Facilities",
+    "https://www.trinitycounty.org/DocumentCenter/View/1597/Our-Inspection-Form-PDF"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "While Trinity County clearly operates food facility inspections and publishes reports, the specific grading methodology (letter grades, numerical scores, pass/fail) is not detailed in available official sources. Fire department authority structure unclear as county appears to rely on multiple volunteer fire departments rather than single AHJ.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Trinity County Environmental Health Division needed to confirm: 1) Exact grading system methodology, 2) Inspection frequency and risk-based scheduling, 3) Fire safety inspection authority and requirements for commercial kitchens, 4) Specific local ordinances beyond state food code",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:28:16.777684+00:00",
+    "duration_seconds": 42.080551,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 92056,
+    "output_tokens": 1035,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:27:34.697133+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.209286+00:00",
+    "computed_confidence": "low",
+    "computed_confidence_score": 42,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 1,
+    "warnings": [
+      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+    ],
+    "import_eligible": true
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "jurisdiction_name": "Mono County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Mono County Environmental Health Department",
+  "department_url": "https://monocounty.ca.gov/environmental-health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Mono County follows California Retail Food Code requirements but specific grading system not publicly detailed on county website",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Based on risk assessment - routine inspections conducted at unannounced intervals",
+    "risk_categories": null,
+    "reinspection_trigger": "Violations requiring correction or follow-up verification",
+    "public_disclosure": "Inspection reports must be available upon request per California law but posting requirements not specified"
+  },
+  "fire_safety_authority": {
+    "department_name": "Local fire department/authority having jurisdiction - specific department not identified",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial cooking appliances producing grease vapors require UL 300 compliant fire suppression systems with 6-month inspections per California Fire Code",
+    "inspection_frequency": "Every 6 months for commercial kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - portion of California Health and Safety Code",
+    "state_vs_local_authority": "County conducts inspections - Mono County Environmental Health Department responsible for routine inspections and permits",
+    "local_ordinances": "Not specified beyond state CalCode requirements",
+    "permit_types": [
+      "Health Permit",
+      "Food Safety Manager Certification",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://monocounty.ca.gov/environmental-health/page/food",
+    "https://monohealth.com/environmental-health/page/food",
+    "https://monocounty.ca.gov/environmental-health/page/food-safety-certification"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Mono County's website provides basic program information but lacks specific details about grading system, inspection frequency schedules, risk categorization, and specific fire department authority. Most information inferred from general California practices.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Mono County Environmental Health Department (760) 924-1830 needed to verify: 1) Specific grading/scoring system used, 2) Inspection frequency by risk category, 3) Fire department jurisdiction for commercial kitchen systems, 4) Public posting requirements for inspection results, 5) Any local ordinances beyond CalCode",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:25:16.632569+00:00",
+    "duration_seconds": 31.640437,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 150274,
+    "output_tokens": 1038,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:24:44.992132+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.189039+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 60,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

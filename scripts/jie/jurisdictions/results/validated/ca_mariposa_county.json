@@ -1,0 +1,79 @@
+{
+  "jurisdiction_name": "Mariposa County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Mariposa County Environmental Health Division",
+  "department_url": "https://www.mariposacounty.org/235/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Unable to verify the specific grading or scoring system used for food facility inspections",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based inspections with B&B facilities serving full breakfast requiring at least twice annually",
+    "risk_categories": null,
+    "reinspection_trigger": "Not specified in available documentation",
+    "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Mariposa County Fire Department",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standards (industry standard)",
+    "inspection_frequency": "Semi-annual for commercial kitchen hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC) - California Health and Safety Code Division 104, Part 7",
+    "state_vs_local_authority": "County-level inspections conducted by Environmental Health Division",
+    "local_ordinances": "Mariposa County specific requirements for B&Bs, cottage food operations, and catering operations",
+    "permit_types": [
+      "Food Facility Permit",
+      "California Food Handler Card",
+      "Food Manager Certificate"
+    ]
+  },
+  "data_sources": [
+    "https://www.mariposacounty.org/235/Environmental-Health",
+    "https://www.mariposacounty.org/447/Food-Facilities",
+    "https://mariposacounty.gov/DocumentCenter/View/89347/HHSA-Catering-Requirements-V-20-08-03-2021",
+    "https://mariposacounty.gov/DocumentCenter/View/97027/HHSA-Mobile-Food-Facility-Guidelines-Version-20-12-01-2023",
+    "https://www.mariposacounty.gov/76/Fire-Department"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Could not locate specific grading system information on official website or documents. Found general inspection program information but no scoring methodology.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to contact Mariposa County Environmental Health Division directly to determine specific grading methodology, inspection scoring system, risk categorization details, and whether inspection results are published online.",
+  "_meta": {
+    "crawled_at": "2026-02-19T02:27:40.868036+00:00",
+    "duration_seconds": 32,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T02:27:40.868036+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.185872+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 47,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 1,
+    "warnings": [
+      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+    ],
+    "import_eligible": true
+  }
+}

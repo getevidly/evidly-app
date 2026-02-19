@@ -1,0 +1,66 @@
+{
+  "jurisdiction_name": "Siskiyou County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Siskiyou County Environmental Health Division",
+  "department_url": "https://www.siskiyoucounty.gov/environmentalhealth",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Siskiyou County conducts routine food facility inspections but does not appear to use a letter grading or numerical scoring system for public display. California law does not require counties to use grading systems - some counties inform the public through different methods.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Routine unannounced inspections conducted by Registered Environmental Health Specialists (REHS)",
+    "risk_categories": null,
+    "reinspection_trigger": "Violations noted during routine inspections require follow-up verification",
+    "public_disclosure": "The two most recent routine inspections and any subsequent reinspections are posted online. Inspection reports are available for public review upon request as required by California Public Records Act."
+  },
+  "fire_safety_authority": {
+    "department_name": "Not specified - likely local fire authority or CAL FIRE",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "NFPA 96 standards apply - commercial kitchen hood fire suppression systems require semi-annual inspections by licensed fire protection companies",
+    "inspection_frequency": "Every 6 months per NFPA standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code beginning with section 113700",
+    "state_vs_local_authority": "County level inspections - Siskiyou County Environmental Health Division conducts inspections under state-delegated authority",
+    "local_ordinances": "Not specified beyond state CalCode requirements",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Training"
+    ]
+  },
+  "data_sources": [
+    "https://www.siskiyoucounty.gov/environmentalhealth/facility-inspection-reports",
+    "https://www.siskiyoucounty.gov/environmentalhealth/page/food",
+    "https://www.siskiyoucounty.gov/environmentalhealth",
+    "https://www.sandiegocounty.gov/content/sdc/deh/fhd/food/food.html",
+    "https://www.slocounty.ca.gov/departments/health-agency/public-health/environmental-health-services/all-environmental-health-services/food-facilities-and-operations/food-program-frequently-asked-questions"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "While basic inspection program information was verified from official Siskiyou County sources, specific grading methodology, scoring systems, and detailed operational procedures were not found. The county appears to follow standard California practices but does not publicly post letter grades like some other counties.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Siskiyou County Environmental Health Division (530-841-2100) is recommended to verify: 1) Specific grading or scoring methodology if any, 2) Risk-based inspection frequency categories, 3) Local fire authority for hood system inspections, 4) Any local ordinances beyond state CalCode, 5) Specific permit requirements and fee structure.",
+  "_meta": {
+    "crawled_at": "2026-02-19T07:03:59.808573+00:00",
+    "duration_seconds": 74.238188,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 169078,
+    "output_tokens": 1358,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T07:02:45.570385+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "jurisdiction_name": "Nevada County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Nevada County Environmental Health Department",
+  "department_url": "https://www.nevadacountyca.gov/1470/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "No specific grading or scoring system details found on official Nevada County websites. System type could not be verified.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unknown - no specific frequency information found on official sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Unknown - specific reinspection criteria not found",
+    "public_disclosure": "Unknown - public disclosure requirements not specified on official sources"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unknown - specific fire authority not identified for Nevada County commercial kitchen inspections",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": "Semi-annual (every 6 months) inspection required per NFPA 17A standards for wet chemical fire suppression systems",
+    "inspection_frequency": "Semi-annual for fire suppression systems, but local fire authority not specifically identified"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CRFC)",
+    "state_vs_local_authority": "Nevada County Environmental Health Department conducts inspections at county level",
+    "local_ordinances": "Unknown - specific local ordinances beyond state food code not identified",
+    "permit_types": [
+      "Annual Environmental Health Permit to Operate",
+      "Plan Check permits for new/remodeled facilities"
+    ]
+  },
+  "data_sources": [
+    "https://www.nevadacountyca.gov/1470/Environmental-Health",
+    "https://www.nevadacountyca.gov/2131/Food-Facilities",
+    "https://www.nevadacountyca.gov/2806/Permits-and-Licenses"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "While official Nevada County Environmental Health Department website and food facility pages were found, specific details about grading systems, inspection frequencies, scoring methods, fire authority, and public disclosure requirements were not available in search results. Only basic regulatory framework information was verified.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Nevada County Environmental Health Department at (530) 265-1222 Option 3 is needed to verify: 1) Specific grading/scoring system used 2) Inspection frequency and risk-based scheduling 3) Fire safety inspection authority for commercial kitchens 4) Public disclosure requirements 5) Local ordinances beyond California Retail Food Code",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:50:56.945225+00:00",
+    "duration_seconds": 33.436461,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 131831,
+    "output_tokens": 1104,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:50:23.508764+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

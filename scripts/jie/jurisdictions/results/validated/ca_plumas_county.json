@@ -1,0 +1,75 @@
+{
+  "jurisdiction_name": "Plumas County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Plumas County Environmental Health Department",
+  "department_url": "https://www.plumascounty.us/174/Environmental-Health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "No grading system details found in official sources - unable to verify if letter grades, numerical scores, or pass/fail system is used",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Minimum of two (2) times a year for routine inspection",
+    "risk_categories": null,
+    "reinspection_trigger": "Serious violations trigger re-inspection date setup",
+    "public_disclosure": "Food inspection reports available for area food facilities - specific posting requirements not detailed"
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple local Fire Protection Districts and Community Service Districts - 14 total agencies",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood fire suppression systems must have inspections every six months by licensed fire protection company per NFPA 96",
+    "inspection_frequency": "Every six months"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Cal Code), effective January 2019",
+    "state_vs_local_authority": "County-level inspections conducted by Environmental Health Specialists",
+    "local_ordinances": "Not specified in available sources",
+    "permit_types": [
+      "Food Safety Certificate (5 years)",
+      "California Food Handler Card (required for all food prep/service employees)"
+    ]
+  },
+  "data_sources": [
+    "https://www.plumascounty.us/275/Food-Safety",
+    "https://www.plumascounty.us/371/Opening-a-Restaurant",
+    "https://www.plumascounty.us/174/Environmental-Health",
+    "https://www.plumasfirechiefs.org/fire-departments.html"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "While basic inspection frequency and food code basis are verified, critical details about grading methodology, scoring systems, and specific fire marshal authority are not available in official sources",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Plumas County Environmental Health at (530) 283-6355 needed to verify: 1) Specific grading/scoring system used 2) Letter grades vs numerical scores vs pass/fail 3) Inspection report posting requirements 4) Which specific fire districts have authority over commercial kitchen inspections 5) Local ordinances beyond state code",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:57:36.545414+00:00",
+    "duration_seconds": 86.213573,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 92576,
+    "output_tokens": 1049,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:56:10.331841+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.193206+00:00",
+    "computed_confidence": "medium",
+    "computed_confidence_score": 55,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

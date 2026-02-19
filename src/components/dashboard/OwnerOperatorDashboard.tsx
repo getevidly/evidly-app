@@ -24,7 +24,7 @@ import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { FireStatusBars } from '../shared/FireStatusBars';
-import { GOLD, NAVY, PAGE_BG, MUTED, BODY_TEXT, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, statusColor } from './shared/constants';
+import { GOLD, NAVY, PAGE_BG, MUTED, BODY_TEXT, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, statusColor, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
@@ -669,7 +669,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
-  const { companyName, firstName, isDemoMode } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
 
@@ -748,7 +748,7 @@ export default function OwnerOperatorDashboard() {
       {/* ============================================================ */}
       <div style={stagger(0)} className="px-4 sm:px-6 pt-4">
         <DashboardHero
-          firstName={firstName}
+          firstName={DEMO_ROLE_NAMES.owner_operator.firstName}
           orgName={companyName || DEMO_ORG.name}
           subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
           onSubtitleClick={() => navigate('/org-hierarchy')}

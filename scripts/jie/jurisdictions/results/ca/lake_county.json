@@ -1,0 +1,63 @@
+{
+  "jurisdiction_name": "Lake County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Lake County Environmental Health Department",
+  "department_url": "https://www.lakecountyca.gov/338/Food-Safety",
+  "grading_system": {
+    "type": "unknown",
+    "description": "No specific grading system verified from official sources. Lake County Environmental Health provides inspection reports but grading methodology not found.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based: restaurants inspected at least 3 times per year, larger grocery stores 2-3 times annually, low-risk facilities less frequently, with everyone receiving at least one inspection per year",
+    "risk_categories": null,
+    "reinspection_trigger": "Major critical violations must be corrected and may require follow-up inspection",
+    "public_disclosure": "Inspection reports available by location and name via PDF downloads on county website"
+  },
+  "fire_safety_authority": {
+    "department_name": "Lake County Fire Protection District and local fire departments",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (part of California Health and Safety Code)",
+    "state_vs_local_authority": "County level - Lake County Environmental Health personnel conduct all inspections and issue permits for retail food operations",
+    "local_ordinances": "No specific local ordinances identified beyond state code compliance",
+    "permit_types": [
+      "Environmental Health Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.lakecountyca.gov/338/Food-Safety",
+    "https://www.lakecountyca.gov/360/Food-Facility-Inspections",
+    "https://www.lakecountyca.gov/DocumentCenter/View/2914/California-Retail-Food-Code-PDF"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "No grading system (letter grades, numerical scores, or pass/fail) could be verified from official Lake County sources. Inspection frequency and violation reporting system confirmed, but specific grading methodology not found.",
+  "needs_manual_verification": true,
+  "verification_notes": "Manual verification needed to confirm: 1) Whether Lake County uses any grading system (A/B/C, numerical scores, pass/fail), 2) Specific fire department requirements for commercial kitchen hood systems and suppression systems, 3) Exact inspection scoring methodology and public disclosure requirements.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:03:28.476413+00:00",
+    "duration_seconds": 37.077968,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 160720,
+    "output_tokens": 1064,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:02:51.398445+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

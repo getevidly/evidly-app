@@ -1,0 +1,63 @@
+{
+  "jurisdiction_name": "Shasta County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Shasta County Environmental Health Division",
+  "department_url": "https://www.shastacounty.gov/environmental-health",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Grading system not specified in available documentation. County has online inspection results but no grading methodology detailed.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Multiple times per year based on facility risk assessment",
+    "risk_categories": null,
+    "reinspection_trigger": "Violations requiring correction",
+    "public_disclosure": "Online inspection results available through county website"
+  },
+  "fire_safety_authority": {
+    "department_name": "Unknown - not specified in available sources",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (Cal Code)",
+    "state_vs_local_authority": "County environmental health conducts inspections for all incorporated cities in Shasta County",
+    "local_ordinances": "County enforces state code plus local Shasta County ordinances",
+    "permit_types": [
+      "Health Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.shastacounty.gov/environmental-health",
+    "https://www.shastacounty.gov/environmental-health/page/food-safety-facility-inspections",
+    "https://www.shastacounty.gov/environmental-health/page/ehd-services"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Clear information found about department structure, legal authority (Cal Code), and inspection frequency, but specific grading methodology and fire safety requirements not detailed in available sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Need to verify: 1) Specific grading system used (letter grades, numerical scores, or pass/fail), 2) Fire department authority and commercial kitchen fire suppression inspection requirements, 3) Specific risk categories and inspection frequencies, 4) Grade posting/display requirements",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:55:43.935836+00:00",
+    "duration_seconds": 28.283942,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 127821,
+    "output_tokens": 923,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:55:15.651894+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

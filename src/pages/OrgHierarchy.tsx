@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
   Building2,
@@ -383,12 +382,11 @@ function collectLocations(node: OrgTreeNode): OrgTreeNode[] {
 // ── Main Page ────────────────────────────────────────────────
 
 export function OrgHierarchy() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const selectedId = searchParams.get('node') || '';
+  const [selectedId, setSelectedId] = useState('');
   const selectedNode = selectedId ? findTreeNode(orgTree, selectedId) : null;
 
   const handleSelect = (id: string) => {
-    setSearchParams({ node: id });
+    setSelectedId(id);
   };
 
   return (
@@ -412,10 +410,10 @@ export function OrgHierarchy() {
       </div>
 
       {/* Two-column layout */}
-      <div className="flex flex-col lg:flex-row gap-5">
-        {/* Left column — Tree (40%) */}
-        <div className="lg:w-[40%] flex-shrink-0">
-          <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[40%_1px_1fr] gap-5 items-stretch">
+        {/* Left column — Tree */}
+        <div className="min-h-[400px]">
+          <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-4 h-full">
             <h3 className="text-sm font-semibold text-white mb-3">Organization Tree</h3>
             <div className="space-y-0.5">
               <TreeNodeRow node={orgTree} selectedId={selectedId} onSelect={handleSelect} />
@@ -424,17 +422,17 @@ export function OrgHierarchy() {
         </div>
 
         {/* Divider (desktop) */}
-        <div className="hidden lg:block w-px bg-slate-700 flex-shrink-0" />
+        <div className="hidden lg:block bg-slate-700" />
 
-        {/* Right column — Detail (60%) */}
-        <div className="lg:flex-1 min-w-0">
-          <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-5">
+        {/* Right column — Detail */}
+        <div className="min-w-0 min-h-[400px]">
+          <div className="rounded-xl border border-slate-700 bg-slate-800/60 p-5 h-full">
             {selectedNode ? (
               selectedNode.type === 'location'
                 ? <LocationDetail node={selectedNode} />
                 : <RegionDetail node={selectedNode} />
             ) : (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center h-full text-center">
                 <Building2 className="h-10 w-10 text-slate-600 mb-3" />
                 <p className="text-slate-400 text-sm">Select a location or region to view details</p>
               </div>

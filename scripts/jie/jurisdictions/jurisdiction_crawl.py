@@ -102,6 +102,17 @@ async def crawl_jurisdiction(client, jurisdiction, semaphore, results_dir, max_r
                 for prefix in ["```json","```"]:
                     if cleaned.startswith(prefix): cleaned = cleaned[len(prefix):]
                 if cleaned.endswith("```"): cleaned = cleaned[:-3]
+                cleaned = cleaned.strip()
+                # Handle model adding text preamble before JSON
+                if cleaned and not cleaned.startswith("{"):
+                    brace_idx = cleaned.find("{")
+                    if brace_idx > 0:
+                        cleaned = cleaned[brace_idx:]
+                # Handle trailing text after JSON
+                if cleaned:
+                    last_brace = cleaned.rfind("}")
+                    if last_brace >= 0 and last_brace < len(cleaned) - 1:
+                        cleaned = cleaned[:last_brace+1]
                 result = json.loads(cleaned.strip())
                 if not isinstance(result, dict):
                     rec["error"]=f"Not a dict: {type(result).__name__}"; rec["error_type"]="invalid_structure"

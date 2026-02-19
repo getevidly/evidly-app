@@ -1,0 +1,79 @@
+{
+  "jurisdiction_name": "Glenn County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Glenn County Environmental Health Department - Planning & Community Development Services",
+  "department_url": "https://www.countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Glenn County does not appear to use a formal letter grading or numerical scoring system. They classify violations as Critical, Major, and Minor but no evidence found of A/B/C grades or numerical scores on inspection reports.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Unknown - no specific frequency information found for Glenn County",
+    "risk_categories": null,
+    "reinspection_trigger": "Critical violations must be corrected at time of inspection and may require follow-up inspection. Re-inspection not usually required for minor violations only.",
+    "public_disclosure": "Inspection reports posted online as scanned PDFs, updated every few weeks. Reports available since August 1, 2006."
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple fire protection districts serve Glenn County (Artois-Glenn, Orland, Hamilton City, Kanawha-Glenn, Ord, Glenn-Codora Fire Protection Districts)",
+    "hood_system_inspection_required": null,
+    "ansul_system_requirements": null,
+    "inspection_frequency": null
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - part of California Health and Safety Code, effective July 1, 2007",
+    "state_vs_local_authority": "County-level inspections conducted by Glenn County Environmental Health Department",
+    "local_ordinances": "Unknown - no specific local ordinances beyond state food code found",
+    "permit_types": [
+      "Food Facility Permit",
+      "California Food Handler Certificate",
+      "Mobile Food Facility (MFF) Permit",
+      "Cottage Food Operation Permit",
+      "Temporary Food Facility Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety",
+    "https://www.countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety/food-facility",
+    "https://countyofglenn.net/government/departments/planning-community-development-services/environmental-health/food-safety"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "Could not verify grading/scoring system, inspection frequencies, or specific fire safety authority requirements. Glenn County appears to use violation classification (Critical/Major/Minor) rather than grades or scores. Fire authority is fragmented across multiple fire protection districts.",
+  "needs_manual_verification": true,
+  "verification_notes": "Manual verification needed for: 1) Confirmation of no formal grading system vs. undisclosed grading system, 2) Specific inspection frequency schedules and risk-based criteria, 3) Which fire protection district has authority over commercial kitchen inspections and specific hood/suppression system requirements, 4) Any local ordinances beyond state food code requirements.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:27:36.080647+00:00",
+    "duration_seconds": 39.210698,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 177803,
+    "output_tokens": 1306,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:26:56.869949+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.177326+00:00",
+    "computed_confidence": "low",
+    "computed_confidence_score": 42,
+    "llm_confidence": "low",
+    "error_count": 0,
+    "warning_count": 1,
+    "warnings": [
+      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+    ],
+    "import_eligible": true
+  }
+}

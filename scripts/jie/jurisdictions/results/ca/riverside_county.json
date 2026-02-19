@@ -1,0 +1,88 @@
+{
+  "jurisdiction_name": "Riverside County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Riverside County Department of Environmental Health",
+  "department_url": "https://rivcoeh.org/",
+  "grading_system": {
+    "type": "letter_grade",
+    "description": "Uses letter grades A, B, C based on percentage scores with required re-inspection for B or C grades",
+    "letter_grades": [
+      "A",
+      "B",
+      "C"
+    ],
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": 80,
+    "grade_thresholds": {
+      "A": {
+        "min": 90,
+        "max": 100
+      },
+      "B": {
+        "min": 80,
+        "max": 89
+      },
+      "C": {
+        "min": 0,
+        "max": 79
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "2-3 routine inspections annually for most facilities, with high-risk facilities inspected more frequently",
+    "risk_categories": [
+      "High-risk",
+      "Standard",
+      "Low-risk"
+    ],
+    "reinspection_trigger": "Grade B or C requires correction of all violations and re-inspection within a week to achieve Grade A",
+    "public_disclosure": "Grade cards must be posted in location clearly visible to public near main entrance; inspection reports available online through myhealthdepartment.com portal"
+  },
+  "fire_safety_authority": {
+    "department_name": "Riverside County Fire Department, Office of the Fire Marshal",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial cooking fire extinguishing systems must comply with NFPA 17A, NFPA 96, 2022 CFC, and 2022 CMC; systems require semi-annual inspection and maintenance by licensed technicians",
+    "inspection_frequency": "Every 6 months for kitchen hood fire suppression systems per NFPA standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Health and Safety Code (CalCode) and California Retail Food Code",
+    "state_vs_local_authority": "County-level inspections conducted by Riverside County Department of Environmental Health",
+    "local_ordinances": "Riverside County Ordinances supplement state CalCode requirements",
+    "permit_types": [
+      "Health Permit",
+      "Food Handler Card",
+      "Certified Food Protection Manager"
+    ]
+  },
+  "data_sources": [
+    "https://rivcoeh.org/foods",
+    "https://rivcoeh.org/restaurant-grading",
+    "https://rivcocob.org/ordinance-no-493",
+    "https://www.myshyft.com/blog/health-inspection-checklist-riverside-california/",
+    "https://www.rvcfire.org/pdf/fire-marshal/guideline-ofm/Commercial%20Cooking%20Fire%20Extinguishing%20System%20%202023%20Guideline%20OFM-04%20FINAL%2012-26-2023%20RVC.pdf"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Clear verification found for grading system (A/B/C with specific thresholds), inspection authority, frequency, and fire safety requirements from official county sources",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official Riverside County Department of Environmental Health and Fire Department sources. Grading thresholds confirmed: A (90-100%), B (80-89%), C (79% and below).",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:11:23.739782+00:00",
+    "duration_seconds": 94.167202,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 136200,
+    "output_tokens": 1209,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:09:49.572580+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

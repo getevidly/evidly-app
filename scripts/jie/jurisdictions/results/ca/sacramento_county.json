@@ -1,0 +1,67 @@
+{
+  "jurisdiction_name": "Sacramento County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Sacramento County Environmental Management Department",
+  "department_url": "https://emd.saccounty.gov/EH/FoodProtect-RetailFood/Pages/default.aspx",
+  "grading_system": {
+    "type": "other",
+    "description": "Green-Yellow-Red (GYR) Color-Coded Placard System - Green (Pass), Yellow (Conditional Pass requiring 24-72 hour re-inspection), Red (Closed)",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Food preparation facilities inspected approximately 3 times per year; retail markets inspected 2 times per year",
+    "risk_categories": null,
+    "reinspection_trigger": "Yellow placard requires follow-up inspection within 24-72 hours; major violations require re-inspection unless corrected during inspection",
+    "public_disclosure": "Color-coded placards must be posted within 5 feet of main entrance; inspection reports available online and must be kept on-site for review upon request"
+  },
+  "fire_safety_authority": {
+    "department_name": "Local fire departments (varies by city within Sacramento County)",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "NFPA 96 compliant systems required; semi-annual inspections every 6 months by licensed fire protection technician",
+    "inspection_frequency": "Every 6 months for commercial kitchen fire suppression systems per NFPA standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (California Health and Safety Code Division 104, Part 7)",
+    "state_vs_local_authority": "Local environmental health agencies enforce state California Retail Food Code - Sacramento County EMD conducts inspections for all incorporated cities and unincorporated areas",
+    "local_ordinances": "Sacramento County Code supplements state requirements; includes specific placard posting requirements and inspection frequencies",
+    "permit_types": [
+      "Health Permit to Operate",
+      "Food Handler Cards (3-year validity)",
+      "Food Safety Manager Certification (5-year validity, ANSI-accredited)"
+    ]
+  },
+  "data_sources": [
+    "https://emd.saccounty.gov/EH/FoodProtect-RetailFood/Pages/default.aspx",
+    "https://emd.saccounty.gov/EH/FoodProtect-RetailFood/Pages/GYR_Placards.aspx",
+    "https://emd.saccounty.gov/EH/Pages/EMDFoodInspectResults.aspx",
+    "https://emd.saccounty.gov/EH/FoodProtect-RetailFood/Pages/CalCode.aspx",
+    "https://emdinspections.saccounty.net/food.aspx"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Verified directly from official Sacramento County Environmental Management Department website with comprehensive documentation of Green-Yellow-Red placard system, inspection frequencies, and California Retail Food Code enforcement",
+  "needs_manual_verification": false,
+  "verification_notes": "All information confirmed from official county sources. Fire safety inspection requirements confirmed as NFPA standards enforced by local fire departments with 6-month inspection cycles for commercial kitchen suppression systems.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:06:23.266953+00:00",
+    "duration_seconds": 36.853342,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 164325,
+    "output_tokens": 1231,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:05:46.413611+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

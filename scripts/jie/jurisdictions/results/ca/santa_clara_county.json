@@ -1,0 +1,81 @@
+{
+  "jurisdiction_name": "Santa Clara County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Santa Clara County Department of Environmental Health",
+  "department_url": "https://deh.santaclaracounty.gov/",
+  "grading_system": {
+    "type": "hybrid",
+    "description": "Green-Yellow-Red color-coded placard system separate from numerical compliance scores. Placards based on major violations, scores based on all violations.",
+    "letter_grades": null,
+    "score_range_min": 0,
+    "score_range_max": 100,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Green": {
+        "description": "PASS - No more than one major violation corrected during inspection"
+      },
+      "Yellow": {
+        "description": "CONDITIONAL PASS - Two or more major violations corrected during inspection"
+      },
+      "Red": {
+        "description": "CLOSURE - Imminent threat to health, violations not corrected"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "Typically twice per year for restaurants, varies by facility type and risk factors",
+    "risk_categories": [
+      "Major",
+      "Moderate",
+      "Minor"
+    ],
+    "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days to ensure major violations remain corrected",
+    "public_disclosure": "All inspection results, placards, and scores publicly available through SCCDineOut web application and posted placards at facilities"
+  },
+  "fire_safety_authority": {
+    "department_name": "Santa Clara County Fire Marshal's Office (operated by Santa Clara County Fire Department)",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen hood and duct extinguishing system permits required with specific submittal and inspection requirements including bag/balloon tests and functional testing",
+    "inspection_frequency": "Multiple inspections required during installation - rough piping, functional testing, and final inspection"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code, Health and Safety Code Division 104, Part 7",
+    "state_vs_local_authority": "County-level inspections conducted by Santa Clara County Department of Environmental Health",
+    "local_ordinances": "Restaurant placarding and scoring program launched October 2014, modeled after Sacramento County system",
+    "permit_types": [
+      "Food Facility Operating Permit",
+      "Food Safety Manager Certification",
+      "Food Handler Cards"
+    ]
+  },
+  "data_sources": [
+    "https://deh.santaclaracounty.gov/food-and-retail/compliance-retail-food-operations/food-facility-placarding-and-scoring-program",
+    "https://eservices.sccgov.org/facilityinspection",
+    "https://deh.santaclaracounty.gov/consumers/food-safety-programs/sccdineout-web-app",
+    "https://plandev.sccgov.org/how/apply-permit/commercial-kitchen-hood-duct-extinguishing-system-submittalinspection-requirements",
+    "https://plandev.santaclaracounty.gov/services/development-services/fire-marshals-office"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Comprehensive official documentation found for grading system, inspection processes, and fire safety requirements. All information verified through official county sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "System well-documented with clear explanations of hybrid placard/scoring methodology, violation categories with point deductions (Major: 8 points, Moderate: 3 points, Minor: 2 points), and fire safety inspection requirements for commercial kitchens.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:46:10.616542+00:00",
+    "duration_seconds": 31.595845,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 68006,
+    "output_tokens": 1196,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:45:39.020697+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

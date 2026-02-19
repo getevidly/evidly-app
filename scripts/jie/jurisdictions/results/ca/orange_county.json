@@ -1,0 +1,71 @@
+{
+  "jurisdiction_name": "Orange County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Orange County Health Care Agency - Environmental Health Division",
+  "department_url": "https://ochealthinfo.com/about-hca/public-health-services/environmental-health-division",
+  "grading_system": {
+    "type": "pass_fail",
+    "description": "Orange County uses a pass/fail placard system instead of letter grades. Facilities receive Pass, Reinspection Due-Pass, or Closed placards.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based routine inspections based on facility type and risk category identification",
+    "risk_categories": [
+      "High",
+      "Moderate",
+      "Low"
+    ],
+    "reinspection_trigger": "Major violations observed and corrected require follow-up inspection on date posted on seal",
+    "public_disclosure": "Most recent inspection report required to be available at facility for public view upon request; online inspection database available at inspections.myhealthdepartment.com"
+  },
+  "fire_safety_authority": {
+    "department_name": "Orange County Fire Authority (OCFA) and local fire departments",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems required per NFPA standards and local fire codes",
+    "inspection_frequency": "Semi-annual inspection and testing of restaurant hood suppression systems typically required"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - part of California Health and Safety Code, based on FDA Food Code",
+    "state_vs_local_authority": "County Environmental Health Division conducts inspections under California Retail Food Code authority",
+    "local_ordinances": "Orange County ordinances supplement state California Retail Food Code requirements",
+    "permit_types": [
+      "Health Permit",
+      "Food Manager Certification",
+      "Food Handler Cards"
+    ]
+  },
+  "data_sources": [
+    "https://ochealthinfo.com/about-hca/public-health-services/environmental-health-division/food/food-facility-health-permit",
+    "https://inspections.myhealthdepartment.com/orange-county",
+    "https://www.ochealthinfo.com/sites/hca/files/2021-03/Retail_Food_Facility_Inspection_Marking_Guide_REV_08-23-17.pdf",
+    "https://www.publicceo.com/2009/06/counties-choose-whether-or-not-restaurants-make-the-grade/",
+    "https://ocgrandjury.org/sites/jury/files/2023-08/restaurant.pdf"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Orange County's pass/fail system is well-documented across multiple official sources. The county explicitly chose this system over letter grades despite pressure from grand jury reports.",
+  "needs_manual_verification": false,
+  "verification_notes": "Orange County is definitively confirmed to use pass/fail placards rather than letter grades. The county has approximately 15,000 food facilities under California Retail Food Code enforcement.",
+  "_meta": {
+    "crawled_at": "2026-02-19T06:00:44.845724+00:00",
+    "duration_seconds": 42.798406,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 155357,
+    "output_tokens": 1137,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T06:00:02.047318+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "jurisdiction_name": "Amador County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Amador County Environmental Health Department",
+  "department_url": "https://www.amadorcounty.gov/departments/environmental-health/food-program",
+  "grading_system": {
+    "type": "unknown",
+    "description": "System type not specified on official website. Results posted at facilities and available at Environmental Health Department but grading methodology not detailed.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "annual inspections",
+    "risk_categories": null,
+    "reinspection_trigger": "Not specified on official sources",
+    "public_disclosure": "Results viewable at individual facilities and obtainable at Environmental Health Department"
+  },
+  "fire_safety_authority": {
+    "department_name": "Multiple agencies - Amador Fire Protection District, City of Jackson Fire Department, other local fire protection districts",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Per California fire code - 6-month inspections by licensed fire protection company required",
+    "inspection_frequency": "Every 6 months per NFPA 96 standards"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code",
+    "state_vs_local_authority": "County-level inspections - state mandated program administered locally",
+    "local_ordinances": "Not specified beyond state CalCode compliance",
+    "permit_types": [
+      "Annual Permit to Operate",
+      "Temporary Food Facility Permits"
+    ]
+  },
+  "data_sources": [
+    "https://www.amadorcounty.gov/departments/environmental-health/food-program",
+    "https://www.amadorcounty.gov/departments/environmental-health",
+    "https://www.amadorcounty.gov/departments/environmental-health/faq-s",
+    "https://www.amadorcounty.gov/departments/office-of-emergency-services/emergency-information/fire-agencies"
+  ],
+  "confidence_level": "low",
+  "confidence_notes": "While basic program structure is confirmed, specific grading methodology (letter grades vs. numerical scores vs. pass/fail) is not detailed on official county website. Fire safety information limited to general California requirements.",
+  "needs_manual_verification": true,
+  "verification_notes": "Direct contact with Amador County Environmental Health Department (209) 223-6439 required to verify: 1) Specific grading/scoring system used 2) Risk-based inspection categories 3) Reinspection triggers and thresholds 4) Local ordinances beyond state requirements 5) Specific fire authority jurisdiction for commercial kitchens",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:00:40.646393+00:00",
+    "duration_seconds": 29.202013,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 91668,
+    "output_tokens": 1037,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:00:11.444380+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

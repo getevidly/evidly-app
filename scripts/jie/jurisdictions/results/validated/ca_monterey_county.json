@@ -1,0 +1,77 @@
+{
+  "jurisdiction_name": "Monterey County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Monterey County Health Department Environmental Health Bureau",
+  "department_url": "https://www.countyofmonterey.gov/government/departments-a-h/health/environmental-health",
+  "grading_system": {
+    "type": "other",
+    "description": "Gold Seal program - voluntary evaluation system rather than traditional grading. Facilities achieving substantial compliance with California food safety standards receive a Gold Seal recognition. Unlike other counties, Monterey County does not use letter grades (A/B/C) or numerical scores.",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Regular routine inspections conducted by Registered Environmental Health Specialists. Mobile food facilities inspected twice yearly at designated times and locations.",
+    "risk_categories": null,
+    "reinspection_trigger": "Complaint investigations, follow-up inspections for violations, permit inspections may be scheduled in advance",
+    "public_disclosure": "Two most recent inspection reports available through MC Food Inspection Findings mobile app. Facilities must maintain most recent routine inspection report on-site for public review upon request per California Retail Food Code requirements. Gold Seal status visible to public through app and posted at facility."
+  },
+  "fire_safety_authority": {
+    "department_name": "Monterey County Regional Fire Protection District (for unincorporated areas) and local city fire departments (for incorporated cities)",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems must be inspected every 6 months per NFPA 96 standards by licensed fire protection companies",
+    "inspection_frequency": "Semi-annual (every 6 months) for commercial kitchen hood fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - state implementation of food safety requirements",
+    "state_vs_local_authority": "County-level inspections - Monterey County Environmental Health Bureau conducts inspections in unincorporated areas, with some incorporated cities contracting county services",
+    "local_ordinances": "County follows California Retail Food Code with local enforcement through county ordinances",
+    "permit_types": [
+      "Health Permit",
+      "Temporary Food Facility Permit",
+      "Mobile Food Facility Permit",
+      "Micro Enterprise Home Kitchen Operation Permit"
+    ]
+  },
+  "data_sources": [
+    "https://www.countyofmonterey.gov/government/departments-a-h/health/environmental-health/consumer-health-protection/food/gold-seal-program",
+    "https://www.montereycountyweekly.com/food_wine/a-ride-along-with-county-health-inspectors-who-ensure-restaurants-meet-food-safety-standards/article_3e0f70c2-107a-11ee-bd7c-b7c6b68f4553.html",
+    "https://www.countyofmonterey.gov/government/departments-a-h/health/environmental-health/consumer-health-protection/faq",
+    "https://www.mcrfd.org/business-inspections-program"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Clear official documentation confirms Monterey County uses Gold Seal recognition system rather than traditional letter grading. Multiple sources confirm this is an evaluation program, not a grading system. California Retail Food Code basis is well documented. Fire safety inspection requirements confirmed through NFPA standards.",
+  "needs_manual_verification": false,
+  "verification_notes": "System verified through official county websites, news articles with inspector quotes, and consistent information across multiple sources. The Gold Seal program is clearly documented as Monterey County's unique approach instead of traditional A/B/C grading used by other California counties.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:38:12.790590+00:00",
+    "duration_seconds": 38.747415,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 141822,
+    "output_tokens": 1336,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:37:34.043175+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  },
+  "_validation": {
+    "validated_at": "2026-02-19T19:43:14.189039+00:00",
+    "computed_confidence": "high",
+    "computed_confidence_score": 100,
+    "llm_confidence": "high",
+    "error_count": 0,
+    "warning_count": 0,
+    "warnings": [],
+    "import_eligible": true
+  }
+}

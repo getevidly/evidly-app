@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ShieldCheck, ChevronRight, ChevronDown, Info } from 'lucide-react';
+import { ShieldCheck, ChevronRight, ChevronDown } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
@@ -17,7 +17,102 @@ import {
   type SidebarSubItem,
 } from '../../config/sidebarConfig';
 import { checkPermission } from '../../hooks/usePermission';
-import { sidebarTooltipContent } from '../../data/tooltipContent';
+
+// ── Sidebar item descriptions (inline, no external import) ──
+
+const SIDEBAR_ITEM_DESCRIPTIONS: Record<string, string> = {
+  'dashboard':        "Your compliance overview — scores, alerts, and today's priorities.",
+  'calendar':         "Weekly and monthly view of inspections, deadlines, and scheduled tasks.",
+  'my-tasks':         "Your assigned action items, corrective actions, and follow-ups.",
+  'checklists':       "Daily task lists for food safety, temperature logs, and opening/closing procedures.",
+  'incidents':        "Log and track safety or compliance incidents with timestamped records.",
+  'temperatures':     "Manual, QR, or IoT-based temperature recording for receiving, storage, and cooking.",
+  'log-temp':         "Quick-log a temperature reading for your station.",
+  'iot-monitoring':   "Live sensor data from connected temperature probes and equipment monitors.",
+  'equipment':        "Asset register for all kitchen equipment with service history and maintenance dates.",
+  'vendors':          "Service providers assigned to your locations — hood cleaning, grease management, and more.",
+  'documents':        "Compliance certificates, inspection reports, and permit documentation.",
+  'haccp':            "Hazard Analysis and Critical Control Points — food safety plans and monitoring records.",
+  'photos':           "Photo evidence for inspections, incidents, and compliance documentation.",
+  'training':         "Staff training courses, certifications, and compliance education tracking.",
+  'compliance':       "Jurisdiction-verified scoring breakdown for food safety and fire safety across all locations.",
+  'self-inspection':  "Run a self-inspection using the same criteria your health department applies.",
+  'inspector':        "See your location through an inspector's eyes — the same view they use during walkthroughs.",
+  'ai-copilot':       "AI-powered compliance assistant for answering questions and generating action plans.",
+  'regulatory':       "Track upcoming inspection windows, permit renewals, and regulatory deadlines.",
+  'reporting':        "Export compliance summaries, inspection history, and documentation packages.",
+  'alerts':           "Active compliance alerts and notifications requiring attention across your locations.",
+  'fire-safety':      "Fire suppression system status, inspections, and NFPA 96 compliance tracking.",
+  'locations':        "Add, edit, or configure locations including jurisdiction mapping and scoring methodology.",
+  'benchmarks':       "Compare compliance performance across locations, regions, or time periods.",
+  'risk-score':       "Insurance risk assessment based on compliance posture, incident history, and equipment status.",
+  'leaderboard':      "Location and team rankings by compliance performance and daily task completion.",
+  'marketplace':      "Browse and connect with verified compliance service vendors in your area.",
+  'team':             "Manage staff roles, access levels, and location assignments.",
+  'system-admin':     "Platform administration, client onboarding, and system configuration.",
+  'settings':         "Account preferences, notification settings, and platform configuration.",
+  'help':             "Documentation, support, and contact options.",
+  'usage-analytics':  "Platform usage metrics, adoption rates, and engagement analytics.",
+};
+
+// ── NavTooltip wrapper (fixed positioning to bypass overflow clipping) ──
+
+const NavTooltip: React.FC<{
+  itemKey: string;
+  label: string;
+  children: React.ReactNode;
+}> = ({ itemKey, label, children }) => {
+  const [show, setShow] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const ref = React.useRef<HTMLDivElement>(null);
+  const desc = SIDEBAR_ITEM_DESCRIPTIONS[itemKey];
+  if (!desc) return <>{children}</>;
+
+  const handleEnter = () => {
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setPos({ top: rect.top + rect.height / 2, left: rect.right + 12 });
+    }
+    setShow(true);
+  };
+
+  return (
+    <div
+      ref={ref}
+      style={{ position: 'relative', width: '100%' }}
+      onMouseEnter={handleEnter}
+      onMouseLeave={() => setShow(false)}
+    >
+      {children}
+      {show && (
+        <div
+          role="tooltip"
+          style={{
+            position: 'fixed',
+            top: pos.top,
+            left: pos.left,
+            transform: 'translateY(-50%)',
+            zIndex: 99999,
+            width: 220,
+            backgroundColor: '#0f172a',
+            border: '1px solid #334155',
+            borderRadius: 8,
+            padding: '8px 12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+            pointerEvents: 'none' as const,
+          }}
+        >
+          <p style={{ margin: 0, marginBottom: 4, fontSize: 12, fontWeight: 600, color: '#ffffff' }}>
+            {label}
+          </p>
+          <p style={{ margin: 0, fontSize: 11, color: '#94a3b8', lineHeight: 1.5 }}>
+            {desc}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ── Jurisdiction status dot color ─────────────────────────
 
@@ -33,51 +128,6 @@ function getStatusDotColor(locUrlId: string): string {
 }
 
 const STORAGE_KEY = 'evidly-sidebar-collapsed';
-
-// ── Inline sidebar tooltip ──────────────────────────────
-
-function SidebarNavTooltip({ itemId }: { itemId: string }) {
-  const [visible, setVisible] = useState(false);
-  const tip = sidebarTooltipContent[itemId];
-  if (!tip) return null;
-
-  return (
-    <span className="relative inline-flex items-center ml-1">
-      <span
-        className="cursor-help inline-flex items-center"
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Info size={11} className="text-slate-400 hover:text-slate-300 transition-colors" />
-      </span>
-      {visible && (
-        <span
-          role="tooltip"
-          className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-[10000] rounded-md px-3 py-2 text-xs leading-relaxed shadow-lg pointer-events-none"
-          style={{
-            width: 260,
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
-            color: '#e2e8f0',
-          }}
-        >
-          {tip.description}
-          <span
-            className="absolute top-1/2 -translate-y-1/2 right-full"
-            style={{
-              width: 0,
-              height: 0,
-              borderTop: '6px solid transparent',
-              borderBottom: '6px solid transparent',
-              borderRight: '6px solid #334155',
-            }}
-          />
-        </span>
-      )}
-    </span>
-  );
-}
 
 // ── Sidebar component ───────────────────────────────────
 
@@ -191,47 +241,48 @@ export function Sidebar() {
     const testId = isTestMode ? `nav-${item.id}` : undefined;
 
     return (
-      <div key={item.id}>
-        <div
-          onClick={() => {
-            if (hasSubItems) {
-              setExpandedNavItem(isExpanded ? null : item.id);
-            }
-            navigate(item.route);
-          }}
-          className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
-            active
-              ? 'text-[#d4af37] bg-[#163a52]'
-              : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
-          }`}
-          style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
-          {...(testId ? { 'data-testid': testId } : {})}
-        >
-          <item.icon
-            className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
-              active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
-            }`}
-          />
-          <span className="flex-1 truncate">{item.label}</span>
-          <SidebarNavTooltip itemId={item.id} />
-          {hasSubItems && (
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
+      <NavTooltip key={item.id} itemKey={item.id} label={item.label}>
+        <div>
+          <div
+            onClick={() => {
+              if (hasSubItems) {
                 setExpandedNavItem(isExpanded ? null : item.id);
-              }}
-              className="ml-1 p-0.5 rounded hover:bg-white/10 transition-colors"
-            >
-              {isExpanded ? (
-                <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
-              ) : (
-                <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-              )}
-            </span>
-          )}
+              }
+              navigate(item.route);
+            }}
+            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 cursor-pointer ${
+              active
+                ? 'text-[#d4af37] bg-[#163a52]'
+                : 'text-gray-200 hover:bg-[#163a52] hover:text-white'
+            }`}
+            style={active ? { boxShadow: 'inset 3px 0 0 #d4af37' } : undefined}
+            {...(testId ? { 'data-testid': testId } : {})}
+          >
+            <item.icon
+              className={`mr-3 flex-shrink-0 h-[18px] w-[18px] ${
+                active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
+              }`}
+            />
+            <span className="flex-1 truncate">{item.label}</span>
+            {hasSubItems && (
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedNavItem(isExpanded ? null : item.id);
+                }}
+                className="ml-1 p-0.5 rounded hover:bg-white/10 transition-colors"
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-3.5 w-3.5 text-gray-400" />
+                ) : (
+                  <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+                )}
+              </span>
+            )}
+          </div>
+          {hasSubItems && isExpanded && item.subItems!.map(sub => renderSubItem(sub))}
         </div>
-        {hasSubItems && isExpanded && item.subItems!.map(sub => renderSubItem(sub))}
-      </div>
+      </NavTooltip>
     );
   };
 

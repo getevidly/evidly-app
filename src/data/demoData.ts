@@ -3843,3 +3843,167 @@ export const coolingLogs: CoolingLogEntry[] = [
     loggedBy: 'user-km-2', sensorId: null, notes: 'Active cooling in progress', locationName: 'Airport Cafe',
   },
 ];
+
+// ── Daily Checklists (recurring task definitions) ────────────
+
+export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+
+export interface DailyChecklistItem {
+  id: string;
+  title: string;
+  description: string;
+  /** Shift window when this checklist should be completed */
+  shift: 'morning' | 'afternoon' | 'evening' | 'all_day';
+  /** Estimated time to complete in minutes */
+  estimatedMinutes: number;
+  /** Whether this checklist is required (vs. optional) */
+  required: boolean;
+  /** Recurrence pattern */
+  recurrence: 'daily' | 'weekly' | 'monthly';
+  /** Days of the week this checklist is active */
+  daysActive: DayOfWeek[];
+  /** Which locations this checklist applies to (facility IDs) */
+  locationIds: string[];
+  /** Role(s) responsible for completing this checklist */
+  assignedRoles: string[];
+  category: 'food_safety' | 'fire_safety' | 'general';
+}
+
+export const dailyChecklists: DailyChecklistItem[] = [
+  {
+    id: 'dc-1',
+    title: 'Opening Checklist',
+    description: 'Pre-service safety walkthrough: handwash stations stocked, sanitizer buckets prepared, cold/hot holding temps verified, pest activity check, floor and drain inspection.',
+    shift: 'morning',
+    estimatedMinutes: 15,
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    category: 'food_safety',
+  },
+  {
+    id: 'dc-2',
+    title: 'Closing Checklist',
+    description: 'End-of-day shutdown: equipment powered down, surfaces sanitized, waste removed, walk-in organized (FIFO), floor drains flushed, doors secured.',
+    shift: 'evening',
+    estimatedMinutes: 15,
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    category: 'food_safety',
+  },
+  {
+    id: 'dc-3',
+    title: 'AM Line Check',
+    description: 'Morning line inspection: hot holding temps >=135 °F, cold holding <=41 °F, date labels current, sneeze guards in place, utensil storage correct.',
+    shift: 'morning',
+    estimatedMinutes: 10,
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    category: 'food_safety',
+  },
+  {
+    id: 'dc-4',
+    title: 'PM Line Check',
+    description: 'Afternoon line re-check: verify holding temps have not drifted, replenish ice baths, swap out tongs/utensils, check date labels on restocked items.',
+    shift: 'afternoon',
+    estimatedMinutes: 10,
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    category: 'food_safety',
+  },
+];
+
+// ── Daily Temperature Checks (recurring task definitions) ────
+
+export interface DailyTemperatureCheckItem {
+  id: string;
+  title: string;
+  description: string;
+  /** Shift window when this check should be completed */
+  shift: 'morning' | 'afternoon' | 'evening' | 'all_day';
+  /** Input method for this temperature check */
+  inputMethod: 'manual' | 'qr_scan' | 'iot_sensor';
+  /** Whether this check is required (vs. optional) */
+  required: boolean;
+  /** Recurrence pattern */
+  recurrence: 'daily' | 'weekly' | 'monthly';
+  /** Days of the week this check is active */
+  daysActive: DayOfWeek[];
+  /** Which locations this check applies to (facility IDs) */
+  locationIds: string[];
+  /** Role(s) responsible for completing this check */
+  assignedRoles: string[];
+  /** Related HACCP CCP number, if applicable */
+  haccpCcpNumber: string | null;
+  category: 'food_safety';
+}
+
+export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
+  {
+    id: 'dtc-1',
+    title: 'Receiving Temperature Log',
+    description: 'Log temperatures of all deliveries at receiving dock. Reject items arriving above 41 °F (cold) or below 135 °F (hot). Record vendor, item, temp, and pass/fail.',
+    shift: 'morning',
+    inputMethod: 'manual',
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    haccpCcpNumber: 'CCP-01',
+    category: 'food_safety',
+  },
+  {
+    id: 'dtc-2',
+    title: 'Storage Temp Check \u2014 AM',
+    description: 'Morning walk-in cooler, walk-in freezer, and reach-in unit temperature readings. Coolers <=41 °F, freezers <=0 °F. Log corrective action for any out-of-range readings.',
+    shift: 'morning',
+    inputMethod: 'manual',
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    haccpCcpNumber: 'CCP-01',
+    category: 'food_safety',
+  },
+  {
+    id: 'dtc-3',
+    title: 'Storage Temp Check \u2014 PM',
+    description: 'Afternoon verification of all cold-storage and freezer units. Confirm temps remain in safe range after peak service. Note any drift from AM readings.',
+    shift: 'afternoon',
+    inputMethod: 'manual',
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    haccpCcpNumber: 'CCP-01',
+    category: 'food_safety',
+  },
+  {
+    id: 'dtc-4',
+    title: 'Cooking Temperature Log',
+    description: 'Record final cook temps for all proteins and reheated items throughout service. Poultry >=165 °F, ground meats >=155 °F, other meats >=145 °F. Log corrective action for failures.',
+    shift: 'all_day',
+    inputMethod: 'manual',
+    required: true,
+    recurrence: 'daily',
+    daysActive: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
+    locationIds: ['1', '2', '3'],
+    assignedRoles: ['kitchen_manager', 'kitchen_staff'],
+    haccpCcpNumber: 'CCP-02',
+    category: 'food_safety',
+  },
+];

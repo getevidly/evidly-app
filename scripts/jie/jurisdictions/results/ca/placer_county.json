@@ -1,0 +1,67 @@
+{
+  "jurisdiction_name": "Placer County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Placer County Environmental Health Division",
+  "department_url": "https://www.placer.ca.gov/3105/Environmental-Health",
+  "grading_system": {
+    "type": "pass_fail",
+    "description": "Placer County uses a color-coded placard system rather than letter grades or numerical scores. Green = Pass (no major violations), Yellow = Conditional Pass (major violations present), Red = Closed (imminent health hazards)",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Periodic, unannounced inspections by assigned Environmental Health Specialists - specific risk-based frequency not specified in available sources",
+    "risk_categories": null,
+    "reinspection_trigger": "Major violations remaining uncorrected after routine inspection, failure to comply with compliance agreement, or imminent health hazards requiring closure",
+    "public_disclosure": "Color-coded placards must be posted in clearly visible location to patrons; recent inspection reports available online for public review"
+  },
+  "fire_safety_authority": {
+    "department_name": "Local Fire Department (varies by jurisdiction within county)",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "NFPA 96 compliant fire suppression systems required for Type I hoods covering commercial cooking equipment - semi-annual inspections required",
+    "inspection_frequency": "Every six months by licensed fire protection company per NFPA 96"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode) - California Health and Safety Code Section 113700 et seq.",
+    "state_vs_local_authority": "County-level enforcement - Placer County Environmental Health Specialists conduct inspections and issue permits",
+    "local_ordinances": "Placer County Retail Food Facility Placard Program ordinance adopted and incorporated by reference to CalCode",
+    "permit_types": [
+      "Health Permit",
+      "Food Safety Certificate",
+      "Food Handler Card"
+    ]
+  },
+  "data_sources": [
+    "https://www.placer.ca.gov/3337/Food-Protection-Program",
+    "https://www.placer.ca.gov/5964/Placard-Program---Food-Safety",
+    "https://ecode360.com/43574763",
+    "https://www.placer.ca.gov/DocumentCenter/View/9217/Starting-a-Food-Business-in-Placer-County-PDF",
+    "https://www.placer.ca.gov/DocumentCenter/View/9213/Hood-Plan-Requirements-PDF"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Information verified from official Placer County Environmental Health sources including department website, ordinances, and official documents. Placard system clearly documented with specific criteria.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified from official county sources. Placer County uses color-coded placards (Green/Yellow/Red) rather than letter grades or numerical scores, which is clearly documented in their ordinance and website materials.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:51:08.813650+00:00",
+    "duration_seconds": 35.103655,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 95782,
+    "output_tokens": 1251,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:50:33.709995+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

@@ -10,10 +10,8 @@ import { useRole } from '../../contexts/RoleContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { useDemo } from '../../contexts/DemoContext';
-import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
-import { FoodSafetyWidget } from '../shared/FoodSafetyWidget';
-import { getGreeting, getFormattedDate, GOLD, DEMO_ROLE_NAMES } from './shared/constants';
+import { DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
@@ -63,6 +61,12 @@ const DEMO_TEAM = [
 ];
 
 const DEMO_PROGRESS = 52;
+
+const CHEF_FOOD_SAFETY_LOCATIONS = [
+  { name: 'Downtown Kitchen', jurisdiction: 'Fresno County', status: 'Compliant', detail: 'No Open Majors' },
+  { name: 'Airport Cafe', jurisdiction: 'Merced County', status: 'Satisfactory', detail: 'Satisfactory' },
+  { name: 'University Dining', jurisdiction: 'Stanislaus County', status: 'Action Required', detail: '3 Major Open' },
+];
 
 // --------------- Helpers ---------------
 
@@ -131,14 +135,6 @@ export default function KitchenManagerDashboard() {
   const hasMultipleLocations = accessibleLocations.length > 1;
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
-  // Jurisdiction-native grades for selected location
-  const jieKey = `demo-loc-${selectedLocationUrlId}`;
-  const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
-  const foodGrade = override?.foodSafety?.gradeDisplay || 'Pending';
-  const foodStatus = override?.foodSafety?.status || 'unknown';
-  const fireGrade = override?.fireSafety?.grade || 'Pending';
-  const fireStatus = override?.fireSafety?.status || 'unknown';
-
   const KM_LOC_NAMES: Record<string, string> = {
     downtown: 'Downtown Kitchen',
     airport: 'Airport Cafe',
@@ -163,36 +159,50 @@ export default function KitchenManagerDashboard() {
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* Hero Banner */}
       <DashboardHero
-        greeting={`${getGreeting()}, ${DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}.`}
+        firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
-      >
-        {/* Grade badges */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => navigate('/compliance')}
-            className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
-              foodStatus === 'passing' ? 'bg-green-500/20 text-green-300'
-                : foodStatus === 'failing' ? 'bg-red-500/20 text-red-300'
-                : 'bg-amber-500/20 text-amber-300'
-            }`}
-          >
-            Food: {foodGrade}
-          </button>
-          {userRole !== 'chef' && (
-            <button
-              type="button"
-              onClick={() => navigate('/fire-safety')}
-              className={`text-xs font-semibold px-2 py-1 rounded-full hover:opacity-80 transition-opacity ${
-                fireStatus === 'passing' ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
-              }`}
-            >
-              Fire: {fireGrade}
-            </button>
-          )}
+      />
+
+      {/* Food Safety — chef only */}
+      {userRole === 'chef' && (
+        <div>
+          <SectionHeader>Food Safety<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+          <div className="space-y-2">
+            {CHEF_FOOD_SAFETY_LOCATIONS.map(loc => {
+              const statusColor = loc.status === 'Compliant' ? '#16a34a'
+                : loc.status === 'Action Required' ? '#dc2626'
+                : '#d97706';
+              const statusBg = loc.status === 'Compliant' ? '#dcfce7'
+                : loc.status === 'Action Required' ? '#fef2f2'
+                : '#fef3c7';
+              return (
+                <button
+                  key={loc.name}
+                  type="button"
+                  onClick={() => navigate('/compliance')}
+                  className="w-full rounded-lg p-4 text-left hover:shadow-md transition-shadow"
+                  style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)', backgroundColor: '#fff', borderLeft: `3px solid ${statusColor}` }}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
+                    <span
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                      style={{ backgroundColor: statusBg, color: statusColor }}
+                    >
+                      {loc.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">{loc.jurisdiction}</span>
+                    <span className="text-xs text-gray-500">{loc.detail}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </DashboardHero>
+      )}
 
       {/* Location tabs (if multiple locations) */}
       {hasMultipleLocations && (

@@ -1,0 +1,75 @@
+{
+  "jurisdiction_name": "Butte County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Butte County Environmental Health (BCEH)",
+  "department_url": "https://www.buttecounty.net/755/Environmental-Health",
+  "grading_system": {
+    "type": "other",
+    "description": "Color-coded placard system with Green (Pass), Yellow (Conditional Pass), and Red (Closed) placards based on major violations and compliance status",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": {
+      "Green": {
+        "criteria": "No more than one major violation that is mitigated or corrected during inspection"
+      },
+      "Yellow": {
+        "criteria": "Two or more major violations, violation of compliance agreement, or same major violation in three consecutive inspections"
+      },
+      "Red": {
+        "criteria": "Imminent health hazard requiring closure that cannot be mitigated or corrected during inspection"
+      }
+    }
+  },
+  "inspection_details": {
+    "frequency": "BCEH conducts 2000+ routine health inspections per year for approximately 1200 retail food facilities",
+    "risk_categories": null,
+    "reinspection_trigger": "Yellow placard violations require follow-up inspection within timeframe specified. Red placard requires closure until compliance achieved.",
+    "public_disclosure": "Color-coded placards must be posted at establishment entrance showing most recent inspection status. Inspection reports posted online for public viewing."
+  },
+  "fire_safety_authority": {
+    "department_name": "CAL FIRE/Butte County Fire Department - Fire Marshal Bureau",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "Commercial kitchen fire suppression systems must comply with California Fire Code and NFPA standards. Semi-annual inspections required per NFPA 96.",
+    "inspection_frequency": "Semi-annual (every 6 months) for commercial kitchen hood fire suppression systems per NFPA 96 requirements"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code (CalCode)",
+    "state_vs_local_authority": "County level - Butte County Environmental Health conducts inspections and enforcement",
+    "local_ordinances": "Butte County Improvement Standards and color-coded placard program requirements beyond state code",
+    "permit_types": [
+      "Food Facility Permit to Operate",
+      "California Food Handler Certification"
+    ]
+  },
+  "data_sources": [
+    "https://www.buttecounty.net/767/Food-Program",
+    "https://www.buttecounty.net/775/Consumer-Protection",
+    "https://www.buttecounty.net/570/Fire-Marshal",
+    "https://doczz.net/doc/9075385/butte-county-green--yellow--and-red-placard-program"
+  ],
+  "confidence_level": "high",
+  "confidence_notes": "Official Butte County websites provide detailed information on color-coded placard system, inspection processes, and regulatory authority. Fire Marshal information confirmed through CAL FIRE/Butte County Fire Department sources.",
+  "needs_manual_verification": false,
+  "verification_notes": "All key information verified through official Butte County Environmental Health and Fire Department websites. Color-coded placard system is unique compared to letter grade systems used in other CA counties.",
+  "_meta": {
+    "crawled_at": "2026-02-19T04:06:18.555372+00:00",
+    "duration_seconds": 36.560214,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 146155,
+    "output_tokens": 1220,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T04:05:41.995158+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}

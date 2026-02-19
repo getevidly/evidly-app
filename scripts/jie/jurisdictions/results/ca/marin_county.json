@@ -1,0 +1,66 @@
+{
+  "jurisdiction_name": "Marin County",
+  "jurisdiction_type": "county",
+  "state": "CA",
+  "department_name": "Community Development Agency - Environmental Health Services",
+  "department_url": "https://www.marincounty.org/depts/cd/divisions/environmental-health-services",
+  "grading_system": {
+    "type": "unknown",
+    "description": "Marin County conducts food facility inspections but specific grading/scoring methodology not found in public sources",
+    "letter_grades": null,
+    "score_range_min": null,
+    "score_range_max": null,
+    "passing_threshold": null,
+    "grade_thresholds": null
+  },
+  "inspection_details": {
+    "frequency": "Risk-based frequency as required by California Retail Food Code",
+    "risk_categories": null,
+    "reinspection_trigger": "Violations found during routine inspection or complaints",
+    "public_disclosure": "Food facility inspections are searchable through online portal and open data portal"
+  },
+  "fire_safety_authority": {
+    "department_name": "Southern Marin Fire Protection District and other local fire departments",
+    "hood_system_inspection_required": true,
+    "ansul_system_requirements": "ANSUL-style suppression systems required for commercial kitchens, with semi-annual inspections every 6 months per NFPA 96. Systems must undergo AHJ acceptance testing by fire marshal before approval.",
+    "inspection_frequency": "Semi-annual (every 6 months) for kitchen fire suppression systems"
+  },
+  "regulatory_framework": {
+    "food_code_basis": "California Retail Food Code",
+    "state_vs_local_authority": "County Environmental Health Services conducts inspections for all retail food facilities in Marin County",
+    "local_ordinances": "Reusable foodware ordinance, compostable plates/cups requirements",
+    "permit_types": [
+      "Annual Operating Permit",
+      "California Food Handler Card",
+      "California Food Manager Certification"
+    ]
+  },
+  "data_sources": [
+    "https://www.marincounty.org/depts/cd/divisions/environmental-health-services/food-program",
+    "https://cdaportal2.marincounty.org/FoodInspectionSearch",
+    "https://www.marincounty.gov/sites/g/files/fdkgoe241/files/2024-08/requirements-for-hoods.pdf",
+    "https://www.smfd.org/our-district/prevention/fire-and-life-safety/inspections/construction-inspections"
+  ],
+  "confidence_level": "medium",
+  "confidence_notes": "Clear information found on inspection authority (county Environmental Health Services), food code basis (California Retail Food Code), and fire safety requirements. However, specific grading/scoring methodology not documented in publicly available sources.",
+  "needs_manual_verification": true,
+  "verification_notes": "Must verify specific grading system used by Marin County Environmental Health Services - whether they use letter grades (A/B/C), numerical scores (0-100), pass/fail, or another methodology. Also need to confirm specific inspection frequencies and risk categories used.",
+  "_meta": {
+    "crawled_at": "2026-02-19T05:34:53.211756+00:00",
+    "duration_seconds": 33.365056,
+    "model": "claude-sonnet-4-20250514",
+    "input_tokens": 100039,
+    "output_tokens": 1204,
+    "status": "success",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T05:34:19.846700+00:00",
+        "error": null,
+        "error_type": null
+      }
+    ],
+    "stop_reason": "end_turn"
+  }
+}
