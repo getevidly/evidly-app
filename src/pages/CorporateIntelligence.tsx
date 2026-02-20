@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ExecutiveSummaryCard } from '../components/intelligence/ExecutiveSummaryCard';
 import { ComplianceHeatMap } from '../components/intelligence/ComplianceHeatMap';
 import { RiskRadar } from '../components/intelligence/RiskRadar';
@@ -23,12 +24,31 @@ const viewModes: { id: ViewMode; label: string; icon: string; description: strin
 ];
 
 export function CorporateIntelligence() {
+  const navigate = useNavigate();
   const [activeView, setActiveView] = useState<ViewMode>('operations');
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
   const data = demoIntelligence;
 
   return (
     <div style={{ padding: '24px', backgroundColor: '#0f172a', minHeight: '100vh', fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif" }}>
+      {/* Breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
+        <button
+          onClick={() => navigate('/dashboard')}
+          style={{
+            background: 'transparent', border: 'none',
+            color: '#64748b', fontSize: '12px', cursor: 'pointer',
+            padding: 0, fontFamily: 'system-ui',
+          }}
+        >
+          Dashboard
+        </button>
+        <span style={{ color: '#334155', fontSize: '12px' }}>{'\u203A'}</span>
+        <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, fontFamily: 'system-ui' }}>
+          Corporate Intelligence
+        </span>
+      </div>
+
       {/* Page Header */}
       <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
