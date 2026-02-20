@@ -4,7 +4,8 @@
  */
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Shield, ArrowRight, CheckCircle, Heart } from 'lucide-react';
+import { ArrowRight, CheckCircle, Heart } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 
 const MECHANIC_MESSAGES: Record<string, { heading: string; subtext: string; icon: 'shield' | 'heart' }> = {
   CB: { heading: 'A Compliance Champion invited you!', subtext: 'Join EvidLY and see why top kitchens trust us to stay compliant.', icon: 'shield' },
@@ -49,7 +50,7 @@ export default function ReferralRedirect() {
             {message.icon === 'heart' ? (
               <Heart className="h-8 w-8 text-white" />
             ) : (
-              <Shield className="h-8 w-8 text-white" />
+              <EvidlyIcon size={32} />
             )}
           </div>
         </div>

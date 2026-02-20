@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, ChevronDown, ChevronUp, AlertTriangle, CheckCircle2, XCircle,
-  Shield, ClipboardCheck, Info,
+  ClipboardCheck, Info,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
@@ -164,7 +165,7 @@ export function ScoringBreakdown() {
       {/* ─── Section 1: Jurisdiction Status ─── */}
       <div className="space-y-3">
         <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-[#1e4d6b]" />
+          <EvidlyIcon size={20} />
           Jurisdiction Status
         </h2>
         <p className="text-sm text-gray-500 -mt-1">What the authorities see &mdash; official grades from your inspecting agencies.</p>
@@ -330,7 +331,7 @@ export function ScoringBreakdown() {
         <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg bg-[#eef4f8] border border-[#b8d4e8] flex items-center justify-center flex-shrink-0">
-              <Shield className="w-5 h-5 text-[#1e4d6b]" />
+              <EvidlyIcon size={20} />
             </div>
             <div className="flex-1">
               <div className="text-base font-bold text-gray-900">{jurisdictionInfo.name}</div>

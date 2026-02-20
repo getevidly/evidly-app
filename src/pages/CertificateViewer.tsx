@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Award, Download, Eye, Search, Filter,
   CheckCircle2, AlertTriangle, XCircle, Clock, Printer,
-  Shield, BookOpenCheck, Flame, Settings2, Brain, Globe,
+  BookOpenCheck, Flame, Settings2, Brain, Globe,
 } from 'lucide-react';
 import {
   trainingCertificates, trainingCourses,

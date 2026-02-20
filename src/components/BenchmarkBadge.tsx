@@ -1,4 +1,5 @@
-import { Shield, ShieldCheck, Download, Printer, Share2, QrCode, Lock } from 'lucide-react';
+import { Download, Printer, Share2, QrCode, Lock } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
@@ -48,7 +49,7 @@ function BadgeTierCard({ tier, isEarned, isCurrent, qualification, locationName 
           }}
         >
           {isEarned ? (
-            <ShieldCheck className="h-8 w-8 text-white" />
+            <EvidlyIcon size={32} />
           ) : (
             <Lock className="h-6 w-6 text-gray-400" />
           )}
@@ -145,7 +146,7 @@ export function BenchmarkBadge({ qualification, locationName }: BenchmarkBadgePr
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
       <div className="flex items-center gap-3 mb-5">
-        <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+        <EvidlyIcon size={20} />
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Compliance Badges</h3>
           <p className="text-xs text-gray-500">{locationName}</p>

@@ -4,9 +4,10 @@ import {
   ArrowLeft, BookOpen, Clock, CheckCircle2, Circle, Play,
   Lock, ChevronRight, ChevronDown, Award, Brain,
   AlertTriangle, XCircle, RotateCcw, Timer, Send,
-  Download, Flame, Shield, Settings2, BookOpenCheck,
+  Download, Flame, Settings2, BookOpenCheck,
   Users, BarChart3, Globe, FileText,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   trainingCourses, trainingModules, trainingEnrollments,
   trainingCertificates, trainingQuizAttempts,
@@ -17,8 +18,8 @@ import { toast } from 'sonner';
 
 type ViewState = 'overview' | 'lesson' | 'quiz' | 'certificate';
 
-const CATEGORY_ICON: Record<TrainingCategory, typeof Shield> = {
-  food_safety_handler: Shield,
+const CATEGORY_ICON: Record<TrainingCategory, typeof EvidlyIcon> = {
+  food_safety_handler: EvidlyIcon,
   food_safety_manager: BookOpenCheck,
   fire_safety: Flame,
   compliance_ops: Settings2,

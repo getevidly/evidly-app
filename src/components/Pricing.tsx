@@ -1,4 +1,5 @@
-import { Check, Mail, Phone, Shield, Gift, CreditCard } from 'lucide-react';
+import { Check, Mail, Phone, Gift, CreditCard } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
@@ -57,7 +58,7 @@ export default function Pricing() {
         {/* Risk-Free Guarantee Banner */}
         <div className="max-w-3xl mx-auto mb-10 rounded-2xl p-6 text-center" style={{ backgroundColor: '#eef4f8', border: '2px solid #b8d4e8' }}>
           <div className="flex items-center justify-center gap-3 mb-3">
-            <Shield className="w-7 h-7" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={28} />
             <h3 className="text-xl font-bold" style={{ color: '#1e4d6b' }}>Risk-Free Guarantee</h3>
           </div>
           <p className="text-gray-700 max-w-xl mx-auto leading-relaxed">
@@ -66,7 +67,7 @@ export default function Pricing() {
           </p>
           <div className="flex items-center justify-center gap-6 mt-4 text-sm text-gray-600">
             <span className="flex items-center gap-1.5"><Gift className="w-4 h-4 text-[#d4af37]" />30-day free trial</span>
-            <span className="flex items-center gap-1.5"><Shield className="w-4 h-4 text-[#d4af37]" />45-day money-back</span>
+            <span className="flex items-center gap-1.5"><EvidlyIcon size={16} />45-day money-back</span>
             <span className="flex items-center gap-1.5"><CreditCard className="w-4 h-4 text-[#d4af37]" />Cancel anytime</span>
           </div>
         </div>
@@ -155,7 +156,7 @@ export default function Pricing() {
                   </div>
                   <div style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }} className="rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+                      <EvidlyIcon size={24} className="flex-shrink-0" />
                       <div>
                         <p className="font-semibold" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
                         <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>
@@ -192,7 +193,7 @@ export default function Pricing() {
                   </div>
                   <div style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }} className="rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <Shield className="w-6 h-6 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+                      <EvidlyIcon size={24} className="flex-shrink-0" />
                       <div>
                         <p className="font-semibold" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
                         <p className="text-sm mt-1" style={{ color: '#3a6d8a' }}>

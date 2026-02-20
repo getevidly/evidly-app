@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   UtensilsCrossed, Flame,
   Thermometer, ClipboardList,
-  CheckCircle2, BarChart3, LineChart as LineChartIcon, Shield,
+  CheckCircle2, BarChart3, LineChart as LineChartIcon,
   Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
 } from 'lucide-react';
+import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
@@ -278,7 +279,7 @@ function StrategicActionsBar({ navigate }: { navigate: (path: string) => void })
   const actions = [
     { icon: <BarChart3 size={16} />, title: 'Generate Org Report', cta: 'Generate Report', route: '/reports' },
     { icon: <LineChartIcon size={16} />, title: 'View Benchmarks', cta: 'View Benchmarks', route: '/benchmarks' },
-    { icon: <Shield size={16} />, title: 'Risk Assessment', cta: 'View Risk Report', route: '/risk-score' },
+    { icon: <EvidlyIcon size={16} />, title: 'Risk Assessment', cta: 'View Risk Report', route: '/risk-score' },
   ];
 
   return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Check, MapPin, Thermometer, CheckSquare, FileText, Users, QrCode, PartyPopper, Plus } from 'lucide-react';
+import { Check, MapPin, Thermometer, CheckSquare, FileText, Users, QrCode, PartyPopper, Plus } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -9,8 +10,8 @@ import { toast } from 'sonner';
 import { lookupJurisdiction, linkJurisdictionToLocation } from '../utils/jurisdictionLookup';
 
 const steps = [
-  { id: 1, name: 'Welcome', icon: Shield },
-  { id: 2, name: 'Org Details', icon: Shield },
+  { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
+  { id: 2, name: 'Org Details', icon: () => <EvidlyIcon size={20} /> },
   { id: 3, name: 'Add Location', icon: MapPin },
   { id: 4, name: 'Equipment', icon: Thermometer },
   { id: 5, name: 'Checklists', icon: CheckSquare },
@@ -191,7 +192,7 @@ export function Onboarding() {
       case 1:
         return (
           <div className="text-center">
-            <Shield className="h-24 w-24 text-[#d4af37] mx-auto mb-6" />
+            <EvidlyIcon size={96} className="mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Welcome to EvidLY</h2>
             <p className="text-lg text-gray-600 mb-8">
               Let's get your food safety compliance system set up. This will only take a few minutes.

@@ -4,11 +4,12 @@ import { toast } from 'sonner';
 import {
   Activity, Radio, Cloud, Zap, Upload, Bluetooth, Thermometer,
   Wifi, WifiOff, Battery, BatteryWarning, AlertTriangle, CheckCircle,
-  Bell, Clock, Settings, Shield, TrendingUp, DollarSign, Snowflake,
+  Bell, Clock, Settings, TrendingUp, DollarSign, Snowflake,
   DoorOpen, BarChart3, Plus, ChevronRight, ArrowUpRight, ArrowDownRight,
   Lock, Key, XCircle, FileText, Droplets, Users, Mail, Phone,
   MessageSquare, Brain, Cpu, Link2, Eye,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   iotSensors, iotSensorProviders, iotSensorReadings, iotSensorAlerts,
   iotSensorConfigs, iotIngestionLog, iotDefrostSchedules, iotDoorEvents,
@@ -29,7 +30,7 @@ const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
   { key: 'devices', label: 'Device Management', icon: Radio },
   { key: 'integrations', label: 'Integration Setup', icon: Cloud },
   { key: 'alerts', label: 'Alert Config', icon: Bell },
-  { key: 'compliance', label: 'Compliance Impact', icon: Shield },
+  { key: 'compliance', label: 'Compliance Impact', icon: () => <EvidlyIcon size={14} /> },
   { key: 'pricing', label: 'Pricing', icon: DollarSign },
 ];
 
@@ -553,7 +554,7 @@ function ComplianceImpactTab() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-4 w-4" style={{ color: PRIMARY }} />
+            <EvidlyIcon size={16} />
             <span className="text-xs font-semibold text-gray-500">Compliance Score</span>
           </div>
           <div className="text-xs text-gray-500 mb-2">Temp compliance rate feeds into Operational Compliance (50% weight)</div>

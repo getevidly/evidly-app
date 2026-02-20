@@ -2,11 +2,12 @@ import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import {
   Download, Share2, Printer, FileText, Thermometer, CheckSquare,
-  AlertTriangle, Truck, Shield, ChevronDown, ChevronRight, ClipboardList,
-  Wrench, Loader2, ShieldCheck, Hash, Clock, Link2, Copy, History,
+  AlertTriangle, Truck, ChevronDown, ChevronRight, ClipboardList,
+  Wrench, Loader2, Hash, Clock, Link2, Copy, History,
   Lock, Eye, CheckCircle, XCircle, Camera, GraduationCap, BarChart3,
   Calendar, Users, ArrowRight, ExternalLink, Trash2, RefreshCw,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
@@ -376,7 +377,7 @@ export function AuditTrail() {
     { id: 'equipment', label: 'Equipment', icon: Wrench, enabled: true, description: 'Equipment condition, warranty, service history' },
     { id: 'vendors', label: 'Vendor Services', icon: Truck, enabled: true, description: 'Service records and certifications' },
     { id: 'documents', label: 'Documents', icon: FileText, enabled: true, description: 'Licenses, permits, certifications' },
-    { id: 'compliance', label: 'Compliance Scores', icon: ShieldCheck, enabled: true, description: 'Food safety and fire safety scores' },
+    { id: 'compliance', label: 'Compliance Scores', icon: EvidlyIcon as any, enabled: true, description: 'Food safety and fire safety scores' },
     { id: 'audit_activity', label: 'Inspection Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
     { id: 'photos', label: 'Photo Evidence', icon: Camera, enabled: false, description: 'Photographic documentation' },
     { id: 'training', label: 'Training Records', icon: GraduationCap, enabled: false, description: 'Staff certifications and course completions' },
@@ -831,7 +832,7 @@ export function AuditTrail() {
               </button>
               <div className="flex gap-2 flex-wrap">
                 <button onClick={handleVerifyHash} disabled={verifying} className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-green-600 text-green-700 rounded-lg text-sm font-medium hover:bg-green-50 disabled:opacity-60">
-                  {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
+                  {verifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <EvidlyIcon size={16} />}
                   {verifying ? 'Verifying...' : 'Verify Integrity'}
                 </button>
                 <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium disabled:opacity-60">
@@ -873,7 +874,7 @@ export function AuditTrail() {
               {/* Report Header */}
               <div className="bg-[#1e4d6b] rounded-xl p-4 sm:p-6 text-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <ShieldCheck className="h-8 w-8 text-[#d4af37]" />
+                  <EvidlyIcon size={32} />
                   <div>
                     <h2 className="text-xl font-bold">Chain of Custody Inspection Trail</h2>
                     <p className="text-blue-200 text-sm">Demo Restaurant Group — EvidLY Compliance Platform</p>
@@ -1233,7 +1234,7 @@ export function AuditTrail() {
               {/* Compliance Scores */}
               {moduleEnabled('compliance') && reportData.complianceScores.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="compliance" icon={ShieldCheck} title="Compliance Scores" count={reportData.complianceScores.length} />
+                  <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} />
                   {expandedSections['compliance'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1346,7 +1347,7 @@ export function AuditTrail() {
                     {/* Certification statement */}
                     <div className="mt-6 p-4 rounded-lg border-2 border-[#1e4d6b] bg-[#eef4f8]">
                       <div className="flex items-start gap-3">
-                        <ShieldCheck className="h-6 w-6 flex-shrink-0 mt-0.5" style={{ color: '#1e4d6b' }} />
+                        <EvidlyIcon size={24} className="flex-shrink-0 mt-0.5" />
                         <div>
                           <h4 className="font-bold" style={{ color: '#1e4d6b' }}>Chain of Custody Certification</h4>
                           <p className="text-sm text-gray-700 mt-1">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Siren,
@@ -17,7 +18,6 @@ import {
   Camera,
   FileText,
   Timer,
-  Shield,
   ChevronRight,
   ChevronLeft,
   Download,
@@ -521,7 +521,7 @@ export function PlaybookRunner() {
             {/* Compliance Narrative */}
             <div style={{ marginTop: 24, padding: 20, borderRadius: 10, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
               <h4 style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Shield size={16} /> Compliance Narrative
+                <EvidlyIcon size={16} /> Compliance Narrative
               </h4>
               <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.6, margin: 0 }}>
                 On {new Date(incident.initiatedAt).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}, a {incident.templateTitle.toLowerCase()} incident was reported at {incident.location}. The response was initiated by {incident.initiatedBy} following the EvidLY standardized playbook protocol. {completedSteps.size} of {steps.length} steps were completed{skippedSteps.size > 0 ? ` (${skippedSteps.size} skipped)` : ''} with documented evidence, timestamped actions, and regulatory compliance references ({template.regulatoryBasis}). {foodTotalLoss > 0 ? `Estimated food loss: $${foodTotalLoss.toFixed(2)}. ` : ''}Total response time: {formatTimer(totalSeconds)}. This report serves as a legal defense file demonstrating proactive, protocol-driven incident management.
@@ -779,7 +779,7 @@ export function PlaybookRunner() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {step.regulatoryReference && (
                     <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 6, background: '#eef4f8', color: '#1e4d6b', fontWeight: 500, border: '1px solid #b8d4e8' }}>
-                      <Shield size={11} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 3 }} />
+                      <EvidlyIcon size={11} className="inline align-middle mr-0.5" />
                       {step.regulatoryReference}
                     </span>
                   )}

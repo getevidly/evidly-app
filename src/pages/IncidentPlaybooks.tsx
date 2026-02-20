@@ -19,7 +19,6 @@ import {
   ChevronRight,
   BarChart3,
   Timer,
-  Shield,
   Plus,
   TrendingUp,
   Sparkles,
@@ -33,6 +32,7 @@ import {
   type PlaybookSeverity,
   type PlaybookCategory,
 } from '../data/demoData';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -126,7 +126,7 @@ function PlaybookCard({ template, onActivate, isCustom }: { template: PlaybookTe
 
         {/* Regulatory basis */}
         <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 14, padding: '6px 8px', background: '#f9fafb', borderRadius: 6, lineHeight: 1.4 }}>
-          <Shield size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }} />
+          <EvidlyIcon size={12} className="inline align-middle mr-1" />
           {template.regulatoryBasis}
         </div>
 

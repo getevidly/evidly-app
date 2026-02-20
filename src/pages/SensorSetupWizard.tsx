@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, ArrowRight, Check, Cloud, Zap, Upload, Bluetooth,
-  Thermometer, Lock, Key, Wifi, Radio, Bell, Clock, Shield,
+  Thermometer, Lock, Key, Wifi, Radio, Bell, Clock,
   ChevronDown, Mail, Phone, MessageSquare, AlertTriangle,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { iotSensorProviders } from '../data/demoData';
 import { toast } from 'sonner';
 
@@ -344,7 +345,7 @@ export function SensorSetupWizard() {
                   <p className="text-xs text-gray-400 mt-1">Paste this URL into your iMonnit webhook configuration.</p>
                 </div>
                 <div className="p-3 rounded-lg bg-green-50 text-xs text-green-700">
-                  <Shield className="h-3 w-3 inline mr-1" /> Webhook secured with HMAC-SHA256 signature verification. EvidLY validates every payload.
+                  <EvidlyIcon size={12} className="inline mr-1" /> Webhook secured with HMAC-SHA256 signature verification. EvidLY validates every payload.
                 </div>
               </div>
             )}

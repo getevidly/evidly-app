@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, Play, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Play } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { LeadCaptureModal } from '../components/LeadCaptureModal';
@@ -208,7 +209,7 @@ export function Login() {
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-md text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >
-                <ShieldCheck className="h-4 w-4" />
+                <EvidlyIcon size={16} />
                 Sign in with {branding.sso.provider === 'saml' ? 'SAML SSO' : branding.sso.provider === 'oidc' ? 'OpenID Connect' : 'SSO'}
               </button>
               {branding.sso.enforce && (
@@ -257,7 +258,7 @@ export function Login() {
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <ShieldCheck className="h-3.5 w-3.5 text-[#d4af37]" />
+              <EvidlyIcon size={14} />
               <span>Powered by <span className="font-semibold text-gray-500">EvidLY</span></span>
             </a>
           </div>

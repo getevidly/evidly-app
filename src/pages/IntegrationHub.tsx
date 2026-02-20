@@ -8,7 +8,7 @@ import {
   Search, ExternalLink, CheckCircle2, AlertTriangle,
   RefreshCw, Pause, Play, Trash2, Copy, Eye, EyeOff,
   ArrowUpRight, ArrowDownLeft, Clock, Filter,
-  Zap, Shield, ChevronRight, Plus, XCircle, X, Check,
+  Zap, ChevronRight, Plus, XCircle, X, Check,
   Globe, Code2, Webhook, BarChart3, Send,
 } from 'lucide-react';
 import {

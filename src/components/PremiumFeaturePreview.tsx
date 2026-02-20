@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
-import { Lock, Sparkles, ArrowRight, BarChart3, Shield, Brain } from 'lucide-react';
+import { Lock, Sparkles, ArrowRight, BarChart3, Brain } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import type { FeatureDefinition, PlanTier } from '../lib/featureGating';
 
@@ -260,7 +261,7 @@ function SampleDataPreview({ feature, currentTier }: PremiumFeaturePreviewProps)
           color: '#92742a',
         }}
       >
-        <Shield size={16} style={{ flexShrink: 0 }} />
+        <EvidlyIcon size={16} className="flex-shrink-0" />
         <span>This shows sample data. Upgrade to see your real {feature.name}.</span>
       </div>
 

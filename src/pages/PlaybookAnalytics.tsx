@@ -20,10 +20,10 @@ import {
   Clock,
   DollarSign,
   FileText,
-  Shield,
   MapPin,
   TrendingDown,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   playbookTemplates,
   demoCustomPlaybooks,
@@ -527,7 +527,7 @@ export function PlaybookAnalytics() {
                         fontWeight: 500,
                       }}
                     >
-                      <Shield size={14} color={complianceBadgeColor(loc.complianceRate)} />
+                      <EvidlyIcon size={14} />
                       Compliance
                     </div>
                     <div

@@ -1,4 +1,5 @@
-import { Shield, ShieldCheck, ShieldX, AlertTriangle, Award } from 'lucide-react';
+import { ShieldX, AlertTriangle, Award } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import type { JurisdictionScoreResult } from '../lib/jurisdictionScoring';
 
 interface JurisdictionScoreDisplayProps {
@@ -9,7 +10,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
   if (result.systemType === 'none') {
     return (
       <div className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 min-h-[200px]">
-        <Shield className="w-10 h-10 text-gray-400 mb-3" />
+        <EvidlyIcon size={40} className="mb-3" />
         <div className="text-sm font-medium text-gray-500">Non-CA Location</div>
         <div className="text-xs text-gray-400 mt-1 text-center max-w-[180px]">
           {result.message}
@@ -102,7 +103,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
           style={{ backgroundColor: isPassing ? '#22c55e' : '#ef4444' }}
         >
           {isPassing ? (
-            <ShieldCheck className="w-12 h-12 text-white" />
+            <EvidlyIcon size={48} />
           ) : (
             <ShieldX className="w-12 h-12 text-white" />
           )}
@@ -135,7 +136,7 @@ export function JurisdictionScoreDisplay({ result }: JurisdictionScoreDisplayPro
         className="w-[120px] h-[120px] rounded-2xl flex flex-col items-center justify-center shadow-sm"
         style={{ backgroundColor: result.grade.color }}
       >
-        <ShieldCheck className="w-8 h-8 text-white mb-1" />
+        <EvidlyIcon size={32} className="mb-1" />
         <span className="text-sm font-bold text-white text-center px-2 leading-tight">{result.grade.label}</span>
       </div>
       <div className="mt-3 text-center">

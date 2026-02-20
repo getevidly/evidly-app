@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { ShieldCheck, Star, Crown, Diamond, Shield, CheckCircle2, Award, ExternalLink } from 'lucide-react';
+import { Star, Crown, Diamond, CheckCircle2, Award, ExternalLink } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 
 // ── Demo verification data ──────────────────────────────────────────
 
@@ -41,7 +42,7 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
 };
 
 const BADGE_CONFIG = {
-  verified: { label: 'EvidLY Verified', icon: Shield, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
+  verified: { label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
   excellence: { label: 'EvidLY Excellence', icon: Star, color: '#94a3b8', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
   elite: { label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
   platinum: { label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months' },
@@ -68,7 +69,7 @@ export default function PublicVerification() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-md w-full p-8 text-center">
-          <ShieldCheck className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <EvidlyIcon size={48} className="mx-auto mb-4" />
           <h1 className="text-xl font-bold text-gray-900 mb-2">Verification Not Found</h1>
           <p className="text-sm text-gray-500 mb-6">This verification code is invalid or has expired. Please check the URL and try again.</p>
           <a href="https://evidly.com" className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
@@ -88,7 +89,7 @@ export default function PublicVerification() {
       <div className="py-6 px-4" style={{ backgroundColor: '#1e4d6b' }}>
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-8 w-8" style={{ color: '#d4af37' }} />
+            <EvidlyIcon size={32} />
             <span className="text-xl font-bold">
               <span className="text-white">Evid</span>
               <span style={{ color: '#d4af37' }}>LY</span>
@@ -142,7 +143,7 @@ export default function PublicVerification() {
           {/* Footer */}
           <div className="p-6 text-center" style={{ backgroundColor: '#faf8f3' }}>
             <div className="flex items-center justify-center gap-2 mb-3">
-              <ShieldCheck className="h-5 w-5" style={{ color: '#d4af37' }} />
+              <EvidlyIcon size={20} />
               <span className="text-sm font-semibold text-gray-700">Verified by EvidLY — Compliance Simplified</span>
             </div>
             <p className="text-xs text-gray-500 mb-1">Verification code: {code}</p>

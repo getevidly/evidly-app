@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
-  DollarSign, Wrench, Shield, AlertTriangle, Clock,
+  DollarSign, Wrench, AlertTriangle, Clock,
   MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
   Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed, QrCode, Printer,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -791,7 +792,7 @@ export function Equipment() {
             <div className="text-xs text-gray-400 mt-1">across {locationFilter === 'all' ? '3 locations' : '1 location'}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Shield className="h-5 w-5 text-[#d97706]" /><span className="text-xs text-gray-500 uppercase font-semibold">Warranty Expiring</span></div>
+            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">Warranty Expiring</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">within 90 days</div>
           </div>
@@ -868,7 +869,7 @@ export function Equipment() {
                     <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 text-gray-400" />{eq.location}</div>
                     <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gray-400" />Installed {format(new Date(eq.installDate), 'MMM yyyy')} · {ageLabel(eq.installDate)}</div>
                     <div className="flex items-center gap-1.5">
-                      <Shield className="h-3 w-3" style={{ color: w.color }} />
+                      <EvidlyIcon size={12} />
                       <span>Warranty: </span><span style={badge(w.label, w.color, w.bg)}>{w.label}</span>
                       {w.label === 'Active' && <span className="text-gray-400">exp {format(new Date(eq.warrantyExpiry), 'MMM yyyy')}</span>}
                     </div>
@@ -1003,7 +1004,7 @@ export function Equipment() {
                     <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Warranty Information</h4>
                     <div className="p-4 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2 mb-3">
-                        <Shield className="h-5 w-5" style={{ color: warrantyInfo(selected.warrantyExpiry).color }} />
+                        <EvidlyIcon size={20} />
                         <span className="font-bold text-sm" style={{ color: warrantyInfo(selected.warrantyExpiry).color }}>
                           {warrantyInfo(selected.warrantyExpiry).label}
                         </span>
@@ -1042,7 +1043,7 @@ export function Equipment() {
                     <div className="p-4 rounded-lg border border-gray-200">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                         <div className="flex items-center gap-2">
-                          <Shield className="h-5 w-5" style={{ color: wi.color }} />
+                          <EvidlyIcon size={20} />
                           <span className="font-bold text-sm" style={{ color: wi.color }}>{wi.label}</span>
                         </div>
                         {wi.days > 0 && <span className="text-xs text-gray-500">{wi.days} days remaining</span>}
@@ -1394,7 +1395,7 @@ export function Equipment() {
                     {selected.warrantyProvider && !vendors.some(v => v.vendor === selected.warrantyProvider) && (
                       <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
                         <div className="flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-[#1e4d6b]" />
+                          <EvidlyIcon size={16} />
                           <span className="text-sm font-medium text-[#1e4d6b]">Warranty Provider: {selected.warrantyProvider}</span>
                         </div>
                         {selected.warrantyContact && (

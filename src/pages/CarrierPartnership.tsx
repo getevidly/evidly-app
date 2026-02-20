@@ -1,6 +1,4 @@
 import {
-  Shield,
-  ShieldCheck,
   CheckCircle,
   TrendingUp,
   Flame,
@@ -8,6 +6,7 @@ import {
   Lock,
   Mail,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
@@ -18,7 +17,7 @@ export function CarrierPartnership() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1e4d6b' }}>
-            <ShieldCheck className="h-10 w-10 text-white" />
+            <EvidlyIcon size={40} />
           </div>
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="text-2xl font-bold text-gray-900">Evid</span>
@@ -39,7 +38,7 @@ export function CarrierPartnership() {
           <h2 className="text-xl font-bold text-gray-900 mb-6">What This Portal Will Offer</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: Shield, title: 'Authenticated API Access', desc: 'Real-time risk scores via RESTful API with X-API-Key authentication and rate limiting' },
+              { icon: EvidlyIcon as any, title: 'Authenticated API Access', desc: 'Real-time risk scores via RESTful API with X-API-Key authentication and rate limiting' },
               { icon: TrendingUp, title: '12-Month Trend Analysis', desc: 'Monthly score snapshots showing consistency and improvement trajectory' },
               { icon: Flame, title: 'Fire Safety Verification', desc: 'NFPA 96/17A/10/72 (2025 Edition) compliance status with service dates and vendor documentation' },
               { icon: BarChart3, title: 'Anonymized Incident Metrics', desc: 'Aggregated incident counts by severity and category — no employee PII or raw reports' },

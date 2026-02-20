@@ -297,8 +297,7 @@ export function Sidebar() {
             <>
               <EvidlyIcon size={36} />
               <div className="ml-3">
-                <EvidlyLogo size="md" />
-                <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
+                <EvidlyLogo width={140} showTagline={false} />
               </div>
             </>
           ) : (

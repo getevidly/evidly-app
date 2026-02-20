@@ -1,9 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
-  Flame, Check, X, Camera, AlertTriangle, Shield, Clock, ChevronDown,
+  Flame, Check, X, Camera, AlertTriangle, Clock, ChevronDown,
   ChevronRight, CheckCircle2, XCircle, FileText, MapPin, CalendarDays,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { useRole } from '../contexts/RoleContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
@@ -437,7 +438,7 @@ export function FireSafety() {
                   <div className="grid gap-3">
                     {/* Authority note */}
                     <div className="flex items-start gap-2 text-xs text-gray-500 bg-gray-50 rounded-lg p-2.5">
-                      <Shield size={13} className="mt-0.5 flex-shrink-0 text-gray-400" />
+                      <EvidlyIcon size={13} className="mt-0.5 flex-shrink-0" />
                       <span>{item.authorityNote}</span>
                     </div>
 
@@ -492,7 +493,7 @@ export function FireSafety() {
       {/* Kitchen role message for non-daily tabs */}
       {userRole === 'kitchen_staff' && activeTab !== 'daily' && (
         <div className="text-center py-12 text-gray-500">
-          <Shield size={32} className="mx-auto mb-2 text-gray-300" />
+          <EvidlyIcon size={32} className="mx-auto mb-2" />
           <p className="text-sm font-medium">{TAB_LABELS[activeTab]} checks are managed by your Kitchen Manager</p>
           <p className="text-xs mt-1">You have access to daily fire safety checks</p>
         </div>

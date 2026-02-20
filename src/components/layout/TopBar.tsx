@@ -4,7 +4,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
-import { EvidlyLogo } from '../ui/EvidlyLogo';
 import { NotificationCenter } from '../NotificationCenter';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
@@ -404,9 +403,18 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               )}
             </div>
 
-            <div className="hidden md:flex items-center space-x-2 ml-2">
-              <EvidlyIcon size={32} />
-              <EvidlyLogo size="md" showTagline />
+            <div className="hidden md:flex items-center ml-2" style={{ gap: '8px' }}>
+              <EvidlyIcon size={28} />
+              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+                <span style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: '15px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.3px' }}>
+                  <span style={{ color: '#A08C5A' }}>E</span>
+                  <span style={{ color: '#ffffff' }}>vid</span>
+                  <span style={{ color: '#A08C5A' }}>LY</span>
+                </span>
+                <span style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: '8px', fontWeight: 600, color: '#78909C', letterSpacing: '2px', marginTop: '2px' }}>
+                  COMPLIANCE SIMPLIFIED
+                </span>
+              </div>
             </div>
           </div>
         </div>

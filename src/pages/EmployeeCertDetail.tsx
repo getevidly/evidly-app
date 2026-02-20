@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Shield, AlertTriangle, CheckCircle2, XCircle, Clock, Upload, GraduationCap, Flame } from 'lucide-react';
+import { ArrowLeft, Award, AlertTriangle, CheckCircle2, XCircle, Clock, Upload, GraduationCap, Flame } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
@@ -49,7 +50,7 @@ const DEMO_EMPLOYEES = [
 
 function getCertIcon(type: string) {
   if (type.includes('fire') || type.includes('hood')) return <Flame size={16} color="#dc2626" />;
-  if (type.includes('cfpm') || type.includes('haccp')) return <Shield size={16} color="#1e4d6b" />;
+  if (type.includes('cfpm') || type.includes('haccp')) return <EvidlyIcon size={16} />;
   return <Award size={16} color="#15803d" />;
 }
 

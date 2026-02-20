@@ -24,7 +24,7 @@ export default function Navigation() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 sm:gap-3 no-underline">
             <EvidlyIcon size={42} />
-            <EvidlyLogo size="lg" variant="light" />
+            <EvidlyLogo width={160} showTagline={true} />
           </a>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="no-underline text-[var(--color-text-light)] font-medium text-[0.95rem] transition-colors hover:text-[var(--color-blue)]">Features</a>

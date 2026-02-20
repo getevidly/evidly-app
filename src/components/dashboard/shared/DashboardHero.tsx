@@ -6,7 +6,7 @@
  * Children slot allows role-specific content (score panels, status cards, etc.).
  */
 
-import { ShieldCheck } from 'lucide-react';
+import { EvidlyIcon } from '../../ui/EvidlyIcon';
 import { STEEL_SLATE_GRADIENT, GOLD, FONT, getGreeting, getFormattedDate } from './constants';
 
 interface DashboardHeroProps {
@@ -53,7 +53,7 @@ export function DashboardHero({
             className="w-10 h-10 rounded-lg flex items-center justify-center"
             style={{ backgroundColor: 'rgba(196, 154, 43, 0.15)' }}
           >
-            <ShieldCheck className="w-5 h-5" style={{ color: GOLD }} />
+            <EvidlyIcon size={20} />
           </div>
           <div>
             <h2 className="text-xl font-bold leading-tight">{greetingText}</h2>

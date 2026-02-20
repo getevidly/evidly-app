@@ -5,8 +5,6 @@ import {
   Star,
   Clock,
   MapPin,
-  ShieldCheck,
-  Shield,
   Award,
   ChevronRight,
   Flame,
@@ -17,6 +15,7 @@ import {
   ArrowRight,
   Building2,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   marketplaceVendors,
@@ -37,12 +36,12 @@ function TierBadge({ tier }: { tier: MarketplaceTier }) {
   > = {
     verified: {
       bg: 'bg-green-50 text-green-700 border border-green-200',
-      icon: <ShieldCheck className="h-3 w-3" />,
+      icon: <EvidlyIcon size={12} />,
       label: 'Verified',
     },
     certified: {
       bg: 'bg-gray-100 text-gray-700 border border-gray-200',
-      icon: <Shield className="h-3 w-3" />,
+      icon: <EvidlyIcon size={12} />,
       label: 'Certified',
     },
     preferred: {
@@ -95,7 +94,7 @@ function StarRating({ rating, count }: { rating: number; count?: number }) {
 /* ------------------------------------------------------------------ */
 const iconMap: Record<string, React.ElementType> = {
   Flame,
-  ShieldCheck,
+  ShieldCheck: EvidlyIcon,
   Cog,
   ClipboardCheck,
 };
@@ -327,7 +326,7 @@ export function VendorMarketplace() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {marketplaceCategories.map((cat) => {
             const isActive = selectedCategory === cat.name;
-            const IconComponent = iconMap[cat.icon] || ShieldCheck;
+            const IconComponent = iconMap[cat.icon] || EvidlyIcon;
             const bgColor = categoryBgColors[cat.icon] || 'bg-gray-100 text-gray-600';
 
             return (

@@ -1,7 +1,8 @@
 import {
-  ShieldCheck, Shield, Building2, Network, KeyRound, Palette, Globe,
+  Building2, Network, KeyRound, Palette, Globe,
   BarChart3, Headphones, ArrowRight, Lock, Layers, Users, Zap,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
@@ -15,7 +16,7 @@ export function EnterpriseLanding() {
         {/* Hero */}
         <div className="text-center mb-14">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1e4d6b' }}>
-            <ShieldCheck className="h-10 w-10 text-white" />
+            <EvidlyIcon size={40} />
           </div>
           <div className="flex items-center justify-center gap-2 mb-1">
             <span className="text-2xl font-bold text-gray-900">Evid</span>

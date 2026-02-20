@@ -8,9 +8,10 @@ import {
   Radio, Signal, Cloud, CloudOff, Bluetooth, FileText, Download, Upload,
   Copy, RefreshCw, Zap, Eye, Bell, BellOff, ArrowUpRight, ArrowDownRight,
   Search, Filter, MoreHorizontal, ChevronDown, ChevronRight, LogOut,
-  Layers, BarChart3, TrendingUp, Shield, Database, Link2, ExternalLink,
+  Layers, BarChart3, TrendingUp, Database, Link2, ExternalLink,
   X, Plus, ArrowLeft, Wrench, Pause, Trash2, Mail, Phone, ChevronLeft, ChevronUp,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   iotSensorProviders, iotSensors, iotSensorReadings, iotSensorAlerts,
   iotSensorConfigs, iotIngestionLog, iotMaintenanceLog,
@@ -800,7 +801,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
         {[
           { label: 'Total Readings (24h)', value: iotSensorReadings.length.toString(), icon: Database, color: '#1e4d6b' },
           { label: 'Avg Temperature', value: `${avgTemp.toFixed(1)}°F`, icon: Thermometer, color: '#d4af37' },
-          { label: 'Compliance Rate', value: `${data.coolerTotal > 0 ? Math.round((data.coolerInRange / data.coolerTotal) * 100) : 0}%`, icon: Shield, color: '#22c55e' },
+          { label: 'Compliance Rate', value: `${data.coolerTotal > 0 ? Math.round((data.coolerInRange / data.coolerTotal) * 100) : 0}%`, icon: () => <EvidlyIcon size={16} />, color: '#22c55e' },
           { label: 'Fleet Uptime', value: `${uptimePct}%`, icon: Wifi, color: '#7c3aed' },
         ].map(item => (
           <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4">
@@ -1151,7 +1152,7 @@ function SetupWizardModal({ onClose }: { onClose: () => void }) {
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><Shield className="h-5 w-5 text-purple-600" /></div>
+                      <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center"><EvidlyIcon size={20} /></div>
                       <div>
                         <div className="text-sm font-semibold text-purple-900">OAuth 2.0 Authorization</div>
                         <div className="text-xs text-purple-600">Secure token-based authentication</div>

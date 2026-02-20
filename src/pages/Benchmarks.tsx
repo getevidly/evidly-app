@@ -2,10 +2,11 @@ import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import {
   BarChart3, TrendingUp, TrendingDown, Award, Share2, Download,
-  ChevronDown, ChevronRight, ArrowRight, Star, Shield, Crown,
+  ChevronDown, ChevronRight, ArrowRight, Star, Crown,
   Diamond, Info, Users, MapPin, Building2, Filter, Brain, Lock,
   Trophy, Target, CheckCircle2, AlertTriangle, ExternalLink, Loader2,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
@@ -86,7 +87,7 @@ const COUNTIES = ['All Counties', 'Fresno County', 'Los Angeles County', 'San Fr
 const SIZES = ['All Sizes', 'Single Location', '2-10 Locations', '11-50 Locations', '50+ Locations'];
 
 const BADGE_TIERS = [
-  { tier: 'verified', label: 'EvidLY Verified', icon: Shield, color: '#cd7f32', bg: '#fdf4e8', desc: 'Score 80+ for 3 consecutive months', qualified: true },
+  { tier: 'verified', label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Score 80+ for 3 consecutive months', qualified: true },
   { tier: 'excellence', label: 'EvidLY Excellence', icon: Star, color: '#94a3b8', bg: '#f1f5f9', desc: 'Score 90+ for 3 consecutive months', qualified: true },
   { tier: 'elite', label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months', qualified: false },
   { tier: 'platinum', label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months', qualified: false },

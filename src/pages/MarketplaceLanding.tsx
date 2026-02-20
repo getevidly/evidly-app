@@ -1,6 +1,4 @@
 import {
-  ShieldCheck,
-  Shield,
   UserPlus,
   TrendingUp,
   Flame,
@@ -15,6 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
@@ -27,7 +26,7 @@ export function MarketplaceLanding() {
         {/* Header */}
         <div className="text-center mb-14">
           <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#1e4d6b' }}>
-            <ShieldCheck className="h-10 w-10 text-white" />
+            <EvidlyIcon size={40} />
           </div>
           <div className="flex items-center justify-center gap-2 mb-1">
             <span className="text-2xl font-bold text-gray-900">Evid</span>
@@ -46,7 +45,7 @@ export function MarketplaceLanding() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { step: 1, icon: UserPlus, title: 'Create Your Profile', desc: 'Sign up free, add your services, certifications, and service area. Takes less than 10 minutes.' },
-              { step: 2, icon: ShieldCheck, title: 'Get EvidLY Verified', desc: 'Upload your credentials. Our team verifies your insurance, licenses, and certifications within 24 hours.' },
+              { step: 2, icon: () => <EvidlyIcon size={24} />, title: 'Get EvidLY Verified', desc: 'Upload your credentials. Our team verifies your insurance, licenses, and certifications within 24 hours.' },
               { step: 3, icon: TrendingUp, title: 'Receive Qualified Leads', desc: 'Operators in your area find you through our marketplace. Accept quotes, schedule services, grow your business.' },
             ].map(item => (
               <div key={item.step} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 text-center">
@@ -69,7 +68,7 @@ export function MarketplaceLanding() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { icon: Flame, title: 'Fire Safety', subs: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
-              { icon: ShieldCheck, title: 'Food Safety', subs: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
+              { icon: () => <EvidlyIcon size={20} />, title: 'Food Safety', subs: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
               { icon: Wrench, title: 'Equipment', subs: ['HVAC', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Plumbing'] },
               { icon: ClipboardCheck, title: 'Compliance', subs: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development'] },
             ].map(cat => (
@@ -98,14 +97,14 @@ export function MarketplaceLanding() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               {
-                icon: ShieldCheck,
+                icon: () => <EvidlyIcon size={24} />,
                 iconColor: '#22c55e',
                 accent: '#22c55e',
                 tier: 'Verified',
                 features: ['Free to join', 'Basic marketplace listing', 'Up to 5 leads/month', 'Credential verification'],
               },
               {
-                icon: Shield,
+                icon: () => <EvidlyIcon size={24} />,
                 iconColor: '#6b7280',
                 accent: '#1e4d6b',
                 tier: 'Certified',

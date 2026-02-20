@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
-  Shield,
-  ShieldCheck,
   ShieldOff,
   CheckCircle,
   XCircle,
@@ -17,6 +15,7 @@ import {
   RefreshCw,
   AlertTriangle,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { useRole } from '../contexts/RoleContext';
@@ -91,7 +90,7 @@ export function InsuranceSettings() {
       {/* Page Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-          <Shield className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+          <EvidlyIcon size={24} />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Insurance Integration</h1>
@@ -104,7 +103,7 @@ export function InsuranceSettings() {
         <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
           <div className="flex items-center gap-3">
             {sharingEnabled
-              ? <ShieldCheck className="h-6 w-6 text-green-500" />
+              ? <EvidlyIcon size={24} />
               : <ShieldOff className="h-6 w-6 text-gray-400" />}
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Share My EvidLY Risk Score with Insurance Partners</h2>
@@ -349,7 +348,7 @@ export function InsuranceSettings() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 max-w-lg w-[95vw] sm:w-full p-4 sm:p-6" style={F}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-                <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                <EvidlyIcon size={20} />
               </div>
               <h3 className="text-lg font-bold text-gray-900">Enable Data Sharing?</h3>
             </div>

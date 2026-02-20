@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Download, FileText, Shield, Building, CheckCircle, Loader, Share2, Mail, QrCode, Printer } from 'lucide-react';
+import { Download, FileText, Building, CheckCircle, Loader, Share2, Mail, QrCode, Printer } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 
 interface PackageDocument {
   name: string;
@@ -25,11 +26,11 @@ const packageDocuments: PackageDocument[] = [
 
 type PackageType = 'inspection' | 'insurance' | 'landlord' | 'custom';
 
-const packagePresets: Record<PackageType, { label: string; description: string; icon: typeof Shield; docs: string[] }> = {
+const packagePresets: Record<PackageType, { label: string; description: string; icon: typeof EvidlyIcon | typeof FileText | typeof Building; docs: string[] }> = {
   inspection: {
     label: 'Health Inspection Packet',
     description: 'Everything an inspector needs — permits, food handler certs, HACCP plan, temp logs, vendor docs',
-    icon: Shield,
+    icon: EvidlyIcon,
     docs: ['Health Permit', 'Business License', 'Food Handler Certifications (4)', 'HACCP Plan', 'Temperature Log Summary', 'Hood Cleaning Certificate', 'Fire Suppression Inspection', 'Fire Extinguisher Tags', 'Pest Control Report', 'Compliance Score Report'],
   },
   insurance: {

@@ -2,10 +2,11 @@ import { useState } from 'react';
 import {
   Radio, Wifi, WifiOff, Battery, Signal, AlertTriangle, Check, X,
   Thermometer, Droplets, Bell, BellOff, Settings, ChevronDown, ChevronUp,
-  Clock, MapPin, Activity, Shield, RefreshCw, Eye, BarChart3,
+  Clock, MapPin, Activity, RefreshCw, Eye, BarChart3,
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   iotSensors, iotSensorReadings, iotSensorAlerts, iotSensorProviders,
@@ -287,7 +288,7 @@ export default function IoTMonitoring() {
           {/* Compliance Impact */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Shield className="h-5 w-5 text-[#1e4d6b]" />
+              <EvidlyIcon size={20} />
               IoT Compliance Impact
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

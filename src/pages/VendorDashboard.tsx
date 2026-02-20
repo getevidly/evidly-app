@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   LayoutDashboard, MessageSquare, CalendarDays, FileText, Star, BarChart3,
-  Shield, ShieldCheck, Award, Eye, TrendingUp, Clock, MapPin, Users,
+  Award, Eye, TrendingUp, Clock, MapPin, Users,
   CheckCircle, XCircle, AlertTriangle, Upload, Send, ChevronRight,
   Zap, Lock, ArrowUpRight, Camera, ClipboardCheck, LogOut, Bell,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import {
   vendorDashboardStats, vendorLeads, vendorScheduledServices, vendorCredentials,
@@ -30,9 +31,9 @@ const TABS: { id: VendorTab; label: string; icon: typeof LayoutDashboard; badge?
 
 // ── Helpers ──────────────────────────────────────────────────
 function TierBadge({ tier, size = 'sm' }: { tier: MarketplaceTier; size?: 'sm' | 'lg' }) {
-  const cfg: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: typeof Shield; label: string }> = {
-    verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: ShieldCheck, label: 'Verified'  },
-    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: Shield,      label: 'Certified' },
+  const cfg: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: React.ComponentType<any>; label: string }> = {
+    verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: EvidlyIcon, label: 'Verified'  },
+    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: EvidlyIcon,      label: 'Certified' },
     preferred: { bg: 'bg-amber-50',  text: 'text-amber-700',  border: 'border-amber-200',  icon: Award,       label: 'Preferred' },
   };
   const c = cfg[tier];
@@ -190,7 +191,7 @@ export function VendorDashboard() {
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Your Plan</h3>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-              <Shield className="h-5 w-5 text-gray-500" />
+              <EvidlyIcon size={20} />
             </div>
             <div>
               <div className="font-semibold text-gray-900">Free — EvidLY Listed</div>

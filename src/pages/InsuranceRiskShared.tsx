@@ -1,8 +1,9 @@
 import { useParams } from 'react-router-dom';
 import {
-  Shield, ShieldCheck, CheckCircle, TrendingUp, Download, Info,
+  CheckCircle, TrendingUp, Download, Info,
   Flame, UtensilsCrossed, FileCheck, Settings2, ExternalLink,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
 
 // ── Demo data for public insurer view ─────────────────────────
@@ -163,7 +164,7 @@ export default function InsuranceRiskShared() {
       <div className="bg-[#1e4d6b] text-white px-4 sm:px-8 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-7 w-7" style={{ color: '#d4af37' }} />
+            <EvidlyIcon size={28} />
             <div>
               <span className="text-lg font-bold">
                 <span className="text-white">Evid</span>
@@ -329,7 +330,7 @@ export default function InsuranceRiskShared() {
         {/* For Insurance Professionals */}
         <div className="rounded-xl p-5" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
           <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
-            <Shield className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={16} />
             For Insurance Professionals
           </h3>
           <p className="text-sm text-gray-700 mb-3">
@@ -348,7 +349,7 @@ export default function InsuranceRiskShared() {
         {/* Footer */}
         <div className="text-center py-4 border-t border-gray-200">
           <div className="flex items-center justify-center gap-2 mb-1">
-            <ShieldCheck className="h-4 w-4" style={{ color: '#d4af37' }} />
+            <EvidlyIcon size={16} />
             <span className="text-sm font-bold">
               <span className="text-gray-900">Evid</span>
               <span style={{ color: '#d4af37' }}>LY</span>

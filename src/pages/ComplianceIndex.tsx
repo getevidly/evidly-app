@@ -3,9 +3,10 @@ import { toast } from 'sonner';
 import {
   BarChart3, TrendingUp, TrendingDown, Download, Share2, ArrowRight,
   AlertTriangle, CheckCircle2, Brain, Info, Users, MapPin, Building2,
-  FileText, Calendar, Shield, BookOpen, Sparkles, ExternalLink,
+  FileText, Calendar, BookOpen, Sparkles, ExternalLink,
   ChevronDown, ChevronRight, Scale, Flame, ThermometerSun,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -230,7 +231,7 @@ export function ComplianceIndex() {
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <Shield className="h-10 w-10" style={{ color: '#d4af37' }} />
+                <EvidlyIcon size={40} />
                 <div>
                   <h1 className="text-2xl font-bold">EvidLY Compliance Index</h1>
                   <p className="text-sm text-gray-200">Q{REPORT.quarter} {REPORT.year} — California Commercial Kitchens</p>
@@ -703,7 +704,7 @@ export function ComplianceIndex() {
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+              <EvidlyIcon size={20} />
               Data Integrity & Anonymization
             </h2>
           </div>
@@ -735,7 +736,7 @@ export function ComplianceIndex() {
                   'Individual location scores (only aggregated/anonymized)',
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-2">
-                    <Shield className="h-3.5 w-3.5 text-red-400 mt-0.5 flex-shrink-0" />
+                    <EvidlyIcon size={14} className="mt-0.5 flex-shrink-0" />
                     <span className="text-xs text-gray-600">{item}</span>
                   </div>
                 ))}

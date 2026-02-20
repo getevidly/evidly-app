@@ -1,4 +1,5 @@
-import { Shield, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import {
   calculateInsuranceRiskScore,
@@ -25,7 +26,7 @@ export function InsuranceReadinessWidget({ locationId }: InsuranceReadinessWidge
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Insurance Risk Score</h3>

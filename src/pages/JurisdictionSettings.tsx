@@ -2,11 +2,12 @@
 import { type ReactNode, useState } from 'react';
 import { toast } from 'sonner';
 import {
-  ChevronDown, ChevronUp, MapPin, Shield, Phone, ExternalLink,
+  ChevronDown, ChevronUp, MapPin, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
   Award, Calendar, Wrench, ClipboardList, Building2, RotateCcw,
   Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   DEMO_LOCATION_JURISDICTIONS,
@@ -578,7 +579,7 @@ export function JurisdictionSettings() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-[#1e4d6b]" />
+            <EvidlyIcon size={20} />
             <h2 className="text-base sm:text-lg font-bold text-gray-900">California Regulations — Auto-Applied</h2>
           </div>
           <p className="text-sm text-gray-500 mt-1">
@@ -782,7 +783,7 @@ export function JurisdictionSettings() {
                 {/* Regulation Overrides */}
                 {demoConfig && (
                   <CollapsibleSection
-                    icon={<Shield className="w-4 h-4" />}
+                    icon={<EvidlyIcon size={16} />}
                     title="Applied Regulations"
                     defaultOpen
                     badge={
@@ -1022,7 +1023,7 @@ export function JurisdictionSettings() {
 
                 {/* 4b. Inspection Grading System */}
                 <CollapsibleSection
-                  icon={<Shield className="w-4 h-4" />}
+                  icon={<EvidlyIcon size={16} />}
                   title="Inspection Grading System"
                 >
                   {inspectionSystem ? (
@@ -1482,7 +1483,7 @@ export function JurisdictionSettings() {
       {/* Onboarding Note */}
       <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8] mt-6">
         <div className="flex items-start gap-3">
-          <Shield className="w-5 h-5 text-[#1e4d6b] mt-0.5 flex-shrink-0" />
+          <EvidlyIcon size={20} className="mt-0.5 flex-shrink-0" />
           <div>
             <p className="text-sm text-gray-700">
               <strong>How auto-detection works:</strong> When you add a location with a California zip code (900xx–961xx)

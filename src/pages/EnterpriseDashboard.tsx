@@ -2,13 +2,14 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Building2, Network, KeyRound, Users, Palette, FileText,
-  ShieldCheck, LogOut, ChevronRight, ChevronDown, Shield, Award,
+  LogOut, ChevronRight, ChevronDown, Award,
   TrendingUp, TrendingDown, MapPin, Clock, Settings, Eye, Copy, RefreshCw,
   UserPlus, Download, Upload, Search, Filter, Globe, Lock,
   BarChart3, Zap, ExternalLink, CheckCircle, XCircle, AlertTriangle,
   Layers, Monitor, Paintbrush, ArrowUp, ArrowDown, Minus,
   Thermometer, ClipboardCheck, Wrench, FileWarning, Loader2, CheckCircle2,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   enterpriseTenants, enterpriseHierarchy, enterpriseUsers,
   enterpriseReportTemplates, enterpriseAuditLog,
@@ -236,7 +237,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
       {/* Executive Summary Panel */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4 flex-wrap">
-          <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          <EvidlyIcon size={20} />
           <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
           <button
             onClick={() => navigate('/enterprise/dashboard')}
@@ -251,7 +252,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           {[
-            { label: 'Overall Score', value: avgScore + '%', icon: ShieldCheck, highlight: true },
+            { label: 'Overall Score', value: avgScore + '%', icon: EvidlyIcon as any, highlight: true },
             { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
             { label: 'vs 3Mo Ago', value: (trend3mDelta >= 0 ? '+' : '') + trend3mDelta + '%', icon: trend3mDelta >= 0 ? TrendingUp : TrendingDown },
             { label: 'Locations', value: `${totalLocations.toLocaleString()} total`, icon: MapPin },
@@ -1335,7 +1336,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
               <div className="w-40 flex-shrink-0 p-3" style={{ backgroundColor: colors.sidebarBg }}>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: colors.primaryColor }}>
-                    <Shield className="h-4 w-4" style={{ color: colors.sidebarText }} />
+                    <EvidlyIcon size={16} />
                   </div>
                   <span className="text-[10px] font-bold truncate" style={{ color: colors.sidebarText }}>{platformName}</span>
                 </div>
@@ -1376,7 +1377,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
           {/* Mini Login Preview */}
           <div className="mt-4 border border-gray-200 rounded-xl overflow-hidden p-6 text-center" style={{ backgroundColor: colors.sidebarBg }}>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: colors.primaryColor }}>
-              <Shield className="h-6 w-6" style={{ color: colors.sidebarText }} />
+              <EvidlyIcon size={24} />
             </div>
             <p className="text-sm font-bold mb-3" style={{ color: colors.sidebarText }}>{platformName}</p>
             <div className="max-w-xs mx-auto space-y-2">
@@ -2008,7 +2009,7 @@ export function EnterpriseDashboard() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1e4d6b' }}>
-              <ShieldCheck className="h-5 w-5 text-white" />
+              <EvidlyIcon size={20} />
             </div>
             <div>
               <div className="flex items-center gap-1.5">

@@ -1,4 +1,4 @@
-import { Shield } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 
 interface InspectionReadyBadgeProps {
   score: number;
@@ -14,7 +14,7 @@ export function InspectionReadyBadge({ score, show }: InspectionReadyBadgeProps)
       title="Your compliance score qualifies as inspection-ready"
     >
       <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-[#d4af37] badge-shimmer">
-        <Shield className="w-5 h-5 text-white" strokeWidth={2.5} />
+        <EvidlyIcon size={20} />
         <span className="text-sm font-bold text-white tracking-wide">
           Inspection Ready ✓
         </span>

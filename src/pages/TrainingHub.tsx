@@ -6,11 +6,12 @@ import {
   Search, Filter, Clock, Users, Play, ChevronRight,
   CheckCircle2, AlertTriangle, XCircle, BarChart3,
   Download, Eye, Plus, RefreshCw, TrendingUp,
-  BookOpenCheck, Brain, Globe, Flame, Shield,
+  BookOpenCheck, Brain, Globe, Flame,
   FileText, DollarSign, CalendarClock, ArrowRight,
   Building2, UserCheck, AlertCircle, Star, Zap,
   Target, Send, CreditCard, Check, X, Printer,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   trainingCourses, trainingModules, trainingEnrollments, trainingCertificates,
   trainingSB476Log, trainingQuizAttempts,
@@ -26,15 +27,15 @@ const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
   { id: 'catalog', label: 'Course Catalog', icon: BookOpen },
   { id: 'learning', label: 'My Learning', icon: GraduationCap },
   { id: 'certifications', label: 'Certifications', icon: Award },
-  { id: 'requirements', label: 'Requirements', icon: Shield },
+  { id: 'requirements', label: 'Requirements', icon: EvidlyIcon },
   { id: 'overview', label: 'Compliance Overview', icon: Target },
   { id: 'sb476', label: 'SB 476 Tracker', icon: Scale },
   { id: 'admin', label: 'Admin', icon: Settings2 },
   { id: 'pricing', label: 'Pricing', icon: CreditCard },
 ];
 
-const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof Shield; color: string; bg: string }> = {
-  food_safety_handler: { label: 'Food Safety – Handler', icon: Shield, color: '#15803d', bg: '#dcfce7' },
+const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof EvidlyIcon; color: string; bg: string }> = {
+  food_safety_handler: { label: 'Food Safety – Handler', icon: EvidlyIcon, color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1e4d6b', bg: '#e0f2fe' },
   fire_safety: { label: 'Fire Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
   compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#d4af37', bg: '#fef3c7' },
@@ -892,7 +893,7 @@ function PricingTab() {
           {[
             { icon: DollarSign, title: 'Cost Savings', desc: 'Eliminates $10–20/employee third-party cert fees. ServSafe Manager prep alone costs $150–250 per person.' },
             { icon: Target, title: 'Better Compliance', desc: 'Training completion auto-updates compliance scores. Staff who train in EvidLY use EvidLY daily.' },
-            { icon: Shield, title: 'Legal Protection', desc: 'Documented training = legal defense. SB 476 compliance tracking is unique to California market.' },
+            { icon: EvidlyIcon, title: 'Legal Protection', desc: 'Documented training = legal defense. SB 476 compliance tracking is unique to California market.' },
             { icon: Zap, title: 'One Platform', desc: 'Enterprise clients (Pacific Coast Dining, Compass) eliminate one more vendor. Training + compliance + operations in one tool.' },
           ].map(item => (
             <div key={item.title} style={{ display: 'flex', gap: 12 }}>

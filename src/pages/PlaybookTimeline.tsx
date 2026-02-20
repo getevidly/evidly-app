@@ -1,9 +1,10 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   ArrowLeft, CheckCircle2, Clock, Camera, FileText, Thermometer,
-  User, MapPin, Phone, Download, Printer, Shield, Share2,
+  User, MapPin, Phone, Download, Printer, Share2,
   DollarSign, Truck, AlertTriangle, Siren,
 } from 'lucide-react';
 import {
@@ -510,7 +511,7 @@ export function PlaybookTimeline() {
         padding: '16px 16px',
       }}>
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Shield size={18} color="#1e4d6b" /> Compliance Narrative
+          <EvidlyIcon size={18} /> Compliance Narrative
         </h3>
         <div style={{ fontSize: 14, color: '#334155', lineHeight: 1.7 }}>
           <p style={{ margin: '0 0 10px' }}>

@@ -1,59 +1,71 @@
 /**
- * LOGO-FIX-3 — EvidLY Wordmark (HTML spans, zero-gap)
+ * BRANDING-UPDATE-1 — EvidLY Wordmark (inline SVG)
  *
- * variant="dark" (default): "vid" in white — for dark backgrounds
- * variant="light": "vid" in navy (#1E2D4D) — for light backgrounds
- * "E" + "LY" always in Refined Gold (#A08C5A).
- *
- * Uses HTML <span> elements instead of SVG <text> to guarantee
- * zero gaps across all browsers and font rendering engines.
+ * E + LY in Refined Gold (#A08C5A), "vid" in #B0BEC5.
+ * Tagline "COMPLIANCE SIMPLIFIED" in #78909C.
+ * Uses SVG <text> for pixel-perfect rendering.
  */
 
+import React from 'react';
+
 interface EvidlyLogoProps {
-  className?: string;
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'dark' | 'light';
+  width?: number;
   showTagline?: boolean;
+  className?: string;
+  /** @deprecated — use width instead. Kept for back-compat. */
+  size?: 'sm' | 'md' | 'lg';
+  /** @deprecated — SVG renders identically on all backgrounds. */
+  variant?: 'dark' | 'light';
 }
 
-export function EvidlyLogo({
+export const EvidlyLogo: React.FC<EvidlyLogoProps> = ({
+  width,
+  showTagline = true,
   className,
-  size = 'md',
-  variant = 'dark',
-  showTagline = false,
-}: EvidlyLogoProps) {
-  const vidColor = variant === 'light' ? '#1E2D4D' : '#ffffff';
-  const goldColor = '#A08C5A';
-
-  const sizeMap = { sm: '0.875rem', md: '1.25rem', lg: '1.5rem' };
-  const fontSize = sizeMap[size];
+  size,
+}) => {
+  // Back-compat: if legacy `size` prop used without `width`, map it
+  const sizeToWidth = { sm: 100, md: 140, lg: 180 };
+  const resolvedWidth = width ?? (size ? sizeToWidth[size] : 200);
+  const height = showTagline ? resolvedWidth * 0.25 : resolvedWidth * 0.18;
 
   return (
-    <div className={className} style={{ lineHeight: 1.2 }}>
-      <span
-        style={{
-          fontFamily: "'Outfit', 'Inter', sans-serif",
-          fontWeight: 800,
-          fontSize,
-          letterSpacing: '-0.02em',
-        }}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={showTagline ? '0 0 240 60' : '0 0 240 48'}
+      width={resolvedWidth}
+      height={height}
+      aria-label="EvidLY — Compliance Simplified"
+      className={className}
+    >
+      <text
+        x="0"
+        y="38"
+        fontFamily="system-ui, -apple-system, 'Segoe UI', sans-serif"
+        fontSize="42"
+        fontWeight="800"
+        letterSpacing="-1"
       >
-        <span style={{ color: goldColor }}>E</span>
-        <span style={{ color: vidColor }}>vid</span>
-        <span style={{ color: goldColor }}>LY</span>
-      </span>
+        <tspan fill="#A08C5A">E</tspan>
+        <tspan fill="#B0BEC5">vid</tspan>
+        <tspan fill="#A08C5A">LY</tspan>
+      </text>
       {showTagline && (
-        <div
-          style={{
-            fontSize: '9px',
-            color: '#94a3b8',
-            letterSpacing: '0.05em',
-            marginTop: '-1px',
-          }}
+        <text
+          x="0"
+          y="56"
+          fontFamily="system-ui, -apple-system, 'Segoe UI', sans-serif"
+          fontSize="10"
+          fontWeight="600"
+          fill="#78909C"
+          letterSpacing="3"
         >
-          Compliance Simplified
-        </div>
+          COMPLIANCE SIMPLIFIED
+        </text>
       )}
-    </div>
+    </svg>
   );
-}
+};
+
+// Also export as named function for existing imports
+export { EvidlyLogo as default };

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   Siren, ArrowLeft, ChevronRight, ChevronLeft, Plus, Trash2,
   ChevronUp, ChevronDown, CheckCircle2, Camera, Thermometer,
-  PenLine, FileText, Shield, Bell, Building2,
+  PenLine, FileText, Bell, Building2,
 } from 'lucide-react';
 
 type Step = 'basics' | 'steps' | 'notifications' | 'review';
@@ -393,7 +394,7 @@ export function PlaybookBuilder() {
 
             <div style={{ padding: 16, borderRadius: 10, background: '#eef4f8', border: '1px solid #b8d4e8' }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: '#1e4d6b', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Shield size={16} /> Review Schedule
+                <EvidlyIcon size={16} /> Review Schedule
               </div>
               <p style={{ fontSize: 13, color: '#374151', margin: 0 }}>
                 This playbook is set to be reviewed <strong>{reviewSchedule}</strong>. All assigned reviewers will receive a reminder when a review is due.
@@ -418,7 +419,7 @@ export function PlaybookBuilder() {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, fontSize: 13, color: '#374151' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Shield size={14} color="#1e4d6b" />
+                  <EvidlyIcon size={14} />
                   Category: <strong style={{ marginLeft: 4 }}>{categoryLabel}</strong>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

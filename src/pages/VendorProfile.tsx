@@ -2,10 +2,11 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  ArrowLeft, Star, Clock, MapPin, Shield, ShieldCheck, Award,
+  ArrowLeft, Star, Clock, MapPin, Award,
   Phone, Mail, Globe, CheckCircle, XCircle, Calendar, MessageSquare,
   Users, TrendingUp, Building2, Send, ChevronDown,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   marketplaceVendors, marketplaceReviews, locations,
@@ -14,9 +15,9 @@ import {
 
 // ── Helper: Tier Badge ──────────────────────────────────────────
 function TierBadge({ tier }: { tier: MarketplaceTier }) {
-  const config: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: typeof Shield; label: string }> = {
-    verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: ShieldCheck, label: 'Verified'  },
-    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: Shield,      label: 'Certified' },
+  const config: Record<MarketplaceTier, { bg: string; text: string; border: string; icon: React.ComponentType<any>; label: string }> = {
+    verified:  { bg: 'bg-green-50',  text: 'text-green-700',  border: 'border-green-200',  icon: EvidlyIcon, label: 'Verified'  },
+    certified: { bg: 'bg-gray-100',  text: 'text-gray-700',   border: 'border-gray-200',   icon: EvidlyIcon,      label: 'Certified' },
     preferred: { bg: 'bg-amber-50',  text: 'text-amber-700',  border: 'border-amber-200',  icon: Award,       label: 'Preferred' },
   };
   const c = config[tier];
@@ -319,7 +320,7 @@ export function VendorProfile() {
             {/* EvidLY Platform Stats */}
             <div className="mt-8 bg-gradient-to-r from-[#eef4f8] to-[#f0f7fb] rounded-xl border border-[#b8d4e8] p-5">
               <div className="flex items-center gap-2 mb-4">
-                <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                <EvidlyIcon size={20} />
                 <h3 className="text-sm font-semibold text-gray-900">EvidLY Platform Stats</h3>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

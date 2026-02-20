@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  Shield,
   Flame,
   UtensilsCrossed,
   FileCheck,
@@ -19,7 +18,6 @@ import {
   Info,
   Lock,
   ShieldAlert,
-  ShieldCheck,
   TrendingUp,
   Share2,
   Copy,
@@ -27,6 +25,7 @@ import {
   Link2,
   X,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
 import { useRole } from '../contexts/RoleContext';
@@ -457,7 +456,7 @@ export function InsuranceRisk() {
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
-            <Shield className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={24} />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Insurance Risk Score</h1>
@@ -556,7 +555,7 @@ export function InsuranceRisk() {
       {/* 4 Category Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         {riskResult.categories.map(cat => {
-          const Icon = CATEGORY_ICONS[cat.key] || Shield;
+          const Icon = CATEGORY_ICONS[cat.key] || Flame;
           const catColor = CATEGORY_COLORS[cat.key] || '#6b7280';
           const catTier = getInsuranceRiskTier(cat.score);
           const isExpanded = expandedCategory === cat.key;
@@ -719,7 +718,7 @@ export function InsuranceRisk() {
 
           <div className="p-4 rounded-lg" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe' }}>
             <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck className="h-4 w-4 text-blue-500" />
+              <EvidlyIcon size={16} />
               <span className="text-sm font-semibold text-gray-900">General Liability</span>
             </div>
             <p className="text-xs text-gray-600 mb-2">Carriers assess foodborne illness and premises liability risk:</p>
@@ -1133,7 +1132,7 @@ export function InsuranceRisk() {
 
                   <div className="text-sm text-gray-600 space-y-1">
                     <div className="flex items-center gap-2"><Link2 className="h-3.5 w-3.5 text-gray-400" /> Expires: {new Date(Date.now() + parseInt(shareExpiry) * 86400000).toLocaleDateString()}</div>
-                    <div className="flex items-center gap-2"><Shield className="h-3.5 w-3.5 text-gray-400" /> Shared with: {shareRecipient}</div>
+                    <div className="flex items-center gap-2"><EvidlyIcon size={14} /> Shared with: {shareRecipient}</div>
                   </div>
 
                   {shareEmail && (

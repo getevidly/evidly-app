@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShieldCheck, Upload, CheckCircle, AlertCircle, Loader, FileText, X } from 'lucide-react';
+import { Upload, CheckCircle, AlertCircle, Loader, FileText, X } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { validateSecureToken, uploadViaSecureToken } from '../lib/api';
 
 export function VendorSecureUpload() {
@@ -96,7 +97,7 @@ export function VendorSecureUpload() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <ShieldCheck className="h-8 w-8 text-[#d4af37]" />
+            <EvidlyIcon size={32} />
             <span className="text-2xl font-bold">
               <span className="text-[#1e4d6b]">Evid</span>
               <span className="text-[#d4af37]">LY</span>

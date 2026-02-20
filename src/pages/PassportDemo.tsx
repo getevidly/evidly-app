@@ -1,4 +1,5 @@
-import { Shield, CheckCircle2, AlertCircle } from 'lucide-react';
+import { CheckCircle2, AlertCircle } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 
 export default function PassportDemo() {
   const today = new Date().toLocaleDateString('en-US', {
@@ -45,7 +46,7 @@ export default function PassportDemo() {
     <div className="min-h-screen bg-white">
       <header className="bg-[#1e4d6b] text-white py-6 px-6">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <Shield className="w-10 h-10 text-[#d4af37]" strokeWidth={2} />
+          <EvidlyIcon size={40} />
           <div>
             <h1 className="font-['Outfit'] text-2xl font-bold">EvidLY Compliance Passport</h1>
             <p className="text-sm text-gray-300">Live Compliance Status</p>

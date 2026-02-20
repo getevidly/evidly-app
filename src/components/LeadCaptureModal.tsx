@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, X, User, Mail, Building2 } from 'lucide-react';
+import { X, User, Mail, Building2 } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useDemo } from '../contexts/DemoContext';
 import type { DemoLead } from '../contexts/DemoContext';
 
@@ -64,7 +65,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
           {/* Header */}
           <div className="bg-[#1e4d6b] px-6 py-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="h-7 w-7 text-[#d4af37]" />
+              <EvidlyIcon size={28} />
               <div>
                 <span className="text-xl font-bold text-white">
                   Evid<span className="text-[#d4af37]">LY</span>

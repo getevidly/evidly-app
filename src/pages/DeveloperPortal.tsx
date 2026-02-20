@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, BookOpen, Key, Code2, Webhook, FlaskConical,
-  Terminal, Shield, DollarSign, Copy, ChevronRight,
+  Terminal, DollarSign, Copy, ChevronRight,
   ChevronDown, ExternalLink, Check, Zap, Lock,
   Clock, Server, FileJson, Globe,
 } from 'lucide-react';

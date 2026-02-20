@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import {
-  ShieldCheck,
-  Shield,
   Palette,
   Globe,
   Lock,
@@ -12,6 +10,7 @@ import {
   Check,
   RotateCcw,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useBranding, DEMO_BRAND_PRESETS, DEFAULT_BRANDING, type BrandingConfig } from '../contexts/BrandingContext';
 
 // ── Brand preset metadata for cards ────────────────────
@@ -159,7 +158,7 @@ export function BrandingSettings() {
                 )}
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: preset.color }}>
-                    <ShieldCheck className="h-5 w-5 text-white" />
+                    <EvidlyIcon size={20} />
                   </div>
                   <div className="w-4 h-4 rounded" style={{ backgroundColor: preset.accent }} />
                 </div>
@@ -175,7 +174,7 @@ export function BrandingSettings() {
         {/* Brand Identity */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Shield className="h-5 w-5 text-[#1e4d6b]" />
+            <EvidlyIcon size={20} />
             <h2 className="text-lg font-semibold text-gray-900">Brand Identity</h2>
           </div>
           <div className="space-y-4">
@@ -417,7 +416,7 @@ export function BrandingSettings() {
             <div className="flex" style={{ height: 260 }}>
               <div className="w-44 flex-shrink-0 p-3" style={{ backgroundColor: localColors.sidebarBg }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <ShieldCheck className="h-5 w-5" style={{ color: localColors.accent }} />
+                  <EvidlyIcon size={20} />
                   <span className="text-xs font-bold truncate" style={{ color: localColors.sidebarText }}>
                     {localBrandName}
                   </span>
@@ -453,7 +452,7 @@ export function BrandingSettings() {
             <p className="text-xs font-medium text-gray-500 px-4 pt-3 pb-2">Login Page</p>
             <div className="p-6 text-center bg-[#faf8f3]" style={{ minHeight: 260 }}>
               <div className="flex items-center justify-center gap-2 mb-2">
-                <ShieldCheck className="h-6 w-6" style={{ color: localColors.accent }} />
+                <EvidlyIcon size={24} />
                 <span className="text-lg font-bold" style={{ color: localColors.primary }}>
                   {localBrandName}
                 </span>

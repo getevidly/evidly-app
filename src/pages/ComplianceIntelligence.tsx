@@ -2,13 +2,14 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  ShieldCheck, AlertTriangle, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
+  AlertTriangle, TrendingUp, TrendingDown, ArrowUp, ArrowDown,
   Minus, Search, Download, ChevronRight, ExternalLink, Share2,
   Flame, UtensilsCrossed, BarChart3, Users, Target, Zap,
-  Clock, Activity, Eye, Shield, CalendarDays, DollarSign, FileBarChart,
+  Clock, Activity, Eye, CalendarDays, DollarSign, FileBarChart,
   Radar, Brain, AlertCircle, ClipboardCheck, Info, Send, Plus, CheckCircle,
   Database, Server, CreditCard, Layers, Star,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, ReferenceLine,
@@ -88,7 +89,7 @@ const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
   { id: 'command', label: 'Command Center', icon: BarChart3 },
   { id: 'compare', label: 'Compare', icon: Users },
   { id: 'trends', label: 'Trends', icon: TrendingUp },
-  { id: 'risk', label: 'Risk', icon: Shield },
+  { id: 'risk', label: 'Risk', icon: EvidlyIcon as any },
   { id: 'staffing', label: 'Staffing', icon: Brain },
   { id: 'financial', label: 'Financial', icon: DollarSign },
   { id: 'reports', label: 'Reporting', icon: FileBarChart },
@@ -183,7 +184,7 @@ function CommandCenterTab() {
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={20} />
             <h2 className="text-base font-bold text-gray-900">Organization Pulse</h2>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-gray-400">
@@ -1063,7 +1064,7 @@ function formatDollars(n: number) {
 function FinancialTab() {
   const categoryIcons: Record<string, typeof Flame> = {
     gavel: AlertTriangle,
-    shield: Shield,
+    shield: EvidlyIcon as any,
     alert: Activity,
     revenue: DollarSign,
     'trending-up': TrendingUp,

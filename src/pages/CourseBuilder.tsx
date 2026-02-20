@@ -4,9 +4,10 @@ import { toast } from 'sonner';
 import {
   ArrowLeft, ArrowRight, BookOpen, Plus, Trash2, GripVertical,
   CheckCircle2, Clock, Settings2, Users, Save, Eye,
-  ChevronRight, AlertCircle, Globe, Shield, Flame, Brain,
+  ChevronRight, AlertCircle, Globe, Flame, Brain,
   BookOpenCheck, FileText,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { trainingCourses, type TrainingCategory } from '../data/demoData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -22,8 +23,8 @@ const STEPS: { id: Step; label: string; number: number }[] = [
   { id: 'assign', label: 'Assign & Publish', number: 6 },
 ];
 
-const CATEGORIES: { value: TrainingCategory; label: string; icon: typeof Shield }[] = [
-  { value: 'food_safety_handler', label: 'Food Safety – Handler', icon: Shield },
+const CATEGORIES: { value: TrainingCategory; label: string; icon: typeof EvidlyIcon }[] = [
+  { value: 'food_safety_handler', label: 'Food Safety – Handler', icon: EvidlyIcon },
   { value: 'food_safety_manager', label: 'Food Safety – Manager', icon: BookOpenCheck },
   { value: 'fire_safety', label: 'Fire Safety', icon: Flame },
   { value: 'compliance_ops', label: 'Compliance Ops', icon: Settings2 },

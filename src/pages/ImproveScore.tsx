@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  Shield,
   Flame,
   UtensilsCrossed,
   FileCheck,
@@ -21,6 +20,7 @@ import {
   Clock,
   Zap,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { locations } from '../data/demoData';
 import {
@@ -235,7 +235,7 @@ export function ImproveScore() {
       {/* Category Impact Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {categoryGroups.map(group => {
-          const Icon = CATEGORY_ICONS[group.name] || Shield;
+          const Icon = CATEGORY_ICONS[group.name] || EvidlyIcon;
           const color = CATEGORY_COLORS[group.name] || '#6b7280';
           return (
             <div
@@ -298,7 +298,7 @@ export function ImproveScore() {
           filteredItems.map((item, idx) => {
             const globalIdx = riskResult.actionItems.indexOf(item);
             const isCompleted = completedActions.has(globalIdx);
-            const Icon = CATEGORY_ICONS[item.category] || Shield;
+            const Icon = CATEGORY_ICONS[item.category] || EvidlyIcon;
             const catColor = CATEGORY_COLORS[item.category] || '#6b7280';
             const QuickIcon = item.quickActionType ? QUICK_ACTION_ICONS[item.quickActionType] : undefined;
 

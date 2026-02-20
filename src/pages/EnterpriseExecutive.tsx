@@ -1,9 +1,10 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ShieldCheck, TrendingUp, TrendingDown, MapPin, CheckCircle, AlertTriangle,
+  TrendingUp, TrendingDown, MapPin, CheckCircle, AlertTriangle,
   ArrowUp, ArrowDown, Minus, ChevronRight, ExternalLink, X, Loader2, CheckCircle2,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -253,13 +254,13 @@ export function EnterpriseExecutive() {
         {/* ── C. Executive Summary Panel ────────────────────── */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <ShieldCheck className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+            <EvidlyIcon size={20} />
             <h2 className="text-base font-bold text-gray-900">Executive Summary</h2>
             <span className="text-[10px] text-gray-400 ml-auto">Powered by {dataPointsThisMonth.toLocaleString()} compliance data points this month</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             {[
-              { label: 'Overall Score', value: overallScore + '%', icon: ShieldCheck, highlight: true },
+              { label: 'Overall Score', value: overallScore + '%', icon: EvidlyIcon as any, highlight: true },
               { label: 'vs Last Mo', value: (trendDelta >= 0 ? '+' : '') + trendDelta + '%', icon: trendDelta >= 0 ? TrendingUp : TrendingDown },
               { label: 'vs 3Mo Ago', value: (trend3mDelta >= 0 ? '+' : '') + trend3mDelta + '%', icon: trend3mDelta >= 0 ? TrendingUp : TrendingDown },
               { label: 'Locations', value: `${totalLocations.toLocaleString()} total`, icon: MapPin },

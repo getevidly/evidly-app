@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CheckCircle2, Crown, ExternalLink, Loader2, Gift, Shield, Clock } from 'lucide-react';
+import { CheckCircle2, Crown, ExternalLink, Loader2, Gift, Clock } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -129,7 +130,7 @@ export function BillingPanel() {
                   <span>{demoTrialDaysLeft} days left in trial</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-sm text-[#166534]">
-                  <Shield className="h-4 w-4" />
+                  <EvidlyIcon size={16} />
                   <span>{demoGuaranteeDaysLeft} days left on money-back guarantee</span>
                 </div>
               </div>
@@ -141,7 +142,7 @@ export function BillingPanel() {
       {/* 45-Day Guarantee Info */}
       <div className="rounded-lg p-4" style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}>
         <div className="flex items-center gap-3">
-          <Shield className="w-5 h-5 flex-shrink-0" style={{ color: '#1e4d6b' }} />
+          <EvidlyIcon size={20} className="flex-shrink-0" />
           <div>
             <p className="font-semibold text-sm" style={{ color: '#1e4d6b' }}>45-Day Money-Back Guarantee</p>
             <p className="text-xs mt-0.5" style={{ color: '#3a6d8a' }}>

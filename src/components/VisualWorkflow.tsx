@@ -1,4 +1,5 @@
-import { Thermometer, CheckSquare, FileText, Shield, Bell, QrCode, ArrowRight } from 'lucide-react';
+import { Thermometer, CheckSquare, FileText, Bell, QrCode, ArrowRight } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 
 const steps = [
   {
@@ -23,7 +24,7 @@ const steps = [
     bg: '#f5f3ff',
   },
   {
-    icon: Shield,
+    icon: EvidlyIcon,
     title: 'Score Updates Live',
     description: 'Your compliance score updates in real-time across 3 pillars.',
     color: '#d4af37',

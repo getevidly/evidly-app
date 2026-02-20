@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, Shield, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, AlertTriangle, CheckCircle } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -1356,7 +1357,7 @@ export function Checklists() {
               <div className="bg-[#eef4f8] border border-[#b8d4e8] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-[#1e4d6b] flex items-center gap-1.5">
-                    <Shield size={14} /> HACCP Logs Auto-Populated
+                    <EvidlyIcon size={14} /> HACCP Logs Auto-Populated
                   </h3>
                   <button onClick={() => setCcpMappingResults([])} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
                 </div>

@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, ExternalLink, Upload, Share2,
-  CheckCircle2, Square, Calendar, Shield, AlertTriangle,
+  CheckCircle2, Square, Calendar, AlertTriangle,
   Filter, Clock, MapPin, Bell, X
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   DEMO_ALERTS, MONITORED_SOURCES, CUSTOMER_JURISDICTIONS,
@@ -274,7 +275,7 @@ export function RegulatoryAlerts() {
                   {/* TODO: Wire to /api/regulatory-alert-summary edge function for AI summaries */}
                   <div className="bg-[#eef4f8] rounded-lg p-4 border border-[#b8d4e8]">
                     <div className="flex items-center gap-1.5">
-                      <Shield className="w-4 h-4 text-[#1e4d6b]" />
+                      <EvidlyIcon size={16} />
                       <span className="text-sm font-semibold text-[#1e4d6b]">AI Summary</span>
                     </div>
                     <p className="text-sm text-gray-700 mt-2">{alert.summary}</p>
@@ -431,7 +432,7 @@ export function RegulatoryAlerts() {
             {/* Monitoring Sources */}
             <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 border border-gray-100 mt-4">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#1e4d6b]" />
+                <EvidlyIcon size={16} />
                 <h3 className="font-semibold text-gray-900">Monitoring Sources</h3>
               </div>
               <div className="mt-3 space-y-3">

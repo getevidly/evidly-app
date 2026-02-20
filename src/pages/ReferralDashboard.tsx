@@ -4,7 +4,7 @@
  */
 import { useState } from 'react';
 import {
-  Gift, Trophy, Shield, Heart, Truck, Share2, Copy, CheckCircle,
+  Gift, Trophy, Heart, Truck, Share2, Copy, CheckCircle,
   ExternalLink, Star, Award, TrendingUp, Users, ArrowRight, Sparkles,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';

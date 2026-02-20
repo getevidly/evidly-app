@@ -3,9 +3,10 @@ import { toast } from 'sonner';
 import {
   Camera, Search, Filter, MapPin, Clock, Calendar, ChevronDown,
   X, ChevronLeft, ChevronRight, Download, Image, CheckCircle, Printer,
-  Thermometer, ClipboardCheck, AlertTriangle, Truck, Wrench, Shield,
+  Thermometer, ClipboardCheck, AlertTriangle, Truck, Wrench,
   FileText, LayoutGrid, List as ListIcon,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -82,7 +83,7 @@ const RECORD_TYPE_ICONS: Record<RecordType, typeof Thermometer> = {
   'Incident':        AlertTriangle,
   'Vendor Delivery': Truck,
   'Equipment':       Wrench,
-  'Self-Inspection':      Shield,
+  'Self-Inspection':      EvidlyIcon,
   'General':         FileText,
 };
 

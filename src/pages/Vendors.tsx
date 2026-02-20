@@ -2,10 +2,11 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Plus, Building2, Mail, Phone, FileText, CheckCircle, AlertTriangle, Clock,
-  ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download, Shield,
+  ChevronRight, ArrowLeft, MapPin, Calendar, Send, Upload, Download,
   Bell, BellOff, ExternalLink, XCircle, Filter, CheckCircle2, TrendingUp,
   TrendingDown, Minus, Link2, Loader2, Wrench,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { vendors as demoVendors, locations as demoLocations } from '../data/demoData';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -580,7 +581,7 @@ export function Vendors() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
-                        <Shield className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.reliabilityScore) }} />
+                        <EvidlyIcon size={16} />
                         <span className="text-sm text-gray-500 font-medium">Reliability Score</span>
                       </div>
                       <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
@@ -905,7 +906,7 @@ export function Vendors() {
                 <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Upload Page Preview</h3>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8">
                   <div className="max-w-md mx-auto text-center">
-                    <Shield className="h-10 w-10 mx-auto text-[#d4af37] mb-3" />
+                    <EvidlyIcon size={40} className="mx-auto mb-3" />
                     <h4 className="text-xl font-bold mb-1">
                       <span style={{ color: '#1e4d6b' }}>Evid</span>
                       <span style={{ color: '#d4af37' }}>LY</span>
@@ -930,7 +931,7 @@ export function Vendors() {
                       <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG, DOC — Max 25MB</p>
                     </div>
                     <p className="text-xs text-gray-400 flex items-center justify-center">
-                      <Shield className="h-3 w-3 mr-1" />
+                      <EvidlyIcon size={12} className="mr-1" />
                       Files are encrypted end-to-end
                     </p>
                   </div>

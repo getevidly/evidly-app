@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
-  ArrowLeft, Wrench, Shield, Clock, MapPin, Calendar, Flame, UtensilsCrossed,
+  ArrowLeft, Wrench, Clock, MapPin, Calendar, Flame, UtensilsCrossed,
   Truck, AlertTriangle, Plus, CheckCircle, XCircle, ChevronRight, Package,
   DollarSign, TrendingUp, QrCode, Printer,
 } from 'lucide-react';

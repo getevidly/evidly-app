@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wrench, Shield, AlertTriangle, DollarSign, Calendar, ArrowRight } from 'lucide-react';
+import { Wrench, AlertTriangle, DollarSign, Calendar, ArrowRight } from 'lucide-react';
+import { EvidlyIcon } from './ui/EvidlyIcon';
 
 interface Props {
   locationId: string;
@@ -140,7 +141,7 @@ export function EquipmentHealthWidget({ locationId }: Props) {
 
       {/* Warranty summary */}
       <div className="flex items-center gap-2 mb-4">
-        <Shield className="h-3.5 w-3.5 text-gray-400 flex-shrink-0" />
+        <EvidlyIcon size={14} className="flex-shrink-0" />
         <span className="text-xs text-gray-500">Warranty:</span>
         <span className="text-xs font-medium" style={{ color: '#16a34a' }}>{data.warrantyActive} active</span>
         {data.warrantyExpiringSoon > 0 && (

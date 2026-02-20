@@ -4,9 +4,10 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import {
   FileText, Download, Eye, AlertTriangle, CheckCircle, XCircle,
   Clock, Share2, Lock, ChevronDown, ChevronUp, ClipboardCheck,
-  TrendingUp, TrendingDown, Building2, Shield, Users, Flame,
+  TrendingUp, TrendingDown, Building2, Users, Flame,
   Package, AlertCircle, History, Mail, Link2, Send,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { locations, locationScores } from '../data/demoData';
 import {
@@ -498,7 +499,7 @@ export function HealthDeptReport() {
                 {generatedReport.config.sections.foodSafety && (
                   <CollapsibleSection
                     title="Food Safety Summary"
-                    icon={<Shield className="h-5 w-5 text-[#1e4d6b]" />}
+                    icon={<EvidlyIcon size={20} />}
                     badge={<CountBadge count={generatedReport.foodSafety.filter(i => i.status === 'non-compliant').length} color="red" />}
                     defaultOpen
                   >
@@ -782,7 +783,7 @@ export function HealthDeptReport() {
 
                       {/* Days Since Last Critical Violation */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', backgroundColor: selectedLocation === 'downtown' ? '#f0fdf4' : '#fef2f2', borderRadius: 8, border: `1px solid ${selectedLocation === 'downtown' ? '#bbf7d0' : '#fecaca'}` }}>
-                        <Shield className="h-5 w-5" style={{ color: selectedLocation === 'downtown' ? '#22c55e' : '#ef4444' }} />
+                        <EvidlyIcon size={20} />
                         <div>
                           <span style={{ fontWeight: 600, color: '#374151' }}>Days Since Last Critical Violation: </span>
                           <span style={{ fontWeight: 700, color: selectedLocation === 'downtown' ? '#22c55e' : '#ef4444' }}>

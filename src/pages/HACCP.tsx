@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Shield, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -999,7 +1000,7 @@ export function HACCP() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
-              <Shield className="h-4 w-4 text-[#1e4d6b]" />
+              <EvidlyIcon size={16} />
               <span className="text-sm text-gray-500 font-medium">Active Plans</span>
             </div>
             <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>

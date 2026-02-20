@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Shield, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2 } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -79,7 +80,7 @@ export function Settings() {
     { id: 'regulatory-monitoring', icon: Megaphone, roles: ['executive', 'owner_operator'] as UserRole[] },
     { id: 'jurisdiction', icon: Globe, roles: ['executive', 'owner_operator'] as UserRole[] },
     { id: 'integrations', icon: Plug, roles: ['executive', 'owner_operator'] as UserRole[] },
-    { id: 'privacy', icon: Shield, roles: ['executive', 'owner_operator'] as UserRole[] },
+    { id: 'privacy', icon: EvidlyIcon, roles: ['executive', 'owner_operator'] as UserRole[] },
     { id: 'security', icon: Lock, roles: ['executive', 'owner_operator', 'kitchen_staff', 'facilities_manager'] as UserRole[] },
     { id: 'billing', icon: CreditCard, roles: ['executive'] as UserRole[] },
     { id: 'enterprise', icon: Layers, roles: ['executive'] as UserRole[] },
@@ -856,7 +857,7 @@ export function Settings() {
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3 sm:gap-4">
                       <div className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1e4d6b' }}>
-                        <Shield className="h-6 w-6 text-white" />
+                        <EvidlyIcon size={24} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-gray-900">Insurance Risk Score Sharing</h4>
@@ -1293,7 +1294,7 @@ export function Settings() {
               {!benchmarkOptIn && (
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                   <div className="flex items-start gap-3">
-                    <Shield className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <EvidlyIcon size={20} className="mt-0.5 flex-shrink-0" />
                     <div>
                       <h4 className="text-sm font-semibold text-amber-800">Benchmarking Opted Out</h4>
                       <p className="text-xs text-amber-700 mt-1">
@@ -1412,7 +1413,7 @@ export function Settings() {
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#eef4f8' }}>
-                    <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+                    <EvidlyIcon size={20} />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">SCIM 2.0 Provisioning</h4>

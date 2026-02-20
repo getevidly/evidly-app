@@ -5,7 +5,7 @@ import {
   ArrowLeft, Thermometer, Droplets, Battery, BatteryWarning, Wifi, WifiOff,
   AlertTriangle, CheckCircle, Clock, Activity, Settings, Edit3, Pause, Trash2,
   Bell, MapPin, Cpu, Radio, Calendar, Wrench, ChevronRight, RotateCcw,
-  Shield, ArrowUpRight, ArrowDownRight, XCircle,
+  ArrowUpRight, ArrowDownRight, XCircle,
 } from 'lucide-react';
 import {
   iotSensors, iotSensorReadings, iotSensorAlerts, iotSensorProviders,

@@ -15,10 +15,10 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
-  Shield,
   GraduationCap,
   X,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -398,7 +398,7 @@ export function InspectorView() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-[#1e4d6b] flex items-center justify-center">
-                  <Shield className="h-5 w-5 text-white" />
+                  <EvidlyIcon size={20} />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-[#1e4d6b]">

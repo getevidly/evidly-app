@@ -2,10 +2,11 @@ import { useState, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import {
   Download, Mail, Share2, Printer, FileText, Thermometer, CheckSquare,
-  AlertTriangle, Truck, Shield, ChevronDown,
-  ChevronRight, ClipboardList, Wrench, Eye, EyeOff, ShieldCheck,
+  AlertTriangle, Truck, ChevronDown,
+  ChevronRight, ClipboardList, Wrench, Eye, EyeOff,
   Loader2,
 } from 'lucide-react';
+import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
@@ -303,7 +304,7 @@ export function AuditReport() {
 
   // Section toggles
   const [sections, setSections] = useState<ReportSection[]>([
-    { id: 'summary', label: 'Executive Summary', icon: Shield, enabled: true },
+    { id: 'summary', label: 'Executive Summary', icon: EvidlyIcon as any, enabled: true },
     { id: 'temp_logs', label: 'Temperature Logs', icon: Thermometer, enabled: true },
     { id: 'checklists', label: 'Checklist Completions', icon: CheckSquare, enabled: true },
     { id: 'incidents', label: 'Corrective Actions / Incidents', icon: AlertTriangle, enabled: true },
@@ -695,7 +696,7 @@ export function AuditReport() {
               {/* Report Header */}
               <div className="bg-[#1e4d6b] rounded-xl p-4 sm:p-6 text-white" style={{ pageBreakAfter: 'avoid' }}>
                 <div className="flex items-center gap-3 mb-4">
-                  <ShieldCheck className="h-8 w-8 text-[#d4af37]" />
+                  <EvidlyIcon size={32} />
                   <span className="text-2xl font-bold">
                     <span className="text-white">Evid</span>
                     <span className="text-[#d4af37]">LY</span>
@@ -748,7 +749,7 @@ export function AuditReport() {
                 <div id="section-summary" className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 report-section">
                   <button onClick={() => toggleExpand('summary')} className="flex items-center gap-2 w-full text-left no-print">
                     {expandedSections.summary ? <ChevronDown className="h-5 w-5 text-gray-400" /> : <ChevronRight className="h-5 w-5 text-gray-400" />}
-                    <Shield className="h-5 w-5 text-[#1e4d6b]" />
+                    <EvidlyIcon size={20} />
                     <h3 className="text-lg font-bold text-gray-900 flex-1">Executive Summary</h3>
                   </button>
                   {expandedSections.summary && (
