@@ -539,14 +539,14 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2026-03-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-03-10', maintenanceInterval: 'Quarterly',
     linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 3800,
-    notes: 'Cleaned with main hood system by ABC Fire Protection. Hinge kit operational. NFPA 96 §7.8 — listed for grease-laden vapor service. Belt replaced Oct 2025.',
+    notes: 'Cleaned with main hood system by ABC Fire Protection. Hinge kit operational. NFPA 96 Chapter 8 — listed for grease-laden vapor service. Belt replaced Oct 2025.',
     serviceHistory: [
       { date: '2025-12-10', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned, hinge kit lubricated, grease drain cleared. Included with hood cleaning.' },
       { date: '2025-10-20', vendor: 'ABC Fire Protection', type: 'Belt Replacement + Quarterly Clean', cost: 185, notes: 'Replaced drive belt (showing cracks). Fan blades cleaned. Bearings lubricated.' },
       { date: '2025-07-20', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood service. Moderate grease on blades. Hinge kit good.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-15', nextDue: '2026-02-15' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-12-10', nextDue: '2026-03-10' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-10-20', nextDue: '2026-04-20' },
@@ -560,13 +560,13 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Greenheck', warrantyTerms: '5-year parts',
     condition: 'Fair', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
     linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 3400,
-    notes: 'Bearing noise noted last service — monitor closely. NFPA 96 §7.8.2 hinge kit installed. Warranty expired.',
+    notes: 'Bearing noise noted last service — monitor closely. NFPA 96 Chapter 8 hinge kit installed. Warranty expired.',
     serviceHistory: [
       { date: '2025-11-22', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Cleaned with hood. Bearing noise at startup — minor. Monitor next quarter.' },
       { date: '2025-08-22', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Fan blades cleaned. Grease containment drain cleared.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-22', nextDue: '2026-02-22' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-11-22', nextDue: '2026-02-22' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-08-22', nextDue: '2026-02-22' },
@@ -586,7 +586,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { date: '2025-05-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning + Belt Replace', cost: 165, notes: 'Belt replaced (glazed). Bearings lubricated. Airflow tested — within spec.' },
     ],
     schedule: [
-      { task: 'Visual check — fan running during cooking (NFPA 96 §12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
+      { task: 'Visual check — fan running during cooking (NFPA 96 Table 12.4)', interval: 'Daily', lastDone: '2026-02-08', nextDue: '2026-02-09' },
       { task: 'Belt tension & condition, hinge kit, grease containment', interval: 'Monthly', lastDone: '2026-01-15', nextDue: '2026-02-15' },
       { task: 'Clean blades & housing, lubricate bearings, check motor amps', interval: 'Quarterly', lastDone: '2025-11-15', nextDue: '2026-02-15' },
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-05-15', nextDue: '2026-11-15' },

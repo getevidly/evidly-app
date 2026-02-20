@@ -3992,3 +3992,137 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
     category: 'food_safety',
   },
 ];
+
+// ── Corporate Intelligence Demo Data ──────────────────────────────
+
+export const demoIntelligence = {
+  orgName: 'Pacific Coast Dining',
+  reportDate: new Date().toISOString(),
+  period: '90 days',
+
+  complianceMatrix: [
+    {
+      locationId: 'downtown',
+      locationName: 'Downtown Kitchen',
+      jurisdiction: 'Fresno County DPH',
+      foodSafetyStatus: 'Compliant',
+      fireSafetyVerdict: 'Pass',
+      openItems: 2,
+      trend: 'improving' as const,
+      riskLevel: 'low' as const,
+      lastInspectionDate: '2026-01-15',
+      nextInspectionWindow: '2026-07-15',
+      checklistCompletionRate: 0.96,
+      tempLogCompletionRate: 0.98,
+      staffTurnoverRate: 0.12,
+      incidentsLast90Days: 0,
+      permitExpirations: [] as { document: string; daysUntilExpiry: number }[],
+      estimatedRiskExposure: 8500,
+      estimatedComplianceSavings: 42000,
+    },
+    {
+      locationId: 'airport',
+      locationName: 'Airport Cafe',
+      jurisdiction: 'Merced County DPH',
+      foodSafetyStatus: 'Satisfactory',
+      fireSafetyVerdict: 'Fail',
+      openItems: 4,
+      trend: 'declining' as const,
+      riskLevel: 'high' as const,
+      lastInspectionDate: '2026-01-28',
+      nextInspectionWindow: '2026-04-28',
+      checklistCompletionRate: 0.71,
+      tempLogCompletionRate: 0.68,
+      staffTurnoverRate: 0.34,
+      incidentsLast90Days: 2,
+      permitExpirations: [
+        { document: 'Hood Cleaning Certificate', daysUntilExpiry: 18 },
+        { document: 'Fire Suppression Inspection', daysUntilExpiry: 45 },
+      ],
+      estimatedRiskExposure: 127000,
+      estimatedComplianceSavings: 89000,
+    },
+    {
+      locationId: 'university',
+      locationName: 'University Dining',
+      jurisdiction: 'Stanislaus County DER',
+      foodSafetyStatus: 'Action Required',
+      fireSafetyVerdict: 'Fail',
+      openItems: 6,
+      trend: 'declining' as const,
+      riskLevel: 'critical' as const,
+      lastInspectionDate: '2026-02-01',
+      nextInspectionWindow: '2026-03-01',
+      checklistCompletionRate: 0.54,
+      tempLogCompletionRate: 0.61,
+      staffTurnoverRate: 0.51,
+      incidentsLast90Days: 4,
+      permitExpirations: [
+        { document: 'Health Permit', daysUntilExpiry: 7 },
+        { document: 'Hood Cleaning Certificate', daysUntilExpiry: 3 },
+      ],
+      estimatedRiskExposure: 385000,
+      estimatedComplianceSavings: 210000,
+    },
+  ],
+
+  orgMetrics: {
+    totalOpenItems: 12,
+    criticalLocations: 1,
+    highRiskLocations: 1,
+    permitExpirationsNext30Days: 3,
+    avgChecklistCompletion: 0.74,
+    avgTempLogCompletion: 0.76,
+    totalEstimatedRiskExposure: 520500,
+    totalEstimatedSavings: 341000,
+    inspectionsDueNext90Days: 2,
+    staffTurnoverOrgAvg: 0.32,
+  },
+
+  trendData: {
+    downtown: Array.from({ length: 90 }, (_, i) => ({
+      day: i + 1,
+      checklistRate: Math.min(1, 0.88 + i * 0.001 + Math.sin(i * 0.3) * 0.02),
+      tempLogRate: Math.min(1, 0.92 + i * 0.0008 + Math.cos(i * 0.4) * 0.015),
+      openItems: Math.max(0, 5 - Math.floor(i / 20)),
+    })),
+    airport: Array.from({ length: 90 }, (_, i) => ({
+      day: i + 1,
+      checklistRate: Math.max(0.4, 0.85 - i * 0.0016 + Math.sin(i * 0.5) * 0.03),
+      tempLogRate: Math.max(0.4, 0.82 - i * 0.0015 + Math.cos(i * 0.3) * 0.025),
+      openItems: Math.min(8, 1 + Math.floor(i / 15)),
+    })),
+    university: Array.from({ length: 90 }, (_, i) => ({
+      day: i + 1,
+      checklistRate: Math.max(0.3, 0.78 - i * 0.003 + Math.sin(i * 0.4) * 0.04),
+      tempLogRate: Math.max(0.3, 0.75 - i * 0.0025 + Math.cos(i * 0.5) * 0.03),
+      openItems: Math.min(10, 2 + Math.floor(i / 12)),
+    })),
+  } as Record<string, { day: number; checklistRate: number; tempLogRate: number; openItems: number }[]>,
+
+  upcomingRegulatoryChanges: [
+    {
+      title: 'CalCode Amendment — Cooling Requirements',
+      effectiveDate: '2026-06-01',
+      affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+      impact: 'medium' as const,
+      description: 'Updated cooling time requirements under CalCode.',
+    },
+    {
+      title: 'NFPA 96 Hood Cleaning Frequency Review',
+      effectiveDate: '2026-09-01',
+      affectedLocations: ['Airport Cafe', 'University Dining'],
+      impact: 'high' as const,
+      description: 'AHJ enforcement of Table 12.4 frequency schedules increasing in Central Valley.',
+    },
+  ],
+
+  industryBenchmarks: {
+    avgChecklistCompletion: 0.68,
+    avgTempLogCompletion: 0.71,
+    avgStaffTurnover: 0.45,
+    avgOpenItemsPerLocation: 8.2,
+    topDecileChecklistCompletion: 0.95,
+    topDecileTempLogCompletion: 0.96,
+  },
+};

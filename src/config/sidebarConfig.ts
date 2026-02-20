@@ -25,6 +25,7 @@ import {
   Cog,
   Flame,
   Radio,
+  Radar,
   type LucideIcon,
 } from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
@@ -107,6 +108,7 @@ export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
   { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
   { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
   { id: 'leaderboard',         label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
+  { id: 'corp-intelligence',   label: 'Corporate Intel',     icon: Radar,            route: '/corporate-intelligence', roles: ['executive', 'owner_operator'] },
   { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT },
 
   // ── ADMIN ──
@@ -190,7 +192,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     id: 'enterprise',
     label: 'Enterprise',
-    itemIds: ['locations', 'benchmarks', 'risk-score', 'leaderboard', 'marketplace'],
+    itemIds: ['locations', 'benchmarks', 'risk-score', 'leaderboard', 'corp-intelligence', 'marketplace'],
   },
   {
     id: 'admin',
