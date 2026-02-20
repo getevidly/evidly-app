@@ -990,14 +990,14 @@ export function Settings() {
               <h3 className="text-xl font-bold text-gray-900">{t('settings.securityChangePassword')}</h3>
               <p className="text-sm text-gray-600">{t('settings.securityDesc')}</p>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.currentPassword')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                 <div className="relative">
                   <input
                     type={showCurrentPw ? 'text' : 'password'}
                     value={pwForm.current}
                     onChange={(e) => { setPwForm({ ...pwForm, current: e.target.value }); setPwError(''); setPwSuccess(''); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
-                    placeholder={t('topBar.enterCurrentPassword')}
+                    placeholder="Enter current password"
                   />
                   <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -1005,14 +1005,14 @@ export function Settings() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.newPassword')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showNewPw ? 'text' : 'password'}
                     value={pwForm.newPw}
                     onChange={(e) => { setPwForm({ ...pwForm, newPw: e.target.value }); setPwError(''); setPwSuccess(''); }}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37] pr-10"
-                    placeholder={t('topBar.enterNewPassword')}
+                    placeholder="Enter new password"
                   />
                   <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                     {showNewPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -1020,13 +1020,13 @@ export function Settings() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('topBar.confirmNewPassword')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                 <input
                   type="password"
                   value={pwForm.confirm}
                   onChange={(e) => { setPwForm({ ...pwForm, confirm: e.target.value }); setPwError(''); setPwSuccess(''); }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                  placeholder={t('topBar.reEnterNewPassword')}
+                  placeholder="Re-enter new password"
                 />
               </div>
               {pwError && (
@@ -1040,33 +1040,33 @@ export function Settings() {
                   setPwError('');
                   setPwSuccess('');
                   if (!pwForm.current || !pwForm.newPw || !pwForm.confirm) {
-                    setPwError(t('topBar.allFieldsRequired'));
+                    setPwError('All fields are required.');
                     return;
                   }
                   if (pwForm.newPw.length < 8) {
-                    setPwError(t('topBar.passwordMinLength'));
+                    setPwError('Password must be at least 8 characters.');
                     return;
                   }
                   if (pwForm.newPw !== pwForm.confirm) {
-                    setPwError(t('topBar.passwordsDoNotMatch'));
+                    setPwError('Passwords do not match.');
                     return;
                   }
                   if (isDemoMode) {
-                    setPwSuccess(t('topBar.passwordLiveOnly'));
+                    setPwSuccess('Password changes are only available in live mode.');
                     return;
                   }
                   supabase.auth.updateUser({ password: pwForm.newPw }).then(({ error }) => {
                     if (error) {
                       setPwError(error.message);
                     } else {
-                      setPwSuccess(t('topBar.passwordUpdated'));
+                      setPwSuccess('Password updated successfully.');
                       setPwForm({ current: '', newPw: '', confirm: '' });
                     }
                   });
                 }}
                 className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
               >
-                {t('topBar.updatePassword')}
+                Update Password
               </button>
             </div>
           )}

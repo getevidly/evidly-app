@@ -683,21 +683,6 @@ function HierarchyNode({ node, depth = 0, selectedId, onSelect }: { node: Enterp
   );
 }
 
-// Heat map cell for visualizing scores across children
-function HeatMapCell({ score, label, onClick }: { score: number; label: string; onClick: () => void }) {
-  const bg = score >= 90 ? '#dcfce7' : score >= 80 ? '#fef9c3' : score >= 70 ? '#fed7aa' : '#fecaca';
-  const text = score >= 90 ? '#166534' : score >= 80 ? '#854d0e' : score >= 70 ? '#9a3412' : '#991b1b';
-  return (
-    <button
-      onClick={onClick}
-      className="p-2 rounded-lg border border-gray-200 text-center hover:opacity-80 transition-opacity cursor-pointer"
-      style={{ backgroundColor: bg }}
-    >
-      <p className="text-sm font-bold" style={{ color: text }}>{score}</p>
-      <p className="text-[9px] truncate" style={{ color: text + 'cc' }}>{label}</p>
-    </button>
-  );
-}
 
 function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
   const [selectedTenant, setSelectedTenant] = useState('ent-pcdining');
@@ -956,30 +941,6 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
             )}
           </div>
 
-          {/* Heat Map */}
-          {selectedNode?.children && selectedNode.children.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
-              <h4 className="text-xs font-semibold text-gray-700 mb-3">Compliance Heat Map</h4>
-              <div className="grid grid-cols-3 gap-2">
-                {[...selectedNode.children].sort((a, b) => b.complianceScore - a.complianceScore).map(c => (
-                  <HeatMapCell key={c.id} score={c.complianceScore} label={c.name} onClick={() => setSelectedNode(c)} />
-                ))}
-              </div>
-              <div className="flex items-center justify-center gap-3 mt-3 pt-2 border-t border-gray-100">
-                {[
-                  { label: '90+', bg: '#dcfce7' },
-                  { label: '80-89', bg: '#fef9c3' },
-                  { label: '70-79', bg: '#fed7aa' },
-                  { label: '<70', bg: '#fecaca' },
-                ].map(l => (
-                  <span key={l.label} className="flex items-center gap-1">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: l.bg, border: '1px solid #e5e7eb' }} />
-                    <span className="text-[9px] text-gray-400">{l.label}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

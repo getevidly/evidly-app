@@ -66,9 +66,9 @@ export const DEMO_ROLE_NAMES: Record<string, { firstName: string; fullName: stri
   executive: { firstName: 'David', fullName: 'David Chen' },
   compliance_manager: { firstName: 'Sarah', fullName: 'Sarah Kim' },
   chef: { firstName: 'Maria', fullName: 'Maria Santos' },
-  facilities_manager: { firstName: 'Mike', fullName: 'Mike Thompson' },
+  facilities_manager: { firstName: 'Robert', fullName: 'Robert Okafor' },
   kitchen_manager: { firstName: 'Carlos', fullName: 'Carlos Rivera' },
-  kitchen_staff: { firstName: 'Carlos', fullName: 'Carlos Mendez' },
+  kitchen_staff: { firstName: 'Miguel', fullName: 'Miguel Torres' },
 };
 
 // ── Status color helper ──────────────────────────────────

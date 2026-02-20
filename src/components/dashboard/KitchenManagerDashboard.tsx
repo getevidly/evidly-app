@@ -14,6 +14,9 @@ import { DEMO_ORG } from '../../data/demoData';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
+import { ReferralBanner } from '../referral/ReferralBanner';
+import { K2CWidget } from '../referral/K2CWidget';
+import { demoReferral } from '../../data/demoData';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/calendarDemoEvents';
@@ -164,6 +167,13 @@ export default function KitchenManagerDashboard() {
         locationName={locationName}
       />
 
+      {/* K2C Referral Banner */}
+      <ReferralBanner
+        referralCode={demoReferral.referralCode}
+        referralUrl={demoReferral.referralUrl}
+        mealsGenerated={demoReferral.mealsGenerated}
+      />
+
       {/* Food Safety — chef only */}
       {userRole === 'chef' && (
         <div>
@@ -203,6 +213,16 @@ export default function KitchenManagerDashboard() {
           </div>
         </div>
       )}
+
+      {/* K2C Widget */}
+      <div style={{ maxWidth: 320 }}>
+        <K2CWidget
+          mealsGenerated={demoReferral.mealsGenerated}
+          referralsCount={demoReferral.referralsCount}
+          monthsFree={demoReferral.monthsFree}
+          onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
+        />
+      </div>
 
       {/* Location tabs (if multiple locations) */}
       {hasMultipleLocations && (

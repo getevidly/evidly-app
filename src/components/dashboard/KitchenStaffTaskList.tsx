@@ -16,6 +16,12 @@ import { SectionTooltip } from '../ui/SectionTooltip';
 import { useTranslation } from '../../contexts/LanguageContext';
 import type { Locale } from '../../lib/i18n';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
+import { DashboardHero } from './shared/DashboardHero';
+import { DEMO_ROLE_NAMES } from './shared/constants';
+import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
+import { ReferralBanner } from '../referral/ReferralBanner';
+import { K2CWidget } from '../referral/K2CWidget';
+import { demoReferral } from '../../data/demoData';
 
 // --------------- Demo Data ---------------
 
@@ -29,8 +35,31 @@ interface StaffTask {
   completedAt?: string;
 }
 
-const DEMO_STAFF_NAME = 'Carlos';
 const DEMO_STAFF_LOCATION = 'Downtown Kitchen';
+
+// Calendar demo events for kitchen staff
+const STAFF_CALENDAR_EVENTS: CalendarEvent[] = (() => {
+  const today = new Date();
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  return [
+    { date: fmt(today), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'high' as const },
+    { date: fmt(today), type: 'temp_check', title: 'AM Temperature Logs', location: 'Downtown Kitchen', priority: 'high' as const },
+    { date: fmt(today), type: 'checklist', title: 'Closing Checklist', location: 'Downtown Kitchen', priority: 'medium' as const },
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'high' as const },
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'temp_check', title: 'AM Temperature Logs', location: 'Downtown Kitchen', priority: 'high' as const },
+    { date: fmt(new Date(today.getTime() + 2 * 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'medium' as const },
+  ];
+})();
+
+const STAFF_CALENDAR_COLORS: Record<string, string> = {
+  checklist: '#1e4d6b',
+  temp_check: '#d97706',
+};
+
+const STAFF_CALENDAR_LABELS: Record<string, string> = {
+  checklist: 'Checklist',
+  temp_check: 'Temp Check',
+};
 
 const INITIAL_TASKS: StaffTask[] = [
   // TO DO (6 tasks) — temp tasks first
@@ -131,6 +160,8 @@ export default function KitchenStaffTaskList() {
     setDismissedAlerts(prev => new Set(prev).add(id));
   }, []);
 
+  const [referralNudge, setReferralNudge] = useState(false);
+
   const handleMarkDone = useCallback((taskId: string) => {
     setTasks(prev => prev.map(t => {
       if (t.id !== taskId) return t;
@@ -142,25 +173,47 @@ export default function KitchenStaffTaskList() {
       const m = minutes.toString().padStart(2, '0');
       return { ...t, status: 'done' as const, completedAt: `${h}:${m} ${ampm}` };
     }));
+    // Touchpoint 1: Show referral nudge 1 in 5 times, max 1 per session
+    if (Math.random() < 0.2 && !sessionStorage.getItem('referral_shown')) {
+      sessionStorage.setItem('referral_shown', 'true');
+      setReferralNudge(true);
+    }
   }, []);
 
   const getTaskDescription = (task: StaffTask) => lang === 'es' ? task.descriptionEs : task.description;
+
+  const staffName = DEMO_ROLE_NAMES.kitchen_staff?.firstName || 'Miguel';
 
   return (
     <div className="w-full flex justify-center" style={{ fontFamily: 'Inter, sans-serif' }}>
       <div className="w-full" style={{ maxWidth: 480 }}>
         <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <button type="button" onClick={() => navigate('/dashboard')} className="text-lg font-semibold text-gray-900 hover:opacity-70 transition-opacity">{DEMO_STAFF_LOCATION}</button>
-            <div className="flex items-center gap-1.5">
-              <ClipboardCheck size={18} style={{ color: '#1e4d6b' }} />
-              <span className="text-sm font-medium text-gray-700">{DEMO_STAFF_NAME}</span>
-            </div>
-          </div>
+          {/* Hero Banner */}
+          <DashboardHero
+            firstName={staffName}
+            orgName="Pacific Coast Dining"
+            locationName={DEMO_STAFF_LOCATION}
+          />
+
+          {/* K2C Referral Banner */}
+          <ReferralBanner
+            referralCode={demoReferral.referralCode}
+            referralUrl={demoReferral.referralUrl}
+            mealsGenerated={demoReferral.mealsGenerated}
+          />
 
           {/* Alert Banner */}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
+
+          {/* K2C Widget */}
+          <div style={{ maxWidth: 320 }}>
+            <K2CWidget
+              mealsGenerated={demoReferral.mealsGenerated}
+              referralsCount={demoReferral.referralsCount}
+              monthsFree={demoReferral.monthsFree}
+              onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
+            />
+          </div>
 
           {/* My Shift Progress */}
           <div>
@@ -337,6 +390,45 @@ export default function KitchenStaffTaskList() {
               {s.reportIssue}
             </button>
           </div>
+
+          {/* Referral nudge — shown after checklist task completion */}
+          {referralNudge && (
+            <div style={{
+              background: 'linear-gradient(135deg, #1E2D4D 0%, #2A3F6B 100%)',
+              border: '1px solid #A08C5A',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+            }}>
+              <p style={{ fontSize: '12px', color: '#ffffff', margin: 0 }}>
+                All done! Know a kitchen still on paper?{' '}
+                <button
+                  onClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
+                  style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+                >
+                  Share EvidLY →
+                </button>
+              </p>
+              <button
+                onClick={() => setReferralNudge(false)}
+                style={{ color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {/* Calendar */}
+          <CalendarCard
+            events={STAFF_CALENDAR_EVENTS}
+            typeColors={STAFF_CALENDAR_COLORS}
+            typeLabels={STAFF_CALENDAR_LABELS}
+            navigate={navigate}
+            tooltipContent={useTooltip('scheduleCalendar', userRole)}
+          />
 
           {/* Language Toggle */}
           <div className="flex items-center justify-center gap-2 py-4">

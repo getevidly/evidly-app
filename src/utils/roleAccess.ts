@@ -4,29 +4,23 @@
 // 7 roles with differentiated access to JIE components
 // ═══════════════════════════════════════════════════════════
 
-export type UserRole =
-  | 'evidly_admin'
-  | 'enterprise_admin'
-  | 'owner_operator'
-  | 'chef'
-  | 'facilities_manager'
-  | 'kitchen_manager'
-  | 'staff'
-  | 'demo';
+import type { UserRole } from '../contexts/RoleContext';
+
+export type { UserRole };
 
 // Who can see the jurisdiction info panel (scoring method, weights, fire AHJ)
 export function canViewJurisdictionInfo(role: UserRole): boolean {
-  return role !== 'staff';
+  return role !== 'kitchen_staff';
 }
 
 // Who can see the scoring breakdown (violation-level detail)
 export function canViewScoringBreakdown(role: UserRole): boolean {
-  return ['evidly_admin', 'enterprise_admin', 'owner_operator', 'facilities_manager', 'demo'].includes(role);
+  return ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager'].includes(role);
 }
 
 // Who can see the demo jurisdiction switcher
 export function canViewDemoSwitcher(role: UserRole): boolean {
-  return ['evidly_admin', 'enterprise_admin', 'demo'].includes(role);
+  return ['owner_operator', 'executive', 'compliance_manager'].includes(role);
 }
 
 // Default pillar focus per role
@@ -45,11 +39,11 @@ export function getDefaultPillar(role: UserRole): 'all' | 'food_safety' | 'fire_
 // Badge size per role context
 export function getBadgeSize(role: UserRole): 'sm' | 'md' | 'lg' {
   switch (role) {
-    case 'staff':
+    case 'kitchen_staff':
       return 'sm';
-    case 'evidly_admin':
-    case 'enterprise_admin':
-    case 'demo':
+    case 'owner_operator':
+    case 'executive':
+    case 'compliance_manager':
       return 'lg';
     default:
       return 'md';
@@ -58,17 +52,16 @@ export function getBadgeSize(role: UserRole): 'sm' | 'md' | 'lg' {
 
 // Whether to show jurisdiction name alongside the badge
 export function showJurisdictionName(role: UserRole): boolean {
-  return role !== 'staff';
+  return role !== 'kitchen_staff';
 }
 
 // Default violation filter for scoring breakdown
 export function getDefaultViolationFilter(role: UserRole): 'all' | 'critical_major' | 'none' {
   switch (role) {
-    case 'evidly_admin':
-    case 'enterprise_admin':
-    case 'demo':
-      return 'all';
     case 'owner_operator':
+    case 'executive':
+    case 'compliance_manager':
+      return 'all';
     case 'facilities_manager':
       return 'critical_major';
     default:

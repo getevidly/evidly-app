@@ -412,6 +412,16 @@ export function Sidebar() {
           </div>
         )}
 
+        {/* Touchpoint 5: Refer a Kitchen link */}
+        <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">
+          <button
+            onClick={() => navigate('/referrals')}
+            style={{ fontSize: '11px', color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 500 }}
+          >
+            🍽️ Refer a Kitchen
+          </button>
+        </div>
+
         {/* Powered by EvidLY badge (white-label only) */}
         {branding.poweredByVisible && (
           <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">

@@ -59,9 +59,8 @@ const COUNTY_SCORES = [
 ];
 
 const CATEGORY_SCORES = [
-  { category: 'Operational (Food Safety)', score: 79, prev: 77, change: +2, weakest: false },
-  { category: 'Equipment (Fire Safety)', score: 76, prev: 74, change: +2, weakest: true },
-  { category: 'Documentation & Permits', score: 81, prev: 80, change: +1, weakest: false },
+  { category: 'Food Safety (Operational)', score: 79, prev: 77, change: +2, weakest: false },
+  { category: 'Fire Safety (Equipment)', score: 76, prev: 74, change: +2, weakest: true },
 ];
 
 const TRENDING_AREAS = {
@@ -343,10 +342,23 @@ export function ComplianceIndex() {
               </div>
             </div>
             <div className="p-4 rounded-lg bg-gray-50 text-sm text-gray-600">
-              <strong>Methodology:</strong> The overall industry score is a weighted average across three compliance domains
-              (Operational 50%, Equipment 25%, Documentation 25%) calculated from {REPORT.totalLocations.toLocaleString()} active
+              <strong>Methodology:</strong> The overall industry readiness index is based on two compliance pillars
+              — Food Safety (55%) and Fire Safety (45%) — calculated from {REPORT.totalLocations.toLocaleString()} active
               locations on the EvidLY platform. All data is anonymized before aggregation.
             </div>
+            {/* Touchpoint 2: Referral nudge — help raise the industry score */}
+            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '12px' }}>
+              Help raise the industry average.{' '}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('https://getevidly.com/ref/PACIFIC-COAST-DK');
+                  toast.success('Referral link copied!');
+                }}
+                style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+              >
+                Share EvidLY with a peer kitchen →
+              </button>
+            </p>
           </div>
         </div>
 

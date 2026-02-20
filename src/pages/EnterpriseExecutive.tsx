@@ -93,8 +93,6 @@ export function EnterpriseExecutive() {
 
   // State
   const [drillDownNodeId, setDrillDownNodeId] = useState<string | null>(null);
-  const [heatMapCategory, setHeatMapCategory] = useState<ComplianceCategory>('overall');
-  const [heatMapStatusFilter, setHeatMapStatusFilter] = useState<'all' | 'compliant' | 'at_risk' | 'critical'>('all');
   const [selectedTrendUnits, setSelectedTrendUnits] = useState<string[]>(['overall']);
 
   // Derived data
@@ -115,16 +113,6 @@ export function EnterpriseExecutive() {
     return all.filter(a => codes.has(a.nodeCode));
   }, [drillDownNodeId, activeNode]);
 
-  const heatMapChildren = useMemo(() => {
-    const children = activeNode.children || [];
-    return children.filter(c => {
-      const score = getScoreByCategory(c, heatMapCategory);
-      if (heatMapStatusFilter === 'compliant') return score >= 80;
-      if (heatMapStatusFilter === 'at_risk') return score >= 60 && score < 80;
-      if (heatMapStatusFilter === 'critical') return score < 60;
-      return true;
-    });
-  }, [activeNode, heatMapCategory, heatMapStatusFilter]);
 
   // Trend data: latest, previous, 3 months ago
   const latestTrend = enterpriseTrendData[enterpriseTrendData.length - 1];
@@ -314,107 +302,8 @@ export function EnterpriseExecutive() {
           </div>
         </div>
 
-        {/* ── D. Heat Map + Critical Alerts ─────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Organization Heat Map */}
-          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-              <h3 className="text-sm font-semibold text-gray-900">Organization Heat Map</h3>
-              <div className="flex items-center gap-2">
-                <select
-                  value={heatMapStatusFilter}
-                  onChange={e => setHeatMapStatusFilter(e.target.value as any)}
-                  className="text-[11px] border border-gray-200 rounded-md px-2 py-1 text-gray-600"
-                >
-                  <option value="all">All Status</option>
-                  <option value="compliant">Compliant (80+)</option>
-                  <option value="at_risk">At Risk (60-79)</option>
-                  <option value="critical">Critical (&lt;60)</option>
-                </select>
-              </div>
-            </div>
-            {/* Category toggle */}
-            <div className="flex gap-1 mb-4 overflow-x-auto">
-              {([
-                { key: 'overall', label: 'Overall' },
-                { key: 'foodSafety', label: 'Food Safety' },
-                { key: 'fireSafety', label: 'Fire Safety' },
-              ] as { key: ComplianceCategory; label: string }[]).map(cat => (
-                <button
-                  key={cat.key}
-                  onClick={() => setHeatMapCategory(cat.key)}
-                  className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors cursor-pointer whitespace-nowrap ${
-                    heatMapCategory === cat.key
-                      ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-            {/* Back button when drilled */}
-            {drillDownNodeId && (
-              <button
-                onClick={() => {
-                  const parent = breadcrumb.length >= 2 ? breadcrumb[breadcrumb.length - 2] : null;
-                  setDrillDownNodeId(parent && parent.id !== enterpriseHierarchy.id ? parent.id : null);
-                }}
-                className="text-[11px] text-gray-500 hover:text-gray-700 mb-3 flex items-center gap-1 cursor-pointer"
-              >
-                <ArrowUp className="h-3 w-3" /> Back to {breadcrumb.length >= 2 ? breadcrumb[breadcrumb.length - 2].name : 'Corporate'}
-              </button>
-            )}
-            {/* Heat map grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {heatMapChildren.length > 0 ? heatMapChildren.map(node => {
-                const score = getScoreByCategory(node, heatMapCategory);
-                return (
-                  <button
-                    key={node.id}
-                    onClick={() => handleDrill(node.id)}
-                    className="rounded-lg border p-4 text-left transition-all hover:shadow-md cursor-pointer"
-                    style={{ backgroundColor: scoreBg(score), borderColor: scoreBorder(score) }}
-                  >
-                    <p className="text-xs font-semibold text-gray-900 truncate">{node.name}</p>
-                    <p className="text-[10px] text-gray-500 mb-2">{node.locationCount.toLocaleString()} locations</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold" style={{ color: scoreColor(score) }}>{score}%</span>
-                      <TrendBadge value={nodeTrend(node.id)} />
-                    </div>
-                    <div className="mt-2 grid grid-cols-2 gap-1">
-                      {[
-                        { label: 'FS', val: node.foodSafety },
-                        { label: 'Fire', val: node.fireSafety },
-                      ].map(p => (
-                        <div key={p.label} className="text-center">
-                          <p className="text-[8px] text-gray-400">{p.label}</p>
-                          <p className="text-[10px] font-semibold" style={{ color: scoreColor(p.val) }}>{p.val}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </button>
-                );
-              }) : (
-                <div className="col-span-full text-center py-8 text-sm text-gray-400">No matching units</div>
-              )}
-            </div>
-            {/* Legend */}
-            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-gray-100 flex-wrap">
-              {[
-                { label: '90+ Excellent', color: '#dcfce7' },
-                { label: '80-89 Good', color: '#fef9c3' },
-                { label: '70-79 Fair', color: '#fed7aa' },
-                { label: '<70 Critical', color: '#fecaca' },
-              ].map(l => (
-                <div key={l.label} className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: l.color, border: '1px solid #d1d5db' }} />
-                  <span className="text-[10px] text-gray-500">{l.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        {/* ── D. Critical Alerts ─────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Critical Alerts */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">

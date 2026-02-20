@@ -314,6 +314,19 @@ export function DocumentChecklist() {
               Your compliance documentation is complete. Keep your documents up-to-date as they
               expire.
             </p>
+            {/* Touchpoint 3: Referral nudge after document completion */}
+            <p style={{ fontSize: '12px', color: '#15803d', marginTop: '8px' }}>
+              Filed! Your vendor's other clients might need this too.{' '}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText('https://getevidly.com/ref/PACIFIC-COAST-DK');
+                  toast.success('Referral link copied!');
+                }}
+                style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
+              >
+                Share →
+              </button>
+            </p>
           </div>
         </div>
       )}

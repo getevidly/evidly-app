@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertTriangle, Clock, ChevronRight, FileText, Flame, Wind, Droplets, Trash2, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { ReferralBanner } from '../components/referral/ReferralBanner';
+import { K2CWidget } from '../components/referral/K2CWidget';
+import { demoReferral } from '../data/demoData';
 
 interface EquipmentStatus {
   id: string;
@@ -188,6 +191,13 @@ export function FacilitiesDashboard() {
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
 
+        {/* K2C Referral Banner */}
+        <ReferralBanner
+          referralCode={demoReferral.referralCode}
+          referralUrl={demoReferral.referralUrl}
+          mealsGenerated={demoReferral.mealsGenerated}
+        />
+
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Equipment Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -236,6 +246,16 @@ export function FacilitiesDashboard() {
               );
             })}
           </div>
+        </div>
+
+        {/* K2C Widget */}
+        <div style={{ maxWidth: 320 }}>
+          <K2CWidget
+            mealsGenerated={demoReferral.mealsGenerated}
+            referralsCount={demoReferral.referralsCount}
+            monthsFree={demoReferral.monthsFree}
+            onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
+          />
         </div>
 
         {vendorActions.length > 0 && (

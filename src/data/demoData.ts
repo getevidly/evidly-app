@@ -27,6 +27,31 @@ export function getWeights(): PillarWeights {
 // Backwards-compatible wrapper — delegates to scoring engine
 export const getGrade = (score: number) => getScoreInfo(score);
 
+// --------------- Per-Role Demo User Names ---------------
+import type { UserRole } from '../contexts/RoleContext';
+
+export const demoUsers: Record<UserRole, { name: string; title: string }> = {
+  owner_operator:     { name: 'James Wilson',   title: 'Owner / Operator' },
+  executive:          { name: 'David Chen',      title: 'Executive' },
+  compliance_manager: { name: 'Sarah Kim',       title: 'Compliance Manager' },
+  chef:               { name: 'Maria Santos',    title: 'Head Chef' },
+  facilities_manager: { name: 'Robert Okafor',   title: 'Facilities Manager' },
+  kitchen_manager:    { name: 'Carlos Rivera',   title: 'Kitchen Manager' },
+  kitchen_staff:      { name: 'Miguel Torres',   title: 'Kitchen Staff' },
+};
+
+// --------------- K2C Referral Demo Data ---------------
+export const demoReferral = {
+  referralCode: 'PACIFIC-COAST-DK',
+  referralUrl: 'https://getevidly.com/ref/PACIFIC-COAST-DK',
+  referralsCount: 2,
+  mealsGenerated: 24,        // 2 referrals × 12 meals each
+  monthsFree: 2,
+  pendingReferrals: 1,
+  leaderboardRank: 3,
+  networkPoints: 8,
+};
+
 // ============================================================
 // Location Jurisdiction Status — replaces legacy numeric scores
 // ============================================================

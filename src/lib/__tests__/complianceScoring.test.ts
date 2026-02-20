@@ -1,191 +1,60 @@
 import { describe, it, expect } from 'vitest';
 import {
-  computeComplianceScore,
-  computeWeightedOverall,
-  calculateFoodSafetyScore,
   calculateFireSafetyScore,
-  calculateVendorComplianceScore,
-  PILLAR_WEIGHTS,
+  getScoreColor,
+  getScoreStatus,
+  getScoreInfo,
+  getGraduatedPenalty,
   DEFAULT_WEIGHTS,
-  type ScoringItem,
-  type PillarName,
 } from '../complianceScoring';
 
 describe('complianceScoring', () => {
   // ─── PILLAR_WEIGHTS ───────────────────────────────────
-  describe('PILLAR_WEIGHTS', () => {
-    it('Food Safety = 45%, Fire Safety = 35%, Vendor Compliance = 20%', () => {
-      expect(PILLAR_WEIGHTS.foodSafety).toBe(0.45);
-      expect(PILLAR_WEIGHTS.fireSafety).toBe(0.35);
-      expect(PILLAR_WEIGHTS.vendorCompliance).toBe(0.20);
-    });
-
-    it('weights sum to 1.0', () => {
-      const sum = PILLAR_WEIGHTS.foodSafety + PILLAR_WEIGHTS.fireSafety + PILLAR_WEIGHTS.vendorCompliance;
+  describe('DEFAULT_WEIGHTS', () => {
+    it('Food Safety + Fire Safety weights sum to 1.0', () => {
+      const sum = DEFAULT_WEIGHTS.foodSafety + DEFAULT_WEIGHTS.fireSafety;
       expect(sum).toBeCloseTo(1.0);
     });
-  });
 
-  // ─── computeComplianceScore ───────────────────────────
-  describe('computeComplianceScore', () => {
-    it('all items compliant → 100% overall', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'Checklists', pillar: 'foodSafety', status: 'compliant' },
-        { id: '3', name: 'Hood cleaning', pillar: 'fireSafety', status: 'compliant' },
-        { id: '4', name: 'Fire extinguisher', pillar: 'fireSafety', status: 'compliant' },
-        { id: '5', name: 'Vendor certs', pillar: 'vendorCompliance', status: 'compliant' },
-        { id: '6', name: 'Insurance', pillar: 'vendorCompliance', status: 'compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      expect(result.overall).toBe(100);
-      expect(result.foodSafety).toBe(100);
-      expect(result.fireSafety).toBe(100);
-      expect(result.vendorCompliance).toBe(100);
-    });
-
-    it('all items non_compliant → 0% overall', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'non_compliant' },
-        { id: '2', name: 'Checklists', pillar: 'foodSafety', status: 'non_compliant' },
-        { id: '3', name: 'Hood cleaning', pillar: 'fireSafety', status: 'non_compliant' },
-        { id: '4', name: 'Fire extinguisher', pillar: 'fireSafety', status: 'non_compliant' },
-        { id: '5', name: 'Vendor certs', pillar: 'vendorCompliance', status: 'non_compliant' },
-        { id: '6', name: 'Insurance', pillar: 'vendorCompliance', status: 'non_compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      expect(result.overall).toBe(0);
-      expect(result.foodSafety).toBe(0);
-      expect(result.fireSafety).toBe(0);
-      expect(result.vendorCompliance).toBe(0);
-    });
-
-    it('mixed items → correct weighted calculation', () => {
-      const items: ScoringItem[] = [
-        // Food Safety: 1/2 = 50%
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'Checklists', pillar: 'foodSafety', status: 'non_compliant' },
-        // Fire Safety: 2/2 = 100%
-        { id: '3', name: 'Hood cleaning', pillar: 'fireSafety', status: 'compliant' },
-        { id: '4', name: 'Fire extinguisher', pillar: 'fireSafety', status: 'compliant' },
-        // Vendor Compliance: 0/2 = 0%
-        { id: '5', name: 'Vendor certs', pillar: 'vendorCompliance', status: 'non_compliant' },
-        { id: '6', name: 'Insurance', pillar: 'vendorCompliance', status: 'non_compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      expect(result.foodSafety).toBe(50);
-      expect(result.fireSafety).toBe(100);
-      expect(result.vendorCompliance).toBe(0);
-      // overall = 50*0.45 + 100*0.35 + 0*0.20 = 22.5 + 35 + 0 = 57.5 → 58
-      expect(result.overall).toBe(58);
-    });
-
-    it('items with not_applicable → excluded from calculation', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'HACCP N/A', pillar: 'foodSafety', status: 'not_applicable' },
-        { id: '3', name: 'Hood cleaning', pillar: 'fireSafety', status: 'compliant' },
-        { id: '4', name: 'Exhaust N/A', pillar: 'fireSafety', status: 'not_applicable' },
-        { id: '5', name: 'Vendor certs', pillar: 'vendorCompliance', status: 'compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      // Food Safety: 1 compliant / 1 applicable = 100%
-      expect(result.foodSafety).toBe(100);
-      // Fire Safety: 1 compliant / 1 applicable = 100%
-      expect(result.fireSafety).toBe(100);
-      // Vendor Compliance: 1 compliant / 1 applicable = 100%
-      expect(result.vendorCompliance).toBe(100);
-      expect(result.overall).toBe(100);
-    });
-
-    it('empty items → 0% overall', () => {
-      const result = computeComplianceScore([], 'loc1');
-      expect(result.overall).toBe(0);
-      expect(result.foodSafety).toBe(0);
-      expect(result.fireSafety).toBe(0);
-      expect(result.vendorCompliance).toBe(0);
-    });
-
-    it('single pillar with items → other pillars at 0', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'Checklists', pillar: 'foodSafety', status: 'compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      expect(result.foodSafety).toBe(100);
-      expect(result.fireSafety).toBe(0);
-      expect(result.vendorCompliance).toBe(0);
-      // overall = 100*0.45 + 0*0.35 + 0*0.20 = 45
-      expect(result.overall).toBe(45);
-    });
-
-    it('returns correct pillar breakdown with labels', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Test', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'Test', pillar: 'fireSafety', status: 'compliant' },
-        { id: '3', name: 'Test', pillar: 'vendorCompliance', status: 'compliant' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      expect(result.pillars).toHaveLength(3);
-      expect(result.pillars[0].label).toBe('Food Safety');
-      expect(result.pillars[1].label).toBe('Fire Safety');
-      expect(result.pillars[2].label).toBe('Vendor Compliance');
-    });
-
-    it('pending items count as non-compliant', () => {
-      const items: ScoringItem[] = [
-        { id: '1', name: 'Temp logs', pillar: 'foodSafety', status: 'compliant' },
-        { id: '2', name: 'Checklists', pillar: 'foodSafety', status: 'pending' },
-      ];
-      const result = computeComplianceScore(items, 'loc1');
-      // 1 compliant / 2 applicable = 50%
-      expect(result.foodSafety).toBe(50);
+    it('Food Safety = 55%, Fire Safety = 45%', () => {
+      expect(DEFAULT_WEIGHTS.foodSafety).toBe(0.55);
+      expect(DEFAULT_WEIGHTS.fireSafety).toBe(0.45);
     });
   });
 
-  // ─── computeWeightedOverall ───────────────────────────
-  describe('computeWeightedOverall', () => {
-    it('computes correct weighted sum with default weights', () => {
-      const result = computeWeightedOverall({
-        foodSafety: 100,
-        fireSafety: 100,
-        vendorCompliance: 100,
-      });
-      expect(result).toBe(100);
-    });
+  // ─── getScoreColor ─────────────────────────────────────
+  describe('getScoreColor', () => {
+    it('90+ → green', () => expect(getScoreColor(90)).toBe('#22c55e'));
+    it('75+ → yellow', () => expect(getScoreColor(80)).toBe('#eab308'));
+    it('60+ → amber', () => expect(getScoreColor(65)).toBe('#f59e0b'));
+    it('<60 → red', () => expect(getScoreColor(50)).toBe('#ef4444'));
+  });
 
-    it('computes correct weighted sum with mixed scores', () => {
-      const result = computeWeightedOverall({
-        foodSafety: 80,
-        fireSafety: 60,
-        vendorCompliance: 40,
-      });
-      // 80*0.45 + 60*0.35 + 40*0.20 = 36 + 21 + 8 = 65
-      expect(result).toBe(65);
+  // ─── getScoreStatus ────────────────────────────────────
+  describe('getScoreStatus', () => {
+    it('90+ → Excellent', () => expect(getScoreStatus(95)).toBe('Excellent'));
+    it('75+ → Good', () => expect(getScoreStatus(80)).toBe('Good'));
+    it('60+ → Needs Attention', () => expect(getScoreStatus(65)).toBe('Needs Attention'));
+    it('<60 → Critical', () => expect(getScoreStatus(50)).toBe('Critical'));
+  });
+
+  // ─── getScoreInfo ──────────────────────────────────────
+  describe('getScoreInfo', () => {
+    it('returns label, color, and hex', () => {
+      const info = getScoreInfo(85);
+      expect(info.label).toBe('Good');
+      expect(info.color).toBe('yellow');
+      expect(info.hex).toBe('#eab308');
     });
   });
 
-  // ─── calculateFoodSafetyScore ─────────────────────────
-  describe('calculateFoodSafetyScore', () => {
-    it('perfect scores → 100', () => {
-      const result = calculateFoodSafetyScore({
-        tempCheckCompletionRate: 100,
-        checklistCompletionRate: 100,
-        incidentResolutionAvgHours: 1,
-        haccpMonitoringRate: 100,
-      });
-      expect(result).toBe(100);
-    });
-
-    it('all zeros → 0', () => {
-      const result = calculateFoodSafetyScore({
-        tempCheckCompletionRate: 0,
-        checklistCompletionRate: 0,
-        incidentResolutionAvgHours: -1,
-        haccpMonitoringRate: 0,
-      });
-      expect(result).toBe(0);
-    });
+  // ─── getGraduatedPenalty ───────────────────────────────
+  describe('getGraduatedPenalty', () => {
+    it('expired → full penalty', () => expect(getGraduatedPenalty(-5, 100)).toBe(100));
+    it('1-7 days → 50% penalty', () => expect(getGraduatedPenalty(3, 100)).toBe(50));
+    it('8-14 days → 30% penalty', () => expect(getGraduatedPenalty(10, 100)).toBe(30));
+    it('15-30 days → 15% penalty', () => expect(getGraduatedPenalty(20, 100)).toBe(15));
+    it('30+ days → 0% penalty', () => expect(getGraduatedPenalty(60, 100)).toBe(0));
   });
 
   // ─── calculateFireSafetyScore ─────────────────────────
@@ -211,27 +80,12 @@ describe('complianceScoring', () => {
       ]);
       expect(result).toBe(0);
     });
-  });
 
-  // ─── calculateVendorComplianceScore ───────────────────
-  describe('calculateVendorComplianceScore', () => {
-    it('all documents current → 100', () => {
-      const result = calculateVendorComplianceScore([
-        { name: 'Vendor Certs', weight: 0.40, daysUntilExpiry: 90, count: 5, expiredCount: 0 },
-        { name: 'Insurance', weight: 0.30, daysUntilExpiry: 120 },
-        { name: 'Service Records', weight: 0.30, daysUntilExpiry: 60 },
+    it('condition-based items use conditionScore', () => {
+      const result = calculateFireSafetyScore([
+        { name: 'Daily Checks', weight: 1.0, daysUntilDue: Infinity, conditionScore: 80 },
       ]);
-      expect(result).toBe(100);
-    });
-
-    it('expired vendor certs reduce score', () => {
-      const result = calculateVendorComplianceScore([
-        { name: 'Vendor Certs', weight: 0.40, daysUntilExpiry: 90, count: 4, expiredCount: 2 },
-        { name: 'Insurance', weight: 0.30, daysUntilExpiry: 120 },
-        { name: 'Service Records', weight: 0.30, daysUntilExpiry: 60 },
-      ]);
-      expect(result).toBeLessThan(100);
-      expect(result).toBeGreaterThan(0);
+      expect(result).toBe(80);
     });
   });
 });

@@ -23,6 +23,9 @@ import {
   DEMO_WEEKLY_ACTIVITY,
 } from '../../data/demoData';
 import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, DEMO_ROLE_NAMES } from './shared/constants';
+import { ReferralBanner } from '../referral/ReferralBanner';
+import { K2CWidget } from '../referral/K2CWidget';
+import { demoReferral } from '../../data/demoData';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
@@ -418,6 +421,15 @@ export default function ExecutiveDashboard() {
         <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
       </DashboardHero>
 
+      {/* K2C Referral Banner */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <ReferralBanner
+          referralCode={demoReferral.referralCode}
+          referralUrl={demoReferral.referralUrl}
+          mealsGenerated={demoReferral.mealsGenerated}
+        />
+      </div>
+
       {/* ============================================================ */}
       {/* CONTENT                                                       */}
       {/* ============================================================ */}
@@ -431,6 +443,16 @@ export default function ExecutiveDashboard() {
 
         {/* Where Do I Start? — executive-focused priorities */}
         <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+
+        {/* K2C Widget */}
+        <div style={{ maxWidth: 320 }}>
+          <K2CWidget
+            mealsGenerated={demoReferral.mealsGenerated}
+            referralsCount={demoReferral.referralsCount}
+            monthsFree={demoReferral.monthsFree}
+            onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
+          />
+        </div>
 
         {/* Schedule Calendar */}
         <ErrorBoundary level="widget">
