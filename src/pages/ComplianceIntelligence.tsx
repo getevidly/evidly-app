@@ -45,6 +45,8 @@ import {
 } from '../data/intelligenceData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { ServiceCostPanel, type ServiceState } from '../components/intelligence/ServiceCostPanel';
+import { CostOfInactionEngine } from '../components/intelligence/CostOfInactionEngine';
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -1062,6 +1064,7 @@ function formatDollars(n: number) {
 }
 
 function FinancialTab() {
+  const [serviceStates, setServiceStates] = useState<ServiceState[]>([]);
   const categoryIcons: Record<string, typeof Flame> = {
     gavel: AlertTriangle,
     shield: EvidlyIcon as any,
@@ -1080,6 +1083,10 @@ function FinancialTab() {
         </div>
         <p className="text-[11px] text-gray-500">Translates compliance data into dollar figures for the CFO. All estimates based on industry benchmarks and your organization's data.</p>
       </div>
+
+      {/* CPP Service ROI Engine */}
+      <ServiceCostPanel onStateChange={setServiceStates} />
+      <CostOfInactionEngine serviceStates={serviceStates} />
 
       {/* Cost Categories */}
       <div className="space-y-4">
