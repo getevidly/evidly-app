@@ -7,6 +7,7 @@ import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
+import { useTranslation } from '../../contexts/LanguageContext';
 import { locations as demoLocations } from '../../data/demoData';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import {
@@ -131,6 +132,51 @@ function getStatusDotColor(locUrlId: string): string {
 
 const STORAGE_KEY = 'evidly-sidebar-collapsed';
 
+// ── Nav item id → i18n key mapping ──
+const NAV_I18N: Record<string, string> = {
+  'dashboard': 'nav.dashboard',
+  'my-tasks': 'nav.myTasks',
+  'calendar': 'nav.calendar',
+  'checklists': 'nav.checklists',
+  'temperatures': 'nav.temperatures',
+  'log-temp': 'nav.logTemp',
+  'iot-monitoring': 'nav.iotMonitoring',
+  'fire-safety': 'nav.fireSafety',
+  'incidents': 'nav.incidents',
+  'documents': 'nav.documents',
+  'equipment': 'nav.equipment',
+  'haccp': 'nav.haccp',
+  'vendors': 'nav.vendors',
+  'photos': 'nav.photos',
+  'training': 'nav.training',
+  'compliance': 'nav.complianceOverview',
+  'self-inspection': 'nav.selfAudit',
+  'inspector': 'nav.inspectorView',
+  'ai-copilot': 'nav.aiCopilot',
+  'regulatory': 'nav.regulatoryUpdates',
+  'reporting': 'nav.reporting',
+  'alerts': 'nav.alerts',
+  'locations': 'nav.locations',
+  'benchmarks': 'nav.benchmarks',
+  'risk-score': 'nav.riskScore',
+  'leaderboard': 'nav.leaderboard',
+  'marketplace': 'nav.marketplace',
+  'team': 'nav.team',
+  'system-admin': 'nav.systemAdmin',
+  'settings': 'nav.settings',
+  'help': 'nav.helpSupport',
+  'usage-analytics': 'nav.usageAnalytics',
+};
+
+// ── Section id → i18n key mapping ──
+const SECTION_I18N: Record<string, string> = {
+  'operations': 'nav.sectionDailyOps',
+  'records': 'nav.sectionRecords',
+  'compliance': 'nav.sectionComplInsights',
+  'enterprise': 'nav.sectionEnterprise',
+  'admin': 'nav.sectionAdmin',
+};
+
 // ── Sidebar component ───────────────────────────────────
 
 export function Sidebar() {
@@ -139,6 +185,7 @@ export function Sidebar() {
   const { userRole } = useRole();
   const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
   const { branding } = useBranding();
+  const { t } = useTranslation();
 
   const isTestMode = useMemo(() => checkTestMode(), []);
   const isEvidlyAdmin = false;
@@ -241,9 +288,11 @@ export function Sidebar() {
     const hasSubItems = item.subItems && item.subItems.length > 0;
     const isExpanded = expandedNavItem === item.id;
     const testId = isTestMode ? `nav-${item.id}` : undefined;
+    const i18nKey = NAV_I18N[item.id];
+    const displayLabel = i18nKey ? t(i18nKey) : item.label;
 
     return (
-      <NavTooltip key={item.id} itemKey={item.id} label={item.label}>
+      <NavTooltip key={item.id} itemKey={item.id} label={displayLabel}>
         <div>
           <div
             onClick={() => {
@@ -265,7 +314,7 @@ export function Sidebar() {
                 active ? 'text-[#d4af37]' : 'text-gray-300 group-hover:text-white'
               }`}
             />
-            <span className="flex-1 truncate">{item.label}</span>
+            <span className="flex-1 truncate">{displayLabel}</span>
             {hasSubItems && (
               <span
                 onClick={(e) => {
@@ -344,6 +393,8 @@ export function Sidebar() {
           {/* Collapsible sections */}
           {sections.map(section => {
             const isCollapsed = !!collapsed[section.id];
+            const sectionKey = SECTION_I18N[section.id];
+            const sectionLabel = sectionKey ? t(sectionKey) : section.label;
             return (
               <div key={section.id} className="mb-1">
                 {/* Section header */}
@@ -356,7 +407,7 @@ export function Sidebar() {
                     className="text-[10px] uppercase font-semibold tracking-wider"
                     style={{ color: '#94a3b8' }}
                   >
-                    {section.label}
+                    {sectionLabel}
                   </span>
                   {isCollapsed ? (
                     <ChevronRight className="h-3 w-3" style={{ color: '#94a3b8' }} />
@@ -376,13 +427,13 @@ export function Sidebar() {
         {showLocations && visibleLocations.length > 0 && (
           <div className="flex-shrink-0 border-t border-white/10 px-3 py-3">
             <div className="flex items-center justify-between px-2 mb-2">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Locations</span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">{t('nav.sectionLocations')}</span>
               {userRole === 'owner_operator' && (
                 <span
                   onClick={() => navigate('/org-hierarchy')}
                   className="text-[10px] text-gray-500 hover:text-[#d4af37] cursor-pointer transition-colors"
                 >
-                  Edit
+                  {t('nav.editLocations')}
                 </span>
               )}
             </div>
@@ -417,7 +468,7 @@ export function Sidebar() {
             onClick={() => navigate('/referrals')}
             style={{ fontSize: '11px', color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 500 }}
           >
-            🍽️ Refer a Kitchen
+            🍽️ {t('nav.referKitchen')}
           </button>
         </div>
 
