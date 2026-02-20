@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, AlertCircle, AlertTriangle, Info, X, Clock, CheckCircle2, FileText, Thermometer, Users, Upload, ChevronDown, ExternalLink, MapPin, Store, ShieldAlert } from 'lucide-react';
 import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 
 interface Alert {
@@ -27,6 +28,7 @@ interface Alert {
 }
 
 export function Alerts() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
   const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
@@ -271,7 +273,7 @@ export function Alerts() {
 
   const alertLocations = [...new Set(alerts.map(a => a.location))].filter(loc => alertAccessibleLocNames.includes(loc)).sort();
   const alertTypes: { value: string; label: string }[] = [
-    { value: 'all', label: 'All Types' },
+    { value: 'all', label: t('pages.calendar.allTypes') },
     { value: 'document_expiring', label: 'Document Expiring' },
     { value: 'missed_log', label: 'Missed Temp Logs' },
     { value: 'vendor_overdue', label: 'Vendor Overdue' },
@@ -305,9 +307,9 @@ export function Alerts() {
 
   const getSeverityLabel = (severity: string) => {
     switch (severity) {
-      case 'high': return 'Critical';
-      case 'medium': return 'Warning';
-      default: return 'Info';
+      case 'high': return t('status.critical');
+      case 'medium': return t('status.warning');
+      default: return t('status.info');
     }
   };
 
@@ -424,26 +426,26 @@ export function Alerts() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Alerts' }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.alerts.title') }]} />
       <div className="space-y-6">
         <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-xl p-4 sm:p-6 text-white">
           <div className="flex items-center space-x-3 mb-2">
             <Bell className="h-8 w-8 text-[#d4af37]" />
-            <h2 className="text-xl sm:text-2xl font-bold">Compliance Alerts</h2>
+            <h2 className="text-xl sm:text-2xl font-bold">{t('pages.alerts.complianceAlerts')}</h2>
           </div>
-          <p className="text-gray-300">AI-powered predictive alerts and notifications</p>
+          <p className="text-gray-300">{t('pages.alerts.subtitle')}</p>
           <div className="flex items-center space-x-6 mt-4 flex-wrap gap-y-2">
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <Bell className="h-4 w-4 text-[#d4af37]" />
-                <span className="text-sm text-gray-300 font-medium">Active Alerts</span>
+                <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.activeAlerts')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold text-white text-center">{activeCount}</div>
             </div>
             <div>
               <div className="flex items-center justify-center gap-2 mb-1">
                 <AlertCircle className="h-4 w-4 text-red-400" />
-                <span className="text-sm text-gray-300 font-medium">Critical</span>
+                <span className="text-sm text-gray-300 font-medium">{t('pages.alerts.critical')}</span>
               </div>
               <div className="text-xl sm:text-3xl font-bold text-red-400 text-center">{urgentCount}</div>
             </div>
@@ -458,7 +460,7 @@ export function Alerts() {
               filter === 'all' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            All ({activeCount})
+            {t('pages.alerts.all')} ({activeCount})
           </button>
           <button
             onClick={() => setFilter('urgent')}
@@ -466,7 +468,7 @@ export function Alerts() {
               filter === 'urgent' ? 'bg-red-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Critical ({urgentCount})
+            {t('pages.alerts.critical')} ({urgentCount})
           </button>
           <button
             onClick={() => setFilter('upcoming')}
@@ -474,7 +476,7 @@ export function Alerts() {
               filter === 'upcoming' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Upcoming
+            {t('pages.alerts.upcoming')}
           </button>
           <button
             onClick={() => setFilter('snoozed')}
@@ -482,7 +484,7 @@ export function Alerts() {
               filter === 'snoozed' ? 'bg-purple-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Snoozed
+            {t('pages.alerts.snoozed')}
           </button>
           <button
             onClick={() => setFilter('resolved')}
@@ -490,7 +492,7 @@ export function Alerts() {
               filter === 'resolved' ? 'bg-green-500 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            Resolved
+            {t('pages.alerts.resolved')}
           </button>
         </div>
 
@@ -501,17 +503,17 @@ export function Alerts() {
             onChange={(e) => setSeverityFilter(e.target.value as any)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
           >
-            <option value="all">All Severities</option>
-            <option value="high">Critical</option>
-            <option value="medium">Warning</option>
-            <option value="low">Info</option>
+            <option value="all">{t('pages.alerts.allSeverities')}</option>
+            <option value="high">{t('status.critical')}</option>
+            <option value="medium">{t('status.warning')}</option>
+            <option value="low">{t('status.info')}</option>
           </select>
           <select
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
           >
-            <option value="all">All Locations</option>
+            <option value="all">{t('pages.alerts.allLocations')}</option>
             {alertLocations.map(loc => (
               <option key={loc} value={loc}>{loc}</option>
             ))}
@@ -530,7 +532,7 @@ export function Alerts() {
               onClick={() => { setSeverityFilter('all'); setLocationFilter('all'); setTypeFilter('all'); }}
               className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 underline"
             >
-              Clear filters
+              {t('pages.alerts.clearFilters')}
             </button>
           )}
         </div>
@@ -540,7 +542,7 @@ export function Alerts() {
             <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-200">
               <CheckCircle2 className="h-12 w-12 text-green-500 mx-auto mb-4" />
               <p className="text-gray-500">
-                {filter === 'resolved' ? 'No resolved alerts' : 'No alerts match your filters'}
+                {filter === 'resolved' ? t('pages.alerts.noResolvedAlerts') : t('pages.alerts.noMatchingAlerts')}
               </p>
             </div>
           ) : (
@@ -580,7 +582,7 @@ export function Alerts() {
                             {alertItem.days_until_due && (
                               <span className="flex items-center space-x-1">
                                 <Clock className="h-4 w-4" />
-                                <span>{alertItem.days_until_due} days remaining</span>
+                                <span>{alertItem.days_until_due} {t('pages.alerts.daysRemaining')}</span>
                               </span>
                             )}
                           </div>
@@ -594,19 +596,19 @@ export function Alerts() {
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{alertItem.description}</p>
                       <div className="bg-white rounded-md p-3 border border-gray-200 mb-3">
-                        <p className="text-sm font-medium text-gray-700 mb-1">Recommended Action:</p>
+                        <p className="text-sm font-medium text-gray-700 mb-1">{t('pages.alerts.recommendedAction')}:</p>
                         <p className="text-sm text-gray-600">{alertItem.recommended_action}</p>
                       </div>
                       {alertItem.assigned_to && (
                         <div className="flex items-center space-x-2 text-sm text-gray-500">
                           <Users className="h-4 w-4" />
-                          <span>Assigned to: <strong className="text-gray-700">{alertItem.assigned_to}</strong></span>
+                          <span>{t('pages.alerts.assignedTo')}: <strong className="text-gray-700">{alertItem.assigned_to}</strong></span>
                         </div>
                       )}
                       {alertItem.status === 'snoozed' && alertItem.snoozed_until && (
                         <div className="flex items-center space-x-2 text-sm text-purple-600 mt-2">
                           <Clock className="h-4 w-4" />
-                          <span>Snoozed until {format(new Date(alertItem.snoozed_until), 'MMM d, yyyy')}</span>
+                          <span>{t('pages.alerts.snoozedUntil')} {format(new Date(alertItem.snoozed_until), 'MMM d, yyyy')}</span>
                         </div>
                       )}
                     </div>
@@ -618,20 +620,20 @@ export function Alerts() {
                       onClick={() => handleResolveClick(alertItem)}
                       className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors"
                     >
-                      Resolve
+                      {t('pages.alerts.resolve')}
                     </button>
                     {alertItem.navigate_to && (
                       <button
                         onClick={() => navigate(alertItem.navigate_to!)}
                         className="px-4 py-2 min-h-[44px] bg-[#d4af37] text-white text-sm rounded-lg hover:bg-[#b8962f] transition-colors flex items-center space-x-1"
                       >
-                        <span>Go to {alertItem.navigate_to === '/documents' ? 'Documents' :
-                          alertItem.navigate_to === '/temp-logs' ? 'Temp Logs' :
-                          alertItem.navigate_to === '/vendors' ? 'Vendors' :
+                        <span>{t('pages.alerts.goTo')} {alertItem.navigate_to === '/documents' ? t('cards.documents') :
+                          alertItem.navigate_to === '/temp-logs' ? t('cards.temperatures') :
+                          alertItem.navigate_to === '/vendors' ? t('cards.vendors') :
                           alertItem.navigate_to === '/haccp' ? 'HACCP' :
-                          alertItem.navigate_to === '/checklists' ? 'Checklists' :
-                          alertItem.navigate_to === '/team' ? 'Team' :
-                          'Dashboard'}</span>
+                          alertItem.navigate_to === '/checklists' ? t('cards.checklists') :
+                          alertItem.navigate_to === '/team' ? t('nav.team') :
+                          t('nav.dashboard')}</span>
                         <ExternalLink className="h-3.5 w-3.5" />
                       </button>
                     )}
@@ -641,7 +643,7 @@ export function Alerts() {
                         className="px-4 py-2 min-h-[44px] bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-1"
                       >
                         <ShieldAlert className="h-4 w-4" />
-                        <span>Create Corrective Action</span>
+                        <span>{t('pages.alerts.createCorrectiveAction')}</span>
                       </button>
                     )}
                     <div className="relative">
@@ -649,7 +651,7 @@ export function Alerts() {
                         onClick={() => setOpenSnoozeDropdown(openSnoozeDropdown === alertItem.id ? null : alertItem.id)}
                         className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
-                        <span>Snooze</span>
+                        <span>{t('pages.alerts.snooze')}</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openSnoozeDropdown === alertItem.id && (
@@ -658,19 +660,19 @@ export function Alerts() {
                             onClick={() => handleSnooze(alertItem.id, 7)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
-                            Snooze 7 days
+                            {t('pages.alerts.snooze7Days')}
                           </button>
                           <button
                             onClick={() => handleSnooze(alertItem.id, 30)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           >
-                            Snooze 30 days
+                            {t('pages.alerts.snooze30Days')}
                           </button>
                           <button
                             onClick={() => setShowCustomDatePicker(true)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-t"
                           >
-                            Custom date
+                            {t('pages.alerts.customDate')}
                           </button>
                           {showCustomDatePicker && (
                             <div className="px-4 py-2 border-t">
@@ -685,7 +687,7 @@ export function Alerts() {
                                 onClick={() => handleCustomSnooze(alertItem.id)}
                                 className="w-full mt-2 px-2 py-1 bg-[#1e4d6b] text-white text-xs rounded hover:bg-[#163a52]"
                               >
-                                Set
+                                {t('pages.alerts.set')}
                               </button>
                             </div>
                           )}
@@ -697,7 +699,7 @@ export function Alerts() {
                         onClick={() => setOpenReassignDropdown(openReassignDropdown === alertItem.id ? null : alertItem.id)}
                         className="px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-1"
                       >
-                        <span>Reassign</span>
+                        <span>{t('pages.alerts.reassign')}</span>
                         <ChevronDown className="h-4 w-4" />
                       </button>
                       {openReassignDropdown === alertItem.id && (
@@ -727,43 +729,43 @@ export function Alerts() {
       {showResolveModal && selectedAlert && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-4 sm:p-6 max-w-lg w-[95vw] sm:w-full">
-            <h3 className="text-xl sm:text-2xl font-bold mb-4">Resolve Alert</h3>
+            <h3 className="text-xl sm:text-2xl font-bold mb-4">{t('pages.alerts.resolveAlert')}</h3>
             <p className="text-gray-600 mb-6">{selectedAlert.title}</p>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Resolution Type <span className="text-red-600">*</span>
+                  {t('pages.alerts.resolutionType')} <span className="text-red-600">*</span>
                 </label>
                 <select
                   value={resolutionType}
                   onChange={(e) => setResolutionType(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 >
-                  <option value="">Select resolution type...</option>
-                  <option value="fixed">Fixed</option>
-                  <option value="scheduled">Scheduled</option>
-                  <option value="not_applicable">Not Applicable</option>
-                  <option value="escalated">Escalated</option>
+                  <option value="">{t('pages.alerts.selectResolutionType')}</option>
+                  <option value="fixed">{t('pages.alerts.fixed')}</option>
+                  <option value="scheduled">{t('pages.alerts.scheduled')}</option>
+                  <option value="not_applicable">{t('pages.alerts.notApplicable')}</option>
+                  <option value="escalated">{t('pages.alerts.escalated')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Action Taken <span className="text-red-600">*</span>
+                  {t('pages.alerts.actionTaken')} <span className="text-red-600">*</span>
                 </label>
                 <textarea
                   value={resolutionNotes}
                   onChange={(e) => setResolutionNotes(e.target.value)}
                   rows={4}
-                  placeholder="Describe what action was taken to resolve this alert..."
+                  placeholder={t('pages.alerts.actionTakenPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Resolved By
+                  {t('pages.alerts.resolvedBy')}
                 </label>
                 <input
                   type="text"
@@ -775,18 +777,18 @@ export function Alerts() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Supporting Document (Optional)
+                  {t('pages.alerts.supportingDocument')}
                 </label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-gray-400 transition-colors cursor-pointer">
                   <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                  <p className="text-sm text-gray-600">{t('pages.alerts.clickToUpload')}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('pages.alerts.fileTypes')}</p>
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date Resolved
+                  {t('pages.alerts.dateResolved')}
                 </label>
                 <input
                   type="text"
@@ -802,13 +804,13 @@ export function Alerts() {
                 onClick={() => setShowResolveModal(false)}
                 className="flex-1 px-4 py-2 min-h-[44px] border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleResolveSubmit}
                 className="flex-1 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors"
               >
-                Submit Resolution
+                {t('pages.alerts.submitResolution')}
               </button>
             </div>
           </div>

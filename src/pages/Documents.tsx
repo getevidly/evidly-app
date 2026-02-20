@@ -15,6 +15,7 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface Document {
   id: string;
@@ -132,21 +133,22 @@ function getDocStatus(doc: Document): 'current' | 'expiring' | 'expired' {
   return 'current';
 }
 
-function DocStatusBadge({ status }: { status: 'current' | 'expiring' | 'expired' }) {
-  const styles: Record<string, { bg: string; text: string; label: string }> = {
-    current: { bg: '#dcfce7', text: '#166534', label: 'Current' },
-    expiring: { bg: '#fef9c3', text: '#854d0e', label: 'Expiring' },
-    expired: { bg: '#fee2e2', text: '#991b1b', label: 'Expired' },
+function DocStatusBadge({ status, label }: { status: 'current' | 'expiring' | 'expired'; label?: string }) {
+  const styles: Record<string, { bg: string; text: string; fallback: string }> = {
+    current: { bg: '#dcfce7', text: '#166534', fallback: 'Current' },
+    expiring: { bg: '#fef9c3', text: '#854d0e', fallback: 'Expiring' },
+    expired: { bg: '#fee2e2', text: '#991b1b', fallback: 'Expired' },
   };
   const s = styles[status];
   return (
     <span style={{ backgroundColor: s.bg, color: s.text, padding: '2px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600 }}>
-      {s.label}
+      {label || s.fallback}
     </span>
   );
 }
 
 export function Documents() {
+  const { t } = useTranslation();
   const { profile } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
@@ -284,14 +286,29 @@ export function Documents() {
 
   const categories = ['License', 'Permit', 'Certificate', 'Insurance', 'Training', 'Other'];
 
+  const categoryLabelMap: Record<string, string> = {
+    License: t('pages.documents.license'),
+    Permit: t('pages.documents.permit'),
+    Certificate: t('pages.documents.certificate'),
+    Insurance: t('pages.documents.insurance'),
+    Training: t('pages.documents.training'),
+    Other: t('pages.documents.other'),
+  };
+
+  const statusLabelMap: Record<string, string> = {
+    current: t('status.current'),
+    expiring: t('status.expiring'),
+    expired: t('status.expired'),
+  };
+
   const getSharedStatusBadge = (status: string) => {
     switch (status) {
       case 'downloaded':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Downloaded</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('pages.documents.downloaded')}</span>;
       case 'viewed':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Viewed</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">{t('pages.documents.viewed')}</span>;
       case 'sent':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Sent</span>;
+        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{t('pages.documents.sent')}</span>;
       default:
         return null;
     }
@@ -299,14 +316,14 @@ export function Documents() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Documents' }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.documents.title') }]} />
       <div className="space-y-6">
         {demoMode && <DemoModeBanner />}
 
         <div className="flex justify-between items-center flex-wrap gap-2">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Documentation</h1>
-            <p className="text-sm text-gray-600 mt-1">Store and manage compliance documents</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.documents.documentation')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('pages.documents.subtitle')}</p>
           </div>
           <div className="flex gap-2 flex-wrap">
             {selectedDocs.length > 0 && activeTab === 'documents' && (
@@ -315,7 +332,7 @@ export function Documents() {
                 className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg shadow-sm hover:bg-[#163a52] transition-colors duration-150"
               >
                 <Share2 className="h-5 w-5" />
-                <span>Share {selectedDocs.length} Selected</span>
+                <span>{t('pages.documents.shareSelected').replace('{{count}}', String(selectedDocs.length))}</span>
               </button>
             )}
             <button
@@ -323,16 +340,16 @@ export function Documents() {
               className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
-              <span className="hidden sm:inline">Upload Document</span>
-              <span className="sm:hidden">Upload</span>
+              <span className="hidden sm:inline">{t('pages.documents.upload')}</span>
+              <span className="sm:hidden">{t('pages.documents.uploadShort')}</span>
             </button>
             <button
               onClick={() => setShowPhotoCapture(!showPhotoCapture)}
               className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border-2 border-[#1e4d6b] rounded-xl hover:bg-gray-50 shadow-sm transition-colors duration-150"
             >
               <Camera className="h-5 w-5" />
-              <span className="hidden sm:inline">Take Photo</span>
-              <span className="sm:hidden">Photo</span>
+              <span className="hidden sm:inline">{t('pages.documents.takePhoto')}</span>
+              <span className="sm:hidden">{t('pages.documents.photoShort')}</span>
             </button>
           </div>
         </div>
@@ -343,12 +360,12 @@ export function Documents() {
             <PhotoEvidence
               photos={docPhotos}
               onChange={setDocPhotos}
-              label="Photograph Physical Document"
+              label={t('pages.documents.photographDocument')}
               maxPhotos={3}
               documentMode
             />
             <p className="text-xs text-gray-400 mt-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Auto-enhances contrast and brightness for readability. Position document flat with even lighting.
+              {t('pages.documents.photoHint')}
             </p>
             {docPhotos.length > 0 && (
               <div className="mt-3 space-y-3">
@@ -356,9 +373,9 @@ export function Documents() {
                   onClick={() => { toast.success('Document photo saved'); setShowPhotoCapture(false); setDocPhotos([]); }}
                   className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                 >
-                  Save Document Photo
+                  {t('pages.documents.saveDocumentPhoto')}
                 </button>
-                <PhotoGallery photos={docPhotos} title="Document Photos" />
+                <PhotoGallery photos={docPhotos} title={t('pages.documents.documentPhotos')} />
               </div>
             )}
           </div>
@@ -369,28 +386,28 @@ export function Documents() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <FileText className="h-4 w-4 text-[#1e4d6b]" />
-              <span className="text-sm text-gray-500 font-medium">Total Documents</span>
+              <span className="text-sm text-gray-500 font-medium">{t('pages.documents.totalDocuments')}</span>
             </div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{locationFilteredDocs.length}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-500 font-medium">Current</span>
+              <span className="text-sm text-gray-500 font-medium">{t('status.current')}</span>
             </div>
             <div className="text-xl sm:text-3xl font-bold text-green-600 text-center">{statusCounts.current}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #d4af37' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Clock className="h-4 w-4 text-[#d4af37]" />
-              <span className="text-sm text-gray-500 font-medium">Expiring Soon</span>
+              <span className="text-sm text-gray-500 font-medium">{t('status.expiringSoon')}</span>
             </div>
             <div className="text-xl sm:text-3xl font-bold text-[#d4af37] text-center">{statusCounts.expiring}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #ef4444' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4 text-red-600" />
-              <span className="text-sm text-gray-500 font-medium">Expired</span>
+              <span className="text-sm text-gray-500 font-medium">{t('status.expired')}</span>
             </div>
             <div className="text-xl sm:text-3xl font-bold text-red-600 text-center">{statusCounts.expired}</div>
           </div>
@@ -406,7 +423,7 @@ export function Documents() {
                   onClick={() => setDocStatusFilter(docStatusFilter === 'expired' ? 'all' : 'expired')}
                   style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: '3px' }}
                 >
-                  {statusCounts.expired} document{statusCounts.expired > 1 ? 's' : ''} expired.{' '}
+                  {statusCounts.expired} {t('pages.documents.documentsExpired')}{' '}
                 </strong>
               )}
               {statusCounts.expiring > 0 && (
@@ -414,7 +431,7 @@ export function Documents() {
                   onClick={() => setDocStatusFilter(docStatusFilter === 'expiring' ? 'all' : 'expiring')}
                   style={{ cursor: 'pointer', textDecoration: 'underline', textDecorationStyle: 'dotted', textUnderlineOffset: '3px' }}
                 >
-                  {statusCounts.expiring} document{statusCounts.expiring > 1 ? 's' : ''} expiring within 30 days.
+                  {statusCounts.expiring} {t('pages.documents.documentsExpiring')}
                 </span>
               )}
             </span>
@@ -424,7 +441,7 @@ export function Documents() {
         {/* Active status filter indicator */}
         {docStatusFilter !== 'all' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '13px', color: '#6b7280' }}>Showing:</span>
+            <span style={{ fontSize: '13px', color: '#6b7280' }}>{t('pages.documents.showing')}</span>
             <span
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600,
@@ -432,7 +449,7 @@ export function Documents() {
                 color: docStatusFilter === 'expired' ? '#991b1b' : '#854d0e',
               }}
             >
-              {docStatusFilter === 'expired' ? 'Expired' : 'Expiring Soon'} documents
+              {docStatusFilter === 'expired' ? t('pages.documents.expiredDocuments') : t('pages.documents.expiringSoonDocuments')}
               <button onClick={() => setDocStatusFilter('all')} style={{ marginLeft: '2px', cursor: 'pointer', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', fontSize: '14px', lineHeight: 1 }}>&times;</button>
             </span>
           </div>
@@ -447,7 +464,7 @@ export function Documents() {
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
-            All Documents
+            {t('pages.documents.allDocuments')}
           </button>
           <button
             onClick={() => setActiveTab('shared')}
@@ -457,7 +474,7 @@ export function Documents() {
                 : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
             }`}
           >
-            Shared ({sharedItems.length})
+            {t('pages.documents.shared')} ({sharedItems.length})
           </button>
         </div>
 
@@ -469,7 +486,7 @@ export function Documents() {
                 <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#9ca3af' }} />
                 <input
                   type="text"
-                  placeholder="Search documents..."
+                  placeholder={t('pages.documents.searchDocuments')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   style={{ width: '100%', padding: '8px 12px 8px 36px', border: '1px solid #d1d5db', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
@@ -496,7 +513,7 @@ export function Documents() {
                   selectedCategory === 'All' ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                All ({locationFilteredDocs.length})
+                {t('pages.documents.all')} ({locationFilteredDocs.length})
               </button>
               {categories.map((cat) => {
                 const count = locationFilteredDocs.filter(d => d.category === cat).length;
@@ -508,7 +525,7 @@ export function Documents() {
                       selectedCategory === cat ? 'bg-[#1e4d6b] text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                     }`}
                   >
-                    {cat} {count > 0 ? `(${count})` : ''}
+                    {categoryLabelMap[cat] || cat} {count > 0 ? `(${count})` : ''}
                   </button>
                 );
               })}
@@ -526,14 +543,14 @@ export function Documents() {
               ) : filteredDocuments.length === 0 ? (
                 <EmptyState
                   icon={FileText}
-                  title={searchQuery ? 'No matching documents' : selectedCategory === 'All' ? 'No documents yet' : `No ${selectedCategory} documents`}
+                  title={searchQuery ? t('pages.documents.noMatchingDocuments') : selectedCategory === 'All' ? t('pages.documents.noDocumentsYet') : t('pages.documents.noCategoryDocuments').replace('{{category}}', categoryLabelMap[selectedCategory] || selectedCategory)}
                   description={searchQuery
-                    ? `No documents match "${searchQuery}". Try a different search term.`
+                    ? t('pages.documents.noMatchingDescription')
                     : selectedCategory === 'All'
-                    ? 'Upload your first compliance document to get started tracking licenses, permits, and certificates.'
-                    : `No documents found in the "${selectedCategory}" category. Upload one or select a different filter.`}
+                    ? t('pages.documents.noDocumentsDescription')
+                    : t('pages.documents.noCategoryDescription')}
                   action={{
-                    label: 'Upload Document',
+                    label: t('pages.documents.upload'),
                     onClick: () => setShowSmartUpload(true),
                   }}
                 />
@@ -557,25 +574,25 @@ export function Documents() {
                           />
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Document Name
+                          {t('pages.documents.documentName')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                          Category
+                          {t('pages.documents.category')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                          Location
+                          {t('pages.documents.location')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
+                          {t('pages.documents.status')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                          Uploaded
+                          {t('pages.documents.uploaded')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Expiration
+                          {t('pages.documents.expiration')}
                         </th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
+                          {t('pages.documents.actions')}
                         </th>
                       </tr>
                     </thead>
@@ -599,7 +616,7 @@ export function Documents() {
                                   <div className="text-sm font-medium text-gray-900">{doc.title}</div>
                                   {doc.provided_by && (
                                     <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                                      Provided by: <span style={{ color: '#1e4d6b', fontWeight: 500 }}>{doc.provided_by}</span>
+                                      {t('pages.documents.providedBy')} <span style={{ color: '#1e4d6b', fontWeight: 500 }}>{doc.provided_by}</span>
                                     </div>
                                   )}
                                 </div>
@@ -607,14 +624,14 @@ export function Documents() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
                               <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {doc.category}
+                                {categoryLabelMap[doc.category] || doc.category}
                               </span>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                               {doc.location}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap">
-                              <DocStatusBadge status={docStatus} />
+                              <DocStatusBadge status={docStatus} label={statusLabelMap[docStatus]} />
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                               {format(new Date(doc.created_at), 'MMM d, yyyy')}
@@ -666,10 +683,10 @@ export function Documents() {
             {sharedItems.length === 0 ? (
               <EmptyState
                 icon={Share2}
-                title="No shared documents"
-                description="Documents you share with third parties will appear here with tracking information."
+                title={t('pages.documents.noSharedDocuments')}
+                description={t('pages.documents.noSharedDescription')}
                 action={{
-                  label: 'Share a Document',
+                  label: t('pages.documents.shareADocument'),
                   onClick: () => {
                     setActiveTab('documents');
                   },
@@ -681,19 +698,19 @@ export function Documents() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Document
+                        {t('pages.documents.document')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Recipient
+                        {t('pages.documents.recipient')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                        Recipient Type
+                        {t('pages.documents.recipientType')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
-                        Date Shared
+                        {t('pages.documents.dateShared')}
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        {t('pages.documents.status')}
                       </th>
                     </tr>
                   </thead>

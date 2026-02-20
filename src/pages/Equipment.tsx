@@ -21,6 +21,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { iotSensors, iotSensorReadings, iotSensorProviders } from '../data/demoData';
+import { useTranslation } from '../contexts/LanguageContext';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -597,6 +598,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
 
 export function Equipment() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [locationFilter, setLocationFilter] = useState('all');
   const [pillarFilter, setPillarFilter] = useState<'all' | 'fire_safety' | 'food_safety'>('all');
   const [search, setSearch] = useState('');
@@ -748,14 +750,14 @@ export function Equipment() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Equipment' }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('nav.equipment') }]} />
 
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Equipment Lifecycle</h1>
-            <p className="text-sm text-gray-600 mt-1">Track warranties, maintenance schedules, and replacement timelines</p>
+            <h1 className="text-2xl font-bold text-gray-900">{t('pages.equipment.lifecycleTitle')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('pages.equipment.lifecycleSubtitle')}</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <select
@@ -763,7 +765,7 @@ export function Equipment() {
               onChange={e => setLocationFilter(e.target.value)}
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
-              <option value="all">All Locations</option>
+              <option value="all">{t('pages.equipment.allLocations')}</option>
               {LOCATIONS.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
             </select>
             <select
@@ -771,15 +773,15 @@ export function Equipment() {
               onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
-              <option value="all">All Pillars</option>
-              <option value="fire_safety">Fire Safety</option>
-              <option value="food_safety">Food Safety</option>
+              <option value="all">{t('pages.equipment.allPillars')}</option>
+              <option value="fire_safety">{t('pages.equipment.fireSafety')}</option>
+              <option value="food_safety">{t('pages.equipment.foodSafety')}</option>
             </select>
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
             >
-              <Plus className="h-4 w-4" /> Add Equipment
+              <Plus className="h-4 w-4" /> {t('pages.equipment.addEquipment')}
             </button>
           </div>
         </div>
@@ -787,24 +789,24 @@ export function Equipment() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Total Equipment</span></div>
+            <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')}</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
-            <div className="text-xs text-gray-400 mt-1">across {locationFilter === 'all' ? '3 locations' : '1 location'}</div>
+            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.across')} {locationFilter === 'all' ? `3 ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">Warranty Expiring</span></div>
+            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')}</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
-            <div className="text-xs text-gray-400 mt-1">within 90 days</div>
+            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.within90Days')}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">Maintenance Overdue</span></div>
+            <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')}</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
-            <div className="text-xs text-gray-400 mt-1">needs immediate attention</div>
+            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">Avg Equipment Age</span></div>
+            <div className="flex items-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
-            <div className="text-xs text-gray-400 mt-1">years</div>
+            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.years')}</div>
           </div>
         </div>
 
@@ -815,7 +817,7 @@ export function Equipment() {
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search equipment, make, model, serial..."
+              placeholder={t('pages.equipment.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             />
           </div>
@@ -867,15 +869,15 @@ export function Equipment() {
                   </div>
                   <div className="space-y-1.5 text-xs text-gray-600">
                     <div className="flex items-center gap-1.5"><MapPin className="h-3 w-3 text-gray-400" />{eq.location}</div>
-                    <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gray-400" />Installed {format(new Date(eq.installDate), 'MMM yyyy')} · {ageLabel(eq.installDate)}</div>
+                    <div className="flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gray-400" />{t('pages.equipment.installed')} {format(new Date(eq.installDate), 'MMM yyyy')} · {ageLabel(eq.installDate)}</div>
                     <div className="flex items-center gap-1.5">
                       <EvidlyIcon size={12} />
-                      <span>Warranty: </span><span style={badge(w.label, w.color, w.bg)}>{w.label}</span>
+                      <span>{t('pages.equipment.warranty')}: </span><span style={badge(w.label, w.color, w.bg)}>{w.label}</span>
                       {w.label === 'Active' && <span className="text-gray-400">exp {format(new Date(eq.warrantyExpiry), 'MMM yyyy')}</span>}
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Wrench className="h-3 w-3" style={{ color: m.color }} />
-                      <span>Maintenance: </span><span style={badge(m.label, m.color, m.bg)}>{m.label}</span>
+                      <span>{t('pages.equipment.maintenance')}: </span><span style={badge(m.label, m.color, m.bg)}>{m.label}</span>
                     </div>
                     <div className="flex items-center gap-1.5"><Truck className="h-3 w-3 text-gray-400" />{eq.linkedVendor}</div>
                   </div>
@@ -890,9 +892,9 @@ export function Equipment() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
             <table className="w-full">
               <thead><tr>
-                <th style={thStyle}>Equipment</th><th style={thStyle}>Type</th><th style={thStyle} className="hidden sm:table-cell">Location</th>
-                <th style={thStyle} className="hidden md:table-cell">Age</th><th style={thStyle}>Condition</th><th style={thStyle} className="hidden sm:table-cell">Warranty</th>
-                <th style={thStyle} className="hidden md:table-cell">Next Maintenance</th><th style={thStyle} className="hidden lg:table-cell">Vendor</th>
+                <th style={thStyle}>{t('pages.equipment.title')}</th><th style={thStyle}>{t('pages.equipment.type')}</th><th style={thStyle} className="hidden sm:table-cell">{t('pages.equipment.location')}</th>
+                <th style={thStyle} className="hidden md:table-cell">{t('pages.equipment.age')}</th><th style={thStyle}>{t('pages.equipment.condition')}</th><th style={thStyle} className="hidden sm:table-cell">{t('pages.equipment.warranty')}</th>
+                <th style={thStyle} className="hidden md:table-cell">{t('pages.equipment.nextService')}</th><th style={thStyle} className="hidden lg:table-cell">{t('pages.equipment.vendor')}</th>
               </tr></thead>
               <tbody>
                 {filtered.map(eq => {
@@ -922,7 +924,7 @@ export function Equipment() {
 
         {filtered.length === 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center text-gray-400">
-            No equipment matches your filters.
+            {t('pages.equipment.noMatch')}
           </div>
         )}
 
@@ -936,10 +938,10 @@ export function Equipment() {
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
-                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'fire_safety'; return <span style={{ ...badge(isF ? 'Fire Safety' : 'Food Safety', isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? 'Fire Safety' : 'Food Safety'}</span>; })()}
+                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'fire_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.fireSafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.fireSafety') : t('pages.equipment.foodSafety')}</span>; })()}
                   <span style={badge(selected.condition, conditionStyle(selected.condition).color, conditionStyle(selected.condition).bg)}>{selected.condition}</span>
                   <span style={badge(warrantyInfo(selected.warrantyExpiry).label, warrantyInfo(selected.warrantyExpiry).color, warrantyInfo(selected.warrantyExpiry).bg)}>
-                    Warranty: {warrantyInfo(selected.warrantyExpiry).label}
+                    {t('pages.equipment.warranty')}: {warrantyInfo(selected.warrantyExpiry).label}
                   </span>
                   <span style={badge(maintenanceStatus(selected.nextMaintenanceDue).label, maintenanceStatus(selected.nextMaintenanceDue).color, maintenanceStatus(selected.nextMaintenanceDue).bg)}>
                     {maintenanceStatus(selected.nextMaintenanceDue).label}
@@ -947,8 +949,8 @@ export function Equipment() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => setShowQRLabel(true)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"><QrCode className="h-3.5 w-3.5" />QR Label</button>
-                <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">View Full Detail</button>
+                <button onClick={() => setShowQRLabel(true)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1"><QrCode className="h-3.5 w-3.5" />{t('pages.equipment.qrLabel')}</button>
+                <button onClick={() => navigate(`/equipment/${selected.id}`)} className="text-xs font-medium px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition-colors">{t('pages.equipment.viewFullDetail')}</button>
                 <button onClick={() => setSelectedId(null)} className="p-1 rounded hover:bg-gray-200"><X className="h-5 w-5 text-gray-400" /></button>
               </div>
             </div>
@@ -963,10 +965,10 @@ export function Equipment() {
                   (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
                 );
                 const baseTabs: [string, string][] = [
-                  ['overview', 'Overview'], ['warranty', 'Warranty'], ['service', 'Service History'],
-                  ['schedule', 'Schedule'], ['forecast', 'Lifecycle & Cost'], ['costs', 'Cost Breakdown'], ['vendors', 'Vendors'],
+                  ['overview', t('pages.equipment.overview')], ['warranty', t('pages.equipment.warrantyTab')], ['service', t('pages.equipment.serviceHistory')],
+                  ['schedule', t('pages.equipment.schedule')], ['forecast', t('pages.equipment.lifecycleAndCost')], ['costs', t('pages.equipment.costBreakdown')], ['vendors', t('pages.equipment.vendors')],
                 ];
-                if (linkedSensor) baseTabs.push(['iot', 'IoT Sensor']);
+                if (linkedSensor) baseTabs.push(['iot', t('pages.equipment.iotSensor')]);
                 return baseTabs;
               })().map(([tab, label]) => (
                 <button
@@ -986,22 +988,22 @@ export function Equipment() {
               {detailTab === 'overview' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Specifications</h4>
+                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{t('pages.equipment.specifications')}</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                      <div><span className="text-gray-400 block text-xs">Type</span><span className="font-medium">{selected.type}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Make</span><span className="font-medium">{selected.make}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Model</span><span className="font-medium">{selected.model}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Serial Number</span><span className="font-medium font-mono text-xs">{selected.serial}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Location</span><span className="font-medium">{selected.location}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Installation Date</span><span className="font-medium">{format(new Date(selected.installDate), 'MMM d, yyyy')}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Age</span><span className="font-medium">{ageLabel(selected.installDate)}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Purchase Price</span><span className="font-medium">{currency(selected.purchasePrice)}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Maintenance Interval</span><span className="font-medium">{selected.maintenanceInterval}</span></div>
-                      <div><span className="text-gray-400 block text-xs">Linked Vendor</span><span className="font-medium text-[#1e4d6b]">{selected.linkedVendor}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.type')}</span><span className="font-medium">{selected.type}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.make')}</span><span className="font-medium">{selected.make}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.model')}</span><span className="font-medium">{selected.model}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.serialNumber')}</span><span className="font-medium font-mono text-xs">{selected.serial}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.location')}</span><span className="font-medium">{selected.location}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.installationDate')}</span><span className="font-medium">{format(new Date(selected.installDate), 'MMM d, yyyy')}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.age')}</span><span className="font-medium">{ageLabel(selected.installDate)}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.purchasePrice')}</span><span className="font-medium">{currency(selected.purchasePrice)}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.maintenanceInterval')}</span><span className="font-medium">{selected.maintenanceInterval}</span></div>
+                      <div><span className="text-gray-400 block text-xs">{t('pages.equipment.linkedVendor')}</span><span className="font-medium text-[#1e4d6b]">{selected.linkedVendor}</span></div>
                     </div>
                   </div>
                   <div className="space-y-4">
-                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Warranty Information</h4>
+                    <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide">{t('pages.equipment.warrantyInformation')}</h4>
                     <div className="p-4 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2 mb-3">
                         <EvidlyIcon size={20} />
@@ -1010,19 +1012,19 @@ export function Equipment() {
                         </span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div><span className="text-gray-400 block text-xs">Provider</span><span className="font-medium">{selected.warrantyProvider}</span></div>
-                        <div><span className="text-gray-400 block text-xs">Expiry Date</span><span className="font-medium">{format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span></div>
-                        <div className="col-span-2"><span className="text-gray-400 block text-xs">Terms</span><span className="font-medium">{selected.warrantyTerms}</span></div>
+                        <div><span className="text-gray-400 block text-xs">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
+                        <div><span className="text-gray-400 block text-xs">{t('pages.equipment.expiryDate')}</span><span className="font-medium">{format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span></div>
+                        <div className="col-span-2"><span className="text-gray-400 block text-xs">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
                       </div>
                     </div>
                     {selected.notes && (
                       <div>
-                        <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">Notes</h4>
+                        <h4 className="text-sm font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.notesLabel')}</h4>
                         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">{selected.notes}</p>
                       </div>
                     )}
                     {equipmentPhotos.length > 0 && (
-                      <PhotoGallery photos={equipmentPhotos} title="Equipment Photos" />
+                      <PhotoGallery photos={equipmentPhotos} title={t('pages.equipment.equipmentPhotos')} />
                     )}
                   </div>
                 </div>
@@ -1046,33 +1048,33 @@ export function Equipment() {
                           <EvidlyIcon size={20} />
                           <span className="font-bold text-sm" style={{ color: wi.color }}>{wi.label}</span>
                         </div>
-                        {wi.days > 0 && <span className="text-xs text-gray-500">{wi.days} days remaining</span>}
-                        {wi.days < 0 && <span className="text-xs text-red-500">Expired {Math.abs(wi.days)} days ago</span>}
+                        {wi.days > 0 && <span className="text-xs text-gray-500">{wi.days} {t('pages.equipment.daysRemaining')}</span>}
+                        {wi.days < 0 && <span className="text-xs text-red-500">{t('status.expired')} {Math.abs(wi.days)} {t('pages.equipment.expiredDaysAgo')}</span>}
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden mb-2">
                         <div className="h-3 rounded-full transition-all" style={{ width: `${warPct}%`, backgroundColor: wi.color }} />
                       </div>
                       <div className="flex flex-wrap justify-between gap-1 text-xs text-gray-400">
-                        <span>Start: {format(new Date(selected.installDate), 'MMM d, yyyy')}</span>
-                        <span>{warPct}% through warranty period</span>
-                        <span>Expires: {format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span>
+                        <span>{t('pages.equipment.start')}: {format(new Date(selected.installDate), 'MMM d, yyyy')}</span>
+                        <span>{warPct}% {t('pages.equipment.throughWarrantyPeriod')}</span>
+                        <span>{t('pages.equipment.expires')}: {format(new Date(selected.warrantyExpiry), 'MMM d, yyyy')}</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">Warranty Details</h4>
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.warrantyDetails')}</h4>
                         <div className="space-y-2 text-sm">
-                          <div><span className="text-gray-400 text-xs block">Provider</span><span className="font-medium">{selected.warrantyProvider}</span></div>
-                          <div><span className="text-gray-400 text-xs block">Terms</span><span className="font-medium">{selected.warrantyTerms}</span></div>
+                          <div><span className="text-gray-400 text-xs block">{t('pages.equipment.provider')}</span><span className="font-medium">{selected.warrantyProvider}</span></div>
+                          <div><span className="text-gray-400 text-xs block">{t('pages.equipment.terms')}</span><span className="font-medium">{selected.warrantyTerms}</span></div>
                           {selected.warrantyContact && (
-                            <div><span className="text-gray-400 text-xs block">Contact</span><span className="font-medium text-[#1e4d6b]">{selected.warrantyContact}</span></div>
+                            <div><span className="text-gray-400 text-xs block">{t('pages.equipment.contact')}</span><span className="font-medium text-[#1e4d6b]">{selected.warrantyContact}</span></div>
                           )}
                         </div>
                       </div>
                       <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">Warranty Claims ({warrantyClaims.length})</h4>
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.warrantyClaims')} ({warrantyClaims.length})</h4>
                         {warrantyClaims.length === 0 ? (
-                          <p className="text-sm text-gray-400">No warranty claims on record.</p>
+                          <p className="text-sm text-gray-400">{t('pages.equipment.noWarrantyClaims')}</p>
                         ) : (
                           <div className="space-y-2">
                             {warrantyClaims.slice(0, 5).map((c, i) => (
@@ -1092,7 +1094,7 @@ export function Equipment() {
                       <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-3">
                         <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-bold text-sm text-amber-700">Warranty Expiring Soon</h4>
+                          <h4 className="font-bold text-sm text-amber-700">{t('pages.equipment.warrantyExpiringSoon')}</h4>
                           <p className="text-xs text-amber-600 mt-1">
                             Only {wi.days} days remaining. Consider scheduling any pending warranty service and evaluate extended warranty options from {selected.warrantyProvider}.
                           </p>
@@ -1103,7 +1105,7 @@ export function Equipment() {
                       <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
                         <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-bold text-sm text-red-700">Warranty Expired</h4>
+                          <h4 className="font-bold text-sm text-red-700">{t('pages.equipment.warrantyExpired')}</h4>
                           <p className="text-xs text-red-600 mt-1">
                             This equipment is no longer under warranty. All future repairs will be at full cost. Ensure maintenance schedule is current to maximize lifespan.
                           </p>
@@ -1118,8 +1120,8 @@ export function Equipment() {
               {detailTab === 'service' && (
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="text-sm font-bold text-gray-700">{selected.serviceHistory.length} service records</span>
-                    <span className="text-xs text-gray-400">· Total spend: {currency(selected.serviceHistory.reduce((s, r) => s + r.cost, 0))}</span>
+                    <span className="text-sm font-bold text-gray-700">{selected.serviceHistory.length} {t('pages.equipment.serviceRecords')}</span>
+                    <span className="text-xs text-gray-400">· {t('pages.equipment.totalSpend')}: {currency(selected.serviceHistory.reduce((s, r) => s + r.cost, 0))}</span>
                   </div>
                   <div className="space-y-0">
                     {selected.serviceHistory.map((rec, i) => (
@@ -1151,8 +1153,8 @@ export function Equipment() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead><tr>
-                      <th style={thStyle}>Task</th><th style={thStyle}>Interval</th>
-                      <th style={thStyle}>Last Completed</th><th style={thStyle}>Next Due</th><th style={thStyle}>Status</th>
+                      <th style={thStyle}>{t('pages.equipment.task')}</th><th style={thStyle}>{t('pages.equipment.interval')}</th>
+                      <th style={thStyle}>{t('pages.equipment.lastCompleted')}</th><th style={thStyle}>{t('pages.equipment.nextDue')}</th><th style={thStyle}>{t('pages.equipment.status')}</th>
                     </tr></thead>
                     <tbody>
                       {selected.schedule.map((s, i) => {
@@ -1180,20 +1182,20 @@ export function Equipment() {
                 const replacementDate = new Date(selected.installDate);
                 replacementDate.setFullYear(replacementDate.getFullYear() + selected.usefulLifeYears);
                 const pastLife = age >= selected.usefulLifeYears;
-                const statusLabel = pastLife ? 'Past Expected Life' : pct > 75 ? 'Approaching End of Life' : 'On Track';
+                const statusLabel = pastLife ? t('pages.equipment.pastExpectedLife') : pct > 75 ? t('pages.equipment.approachingEndOfLife') : t('pages.equipment.onTrack');
                 const statusColor = pastLife ? '#dc2626' : pct > 75 ? '#d97706' : '#16a34a';
                 const bv = bookValue(selected.purchasePrice, selected.installDate, selected.usefulLifeYears);
                 const totalSpend = selected.serviceHistory.reduce((s, r) => s + r.cost, 0);
                 const trend = maintenanceTrend(selected.serviceHistory);
                 const ac = annualCosts(selected.serviceHistory);
                 const trendColor = trend === 'increasing' ? '#dc2626' : trend === 'decreasing' ? '#16a34a' : '#6b7280';
-                const trendLabel = trend === 'increasing' ? 'Rising' : trend === 'decreasing' ? 'Declining' : 'Stable';
+                const trendLabel = trend === 'increasing' ? t('pages.equipment.rising') : trend === 'decreasing' ? t('pages.equipment.declining') : t('pages.equipment.stable');
                 return (
                   <div className="space-y-6">
                     {/* Lifecycle Progress Bar */}
                     <div className="p-4 rounded-lg border border-gray-200">
                       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <span className="text-sm font-bold text-gray-700">Lifecycle Progress</span>
+                        <span className="text-sm font-bold text-gray-700">{t('pages.equipment.lifecycleProgress')}</span>
                         <span className="text-sm font-bold" style={{ color: statusColor }}>{statusLabel}</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
@@ -1209,20 +1211,20 @@ export function Equipment() {
                     {/* KPI Cards */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Purchase Price</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Book Value</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.bookValue')}</div>
                         <div className="text-lg font-bold text-[#1e4d6b]">{currency(bv)}</div>
-                        <div className="text-[10px] text-gray-400">Straight-line depreciation</div>
+                        <div className="text-[10px] text-gray-400">{t('pages.equipment.straightLineDepreciation')}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Total Maintenance</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenance')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Total Cost of Ownership</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
                     </div>
@@ -1230,19 +1232,19 @@ export function Equipment() {
                     {/* Second row KPIs */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Current Age</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.currentAge')}</div>
                         <div className="text-lg font-bold text-gray-900">{ageLabel(selected.installDate)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Remaining Life</div>
-                        <div className="text-lg font-bold" style={{ color: statusColor }}>{pastLife ? 'Overdue' : `${remainingYears.toFixed(1)} yrs`}</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.remainingLife')}</div>
+                        <div className="text-lg font-bold" style={{ color: statusColor }}>{pastLife ? t('status.overdue') : `${remainingYears.toFixed(1)} yrs`}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Replacement Cost</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.replacementCost')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.replacementCost)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Maintenance Trend</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.maintenanceTrend')}</div>
                         <div className="flex items-center gap-1">
                           {trend === 'increasing' && <TrendingUp className="h-4 w-4" style={{ color: trendColor }} />}
                           {trend === 'decreasing' && <TrendingDown className="h-4 w-4" style={{ color: trendColor }} />}
@@ -1254,7 +1256,7 @@ export function Equipment() {
                     {/* Annual Maintenance Cost Trend */}
                     {ac.length > 1 && (
                       <div className="p-4 rounded-lg border border-gray-200">
-                        <h4 className="text-sm font-bold text-gray-700 mb-3">Annual Maintenance Cost Trend</h4>
+                        <h4 className="text-sm font-bold text-gray-700 mb-3">{t('pages.equipment.annualMaintenanceCostTrend')}</h4>
                         <div className="flex items-end gap-3 h-24">
                           {ac.map((y, i) => {
                             const maxCost = Math.max(...ac.map(a => a.cost), 1);
@@ -1276,7 +1278,7 @@ export function Equipment() {
                       <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
                         <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-bold text-sm text-red-700">Replacement Recommended</h4>
+                          <h4 className="font-bold text-sm text-red-700">{t('pages.equipment.replacementRecommended')}</h4>
                           <p className="text-xs text-red-600 mt-1">
                             This equipment has exceeded its expected useful life of {selected.usefulLifeYears} years.
                             Current condition: {selected.condition}. Budget {currency(selected.replacementCost)} for replacement.
@@ -1288,7 +1290,7 @@ export function Equipment() {
                       <div className="p-4 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-3">
                         <TrendingUp className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-bold text-sm text-amber-700">Rising Maintenance Costs</h4>
+                          <h4 className="font-bold text-sm text-amber-700">{t('pages.equipment.risingMaintenanceCosts')}</h4>
                           <p className="text-xs text-amber-600 mt-1">
                             Maintenance costs are increasing year-over-year. This equipment is {pct.toFixed(0)}% through its expected lifespan.
                             Consider scheduling a replacement evaluation before costs exceed repair-vs-replace threshold.
@@ -1308,27 +1310,27 @@ export function Equipment() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Purchase Price</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.purchasePrice')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Total Maintenance Spend</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.totalMaintenanceSpend')}</div>
                         <div className="text-lg font-bold text-[#1e4d6b]">{currency(totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Total Cost of Ownership</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.totalCostOwnership')}</div>
                         <div className="text-lg font-bold text-gray-900">{currency(selected.purchasePrice + totalSpend)}</div>
                       </div>
                       <div className="p-3 rounded-lg border border-gray-200">
-                        <div className="text-xs text-gray-400">Warranty Services</div>
-                        <div className="text-lg font-bold text-green-600">{warrantySaved} free</div>
+                        <div className="text-xs text-gray-400">{t('pages.equipment.warrantyServices')}</div>
+                        <div className="text-lg font-bold text-green-600">{warrantySaved} {t('pages.equipment.free')}</div>
                       </div>
                     </div>
-                    <h4 className="text-sm font-bold text-gray-700">Service Cost Breakdown</h4>
+                    <h4 className="text-sm font-bold text-gray-700">{t('pages.equipment.serviceCostBreakdown')}</h4>
                     <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead><tr>
-                        <th style={thStyle}>Date</th><th style={thStyle}>Service</th><th style={thStyle}>Vendor</th><th style={thStyle}>Cost</th>
+                        <th style={thStyle}>{t('pages.equipment.date')}</th><th style={thStyle}>{t('pages.equipment.service')}</th><th style={thStyle}>{t('pages.equipment.vendor')}</th><th style={thStyle}>{t('pages.equipment.cost')}</th>
                       </tr></thead>
                       <tbody>
                         {selected.serviceHistory.map((r, i) => (
@@ -1359,7 +1361,7 @@ export function Equipment() {
                         onClick={() => guardAction('edit', 'vendor links', () => showToast('Vendor link saved.'))}
                         className="flex items-center gap-1 text-xs font-medium text-[#1e4d6b] hover:text-[#163a52]"
                       >
-                        <Plus className="h-3.5 w-3.5" /> Link Vendor
+                        <Plus className="h-3.5 w-3.5" /> {t('pages.equipment.linkVendor')}
                       </button>
                     </div>
                     <div className="space-y-3">
@@ -1372,11 +1374,11 @@ export function Equipment() {
                             <div>
                               <div className="font-medium text-sm text-gray-900">{v.vendor}</div>
                               <div className="text-xs text-gray-500">{v.serviceType}</div>
-                              {v.isPrimary && <span style={badge('Primary', '#1e4d6b', '#eef4f8')}>Primary</span>}
+                              {v.isPrimary && <span style={badge(t('pages.equipment.primary'), '#1e4d6b', '#eef4f8')}>{t('pages.equipment.primary')}</span>}
                               {(() => {
                                 const lastSvc = selected.serviceHistory.find(s => s.vendor === v.vendor);
                                 return lastSvc ? (
-                                  <div className="text-xs text-gray-400 mt-1">Last service: {format(new Date(lastSvc.date), 'MMM d, yyyy')}</div>
+                                  <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.lastService')}: {format(new Date(lastSvc.date), 'MMM d, yyyy')}</div>
                                 ) : null;
                               })()}
                             </div>
@@ -1386,7 +1388,7 @@ export function Equipment() {
                               onClick={() => { window.location.href = `/vendors?id=${encodeURIComponent(v.vendor.toLowerCase().replace(/\s+/g, '-'))}`; }}
                               className="text-xs text-[#1e4d6b] hover:underline"
                             >
-                              View Vendor
+                              {t('pages.equipment.viewVendor')}
                             </button>
                           </div>
                         </div>
@@ -1415,7 +1417,7 @@ export function Equipment() {
                   (selected.name.toLowerCase().includes('cooler') && s.name.toLowerCase().includes('cooler') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___')) ||
                   (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
                 );
-                if (!sensor) return <p className="text-sm text-gray-500">No IoT sensor linked to this equipment.</p>;
+                if (!sensor) return <p className="text-sm text-gray-500">{t('pages.equipment.noIotSensor')}</p>;
 
                 const provider = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
                 const readings = iotSensorReadings.filter(r => r.sensorId === sensor.id);
@@ -1459,7 +1461,7 @@ export function Equipment() {
                       <div className="flex items-center gap-1.5">
                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColor }} />
                         <span className="text-xs font-medium" style={{ color: statusColor }}>
-                          {isOnline ? 'Connected' : sensor.status === 'warning' ? 'Warning' : 'Disconnected'}
+                          {isOnline ? t('pages.equipment.connected') : sensor.status === 'warning' ? t('status.warning') : t('pages.equipment.disconnected')}
                         </span>
                       </div>
                     </div>
@@ -1467,22 +1469,22 @@ export function Equipment() {
                     {/* Current Reading + Stats */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Current</p>
+                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.current')}</p>
                         <p className={`text-2xl font-bold ${inRange ? 'text-gray-900' : 'text-red-600'}`}>{sensor.currentTempF}°F</p>
-                        <p className="text-xs mt-0.5">{inRange ? <span className="text-green-600">In Range</span> : <span className="text-red-600">Out of Range</span>}</p>
+                        <p className="text-xs mt-0.5">{inRange ? <span className="text-green-600">{t('pages.equipment.inRange')}</span> : <span className="text-red-600">{t('pages.equipment.outOfRange')}</span>}</p>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Range</p>
+                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.range')}</p>
                         <p className="text-lg font-semibold text-gray-900">{thMin}–{thMax}°F</p>
-                        <p className="text-xs text-gray-400 mt-0.5">Threshold</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{t('pages.equipment.threshold')}</p>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Today</p>
+                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.today')}</p>
                         <p className="text-lg font-semibold text-gray-900">{todayReadings}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} out of range</span> : <span className="text-green-600">All in range</span>}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{outOfRange > 0 ? <span className="text-amber-600">{outOfRange} {t('pages.equipment.outOfRange').toLowerCase()}</span> : <span className="text-green-600">{t('pages.equipment.allInRange')}</span>}</p>
                       </div>
                       <div className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Last Seen</p>
+                        <p className="text-xs text-gray-500 mb-1">{t('pages.equipment.lastSeen')}</p>
                         <p className="text-sm font-semibold text-gray-900">{lastSeen}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-gray-400 flex items-center gap-0.5"><Battery className="h-3 w-3" /> {sensor.batteryPct}%</span>
@@ -1493,7 +1495,7 @@ export function Equipment() {
 
                     {/* 24-Hour Chart */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">24-Hour Temperature Chart</h4>
+                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.hourChart')}</h4>
                       <div className="bg-white border border-gray-200 rounded-xl p-3" style={{ height: 180 }}>
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
@@ -1511,14 +1513,14 @@ export function Equipment() {
 
                     {/* Recent Readings Table */}
                     <div>
-                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">Recent Readings</h4>
+                      <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">{t('pages.equipment.recentReadings')}</h4>
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <table className="w-full text-sm">
                           <thead><tr className="bg-gray-50">
-                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Time</th>
-                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">Temp</th>
-                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">Humidity</th>
-                            <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600">Status</th>
+                            <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">{t('pages.equipment.time')}</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">{t('pages.equipment.temp')}</th>
+                            <th className="px-3 py-2 text-right text-xs font-semibold text-gray-600">{t('pages.equipment.humidity')}</th>
+                            <th className="px-3 py-2 text-center text-xs font-semibold text-gray-600">{t('pages.equipment.status')}</th>
                           </tr></thead>
                           <tbody>
                             {readings.map((r, i) => (
@@ -1528,11 +1530,11 @@ export function Equipment() {
                                 <td className="px-3 py-2 text-xs text-gray-500 text-right">{r.humidityPct != null ? `${r.humidityPct}%` : '—'}</td>
                                 <td className="px-3 py-2 text-center">
                                   {r.complianceStatus === 'in_range' ? (
-                                    <span className="text-green-600 text-xs font-medium">In Range</span>
+                                    <span className="text-green-600 text-xs font-medium">{t('pages.equipment.inRange')}</span>
                                   ) : r.complianceStatus === 'warning' ? (
-                                    <span className="text-amber-600 text-xs font-medium">Warning</span>
+                                    <span className="text-amber-600 text-xs font-medium">{t('status.warning')}</span>
                                   ) : (
-                                    <span className="text-red-600 text-xs font-medium">Violation</span>
+                                    <span className="text-red-600 text-xs font-medium">{t('pages.equipment.violation')}</span>
                                   )}
                                 </td>
                               </tr>
@@ -1545,13 +1547,13 @@ export function Equipment() {
                     {/* Actions */}
                     <div className="flex flex-wrap gap-2">
                       <button onClick={() => toast.info('Opening sensor detail page...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1e4d6b] bg-[#eef4f8] rounded-lg hover:bg-[#d9e8f0]">
-                        <Wifi className="h-3.5 w-3.5" /> View Full History
+                        <Wifi className="h-3.5 w-3.5" /> {t('pages.equipment.viewFullHistory')}
                       </button>
                       <button onClick={() => toast.info('CSV export started...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
-                        <TrendingDown className="h-3.5 w-3.5" /> Download CSV
+                        <TrendingDown className="h-3.5 w-3.5" /> {t('pages.equipment.downloadCsv')}
                       </button>
                       <button onClick={() => toast.info('Opening sensor settings...')} className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
-                        <Wrench className="h-3.5 w-3.5" /> Configure Sensor
+                        <Wrench className="h-3.5 w-3.5" /> {t('pages.equipment.configureSensor')}
                       </button>
                     </div>
                   </div>
@@ -1566,62 +1568,62 @@ export function Equipment() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowForm(false)}>
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4" onClick={e => e.stopPropagation()}>
               <div className="p-5 border-b border-gray-200 flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-900">Add Equipment</h2>
+                <h2 className="text-lg font-bold text-gray-900">{t('pages.equipment.addEquipment')}</h2>
                 <button onClick={() => setShowForm(false)} className="p-1 rounded hover:bg-gray-100"><X className="h-5 w-5 text-gray-400" /></button>
               </div>
               <form id="equipment-form" className="p-5 space-y-4" onSubmit={e => e.preventDefault()}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Equipment Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.equipmentType')}</label>
                     <select name="equipment_type" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                      <option value="">Select type...</option>
-                      {EQUIPMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                      <option value="">{t('pages.equipment.selectType')}</option>
+                      {EQUIPMENT_TYPES.map(eqType => <option key={eqType} value={eqType}>{eqType}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.location')}</label>
                     <select name="location" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       {LOCATIONS.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Make</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.make')}</label>
                     <input name="make" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.model')}</label>
                     <input name="model" type="text" placeholder="e.g. TG2R-2S" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Serial Number</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.serialNumber')}</label>
                     <input name="serial_number" type="text" placeholder="e.g. TM-2019-04821" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Installation Date</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.installationDate')}</label>
                     <input name="install_date" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Price</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.purchasePrice')}</label>
                     <input name="purchase_price" type="number" placeholder="0.00" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Expiration</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.expiryDate')}</label>
                     <input name="warranty_expiry" type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Provider</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyProvider')}</label>
                     <input name="warranty_provider" type="text" placeholder="e.g. True Manufacturing" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Maintenance Interval</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.maintenanceInterval')}</label>
                     <select name="maintenance_interval" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
                       {MAINTENANCE_INTERVALS.map(i => <option key={i} value={i}>{i}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Vendor</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.assignedVendor')}</label>
                     <select name="linked_vendor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                      <option value="">Select vendor...</option>
+                      <option value="">{t('pages.equipment.selectVendor')}</option>
                       <option value="CleanAir HVAC">CleanAir HVAC</option>
                       <option value="ABC Fire Protection">ABC Fire Protection</option>
                       <option value="Valley Fire Systems">Valley Fire Systems</option>
@@ -1630,7 +1632,7 @@ export function Equipment() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Photo Evidence</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.photoEvidence')}</label>
                     <PhotoEvidence
                       photos={equipmentPhotos}
                       onChange={setEquipmentPhotos}
@@ -1642,24 +1644,24 @@ export function Equipment() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Terms</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyTerms')}</label>
                     <input name="warranty_terms" type="text" placeholder="e.g. 5-year parts and labor" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Warranty Contact</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.warrantyContact')}</label>
                     <input name="warranty_contact" type="text" placeholder="e.g. 1-800-555-0123" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Expected Useful Life (years)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.expectedUsefulLife')}</label>
                     <input name="useful_life_years" type="number" placeholder="e.g. 10" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Replacement Cost ($)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.replacementCostLabel')}</label>
                     <input name="replacement_cost" type="number" placeholder="e.g. 12000" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.notesLabel')}</label>
                   <textarea name="notes" rows={3} placeholder="Additional notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
                 </div>
                 <div className="flex gap-3 pt-2">
@@ -1699,13 +1701,13 @@ export function Equipment() {
                     })}
                     className="flex-1 px-4 py-2.5 bg-[#1e4d6b] text-white rounded-lg font-medium hover:bg-[#163a52] text-sm"
                   >
-                    Save Equipment
+                    {t('pages.equipment.saveEquipment')}
                   </button>
                   <button
                     onClick={() => setShowForm(false)}
                     className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
                   >
-                    Cancel
+                    {t('pages.equipment.cancel')}
                   </button>
                 </div>
               </form>
@@ -1753,13 +1755,13 @@ export function Equipment() {
                 style={{ backgroundColor: '#1E2D4D' }}
               >
                 <Printer className="h-3.5 w-3.5" />
-                Print Label
+                {t('pages.equipment.printLabel')}
               </button>
               <button
                 onClick={() => setShowQRLabel(false)}
                 className="flex-1 px-3 py-2 border border-gray-300 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
               >
-                Close
+                {t('pages.equipment.close')}
               </button>
             </div>
           </div>

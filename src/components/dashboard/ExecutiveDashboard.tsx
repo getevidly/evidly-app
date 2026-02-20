@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useDemo } from '../../contexts/DemoContext';
+import { useTranslation } from '../../contexts/LanguageContext';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 import { useTooltip } from '../../hooks/useTooltip';
@@ -92,6 +93,7 @@ const EXEC_PRIORITY_ITEMS: PriorityItem[] = [
 // ================================================================
 
 function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
+  const { t } = useTranslation();
   const kpiRoutes: Record<string, string> = {
     'Temp Checks': '/temp-logs',
     'Checklists': '/checklists',
@@ -101,11 +103,11 @@ function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
   };
   const act = DEMO_WEEKLY_ACTIVITY;
   const kpis = [
-    { icon: <Thermometer size={18} />, label: 'Temp Checks', value: act.tempChecks.total, unit: 'logged', bar: act.tempChecks.onTimePercent, metric: String(act.tempChecks.onTimePercent), metricLabel: 'on time', trend: '\u2191 1.4 vs last week', status: 'good' as const },
-    { icon: <ClipboardList size={18} />, label: 'Checklists', value: act.checklists.completed, unit: `of ${act.checklists.required}`, bar: act.checklists.percent, metric: String(act.checklists.percent), metricLabel: 'completion', trend: '\u2191 2.1 vs last week', status: 'good' as const },
-    { icon: <FileText size={18} />, label: 'Documents', value: act.documents.uploaded, unit: 'uploaded', bar: 85, metric: String(act.documents.expiringSoon), metricLabel: 'expiring soon', trend: '\u2014', status: 'warning' as const },
-    { icon: <AlertCircle size={18} />, label: 'Incidents', value: act.incidents.total, unit: 'reported', bar: 75, metric: String(act.incidents.resolved), metricLabel: 'resolved', trend: `\u2193 ${act.incidents.open} open`, status: 'attention' as const },
-    { icon: <Users size={18} />, label: 'Team Activity', value: act.activeTeam, unit: 'active staff', bar: 100, metric: '3', metricLabel: 'locations covered', trend: 'full coverage', status: 'good' as const },
+    { icon: <Thermometer size={18} />, label: t('cards.tempChecks'), routeKey: 'Temp Checks', value: act.tempChecks.total, unit: 'logged', bar: act.tempChecks.onTimePercent, metric: String(act.tempChecks.onTimePercent), metricLabel: 'on time', trend: '\u2191 1.4 vs last week', status: 'good' as const },
+    { icon: <ClipboardList size={18} />, label: t('cards.checklists'), routeKey: 'Checklists', value: act.checklists.completed, unit: `of ${act.checklists.required}`, bar: act.checklists.percent, metric: String(act.checklists.percent), metricLabel: 'completion', trend: '\u2191 2.1 vs last week', status: 'good' as const },
+    { icon: <FileText size={18} />, label: t('cards.documents'), routeKey: 'Documents', value: act.documents.uploaded, unit: 'uploaded', bar: 85, metric: String(act.documents.expiringSoon), metricLabel: 'expiring soon', trend: '\u2014', status: 'warning' as const },
+    { icon: <AlertCircle size={18} />, label: t('cards.incidents'), routeKey: 'Incidents', value: act.incidents.total, unit: 'reported', bar: 75, metric: String(act.incidents.resolved), metricLabel: 'resolved', trend: `\u2193 ${act.incidents.open} open`, status: 'attention' as const },
+    { icon: <Users size={18} />, label: t('cards.teamActivity'), routeKey: 'Team Activity', value: act.activeTeam, unit: 'active staff', bar: 100, metric: '3', metricLabel: 'locations covered', trend: 'full coverage', status: 'good' as const },
   ];
 
   const statusColors = { good: '#16a34a', warning: '#d97706', attention: '#dc2626' };
@@ -117,9 +119,9 @@ function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
           const borderColor = statusColors[kpi.status];
           return (
             <button
-              key={kpi.label}
+              key={kpi.routeKey}
               type="button"
-              onClick={() => navigate(kpiRoutes[kpi.label] || '/dashboard')}
+              onClick={() => navigate(kpiRoutes[kpi.routeKey] || '/dashboard')}
               className="rounded-xl p-3.5 transition-all hover:shadow-md cursor-pointer text-left"
               style={{ borderTop: `3px solid ${borderColor}`, backgroundColor: '#fafbfc' }}
             >
@@ -159,9 +161,10 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
   navigate: (path: string) => void;
   userRole: UserRole;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">Location Status<SectionTooltip content={useTooltip('locationCards', userRole)} /></h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationStatus')}<SectionTooltip content={useTooltip('locationCards', userRole)} /></h4>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {LOCATIONS_WITH_SCORES.map(loc => {
           const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -204,9 +207,9 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
               >
                 <div className="flex items-center gap-2 mb-1">
                   <UtensilsCrossed size={14} style={{ color: MUTED }} />
-                  <span className="text-[13px] text-gray-700 flex-1">Food Safety</span>
+                  <span className="text-[13px] text-gray-700 flex-1">{t('cards.foodSafety')}</span>
                   <span className="text-sm font-bold" style={{ color: foodStatusColor }}>
-                    {score?.foodSafety?.gradeDisplay || 'Pending'}
+                    {score?.foodSafety?.gradeDisplay || t('status.pending')}
                   </span>
                 </div>
                 {score?.foodSafety?.details?.summary && (
@@ -223,13 +226,13 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
               >
                 <div className="flex items-center gap-2">
                   <Flame size={14} style={{ color: MUTED }} />
-                  <span className="text-[13px] text-gray-700 flex-1">Fire Safety</span>
+                  <span className="text-[13px] text-gray-700 flex-1">{t('cards.fireSafety')}</span>
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                     score?.fireSafety?.status === 'passing'
                       ? 'bg-green-50 text-green-700'
                       : 'bg-red-50 text-red-700'
                   }`}>
-                    {score?.fireSafety?.grade || 'Pending'}
+                    {score?.fireSafety?.grade || t('status.pending')}
                   </span>
                 </div>
                 {jur?.fireSafety?.agency_name && (
@@ -244,7 +247,7 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
                 className="w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
                 style={{ color: NAVY }}
               >
-                View Details &rarr;
+                {t('actions.viewDetails')} &rarr;
               </button>
             </div>
           );
@@ -276,10 +279,11 @@ const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
 // ================================================================
 
 function StrategicActionsBar({ navigate }: { navigate: (path: string) => void }) {
+  const { t } = useTranslation();
   const actions = [
-    { icon: <BarChart3 size={16} />, title: 'Generate Org Report', cta: 'Generate Report', route: '/reports' },
-    { icon: <LineChartIcon size={16} />, title: 'View Benchmarks', cta: 'View Benchmarks', route: '/benchmarks' },
-    { icon: <EvidlyIcon size={16} />, title: 'Risk Assessment', cta: 'View Risk Report', route: '/risk-score' },
+    { icon: <BarChart3 size={16} />, title: t('actions.generateOrgReport'), cta: t('actions.generateReport'), route: '/reports' },
+    { icon: <LineChartIcon size={16} />, title: t('actions.viewBenchmarks'), cta: t('actions.viewBenchmarks'), route: '/benchmarks' },
+    { icon: <EvidlyIcon size={16} />, title: t('actions.riskAssessment'), cta: t('actions.viewRiskReport'), route: '/risk-score' },
   ];
 
   return (
@@ -328,6 +332,7 @@ function StrategicActionsBar({ navigate }: { navigate: (path: string) => void })
 // ================================================================
 
 function EvidlyFooter() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center gap-2 py-6 mt-6" style={{ borderTop: '1px solid #eef1f5' }}>
       <span className="text-[15px] font-bold">
@@ -335,7 +340,7 @@ function EvidlyFooter() {
         <span style={{ color: NAVY }}>vid</span>
         <span style={{ color: GOLD }}>LY</span>
       </span>
-      <span className="text-[12px] text-gray-400">Compliance Simplified</span>
+      <span className="text-[12px] text-gray-400">{t('topBar.complianceSimplified')}</span>
     </div>
   );
 }
@@ -349,6 +354,7 @@ export default function ExecutiveDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const { t } = useTranslation();
 
   const jieLocIds = useMemo(
     () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
@@ -384,14 +390,20 @@ export default function ExecutiveDashboard() {
 
   const visibleWidgets = widgets.filter(w => w.visible);
 
+  // Translated widget labels (can't use hooks at module level in DEFAULT_WIDGET_ORDER)
+  const widgetLabelMap: Record<string, string> = useMemo(() => ({
+    tabbedDetails: t('cards.keyMetrics'),
+    locations: t('cards.locationStatus'),
+  }), [t]);
+
   // Tabbed detail section: Trend | Key Metrics
   const tabbedTabs: TabDef[] = useMemo(() => [
     {
       id: 'keyMetrics',
-      label: 'Key Metrics',
+      label: t('cards.keyMetrics'),
       content: <WidgetKPIs navigate={navigate} />,
     },
-  ], [navigate]);
+  ], [navigate, t]);
 
   const renderWidget = (wid: string) => {
     switch (wid) {
@@ -438,7 +450,7 @@ export default function ExecutiveDashboard() {
 
         {/* Alert Banners (locked) */}
         {visibleAlerts.length > 0 && (
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
         )}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
@@ -469,7 +481,7 @@ export default function ExecutiveDashboard() {
         {/* Customizable Widget Section */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-700">Your Dashboard</h3>
+            <h3 className="text-sm font-semibold text-gray-700">{t('cards.yourDashboard')}</h3>
             <button
               type="button"
               onClick={() => setCustomizing(prev => !prev)}
@@ -481,7 +493,7 @@ export default function ExecutiveDashboard() {
               }}
             >
               {customizing ? <CheckCircle2 size={13} /> : <Settings2 size={13} />}
-              {customizing ? 'Done Customizing' : 'Customize Dashboard'}
+              {customizing ? t('cards.doneCustomizing') : t('cards.customizeDashboard')}
             </button>
           </div>
 
@@ -514,7 +526,7 @@ export default function ExecutiveDashboard() {
                   }}
                 >
                   {w.visible ? <Eye size={12} /> : <EyeOff size={12} />}
-                  {w.label}
+                  {widgetLabelMap[w.id] || w.label}
                 </button>
               ))}
             </div>

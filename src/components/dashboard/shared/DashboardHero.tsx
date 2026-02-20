@@ -7,7 +7,8 @@
  */
 
 import { EvidlyIcon } from '../../ui/EvidlyIcon';
-import { STEEL_SLATE_GRADIENT, GOLD, FONT, getGreeting, getFormattedDate } from './constants';
+import { useTranslation } from '../../../contexts/LanguageContext';
+import { STEEL_SLATE_GRADIENT, GOLD, FONT } from './constants';
 
 interface DashboardHeroProps {
   /** Main greeting text — defaults to time-based greeting */
@@ -35,8 +36,17 @@ export function DashboardHero({
   locationName,
   children,
 }: DashboardHeroProps) {
-  const greetingText = greeting || `${getGreeting()}${firstName ? `, ${firstName}` : ''}`;
-  const dateText = getFormattedDate();
+  const { t, locale } = useTranslation();
+  const getGreetingI18n = () => {
+    const h = new Date().getHours();
+    if (h < 12) return t('hero.goodMorning');
+    if (h < 17) return t('hero.goodAfternoon');
+    return t('hero.goodEvening');
+  };
+  const greetingText = greeting || `${getGreetingI18n()}${firstName ? `, ${firstName}` : ''}`;
+  const dateText = new Date().toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
+    weekday: 'long', month: 'long', day: 'numeric',
+  });
 
   return (
     <div

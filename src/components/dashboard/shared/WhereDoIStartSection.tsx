@@ -8,6 +8,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, AlertCircle, Info, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { FONT, BODY_TEXT, stagger } from './constants';
 import { SectionTooltip } from '../../ui/SectionTooltip';
 
@@ -36,7 +37,7 @@ const SEVERITY_CONFIG = {
     iconColor: '#dc2626',
     badgeBg: '#dc2626',
     badgeText: '#fff',
-    label: 'Critical',
+    labelKey: 'status.critical',
   },
   warning: {
     icon: AlertCircle,
@@ -45,7 +46,7 @@ const SEVERITY_CONFIG = {
     iconColor: '#d97706',
     badgeBg: '#d97706',
     badgeText: '#fff',
-    label: 'Warning',
+    labelKey: 'status.warning',
   },
   info: {
     icon: Info,
@@ -54,12 +55,13 @@ const SEVERITY_CONFIG = {
     iconColor: '#2563eb',
     badgeBg: '#2563eb',
     badgeText: '#fff',
-    label: 'Info',
+    labelKey: 'status.info',
   },
 };
 
 export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent }: WhereDoIStartSectionProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (items.length === 0) return null;
 
@@ -69,7 +71,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
         className="text-base font-bold mb-3 flex items-center"
         style={{ color: BODY_TEXT }}
       >
-        Where Do I Start?
+        {t('hero.whereDoIStart')}
         {tooltipContent && <SectionTooltip content={tooltipContent} />}
       </h3>
       <div className="space-y-2">
@@ -94,7 +96,7 @@ export function WhereDoIStartSection({ items, staggerOffset = 0, tooltipContent 
                     className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: config.badgeBg, color: config.badgeText }}
                   >
-                    {config.label}
+                    {t(config.labelKey)}
                   </span>
                   <span className="text-sm font-semibold truncate" style={{ color: BODY_TEXT }}>
                     {item.title}

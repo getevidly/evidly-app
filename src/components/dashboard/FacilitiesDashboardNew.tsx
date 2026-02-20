@@ -13,7 +13,8 @@ import { useDemo } from '../../contexts/DemoContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import { DEMO_ORG } from '../../data/demoData';
 import { FireStatusBars } from '../shared/FireStatusBars';
-import { FONT, JIE_LOC_MAP, getGreeting, DEMO_ROLE_NAMES } from './shared/constants';
+import { useTranslation } from '../../contexts/LanguageContext';
+import { FONT, JIE_LOC_MAP, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { TabbedDetailSection } from './shared/TabbedDetailSection';
@@ -124,13 +125,14 @@ function SectionHeader({ icon: Icon, children }: { icon: typeof Flame; children:
 }
 
 function StatusBadge({ status }: { status: 'current' | 'expiring' | 'expired' | 'confirmed' | 'pending' | 'overdue' }) {
+  const { t: tBadge } = useTranslation();
   const config = {
-    current: { bg: '#dcfce7', color: '#16a34a', label: 'Current' },
-    confirmed: { bg: '#dcfce7', color: '#16a34a', label: 'Confirmed' },
-    expiring: { bg: '#fef3c7', color: '#b45309', label: 'Expiring' },
-    pending: { bg: '#fef3c7', color: '#b45309', label: 'Pending' },
-    expired: { bg: '#fee2e2', color: '#dc2626', label: 'Expired' },
-    overdue: { bg: '#fee2e2', color: '#dc2626', label: 'Overdue' },
+    current: { bg: '#dcfce7', color: '#16a34a', labelKey: 'status.current' },
+    confirmed: { bg: '#dcfce7', color: '#16a34a', labelKey: 'status.confirmed' },
+    expiring: { bg: '#fef3c7', color: '#b45309', labelKey: 'status.expiring' },
+    pending: { bg: '#fef3c7', color: '#b45309', labelKey: 'status.pending' },
+    expired: { bg: '#fee2e2', color: '#dc2626', labelKey: 'status.expired' },
+    overdue: { bg: '#fee2e2', color: '#dc2626', labelKey: 'status.overdue' },
   }[status];
 
   return (
@@ -138,7 +140,7 @@ function StatusBadge({ status }: { status: 'current' | 'expiring' | 'expired' | 
       className="text-xs font-medium px-2 py-0.5 rounded-full"
       style={{ backgroundColor: config.bg, color: config.color }}
     >
-      {config.label}
+      {tBadge(config.labelKey)}
     </span>
   );
 }
@@ -163,6 +165,7 @@ export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
   const { companyName } = useDemo();
+  const { t } = useTranslation();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const defaultLoc = accessibleLocations[0]?.locationUrlId || 'downtown';
@@ -189,7 +192,7 @@ export default function FacilitiesDashboardNew() {
     <div className="space-y-6" style={FONT}>
       {/* Steel-Slate Hero Banner */}
       <DashboardHero
-        greeting={`${getGreeting()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
+        greeting={`${(() => { const h = new Date().getHours(); if (h < 12) return t('hero.goodMorning'); if (h < 17) return t('hero.goodAfternoon'); return t('hero.goodEvening'); })()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
@@ -257,7 +260,7 @@ export default function FacilitiesDashboardNew() {
       </ErrorBoundary>
 
       {/* Tabbed Detail Section: Equipment | Service Schedule | Vendors */}
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center">Equipment &amp; Services<SectionTooltip content={useTooltip('equipmentCard', userRole)} /></h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center">{t('cards.equipmentAndServices')}<SectionTooltip content={useTooltip('equipmentCard', userRole)} /></h4>
       <Card>
         <TabbedDetailSection
           tabs={[

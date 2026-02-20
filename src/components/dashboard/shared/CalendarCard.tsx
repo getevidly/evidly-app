@@ -8,6 +8,7 @@
 
 import { useState, useMemo } from 'react';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { SectionTooltip } from '../../ui/SectionTooltip';
 
 // ── Types ──────────────────────────────────────────────
@@ -30,7 +31,8 @@ export interface CalendarCardProps {
 
 // ── Helpers ──────────────────────────────────────────────
 
-const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const WEEKDAY_LABELS_EN = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const WEEKDAY_LABELS_ES = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -40,8 +42,8 @@ function getFirstDayOfMonth(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
-function formatMonthYear(year: number, month: number) {
-  return new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+function formatMonthYear(year: number, month: number, loc: string) {
+  return new Date(year, month).toLocaleDateString(loc === 'es' ? 'es-ES' : 'en-US', { month: 'long', year: 'numeric' });
 }
 
 function toDateKey(year: number, month: number, day: number): string {
@@ -51,6 +53,7 @@ function toDateKey(year: number, month: number, day: number): string {
 // ── Component ──────────────────────────────────────────────
 
 export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltipContent }: CalendarCardProps) {
+  const { t, locale } = useTranslation();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -104,12 +107,12 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
             className="text-xs font-semibold uppercase"
             style={{ letterSpacing: '0.1em', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}
           >
-            Schedule
+            {t('cards.calendar')}
           </h3>
           {tooltipContent && <SectionTooltip content={tooltipContent} />}
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth)}</span>
+          <span className="text-sm font-medium text-gray-700">{formatMonthYear(viewYear, viewMonth, locale)}</span>
           <button type="button" onClick={prevMonth} className="p-1 rounded hover:bg-gray-100 transition-colors">
             <ChevronLeft size={16} className="text-gray-500" />
           </button>
@@ -121,7 +124,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
 
       {/* Weekday headers */}
       <div className="grid grid-cols-7 gap-0 mb-1">
-        {WEEKDAY_LABELS.map(d => (
+        {(locale === 'es' ? WEEKDAY_LABELS_ES : WEEKDAY_LABELS_EN).map(d => (
           <div key={d} className="text-center text-[10px] font-semibold text-gray-400 py-1">{d}</div>
         ))}
       </div>
@@ -195,10 +198,10 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
       {selectedDay !== null && (
         <div className="mt-3 pt-3 border-t border-gray-100">
           <p className="text-[11px] font-semibold text-gray-500 mb-2">
-            {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+            {new Date(viewYear, viewMonth, selectedDay).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
           </p>
           {selectedEvents.length === 0 ? (
-            <p className="text-xs text-gray-400">No events scheduled</p>
+            <p className="text-xs text-gray-400">{t('cards.noEventsScheduled')}</p>
           ) : (
             <div className="space-y-1.5">
               {selectedEvents.map((evt, i) => (
@@ -220,7 +223,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
                       color: evt.priority === 'critical' ? '#dc2626' : evt.priority === 'high' ? '#b45309' : '#6b7280',
                     }}
                   >
-                    {evt.priority === 'critical' ? 'Critical' : evt.priority === 'high' ? 'High' : 'Medium'}
+                    {evt.priority === 'critical' ? t('status.critical') : evt.priority === 'high' ? t('status.high') : t('status.medium')}
                   </span>
                 </button>
               ))}
@@ -236,7 +239,7 @@ export function CalendarCard({ events, typeColors, typeLabels, navigate, tooltip
         className="mt-3 w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
         style={{ color: '#1e4d6b' }}
       >
-        View Full Calendar &rarr;
+        {t('cards.viewFullCalendar')} &rarr;
       </button>
     </div>
   );

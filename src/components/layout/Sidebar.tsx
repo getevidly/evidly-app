@@ -58,6 +58,41 @@ const SIDEBAR_ITEM_DESCRIPTIONS: Record<string, string> = {
   'usage-analytics':  "Platform usage metrics, adoption rates, and engagement analytics.",
 };
 
+const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
+  'dashboard':        "Su resumen de cumplimiento — puntuaciones, alertas y prioridades de hoy.",
+  'calendar':         "Vista semanal y mensual de inspecciones, fechas límite y tareas programadas.",
+  'my-tasks':         "Sus elementos de acción asignados, acciones correctivas y seguimientos.",
+  'checklists':       "Listas de tareas diarias para seguridad alimentaria, registros de temperatura y procedimientos de apertura/cierre.",
+  'incidents':        "Registre y dé seguimiento a incidentes de seguridad o cumplimiento con registros con marca de tiempo.",
+  'temperatures':     "Registro de temperatura manual, por QR o IoT para recepción, almacenamiento y cocción.",
+  'log-temp':         "Registre rápidamente una lectura de temperatura para su estación.",
+  'iot-monitoring':   "Datos en vivo de sensores de sondas de temperatura y monitores de equipo conectados.",
+  'equipment':        "Registro de activos para todo el equipo de cocina con historial de servicio y fechas de mantenimiento.",
+  'vendors':          "Proveedores de servicio asignados a sus ubicaciones — limpieza de campanas, gestión de grasa y más.",
+  'documents':        "Certificados de cumplimiento, informes de inspección y documentación de permisos.",
+  'haccp':            "HACCP — planes de seguridad alimentaria y registros de monitoreo de puntos críticos de control.",
+  'photos':           "Evidencia fotográfica para inspecciones, incidentes y documentación de cumplimiento.",
+  'training':         "Cursos de capacitación del personal, certificaciones y seguimiento de educación en cumplimiento.",
+  'compliance':       "Desglose de puntuación verificado por jurisdicción para seguridad alimentaria y contra incendios en todas las ubicaciones.",
+  'self-inspection':  "Realice una auto-inspección usando los mismos criterios que aplica su departamento de salud.",
+  'inspector':        "Vea su ubicación a través de los ojos de un inspector — la misma vista que usan durante los recorridos.",
+  'ai-copilot':       "Asistente de cumplimiento impulsado por IA para responder preguntas y generar planes de acción.",
+  'regulatory':       "Seguimiento de próximas ventanas de inspección, renovaciones de permisos y fechas límite regulatorias.",
+  'reporting':        "Exporte resúmenes de cumplimiento, historial de inspecciones y paquetes de documentación.",
+  'alerts':           "Alertas activas de cumplimiento y notificaciones que requieren atención en sus ubicaciones.",
+  'fire-safety':      "Estado de sistemas de supresión de incendios, inspecciones y seguimiento de cumplimiento NFPA 96.",
+  'locations':        "Agregue, edite o configure ubicaciones incluyendo mapeo de jurisdicción y metodología de puntuación.",
+  'benchmarks':       "Compare el rendimiento de cumplimiento entre ubicaciones, regiones o períodos de tiempo.",
+  'risk-score':       "Evaluación de riesgo de seguros basada en postura de cumplimiento, historial de incidentes y estado de equipos.",
+  'leaderboard':      "Rankings de ubicaciones y equipos por rendimiento de cumplimiento y finalización de tareas diarias.",
+  'marketplace':      "Explore y conéctese con proveedores de servicios de cumplimiento verificados en su área.",
+  'team':             "Gestione roles del personal, niveles de acceso y asignaciones de ubicación.",
+  'system-admin':     "Administración de la plataforma, incorporación de clientes y configuración del sistema.",
+  'settings':         "Preferencias de cuenta, configuración de notificaciones y configuración de la plataforma.",
+  'help':             "Documentación, soporte y opciones de contacto.",
+  'usage-analytics':  "Métricas de uso de la plataforma, tasas de adopción y analítica de participación.",
+};
+
 // ── NavTooltip wrapper (fixed positioning to bypass overflow clipping) ──
 
 const NavTooltip: React.FC<{
@@ -68,7 +103,9 @@ const NavTooltip: React.FC<{
   const [show, setShow] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
   const ref = React.useRef<HTMLDivElement>(null);
-  const desc = SIDEBAR_ITEM_DESCRIPTIONS[itemKey];
+  const { locale } = useTranslation();
+  const descriptions = locale === 'es' ? SIDEBAR_ITEM_DESCRIPTIONS_ES : SIDEBAR_ITEM_DESCRIPTIONS;
+  const desc = descriptions[itemKey];
   if (!desc) return <>{children}</>;
 
   const handleEnter = () => {

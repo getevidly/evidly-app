@@ -68,7 +68,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
     kitchen_staff: 'Miguel Torres',
   };
 
-  const displayName = isDemoMode ? (demoRoleNames[userRole] || userName) : (profile?.full_name || 'User');
+  const displayName = isDemoMode ? (demoRoleNames[userRole] || userName) : (profile?.full_name || t('topBar.user'));
 
   const handleChangePassword = () => {
     setPwError('');
@@ -141,10 +141,10 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             <button
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30 transition-colors text-sm text-gray-300 cursor-pointer"
-              title="Quick search (Ctrl+K)"
+              title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'})`}
             >
               <Search className="h-3.5 w-3.5" />
-              <span className="text-xs">Search...</span>
+              <span className="text-xs">{t('topBar.search')}</span>
               <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-white/10 border border-white/20 rounded text-gray-400">
                 {navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'}
               </kbd>
@@ -220,7 +220,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   setShowUserMenu(false);
                 }}
                 className="flex items-center space-x-1.5 px-2.5 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
-                title="Language"
+                title={t('topBar.language')}
               >
                 <Globe className="h-4 w-4 text-gray-300" />
                 <span className="text-xs font-semibold text-gray-300 uppercase">{locale}</span>
@@ -254,7 +254,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               <button
                 onClick={() => navigate('/help')}
                 className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
-                title="Help & Support"
+                title={t('topBar.helpAndSupport')}
               >
                 <HelpCircle className="h-5 w-5 text-gray-300" />
               </button>
@@ -263,7 +263,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               <button
                 onClick={() => navigate('/settings')}
                 className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
-                title="Settings"
+                title={t('nav.settings')}
               >
                 <Settings className="h-5 w-5 text-gray-300" />
               </button>
@@ -294,7 +294,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               {showRoleMenu && (
                 <div className="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
-                    {DEMO_ROLES.map(({ role, label, description, i18nKey }) => (
+                    {DEMO_ROLES.map(({ role, label, description, i18nKey, i18nDescKey }) => (
                       <button
                         key={role}
                         onClick={() => {
@@ -315,7 +315,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                         <span className={`text-sm ${userRole === role ? 'font-medium' : ''}`}>
                           {t(i18nKey) !== i18nKey ? t(i18nKey) : label}
                         </span>
-                        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{description}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 leading-snug">{t(i18nDescKey) !== i18nDescKey ? t(i18nDescKey) : description}</p>
                       </button>
                     ))}
                   </div>
@@ -412,7 +412,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   <span style={{ color: '#A08C5A' }}>LY</span>
                 </span>
                 <span style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: '8px', fontWeight: 600, color: '#78909C', letterSpacing: '2px', marginTop: '2px' }}>
-                  COMPLIANCE SIMPLIFIED
+                  {t('topBar.complianceSimplified').toUpperCase()}
                 </span>
               </div>
             </div>

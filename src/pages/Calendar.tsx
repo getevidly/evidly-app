@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
 import type { UserRole } from '../contexts/RoleContext';
 import { useOperatingHours, formatTime24to12, time24ToHour, DAY_LABELS as _DAY_LABELS } from '../contexts/OperatingHoursContext';
@@ -213,6 +214,7 @@ const ROLE_EVENT_TYPES: Record<UserRole, string[] | 'all'> = {
 
 // ── Component ────────────────────────────────────────────────
 export function Calendar() {
+  const { t: tr } = useTranslation();
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
   const [view, setView] = useState<ViewMode>('week');
@@ -569,7 +571,7 @@ export function Calendar() {
                       {dayEvents.slice(0, 3).map(renderEventChip)}
                       {dayEvents.length > 3 && (
                         <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600, padding: '1px 5px', fontFamily: "'DM Sans', sans-serif" }}>
-                          +{dayEvents.length - 3} more
+                          +{dayEvents.length - 3} {tr('pages.calendar.more')}
                         </div>
                       )}
                     </div>
@@ -751,7 +753,7 @@ export function Calendar() {
             {DAYS[currentDate.getDay()]}, {MONTHS[currentDate.getMonth()]} {currentDate.getDate()}
           </div>
           <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-            {dayEvents.length} event{dayEvents.length !== 1 ? 's' : ''} scheduled
+            {dayEvents.length} {tr('pages.calendar.eventsScheduled')}
           </div>
         </div>
 
@@ -829,7 +831,7 @@ export function Calendar() {
                   })}
                   {isOutside && hourEvents.length === 0 && (
                     <div style={{ fontSize: '11px', color: '#c9cdd2', fontStyle: 'italic', padding: '4px 0', fontFamily: "'DM Sans', sans-serif" }}>
-                      Closed
+                      {tr('pages.calendar.closed')}
                     </div>
                   )}
                 </div>
@@ -907,7 +909,7 @@ export function Calendar() {
                     textTransform: 'uppercase',
                     letterSpacing: '0.5px',
                   }}>
-                    OVERDUE
+                    {tr('pages.calendar.overdue')}
                   </span>
                 )}
                 <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: '0 0 4px 0' }}>
@@ -942,7 +944,7 @@ export function Calendar() {
 
             <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
               <button
-                onClick={() => { showToast('Edit event — available in full version'); }}
+                onClick={() => { showToast(tr('pages.calendar.editEvent')); }}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '8px',
                   border: '2px solid #e5e7eb', backgroundColor: 'white',
@@ -950,7 +952,7 @@ export function Calendar() {
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}
               >
-                Edit
+                {tr('common.edit')}
               </button>
               <button
                 onClick={() => setSelectedEvent(null)}
@@ -961,7 +963,7 @@ export function Calendar() {
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
                 }}
               >
-                Close
+                {tr('common.close')}
               </button>
             </div>
           </div>
@@ -991,13 +993,13 @@ export function Calendar() {
   // ── Main Render ──
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Calendar' }]} />
+      <Breadcrumb items={[{ label: tr('nav.dashboard'), href: '/dashboard' }, { label: tr('pages.calendar.title') }]} />
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>Calendar</h1>
-          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>Schedule and track compliance events, inspections, and vendor services</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
+          <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
         {/* Toolbar */}
@@ -1050,7 +1052,7 @@ export function Calendar() {
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fef3c7'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
             >
-              Today
+              {tr('pages.calendar.today')}
             </button>
 
             {/* View toggle */}
@@ -1068,7 +1070,7 @@ export function Calendar() {
                     transition: 'all 0.15s',
                   }}
                 >
-                  {v.charAt(0).toUpperCase() + v.slice(1)}
+                  {tr(`pages.calendar.${v}`)}
                 </button>
               ))}
             </div>
@@ -1080,7 +1082,7 @@ export function Calendar() {
               style={selectStyle}
               className="w-full sm:w-auto sm:min-w-[150px]"
             >
-              <option value="all">All Types</option>
+              <option value="all">{tr('pages.calendar.allTypes')}</option>
               {eventTypes.map(t => (
                 <option key={t.id} value={t.id}>{t.label}</option>
               ))}
@@ -1093,7 +1095,7 @@ export function Calendar() {
               style={selectStyle}
               className="w-full sm:w-auto sm:min-w-[150px]"
             >
-              <option value="all">All Locations</option>
+              <option value="all">{tr('pages.calendar.allLocations')}</option>
               {LOCATIONS.map(loc => (
                 <option key={loc} value={loc}>{loc}</option>
               ))}
@@ -1141,7 +1143,7 @@ export function Calendar() {
             {/* Legend */}
             <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Event Types
+                {tr('pages.calendar.eventTypes')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {eventTypes.map(type => (
@@ -1177,7 +1179,7 @@ export function Calendar() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                   <AlertTriangle size={16} color="#dc2626" />
                   <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#dc2626', margin: 0, fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                    Overdue ({overdueEvents.length})
+                    {tr('pages.calendar.overdue')} ({overdueEvents.length})
                   </h3>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -1202,7 +1204,7 @@ export function Calendar() {
                       >
                         <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
                         <div style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>
-                          {daysOverdue} day{daysOverdue !== 1 ? 's' : ''} overdue
+                          {daysOverdue} {daysOverdue !== 1 ? tr('pages.calendar.daysOverdue') : tr('pages.calendar.dayOverdue')}
                         </div>
                         <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '1px' }}>{event.location}</div>
                       </div>
@@ -1220,13 +1222,13 @@ export function Calendar() {
               color: 'white',
             }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Today
+                {tr('pages.calendar.today')}
               </h3>
               <div style={{ fontSize: '32px', fontWeight: 800, fontFamily: "'DM Sans', sans-serif", marginBottom: '4px' }}>
                 {todayEvents.length}
               </div>
               <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px', fontFamily: "'DM Sans', sans-serif" }}>
-                scheduled items
+                {tr('pages.calendar.scheduledItems')}
               </div>
               {Object.keys(todayByType).length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '10px' }}>
@@ -1249,11 +1251,11 @@ export function Calendar() {
             {/* Upcoming Events */}
             <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Upcoming
+                {tr('pages.calendar.upcoming')}
               </h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {upcomingEvents.length === 0 && (
-                  <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>No upcoming events</p>
+                  <p style={{ fontSize: '13px', color: '#9ca3af', margin: 0, fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.noUpcomingEvents')}</p>
                 )}
                 {upcomingEvents.map(event => {
                   const t = typeMap[event.type];
@@ -1276,7 +1278,7 @@ export function Calendar() {
                     >
                       <div style={{ fontWeight: 600, fontSize: '12px', color: '#111827', marginBottom: '2px' }}>{event.title}</div>
                       <div style={{ fontSize: '11px', color: '#6b7280' }}>
-                        {isEventToday ? 'Today' : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
+                        {isEventToday ? tr('pages.calendar.today') : eventDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} · {event.time}
                       </div>
                       <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '1px' }}>{event.location}</div>
                     </div>
@@ -1288,14 +1290,14 @@ export function Calendar() {
             {/* Stats */}
             <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '16px' }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111827', margin: '0 0 12px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                This Month
+                {tr('pages.calendar.thisMonth')}
               </h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 {[
-                  { label: 'Total Events', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1e4d6b' },
-                  { label: 'Inspections', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#ea580c' },
-                  { label: 'Vendor Visits', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
-                  { label: 'Meetings', value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'meeting' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#0891b2' },
+                  { label: tr('pages.calendar.totalEvents'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#1e4d6b' },
+                  { label: tr('pages.calendar.inspections'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'inspection' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#ea580c' },
+                  { label: tr('pages.calendar.vendorVisits'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'vendor' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#7c3aed' },
+                  { label: tr('pages.calendar.meetings'), value: filteredEvents.filter(e => { const dd = new Date(e.date + 'T12:00:00'); return e.type === 'meeting' && dd.getMonth() === today.getMonth() && dd.getFullYear() === today.getFullYear(); }).length, color: '#0891b2' },
                 ].map(stat => (
                   <div key={stat.label} style={{ textAlign: 'center', padding: '8px', borderRadius: '8px', backgroundColor: '#f9fafb' }}>
                     <div style={{ fontSize: '20px', fontWeight: 800, color: stat.color, fontFamily: "'DM Sans', sans-serif" }}>{stat.value}</div>

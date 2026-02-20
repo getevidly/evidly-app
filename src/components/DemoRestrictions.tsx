@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useDemo } from '../contexts/DemoContext';
 import { toast } from 'sonner';
+import { useTranslation } from '../contexts/LanguageContext';
 
 export function DemoRestrictions() {
   const { isDemoMode, presenterMode } = useDemo();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isDemoMode || presenterMode) {
@@ -17,7 +19,7 @@ export function DemoRestrictions() {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
         e.preventDefault();
-        toast.info('Printing is available on the paid plan. Start your free trial!');
+        toast.info(t('demo.printAvailableOnPaid'));
       }
     }
     document.addEventListener('keydown', handleKeyDown);
@@ -26,7 +28,7 @@ export function DemoRestrictions() {
       document.body.classList.remove('demo-mode');
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isDemoMode, presenterMode]);
+  }, [isDemoMode, presenterMode, t]);
 
   // Inject print-blocking styles
   useEffect(() => {

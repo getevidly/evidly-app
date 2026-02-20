@@ -10,6 +10,7 @@ import { useRole } from '../contexts/RoleContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
+import { useTranslation } from '../contexts/LanguageContext';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -130,6 +131,7 @@ export function FireSafety() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { userRole } = useRole();
+  const { t } = useTranslation();
 
   const locationParam = searchParams.get('location') || 'downtown';
   const [activeTab, setActiveTab] = useState<Frequency>('daily');
@@ -196,11 +198,11 @@ export function FireSafety() {
     setTimeout(() => {
       setSubmitting(false);
       setSubmitted(true);
-      toast.success(`${TAB_LABELS[activeTab]} fire safety checklist submitted successfully`, {
-        description: `${completedCount}/${items.length} items completed — ${passCount} passed, ${failCount} failed`,
+      toast.success(`${t(`pages.fireSafety.${activeTab}`)} ${t('pages.fireSafety.checklist')} ${t('pages.fireSafety.submittedSuccess')}`, {
+        description: `${completedCount}/${items.length} ${t('pages.fireSafety.itemsCompleted')} — ${passCount} ${t('pages.fireSafety.passed')}, ${failCount} ${t('pages.fireSafety.failed')}`,
       });
     }, 800);
-  }, [activeTab, completedCount, items.length, passCount, failCount]);
+  }, [activeTab, completedCount, items.length, passCount, failCount, t]);
 
   const handleReset = useCallback(() => {
     setResponses(DEMO_PREFILLED[locationParam] || {});
@@ -216,7 +218,7 @@ export function FireSafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">Fire Safety Checklist</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.fireSafety.checklist')}</h1>
             <p className="text-sm text-gray-500">NFPA 96 (2024) · ANSI/UL 300</p>
           </div>
         </div>
@@ -251,20 +253,20 @@ export function FireSafety() {
             <div className="flex gap-6 text-sm">
               <div className="text-center">
                 <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
-                <div className="text-xs text-gray-500">Completed</div>
+                <div className="text-xs text-gray-500">{t('pages.fireSafety.completed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-semibold" style={{ color: '#16a34a' }}>{passCount}</div>
-                <div className="text-xs text-gray-500">Passed</div>
+                <div className="text-xs text-gray-500">{t('pages.fireSafety.passed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-semibold" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
-                <div className="text-xs text-gray-500">Failed</div>
+                <div className="text-xs text-gray-500">{t('pages.fireSafety.failed')}</div>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-500 mb-1">Progress</div>
+            <div className="text-xs text-gray-500 mb-1">{t('pages.fireSafety.progress')}</div>
             <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
               <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
             </div>
@@ -300,7 +302,7 @@ export function FireSafety() {
               }`}
               style={isActive ? { backgroundColor: NAVY, color: 'white' } : { color: '#4b5563' }}
             >
-              {TAB_LABELS[freq]}
+              {t(`pages.fireSafety.${freq}`)}
               <span className="ml-1.5 text-xs opacity-70">({count})</span>
             </button>
           );
@@ -313,14 +315,14 @@ export function FireSafety() {
           <div className="flex items-center gap-2">
             <CheckCircle2 size={18} className="text-green-600" />
             <span className="text-sm font-medium text-green-800">
-              {TAB_LABELS[activeTab]} checklist submitted successfully
+              {t(`pages.fireSafety.${activeTab}`)} {t('pages.fireSafety.submittedSuccess')}
             </span>
           </div>
           <button
             onClick={handleReset}
             className="text-sm text-green-700 hover:text-green-900 font-medium"
           >
-            Start New
+            {t('pages.fireSafety.startNew')}
           </button>
         </div>
       )}
@@ -371,7 +373,7 @@ export function FireSafety() {
                       </span>
                       {needsCorrectiveAction && (
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
-                          Corrective action required
+                          {t('pages.fireSafety.correctiveActionRequired')}
                         </span>
                       )}
                     </div>
@@ -390,7 +392,7 @@ export function FireSafety() {
                       disabled={submitted}
                     >
                       <Check size={14} />
-                      Pass
+                      {t('status.pass')}
                     </button>
                     <button
                       onClick={() => updateResponse(item.id, { status: response.status === 'fail' ? null : 'fail' })}
@@ -402,7 +404,7 @@ export function FireSafety() {
                       disabled={submitted}
                     >
                       <X size={14} />
-                      Fail
+                      {t('status.fail')}
                     </button>
                     <button
                       onClick={() => setExpandedItem(isExpanded ? null : item.id)}
@@ -418,12 +420,12 @@ export function FireSafety() {
                   <div className="mt-3 ml-10">
                     <label className="text-xs font-semibold text-red-700 block mb-1">
                       <AlertTriangle size={12} className="inline mr-1" />
-                      Corrective Action {needsCorrectiveAction && <span className="text-red-500">*</span>}
+                      {t('pages.fireSafety.correctiveAction')} {needsCorrectiveAction && <span className="text-red-500">*</span>}
                     </label>
                     <textarea
                       value={response.correctiveAction}
                       onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
-                      placeholder="Describe corrective action taken or planned..."
+                      placeholder={t('pages.fireSafety.describeCorrectiveAction')}
                       rows={2}
                       disabled={submitted}
                       className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -444,11 +446,11 @@ export function FireSafety() {
 
                     {/* Notes */}
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">Notes</label>
+                      <label className="text-xs font-medium text-gray-600 block mb-1">{t('pages.fireSafety.notes')}</label>
                       <textarea
                         value={response.notes}
                         onChange={e => updateResponse(item.id, { notes: e.target.value })}
-                        placeholder="Optional notes..."
+                        placeholder={t('pages.fireSafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
@@ -460,12 +462,12 @@ export function FireSafety() {
                       <div>
                         <label className="text-xs font-semibold text-red-700 block mb-1">
                           <AlertTriangle size={12} className="inline mr-1" />
-                          Corrective Action *
+                          {t('pages.fireSafety.correctiveAction')} *
                         </label>
                         <textarea
                           value={response.correctiveAction}
                           onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
-                          placeholder="Describe corrective action taken or planned..."
+                          placeholder={t('pages.fireSafety.describeCorrectiveAction')}
                           rows={2}
                           disabled={submitted}
                           className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -479,7 +481,7 @@ export function FireSafety() {
                         photos={response.photos}
                         onChange={photos => updateResponse(item.id, { photos })}
                         highlight={isFailed && item.requiresPhotoOnFail}
-                        highlightText={isFailed && item.requiresPhotoOnFail ? 'Photo required on fail' : undefined}
+                        highlightText={isFailed && item.requiresPhotoOnFail ? t('pages.fireSafety.photoRequiredOnFail') : undefined}
                       />
                     </div>
                   </div>
@@ -494,8 +496,8 @@ export function FireSafety() {
       {userRole === 'kitchen_staff' && activeTab !== 'daily' && (
         <div className="text-center py-12 text-gray-500">
           <EvidlyIcon size={32} className="mx-auto mb-2" />
-          <p className="text-sm font-medium">{TAB_LABELS[activeTab]} checks are managed by your Kitchen Manager</p>
-          <p className="text-xs mt-1">You have access to daily fire safety checks</p>
+          <p className="text-sm font-medium">{t(`pages.fireSafety.${activeTab}`)} {t('pages.fireSafety.managedByManager')}</p>
+          <p className="text-xs mt-1">{t('pages.fireSafety.accessDailyChecks')}</p>
         </div>
       )}
 
@@ -503,10 +505,10 @@ export function FireSafety() {
       {items.length > 0 && (
         <div className="mt-6 flex items-center justify-between">
           <div className="text-sm text-gray-500">
-            {completedCount}/{items.length} items completed
+            {completedCount}/{items.length} {t('pages.fireSafety.itemsCompleted')}
             {failCount > 0 && (
               <span className="ml-2 text-red-600 font-medium">
-                ({failCount} failed — corrective actions required)
+                ({failCount} {t('pages.fireSafety.failedCorrectiveRequired')})
               </span>
             )}
           </div>
@@ -516,7 +518,7 @@ export function FireSafety() {
                 onClick={handleReset}
                 className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Start New Checklist
+                {t('pages.fireSafety.startNewChecklist')}
               </button>
             ) : (
               <button
@@ -527,7 +529,7 @@ export function FireSafety() {
                 onMouseEnter={e => { if (canSubmit) (e.target as HTMLElement).style.backgroundColor = NAVY_HOVER; }}
                 onMouseLeave={e => { if (canSubmit) (e.target as HTMLElement).style.backgroundColor = NAVY; }}
               >
-                {submitting ? 'Submitting...' : `Submit ${TAB_LABELS[activeTab]} Checklist`}
+                {submitting ? t('pages.fireSafety.submitting') : `${t('pages.fireSafety.submitChecklist')} ${t(`pages.fireSafety.${activeTab}`)} ${t('pages.fireSafety.checklist')}`}
               </button>
             )}
           </div>
@@ -542,8 +544,8 @@ export function FireSafety() {
         >
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-gray-400" />
-            <span className="text-sm font-semibold text-gray-700">Vendor-Performed Services</span>
-            <span className="text-xs text-gray-400">(tracked in Equipment)</span>
+            <span className="text-sm font-semibold text-gray-700">{t('pages.fireSafety.vendorServices')}</span>
+            <span className="text-xs text-gray-400">{t('pages.fireSafety.trackedInEquipment')}</span>
           </div>
           {expandedItem === 'vendor-ref' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />}
         </button>
@@ -569,7 +571,7 @@ export function FireSafety() {
                       onClick={() => navigate('/equipment')}
                       className="text-xs font-medium px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-50"
                     >
-                      View in Equipment
+                      {t('pages.fireSafety.viewInEquipment')}
                     </button>
                   </div>
                 </div>

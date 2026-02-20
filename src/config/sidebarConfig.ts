@@ -160,6 +160,7 @@ export interface DemoRoleDefinition {
   label: string;
   description: string;
   i18nKey: string;
+  i18nDescKey: string;
 }
 
 // ── Sidebar sections for collapsible groups ─────────────
@@ -207,41 +208,48 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
     label: 'Owner / Operator',
     description: 'Full access to all locations, settings, and compliance tools',
     i18nKey: 'topBar.ownerOperator',
+    i18nDescKey: 'topBar.roleDescOwnerOperator',
   },
   {
     role: 'executive',
     label: 'Executive View',
     description: 'Org-wide analytics, benchmarks, and strategic reports',
     i18nKey: 'topBar.executiveView',
+    i18nDescKey: 'topBar.roleDescExecutive',
   },
   {
     role: 'compliance_manager',
     label: 'Compliance Manager',
     description: 'Food safety scoring, self-inspections, regulatory tracking',
     i18nKey: 'topBar.complianceManager',
+    i18nDescKey: 'topBar.roleDescComplianceManager',
   },
   {
     role: 'chef',
     label: 'Chef',
     description: 'Kitchen operations, checklists, temps, and team oversight',
     i18nKey: 'topBar.chef',
+    i18nDescKey: 'topBar.roleDescChef',
   },
   {
     role: 'facilities_manager',
     label: 'Facilities Manager',
     description: 'Equipment, vendors, fire safety, and maintenance alerts',
     i18nKey: 'topBar.facilitiesManager',
+    i18nDescKey: 'topBar.roleDescFacilitiesManager',
   },
   {
     role: 'kitchen_manager',
     label: 'Kitchen Manager',
     description: 'Daily operations, checklists, team management',
     i18nKey: 'topBar.kitchenManager',
+    i18nDescKey: 'topBar.roleDescKitchenManager',
   },
   {
     role: 'kitchen_staff',
     label: 'Kitchen Staff',
     description: 'Task-focused: checklists, temp logs, and issue reporting',
     i18nKey: 'topBar.kitchenStaff',
+    i18nDescKey: 'topBar.roleDescKitchenStaff',
   },
 ];

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, RotateCcw, Home, ChevronDown, ChevronRight } from 'lucide-react';
+import { useTranslation } from '../contexts/LanguageContext';
 
 interface ErrorFallbackProps {
   level: 'page' | 'section' | 'widget';
@@ -11,6 +12,7 @@ interface ErrorFallbackProps {
 function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => void }) {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
+  const { t } = useTranslation();
 
   const truncatedStack = error?.stack
     ? error.stack.length > 1000
@@ -26,10 +28,10 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
       >
         <AlertTriangle size={48} style={{ color: '#d4af37' }} className="mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2" style={{ color: '#1e4d6b' }}>
-          Something went wrong
+          {t('errors.somethingWentWrong')}
         </h2>
         <p className="text-gray-600 mb-6">
-          This page encountered an error. Your other pages still work fine.
+          {t('errors.pageError')}
         </p>
         <div className="flex items-center justify-center gap-3 mb-4">
           <button
@@ -40,7 +42,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
             onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
             <RotateCcw size={16} />
-            Try Again
+            {t('errors.tryAgain')}
           </button>
           <button
             onClick={() => navigate('/dashboard')}
@@ -50,7 +52,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent', e.currentTarget.style.color = '#1e4d6b')}
           >
             <Home size={16} />
-            Go to Dashboard
+            {t('errors.goToDashboard')}
           </button>
         </div>
         {error && (
@@ -60,7 +62,7 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
               className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 cursor-pointer bg-transparent border-none p-0"
             >
               {showDetails ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-              Show details
+              {t('errors.showDetails')}
             </button>
             {showDetails && (
               <pre className="mt-2 p-3 bg-gray-100 rounded-lg text-xs text-gray-700 font-mono overflow-x-auto whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
@@ -79,36 +81,40 @@ function PageFallback({ error, onRetry }: { error: Error | null; onRetry: () => 
 }
 
 function SectionFallback({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <div
       className="rounded-lg p-4 flex items-center gap-3"
       style={{ backgroundColor: '#eef4f8', border: '1px solid #b8d4e8' }}
     >
       <AlertTriangle size={20} style={{ color: '#d4af37' }} className="flex-shrink-0" />
-      <span className="text-sm text-gray-600 flex-1">Unable to load this section</span>
+      <span className="text-sm text-gray-600 flex-1">{t('errors.somethingWentWrong')}</span>
       <button
         onClick={onRetry}
         className="text-sm font-medium bg-transparent border-none cursor-pointer p-0"
         style={{ color: '#d4af37' }}
       >
-        Try Again
+        {t('errors.tryAgain')}
       </button>
     </div>
   );
 }
 
 function WidgetFallback({ onRetry }: { onRetry: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <span className="inline-flex items-center gap-1.5 text-sm text-gray-500">
       <AlertTriangle size={14} style={{ color: '#d4af37' }} />
-      <span>Error loading</span>
+      <span>{t('errors.somethingWentWrong')}</span>
       <span className="text-gray-300">·</span>
       <button
         onClick={onRetry}
         className="font-medium bg-transparent border-none cursor-pointer p-0"
         style={{ color: '#d4af37' }}
       >
-        Retry
+        {t('errors.tryAgain')}
       </button>
     </span>
   );

@@ -298,6 +298,287 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
   },
 };
 
+// ── TOOLTIPS — Spanish translations ─────────────────────────
+
+export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> = {
+  // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
+  overallScore: {
+    owner_operator:
+      'Su puntuación combinada de seguridad alimentaria y seguridad contra incendios en todas las ubicaciones, ponderada por la metodología verificada de cada jurisdicción. Esto es lo que los reguladores y auditores ven.',
+    executive:
+      'Postura de cumplimiento agregada en todo su portafolio. Profundice en ubicaciones individuales para identificar dónde se concentra el riesgo.',
+    compliance_manager:
+      'Puntuación ponderada por jurisdicción que combina violaciones de seguridad alimentaria y estado de aprobación/fallo de seguridad contra incendios. Refleja su situación actual bajo la metodología de aplicación activa.',
+    chef:
+      'La puntuación de cumplimiento actual de su ubicación. Completar las listas de verificación diarias y abordar los elementos señalados mueve este número en tiempo real.',
+    facilities_manager:
+      'Sus sistemas de seguridad contra incendios impactan directamente esta puntuación. Los cuatro sistemas — Permiso, Campana, Extintor y Ansul — deben aprobar en cada ubicación.',
+    kitchen_manager:
+      'La puntuación de cumplimiento actual de su ubicación. Completar las listas de verificación diarias y abordar los elementos señalados mueve este número en tiempo real.',
+    kitchen_staff:
+      'Esto muestra cómo le va a su ubicación en salud y seguridad. Complete sus tareas asignadas para mantenerlo en verde.',
+  },
+  fireSafety: {
+    owner_operator:
+      'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
+    executive:
+      'La seguridad contra incendios es binaria — Aprobado o Reprobado. Un solo sistema fallido expone toda la ubicación a suspensión o cierre del permiso.',
+    compliance_manager:
+      'Verificado contra NFPA 96 (2024) Tabla 12.4. Cada AHJ está mapeado a su ubicación específica — sin valores genéricos predeterminados.',
+    chef:
+      'Los cuatro sistemas deben mostrar verde para que su ubicación apruebe la inspección de incendios. Contacte a su Gerente de Instalaciones si alguna barra está en rojo.',
+    facilities_manager:
+      'Su panel principal. Permiso = permiso operativo vigente. Campana = última limpieza dentro del intervalo NFPA 96. Ext = extintor inspeccionado. Ansul = sistema de supresión con servicio.',
+    kitchen_manager:
+      'Los cuatro sistemas deben mostrar verde para que su ubicación apruebe la inspección de incendios. Contacte a su Gerente de Instalaciones si alguna barra está en rojo.',
+    kitchen_staff:
+      'Verde significa que los sistemas de seguridad contra incendios de su cocina están al día. Si ve rojo, informe a su gerente de inmediato.',
+  },
+  urgentItems: {
+    owner_operator:
+      'Elementos de alta prioridad en todas las ubicaciones que requieren acción inmediata. Estos conllevan el mayor riesgo regulatorio y de responsabilidad.',
+    executive:
+      'Elementos críticos sin resolver por ubicación. Cada elemento abierto representa un posible fallo de inspección o acción de cumplimiento.',
+    compliance_manager:
+      'Violaciones y brechas documentales señaladas como alta prioridad bajo los criterios de aplicación de su jurisdicción activa.',
+    chef:
+      'Tareas y elementos de lista de verificación señalados como urgentes para su ubicación hoy. Resuélvalos antes de su próximo período de servicio.',
+    facilities_manager:
+      'Mantenimiento atrasado, permisos vencidos o verificaciones de sistema fallidas. Estos deben resolverse antes de su próxima ventana de inspección.',
+    kitchen_manager:
+      'Tareas y elementos de lista de verificación señalados como urgentes para su ubicación hoy. Resuélvalos antes de su próximo período de servicio.',
+    kitchen_staff:
+      'Estas son sus tareas más importantes en este momento. Complételas primero antes de pasar a otras asignaciones.',
+  },
+  todaysProgress: {
+    owner_operator:
+      'Tasa de finalización de listas de verificación diarias en todas las ubicaciones. Se reinicia a medianoche hora local.',
+    executive:
+      'Actividad de cumplimiento operativo para hoy. La finalización diaria consistente se correlaciona con puntuaciones de inspección más altas.',
+    compliance_manager:
+      'Envíos de listas de verificación de hoy versus tareas requeridas. Las brechas aquí crean riesgo documental durante auditorías.',
+    chef:
+      'El progreso de su equipo en las listas de verificación asignadas hoy. Toque cualquier elemento para completar o señalar para seguimiento.',
+    facilities_manager:
+      'Verificaciones de equipo y tareas de mantenimiento programadas para hoy. Los elementos incompletos se transfieren como atrasados.',
+    kitchen_manager:
+      'El progreso de su equipo en las listas de verificación asignadas hoy. Toque cualquier elemento para completar o señalar para seguimiento.',
+    kitchen_staff:
+      'Esto es lo que tiene en su lista para hoy. Marque cada tarea a medida que la complete.',
+  },
+  locationCards: {
+    owner_operator:
+      'Cada tarjeta refleja la jurisdicción activa de esa ubicación, la metodología de puntuación verificada y la postura de cumplimiento actual.',
+    executive:
+      'Vista rápida a nivel de ubicación. Haga clic en cualquier tarjeta para ver el historial de inspecciones, tendencias de puntuación y elementos abiertos.',
+    compliance_manager:
+      'La jurisdicción y metodología de puntuación están verificadas por ubicación — sin suposiciones. Haga clic para ver detalles de la agencia de aplicación y pesos de puntuación.',
+    chef:
+      'La situación actual de su ubicación. Haga clic para ver las listas de verificación de hoy, elementos abiertos y resultados de inspección recientes.',
+    facilities_manager:
+      'Muestra el AHJ de incendios, estado de permisos y cumplimiento de equipos por ubicación. Haga clic para gestionar activos y programas de mantenimiento.',
+    kitchen_manager:
+      'La situación actual de su ubicación. Haga clic para ver las listas de verificación de hoy, elementos abiertos y resultados de inspección recientes.',
+    kitchen_staff:
+      'Esta es su ubicación. Toque para ver sus tareas de hoy.',
+  },
+
+  // ── TOOLTIPS-2 (11 new sections) ──────────────────────────
+
+  locationScoreCard: {
+    owner_operator:
+      'La puntuación combinada de cumplimiento alimentario e incendios de esta ubicación bajo su jurisdicción activa. Toque para profundizar en el historial de inspecciones y elementos abiertos.',
+    executive:
+      'Postura de cumplimiento a nivel de ubicación. Cada ubicación se puntúa bajo la metodología de su propia jurisdicción — las puntuaciones no son directamente comparables entre condados.',
+    compliance_manager:
+      'Puntuación ponderada por jurisdicción para esta ubicación. Refleja la situación actual bajo la metodología de aplicación activa — no una puntuación genérica o estimada.',
+    chef:
+      'La puntuación de cumplimiento actual de su cocina. Completar las listas de verificación diarias y abordar los elementos señalados la mejora en tiempo real.',
+    facilities_manager:
+      'Los sistemas de seguridad contra incendios contribuyen directamente a esta puntuación. Los cuatro — Permiso, Campana, Ext, Ansul — deben aprobar.',
+    kitchen_manager:
+      'La puntuación de cumplimiento de su ubicación. Toque para ver qué la impulsa y qué tareas la moverán.',
+    kitchen_staff:
+      'Así le va a su cocina. Verde es bueno — complete sus tareas para mantenerlo así.',
+  },
+  checklistCard: {
+    owner_operator:
+      'Listas de verificación operativas diarias en todas las ubicaciones. Las tasas de finalización alimentan la documentación de cumplimiento y la preparación para inspecciones.',
+    executive:
+      'Tasa agregada de finalización de listas de verificación. La finalización diaria consistente es el indicador principal del rendimiento en inspecciones.',
+    compliance_manager:
+      'Los envíos de listas de verificación crean el rastro de auditoría que los reguladores revisan durante las inspecciones. Las brechas aquí son riesgo documental.',
+    chef:
+      'La lista de tareas diarias de su equipo. Cada elemento de lista de verificación completado se registra con marca de tiempo para los registros de cumplimiento.',
+    facilities_manager:
+      'Verificaciones de equipo y seguridad programadas para hoy. Los elementos incompletos se transfieren como atrasados y afectan su puntuación de cumplimiento.',
+    kitchen_manager:
+      'Las listas de verificación de hoy para su ubicación. Toque para asignar, completar o señalar elementos para seguimiento.',
+    kitchen_staff:
+      'Sus tareas para hoy. Marque cada una a medida que avanza — su gerente puede ver su progreso.',
+  },
+  incidentCard: {
+    owner_operator:
+      'Incidentes registrados en todas las ubicaciones. Cada incidente crea un registro de cumplimiento — los incidentes sin resolver se señalan durante las inspecciones.',
+    executive:
+      'Conteo de incidentes abiertos por ubicación. La alta frecuencia o los largos tiempos de resolución son indicadores principales de riesgo de inspección.',
+    compliance_manager:
+      'Los registros de incidentes son parte de su documentación regulatoria. Asegúrese de que cada uno tenga una marca de tiempo de resolución y una acción correctiva registrada.',
+    chef:
+      'Incidentes registrados en su cocina. Reporte cualquier cosa inusual — los incidentes no registrados crean brechas de cumplimiento.',
+    facilities_manager:
+      'Fallas de equipo, eventos de seguridad e incidentes de mantenimiento. Documente y resuelva antes de su próxima ventana de inspección.',
+    kitchen_manager:
+      'Incidentes en su ubicación. Registre nuevos incidentes y dé seguimiento a los elementos abiertos hasta su resolución.',
+    kitchen_staff:
+      'Si algo sale mal en la cocina, regístrelo aquí. Su gerente dará seguimiento.',
+  },
+  equipmentCard: {
+    owner_operator:
+      'Activos de equipo en todas las ubicaciones con estado de mantenimiento. El servicio atrasado en sistemas de supresión de incendios o campanas crea riesgo de cumplimiento.',
+    executive:
+      'Resumen de salud de activos por ubicación. El mantenimiento diferido en equipos críticos es un problema de responsabilidad y cumplimiento de seguridad contra incendios.',
+    compliance_manager:
+      'Los registros de servicio de equipos se revisan durante las inspecciones de seguridad contra incendios y salud. Asegúrese de que todas las fechas de servicio estén actualizadas y documentadas.',
+    chef:
+      'Equipo de cocina asignado a su ubicación. Señale cualquier cosa que necesite reparación — el equipo atrasado afecta las puntuaciones de inspección.',
+    facilities_manager:
+      'Su registro principal de activos. Rastrea intervalos de servicio, asignaciones de proveedores y fechas de vencimiento según los requisitos de NFPA 96 (2024).',
+    kitchen_manager:
+      'Equipo en su ubicación y su estado de servicio actual. Toque para registrar una solicitud de mantenimiento o ver el historial de servicio.',
+    kitchen_staff:
+      'Si un equipo no funciona correctamente, toque aquí para reportarlo.',
+  },
+  vendorCard: {
+    owner_operator:
+      'Proveedores que dan servicio a sus ubicaciones — limpieza de campanas, gestión de grasa, supresión de incendios y más. Los registros de servicio alimentan directamente la documentación de cumplimiento.',
+    executive:
+      'Relaciones con proveedores y estado de contratos por ubicación. Los contratos de servicio vencidos son una exposición de cumplimiento.',
+    compliance_manager:
+      'Los certificados y fechas de servicio de proveedores son documentación requerida para inspecciones de seguridad contra incendios. Verifique que todos estén vigentes.',
+    chef:
+      'Los proveedores de servicio programados para su ubicación. Se le notificará antes de las visitas programadas.',
+    facilities_manager:
+      'Gestione asignaciones de proveedores, programas de servicio y seguimiento de certificados. Las brechas de servicio activan alertas de cumplimiento.',
+    kitchen_manager:
+      'Proveedores programados para dar servicio a su ubicación. Confirme acceso y registre visitas completadas aquí.',
+    kitchen_staff:
+      'Los proveedores pueden estar en el sitio para mantenimiento programado. Su gerente le informará con anticipación.',
+  },
+  reportsCard: {
+    owner_operator:
+      'Informes de cumplimiento en todas las ubicaciones — historial de inspecciones, tendencias de puntuación y exportaciones de documentación para auditorías o revisión de prestamistas.',
+    executive:
+      'Informes de cumplimiento a nivel de portafolio. Exporte para revisión de junta directiva, diligencia de prestamistas o propósitos de seguros.',
+    compliance_manager:
+      'Exportaciones de documentación regulatoria, resúmenes de inspección e historial de violaciones. Sus materiales principales de defensa de auditoría.',
+    chef:
+      'Los informes de su ubicación están disponibles aquí. Su gerente controla lo que puede ver y exportar.',
+    facilities_manager:
+      'Informes de servicio de seguridad contra incendios, registros de mantenimiento de equipos y correspondencia con AHJ — todo exportable para preparación de inspecciones.',
+    kitchen_manager:
+      'Informes de cumplimiento a nivel de ubicación. Exporte historial de inspecciones o registros de finalización de listas de verificación según sea necesario.',
+    kitchen_staff:
+      'No tiene acceso a informes. Consulte a su gerente si necesita documentación.',
+  },
+  jurisdictionCard: {
+    owner_operator:
+      'Cada ubicación está mapeada a su jurisdicción de aplicación real. Las puntuaciones reflejan la metodología verificada de esa agencia — no un estándar genérico.',
+    executive:
+      'Confirma qué organismo regulador gobierna cada ubicación y cómo puntúan. Diferentes condados califican de manera diferente — esto muestra las reglas para cada uno.',
+    compliance_manager:
+      'Datos de jurisdicción verificados para esta ubicación — agencia de aplicación, metodología de puntuación e información de contacto. Nada asumido.',
+    chef:
+      'Esto muestra qué departamento de salud del condado y departamento de bomberos supervisa su cocina.',
+    facilities_manager:
+      'Los detalles de su AHJ de incendios — la autoridad que emite su permiso operativo y realiza inspecciones de seguridad contra incendios.',
+    kitchen_manager:
+      'Las agencias regulatorias que inspeccionan su ubicación y lo que buscan.',
+    kitchen_staff:
+      'Esto muestra quién inspecciona su cocina y cuáles son las reglas.',
+  },
+  teamCard: {
+    owner_operator:
+      'Asignaciones de personal y acceso por rol en todas las ubicaciones. Controle quién puede ver, editar o exportar datos de cumplimiento.',
+    executive:
+      'Vista general de personal por ubicación. Las brechas en el equipo pueden ser un riesgo de cumplimiento si los roles críticos están vacantes.',
+    compliance_manager:
+      'Roles de los miembros del equipo y su acceso al sistema. Asegúrese de que las personas correctas tengan los permisos correctos.',
+    chef:
+      'Su equipo de cocina y sus tareas asignadas. Contacte a su gerente para actualizar las asignaciones del equipo.',
+    facilities_manager:
+      'Personal de mantenimiento y contactos de proveedores asignados a sus ubicaciones.',
+    kitchen_manager:
+      'Gestione los roles de su equipo, asignaciones de tareas y acceso al sistema aquí.',
+    kitchen_staff:
+      'Su equipo y su información de contacto.',
+  },
+  auditLogCard: {
+    owner_operator:
+      'Un registro con marca de tiempo de cada acción realizada en su sistema de cumplimiento — quién hizo qué y cuándo. Inmutable y exportable para revisión regulatoria.',
+    executive:
+      'Rastro de auditoría para la actividad de cumplimiento en todo el portafolio. Demuestra la debida diligencia durante inspecciones o litigios.',
+    compliance_manager:
+      'El registro completo de actividad para sus ubicaciones. Los reguladores pueden solicitar esto durante las inspecciones — asegúrese de que esté completo.',
+    chef:
+      'Un registro de actividad de cumplimiento en su cocina. Esto es solo lectura.',
+    facilities_manager:
+      'Acciones de servicio de equipos, visitas de proveedores y registros de mantenimiento — todo con marca de tiempo aquí.',
+    kitchen_manager:
+      'Un registro de finalizaciones de listas de verificación, registros de incidentes y acciones del equipo en su ubicación.',
+    kitchen_staff:
+      'No tiene acceso al registro de auditoría.',
+  },
+  alertBanner: {
+    owner_operator:
+      'Alertas activas en todas las ubicaciones. Las alertas críticas requieren acción inmediata y afectan su posición de cumplimiento.',
+    executive:
+      'Alertas a nivel de portafolio. Los elementos críticos representan riesgo de inspección o aplicación.',
+    compliance_manager:
+      'Alertas regulatorias y fechas límite de inspección próximas. Los elementos críticos deben abordarse antes de su próxima ventana de inspección.',
+    chef:
+      'Alertas para su cocina. Las alertas rojas necesitan atención ahora — consulte con su gerente.',
+    facilities_manager:
+      'Alertas de equipos y permisos. Las alertas rojas pueden indicar un sistema fallido o una certificación vencida.',
+    kitchen_manager:
+      'Alertas para su ubicación. Asigne elementos críticos a su equipo y dé seguimiento a la resolución aquí.',
+    kitchen_staff:
+      'Si ve una alerta roja, informe a su gerente de inmediato.',
+  },
+  bottomBarActions: {
+    owner_operator:
+      'Acciones rápidas para sus tareas más comunes — escanear un código QR, registrar un incidente o iniciar una lista de verificación.',
+    executive:
+      'Acceso rápido a sus vistas más utilizadas.',
+    compliance_manager:
+      'Atajos a sus tareas de cumplimiento más frecuentes.',
+    chef:
+      'Sus acciones rápidas diarias — iniciar una lista de verificación, registrar un incidente o escanear un código QR.',
+    facilities_manager:
+      'Acceso rápido a verificaciones de equipo y registro de mantenimiento.',
+    kitchen_manager:
+      'Acceso de un toque a las listas de verificación de hoy, escaneo QR y registro de incidentes para su equipo.',
+    kitchen_staff:
+      'Sus acciones diarias — toque para iniciar una lista de verificación, escanear un código QR de estación o reportar un problema.',
+  },
+  scheduleCalendar: {
+    owner_operator:
+      'Próximas fechas límite de mantenimiento, visitas de proveedores, renovaciones de permisos y ventanas de inspección en todas las ubicaciones.',
+    executive:
+      'Calendario a nivel de portafolio de inspecciones, renovaciones de permisos y ventanas de servicio de proveedores.',
+    compliance_manager:
+      'Calendario de inspecciones, fechas límite de renovación de permisos y programas de auto-inspección por ubicación.',
+    chef:
+      'Próximas visitas de proveedores y mantenimiento de equipos programados para su cocina.',
+    facilities_manager:
+      'Próximas fechas límite de mantenimiento, visitas de proveedores, renovaciones de permisos y ventanas de inspección en todas las ubicaciones.',
+    kitchen_manager:
+      'Visitas de proveedores programadas y mantenimiento de equipos que pueden afectar las operaciones de cocina.',
+    kitchen_staff:
+      'Eventos programados que pueden afectar su turno — visitas de proveedores y mantenimiento de equipos.',
+  },
+};
+
 // ── TOOLTIPS-2: Sidebar item tooltips (role-neutral) ────────
 
 export interface SidebarTooltipItem {
@@ -349,4 +630,52 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'settings':         { label: 'Settings',            description: 'Account preferences, notification settings, and platform configuration.' },
   'help':             { label: 'Help & Support',      description: 'Documentation, tutorials, and contact support for assistance.' },
   'usage-analytics':  { label: 'Usage Analytics',     description: 'Platform usage metrics, adoption rates, and engagement analytics.' },
+};
+
+// ── TOOLTIPS-2: Sidebar item tooltips — Spanish ─────────────
+
+export const sidebarTooltipContentEs: Record<string, SidebarTooltipItem> = {
+  // Sin grupo
+  'dashboard':        { label: 'Panel',               description: 'Su resumen de cumplimiento — puntuaciones, alertas y progreso diario de un vistazo.' },
+  'my-tasks':         { label: 'Mis Tareas',           description: 'Sus listas de verificación asignadas, registros de temperatura y elementos de acción para hoy.' },
+  'calendar':         { label: 'Calendario',           description: 'Próximas inspecciones, visitas de proveedores, renovaciones de permisos y horarios del equipo.' },
+
+  // Operaciones Diarias
+  'checklists':       { label: 'Listas de Verificación', description: 'Listas de tareas diarias para seguridad alimentaria, registros de temperatura y procedimientos de apertura/cierre.' },
+  'temperatures':     { label: 'Temperaturas',         description: 'Registro de temperatura manual, por QR o IoT para recepción, almacenamiento y cocción.' },
+  'log-temp':         { label: 'Registrar Temp',       description: 'Registre rápidamente una lectura de temperatura para su estación.' },
+  'iot-monitoring':   { label: 'Monitoreo IoT',        description: 'Datos en vivo de sensores de sondas de temperatura y monitores de equipo conectados.' },
+  'fire-safety':      { label: 'Seguridad Contra Incendios', description: 'Estado de cumplimiento NFPA 96 — permisos, limpieza de campanas, extintores y sistemas de supresión.' },
+  'incidents':        { label: 'Incidentes',           description: 'Registre y dé seguimiento a incidentes de seguridad o cumplimiento. Cada entrada crea un registro de cumplimiento con marca de tiempo.' },
+
+  // Registros y Activos
+  'documents':        { label: 'Documentos',           description: 'Certificados de cumplimiento, informes de inspección y documentación de permisos para todas las ubicaciones.' },
+  'equipment':        { label: 'Equipos',              description: 'Registro de activos para todo el equipo de cocina con historial de servicio y fechas de próximo mantenimiento.' },
+  'haccp':            { label: 'HACCP',                description: 'HACCP — planes de seguridad alimentaria y registros de monitoreo de puntos críticos de control.' },
+  'vendors':          { label: 'Proveedores',          description: 'Proveedores de servicio asignados a sus ubicaciones — limpieza de campanas, gestión de grasa, supresión de incendios y más.' },
+  'photos':           { label: 'Fotos',                description: 'Evidencia fotográfica para inspecciones, incidentes y documentación de cumplimiento.' },
+  'training':         { label: 'Capacitación',         description: 'Cursos de capacitación del personal, certificaciones y seguimiento de educación en cumplimiento.' },
+
+  // Cumplimiento e Información
+  'compliance':       { label: 'Resumen de Cumplimiento', description: 'Desglose de puntuación verificado por jurisdicción para seguridad alimentaria y contra incendios en todas las ubicaciones.' },
+  'self-inspection':  { label: 'Auto-Inspección',      description: 'Realice una auto-inspección usando los mismos criterios que aplica su departamento de salud o AHJ de incendios.' },
+  'inspector':        { label: 'Vista del Inspector',   description: 'Vea su ubicación a través de los ojos de un inspector — la misma vista que usan durante los recorridos.' },
+  'ai-copilot':       { label: 'Copiloto IA',          description: 'Asistente de cumplimiento impulsado por IA para responder preguntas y generar planes de acción.' },
+  'regulatory':       { label: 'Actualizaciones Regulatorias', description: 'Seguimiento de próximas ventanas de inspección, renovaciones de permisos y cambios regulatorios por jurisdicción.' },
+  'reporting':        { label: 'Informes',             description: 'Exporte resúmenes de cumplimiento, historial de inspecciones y paquetes de documentación para auditorías.' },
+  'alerts':           { label: 'Alertas',              description: 'Alertas activas de cumplimiento y notificaciones que requieren atención en sus ubicaciones.' },
+
+  // Empresa
+  'locations':        { label: 'Ubicaciones',          description: 'Agregue, edite o configure ubicaciones incluyendo mapeo de jurisdicción y metodología de puntuación.' },
+  'benchmarks':       { label: 'Comparativas',         description: 'Compare el rendimiento de cumplimiento entre ubicaciones, regiones o períodos de tiempo.' },
+  'risk-score':       { label: 'Puntuación de Riesgo', description: 'Evaluación de riesgo de seguros basada en postura de cumplimiento, historial de incidentes y estado de equipos.' },
+  'leaderboard':      { label: 'Clasificación',        description: 'Rankings de ubicaciones y equipos por rendimiento de cumplimiento y finalización de tareas diarias.' },
+  'marketplace':      { label: 'Mercado',              description: 'Explore y conéctese con proveedores de servicios de cumplimiento verificados en su área.' },
+
+  // Administración
+  'team':             { label: 'Equipo',               description: 'Gestione roles del personal, niveles de acceso y asignaciones de ubicación.' },
+  'system-admin':     { label: 'Admin del Sistema',    description: 'Administración de la plataforma, incorporación de clientes y configuración del sistema.' },
+  'settings':         { label: 'Configuración',        description: 'Preferencias de cuenta, configuración de notificaciones y configuración de la plataforma.' },
+  'help':             { label: 'Ayuda y Soporte',      description: 'Documentación, tutoriales y contacto de soporte para asistencia.' },
+  'usage-analytics':  { label: 'Analítica de Uso',     description: 'Métricas de uso de la plataforma, tasas de adopción y analítica de participación.' },
 };

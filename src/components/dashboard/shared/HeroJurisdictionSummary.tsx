@@ -8,6 +8,7 @@
  */
 
 import { UtensilsCrossed, Flame } from 'lucide-react';
+import { useTranslation } from '../../../contexts/LanguageContext';
 import { useTooltip } from '../../../hooks/useTooltip';
 import { SectionTooltip } from '../../ui/SectionTooltip';
 import { FireStatusBars } from '../../shared/FireStatusBars';
@@ -25,13 +26,14 @@ interface HeroJurisdictionSummaryProps {
 }
 
 export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, userRole }: HeroJurisdictionSummaryProps) {
+  const { t } = useTranslation();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
       {/* Food Safety */}
       <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
         <div className="flex items-center gap-2 mb-3">
           <UtensilsCrossed size={16} style={{ color: '#e2e8f0' }} />
-          <span className="text-sm font-semibold text-white">Food Safety</span>
+          <span className="text-sm font-semibold text-white">{t('cards.foodSafety')}</span>
           <SectionTooltip content={useTooltip('overallScore', userRole)} />
           <span className="text-[10px] text-slate-200 ml-auto">
             {Object.keys(jurisdictions).length > 0 ? `${new Set(Object.values(jurisdictions).map(j => j.county)).size} County Health Depts` : ''}
@@ -46,7 +48,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
             const status = score?.foodSafety?.status || 'unknown';
             const isPassing = status === 'passing';
             const isFailing = status === 'failing';
-            const statusLabel = isPassing ? 'Compliant' : isFailing ? 'Action Required' : 'At Risk';
+            const statusLabel = isPassing ? t('status.compliant') : isFailing ? t('status.actionRequired') : t('status.atRisk');
             return (
               <button
                 key={loc.id}
@@ -86,7 +88,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
       <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: '#e2e8f0' }} />
-          <span className="text-sm font-semibold text-white">Fire Safety</span>
+          <span className="text-sm font-semibold text-white">{t('cards.fireSafety')}</span>
           <SectionTooltip content={useTooltip('fireSafety', userRole)} />
           <span className="text-[10px] text-slate-200 ml-auto">NFPA 96 (2024)</span>
         </div>
@@ -107,7 +109,7 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-white font-medium">{loc.name}</span>
                   <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPassing ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'}`}>
-                    {isPassing ? 'Pass' : 'Fail'}
+                    {isPassing ? t('status.pass') : t('status.fail')}
                   </span>
                 </div>
                 {override && (

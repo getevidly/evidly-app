@@ -6,6 +6,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useTranslation } from '../contexts/LanguageContext';
 
 import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
 
@@ -89,6 +90,7 @@ function getScoreColor(score: number): string {
 }
 
 export function Reports() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
@@ -100,12 +102,12 @@ export function Reports() {
   if (!['executive', 'owner_operator'].includes(userRole)) {
     return (
       <div className="p-6">
-        <Breadcrumb items={[{ label: 'Reporting' }]} />
+        <Breadcrumb items={[{ label: t('pages.reports.reporting') }]} />
         <div className="mt-8 flex flex-col items-center justify-center py-12">
           <ShieldX className="h-16 w-16 text-gray-400 mb-4" />
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{t('pages.reports.accessRestricted')}</h2>
           <p className="text-gray-600 text-center max-w-md">
-            You don't have access to this page. Contact your organization admin.
+            {t('pages.reports.accessRestrictedDescription')}
           </p>
         </div>
       </div>
@@ -451,12 +453,12 @@ export function Reports() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reporting' }]} />
+      <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.reports.reporting') }]} />
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Reporting</h1>
-            <p className="text-sm text-gray-600 mt-1">Comprehensive insights and analytics</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.reports.reporting')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('pages.reports.subtitle')}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             <select
@@ -464,7 +466,7 @@ export function Reports() {
               onChange={(e) => setSelectedLocation(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg"
             >
-              {showAllLocs() && <option value="all">All Locations</option>}
+              {showAllLocs() && <option value="all">{t('common.allLocations')}</option>}
               {reportAccessibleLocs.map(loc => (
                 <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
               ))}
@@ -474,43 +476,43 @@ export function Reports() {
               onChange={(e) => setDateRange(e.target.value)}
               className="px-4 py-2 border border-gray-300 rounded-lg"
             >
-              <option value="this-week">This Week</option>
-              <option value="this-month">This Month</option>
-              <option value="this-quarter">This Quarter</option>
-              <option value="custom">Custom Range</option>
+              <option value="this-week">{t('pages.reports.thisWeek')}</option>
+              <option value="this-month">{t('pages.reports.thisMonth')}</option>
+              <option value="this-quarter">{t('pages.reports.thisQuarter')}</option>
+              <option value="custom">{t('pages.reports.customRange')}</option>
             </select>
             <button
               onClick={() => navigate('/health-dept-report')}
               className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#d4af37] text-white rounded-lg hover:bg-[#b8962f] transition-colors duration-150"
             >
               <ClipboardCheck className="h-5 w-5" />
-              <span className="hidden sm:inline">Health Dept Report</span>
-              <span className="sm:hidden">Health Dept</span>
+              <span className="hidden sm:inline">{t('pages.reports.healthDeptReport')}</span>
+              <span className="sm:hidden">{t('pages.reports.healthDeptShort')}</span>
             </button>
             <button
               onClick={handlePrint}
               className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
             >
               <Printer className="h-5 w-5" />
-              Print
+              {t('actions.print')}
             </button>
             <button
               onClick={handleExportCSV}
               className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150"
             >
               <Download className="h-5 w-5" />
-              <span className="hidden sm:inline">Export CSV</span>
-              <span className="sm:hidden">CSV</span>
+              <span className="hidden sm:inline">{t('pages.reports.exportCsv')}</span>
+              <span className="sm:hidden">{t('pages.reports.csvShort')}</span>
             </button>
           </div>
         </div>
 
         <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           {[
-            { id: 'executive', label: 'Executive Summary' },
-            { id: 'operational', label: 'Food Safety' },
-            { id: 'equipment', label: 'Fire Safety' },
-            { id: 'team', label: 'Team' },
+            { id: 'executive', label: t('pages.reports.executiveSummary') },
+            { id: 'operational', label: t('pages.reports.foodSafety') },
+            { id: 'equipment', label: t('pages.reports.fireSafety') },
+            { id: 'team', label: t('pages.reports.team') },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -530,7 +532,7 @@ export function Reports() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Overall Compliance Score{selectedLocName ? ` — ${selectedLocName}` : ''}
+                {t('pages.reports.overallComplianceScore')}{selectedLocName ? ` — ${selectedLocName}` : ''}
               </h3>
               <div className="flex items-center gap-4 mb-4 flex-wrap">
                 {(() => {
@@ -546,7 +548,7 @@ export function Reports() {
                 })()}
                 <div className="flex items-center text-green-600">
                   <TrendingUp className="h-5 w-5 mr-1" />
-                  <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% from last month</span>
+                  <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% {t('pages.reports.fromLastMonth')}</span>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -562,14 +564,14 @@ export function Reports() {
                       <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Activity className="h-3.5 w-3.5" style={{ color: opColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</span>
+                          <span className="text-sm text-gray-500 font-medium">{t('pages.reports.foodSafety')} ({Math.round(getWeights().foodSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: opColor }}>{opScore}</p>
                       </div>
                       <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
                         <div className="flex items-center justify-center gap-1.5 mb-1">
                           <Thermometer className="h-3.5 w-3.5" style={{ color: eqColor }} />
-                          <span className="text-sm text-gray-500 font-medium">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</span>
+                          <span className="text-sm text-gray-500 font-medium">{t('pages.reports.fireSafety')} ({Math.round(getWeights().fireSafety * 100)}%)</span>
                         </div>
                         <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
                       </div>
@@ -590,17 +592,17 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Location Comparison</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.locationComparison')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Overall</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Food Safety ({Math.round(getWeights().foodSafety * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Fire Safety ({Math.round(getWeights().fireSafety * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.location')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.overall')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.foodSafety')} ({Math.round(getWeights().foodSafety * 100)}%)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.fireSafety')} ({Math.round(getWeights().fireSafety * 100)}%)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -621,7 +623,7 @@ export function Reports() {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Top 5 Issues Requiring Attention</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reports.topIssues')}</h3>
               <div className="space-y-3">
                 {topIssues.map((issue, idx) => (
                   <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -640,7 +642,7 @@ export function Reports() {
         {activeTab === 'operational' && (
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Temperature Compliance Rate</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reports.temperatureComplianceRate')}</h3>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={tempComplianceData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -654,16 +656,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Checklist Completion Rates</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.checklistCompletionRates')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Template</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '160px' }}>Rate</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Completed</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Missed</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.template')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '160px' }}>{t('pages.reports.rate')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.completed')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.missed')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -684,16 +686,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Missed Tasks Summary</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.missedTasksSummary')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Responsible</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.date')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.task')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.location')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.responsible')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -704,7 +706,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{task.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell">
                           {task.responsible === 'Unassigned'
-                            ? <span style={{ color: '#ef4444', fontWeight: '600' }}>Unassigned</span>
+                            ? <span style={{ color: '#ef4444', fontWeight: '600' }}>{t('pages.reports.unassigned')}</span>
                             : <span className="text-gray-600">{task.responsible}</span>
                           }
                         </td>
@@ -717,17 +719,17 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Corrective Actions</h3>
-                <p className="text-sm text-gray-600">Average resolution time: 4.5 days</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.correctiveActions')}</h3>
+                <p className="text-sm text-gray-600">{t('pages.reports.avgResolutionTime')}</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Days Open</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.action')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.status')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.daysOpen')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.location')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -737,7 +739,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <StatusBadge status={action.status} />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">{action.daysOpen || 'Closed'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hidden sm:table-cell">{action.daysOpen || t('pages.reports.closed')}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">{action.location}</td>
                       </tr>
                     ))}
@@ -748,16 +750,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">HACCP Monitoring Compliance</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.haccpMonitoringCompliance')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monitoring</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Records</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Corrective Actions</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.location')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.monitoring')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.records')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.correctiveActions')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -780,17 +782,17 @@ export function Reports() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Vendor Service History</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.vendorServiceHistory')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendor</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Service</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.vendor')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.service')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.date')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.result')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.location')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -812,16 +814,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Equipment Certification Status</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.equipmentCertificationStatus')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expires</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.equipment')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.location')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.status')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.expires')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -842,16 +844,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Maintenance Schedule Adherence</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.maintenanceScheduleAdherence')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Last Service</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adherence</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.equipment')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.dueDate')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.lastServiceDate')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.adherence')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -872,16 +874,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Cost Tracking: Vendor Spend by Category</h3>
-                <p className="text-sm text-gray-600">Total spend this month: $2,200</p>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.costTracking')}</h3>
+                <p className="text-sm text-gray-600">{t('pages.reports.totalSpend')}</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Services</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.category')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.amount')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.services')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -903,17 +905,17 @@ export function Reports() {
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Staff Certification Status</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.staffCertificationStatus')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Location</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Expires</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Left</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.name')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.location')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.status')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.expires')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.daysLeft')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -930,7 +932,7 @@ export function Reports() {
                             fontWeight: '600',
                             color: staff.daysLeft < 0 ? '#ef4444' : staff.daysLeft <= 30 ? '#d4af37' : '#22c55e'
                           }}>
-                            {staff.daysLeft < 0 ? `${Math.abs(staff.daysLeft)} days ago` : `${staff.daysLeft} days`}
+                            {staff.daysLeft < 0 ? t('pages.reports.daysAgo').replace('{{count}}', String(Math.abs(staff.daysLeft))) : t('pages.reports.nDays').replace('{{count}}', String(staff.daysLeft))}
                           </span>
                         </td>
                       </tr>
@@ -942,16 +944,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Task Completion by Employee</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.taskCompletionByEmployee')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Completed</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Missed</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '140px' }}>Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.employee')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.completed')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.missed')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '140px' }}>{t('pages.reports.rate')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -972,16 +974,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Training Records Summary</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.trainingRecordsSummary')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Training</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Completed</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Pending</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '140px' }}>Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.training')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.completed')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.pending')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={{ minWidth: '140px' }}>{t('pages.reports.rate')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -1002,16 +1004,16 @@ export function Reports() {
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="p-4 sm:p-6 pb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Login Activity</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.loginActivity')}</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Total Logins</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg/Wk</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.employee')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.lastLogin')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.totalLogins')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.avgPerWeek')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">

@@ -7,6 +7,7 @@ import {
   Radio,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useTranslation } from '../../contexts/LanguageContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { useDemo } from '../../contexts/DemoContext';
@@ -133,6 +134,7 @@ export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
   const { companyName } = useDemo();
+  const { t } = useTranslation();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const hasMultipleLocations = accessibleLocations.length > 1;
@@ -177,7 +179,7 @@ export default function KitchenManagerDashboard() {
       {/* Food Safety — chef only */}
       {userRole === 'chef' && (
         <div>
-          <SectionHeader>Food Safety<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+          <SectionHeader>{t('cards.foodSafety')}<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
           <div className="space-y-2">
             {CHEF_FOOD_SAFETY_LOCATIONS.map(loc => {
               const statusColor = loc.status === 'Compliant' ? '#16a34a'
@@ -200,12 +202,12 @@ export default function KitchenManagerDashboard() {
                       className="text-[10px] font-bold px-1.5 py-0.5 rounded"
                       style={{ backgroundColor: statusBg, color: statusColor }}
                     >
-                      {loc.status}
+                      {loc.status === 'Compliant' ? t('status.compliant') : loc.status === 'Action Required' ? t('status.actionRequired') : t('status.satisfactory')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-500">{loc.jurisdiction}</span>
-                    <span className="text-xs text-gray-500">{loc.detail}</span>
+                    <span className="text-xs text-gray-500">{loc.detail === 'No Open Majors' ? t('status.noOpenMajors') : loc.detail === 'Satisfactory' ? t('status.satisfactory') : loc.detail}</span>
                   </div>
                 </button>
               );
@@ -245,7 +247,7 @@ export default function KitchenManagerDashboard() {
 
       {/* Today's Progress */}
       <Card>
-        <SectionHeader>Today's Progress<SectionTooltip content={useTooltip('todaysProgress', userRole)} /></SectionHeader>
+        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={useTooltip('todaysProgress', userRole)} /></SectionHeader>
         <div className="space-y-2">
           <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
             <div
@@ -258,14 +260,14 @@ export default function KitchenManagerDashboard() {
             />
           </div>
           <p className="text-sm font-medium" style={{ color: getProgressColor(DEMO_PROGRESS) }}>
-            {DEMO_PROGRESS}% complete
+            {DEMO_PROGRESS}% {t('status.complete').toLowerCase()}
           </p>
         </div>
       </Card>
 
       {/* Checklists — HERO SECTION */}
       <div>
-        <SectionHeader>Checklists<SectionTooltip content={useTooltip('checklistCard', userRole)} /></SectionHeader>
+        <SectionHeader>{t('cards.checklists')}<SectionTooltip content={useTooltip('checklistCard', userRole)} /></SectionHeader>
         <div className="space-y-3">
           {DEMO_CHECKLISTS.map((cl) => (
             <button
@@ -285,9 +287,9 @@ export default function KitchenManagerDashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900">{cl.name}</p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    {cl.status === 'done' && `Done \u00B7 ${cl.assignee} \u00B7 ${cl.completedAt}`}
+                    {cl.status === 'done' && `${t('status.complete')} \u00B7 ${cl.assignee} \u00B7 ${cl.completedAt}`}
                     {cl.status === 'in_progress' && `${cl.completed} of ${cl.items} items \u00B7 ${cl.assignee}`}
-                    {cl.status === 'not_started' && 'Not started yet'}
+                    {cl.status === 'not_started' && t('status.notStartedYet')}
                   </p>
                 </div>
                 {cl.status === 'in_progress' && (
@@ -328,53 +330,53 @@ export default function KitchenManagerDashboard() {
           tabs={[
             {
               id: 'temperatures',
-              label: 'Temperatures',
+              label: t('cards.temperatures'),
               content: (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
-                        <th className="text-left pb-2 font-medium">Equipment</th>
+                        <th className="text-left pb-2 font-medium">{t('cards.equipment')}</th>
                         <th className="text-right pb-2 font-medium">Temp</th>
-                        <th className="text-center pb-2 font-medium">Status</th>
+                        <th className="text-center pb-2 font-medium">{t('common.status')}</th>
                         <th className="text-center pb-2 font-medium">Source</th>
                         <th className="text-right pb-2 font-medium">Last</th>
                         <th className="pb-2"></th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                      {DEMO_TEMPERATURES.map((t) => (
-                        <tr key={t.id} onClick={() => navigate('/temp-logs')} className="cursor-pointer hover:bg-gray-50 transition-colors">
-                          <td className="py-2.5 text-gray-900 font-medium">{t.name}</td>
+                      {DEMO_TEMPERATURES.map((tmp) => (
+                        <tr key={tmp.id} onClick={() => navigate('/temp-logs')} className="cursor-pointer hover:bg-gray-50 transition-colors">
+                          <td className="py-2.5 text-gray-900 font-medium">{tmp.name}</td>
                           <td className="py-2.5 text-right tabular-nums">
-                            {t.temp !== null ? (
-                              <span style={{ color: t.status === 'alert' ? '#dc2626' : '#374151' }}>
-                                {t.temp}{t.unit}
+                            {tmp.temp !== null ? (
+                              <span style={{ color: tmp.status === 'alert' ? '#dc2626' : '#374151' }}>
+                                {tmp.temp}{tmp.unit}
                               </span>
                             ) : (
                               <span className="text-gray-300">&mdash;</span>
                             )}
                           </td>
                           <td className="py-2.5 text-center">
-                            <TempStatusDot status={t.status} />
+                            <TempStatusDot status={tmp.status} />
                           </td>
                           <td className="py-2.5 text-center">
-                            {t.source === 'iot' ? (
+                            {tmp.source === 'iot' ? (
                               <Radio size={14} className="inline text-blue-500" />
                             ) : (
-                              <span className="text-xs text-gray-400">Manual</span>
+                              <span className="text-xs text-gray-400">{t('status.manual')}</span>
                             )}
                           </td>
-                          <td className="py-2.5 text-right text-gray-500 text-xs">{t.lastReading}</td>
+                          <td className="py-2.5 text-right text-gray-500 text-xs">{tmp.lastReading}</td>
                           <td className="py-2.5 text-right">
-                            {t.status === 'needs_log' && (
+                            {tmp.status === 'needs_log' && (
                               <button
                                 type="button"
                                 onClick={() => navigate('/temp-logs')}
                                 className="text-xs font-medium px-2 py-1 rounded hover:bg-gray-50 transition-colors"
                                 style={{ color: '#1e4d6b' }}
                               >
-                                Log Temp &rarr;
+                                {t('actions.logTemp')} &rarr;
                               </button>
                             )}
                           </td>
@@ -387,7 +389,7 @@ export default function KitchenManagerDashboard() {
             },
             {
               id: 'team-activity',
-              label: 'Team Activity',
+              label: t('cards.teamActivity'),
               content: (
                 <div className="space-y-3">
                   {DEMO_TEAM.map((member) => (

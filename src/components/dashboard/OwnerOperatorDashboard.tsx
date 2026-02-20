@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
+import { useTranslation } from '../../contexts/LanguageContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { DEMO_ORG } from '../../data/demoData';
@@ -62,6 +63,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
   onToggleExpand: () => void;
 }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
   const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
   const foodGradeDisplay = jieScore?.foodSafety?.gradeDisplay ?? 'Not assessed';
@@ -141,10 +143,10 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
             <div className="flex items-center gap-2">
               <p className="text-[13px] font-semibold" style={{ color: BODY_TEXT }}>{fireGradeDisplay}</p>
               {fireStatus === 'passing' && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>Pass</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>{t('status.pass')}</span>
               )}
               {fireStatus === 'failing' && (
-                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>Fail</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>{t('status.fail')}</span>
               )}
             </div>
             <p className="text-[11px] text-gray-500 mt-0.5">{fireAHJName}</p>
@@ -158,7 +160,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
           {/* Food Safety Agency Contact */}
           {foodAgencyName && (
             <div className="p-3 rounded-lg" style={{ backgroundColor: '#f8fafb' }}>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Food Safety Authority</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">{t('cards.foodSafetyAuthority')}</p>
               <p className="text-[12px] font-medium text-gray-700">{foodAgencyName}</p>
               {foodAgencyPhone && (
                 <a href={`tel:${foodAgencyPhone}`} className="text-[11px] block mt-0.5" style={{ color: '#1e4d6b' }}>
@@ -167,7 +169,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
               )}
               {foodAgencyWebsite && (
                 <a href={foodAgencyWebsite} target="_blank" rel="noopener noreferrer" className="text-[11px] block mt-0.5 hover:underline" style={{ color: '#1e4d6b' }}>
-                  Agency Website &rarr;
+                  {t('cards.agencyWebsite')} &rarr;
                 </a>
               )}
             </div>
@@ -175,7 +177,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
 
           {/* Fire Safety Agency Contact + Equipment Status */}
           <div className="p-3 rounded-lg" style={{ backgroundColor: '#f8fafb' }}>
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Fire Safety Authority</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1.5">{t('cards.fireSafetyAuthority')}</p>
             <p className="text-[12px] font-medium text-gray-700">{fireAHJName}</p>
             {fireAgencyPhone && (
               <a href={`tel:${fireAgencyPhone}`} className="text-[11px] block mt-0.5" style={{ color: '#1e4d6b' }}>
@@ -184,7 +186,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
             )}
             {fireAgencyWebsite && (
               <a href={fireAgencyWebsite} target="_blank" rel="noopener noreferrer" className="text-[11px] block mt-0.5 hover:underline" style={{ color: '#1e4d6b' }}>
-                Agency Website &rarr;
+                {t('cards.agencyWebsite')} &rarr;
               </a>
             )}
             {fireDetails?.permitStatus && (
@@ -209,7 +211,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
         className="w-full text-center text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
         style={{ color: NAVY }}
       >
-        {expanded ? 'Hide Details \u25B2' : 'View Details \u25BC'}
+        {expanded ? `${t('actions.hideDetails')} \u25B2` : `${t('actions.viewDetails')} \u25BC`}
       </button>
     </div>
   );
@@ -220,12 +222,13 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
 // ================================================================
 
 function WidgetTasks({ navigate, tasks }: { navigate: (path: string) => void; tasks: TaskItem[] }) {
-  const done = tasks.filter(t => t.status === 'done').length;
+  const { t } = useTranslation();
+  const done = tasks.filter(tk => tk.status === 'done').length;
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Today's Tasks</h4>
-        <span className="text-xs font-medium" style={{ color: NAVY }}>{done}/{tasks.length} complete</span>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.todaysTasks')}</h4>
+        <span className="text-xs font-medium" style={{ color: NAVY }}>{done}/{tasks.length} {t('status.complete').toLowerCase()}</span>
       </div>
       <div className="space-y-1.5">
         {tasks.map(task => {
@@ -266,10 +269,11 @@ function WidgetTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
 // ================================================================
 
 function WidgetDeadlines({ navigate, deadlines }: { navigate: (path: string) => void; deadlines: DeadlineItem[] }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Upcoming Deadlines</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.upcomingDeadlines')}</h4>
         <CalendarDays size={14} className="text-gray-400" />
       </div>
       <div className="space-y-1.5">
@@ -293,7 +297,7 @@ function WidgetDeadlines({ navigate, deadlines }: { navigate: (path: string) => 
                 <p className={`text-[10px] font-semibold ${
                   dl.severity === 'critical' ? 'text-red-600' : dl.severity === 'warning' ? 'text-amber-600' : 'text-gray-400'
                 }`}>
-                  {dl.daysLeft}d left
+                  {dl.daysLeft}{t('time.daysLeft')}
                 </p>
               </div>
             </button>
@@ -309,10 +313,11 @@ function WidgetDeadlines({ navigate, deadlines }: { navigate: (path: string) => 
 // ================================================================
 
 function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => void; impact: ImpactItem[] }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Score Impact</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.scoreImpact')}</h4>
         <p className="text-[11px] text-gray-400 mt-0.5">Actions ranked by compliance impact</p>
       </div>
       <div className="space-y-2">
@@ -342,7 +347,7 @@ function WidgetScoreImpact({ navigate, impact }: { navigate: (path: string) => v
                 className="text-xs font-medium shrink-0"
                 style={{ color: NAVY }}
               >
-                Do It &rarr;
+                {t('actions.doIt')} &rarr;
               </span>
             </button>
           );
@@ -377,11 +382,12 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
   jieScores: Record<string, LocationScore>;
   jurisdictions: Record<string, LocationJurisdiction>;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Fire Safety</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.fireSafety')}</h4>
         <Flame size={14} className="text-orange-400" />
       </div>
 
@@ -409,16 +415,16 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
                   <p className="text-[10px] text-gray-500 truncate">{fireAHJ}</p>
                 </div>
                 {fireStatus === 'passing' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>Pass</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>{t('status.pass')}</span>
                 )}
                 {fireStatus === 'failing' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>Fail</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>{t('status.fail')}</span>
                 )}
                 {fireStatus === 'at_risk' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>At Risk</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>{t('status.atRisk')}</span>
                 )}
                 {fireStatus === 'unknown' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>Unknown</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>{t('status.unknown')}</span>
                 )}
               </div>
               {/* Equipment status bars */}
@@ -441,7 +447,7 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
       {/* Alerts */}
       {FIRE_EQUIPMENT_ALERTS.length > 0 && (
         <div className="space-y-1.5">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Equipment Alerts</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">{t('cards.equipmentAlerts')}</p>
           {FIRE_EQUIPMENT_ALERTS.map(a => {
             const isCritical = a.severity === 'critical';
             return (
@@ -473,7 +479,7 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
         className="mt-3 w-full flex items-center justify-center gap-1 py-2 rounded-lg text-xs font-semibold transition-colors hover:opacity-90"
         style={{ backgroundColor: '#fff7ed', color: '#ea580c', border: '1px solid #fed7aa' }}
       >
-        <Flame size={12} /> View Fire Safety
+        <Flame size={12} /> {t('cards.viewFireSafety')}
       </button>
     </div>
   );
@@ -484,10 +490,11 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
 // ================================================================
 
 function WidgetRecentActivity({ navigate, activity }: { navigate: (path: string) => void; activity: ActivityItem[] }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-xl p-5" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Recent Activity</h4>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.recentActivity')}</h4>
         <Activity size={14} className="text-gray-400" />
       </div>
       <div className="space-y-1.5">
@@ -523,11 +530,12 @@ function WidgetRecentActivity({ navigate, activity }: { navigate: (path: string)
 // ================================================================
 
 function QuickActionsBar({ navigate }: { navigate: (path: string) => void }) {
+  const { t } = useTranslation();
   const actions = [
-    { icon: <Thermometer size={16} />, label: 'Log Temp', route: '/temp-logs' },
-    { icon: <ClipboardList size={16} />, label: 'Checklist', route: '/checklists' },
-    { icon: <FileUp size={16} />, label: 'Upload Doc', route: '/documents' },
-    { icon: <Bot size={16} />, label: 'AI Advisor', route: '/compliance-copilot' },
+    { icon: <Thermometer size={16} />, label: t('actions.logTemp'), route: '/temp-logs' },
+    { icon: <ClipboardList size={16} />, label: t('cards.checklists'), route: '/checklists' },
+    { icon: <FileUp size={16} />, label: t('actions.uploadDoc'), route: '/documents' },
+    { icon: <Bot size={16} />, label: t('actions.aiAdvisor'), route: '/compliance-copilot' },
   ];
 
   return (
@@ -571,6 +579,7 @@ function QuickActionsBar({ navigate }: { navigate: (path: string) => void }) {
 // ================================================================
 
 function EvidlyFooter() {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-center gap-2 py-6 mt-6" style={{ borderTop: '1px solid #eef1f5' }}>
       <span className="text-sm font-bold">
@@ -578,7 +587,7 @@ function EvidlyFooter() {
         <span style={{ color: NAVY }}>vid</span>
         <span style={{ color: GOLD }}>LY</span>
       </span>
-      <span className="text-xs text-gray-400">Compliance Simplified</span>
+      <span className="text-xs text-gray-400">{t('topBar.complianceSimplified')}</span>
     </div>
   );
 }
@@ -644,6 +653,7 @@ function DashboardSkeleton() {
 // ================================================================
 
 function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const { t } = useTranslation();
   return (
     <div
       className="flex items-center gap-3 px-4 py-3 rounded-lg"
@@ -660,7 +670,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
         className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0"
         style={{ backgroundColor: '#dc2626' }}
       >
-        Retry
+        {t('actions.retry')}
       </button>
     </div>
   );
@@ -672,6 +682,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
@@ -781,7 +792,7 @@ export default function OwnerOperatorDashboard() {
 
         {/* Alert Banners */}
         {visibleAlerts.length > 0 && (
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
         )}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
@@ -802,7 +813,7 @@ export default function OwnerOperatorDashboard() {
         {isMultiLocation && (
           <div style={stagger(3)}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-700 flex items-center">Locations ({locs.length})<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
+              <h3 className="text-sm font-semibold text-gray-700 flex items-center">{t('cards.locations')} ({locs.length})<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {locs.map(loc => {

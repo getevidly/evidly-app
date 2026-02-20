@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { CheckCircle2 } from 'lucide-react';
+import { useTranslation } from '../contexts/LanguageContext';
 import { needsAttentionItems } from '../data/demoData';
 
 interface Priority {
@@ -13,11 +14,11 @@ interface WelcomeBackProps {
   isDemoMode: boolean;
 }
 
-function getGreeting(): string {
+function getGreetingKey(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+  if (hour < 12) return 'hero.goodMorning';
+  if (hour < 17) return 'hero.goodAfternoon';
+  return 'hero.goodEvening';
 }
 
 function formatLastLogin(lastLoginAt: string | null, isDemoMode: boolean): string {
@@ -63,6 +64,7 @@ function getDemoPriorities(): Priority[] {
 }
 
 export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackProps) {
+  const { t } = useTranslation();
   const firstName = userName?.split(' ')[0] || 'there';
 
   const priorities = useMemo(() => {
@@ -82,7 +84,7 @@ export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackPr
     >
       <div className="flex items-baseline gap-2 flex-wrap">
         <span className="text-lg sm:text-xl font-semibold text-[#1e4d6b]">
-          {getGreeting()}, {firstName}!
+          {t(getGreetingKey())}, {firstName}!
         </span>
       </div>
 
@@ -93,7 +95,7 @@ export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackPr
       {priorities.length > 0 ? (
         <div className="mt-3">
           <p className="text-[13px] font-semibold text-gray-600 mb-1.5">
-            Today's priorities:
+            {t('hero.todaysPriorities')}
           </p>
           <div className="space-y-1">
             {priorities.map((p, i) => (
@@ -106,7 +108,7 @@ export function WelcomeBack({ userName, lastLoginAt, isDemoMode }: WelcomeBackPr
       ) : (
         <div className="flex items-center gap-2 mt-3 text-[13px] text-[#166534]">
           <CheckCircle2 className="w-4 h-4" />
-          <span>All caught up — no urgent items today</span>
+          <span>{t('hero.allCaughtUp')}</span>
         </div>
       )}
     </div>

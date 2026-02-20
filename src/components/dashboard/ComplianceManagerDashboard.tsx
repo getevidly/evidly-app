@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useRole } from '../../contexts/RoleContext';
+import { useTranslation } from '../../contexts/LanguageContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { DEMO_ORG, LOCATIONS_WITH_SCORES } from '../../data/demoData';
@@ -143,6 +144,7 @@ export default function ComplianceManagerDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const { t } = useTranslation();
 
   // JIE: Dual-authority jurisdiction data per location
   const jieLocIds = useMemo(
@@ -179,7 +181,7 @@ export default function ComplianceManagerDashboard() {
   const bottomTabs: TabDef[] = useMemo(() => [
     {
       id: 'inspections',
-      label: 'All Violations',
+      label: t('cards.allViolations'),
       content: (
         <div
           className="bg-white rounded-xl p-5"
@@ -187,7 +189,7 @@ export default function ComplianceManagerDashboard() {
         >
           <div className="flex items-center gap-2 mb-4">
             <CalendarDays size={16} style={{ color: NAVY }} />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Upcoming Inspections</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.upcomingInspections')}</h3>
           </div>
           <div className="space-y-2">
             {DEMO_INSPECTIONS.map((insp, idx) => (
@@ -211,12 +213,12 @@ export default function ComplianceManagerDashboard() {
                   {insp.status === 'urgent' ? (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded mt-1"
                       style={{ backgroundColor: '#dc2626', color: '#fff' }}>
-                      <AlertCircle size={10} /> Urgent
+                      <AlertCircle size={10} /> {t('status.urgent')}
                     </span>
                   ) : (
                     <span className="text-[10px] font-medium px-1.5 py-0.5 rounded mt-1 inline-block"
                       style={{ backgroundColor: '#eff6ff', color: '#2563eb' }}>
-                      Scheduled
+                      {t('status.scheduled')}
                     </span>
                   )}
                 </div>
@@ -228,7 +230,7 @@ export default function ComplianceManagerDashboard() {
     },
     {
       id: 'documents',
-      label: 'Documents',
+      label: t('cards.documents'),
       content: (
         <div
           className="bg-white rounded-xl p-5"
@@ -236,7 +238,7 @@ export default function ComplianceManagerDashboard() {
         >
           <div className="flex items-center gap-2 mb-4">
             <BookOpen size={16} style={{ color: NAVY }} />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Document Compliance</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.documentCompliance')}</h3>
           </div>
           <div className="space-y-2">
             {[
@@ -266,7 +268,7 @@ export default function ComplianceManagerDashboard() {
                     color: doc.status === 'current' ? '#16a34a' : '#d97706',
                   }}
                 >
-                  {doc.status === 'current' ? 'Current' : 'Expiring Soon'}
+                  {doc.status === 'current' ? t('status.current') : t('status.expiringSoon')}
                 </span>
               </button>
             ))}
@@ -276,7 +278,7 @@ export default function ComplianceManagerDashboard() {
     },
     {
       id: 'regulatory',
-      label: 'Regulatory',
+      label: t('cards.regulatory'),
       content: (
         <div
           className="bg-white rounded-xl p-5"
@@ -285,7 +287,7 @@ export default function ComplianceManagerDashboard() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <BookOpen size={16} style={{ color: NAVY }} />
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Regulatory Updates</h3>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.regulatoryUpdates')}</h3>
             </div>
             <button
               type="button"
@@ -293,7 +295,7 @@ export default function ComplianceManagerDashboard() {
               className="text-xs font-medium hover:underline"
               style={{ color: NAVY }}
             >
-              View All &rarr;
+              {t('cards.viewAll')} &rarr;
             </button>
           </div>
           <div className="space-y-2">
@@ -304,9 +306,9 @@ export default function ComplianceManagerDashboard() {
               const impactBg = reg.impact === 'high' ? '#fef2f2'
                 : reg.impact === 'medium' ? '#fef3c7'
                 : '#f3f4f6';
-              const impactLabel = reg.impact === 'high' ? 'High Impact'
-                : reg.impact === 'medium' ? 'Medium Impact'
-                : 'Low Impact';
+              const impactLabel = reg.impact === 'high' ? t('status.highImpact')
+                : reg.impact === 'medium' ? t('status.mediumImpact')
+                : t('status.lowImpact');
 
               return (
                 <button
@@ -338,7 +340,7 @@ export default function ComplianceManagerDashboard() {
     },
     {
       id: 'self-inspection',
-      label: 'Self-Inspection',
+      label: t('cards.selfInspection'),
       content: (
         <div
           className="bg-white rounded-xl p-5"
@@ -346,16 +348,16 @@ export default function ComplianceManagerDashboard() {
         >
           <div className="flex items-center gap-2 mb-4">
             <ClipboardCheck size={16} style={{ color: NAVY }} />
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">Self-Inspection Status</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">{t('cards.selfInspectionStatus')}</h3>
           </div>
           <div className="space-y-2">
             {DEMO_SELF_INSPECTIONS.map((si, idx) => {
               const selfStatusColor = si.status === 'current' ? '#16a34a'
                 : si.status === 'due_soon' ? '#d97706'
                 : '#dc2626';
-              const selfStatusLabel = si.status === 'current' ? 'Current'
-                : si.status === 'due_soon' ? 'Due Soon'
-                : 'Overdue';
+              const selfStatusLabel = si.status === 'current' ? t('status.current')
+                : si.status === 'due_soon' ? t('status.dueSoon')
+                : t('status.overdue');
               const selfStatusBg = si.status === 'current' ? '#dcfce7'
                 : si.status === 'due_soon' ? '#fef3c7'
                 : '#fef2f2';
@@ -389,7 +391,7 @@ export default function ComplianceManagerDashboard() {
                       className="text-[11px] font-semibold px-2.5 py-1.5 rounded-md"
                       style={{ backgroundColor: NAVY, color: '#fff' }}
                     >
-                      Start Inspection &rarr;
+                      {t('actions.startInspection')} &rarr;
                     </span>
                   </div>
                 </button>
@@ -399,7 +401,7 @@ export default function ComplianceManagerDashboard() {
         </div>
       ),
     },
-  ], [navigate]);
+  ], [navigate, t]);
 
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
@@ -436,7 +438,7 @@ export default function ComplianceManagerDashboard() {
         {/* Alert Banners */}
         <div style={stagger(2)}>
           {visibleAlerts.length > 0 && (
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">Alerts<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
           )}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
         </div>
@@ -458,7 +460,7 @@ export default function ComplianceManagerDashboard() {
         {/* 1. LOCATION COMPLIANCE OVERVIEW                              */}
         {/* ============================================================ */}
         <div style={stagger(4)}>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">Location Compliance Overview<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationComplianceOverview')}<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {locs.map(loc => {
               const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -514,16 +516,16 @@ export default function ComplianceManagerDashboard() {
                       <Flame size={14} style={{ color: '#ea580c', flexShrink: 0 }} />
                       <span className="text-[13px] font-semibold flex-1" style={{ color: BODY_TEXT }}>{fireAHJName}</span>
                       {fireStatus === 'passing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>Pass</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#dcfce7', color: '#16a34a' }}>{t('status.pass')}</span>
                       )}
                       {fireStatus === 'failing' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>Fail</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>{t('status.fail')}</span>
                       )}
                       {fireStatus === 'at_risk' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>At Risk</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>{t('status.atRisk')}</span>
                       )}
                       {fireStatus === 'unknown' && (
-                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>Unknown</span>
+                        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>{t('status.unknown')}</span>
                       )}
                     </div>
                     {/* FireStatusBars compact */}
@@ -547,7 +549,7 @@ export default function ComplianceManagerDashboard() {
                     className="mt-3 w-full flex items-center justify-center gap-1 text-xs font-medium py-2 rounded-lg hover:bg-gray-50 transition-colors"
                     style={{ color: NAVY }}
                   >
-                    Details {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    {t('actions.viewDetails')} {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
 
                   {/* Expanded section: agency contact info */}
@@ -558,7 +560,7 @@ export default function ComplianceManagerDashboard() {
                     >
                       {/* Food Safety Agency */}
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Food Safety Agency</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">{t('cards.foodSafetyAuthority')}</p>
                         <p className="text-[12px] font-medium" style={{ color: BODY_TEXT }}>{jur.foodSafety.agency_name}</p>
                         {jur.foodSafety.agency_phone && (
                           <a
@@ -577,14 +579,14 @@ export default function ComplianceManagerDashboard() {
                             className="flex items-center gap-1 text-[11px] mt-0.5 hover:underline"
                             style={{ color: NAVY }}
                           >
-                            <ExternalLink size={10} /> Agency Website
+                            <ExternalLink size={10} /> {t('cards.agencyWebsite')}
                           </a>
                         )}
                       </div>
 
                       {/* Fire Safety AHJ */}
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Fire Safety AHJ</p>
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">{t('cards.fireSafetyAHJ')}</p>
                         <p className="text-[12px] font-medium" style={{ color: BODY_TEXT }}>{jur.fireSafety.agency_name}</p>
                         {jur.fireSafety.agency_phone && (
                           <a
@@ -603,7 +605,7 @@ export default function ComplianceManagerDashboard() {
                             className="flex items-center gap-1 text-[11px] mt-0.5 hover:underline"
                             style={{ color: NAVY }}
                           >
-                            <ExternalLink size={10} /> AHJ Website
+                            <ExternalLink size={10} /> {t('cards.ahjWebsite')}
                           </a>
                         )}
                       </div>
@@ -639,7 +641,7 @@ export default function ComplianceManagerDashboard() {
         {/* FOOTER                                                       */}
         {/* ============================================================ */}
         <div className="flex items-center justify-center py-6 mt-4">
-          <span className="text-xs text-gray-400">Powered by </span>
+          <span className="text-xs text-gray-400">{t('topBar.complianceSimplified')} </span>
           <span className="text-xs font-bold ml-1">
             <span style={{ color: GOLD }}>E</span>
             <span style={{ color: NAVY }}>vid</span>
