@@ -16,6 +16,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { EmptyState } from '../components/EmptyState';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -1672,10 +1673,11 @@ export function IncidentLog() {
             );
           })}
           {filteredIncidents.length === 0 && (
-            <div className="text-center py-16">
-              <AlertTriangle className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No incidents match your filters.</p>
-            </div>
+            <EmptyState
+              icon={AlertTriangle}
+              title="No incidents reported"
+              description="Your kitchen is running clean. No incidents match your current filters."
+            />
           )}
         </div>}
       </div>

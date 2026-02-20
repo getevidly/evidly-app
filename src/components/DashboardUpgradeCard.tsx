@@ -29,7 +29,6 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
         <div className="flex flex-col sm:flex-row gap-2.5 mb-4">
           <button
             onClick={() => {
-              console.log('[CTA] Upgrade clicked from: dashboard-card');
               navigate('/signup');
             }}
             className="px-5 py-2.5 rounded-lg font-bold text-sm transition-colors hover:brightness-110"
@@ -39,7 +38,6 @@ export function DashboardUpgradeCard({ pagesVisited }: DashboardUpgradeCardProps
           </button>
           <button
             onClick={() => {
-              console.log('[CTA] Upgrade clicked from: dashboard-card-demo');
               navigate('/enterprise');
             }}
             className="px-5 py-2.5 rounded-xl font-medium text-sm transition-colors text-white border border-white/30 hover:bg-white/10"

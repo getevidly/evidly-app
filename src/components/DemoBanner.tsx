@@ -10,7 +10,6 @@ export function DemoBanner() {
   if (!isDemoMode || presenterMode) return null;
 
   const handleClick = () => {
-    console.log('[CTA] Upgrade clicked from: top-banner');
     navigate('/signup');
   };
 

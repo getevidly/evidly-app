@@ -19,7 +19,6 @@ export function SidebarUpgradeBadge() {
   if (!isDemoMode || !visible || presenterMode) return null;
 
   const handleClick = () => {
-    console.log('[CTA] Upgrade clicked from: sidebar-badge');
     navigate('/signup');
   };
 

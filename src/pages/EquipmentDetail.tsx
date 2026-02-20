@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, Wrench, Clock, MapPin, Calendar, Flame, UtensilsCrossed,
@@ -187,7 +188,7 @@ export function EquipmentDetail() {
                     <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">QR Temperature Label</h3>
                   </div>
                   <button
-                    onClick={() => alert('Batch printing QR labels for all equipment at this location. (Demo)')}
+                    onClick={() => toast.info('Printing QR labels for all equipment (Demo)')}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border hover:bg-gray-50 transition-colors"
                     style={{ color: NAVY, borderColor: '#b8d4e8' }}
                   >

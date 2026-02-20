@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   Palette,
   Globe,
@@ -40,11 +41,11 @@ const PRESET_CARDS = [
 
 export function BrandingSettings() {
   const { branding, activeBrandKey, setBrandPreset, updateBranding } = useBranding();
-  const [toast, setToast] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2500);
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 2500);
   };
 
   // Local editing state for custom overrides
@@ -111,9 +112,9 @@ export function BrandingSettings() {
   return (
     <div className="space-y-6">
       {/* Toast */}
-      {toast && (
+      {toastMsg && (
         <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm font-medium flex items-center gap-2 animate-in slide-in-from-right">
-          <Check className="h-4 w-4" /> {toast}
+          <Check className="h-4 w-4" /> {toastMsg}
         </div>
       )}
 
@@ -287,7 +288,7 @@ export function BrandingSettings() {
             <label className="block text-xs font-medium text-gray-700 mb-1">SSO Provider</label>
             <select
               value={branding.sso.provider || ''}
-              onChange={() => alert('SSO configuration changes require admin approval.\n\nDemo: Switch brand preset to Enterprise or Cintas to see SSO enabled.')}
+              onChange={() => toast.info('SSO changes require admin approval (Demo)')}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50"
             >
               <option value="">None</option>

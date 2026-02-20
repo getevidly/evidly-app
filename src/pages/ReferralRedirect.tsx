@@ -24,9 +24,6 @@ export default function ReferralRedirect() {
   const message = MECHANIC_MESSAGES[prefix] || MECHANIC_MESSAGES.CB;
 
   useEffect(() => {
-    // Track click (in production, would call API)
-    console.log('[Referral] Click tracked for code:', code);
-
     const timer = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {

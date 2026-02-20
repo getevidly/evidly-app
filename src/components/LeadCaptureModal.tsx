@@ -37,9 +37,6 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
 
     const lead: DemoLead = { ...form };
 
-    // Log for dev visibility
-    console.log('Demo lead:', lead);
-
     // Attempt Supabase insert (silent fail)
     try {
       const { supabase } = await import('../lib/supabase');

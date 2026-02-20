@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import {
   Thermometer,
@@ -343,7 +344,7 @@ export default function KitchenStaffTaskList() {
                   <button
                     key={task.id}
                     type="button"
-                    onClick={() => task.type === 'temp_log' ? navigate('/temp-logs') : alert('Task already completed')}
+                    onClick={() => task.type === 'temp_log' ? navigate('/temp-logs') : toast.info('Task already completed')}
                     className="w-full flex items-center gap-3 p-3 rounded-lg text-left hover:bg-gray-100 transition-colors"
                     style={{ backgroundColor: '#f9fafb' }}
                   >

@@ -15,6 +15,7 @@ import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { EmptyState } from '../components/EmptyState';
 import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type IoTSensorReading } from '../data/demoData';
 
 interface TemperatureEquipment {
@@ -1499,9 +1500,12 @@ export function TempLogs() {
               })}
 
               {equipment.length === 0 && (
-                <div className="col-span-full text-center py-12">
-                  <Thermometer className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">No equipment configured yet.</p>
+                <div className="col-span-full">
+                  <EmptyState
+                    icon={Thermometer}
+                    title="No equipment configured yet"
+                    description="Add temperature monitoring equipment to start logging readings."
+                  />
                 </div>
               )}
             </div>
@@ -2121,10 +2125,11 @@ export function TempLogs() {
                 </div>
 
                 {getFilteredHistory().length === 0 && (
-                  <div className="text-center py-12">
-                    <Clock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No temperature logs found for the selected filters.</p>
-                  </div>
+                  <EmptyState
+                    icon={Clock}
+                    title="No temperature logs found"
+                    description="No logs match the selected date range and filters. Try adjusting your criteria."
+                  />
                 )}
               </div>
             )}
@@ -2408,10 +2413,11 @@ export function TempLogs() {
                 </div>
 
                 {completedCooldowns.length === 0 && (
-                  <div className="text-center py-12">
-                    <StopCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">No completed cooldowns yet.</p>
-                  </div>
+                  <EmptyState
+                    icon={StopCircle}
+                    title="No completed cooldowns yet"
+                    description="Completed cooldown tracking records will appear here."
+                  />
                 )}
               </div>
             </div>

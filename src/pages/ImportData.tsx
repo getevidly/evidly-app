@@ -217,10 +217,6 @@ export function ImportData() {
           ).length;
           const failedCount = rowsToImport.length - successCount;
 
-          console.log(
-            `[Import] ${dataType}: ${successCount} records imported`
-          );
-
           setImportResult({
             success: successCount,
             failed: failedCount,

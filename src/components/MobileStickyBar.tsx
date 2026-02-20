@@ -26,7 +26,6 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
   if (!visible) return null;
 
   const handleClick = () => {
-    console.log(`[CTA] Upgrade clicked from: ${demoMode ? 'mobile-bar' : 'landing-mobile-bar'}`);
     navigate('/signup');
   };
 

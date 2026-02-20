@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   Radio, Wifi, WifiOff, Battery, Signal, AlertTriangle, Check, X,
   Thermometer, Droplets, Bell, BellOff, Settings, ChevronDown, ChevronUp,
@@ -113,7 +114,7 @@ export default function IoTMonitoring() {
             {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
           </select>
           <button
-            onClick={() => alert('Refreshing sensor data... (Demo mode)')}
+            onClick={() => toast.info('Refreshing sensor data (Demo)')}
             className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -593,7 +594,7 @@ export default function IoTMonitoring() {
               })}
             </div>
             <button
-              onClick={() => alert('Threshold configuration saved (Demo mode)')}
+              onClick={() => toast.success('Threshold configuration saved (Demo)')}
               className="mt-4 px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium"
             >
               Save Thresholds

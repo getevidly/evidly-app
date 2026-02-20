@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff, Play } from 'lucide-react';
@@ -205,7 +206,7 @@ export function Login() {
                 <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-gray-500">or</span></div>
               </div>
               <button
-                onClick={() => alert(`SSO login via ${branding.sso.provider?.toUpperCase()} → ${branding.sso.ssoUrl}\n\nThis is a demo placeholder. In production this would redirect to your identity provider.`)}
+                onClick={() => toast.info('SSO login is a demo placeholder. In production, this redirects to your identity provider.')}
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 border-2 rounded-md text-sm font-semibold transition-colors"
                 style={{ borderColor: branding.colors.primary, color: branding.colors.primary }}
               >

@@ -69,8 +69,6 @@ export async function classifyDocument(
   file: File,
   supabaseInvoke: (name: string, options: { body: unknown }) => Promise<{ data: any; error: any }>,
 ): Promise<ClassificationResponse> {
-  const startTime = Date.now();
-
   try {
     const base64 = await fileToBase64(file);
 
@@ -83,9 +81,6 @@ export async function classifyDocument(
     });
 
     if (error) throw error;
-
-    const elapsed = Date.now() - startTime;
-    console.log(`Classification took ${elapsed}ms`);
 
     return data as ClassificationResponse;
   } catch (err) {

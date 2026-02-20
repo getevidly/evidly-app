@@ -18,6 +18,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { EmptyState } from '../components/EmptyState';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Types ──────────────────────────────────────────────────────────
@@ -1227,16 +1228,15 @@ export function Vendors() {
             </div>}
 
             {!loading && filteredVendors.length === 0 && (
-              <div className="text-center py-12 text-gray-500">
-                <Building2 className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                <p className="font-medium">No vendors match your filters</p>
-                <button
-                  onClick={() => { setStatusFilter('all'); setServiceFilter('all'); setLocationFilter('all'); }}
-                  className="mt-2 text-sm text-[#1e4d6b] hover:text-[#163a52]"
-                >
-                  Clear all filters
-                </button>
-              </div>
+              <EmptyState
+                icon={Building2}
+                title="No vendors match your filters"
+                description="Try adjusting your filter criteria or clear all filters to see all vendors."
+                action={{
+                  label: 'Clear All Filters',
+                  onClick: () => { setStatusFilter('all'); setServiceFilter('all'); setLocationFilter('all'); },
+                }}
+              />
             )}
           </>
         )}

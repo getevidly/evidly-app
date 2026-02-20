@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
   Building2,
@@ -401,7 +402,7 @@ export function OrgHierarchy() {
           <p className="text-slate-400 text-sm mt-1">Compliance status across your locations</p>
         </div>
         <button
-          onClick={() => alert('Hierarchy configuration — coming soon in a future release.')}
+          onClick={() => toast.info('Hierarchy configuration \u2014 coming soon')}
           className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-600 text-sm font-medium text-slate-300 hover:bg-slate-700/50 transition-colors cursor-pointer"
         >
           <Settings className="h-4 w-4" />
