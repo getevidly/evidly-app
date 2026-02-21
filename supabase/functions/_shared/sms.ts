@@ -1,6 +1,8 @@
 // Shared Twilio SMS utility for EvidLY edge functions
 // Uses Twilio REST API: https://www.twilio.com/docs/sms/api/message-resource#create-a-message-resource
 
+import { logger } from "./logger.ts";
+
 export interface SendSmsParams {
   to: string;
   body: string;
@@ -16,7 +18,7 @@ export async function sendSms(params: SendSmsParams): Promise<string | null> {
   const fromNumber = Deno.env.get("TWILIO_FROM_NUMBER");
 
   if (!accountSid || !authToken || !fromNumber) {
-    console.warn("[SMS] Twilio credentials not set — skipping send to", params.to);
+    logger.warn("[SMS] Twilio credentials not set — skipping send to", params.to);
     return null;
   }
 
@@ -39,13 +41,13 @@ export async function sendSms(params: SendSmsParams): Promise<string | null> {
 
     const data = await res.json();
     if (!res.ok) {
-      console.error(`[SMS] Twilio error ${res.status} to ${params.to}:`, data);
+      logger.error(`[SMS] Twilio error ${res.status}`, params.to, data);
       return null;
     }
-    console.log(`[SMS] Sent to ${params.to}`, data.sid);
+    logger.info("[SMS] Sent", params.to, data.sid);
     return data.sid;
   } catch (err) {
-    console.error(`[SMS] Failed to send to ${params.to}:`, err);
+    logger.error("[SMS] Failed to send", params.to, err);
     return null;
   }
 }

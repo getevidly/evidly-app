@@ -1,6 +1,8 @@
 // Shared Resend email utility for EvidLY edge functions
 // Uses Resend API: https://resend.com/docs/api-reference/emails/send-email
 
+import { logger } from "./logger.ts";
+
 const RESEND_API_URL = "https://api.resend.com/emails";
 const FROM_ADDRESS = "EvidLY <noreply@getevidly.com>";
 
@@ -18,7 +20,7 @@ export interface SendEmailParams {
 export async function sendEmail(params: SendEmailParams): Promise<{ id: string } | null> {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
-    console.warn("[EMAIL] RESEND_API_KEY not set — skipping send to", params.to);
+    logger.warn("[EMAIL] RESEND_API_KEY not set — skipping send to", params.to);
     return null;
   }
 
@@ -42,13 +44,13 @@ export async function sendEmail(params: SendEmailParams): Promise<{ id: string }
 
     const data = await res.json();
     if (!res.ok) {
-      console.error(`[EMAIL] Resend error ${res.status} to ${params.to}:`, data);
+      logger.error(`[EMAIL] Resend error ${res.status}`, params.to, data);
       return null;
     }
-    console.log(`[EMAIL] Sent to ${params.to}: ${params.subject}`, data.id);
+    logger.info("[EMAIL] Sent", params.to, params.subject, data.id);
     return data;
   } catch (err) {
-    console.error(`[EMAIL] Failed to send to ${params.to}:`, err);
+    logger.error("[EMAIL] Failed to send", params.to, err);
     return null;
   }
 }
