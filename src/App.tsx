@@ -139,6 +139,7 @@ import { PageTransition } from './components/PageTransition';
 import { PageExplanation } from './components/PageExplanation';
 import { AutoBreadcrumb } from './components/layout/AutoBreadcrumb';
 import { useRole } from './contexts/RoleContext';
+import { isRouteAllowedForRole } from './lib/routeGuards';
 
 function LandingPage() {
   return (
@@ -166,8 +167,13 @@ function LandingPage() {
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
+  const location = useLocation();
 
   if (isDemoMode) {
+    if (!isRouteAllowedForRole(location.pathname, userRole)) {
+      return <Navigate to="/dashboard" replace />;
+    }
     return <>{children}</>;
   }
 
@@ -184,6 +190,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isRouteAllowedForRole(location.pathname, userRole)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
@@ -213,6 +223,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function ProtectedLayout() {
   const { user, loading } = useAuth();
   const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
   const location = useLocation();
 
   if (!isDemoMode) {
@@ -229,6 +240,11 @@ function ProtectedLayout() {
     if (!user) {
       return <Navigate to="/login" replace />;
     }
+  }
+
+  // Role-based route guard — redirect to dashboard if role not allowed
+  if (!isRouteAllowedForRole(location.pathname, userRole)) {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
