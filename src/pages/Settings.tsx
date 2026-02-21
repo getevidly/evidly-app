@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2 } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2, Download, Check } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -17,6 +17,12 @@ import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../lib/i18n';
 import { useOffline } from '../contexts/OfflineContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useMobile } from '../hooks/useMobile';
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
   executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
@@ -52,6 +58,8 @@ export function Settings() {
   const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
   const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
+  const { isStandalone } = useMobile();
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [timezone, setTimezone] = useState(() => {
     try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return 'America/Chicago'; }
   });
@@ -106,6 +114,34 @@ export function Settings() {
       });
     }
   }, []);
+
+  // Capture PWA install prompt
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const result = await deferredPrompt.userChoice;
+      if (result.outcome === 'accepted') {
+        toast.success('EvidLY installed successfully!');
+      }
+      setDeferredPrompt(null);
+    } else {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        toast.info('Tap the Share button, then "Add to Home Screen"');
+      } else {
+        toast.info('Look for the install icon in your browser address bar');
+      }
+    }
+  };
 
   const loadNotificationSettings = async () => {
     if (!profile?.id) return;
@@ -1431,6 +1467,37 @@ export function Settings() {
             <div className="space-y-6">
               <h3 className="text-xl font-bold text-gray-900">Sync & Offline</h3>
               <p className="text-sm text-gray-600">Manage offline data, sync status, and device registration for this browser.</p>
+
+              {/* Install App */}
+              <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: isStandalone ? '#dcfce7' : '#eef4f8' }}>
+                    {isStandalone ? <Check className="h-5 w-5 text-green-600" /> : <Download className="h-5 w-5" style={{ color: '#1e4d6b' }} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-gray-900">Install App</h4>
+                    <p className="text-xs text-gray-500">
+                      {isStandalone
+                        ? 'EvidLY is installed as an app on this device'
+                        : 'Install EvidLY for faster access, offline support, and a full-screen experience'}
+                    </p>
+                  </div>
+                  {isStandalone ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
+                      <Check className="h-3.5 w-3.5" /> Installed
+                    </span>
+                  ) : (
+                    <button
+                      onClick={handleInstallApp}
+                      className="px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors flex items-center gap-2 cursor-pointer hover:opacity-90"
+                      style={{ backgroundColor: '#1e4d6b' }}
+                    >
+                      <Download className="h-4 w-4" />
+                      Install
+                    </button>
+                  )}
+                </div>
+              </div>
 
               {/* Connection Status */}
               <div className="border border-gray-200 rounded-lg p-4 sm:p-5">
