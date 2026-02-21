@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 import { MobileTabBar } from './MobileTabBar';
@@ -16,6 +17,8 @@ import { DemoWatermark } from '../DemoWatermark';
 import { DemoRestrictions } from '../DemoRestrictions';
 import { QuickActionsBar } from './QuickActionsBar';
 import { useDemo } from '../../contexts/DemoContext';
+import { useNotifications } from '../../contexts/NotificationContext';
+import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
 import { trackEvent } from '../../utils/analytics';
 
 interface LocationOption {
@@ -34,9 +37,34 @@ interface LayoutProps {
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
   const { tourActive, isDemoMode, presenterMode } = useDemo();
+  const { setNotifications, notifications: currentNotifications } = useNotifications();
   const [guidedTourActive, setGuidedTourActive] = useState(false);
   const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
   const anyTourActive = tourActive || guidedTourActive;
+
+  // Real-time notification subscription (no-op in demo mode — no org profile)
+  useRealtimeNotifications(useCallback((notification) => {
+    setNotifications([
+      {
+        id: notification.id,
+        title: notification.title,
+        time: notification.created_at,
+        link: notification.action_url || '',
+        type: notification.priority === 'high' || notification.priority === 'critical'
+          ? 'alert' : notification.type === 'success' ? 'success' : 'info',
+        locationId: '',
+        read: false,
+      },
+      ...currentNotifications,
+    ]);
+
+    if (notification.priority === 'high' || notification.priority === 'critical') {
+      toast.warning(notification.title, {
+        description: notification.body || undefined,
+        duration: 8000,
+      });
+    }
+  }, [setNotifications, currentNotifications]));
 
   // Track page visits for demo CTAs (stored in sessionStorage for cross-component access)
   const location = useLocation();
