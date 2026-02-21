@@ -8,6 +8,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// ── Batch processing constants ──────────────────────────────────
+const BATCH_SIZE = 50;
+const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -32,6 +36,9 @@ Deno.serve(async (req: Request) => {
     const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const jobStart = Date.now();
+    const isTimedOut = () => Date.now() - jobStart > MAX_RUNTIME_MS;
+
     const { data: orgs } = await supabase
       .from("organizations")
       .select("id, name");
@@ -49,25 +56,30 @@ Deno.serve(async (req: Request) => {
     }
 
     const remindersSent = [];
+    let timedOut = false;
     const now = new Date();
 
     for (const org of orgs) {
+      if (isTimedOut()) { timedOut = true; break; }
       const { data: checklistItems } = await supabase
         .from("onboarding_checklist_items")
         .select("*")
         .eq("organization_id", org.id)
         .eq("is_enabled", true)
         .eq("is_required", true)
-        .eq("category", "documents");
+        .eq("category", "documents")
+        .limit(BATCH_SIZE);
 
       if (!checklistItems || checklistItems.length === 0) continue;
 
       const { data: documents } = await supabase
         .from("documents")
         .select("*")
-        .eq("organization_id", org.id);
+        .eq("organization_id", org.id)
+        .limit(BATCH_SIZE);
 
       for (const item of checklistItems) {
+        if (isTimedOut()) { timedOut = true; break; }
         const hasDoc = documents?.some(
           (doc) =>
             doc.title
@@ -183,7 +195,7 @@ Deno.serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, remindersSent }),
+      JSON.stringify({ success: true, remindersSent, timedOut }),
       {
         headers: {
           ...corsHeaders,

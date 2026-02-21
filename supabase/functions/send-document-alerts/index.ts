@@ -9,6 +9,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// ── Batch processing constants ──────────────────────────────────
+const BATCH_SIZE = 50;
+const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -33,27 +37,28 @@ Deno.serve(async (req: Request) => {
     const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data: documents } = await supabase
-      .from("documents")
-      .select("*")
-      .not("expiration_date", "is", null);
-
-    if (!documents || documents.length === 0) {
-      return new Response(
-        JSON.stringify({ message: "No documents with expiration dates found" }),
-        {
-          headers: {
-            ...corsHeaders,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    }
+    const jobStart = Date.now();
+    const isTimedOut = () => Date.now() - jobStart > MAX_RUNTIME_MS;
 
     const now = new Date();
     const alertsSent = [];
+    let timedOut = false;
 
-    for (const doc of documents) {
+    let offset = 0;
+    let hasMore = true;
+
+    while (hasMore && !isTimedOut()) {
+      const { data: documents, error: fetchErr } = await supabase
+        .from("documents")
+        .select("*")
+        .not("expiration_date", "is", null)
+        .range(offset, offset + BATCH_SIZE - 1);
+
+      if (fetchErr) { break; }
+      if (!documents || documents.length === 0) { hasMore = false; break; }
+
+      for (const doc of documents) {
+        if (isTimedOut()) { timedOut = true; break; }
       const expirationDate = new Date(doc.expiration_date);
       const daysUntilExpiry = Math.floor(
         (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
@@ -159,8 +164,12 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+      offset += BATCH_SIZE;
+      hasMore = documents.length === BATCH_SIZE;
+    } // end batch while loop
+
     return new Response(
-      JSON.stringify({ success: true, alertsSent }),
+      JSON.stringify({ success: true, alertsSent, timedOut }),
       {
         headers: {
           ...corsHeaders,

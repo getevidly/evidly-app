@@ -88,7 +88,8 @@ export async function fetchLocations(organizationId?: string): Promise<Location[
     const { data } = await supabase
       .from('locations')
       .select('*')
-      .eq('organization_id', organizationId);
+      .eq('organization_id', organizationId)
+      .limit(100);
 
     if (!data || data.length === 0) return locations;
 
@@ -208,7 +209,8 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
     const { data: relationships } = await supabase
       .from('vendor_client_relationships')
       .select('vendor_id')
-      .eq('organization_id', organizationId);
+      .eq('organization_id', organizationId)
+      .limit(50);
 
     if (!relationships || relationships.length === 0) return demoVendors;
 
@@ -217,7 +219,8 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
     const { data: vendorRows } = await supabase
       .from('vendors')
       .select('*')
-      .in('id', vendorIds);
+      .in('id', vendorIds)
+      .limit(50);
 
     if (!vendorRows || vendorRows.length === 0) return demoVendors;
 

@@ -91,6 +91,10 @@ function buildReminderBody(
   `;
 }
 
+// ── Batch processing constants ──────────────────────────────────
+const BATCH_SIZE = 50;
+const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
+
 // ── Main handler ────────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -113,33 +117,44 @@ Deno.serve(async (req: Request) => {
     const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const jobStart = Date.now();
+    const isTimedOut = () => Date.now() - jobStart > MAX_RUNTIME_MS;
+
     const results = {
       remindersSent: [] as { vendor: string; serviceType: string; window: string }[],
       overdueAlerts: [] as { vendor: string; serviceType: string; daysOverdue: number }[],
       dueTodayAlerts: [] as { serviceType: string; locationName: string }[],
       errors: [] as string[],
+      timedOut: false,
     };
 
     const now = new Date();
     const todayStr = now.toISOString().slice(0, 10); // YYYY-MM-DD
 
     // ═══════════════════════════════════════════════════
-    // PHASE 1: Process upcoming service reminders
+    // PHASE 1: Process upcoming service reminders (batched)
     // ═══════════════════════════════════════════════════
 
-    const { data: upcomingRecords, error: fetchErr } = await supabase
-      .from("vendor_service_records")
-      .select("*, vendors(id, name, email, phone, contact_name), locations(name)")
-      .eq("status", "upcoming")
-      .gte("service_due_date", todayStr)
-      .order("service_due_date", { ascending: true });
+    let offset = 0;
+    let hasMore = true;
 
-    if (fetchErr) {
-      results.errors.push(`Failed to fetch upcoming records: ${fetchErr.message}`);
-    }
+    while (hasMore && !isTimedOut()) {
+      const { data: upcomingBatch, error: fetchErr } = await supabase
+        .from("vendor_service_records")
+        .select("*, vendors(id, name, email, phone, contact_name), locations(name)")
+        .eq("status", "upcoming")
+        .gte("service_due_date", todayStr)
+        .order("service_due_date", { ascending: true })
+        .range(offset, offset + BATCH_SIZE - 1);
 
-    if (upcomingRecords) {
-      for (const record of upcomingRecords) {
+      if (fetchErr) {
+        results.errors.push(`Failed to fetch upcoming records: ${fetchErr.message}`);
+        break;
+      }
+      if (!upcomingBatch || upcomingBatch.length === 0) { hasMore = false; break; }
+
+      for (const record of upcomingBatch) {
+        if (isTimedOut()) { results.timedOut = true; break; }
         const vendor = (record as any).vendors;
         const locationName = (record as any).locations?.name || "Unknown Location";
         if (!vendor?.email) continue;
@@ -224,12 +239,18 @@ Deno.serve(async (req: Request) => {
           break;
         }
       }
+
+      offset += BATCH_SIZE;
+      hasMore = upcomingBatch.length === BATCH_SIZE;
     }
 
     // ═══════════════════════════════════════════════════
     // PHASE 2: Due-today client alerts
     // ═══════════════════════════════════════════════════
 
+    if (isTimedOut()) { results.timedOut = true; }
+
+    if (!results.timedOut) {
     const { data: dueTodayRecords } = await supabase
       .from("vendor_service_records")
       .select("*, locations(name)")
@@ -301,10 +322,15 @@ Deno.serve(async (req: Request) => {
         });
       }
     }
+    } // end Phase 2 timeout guard
 
     // ═══════════════════════════════════════════════════
     // PHASE 3: Overdue escalation at +7 days
     // ═══════════════════════════════════════════════════
+
+    if (isTimedOut()) { results.timedOut = true; }
+
+    if (!results.timedOut) {
 
     const sevenDaysAgo = new Date(now);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -436,6 +462,7 @@ Deno.serve(async (req: Request) => {
         });
       }
     }
+    } // end Phase 3 timeout guard
 
     return jsonResponse({ success: true, ...results });
   } catch (error) {

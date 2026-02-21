@@ -7,6 +7,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
+// ── Batch processing constants ──────────────────────────────────
+const BATCH_SIZE = 50;
+const MAX_RUNTIME_MS = 50_000; // 50s hard stop (Edge Function limit ~60s)
+
 // This function runs on a cron schedule (daily) and:
 // 1. Checks all vendor documents approaching expiration
 // 2. Sends auto-requests to vendors with secure upload links
@@ -37,7 +41,10 @@ Deno.serve(async (req: Request) => {
     const appUrl = Deno.env.get("APP_URL") || "https://app.getevidly.com";
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const results = { newRequests: [], reminders: [], errors: [] as string[] };
+    const jobStart = Date.now();
+    const isTimedOut = () => Date.now() - jobStart > MAX_RUNTIME_MS;
+
+    const results = { newRequests: [], reminders: [], errors: [] as string[], timedOut: false };
 
     // Get all orgs with auto-request enabled
     const { data: orgSettings } = await supabase
@@ -52,6 +59,7 @@ Deno.serve(async (req: Request) => {
     const now = new Date();
 
     for (const settings of orgSettings) {
+      if (isTimedOut()) { results.timedOut = true; break; }
       const orgId = settings.organization_id;
       const orgName = (settings as any).organizations?.name || "Your Client";
 
@@ -67,10 +75,12 @@ Deno.serve(async (req: Request) => {
         .eq("organization_id", orgId)
         .not("expiration_date", "is", null)
         .lte("expiration_date", targetDate.toISOString())
-        .gte("expiration_date", now.toISOString());
+        .gte("expiration_date", now.toISOString())
+        .limit(BATCH_SIZE);
 
       if (expiringDocs) {
         for (const doc of expiringDocs) {
+          if (isTimedOut()) { results.timedOut = true; break; }
           if (!doc.vendors?.id) continue;
 
           // Check if we already have a pending request for this doc
@@ -164,10 +174,12 @@ Deno.serve(async (req: Request) => {
         .select("*, vendors(id, name, email, phone, contact_name)")
         .eq("organization_id", orgId)
         .eq("status", "pending")
-        .eq("auto_requested", true);
+        .eq("auto_requested", true)
+        .limit(BATCH_SIZE);
 
       if (pendingRequests) {
         for (const req of pendingRequests) {
+          if (isTimedOut()) { results.timedOut = true; break; }
           const createdDate = new Date(req.created_at);
           const daysSinceSent = Math.floor(
             (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)
