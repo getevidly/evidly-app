@@ -65,10 +65,10 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <EvidlyLogo size="sm" showTagline={false} />
           <div>
-            <p style={{ color: '#ffffff', fontSize: '14px', fontWeight: 800, margin: 0, fontFamily: 'system-ui' }}>
+            <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 800, margin: 0, fontFamily: 'system-ui' }}>
               Jurisdiction Intelligence
             </p>
-            <p style={{ color: '#64748b', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
+            <p style={{ color: '#3D5068', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
               Food &amp; Fire Safety scoring by jurisdiction &middot; {active.length} active
             </p>
           </div>
@@ -88,7 +88,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
       {/* Add panel */}
       {showAdd && (
         <div style={{
-          background: '#0f172a', border: '1px solid #A08C5A40',
+          background: '#EEF1F7', border: '1px solid #A08C5A40',
           borderRadius: '10px', padding: '16px', marginBottom: '16px',
         }}>
           <p style={{ color: '#A08C5A', fontSize: '12px', fontWeight: 700, margin: '0 0 10px', fontFamily: 'system-ui' }}>
@@ -96,7 +96,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
             <div>
-              <label style={{ color: '#64748b', fontSize: '10px', fontWeight: 700, display: 'block', marginBottom: '3px', fontFamily: 'system-ui', textTransform: 'uppercase' }}>
+              <label style={{ color: '#3D5068', fontSize: '10px', fontWeight: 700, display: 'block', marginBottom: '3px', fontFamily: 'system-ui', textTransform: 'uppercase' }}>
                 Search County or City
               </label>
               <input
@@ -105,14 +105,14 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
                 onChange={e => setQuery(e.target.value)}
                 placeholder="e.g. Fresno, Merced, Sacramento..."
                 style={{
-                  width: '100%', background: '#1e293b', border: '1px solid #334155',
-                  borderRadius: '6px', padding: '8px 10px', color: '#ffffff',
+                  width: '100%', background: '#FFFFFF', border: '1px solid #D1D9E6',
+                  borderRadius: '6px', padding: '8px 10px', color: '#0B1628',
                   fontSize: '12px', fontFamily: 'system-ui', boxSizing: 'border-box' as const,
                 }}
               />
             </div>
             <div>
-              <label style={{ color: '#64748b', fontSize: '10px', fontWeight: 700, display: 'block', marginBottom: '3px', fontFamily: 'system-ui', textTransform: 'uppercase' }}>
+              <label style={{ color: '#3D5068', fontSize: '10px', fontWeight: 700, display: 'block', marginBottom: '3px', fontFamily: 'system-ui', textTransform: 'uppercase' }}>
                 Location Name (Optional)
               </label>
               <input
@@ -121,8 +121,8 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
                 onChange={e => setPendingLocation(e.target.value)}
                 placeholder="e.g. Downtown Kitchen, Expansion Site A"
                 style={{
-                  width: '100%', background: '#1e293b', border: '1px solid #334155',
-                  borderRadius: '6px', padding: '8px 10px', color: '#ffffff',
+                  width: '100%', background: '#FFFFFF', border: '1px solid #D1D9E6',
+                  borderRadius: '6px', padding: '8px 10px', color: '#0B1628',
                   fontSize: '12px', fontFamily: 'system-ui', boxSizing: 'border-box' as const,
                 }}
               />
@@ -134,17 +134,17 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
             const already = !!userJurisdictions.find(u => u.jurisdictionId === j.id);
             return (
               <div key={j.id} style={{
-                background: '#1e293b', border: '1px solid #334155',
+                background: '#FFFFFF', border: '1px solid #D1D9E6',
                 borderRadius: '6px', padding: '10px 12px', marginBottom: '6px',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ fontSize: '14px' }}>{p.icon}</span>
                   <div>
-                    <p style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>
+                    <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>
                       {j.agencyName}
                     </p>
-                    <p style={{ color: '#64748b', fontSize: '11px', margin: '1px 0 0', fontFamily: 'system-ui' }}>
+                    <p style={{ color: '#3D5068', fontSize: '11px', margin: '1px 0 0', fontFamily: 'system-ui' }}>
                       {j.county} County &middot; {p.label} &middot; {j.gradingScale}
                     </p>
                   </div>
@@ -159,7 +159,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
                       cursor: 'pointer', fontFamily: 'system-ui',
                     }}>+ Current</button>
                     <button onClick={() => add(j, false)} style={{
-                      background: '#1e3a5f', border: '1px solid #1e40af', borderRadius: '4px',
+                      background: '#D1D9E6', border: '1px solid #1e40af', borderRadius: '4px',
                       padding: '4px 8px', color: '#93c5fd', fontSize: '10px', fontWeight: 700,
                       cursor: 'pointer', fontFamily: 'system-ui',
                     }}>+ Expansion</button>
@@ -170,7 +170,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
           })}
 
           {query.length >= 2 && results.length === 0 && (
-            <p style={{ color: '#64748b', fontSize: '12px', fontFamily: 'system-ui' }}>
+            <p style={{ color: '#3D5068', fontSize: '12px', fontFamily: 'system-ui' }}>
               No results for &ldquo;{query}&rdquo;. EvidLY is continuously expanding its jurisdiction database — contact support to request a jurisdiction.
             </p>
           )}
@@ -181,8 +181,8 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
             placeholder="Notes (optional) — e.g. Evaluating expansion here Q3 2026"
             rows={2}
             style={{
-              width: '100%', background: '#1e293b', border: '1px solid #334155',
-              borderRadius: '6px', padding: '8px 10px', color: '#ffffff',
+              width: '100%', background: '#FFFFFF', border: '1px solid #D1D9E6',
+              borderRadius: '6px', padding: '8px 10px', color: '#0B1628',
               fontSize: '12px', fontFamily: 'system-ui', resize: 'vertical',
               boxSizing: 'border-box' as const, marginTop: '8px',
             }}
@@ -193,10 +193,11 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
       {/* Empty state */}
       {active.length === 0 && (
         <div style={{
-          background: '#1E2D4D', border: '1px solid #334155',
+          background: '#FFFFFF', border: '1px solid #D1D9E6',
           borderRadius: '10px', padding: '24px', textAlign: 'center',
+          boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
         }}>
-          <p style={{ color: '#64748b', fontSize: '13px', fontFamily: 'system-ui', margin: 0 }}>
+          <p style={{ color: '#3D5068', fontSize: '13px', fontFamily: 'system-ui', margin: 0 }}>
             No jurisdictions added. Click <strong style={{ color: '#A08C5A' }}>+ Add Jurisdiction</strong> to see your scoring requirements.
           </p>
         </div>
@@ -205,7 +206,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
       {/* Primary jurisdictions */}
       {primary.length > 0 && (
         <div style={{ marginBottom: '12px' }}>
-          <p style={{ color: '#64748b', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 8px', fontFamily: 'system-ui' }}>
+          <p style={{ color: '#3D5068', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 8px', fontFamily: 'system-ui' }}>
             Current Operations
           </p>
           {primary.map(uj => (
@@ -223,7 +224,7 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
       {/* Expansion jurisdictions */}
       {expansion.length > 0 && (
         <div>
-          <p style={{ color: '#64748b', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 8px', fontFamily: 'system-ui' }}>
+          <p style={{ color: '#3D5068', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 8px', fontFamily: 'system-ui' }}>
             Expansion Planning
           </p>
           {expansion.map(uj => (
@@ -240,11 +241,11 @@ export const JurisdictionScoreTable: React.FC<Props> = ({ userJurisdictions, onC
 
       {/* Data notice */}
       <div style={{
-        marginTop: '12px', padding: '8px 12px', background: '#0f172a',
+        marginTop: '12px', padding: '8px 12px', background: '#EEF1F7',
         borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '8px',
       }}>
         <span style={{ fontSize: '12px' }}>&#x1F512;</span>
-        <p style={{ color: '#475569', fontSize: '10px', margin: 0, fontFamily: 'system-ui' }}>
+        <p style={{ color: '#3D5068', fontSize: '10px', margin: 0, fontFamily: 'system-ui' }}>
           EvidLY jurisdiction data is verified through direct agency contact. Always confirm current requirements with your local AHJ. Last update: February 2026.
         </p>
       </div>
@@ -266,9 +267,10 @@ const JurisdictionCard: React.FC<{
 
   return (
     <div style={{
-      background: '#1E2D4D',
-      border: `1px solid ${uj.isPrimary ? '#334155' : '#1e3a5f'}`,
+      background: '#FFFFFF',
+      border: `1px solid ${uj.isPrimary ? '#D1D9E6' : '#D1D9E6'}`,
       borderRadius: '10px', marginBottom: '8px', overflow: 'hidden',
+      boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <button
         onClick={() => setExpandedId(isExpanded ? null : j.id)}
@@ -282,7 +284,7 @@ const JurisdictionCard: React.FC<{
           <span style={{ fontSize: '16px' }}>{p.icon}</span>
           <div style={{ textAlign: 'left' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-              <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
+              <p style={{ color: '#0B1628', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
                 {j.agencyName}
               </p>
               <span style={{
@@ -292,13 +294,13 @@ const JurisdictionCard: React.FC<{
               }}>{p.label}</span>
               {!uj.isPrimary && (
                 <span style={{
-                  background: '#1e3a5f', border: '1px solid #1e40af',
+                  background: '#D1D9E6', border: '1px solid #1e40af',
                   borderRadius: '4px', padding: '1px 6px',
                   fontSize: '10px', color: '#93c5fd', fontWeight: 600, fontFamily: 'system-ui',
                 }}>Expansion</span>
               )}
             </div>
-            <p style={{ color: '#64748b', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
+            <p style={{ color: '#3D5068', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
               {j.county} County &middot; {j.gradingScale} &middot; {j.inspectionFrequency}
             </p>
           </div>
@@ -308,21 +310,21 @@ const JurisdictionCard: React.FC<{
             background: t.bg, borderRadius: '4px', padding: '2px 6px',
             fontSize: '10px', color: t.color, fontWeight: 600, fontFamily: 'system-ui',
           }}>{t.label}</span>
-          <span style={{ color: '#64748b' }}>{isExpanded ? '\u25B2' : '\u25BC'}</span>
+          <span style={{ color: '#3D5068' }}>{isExpanded ? '\u25B2' : '\u25BC'}</span>
         </div>
       </button>
 
       {isExpanded && (
-        <div style={{ borderTop: '1px solid #1e293b', padding: '14px 16px' }}>
+        <div style={{ borderTop: '1px solid #D1D9E6', padding: '14px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
             {[
               { label: 'Grading Scale', value: j.gradingScale },
               { label: 'Passing Threshold', value: j.passingThreshold },
               { label: 'Inspection Frequency', value: j.inspectionFrequency },
             ].map((m, i) => (
-              <div key={i} style={{ background: '#0f172a', borderRadius: '6px', padding: '10px' }}>
-                <p style={{ color: '#64748b', fontSize: '10px', margin: '0 0 3px', fontFamily: 'system-ui', textTransform: 'uppercase', fontWeight: 700 }}>{m.label}</p>
-                <p style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{m.value}</p>
+              <div key={i} style={{ background: '#EEF1F7', borderRadius: '6px', padding: '10px' }}>
+                <p style={{ color: '#3D5068', fontSize: '10px', margin: '0 0 3px', fontFamily: 'system-ui', textTransform: 'uppercase', fontWeight: 700 }}>{m.label}</p>
+                <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{m.value}</p>
               </div>
             ))}
           </div>
@@ -333,7 +335,7 @@ const JurisdictionCard: React.FC<{
               borderRadius: '6px', padding: '10px 12px', marginBottom: '12px',
             }}>
               <p style={{ color: '#fdba74', fontSize: '11px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>Fire Code</p>
-              <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0, fontFamily: 'system-ui' }}>{j.nfpaAdoption}</p>
+              <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, fontFamily: 'system-ui' }}>{j.nfpaAdoption}</p>
             </div>
           )}
 
@@ -343,22 +345,22 @@ const JurisdictionCard: React.FC<{
               { label: 'Inspection Records', href: j.publicResultsUrl },
             ].map((link, i) => (
               <a key={i} href={link.href} target="_blank" rel="noopener noreferrer" style={{
-                background: '#1e293b', border: '1px solid #334155',
+                background: '#EEF1F7', border: '1px solid #D1D9E6',
                 borderRadius: '6px', padding: '6px 12px',
                 color: '#93c5fd', fontSize: '12px', fontWeight: 600,
                 textDecoration: 'none', fontFamily: 'system-ui',
               }}>{link.label} &rarr;</a>
             ))}
             <a href={`tel:${j.agencyPhone.replace(/\D/g, '')}`} style={{
-              background: '#1e293b', border: '1px solid #334155',
+              background: '#EEF1F7', border: '1px solid #D1D9E6',
               borderRadius: '6px', padding: '6px 12px',
-              color: '#94a3b8', fontSize: '12px',
+              color: '#3D5068', fontSize: '12px',
               textDecoration: 'none', fontFamily: 'system-ui',
             }}>{j.agencyPhone}</a>
           </div>
 
           {uj.notes && (
-            <p style={{ color: '#64748b', fontSize: '11px', fontFamily: 'system-ui', margin: '0 0 10px' }}>
+            <p style={{ color: '#3D5068', fontSize: '11px', fontFamily: 'system-ui', margin: '0 0 10px' }}>
               Note: {uj.notes}
             </p>
           )}

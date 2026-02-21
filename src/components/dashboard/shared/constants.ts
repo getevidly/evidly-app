@@ -10,9 +10,15 @@ import type React from 'react';
 // ── Brand colors ──────────────────────────────────────────
 export const GOLD = '#C49A2B';
 export const NAVY = '#163a5f';
-export const PAGE_BG = '#f4f6f9';
-export const MUTED = '#94a3b8';
-export const BODY_TEXT = '#1e293b';
+export const PAGE_BG = '#F4F6FA';
+export const MUTED = '#3D5068';
+export const BODY_TEXT = '#0B1628';
+export const CARD_BG = '#FFFFFF';
+export const CARD_BORDER = '#D1D9E6';
+export const CARD_SHADOW = '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)';
+export const PANEL_BG = '#EEF1F7';
+export const BORDER_SUBTLE = '#E8EDF5';
+export const TEXT_TERTIARY = '#6B7F96';
 export const STEEL_SLATE_GRADIENT = 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)';
 
 // ── Typography ────────────────────────────────────────────

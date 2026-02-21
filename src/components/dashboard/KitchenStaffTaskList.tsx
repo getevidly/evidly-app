@@ -395,7 +395,7 @@ export default function KitchenStaffTaskList() {
           {/* Referral nudge — shown after checklist task completion */}
           {referralNudge && (
             <div style={{
-              background: 'linear-gradient(135deg, #1E2D4D 0%, #2A3F6B 100%)',
+              background: '#EEF1F7',
               border: '1px solid #A08C5A',
               borderRadius: '10px',
               padding: '12px 16px',
@@ -403,8 +403,9 @@ export default function KitchenStaffTaskList() {
               alignItems: 'center',
               justifyContent: 'space-between',
               gap: '12px',
+              boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
             }}>
-              <p style={{ fontSize: '12px', color: '#ffffff', margin: 0 }}>
+              <p style={{ fontSize: '12px', color: '#0B1628', margin: 0 }}>
                 All done! Know a kitchen still on paper?{' '}
                 <button
                   onClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
@@ -415,7 +416,7 @@ export default function KitchenStaffTaskList() {
               </p>
               <button
                 onClick={() => setReferralNudge(false)}
-                style={{ color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
+                style={{ color: '#3D5068', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
               >
                 ×
               </button>

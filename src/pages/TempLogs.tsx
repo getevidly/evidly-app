@@ -1293,7 +1293,7 @@ export function TempLogs() {
           <button
             onClick={() => navigate('/temp-logs/scan')}
             className="flex items-center gap-2 px-4 py-2.5 text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: '#1E2D4D' }}
+            style={{ backgroundColor: '#1e4d6b' }}
           >
             <QrCode className="h-4 w-4" />
             Scan QR Code
@@ -1517,7 +1517,7 @@ export function TempLogs() {
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8">
             <div className="flex items-center space-x-3 mb-6">
               <div className="p-3 rounded-lg" style={{ backgroundColor: '#E8EAF6' }}>
-                <Package className="h-6 w-6" style={{ color: '#1E2D4D' }} />
+                <Package className="h-6 w-6" style={{ color: '#1e4d6b' }} />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.logReceivingTemp')}</h2>
@@ -1544,8 +1544,8 @@ export function TempLogs() {
                   const cfg = getCategoryConfig(foodCategory);
                   if (!cfg) return null;
                   return cfg.tempRequired ? (
-                    <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #1E2D4D' }}>
-                      <p className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
+                    <div className="mt-2 p-3 rounded-lg" style={{ backgroundColor: '#eef4f8', border: '1px solid #D1D9E6' }}>
+                      <p className="text-sm font-medium" style={{ color: '#1e4d6b' }}>
                         Required: Must be ≤{cfg.maxTemp}°F
                       </p>
                     </div>
@@ -1656,9 +1656,9 @@ export function TempLogs() {
                 <button
                   type="submit"
                   className="w-full px-4 py-3 text-white rounded-lg transition-colors font-medium"
-                  style={{ backgroundColor: '#1E2D4D' }}
+                  style={{ backgroundColor: '#1e4d6b' }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#0D1652')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1E2D4D')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
                 >
                   {t('tempLogs.addItem')}
                 </button>
@@ -1728,7 +1728,7 @@ export function TempLogs() {
                       <button
                         onClick={handleCcpSave}
                         className="flex-1 px-4 py-3 text-white rounded-lg font-bold hover:opacity-90 transition-colors"
-                        style={{ backgroundColor: '#1E2D4D' }}
+                        style={{ backgroundColor: '#1e4d6b' }}
                       >
                         Save with Corrective Action
                       </button>

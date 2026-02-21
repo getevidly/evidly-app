@@ -45,8 +45,8 @@ function getRiskScore(loc: any, dim: string): { score: number; color: string } {
 const scoreLabels = ['', 'Low', 'Medium', 'High'];
 
 export const RiskRadar: React.FC<Props> = ({ data }) => (
-  <div style={{ background: '#1E2D4D', border: '1px solid #334155', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
-    <h2 style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
+  <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+    <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
       <span style={{ fontSize: '16px' }}>{'🎯'}</span> Multi-Dimensional Risk Assessment
     </h2>
 
@@ -54,7 +54,7 @@ export const RiskRadar: React.FC<Props> = ({ data }) => (
     <div style={{ display: 'grid', gridTemplateColumns: `150px repeat(${dimensions.length}, 1fr)`, gap: '4px', marginBottom: '6px' }}>
       <span />
       {dimensions.map(d => (
-        <span key={d.key} style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>
+        <span key={d.key} style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>
           {d.label}
         </span>
       ))}
@@ -64,9 +64,9 @@ export const RiskRadar: React.FC<Props> = ({ data }) => (
     {data.complianceMatrix.map((loc: any) => (
       <div key={loc.locationId} style={{
         display: 'grid', gridTemplateColumns: `150px repeat(${dimensions.length}, 1fr)`,
-        gap: '4px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #1e293b',
+        gap: '4px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #D1D9E6',
       }}>
-        <p style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{loc.locationName}</p>
+        <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{loc.locationName}</p>
         {dimensions.map(d => {
           const risk = getRiskScore(loc, d.key);
           return (
@@ -92,7 +92,7 @@ export const RiskRadar: React.FC<Props> = ({ data }) => (
       ].map(l => (
         <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
           <div style={{ width: '10px', height: '10px', borderRadius: '3px', background: `${l.color}40`, border: `1px solid ${l.color}` }} />
-          <span style={{ fontSize: '10px', color: '#64748b', fontFamily: 'system-ui' }}>{l.label}</span>
+          <span style={{ fontSize: '10px', color: '#3D5068', fontFamily: 'system-ui' }}>{l.label}</span>
         </div>
       ))}
     </div>

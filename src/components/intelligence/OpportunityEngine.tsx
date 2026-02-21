@@ -73,12 +73,12 @@ export const OpportunityEngine: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div style={{ background: '#1E2D4D', border: '1px solid #334155', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
+    <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
+        <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
           <span style={{ fontSize: '16px' }}>{'🎯'}</span> Opportunity Engine — ROI-Ranked Improvements
         </h2>
-        <span style={{ fontSize: '11px', color: '#64748b', fontFamily: 'system-ui' }}>
+        <span style={{ fontSize: '11px', color: '#3D5068', fontFamily: 'system-ui' }}>
           {opportunities.length} opportunities identified
         </span>
       </div>
@@ -91,23 +91,23 @@ export const OpportunityEngine: React.FC<Props> = ({ data }) => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ background: s.border, borderRadius: '4px', padding: '1px 6px', fontSize: '10px', color: '#ffffff', fontWeight: 700, fontFamily: 'system-ui' }}>{s.label}</span>
-                  <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{opp.title}</p>
+                  <p style={{ color: '#0B1628', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{opp.title}</p>
                 </div>
-                <span style={{ fontSize: '11px', color: '#64748b', fontFamily: 'system-ui' }}>{opp.category}</span>
+                <span style={{ fontSize: '11px', color: '#3D5068', fontFamily: 'system-ui' }}>{opp.category}</span>
               </div>
-              <p style={{ color: '#64748b', fontSize: '11px', margin: '0 0 8px', fontFamily: 'system-ui' }}>{opp.location}</p>
+              <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 8px', fontFamily: 'system-ui' }}>{opp.location}</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
                 <div>
-                  <p style={{ color: '#475569', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Investment</p>
-                  <p style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{opp.investmentRange}</p>
+                  <p style={{ color: '#3D5068', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Investment</p>
+                  <p style={{ color: '#3D5068', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{opp.investmentRange}</p>
                 </div>
                 <div>
-                  <p style={{ color: '#475569', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Estimated Return</p>
+                  <p style={{ color: '#3D5068', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Estimated Return</p>
                   <p style={{ color: '#4ade80', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{opp.roiEstimate}</p>
                 </div>
                 <div>
-                  <p style={{ color: '#475569', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Impact</p>
-                  <p style={{ color: '#94a3b8', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{opp.impact}</p>
+                  <p style={{ color: '#3D5068', fontSize: '10px', margin: '0 0 2px', fontFamily: 'system-ui' }}>Impact</p>
+                  <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{opp.impact}</p>
                 </div>
               </div>
             </div>

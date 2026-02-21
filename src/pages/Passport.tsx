@@ -62,10 +62,10 @@ export default function Passport() {
 
       <div style={{ padding: '12px 24px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
         <span onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>Dashboard</span>
-        <span style={{ color: '#94a3b8' }}>›</span>
+        <span style={{ color: '#6B7F96' }}>›</span>
         <span onClick={() => navigate('/dashboard?tab=passport')} style={{ cursor: 'pointer', color: '#1e4d6b' }}>QR Passport</span>
-        <span style={{ color: '#94a3b8' }}>›</span>
-        <span style={{ color: '#64748b' }}>{locationData.name}</span>
+        <span style={{ color: '#6B7F96' }}>›</span>
+        <span style={{ color: '#6B7F96' }}>{locationData.name}</span>
       </div>
 
       <main className="max-w-4xl mx-auto px-6 py-12">

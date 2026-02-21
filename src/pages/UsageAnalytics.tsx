@@ -54,7 +54,7 @@ const MODULES: ModuleInfo[] = [
   { id: 'key-metrics', name: 'Key Metrics', icon: '📉', color: '#b45309' },
   { id: 'leaderboard', name: 'Leaderboard', icon: '🏆', color: '#ca8a04' },
   { id: 'ai-advisor', name: 'AI Advisor', icon: '🤖', color: '#6366f1' },
-  { id: 'help', name: 'Help / Support', icon: '❓', color: '#64748b' },
+  { id: 'help', name: 'Help / Support', icon: '❓', color: '#3D5068' },
 ];
 
 const INDUSTRIES = ['Restaurant', 'Healthcare', 'Senior Living', 'Education', 'Hospitality'];
@@ -439,7 +439,7 @@ Generated ${today} · This is an automated report from EvidLY Analytics
   // ── RENDER ──────────────────────────────────────────────────────
   return (
     <>
-      <Breadcrumb items={[{ label: 'Admin', href: '/dashboard' }, { label: 'Usage Analytics' }]} />
+      <Breadcrumb items={[{ label: 'Administration', href: '/dashboard' }, { label: 'Usage Analytics' }]} />
 
       <div style={{ padding: '24px', maxWidth: '1400px', margin: '0 auto', ...F }}>
         {/* Header */}

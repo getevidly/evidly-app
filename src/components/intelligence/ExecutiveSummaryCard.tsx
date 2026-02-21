@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import type { Scenario } from './ScenarioEngine';
 
 interface Props {
   data: any;
   viewMode: string;
   loading: boolean;
   setLoading: (v: boolean) => void;
+  activeScenario?: Scenario | null;
+  scenarioFields?: Record<string, string>;
 }
 
 const viewPrompts: Record<string, string> = {
@@ -59,17 +62,28 @@ The operational chain is direct: high turnover means new staff who lack training
 Three people-strategy investments would most improve compliance outcomes: First, conduct a retention diagnostic at University Dining — identify whether the turnover driver is compensation, management, working conditions, or scheduling, and address the root cause. Reducing turnover from 51% to 30% would be estimated to improve checklist completion by 15-20 points. Second, implement a structured 3-week onboarding compliance checklist for all new hires across all locations — this reduces the proficiency gap during the high-risk transition period. Third, assign a compliance mentor at Airport Cafe and University Dining — a designated team member responsible for daily checklist oversight until completion rates stabilize above 85%.`,
 };
 
-export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading, setLoading }) => {
+export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading, setLoading, activeScenario, scenarioFields }) => {
   const [summary, setSummary] = useState('');
   const [error, setError] = useState('');
   const [isDemo, setIsDemo] = useState(false);
+  const prevScenarioRef = useRef<string | null>(null);
 
   const generateSummary = async () => {
     setLoading(true);
     setError('');
     setIsDemo(false);
 
-    const prompt = viewPrompts[viewMode] || viewPrompts.operations;
+    let prompt = viewPrompts[viewMode] || viewPrompts.operations;
+
+    // If a scenario is active, inject its modifier before the view prompt
+    if (activeScenario) {
+      let scenarioContext = activeScenario.aiPromptModifier;
+      Object.entries(scenarioFields || {}).forEach(([key, value]) => {
+        scenarioContext = scenarioContext.replace(new RegExp(`\\{${key}\\}`, 'g'), value || 'Not specified');
+      });
+
+      prompt = `ACTIVE SCENARIO CONTEXT \u2014 This overrides generic analysis. Read carefully:\n\n${scenarioContext}\n\nNow apply the following analytical lens to this scenario:\n\n${viewPrompts[viewMode] || viewPrompts.operations}\n\nIMPORTANT: Your briefing must be scenario-first. Every insight, risk, and recommendation must be filtered through the lens of the active scenario above. Generic compliance observations that don't connect to the scenario should be omitted.`;
+    }
     const dataContext = JSON.stringify({
       orgName: data.orgName,
       period: data.period,
@@ -129,6 +143,15 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
     generateSummary();
   }, [viewMode]);
 
+  // Regenerate when scenario changes
+  useEffect(() => {
+    const scenarioId = activeScenario?.id || null;
+    if (prevScenarioRef.current !== scenarioId) {
+      prevScenarioRef.current = scenarioId;
+      generateSummary();
+    }
+  }, [activeScenario]);
+
   const viewLabels: Record<string, { icon: string; title: string; color: string }> = {
     operations: { icon: '\u2699\uFE0F', title: 'Operations Intelligence Brief', color: '#3b82f6' },
     risk:       { icon: '\u2696\uFE0F', title: 'Risk & Legal Intelligence Brief', color: '#ef4444' },
@@ -140,8 +163,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #1E2D4D 0%, #162038 100%)',
-      border: `1px solid ${v.color}40`,
+      background: 'linear-gradient(135deg, #1a2d4a 0%, #162038 100%)',
       borderLeft: `4px solid ${v.color}`,
       borderRadius: '12px',
       padding: '20px 24px',
@@ -171,16 +193,29 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
           }}>
             {isDemo ? 'DEMO ANALYSIS' : 'AI GENERATED'}
           </span>
+          {activeScenario && (
+            <span style={{
+              backgroundColor: '#A08C5A20',
+              border: '1px solid #A08C5A',
+              borderRadius: '4px',
+              padding: '2px 6px',
+              fontSize: '10px',
+              color: '#A08C5A',
+              fontWeight: 700,
+            }}>
+              {'\uD83C\uDFAF'} {activeScenario.label}
+            </span>
+          )}
         </div>
         <button
           onClick={generateSummary}
           disabled={loading}
           style={{
             backgroundColor: 'transparent',
-            border: '1px solid #334155',
+            border: '1px solid #2d4a6e',
             borderRadius: '6px',
             padding: '4px 10px',
-            color: '#64748b',
+            color: '#94a3b8',
             fontSize: '11px',
             cursor: loading ? 'not-allowed' : 'pointer',
             fontFamily: 'system-ui',
@@ -193,7 +228,7 @@ export const ExecutiveSummaryCard: React.FC<Props> = ({ data, viewMode, loading,
       {loading && (
         <div style={{
           width: '100%', height: '4px',
-          background: '#1e293b',
+          background: '#1e3a5f',
           borderRadius: '2px',
           overflow: 'hidden',
         }}>

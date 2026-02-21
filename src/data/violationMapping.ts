@@ -87,7 +87,7 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
   },
   {
     evidlyItem: 'fire_suppression',
-    calCodeSection: 'NFPA 96 §904',
+    calCodeSection: 'NFPA 96 Chapter 9',
     description: 'Fire suppression system inspection expired',
     defaultSeverity: 'critical',
     pillar: 'Fire Safety',

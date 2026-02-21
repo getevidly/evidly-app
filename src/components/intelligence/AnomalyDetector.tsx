@@ -72,12 +72,12 @@ export const AnomalyDetector: React.FC<Props> = ({ data }) => {
   const anomalies = detectAnomalies(data);
 
   return (
-    <div style={{ background: '#1E2D4D', border: '1px solid #334155', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
+    <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
+        <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
           <span style={{ fontSize: '16px' }}>{'🔍'}</span> Anomaly Detection
         </h2>
-        <span style={{ fontSize: '11px', color: '#64748b', fontFamily: 'system-ui' }}>
+        <span style={{ fontSize: '11px', color: '#3D5068', fontFamily: 'system-ui' }}>
           {anomalies.length} anomalies detected
         </span>
       </div>
@@ -96,12 +96,12 @@ export const AnomalyDetector: React.FC<Props> = ({ data }) => {
                   <span style={{ fontSize: '12px' }}>{s.icon}</span>
                   <span style={{ background: s.border, borderRadius: '4px', padding: '1px 6px', fontSize: '9px', color: '#ffffff', fontWeight: 700, fontFamily: 'system-ui' }}>{s.label}</span>
                   <p style={{ color: s.text, fontSize: '12px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{a.type}</p>
-                  <span style={{ fontSize: '10px', color: '#475569', fontFamily: 'system-ui', marginLeft: 'auto' }}>{a.location}</span>
+                  <span style={{ fontSize: '10px', color: '#3D5068', fontFamily: 'system-ui', marginLeft: 'auto' }}>{a.location}</span>
                 </div>
-                <p style={{ color: '#94a3b8', fontSize: '11px', margin: '0 0 6px', lineHeight: 1.5, fontFamily: 'system-ui' }}>{a.description}</p>
-                <div style={{ background: '#0f172a', borderRadius: '4px', padding: '6px 10px', borderLeft: '2px solid #A08C5A' }}>
+                <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 6px', lineHeight: 1.5, fontFamily: 'system-ui' }}>{a.description}</p>
+                <div style={{ background: '#EEF1F7', borderRadius: '4px', padding: '6px 10px', borderLeft: '2px solid #A08C5A' }}>
                   <p style={{ color: '#A08C5A', fontSize: '10px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>Recommendation</p>
-                  <p style={{ color: '#94a3b8', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{a.recommendation}</p>
+                  <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>{a.recommendation}</p>
                 </div>
               </div>
             );

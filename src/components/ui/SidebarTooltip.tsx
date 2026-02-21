@@ -36,8 +36,8 @@ export function SidebarTooltip({ content }: SidebarTooltipProps) {
           className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-[10000] rounded-md px-3 py-2 text-xs leading-relaxed shadow-lg pointer-events-none"
           style={{
             width: 260,
-            backgroundColor: '#1e293b',
-            border: '1px solid #334155',
+            backgroundColor: '#1e3a5f',
+            border: '1px solid #2d4a6e',
             color: '#e2e8f0',
           }}
         >
@@ -50,7 +50,7 @@ export function SidebarTooltip({ content }: SidebarTooltipProps) {
               height: 0,
               borderTop: '6px solid transparent',
               borderBottom: '6px solid transparent',
-              borderRight: '6px solid #334155',
+              borderRight: '6px solid #2d4a6e',
             }}
           />
         </span>

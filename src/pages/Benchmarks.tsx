@@ -88,7 +88,7 @@ const SIZES = ['All Sizes', 'Single Location', '2-10 Locations', '11-50 Location
 
 const BADGE_TIERS = [
   { tier: 'verified', label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Score 80+ for 3 consecutive months', qualified: true },
-  { tier: 'excellence', label: 'EvidLY Excellence', icon: Star, color: '#94a3b8', bg: '#f1f5f9', desc: 'Score 90+ for 3 consecutive months', qualified: true },
+  { tier: 'excellence', label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Score 90+ for 3 consecutive months', qualified: true },
   { tier: 'elite', label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months', qualified: false },
   { tier: 'platinum', label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months', qualified: false },
 ];
@@ -141,7 +141,7 @@ function MiniTrendChart({ data }: { data: typeof TREND_DATA }) {
         <text key={i} x={toX(i)} y={h - 12} textAnchor="middle" className="text-[9px] fill-gray-400">{d.month}</text>
       ))}
       {/* Lines */}
-      <path d={line('industry')} fill="none" stroke="#94a3b8" strokeWidth={1.5} strokeDasharray="4 3" />
+      <path d={line('industry')} fill="none" stroke="#3D5068" strokeWidth={1.5} strokeDasharray="4 3" />
       <path d={line('vertical')} fill="none" stroke="#60a5fa" strokeWidth={1.5} />
       <path d={line('yours')} fill="none" stroke="#d4af37" strokeWidth={2.5} />
       {/* Dots on your line */}
@@ -628,7 +628,7 @@ export function Benchmarks() {
                       <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.fireSafety}</td>
                       <td className="py-3 text-center hidden sm:table-cell">
                         {loc.badge ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#64748b' }}>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#3D5068' }}>
                             <Star className="h-3 w-3" /> {loc.badge}
                           </span>
                         ) : (

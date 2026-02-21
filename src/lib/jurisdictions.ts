@@ -170,7 +170,7 @@ const FEDERAL: JurisdictionProfile = {
     { service: 'Hood Cleaning (High Volume)', frequencyDays: 90, frequencyLabel: 'Quarterly', condition: '24-hour operations, wok cooking, charbroiling', source: 'NFPA 96-2024 Table 12.4' },
     { service: 'Hood Cleaning (Moderate Volume)', frequencyDays: 180, frequencyLabel: 'Semi-annually', condition: 'Standard cooking operations', source: 'NFPA 96-2024 Table 12.4' },
     { service: 'Hood Cleaning (Low Volume)', frequencyDays: 365, frequencyLabel: 'Annually', condition: 'Churches, day camps, seasonal, low-volume', source: 'NFPA 96-2024 Table 12.4' },
-    { service: 'Fire Suppression System', frequencyDays: 180, frequencyLabel: 'Semi-annually', source: 'NFPA 96-2024 §11.2.2 / NFPA 17A-2025' },
+    { service: 'Fire Suppression System', frequencyDays: 180, frequencyLabel: 'Semi-annually', source: 'NFPA 96 (2024) Chapter 11 / NFPA 17A-2025' },
     { service: 'Fire Extinguisher Visual Inspection', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual check', source: 'NFPA 10-2025 §7.2.1' },
     { service: 'Fire Extinguisher Professional Service', frequencyDays: 365, frequencyLabel: 'Annually', source: 'NFPA 10-2025 §7.3.1' },
     { service: 'Fire Extinguisher 6-Year Maintenance', frequencyDays: 2190, frequencyLabel: 'Every 6 years', source: 'NFPA 10-2025 §7.3.3' },
@@ -230,7 +230,7 @@ const CALIFORNIA: JurisdictionProfile = {
     { name: 'General Liability Insurance', description: 'Certificate of general liability insurance', renewalFrequency: 'Annual', source: 'Business requirement' },
     { name: 'Fire Inspection Certificate', description: 'Annual fire inspection by local fire department', renewalFrequency: 'Annual', source: 'California Fire Code' },
     { name: 'Hood Cleaning Certificate', description: 'Professional hood/exhaust system cleaning certificate — must clean to bare metal', renewalFrequency: 'Per NFPA 96 (2024) schedule', source: 'NFPA 96-2024 / CalCode' },
-    { name: 'Fire Suppression Inspection', description: 'Semi-annual fire suppression system inspection', renewalFrequency: 'Semi-annual', source: 'NFPA 96-2024 §11.2.2' },
+    { name: 'Fire Suppression Inspection', description: 'Semi-annual fire suppression system inspection', renewalFrequency: 'Semi-annual', source: 'NFPA 96 (2024) Chapter 11' },
     { name: 'Fire Extinguisher Certification', description: 'Annual professional fire extinguisher service', renewalFrequency: 'Annual', source: 'NFPA 10-2025 §7.3.1' },
     { name: 'Grease Trap Maintenance Record', description: 'Grease interceptor pumping and cleaning records', renewalFrequency: 'Per local requirement', source: 'Local pretreatment ordinance' },
     { name: 'Pest Control Service Agreement', description: 'Active pest control service contract', renewalFrequency: 'Ongoing (monthly service)', source: 'CalCode §114259' },
@@ -255,8 +255,8 @@ const CALIFORNIA: JurisdictionProfile = {
   ],
   serviceFrequencies: [
     // CFC-specific service frequencies (supplement federal NFPA entries)
-    { service: 'Hood Filter Cleaning', frequencyDays: 7, frequencyLabel: 'Weekly (min)', condition: 'Staff cleaning of removable hood filters — more frequent for high-volume', source: 'CFC Ch. 6.07 / NFPA 96-2024 §11.6' },
-    { service: 'Fire Suppression Tamper Check', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual: verify seals intact, nozzles unobstructed, gauge in range', source: 'CFC Ch. 6 / NFPA 96-2024 §11.2.1' },
+    { service: 'Hood Filter Cleaning', frequencyDays: 7, frequencyLabel: 'Weekly (min)', condition: 'Staff cleaning of removable hood filters — more frequent for high-volume', source: 'CFC Ch. 6.07 / NFPA 96 (2024) Chapter 11' },
+    { service: 'Fire Suppression Tamper Check', frequencyDays: 30, frequencyLabel: 'Monthly', condition: 'Staff visual: verify seals intact, nozzles unobstructed, gauge in range', source: 'CFC Ch. 6 / NFPA 96 (2024) Chapter 11' },
     { service: 'Fire Prevention Permit Renewal', frequencyDays: 365, frequencyLabel: 'Annually', source: 'CFC §105.6 — local fire authority (AHJ)' },
   ],
   minimumWage: {

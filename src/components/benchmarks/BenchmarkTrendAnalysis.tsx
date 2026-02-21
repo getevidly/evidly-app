@@ -32,7 +32,7 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
               className="px-3 py-1 text-xs font-medium rounded-lg transition-colors"
               style={{
                 backgroundColor: months === m ? '#1e4d6b' : 'transparent',
-                color: months === m ? 'white' : '#64748b',
+                color: months === m ? 'white' : 'var(--text-secondary, #3D5068)',
               }}
             >
               {m}mo
@@ -54,7 +54,7 @@ export function BenchmarkTrendAnalysis({ locationId }: Props) {
             <ReferenceLine y={60} stroke="#f59e0b" strokeDasharray="3 3" label={{ value: '60', position: 'right', fontSize: 10 }} />
             <Line type="monotone" dataKey="yourScore" stroke="#1e4d6b" strokeWidth={3} dot={{ r: 3 }} name="Your Score" />
             <Line type="monotone" dataKey="verticalAvg" stroke="#d4af37" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Restaurant Avg" />
-            <Line type="monotone" dataKey="industryAvg" stroke="#94a3b8" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Industry Avg" />
+            <Line type="monotone" dataKey="industryAvg" stroke="#3D5068" strokeWidth={1.5} dot={{ r: 2 }} strokeDasharray="6 3" name="Industry Avg" />
           </LineChart>
         </ResponsiveContainer>
       </div>

@@ -514,7 +514,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
         { category: 'document', item: 'Hood Cleaning Certificate', status: 'missing', detail: 'No hood cleaning certificate on file — last cleaning was 7 months ago', action: 'Schedule hood cleaning and upload certificate' },
         { category: 'document', item: 'Fire Prevention Permit', status: 'missing', detail: 'No fire prevention permit on file — required by CFC §105.6 from local fire authority (AHJ), separate from health permit', action: 'Contact local fire authority to obtain fire prevention permit' },
         { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396', action: 'Create IHIPP template from Cal/OSHA guidelines' },
-        { category: 'service', item: 'Fire Suppression System', status: 'overdue', detail: 'Semi-annual fire suppression service is 3 weeks overdue — CFC Ch. 6.07 / NFPA 96-2024 §11.2.2', action: 'Schedule emergency fire suppression service' },
+        { category: 'service', item: 'Fire Suppression System', status: 'overdue', detail: 'Semi-annual fire suppression service is 3 weeks overdue — CFC Ch. 6.07 / NFPA 96 (2024) Chapter 11', action: 'Schedule emergency fire suppression service' },
         { category: 'certification', item: 'Food Protection Manager Certification', status: 'missing', detail: '0 of 1 required managers have current certification', action: 'Register manager for ServSafe Manager exam' },
       ];
       return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 6, gaps };

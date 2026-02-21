@@ -17,11 +17,11 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '🔥', label: 'Fire Safety', route: '/fire-safety', permission: 'bottom.fire-safety' },
-    { emoji: '📊', label: 'Reports', route: '/reports', permission: 'bottom.reports' },
+    { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
     { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
   ],
   executive: [
-    { emoji: '📊', label: 'Reports', route: '/reports', permission: 'bottom.reports' },
+    { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
     { emoji: '📍', label: 'Locations', route: '/org-hierarchy', permission: 'bottom.locations' },
     { emoji: '📈', label: 'Benchmarks', route: '/benchmarks', permission: 'bottom.benchmarks' },
     { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },

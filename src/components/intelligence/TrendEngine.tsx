@@ -35,8 +35,8 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (!active || !payload?.length) return null;
     return (
-      <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', fontSize: '12px', fontFamily: 'system-ui' }}>
-        <p style={{ color: '#94a3b8', margin: '0 0 6px', fontWeight: 600 }}>{label}</p>
+      <div style={{ background: '#EEF1F7', border: '1px solid #D1D9E6', borderRadius: '8px', padding: '10px 14px', fontSize: '12px', fontFamily: 'system-ui' }}>
+        <p style={{ color: '#3D5068', margin: '0 0 6px', fontWeight: 600 }}>{label}</p>
         {payload.map((p: any) => (
           <p key={p.dataKey} style={{ color: p.color, margin: '2px 0' }}>
             {locationMap[p.dataKey] || p.dataKey}: <strong>{metricLabels[metric].format(p.value)}</strong>
@@ -47,19 +47,19 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div style={{ background: '#1E2D4D', border: '1px solid #334155', borderRadius: '12px', padding: '20px', marginBottom: '16px' }}>
+    <div style={{ background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px', padding: '20px', marginBottom: '16px', boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <h2 style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
+        <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
           <span style={{ fontSize: '16px' }}>{'📈'}</span> 90-Day Compliance Trajectory
         </h2>
         <div style={{ display: 'flex', gap: '4px' }}>
           {Object.entries(metricLabels).map(([key, m]) => (
             <button key={key} onClick={() => setMetric(key as any)}
               style={{
-                background: metric === key ? '#A08C5A' : '#1e293b',
-                border: `1px solid ${metric === key ? '#A08C5A' : '#334155'}`,
+                background: metric === key ? '#A08C5A' : '#EEF1F7',
+                border: `1px solid ${metric === key ? '#A08C5A' : '#D1D9E6'}`,
                 borderRadius: '4px', padding: '3px 8px', fontSize: '10px',
-                color: metric === key ? '#ffffff' : '#64748b', fontWeight: 600,
+                color: metric === key ? '#ffffff' : '#3D5068', fontWeight: 600,
                 cursor: 'pointer', fontFamily: 'system-ui',
               }}>
               {m.label}
@@ -71,13 +71,13 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
       <div style={{ width: '100%', height: 260 }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-            <XAxis dataKey="day" tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#334155' }} />
-            <YAxis tick={{ fill: '#64748b', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#334155' }}
+            <CartesianGrid strokeDasharray="3 3" stroke="#D1D9E6" />
+            <XAxis dataKey="day" tick={{ fill: '#3D5068', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#D1D9E6' }} />
+            <YAxis tick={{ fill: '#3D5068', fontSize: 10 }} tickLine={false} axisLine={{ stroke: '#D1D9E6' }}
               tickFormatter={v => metric === 'openItems' ? String(v) : `${Math.round(v * 100)}%`}
               domain={metric === 'openItems' ? [0, 'auto'] : [0, 1]} />
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }}
+            <Legend wrapperStyle={{ fontSize: '11px', color: '#3D5068' }}
               formatter={(value: string) => locationMap[value] || value} />
             {Object.entries(locationColors).map(([locId, colors]) => (
               <Area key={locId} type="monotone" dataKey={locId}

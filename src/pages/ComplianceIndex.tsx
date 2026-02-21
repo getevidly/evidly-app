@@ -348,7 +348,7 @@ export function ComplianceIndex() {
               locations on the EvidLY platform. All data is anonymized before aggregation.
             </div>
             {/* Touchpoint 2: Referral nudge — help raise the industry score */}
-            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '12px' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)', marginTop: '12px' }}>
               Help raise the industry average.{' '}
               <button
                 onClick={() => {

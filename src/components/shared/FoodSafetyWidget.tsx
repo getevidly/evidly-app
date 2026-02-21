@@ -16,7 +16,7 @@ function statusColor(status: FoodSafetyWidgetProps['status']): string {
     case 'passing': return '#16a34a';
     case 'failing': return '#dc2626';
     case 'at_risk': return '#d97706';
-    default: return '#94a3b8';
+    default: return '#6B7F96';
   }
 }
 
@@ -36,7 +36,7 @@ export function FoodSafetyWidget({
     return (
       <div className="flex items-center gap-2">
         <UtensilsCrossed size={14} style={{ color, flexShrink: 0 }} />
-        <span className="text-[13px] font-semibold" style={{ color: '#1e293b' }}>{gradeDisplay}</span>
+        <span className="text-[13px] font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</span>
       </div>
     );
   }
@@ -49,12 +49,12 @@ export function FoodSafetyWidget({
       <div className="flex items-start gap-2">
         <UtensilsCrossed size={14} style={{ color, marginTop: 2, flexShrink: 0 }} />
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold" style={{ color: '#1e293b' }}>{gradeDisplay}</p>
+          <p className="text-[13px] font-semibold" style={{ color: '#1e3a5f' }}>{gradeDisplay}</p>
           {summary && (
             <p className="text-[11px] text-gray-500 mt-0.5">{summary}</p>
           )}
           {gradingTypeLabel && (
-            <p className="text-[10px] mt-1" style={{ color: '#94a3b8' }}>{gradingTypeLabel}</p>
+            <p className="text-[10px] mt-1" style={{ color: '#6B7F96' }}>{gradingTypeLabel}</p>
           )}
           {agencyName && (
             <p className="text-[11px] text-gray-500 mt-1">{agencyName}</p>

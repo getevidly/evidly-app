@@ -14,11 +14,12 @@ export const K2CWidget: React.FC<K2CWidgetProps> = ({
   onShareClick,
 }) => (
   <div style={{
-    background: '#1E2D4D',
-    border: '1px solid #334155',
+    background: '#FFFFFF',
+    border: '1px solid #D1D9E6',
     borderLeft: '3px solid #A08C5A',
     borderRadius: '10px',
     padding: '14px 16px',
+    boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
   }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
       <span style={{ fontSize: '16px' }}>🍽️</span>
@@ -37,7 +38,7 @@ export const K2CWidget: React.FC<K2CWidgetProps> = ({
       fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
       fontSize: '22px',
       fontWeight: 800,
-      color: '#ffffff',
+      color: 'var(--text-primary, #0B1628)',
       margin: '0 0 2px',
     }}>
       {mealsGenerated} meals
@@ -45,7 +46,7 @@ export const K2CWidget: React.FC<K2CWidgetProps> = ({
     <p style={{
       fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
       fontSize: '11px',
-      color: '#94a3b8',
+      color: 'var(--text-secondary, #3D5068)',
       margin: '0 0 10px',
     }}>
       {referralsCount} referrals · {monthsFree} months free earned

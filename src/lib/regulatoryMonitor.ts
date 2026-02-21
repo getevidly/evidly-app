@@ -165,7 +165,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       { text: 'Vendor service calendar flagged for review', completed: true },
       { text: 'New document required — upload updated hood cleaning contract', completed: false, actionType: 'upload' },
     ],
-    fullRegulatoryText: 'NFPA 96 §12.4.1.1 (2026 Edition): Type I hoods serving cooking operations producing more than 500 meals per day shall have exhaust systems inspected and cleaned monthly. Type I hoods serving operations producing fewer than 500 meals per day shall follow the inspection frequency in Table 12.4. Effective July 1, 2026.',
+    fullRegulatoryText: 'NFPA 96 Table 12.4 (2026 Edition): Type I hoods serving cooking operations producing more than 500 meals per day shall have exhaust systems inspected and cleaned monthly. Type I hoods serving operations producing fewer than 500 meals per day shall follow the inspection frequency in Table 12.4. Effective July 1, 2026.',
     sourceUrl: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96',
     reviewedBy: 'Sarah Chen',
     reviewedAt: '2026-01-20T14:30:00Z',

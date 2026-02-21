@@ -367,7 +367,7 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
     { label: 'Hood & Duct Cleaning Schedule', ref: 'NFPA 96-2024', factor: fireCat?.factors.find(f => f.name.includes('Hood cleaning')) },
     { label: 'Fire Extinguisher Inspection', ref: 'NFPA 10-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire extinguisher')) },
     { label: 'Fire Alarm System', ref: 'NFPA 72-2025', factor: fireCat?.factors.find(f => f.name.includes('Fire alarm')) },
-    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96-2024 §10.1', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
+    { label: 'Automatic Shutoff Systems', ref: 'NFPA 96 (2024) Chapter 10', factor: fireCat?.factors.find(f => f.name.includes('shutoff')) },
   ];
 
   for (const pse of pseItems) {

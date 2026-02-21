@@ -580,7 +580,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
     linkedVendor: 'ABC Fire Protection', usefulLifeYears: 15, replacementCost: 4200,
-    notes: 'Older unit matching hood system age. Heavy grease buildup requires more frequent cleaning. NFPA 96 §11.6.1 — accessible for cleaning.',
+    notes: 'Older unit matching hood system age. Heavy grease buildup requires more frequent cleaning. NFPA 96 (2024) Chapter 11 — accessible for cleaning. Verify specific section requirements with your AHJ.',
     serviceHistory: [
       { date: '2025-11-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning (with hood)', cost: 0, notes: 'Heavy grease on blades — needed extra cleaning time. Hinge kit working.' },
       { date: '2025-05-15', vendor: 'ABC Fire Protection', type: 'Quarterly Cleaning + Belt Replace', cost: 165, notes: 'Belt replaced (glazed). Bearings lubricated. Airflow tested — within spec.' },
@@ -1752,7 +1752,7 @@ export function Equipment() {
                   printWindow.document.close();
                 }}
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
-                style={{ backgroundColor: '#1E2D4D' }}
+                style={{ backgroundColor: '#1e4d6b' }}
               >
                 <Printer className="h-3.5 w-3.5" />
                 {t('pages.equipment.printLabel')}

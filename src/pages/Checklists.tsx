@@ -291,14 +291,14 @@ const TEMPLATE_CATEGORIES = [
         items: [
           'Inspect fan belt tension and condition — replace if cracked or glazed',
           'Check grease containment and drain — clear any blockages',
-          'Test hinge kit operation — fan opens fully for cleaning access (NFPA 96 §7.8.2)',
+          'Test hinge kit operation — fan opens fully for cleaning access (NFPA 96 (2024) Chapter 7)',
           'Verify fan interlock — fan starts with hood, stops when hood is off (IMC §507.2.1)',
           'Check for excessive vibration — indicates imbalance or bearing wear',
         ],
       },
       {
         key: 'exhaust_fan_quarterly',
-        name: 'Exhaust Fan Quarterly Service (NFPA 96 §12.4)',
+        name: 'Exhaust Fan Quarterly Service (NFPA 96 (2024) Table 12.4)',
         itemCount: 6,
         estimatedTime: '30-45 min',
         role: 'Manager',

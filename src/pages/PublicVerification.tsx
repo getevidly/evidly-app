@@ -43,7 +43,7 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
 
 const BADGE_CONFIG = {
   verified: { label: 'EvidLY Verified', icon: EvidlyIcon, color: '#cd7f32', bg: '#fdf4e8', desc: 'Compliance score 80+ for 3 consecutive months' },
-  excellence: { label: 'EvidLY Excellence', icon: Star, color: '#94a3b8', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
+  excellence: { label: 'EvidLY Excellence', icon: Star, color: '#3D5068', bg: '#f1f5f9', desc: 'Compliance score 90+ for 3 consecutive months' },
   elite: { label: 'EvidLY Elite', icon: Crown, color: '#d4af37', bg: '#fdf8e8', desc: 'Top 10% in vertical for 3 consecutive months' },
   platinum: { label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months' },
 };

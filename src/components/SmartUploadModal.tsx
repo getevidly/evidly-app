@@ -394,7 +394,7 @@ export function SmartUploadModal({
           </button>
           <button
             className="px-5 py-2 rounded-md text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: canSave ? '#1e4d6b' : '#94a3b8' }}
+            style={{ backgroundColor: canSave ? '#1e4d6b' : '#3D5068' }}
             onMouseEnter={(e) => {
               if (canSave) e.currentTarget.style.backgroundColor = '#2a6a8f';
             }}

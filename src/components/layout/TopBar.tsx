@@ -125,7 +125,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         />
       )}
 
-      <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1E2D4D] shadow-sm">
+      <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1a2d4a] shadow-sm">
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
@@ -334,7 +334,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 }}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
               >
-                <div className="h-8 w-8 rounded-full bg-[#A08C5A] flex items-center justify-center text-[#1E2D4D] font-medium">
+                <div className="h-8 w-8 rounded-full bg-[#A08C5A] flex items-center justify-center text-[#1a2d4a] font-medium">
                   {displayName.charAt(0)}
                 </div>
                 <span className="hidden md:block text-sm font-medium text-gray-200">

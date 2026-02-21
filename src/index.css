@@ -23,6 +23,69 @@
   --color-gray-600: #525252;
   --color-text: #333333;
   --color-text-light: #666666;
+
+  /* ── MAIN CONTENT BACKGROUNDS ── */
+  --bg-main:        #F4F6FA;
+  --bg-card:        #FFFFFF;
+  --bg-panel:       #EEF1F7;
+  --bg-input:       #F8F9FC;
+  --bg-hover:       #E8EDF5;
+  --bg-selected:    #E2E8F5;
+  --bg-tooltip:     #1E2D4D;
+  --bg-metric:      #FFFFFF;
+  --bg-metric-alt:  #F0F4FA;
+
+  /* ── BORDERS ── */
+  --border:         #D1D9E6;
+  --border-2:       #B8C4D8;
+  --border-subtle:  #E8EDF5;
+
+  /* ── TEXT ── */
+  --text-primary:   #0B1628;
+  --text-secondary: #3D5068;
+  --text-tertiary:  #6B7F96;
+  --text-inverse:   #F0F4FF;
+
+  /* ── TOPBAR (unchanged) ── */
+  --topbar-bg:      #0B1628;
+  --topbar-border:  #1E3A5F;
+  --topbar-text:    #F0F4FF;
+
+  /* ── SIDEBAR (unchanged) ── */
+  --sidebar-bg:     #07111F;
+  --sidebar-border: #1E3A5F;
+  --sidebar-text:   #94A3B8;
+  --sidebar-active-bg:    #162A48;
+  --sidebar-active-text:  #F0F4FF;
+  --sidebar-active-border: #A08C5A;
+  --sidebar-section-label: #A08C5A;
+  --sidebar-hover-bg:     rgba(30,58,95,.4);
+
+  /* ── BRAND (never change) ── */
+  --gold:           #A08C5A;
+  --gold-light:     #C4A96E;
+  --gold-bg:        rgba(160,140,90,.1);
+  --gold-border:    rgba(160,140,90,.3);
+  --navy:           #0B1628;
+  --navy-deep:      #07111F;
+
+  /* ── STATUS COLORS (never change) ── */
+  --green:          #34D399;
+  --green-bg:       rgba(52,211,153,.1);
+  --green-border:   rgba(52,211,153,.25);
+  --yellow:         #FBBF24;
+  --yellow-bg:      rgba(251,191,36,.1);
+  --yellow-border:  rgba(251,191,36,.25);
+  --red:            #F87171;
+  --red-bg:         rgba(248,113,113,.1);
+  --red-border:     rgba(248,113,113,.3);
+  --blue:           #60A5FA;
+  --blue-bg:        rgba(96,165,250,.1);
+  --blue-border:    rgba(96,165,250,.25);
+  --violet:         #A78BFA;
+  --scoretable:     #00D4AA;
+  --scoretable-bg:  rgba(0,212,170,.1);
+  --scoretable-border: rgba(0,212,170,.3);
 }
 
 * {
@@ -38,8 +101,8 @@ html {
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 15px;
-  background: var(--color-white);
-  color: var(--color-text);
+  background: var(--bg-main);
+  color: var(--text-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }

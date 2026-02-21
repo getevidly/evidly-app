@@ -9,10 +9,8 @@ import {
   Store,
   AlertTriangle,
   Brain,
-  Trophy,
   BarChart3,
   Users,
-  Bell,
   Settings,
   X,
   HelpCircle,
@@ -20,10 +18,14 @@ import {
   AlertCircle,
   ClipboardCheck,
   Target,
-  ShoppingBag,
   Network,
   Camera,
   GraduationCap,
+  Wrench,
+  Calendar,
+  TrendingUp,
+  Lightbulb,
+  Snowflake,
 } from 'lucide-react';
 import { useRole, UserRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -38,120 +40,111 @@ export function MobileTabBar() {
   const isActive = (path: string) => location.pathname === path;
   const isKitchen = userRole === 'kitchen_staff';
 
-  // Role-specific primary tabs
+  // Role-specific primary tabs (per NAV-SPEC-1)
   // Kitchen staff: 5 dedicated tabs, no More button
   // All other roles: 4 tabs + More button
   const tabsByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
-    owner_operator: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
+    kitchen_staff: [
+      { path: '/dashboard', icon: Home, label: 'Today' },
+      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-    ],
-    executive: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
-      { path: '/org-hierarchy', icon: Network, label: 'Locations' },
-    ],
-    compliance_manager: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
-      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
-      { path: '/reports', icon: BarChart3, label: 'Reports' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
+      { path: '/incidents', icon: AlertTriangle, label: 'Report' },
     ],
     chef: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
+      { path: '/dashboard', icon: Home, label: 'Kitchen' },
       { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/cooling-logs', icon: Snowflake, label: 'Cooling' },
       { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
-    ],
-    facilities_manager: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
-      { path: '/analysis', icon: Bell, label: 'Alerts' },
     ],
     kitchen_manager: [
-      { path: '/dashboard', icon: Home, label: 'Home' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/dashboard', icon: Home, label: 'Dashboard' },
       { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-      { path: '/documents', icon: FileText, label: 'Docs' },
+      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
     ],
-    kitchen_staff: [
-      { path: '/dashboard', icon: ClipboardCheck, label: 'Tasks' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temp' },
-      { path: '/photo-evidence', icon: Camera, label: 'Photo' },
-      { path: '/playbooks', icon: AlertTriangle, label: 'Report' },
-      { path: '/training', icon: GraduationCap, label: 'Train' },
+    compliance_manager: [
+      { path: '/dashboard', icon: Home, label: 'Dashboard' },
+      { path: '/corrective-actions', icon: AlertCircle, label: 'Actions' },
+      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
+      { path: '/business-intelligence', icon: Lightbulb, label: 'Insights' },
+    ],
+    facilities_manager: [
+      { path: '/dashboard', icon: Home, label: 'Equipment' },
+      { path: '/calendar', icon: Calendar, label: 'Calendar' },
+      { path: '/vendors', icon: Store, label: 'Vendors' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
+    ],
+    owner_operator: [
+      { path: '/dashboard', icon: Home, label: 'Portfolio' },
+      { path: '/business-intelligence', icon: Lightbulb, label: 'Intel' },
+      { path: '/scoring-breakdown', icon: Target, label: 'Scores' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
+    ],
+    executive: [
+      { path: '/dashboard', icon: Home, label: 'Insights' },
+      { path: '/business-intelligence', icon: Lightbulb, label: 'Intel' },
+      { path: '/scoring-breakdown', icon: Target, label: 'Scores' },
+      { path: '/analysis', icon: TrendingUp, label: 'Analytics' },
     ],
   };
 
-  // Role-specific "More" items (kitchen has none — all 5 tabs are primary)
+  // Role-specific "More" items (kitchen_staff has none — all 5 tabs are primary)
   const moreByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
-    owner_operator: [
-      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/self-inspection', icon: ClipboardCheck, label: 'Self-Inspection' },
-      { path: '/photo-evidence', icon: Camera, label: 'Photos' },
-      { path: '/analysis', icon: Bell, label: 'Alerts' },
-      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
-      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-      { path: '/team', icon: Users, label: 'Team' },
-      { path: '/training', icon: GraduationCap, label: 'Training' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
+    kitchen_staff: [],
+    chef: [
+      { path: '/haccp', icon: ClipboardCheck, label: 'HACCP' },
+      { path: '/allergen-tracking', icon: AlertTriangle, label: 'Allergens' },
+      { path: '/receiving-log', icon: FileText, label: 'Receiving' },
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
-    executive: [
-      { path: '/scoring-breakdown', icon: Target, label: 'Compliance' },
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
-      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
-      { path: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
+    kitchen_manager: [
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/documents', icon: FileText, label: 'Documents' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     compliance_manager: [
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
       { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/benchmarks', icon: Target, label: 'Benchmarks' },
-      { path: '/insurance-risk', icon: AlertTriangle, label: 'Risk Score' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    chef: [
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/training', icon: GraduationCap, label: 'Training' },
-      { path: '/team', icon: Users, label: 'Team' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
+      { path: '/iot-monitoring', icon: Thermometer, label: 'IoT' },
+      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
     facilities_manager: [
-      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/equipment', icon: Store, label: 'Equipment' },
-      { path: '/marketplace', icon: ShoppingBag, label: 'Marketplace' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/equipment', icon: Settings, label: 'Equipment' },
+      { path: '/documents', icon: FileText, label: 'Documents' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
-    kitchen_manager: [
+    owner_operator: [
+      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
+      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
+      { path: '/documents', icon: FileText, label: 'Documents' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
+      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
       { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/playbooks', icon: AlertCircle, label: 'Incidents' },
-      { path: '/copilot', icon: Brain, label: 'Copilot' },
-      { path: '/training', icon: GraduationCap, label: 'Training' },
       { path: '/team', icon: Users, label: 'Team' },
       { path: '/settings', icon: Settings, label: 'Settings' },
       { path: '/help', icon: HelpCircle, label: 'Help' },
     ],
-    kitchen_staff: [],
+    executive: [
+      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
+      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
+      { path: '/reports', icon: BarChart3, label: 'Reporting' },
+      { path: '/billing', icon: FileText, label: 'Billing' },
+      { path: '/settings', icon: Settings, label: 'Settings' },
+      { path: '/help', icon: HelpCircle, label: 'Help' },
+    ],
   };
 
   const mainTabs = tabsByRole[userRole];

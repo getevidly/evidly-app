@@ -478,13 +478,13 @@ export function AIAdvisor() {
                     <div style={{ fontSize: '12px', fontWeight: 600, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {conv.mode === 'inspection' ? '🔍 ' : conv.mode === 'document' ? '📄 ' : ''}{conv.title}
                     </div>
-                    <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>
+                    <div style={{ fontSize: '10px', color: 'var(--text-secondary, #3D5068)', marginTop: '2px' }}>
                       {fmtDate(conv.createdAt)} · {conv.messages.length} msgs
                     </div>
                   </div>
                 ))}
                 {conversations.length === 0 && (
-                  <div style={{ fontSize: '12px', color: '#94a3b8', padding: '16px 8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)', padding: '16px 8px', textAlign: 'center' }}>
                     No conversations yet
                   </div>
                 )}
@@ -559,7 +559,7 @@ export function AIAdvisor() {
                     <Upload style={{ width: '20px', height: '20px', color: '#1e4d6b' }} />
                     <span style={{ fontSize: '14px', fontWeight: 600, color: '#1e4d6b' }}>Upload Document</span>
                   </button>
-                  <div style={{ fontSize: '12px', color: '#94a3b8' }}>PDF, PNG, JPG, or TXT — Max 10MB</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)' }}>PDF, PNG, JPG, or TXT — Max 10MB</div>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -617,14 +617,14 @@ export function AIAdvisor() {
                         padding: '12px 16px', borderRadius: '16px',
                         ...(msg.role === 'user'
                           ? { background: '#1e4d6b', color: '#fff', borderBottomRightRadius: '4px' }
-                          : { background: '#fff', color: '#1e293b', border: '1px solid #e5e7eb', borderBottomLeftRadius: '4px' }),
+                          : { background: '#fff', color: '#1e3a5f', border: '1px solid #e5e7eb', borderBottomLeftRadius: '4px' }),
                       }}
                     >
                       {msg.role === 'assistant' && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #f0f0f0' }}>
                           <span style={{ fontSize: '11px', fontWeight: 700, color: '#1e4d6b' }}>EvidLY AI</span>
-                          <span style={{ fontSize: '11px', color: '#94a3b8' }}>·</span>
-                          <span style={{ fontSize: '11px', color: '#94a3b8' }}>{fmtTime(msg.timestamp)}</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-secondary, #3D5068)' }}>·</span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-secondary, #3D5068)' }}>{fmtTime(msg.timestamp)}</span>
                         </div>
                       )}
                       <div
@@ -633,7 +633,7 @@ export function AIAdvisor() {
                       />
                     </div>
                     {msg.role === 'user' && (
-                      <div style={{ fontSize: '10px', color: '#94a3b8', textAlign: 'right', marginTop: '4px' }}>{fmtTime(msg.timestamp)}</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-secondary, #3D5068)', textAlign: 'right', marginTop: '4px' }}>{fmtTime(msg.timestamp)}</div>
                     )}
 
                     {/* Action items button */}
@@ -892,7 +892,7 @@ export function AIAdvisor() {
                     <CheckCircle2 style={{ width: '18px', height: '18px', color: '#fff' }} />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', margin: 0, ...F }}>Create Action Items</h3>
+                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1e3a5f', margin: 0, ...F }}>Create Action Items</h3>
                     <p style={{ fontSize: '12px', color: '#6b7280', margin: '2px 0 0', ...F }}>{pendingActions.length} items extracted from AI response</p>
                   </div>
                   <button onClick={() => setShowActionModal(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
@@ -906,7 +906,7 @@ export function AIAdvisor() {
                   <div style={{ padding: '20px 24px' }}>
                     {pendingActions.map((action, i) => (
                       <div key={i} style={{ padding: '14px', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e5e7eb', marginBottom: '10px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b', marginBottom: '10px', ...F }}>{action}</div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: '#1e3a5f', marginBottom: '10px', ...F }}>{action}</div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                           <div>
                             <label style={{ fontSize: '11px', fontWeight: 600, color: '#6b7280', display: 'block', marginBottom: '4px' }}>Priority</label>
@@ -963,7 +963,7 @@ export function AIAdvisor() {
                   <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
                     <CheckCircle2 style={{ width: '24px', height: '24px', color: '#22c55e' }} />
                   </div>
-                  <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#1e293b', margin: '0 0 8px', ...F }}>Action Items Created!</h4>
+                  <h4 style={{ fontSize: '16px', fontWeight: 700, color: '#1e3a5f', margin: '0 0 8px', ...F }}>Action Items Created!</h4>
                   <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 20px', ...F }}>
                     {pendingActions.length} items have been added to your Action Center.
                   </p>

@@ -166,7 +166,7 @@ export function WeeklyDigest() {
             disabled={sendingTest || recipients.length === 0}
             style={{
               padding: '10px 18px', borderRadius: '8px', border: 'none',
-              background: sendingTest ? '#94a3b8' : '#1e4d6b', color: '#fff',
+              background: sendingTest ? '#3D5068' : '#1e4d6b', color: '#fff',
               fontSize: '13px', fontWeight: 600, cursor: sendingTest ? 'default' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '6px',
             }}
@@ -266,7 +266,7 @@ export function WeeklyDigest() {
                 </div>
               ))}
               {recipients.length === 0 && (
-                <div style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic', padding: '8px 0' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)', fontStyle: 'italic', padding: '8px 0' }}>
                   No recipients added
                 </div>
               )}
@@ -295,7 +295,7 @@ export function WeeklyDigest() {
                   <span style={{ fontSize: '13px', color: '#374151' }}>
                     {toggle.label}
                     {toggle.locked && (
-                      <span style={{ fontSize: '10px', color: '#94a3b8', marginLeft: '6px', fontWeight: 600 }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-secondary, #3D5068)', marginLeft: '6px', fontWeight: 600 }}>
                         ALWAYS ON
                       </span>
                     )}
@@ -320,7 +320,7 @@ export function WeeklyDigest() {
                 <div style={{ fontSize: '12px', color: '#6b7280' }}>
                   Delivering every {SCHEDULE_OPTIONS.find(o => o.value === schedule)?.label} to {recipients.length} recipient{recipients.length !== 1 ? 's' : ''}.
                 </div>
-                <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px' }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)', marginTop: '6px' }}>
                   Last sent: {isDemoMode ? 'Feb 3, 2026 at 8:00 AM' : 'Not yet sent'}
                 </div>
               </>
@@ -350,7 +350,7 @@ export function WeeklyDigest() {
                 <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
                 <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#eab308' }} />
                 <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e' }} />
-                <span style={{ fontSize: '12px', color: '#94a3b8', marginLeft: '8px' }}>Email Preview</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary, #3D5068)', marginLeft: '8px' }}>Email Preview</span>
               </div>
               <div style={{ marginTop: '12px' }}>
                 <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '4px' }}>

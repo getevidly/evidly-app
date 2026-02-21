@@ -1,7 +1,7 @@
 /**
  * BRANDING-UPDATE-1 — EvidLY Square Icon (inline SVG)
  *
- * Navy bg (#1E2D4D), gold border (#A08C5A), "ELY" in white,
+ * Navy bg (#1a2d4a), gold border (#A08C5A), "ELY" in white,
  * gold underline, gold checkmark badge top-right.
  * viewBox 0 0 80 80.
  */
@@ -23,7 +23,7 @@ export const EvidlyIcon: React.FC<EvidlyIconProps> = ({ size = 40, className }) 
     className={className}
   >
     {/* Navy background */}
-    <rect width="80" height="80" fill="#1E2D4D" rx="16" />
+    <rect width="80" height="80" fill="#1a2d4a" rx="16" />
     {/* Gold border rectangle */}
     <rect x="16" y="16" width="48" height="48" rx="8" fill="none" stroke="#A08C5A" strokeWidth="2.5" />
     {/* ELY text */}

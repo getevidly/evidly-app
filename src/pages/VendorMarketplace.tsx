@@ -111,7 +111,7 @@ const categoryBgColors: Record<string, string> = {
 /* ------------------------------------------------------------------ */
 const tierBorderColor: Record<MarketplaceTier, string> = {
   verified: '#22c55e',
-  certified: '#94a3b8',
+  certified: '#3D5068',
   preferred: '#d4af37',
 };
 

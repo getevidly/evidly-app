@@ -24,13 +24,14 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #1E2D4D 0%, #2A3F6B 50%, #1E2D4D 100%)',
-      border: '1px solid #A08C5A',
+      background: '#FFFFFF',
+      border: '1px solid #D1D9E6',
       borderRadius: '12px',
       padding: '20px 24px',
       marginBottom: '20px',
       position: 'relative',
       overflow: 'hidden',
+      boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       {/* Gold accent bar top */}
       <div style={{
@@ -57,7 +58,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
           <p style={{
             fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
             fontSize: '13px',
-            color: '#ffffff',
+            color: 'var(--text-primary, #0B1628)',
             margin: '0 0 4px',
             fontWeight: 500,
           }}>
@@ -66,11 +67,11 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
           <p style={{
             fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
             fontSize: '12px',
-            color: '#94a3b8',
+            color: 'var(--text-secondary, #3D5068)',
             margin: 0,
           }}>
-            You've generated <strong style={{ color: '#C4AE7A' }}>{mealsGenerated} meals</strong> so far.
-            Plus earn <strong style={{ color: '#C4AE7A' }}>1 month free</strong> for every converted referral.
+            You've generated <strong style={{ color: '#A08C5A' }}>{mealsGenerated} meals</strong> so far.
+            Plus earn <strong style={{ color: '#A08C5A' }}>1 month free</strong> for every converted referral.
           </p>
         </div>
 

@@ -76,7 +76,7 @@ function BlurPreview({ feature, currentTier, children }: PremiumFeaturePreviewPr
           <h3 style={{ color: '#1e4d6b', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
             {feature.name}
           </h3>
-          <p style={{ color: '#64748b', fontSize: 14, margin: '0 0 20px', lineHeight: 1.5 }}>
+          <p style={{ color: '#6B7F96', fontSize: 14, margin: '0 0 20px', lineHeight: 1.5 }}>
             {feature.description}
           </p>
           <button
@@ -98,7 +98,7 @@ function BlurPreview({ feature, currentTier, children }: PremiumFeaturePreviewPr
             <Sparkles size={16} />
             Upgrade to {feature.upgradeLabel} &mdash; {feature.upgradePrice}
           </button>
-          <p style={{ color: '#94a3b8', fontSize: 12, margin: '12px 0 0' }}>
+          <p style={{ color: '#6B7F96', fontSize: 12, margin: '12px 0 0' }}>
             Current plan: {tierLabel(currentTier)}
           </p>
         </div>
@@ -120,14 +120,14 @@ function ProgressBar({ value, color }: { value: number; color: string }) {
 function IndustryBenchmarksSample() {
   const rows: { label: string; value: number; color: string }[] = [
     { label: 'Your Score: 92%', value: 92, color: '#22c55e' },
-    { label: 'Industry Average: 78%', value: 78, color: '#94a3b8' },
+    { label: 'Industry Average: 78%', value: 78, color: '#6B7F96' },
     { label: 'Top 10%: 95%', value: 95, color: '#d4af37' },
   ];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {rows.map((r) => (
         <div key={r.label} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontSize: 13, color: '#334155', width: 160, flexShrink: 0 }}>{r.label}</span>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)', width: 160, flexShrink: 0 }}>{r.label}</span>
           <ProgressBar value={r.value} color={r.color} />
         </div>
       ))}
@@ -165,7 +165,7 @@ function InsuranceRiskScoreSample() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {factors.map((f) => (
             <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 12, color: '#475569', width: 160, flexShrink: 0 }}>{f.label}</span>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', width: 160, flexShrink: 0 }}>{f.label}</span>
               <ProgressBar value={f.value} color="#1e4d6b" />
             </div>
           ))}
@@ -195,7 +195,7 @@ function DefaultSample() {
           }}
         >
           <p style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1e4d6b' }}>{s.value}</p>
-          <p style={{ margin: '4px 0 0', fontSize: 12, color: '#64748b' }}>{s.label}</p>
+          <p style={{ margin: '4px 0 0', fontSize: 12, color: '#6B7F96' }}>{s.label}</p>
         </div>
       ))}
     </div>
@@ -325,10 +325,10 @@ function LockedPreview({ feature, currentTier }: PremiumFeaturePreviewProps) {
       <h3 style={{ color: '#1e4d6b', fontSize: 18, fontWeight: 700, margin: '0 0 8px' }}>
         {feature.name}
       </h3>
-      <p style={{ color: '#475569', fontSize: 14, margin: '0 0 16px', lineHeight: 1.5 }}>
+      <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 14, margin: '0 0 16px', lineHeight: 1.5 }}>
         {feature.description}
       </p>
-      <p style={{ color: '#94a3b8', fontSize: 12, margin: '0 0 20px' }}>
+      <p style={{ color: '#6B7F96', fontSize: 12, margin: '0 0 20px' }}>
         Available on {feature.upgradeLabel} plan
       </p>
       {isEnterprise ? (

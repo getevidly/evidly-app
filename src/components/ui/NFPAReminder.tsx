@@ -63,9 +63,9 @@ const REMINDERS: Reminder[] = [
 const DISMISSED_KEY = 'evidly_nfpa_reminder_dismissed';
 
 const urgencyStyle = {
-  reminder:  { border: '#334155',   bg: '#1E2D4D',   badge: '#94a3b8', badgeBg: '#1e293b',  label: 'Monthly Reminder' },
-  important: { border: '#1e40af',   bg: '#1e3a5f20', badge: '#93c5fd', badgeBg: '#1e3a5f',  label: 'Important' },
-  critical:  { border: '#dc2626',   bg: '#7f1d1d20', badge: '#fca5a5', badgeBg: '#7f1d1d',  label: 'Critical Period' },
+  reminder:  { border: '#D1D9E6',   bg: '#FFFFFF',   badge: '#3D5068', badgeBg: '#EEF1F7',  label: 'Monthly Reminder' },
+  important: { border: '#60A5FA',   bg: '#EFF6FF',   badge: '#2563eb', badgeBg: '#DBEAFE',  label: 'Important' },
+  critical:  { border: '#dc2626',   bg: '#FEF2F2',   badge: '#dc2626', badgeBg: '#FEE2E2',  label: 'Critical Period' },
 };
 
 export const NFPAReminder: React.FC = () => {
@@ -98,37 +98,38 @@ export const NFPAReminder: React.FC = () => {
       background: s.bg, border: `1px solid ${s.border}`,
       borderLeft: `4px solid ${s.border}`, borderRadius: '10px',
       padding: '16px 18px', marginBottom: '20px',
+      boxShadow: '0 1px 3px rgba(11,22,40,.06)',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '16px' }}>&#x1F525;</span>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{reminder.title}</p>
+              <p style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>{reminder.title}</p>
               <span style={{
                 background: s.badgeBg, borderRadius: '4px', padding: '1px 6px',
                 fontSize: '10px', color: s.badge, fontWeight: 700, fontFamily: 'system-ui',
               }}>{s.label}</span>
             </div>
-            <p style={{ color: '#64748b', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
-              {reminder.standard} &middot; <span style={{ color: '#475569' }}>Verify requirements with your AHJ</span>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
+              {reminder.standard} &middot; <span style={{ color: 'var(--text-tertiary)' }}>Verify requirements with your AHJ</span>
             </p>
           </div>
         </div>
         <button onClick={dismiss} style={{
           background: 'transparent', border: 'none',
-          color: '#475569', cursor: 'pointer', fontSize: '18px', padding: 0,
+          color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: '18px', padding: 0,
         }}>&times;</button>
       </div>
-      <p style={{ color: '#94a3b8', fontSize: '12px', margin: '0 0 10px', lineHeight: 1.6, fontFamily: 'system-ui' }}>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '12px', margin: '0 0 10px', lineHeight: 1.6, fontFamily: 'system-ui' }}>
         {reminder.benefit}
       </p>
       <div style={{
-        background: '#0f172a', borderRadius: '6px', padding: '10px 12px',
+        background: '#FEFCF5', borderRadius: '6px', padding: '10px 12px',
         borderLeft: '3px solid #A08C5A',
       }}>
-        <p style={{ color: '#A08C5A', fontSize: '11px', fontWeight: 700, margin: '0 0 3px', fontFamily: 'system-ui' }}>Action This Month</p>
-        <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0, fontFamily: 'system-ui' }}>{reminder.action}</p>
+        <p style={{ color: '#7A6B43', fontSize: '11px', fontWeight: 700, margin: '0 0 3px', fontFamily: 'system-ui' }}>Action This Month</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '12px', margin: 0, fontFamily: 'system-ui' }}>{reminder.action}</p>
       </div>
     </div>
   );

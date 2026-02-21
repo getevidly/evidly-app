@@ -40,9 +40,10 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
 
   return (
     <div style={{
-      background: '#1E2D4D',
+      background: '#FFFFFF',
       border: inactiveCount > 0 ? '1px solid #7f1d1d' : '1px solid #166534',
       borderRadius: '12px', overflow: 'hidden', marginBottom: '16px',
+      boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
       <button onClick={() => setExpanded(!expanded)} style={{
         width: '100%', background: 'none', border: 'none',
@@ -52,10 +53,10 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '18px' }}>&#x1F525;</span>
           <div style={{ textAlign: 'left' }}>
-            <p style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
+            <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
               Fire Safety Service Status — Cleaning Pros Plus
             </p>
-            <p style={{ color: '#64748b', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
+            <p style={{ color: '#3D5068', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
               {4 - inactiveCount} of 4 services active
               {inactiveCount > 0 && ` · ${inactiveCount} not in use — enter your details to see your risk exposure`}
             </p>
@@ -71,18 +72,18 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
               {inactiveCount} Not Active
             </span>
           )}
-          <span style={{ color: '#64748b' }}>{expanded ? '\u25B2' : '\u25BC'}</span>
+          <span style={{ color: '#3D5068' }}>{expanded ? '\u25B2' : '\u25BC'}</span>
         </div>
       </button>
 
       {expanded && (
-        <div style={{ borderTop: '1px solid #334155' }}>
+        <div style={{ borderTop: '1px solid #D1D9E6' }}>
           {CPP_SERVICES.map(service => {
             const state = serviceStates.find(s => s.serviceId === service.id)!;
             const isOpen = openService === service.id;
 
             return (
-              <div key={service.id} style={{ borderBottom: '1px solid #1e293b' }}>
+              <div key={service.id} style={{ borderBottom: '1px solid #D1D9E6' }}>
                 <div style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '14px 20px',
@@ -93,10 +94,10 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                       background: state.isActive ? '#4ade80' : '#ef4444', flexShrink: 0,
                     }} />
                     <div>
-                      <p style={{ color: '#ffffff', fontSize: '13px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>
+                      <p style={{ color: '#0B1628', fontSize: '13px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>
                         {service.name}
                       </p>
-                      <p style={{ color: '#64748b', fontSize: '11px', margin: '1px 0 0', fontFamily: 'system-ui' }}>
+                      <p style={{ color: '#3D5068', fontSize: '11px', margin: '1px 0 0', fontFamily: 'system-ui' }}>
                         {service.nfpaReference}
                       </p>
                     </div>
@@ -118,9 +119,9 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                     <button
                       onClick={() => setOpenService(isOpen ? null : service.id)}
                       style={{
-                        background: 'transparent', border: '1px solid #334155',
+                        background: 'transparent', border: '1px solid #D1D9E6',
                         borderRadius: '6px', padding: '4px 10px',
-                        color: '#64748b', fontSize: '11px',
+                        color: '#3D5068', fontSize: '11px',
                         cursor: 'pointer', fontFamily: 'system-ui',
                       }}
                     >
@@ -130,23 +131,23 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                 </div>
 
                 {isOpen && (
-                  <div style={{ background: '#0f172a', padding: '16px 20px' }}>
+                  <div style={{ background: '#EEF1F7', padding: '16px 20px' }}>
                     {/* Business benefit */}
                     <div style={{
                       background: '#14532d20', border: '1px solid #166534',
                       borderRadius: '8px', padding: '12px', marginBottom: '12px',
                     }}>
                       <p style={{ color: '#4ade80', fontSize: '11px', fontWeight: 700, margin: '0 0 4px', fontFamily: 'system-ui' }}>Business Benefit</p>
-                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0, lineHeight: 1.6, fontFamily: 'system-ui' }}>{service.businessBenefit}</p>
+                      <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.6, fontFamily: 'system-ui' }}>{service.businessBenefit}</p>
                     </div>
 
                     {/* Operational impact */}
                     <div style={{
-                      background: '#1e293b', borderLeft: '3px solid #3b82f6',
+                      background: '#D1D9E6', borderLeft: '3px solid #3b82f6',
                       borderRadius: '6px', padding: '10px 12px', marginBottom: '12px',
                     }}>
                       <p style={{ color: '#93c5fd', fontSize: '11px', fontWeight: 700, margin: '0 0 3px', fontFamily: 'system-ui' }}>Operational Impact</p>
-                      <p style={{ color: '#94a3b8', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>{service.operationalImpact}</p>
+                      <p style={{ color: '#3D5068', fontSize: '12px', margin: 0, lineHeight: 1.5, fontFamily: 'system-ui' }}>{service.operationalImpact}</p>
                     </div>
 
                     {/* Regulatory tags */}
@@ -158,22 +159,22 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                       }}>{service.nfpaReference}</span>
                       {service.additionalRegs.map((r, i) => (
                         <span key={i} style={{
-                          background: '#1e293b', border: '1px solid #334155',
+                          background: '#D1D9E6', border: '1px solid #D1D9E6',
                           borderRadius: '4px', padding: '3px 8px',
-                          fontSize: '11px', color: '#64748b', fontFamily: 'system-ui',
+                          fontSize: '11px', color: '#3D5068', fontFamily: 'system-ui',
                         }}>{r}</span>
                       ))}
                     </div>
 
                     {/* Risk inputs */}
-                    <p style={{ color: '#94a3b8', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 10px', fontFamily: 'system-ui' }}>
+                    <p style={{ color: '#3D5068', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', margin: '0 0 10px', fontFamily: 'system-ui' }}>
                       Your Operation Details — Risk Calculated from Your Numbers
                     </p>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                       {service.costDrivers.map(driver => (
                         <div key={driver.id}>
                           <label style={{
-                            display: 'block', color: '#64748b', fontSize: '10px',
+                            display: 'block', color: '#3D5068', fontSize: '10px',
                             fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px',
                             marginBottom: '3px', fontFamily: 'system-ui',
                           }}>
@@ -184,9 +185,9 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                               value={(state.inputs[driver.id] as string) || ''}
                               onChange={e => updateInput(service.id, driver.id, e.target.value)}
                               style={{
-                                width: '100%', background: '#1e293b',
-                                border: '1px solid #334155', borderRadius: '6px',
-                                padding: '7px 10px', color: '#ffffff',
+                                width: '100%', background: '#FFFFFF',
+                                border: '1px solid #D1D9E6', borderRadius: '6px',
+                                padding: '7px 10px', color: '#0B1628',
                                 fontSize: '12px', fontFamily: 'system-ui',
                               }}
                             >
@@ -196,7 +197,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                           ) : (
                             <div style={{ position: 'relative' }}>
                               {driver.inputType === 'currency' && (
-                                <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#64748b', fontSize: '12px' }}>$</span>
+                                <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#3D5068', fontSize: '12px' }}>$</span>
                               )}
                               <input
                                 type="number"
@@ -204,16 +205,16 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                                 onChange={e => updateInput(service.id, driver.id, parseFloat(e.target.value) || 0)}
                                 placeholder={driver.placeholder}
                                 style={{
-                                  width: '100%', background: '#1e293b',
-                                  border: '1px solid #334155', borderRadius: '6px',
+                                  width: '100%', background: '#FFFFFF',
+                                  border: '1px solid #D1D9E6', borderRadius: '6px',
                                   padding: `7px 10px 7px ${driver.inputType === 'currency' ? '20px' : '10px'}`,
-                                  color: '#ffffff', fontSize: '12px',
+                                  color: '#0B1628', fontSize: '12px',
                                   fontFamily: 'system-ui', boxSizing: 'border-box' as const,
                                 }}
                               />
                             </div>
                           )}
-                          <p style={{ color: '#475569', fontSize: '10px', margin: '3px 0 0', fontFamily: 'system-ui' }}>{driver.helpText}</p>
+                          <p style={{ color: '#3D5068', fontSize: '10px', margin: '3px 0 0', fontFamily: 'system-ui' }}>{driver.helpText}</p>
                         </div>
                       ))}
                     </div>
@@ -235,9 +236,9 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                             onChange={e => update(service.id, { currentCost: parseFloat(e.target.value) || 0 })}
                             placeholder="e.g. 450"
                             style={{
-                              width: '100%', background: '#0f172a',
+                              width: '100%', background: '#FFFFFF',
                               border: '1px solid #166534', borderRadius: '6px',
-                              padding: '7px 10px', color: '#ffffff',
+                              padding: '7px 10px', color: '#0B1628',
                               fontSize: '12px', fontFamily: 'system-ui', boxSizing: 'border-box' as const,
                             }}
                           />
@@ -250,9 +251,9 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                             value={state.frequency}
                             onChange={e => update(service.id, { frequency: parseInt(e.target.value) })}
                             style={{
-                              width: '100%', background: '#0f172a',
+                              width: '100%', background: '#FFFFFF',
                               border: '1px solid #166534', borderRadius: '6px',
-                              padding: '7px 10px', color: '#ffffff',
+                              padding: '7px 10px', color: '#0B1628',
                               fontSize: '12px', fontFamily: 'system-ui',
                             }}
                           >
@@ -272,14 +273,14 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
                     {/* Not active: CPP CTA */}
                     {!state.isActive && (
                       <div style={{
-                        background: 'linear-gradient(135deg, #1E2D4D, #162038)',
+                        background: 'linear-gradient(135deg, #EEF1F7, #FFFFFF)',
                         border: '1px solid #A08C5A', borderRadius: '8px',
                         padding: '14px 16px',
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                       }}>
                         <div>
-                          <p style={{ color: '#ffffff', fontSize: '12px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>{CPP.name}</p>
-                          <p style={{ color: '#64748b', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>
+                          <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 700, margin: '0 0 2px', fontFamily: 'system-ui' }}>{CPP.name}</p>
+                          <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, fontFamily: 'system-ui' }}>
                             {CPP.serviceArea} · {CPP.phone} · {CPP.tagline}
                           </p>
                         </div>

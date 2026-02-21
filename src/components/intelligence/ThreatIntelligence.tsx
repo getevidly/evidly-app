@@ -68,10 +68,11 @@ export const ThreatIntelligence: React.FC<{ data: any }> = ({ data }) => {
 
   return (
     <div style={{
-      background: '#1E2D4D', border: '1px solid #334155',
+      background: '#FFFFFF', border: '1px solid #D1D9E6',
       borderRadius: '12px', padding: '20px', marginBottom: '16px',
+      boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
     }}>
-      <h2 style={{ color: '#ffffff', fontSize: '14px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
+      <h2 style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui' }}>
         {'\u26A0\uFE0F'} Threat Intelligence
         <span style={{
           backgroundColor: '#ef444420', border: '1px solid #ef4444',
@@ -104,8 +105,8 @@ export const ThreatIntelligence: React.FC<{ data: any }> = ({ data }) => {
                     </span>
                   )}
                 </div>
-                <p style={{ color: '#64748b', fontSize: '11px', margin: '0 0 4px', fontFamily: 'system-ui' }}>{threat.location}</p>
-                <p style={{ color: '#94a3b8', fontSize: '11px', margin: 0, lineHeight: 1.4, fontFamily: 'system-ui' }}>{threat.action}</p>
+                <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 4px', fontFamily: 'system-ui' }}>{threat.location}</p>
+                <p style={{ color: '#3D5068', fontSize: '11px', margin: 0, lineHeight: 1.4, fontFamily: 'system-ui' }}>{threat.action}</p>
               </div>
             </div>
           );

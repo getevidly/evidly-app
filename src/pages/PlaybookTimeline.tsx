@@ -98,7 +98,7 @@ export function PlaybookTimeline() {
         <h2 style={{ color: '#1e4d6b', fontSize: 24, fontWeight: 700, margin: '0 0 8px' }}>
           Incident Not Found
         </h2>
-        <p style={{ color: '#64748b', fontSize: 15, marginBottom: 24 }}>
+        <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 15, marginBottom: 24 }}>
           No incident with ID "{id}" was found in the system.
         </p>
         <button
@@ -155,19 +155,19 @@ export function PlaybookTimeline() {
           )}
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, fontSize: 14, color: '#475569' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, fontSize: 14, color: 'var(--text-secondary, #3D5068)' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <MapPin size={15} color="#64748b" /> {incident.location}
+            <MapPin size={15} color="#6B7F96" /> {incident.location}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <User size={15} color="#64748b" /> Initiated by {incident.initiatedBy}
+            <User size={15} color="#6B7F96" /> Initiated by {incident.initiatedBy}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <Clock size={15} color="#64748b" />
+            <Clock size={15} color="#6B7F96" />
             {fmtDate(incident.initiatedAt)} at {fmtTime(incident.initiatedAt)}
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <Siren size={15} color="#64748b" />
+            <Siren size={15} color="#6B7F96" />
             Duration: {totalDuration(incident.initiatedAt, incident.completedAt)}
           </span>
         </div>
@@ -224,7 +224,7 @@ export function PlaybookTimeline() {
 
                 {/* Timestamps */}
                 {log && log.startedAt && (
-                  <div style={{ fontSize: 13, color: '#64748b', marginBottom: 4 }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', marginBottom: 4 }}>
                     Started: {fmtTime(log.startedAt)}
                     {log.completedAt && (
                       <> &mdash; Completed: {fmtTime(log.completedAt)} ({diffMinutes(log.startedAt, log.completedAt)})</>
@@ -235,12 +235,12 @@ export function PlaybookTimeline() {
                   </div>
                 )}
                 {log?.status === 'pending' && (
-                  <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>Pending</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', fontStyle: 'italic' }}>Pending</div>
                 )}
 
                 {/* Completed by */}
                 {log?.status === 'completed' && (
-                  <div style={{ fontSize: 13, color: '#475569', marginBottom: 4 }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', marginBottom: 4 }}>
                     Completed by <strong>{incident.initiatedBy}</strong>
                   </div>
                 )}
@@ -248,7 +248,7 @@ export function PlaybookTimeline() {
                 {/* Notes */}
                 {log && log.notes && (
                   <div style={{
-                    fontSize: 13, color: '#334155', marginTop: 8, padding: '8px 12px',
+                    fontSize: 13, color: 'var(--text-secondary, #3D5068)', marginTop: 8, padding: '8px 12px',
                     background: '#f8fafc', borderRadius: 6, lineHeight: 1.5,
                   }}>
                     {log.notes}
@@ -267,7 +267,7 @@ export function PlaybookTimeline() {
                   )}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 4,
-                    color: actionDone === actionTotal && actionTotal > 0 ? '#16a34a' : '#64748b',
+                    color: actionDone === actionTotal && actionTotal > 0 ? '#16a34a' : '#6B7F96',
                     fontWeight: 600,
                   }}>
                     <CheckCircle2 size={14} /> {actionDone}/{actionTotal} items completed
@@ -293,7 +293,7 @@ export function PlaybookTimeline() {
               <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
                 {['Food Item', 'Qty', 'Temp', 'Decision', 'Cost'].map(h => (
                   <th key={h} style={{
-                    textAlign: 'left', padding: '8px 10px', color: '#64748b',
+                    textAlign: 'left', padding: '8px 10px', color: 'var(--text-secondary, #3D5068)',
                     fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5,
                   }}>
                     {h}
@@ -310,7 +310,7 @@ export function PlaybookTimeline() {
                     <td style={{ padding: '10px 10px', fontWeight: 600, color: '#0f172a' }}>
                       {item.foodName}
                     </td>
-                    <td style={{ padding: '10px 10px', color: '#475569' }}>
+                    <td style={{ padding: '10px 10px', color: 'var(--text-secondary, #3D5068)' }}>
                       {item.quantity} {item.unit}
                     </td>
                     <td style={{ padding: '10px 10px', color: item.currentTemp > 41 ? '#dc2626' : '#16a34a', fontWeight: 600 }}>
@@ -324,7 +324,7 @@ export function PlaybookTimeline() {
                         {dec.label}
                       </span>
                     </td>
-                    <td style={{ padding: '10px 10px', color: '#475569', fontWeight: 600 }}>
+                    <td style={{ padding: '10px 10px', color: 'var(--text-secondary, #3D5068)', fontWeight: 600 }}>
                       ${cost.toFixed(2)}
                     </td>
                   </tr>
@@ -348,7 +348,7 @@ export function PlaybookTimeline() {
               <span style={{ fontWeight: 700, color: '#991b1b' }}>
                 <DollarSign size={15} style={{ verticalAlign: -2 }} /> Total Loss (discarded): ${totalLoss.toFixed(2)}
               </span>
-              <span style={{ color: '#475569' }}>
+              <span style={{ color: 'var(--text-secondary, #3D5068)' }}>
                 Insurance Status: <strong style={{ color: '#1e40af' }}>
                   {INSURANCE_STATUS[demoInsuranceClaim.status]?.label || demoInsuranceClaim.status}
                 </strong>
@@ -376,21 +376,21 @@ export function PlaybookTimeline() {
                 <Truck size={16} color="#1e4d6b" />
                 <span style={{ fontSize: 15, fontWeight: 700, color: '#0f172a' }}>{vc.vendorName}</span>
                 <span style={{
-                  fontSize: 11, fontWeight: 600, color: '#64748b', background: '#e2e8f0',
+                  fontSize: 11, fontWeight: 600, color: 'var(--text-secondary, #3D5068)', background: '#e2e8f0',
                   borderRadius: 999, padding: '1px 8px',
                 }}>
                   {vc.role}
                 </span>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 13, color: '#475569', marginBottom: 8 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, fontSize: 13, color: 'var(--text-secondary, #3D5068)', marginBottom: 8 }}>
                 <span><strong>Contact:</strong> {vc.contactName}</span>
                 <span><strong>Phone:</strong> {vc.phone}</span>
                 <span><strong>Contacted:</strong> {fmtTime(vc.contactedAt)}</span>
               </div>
-              <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.5 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary, #3D5068)', lineHeight: 1.5 }}>
                 {vc.response}
               </div>
-              <div style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', marginTop: 6 }}>
                 Ticket #: <strong style={{ color: '#1e4d6b' }}>{vc.ticketNumber}</strong>
               </div>
             </div>
@@ -410,25 +410,25 @@ export function PlaybookTimeline() {
           const ic = demoInsuranceClaim;
           const st = INSURANCE_STATUS[ic.status] || INSURANCE_STATUS.filed;
           return (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontSize: 14, color: '#475569' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, fontSize: 14, color: 'var(--text-secondary, #3D5068)' }}>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Claim #</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Claim #</div>
                 <div style={{ fontWeight: 700, color: '#0f172a' }}>{ic.claimNumber}</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Carrier</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Carrier</div>
                 <div style={{ fontWeight: 600 }}>{ic.carrier}</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Total Loss</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Total Loss</div>
                 <div style={{ fontWeight: 700, color: '#991b1b' }}>${ic.totalLoss.toFixed(2)}</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Deductible</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Deductible</div>
                 <div style={{ fontWeight: 600 }}>${ic.deductible.toFixed(2)}</div>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Status</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Status</div>
                 <span style={{
                   display: 'inline-block', fontSize: 12, fontWeight: 700, padding: '2px 10px',
                   borderRadius: 999, background: st.bg, color: st.text,
@@ -437,7 +437,7 @@ export function PlaybookTimeline() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Filed</div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontWeight: 600, textTransform: 'uppercase', marginBottom: 2 }}>Filed</div>
                 <div style={{ fontWeight: 600 }}>{fmtDate(ic.filedAt)} by {ic.filedBy}</div>
               </div>
             </div>
@@ -513,7 +513,7 @@ export function PlaybookTimeline() {
         <h3 style={{ fontSize: 17, fontWeight: 700, color: '#1e4d6b', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
           <EvidlyIcon size={18} /> Compliance Narrative
         </h3>
-        <div style={{ fontSize: 14, color: '#334155', lineHeight: 1.7 }}>
+        <div style={{ fontSize: 14, color: 'var(--text-secondary, #3D5068)', lineHeight: 1.7 }}>
           <p style={{ margin: '0 0 10px' }}>
             On <strong>{fmtDate(incident.initiatedAt)}</strong> at <strong>{fmtTime(incident.initiatedAt)}</strong>,
             a <strong>{incident.templateTitle.toLowerCase()}</strong> incident was initiated
@@ -536,7 +536,7 @@ export function PlaybookTimeline() {
             demonstrating adherence to the regulatory standards cited above and is suitable for
             presentation to health department inspectors, insurance adjusters, and legal counsel.
           </p>
-          <p style={{ margin: 0, fontSize: 12, color: '#64748b', fontStyle: 'italic' }}>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--text-secondary, #3D5068)', fontStyle: 'italic' }}>
             Auto-generated by EvidLY Compliance Engine &mdash; {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </p>
         </div>

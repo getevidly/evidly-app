@@ -16,27 +16,28 @@ const riskColors: Record<string, string> = {
 
 export const ComplianceHeatMap: React.FC<{ data: any }> = ({ data }) => (
   <div style={{
-    background: '#1E2D4D', border: '1px solid #334155',
+    background: '#FFFFFF', border: '1px solid #D1D9E6',
     borderRadius: '12px', padding: '20px', marginBottom: '16px',
+    boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
   }}>
     <h2 style={{
-      color: '#ffffff', fontSize: '14px', fontWeight: 700,
+      color: '#0B1628', fontSize: '14px', fontWeight: 700,
       margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'system-ui',
     }}>
       <span style={{ fontSize: '16px' }}>{'🗺️'}</span> Compliance Heat Map
-      <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 400 }}>
+      <span style={{ fontSize: '11px', color: '#3D5068', fontWeight: 400 }}>
         Status by location and pillar
       </span>
     </h2>
 
     {/* Column headers */}
     <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr 1fr 80px 80px 80px', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
-      <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Location</span>
-      <span style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Food Safety</span>
-      <span style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Fire Safety</span>
-      <span style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Checklists</span>
-      <span style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Temp Logs</span>
-      <span style={{ fontSize: '10px', color: '#64748b', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Risk</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Location</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Food Safety</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Fire Safety</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Checklists</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Temp Logs</span>
+      <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: 'system-ui', textTransform: 'uppercase' }}>Risk</span>
     </div>
 
     {data.complianceMatrix.map((loc: any) => {
@@ -49,11 +50,11 @@ export const ComplianceHeatMap: React.FC<{ data: any }> = ({ data }) => (
       return (
         <div key={loc.locationId} style={{
           display: 'grid', gridTemplateColumns: '180px 1fr 1fr 80px 80px 80px',
-          gap: '8px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #1e293b',
+          gap: '8px', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #D1D9E6',
         }}>
           <div>
-            <p style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{loc.locationName}</p>
-            <p style={{ color: '#64748b', fontSize: '10px', margin: '1px 0 0', fontFamily: 'system-ui' }}>{loc.jurisdiction}</p>
+            <p style={{ color: '#0B1628', fontSize: '12px', fontWeight: 600, margin: 0, fontFamily: 'system-ui' }}>{loc.locationName}</p>
+            <p style={{ color: '#3D5068', fontSize: '10px', margin: '1px 0 0', fontFamily: 'system-ui' }}>{loc.jurisdiction}</p>
           </div>
           <div style={{
             background: fs.bg, border: `1px solid ${fs.border}`,

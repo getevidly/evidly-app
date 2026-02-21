@@ -74,13 +74,14 @@ const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').the
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
-const CorporateIntelligence = lazy(() => import('./pages/CorporateIntelligence').then(m => ({ default: m.CorporateIntelligence })));
+const BusinessIntelligence = lazy(() => import('./pages/CorporateIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
 const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
 const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
 const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
+const ComingSoon = lazy(() => import('./pages/ComingSoon').then(m => ({ default: m.ComingSoon })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
@@ -110,6 +111,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ de
 const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ default: m.TempLogQuick })));
 const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ default: m.TempLogScan })));
 const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
+const SelfDiagnosis = lazy(() => import('./pages/SelfDiagnosis').then(m => ({ default: m.SelfDiagnosis })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -297,7 +299,7 @@ function AppRoutes() {
         <Route path="/enterprise/admin" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/corporate-intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><CorporateIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/business-intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><BusinessIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
@@ -332,6 +334,11 @@ function AppRoutes() {
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/fire-safety" element={<FireSafety />} />
           <Route path="/equipment" element={<Equipment />} />
+          <Route path="/equipment/hood-exhaust" element={<ComingSoon title="Hood and Exhaust" description="Hood and exhaust system maintenance, cleaning schedules, and fire suppression inspections." />} />
+          <Route path="/equipment/hvac" element={<ComingSoon title="HVAC" description="Heating, ventilation, and air conditioning system maintenance and service records." />} />
+          <Route path="/equipment/ice-machines" element={<ComingSoon title="Ice Machines" description="Ice machine maintenance, cleaning schedules, and water quality monitoring." />} />
+          <Route path="/equipment/refrigeration" element={<ComingSoon title="Refrigeration" description="Walk-in coolers, freezers, and refrigeration units — temperature monitoring and service records." />} />
+          <Route path="/equipment/suppression-systems" element={<ComingSoon title="Suppression Systems" description="Fire suppression system inspections, certifications, and maintenance compliance." />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
@@ -371,7 +378,17 @@ function AppRoutes() {
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />
+          <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
+          {/* Stub routes for upcoming features */}
+          <Route path="/corrective-actions" element={<ComingSoon title="Corrective Actions" description="Track and resolve compliance violations with documented corrective action plans and follow-up verification." />} />
+          <Route path="/vendor-certifications" element={<ComingSoon title="Vendor Certifications" description="Verify and track vendor compliance certifications, insurance documents, and licensing status." />} />
+          <Route path="/violation-trends" element={<ComingSoon title="Violation Trends" description="Analyze violation patterns over time to identify systemic issues and improvement opportunities." />} />
+          <Route path="/export-center" element={<ComingSoon title="Export Center" description="Export compliance reports, documentation packages, and data extracts in multiple formats." />} />
+          <Route path="/allergen-tracking" element={<ComingSoon title="Allergen Tracking" description="Track allergen presence in menu items, cross-contamination risks, and allergen-free preparation zones." />} />
+          <Route path="/cooling-logs" element={<ComingSoon title="Cooling Logs" description="Record cooling times and temperatures for cooked foods to ensure safe cooling compliance." />} />
+          <Route path="/receiving-log" element={<ComingSoon title="Receiving Log" description="Log incoming deliveries with temperature checks, quality inspections, and supplier verification." />} />
+          <Route path="/billing" element={<ComingSoon title="Billing" description="Manage your EvidLY subscription, payment method, and invoice history." />} />
         </Route>
       </Routes>
     </>

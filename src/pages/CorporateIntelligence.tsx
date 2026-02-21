@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ExecutiveSummaryCard } from '../components/intelligence/ExecutiveSummaryCard';
+import { ScenarioEngine, type Scenario } from '../components/intelligence/ScenarioEngine';
 import { ComplianceHeatMap } from '../components/intelligence/ComplianceHeatMap';
 import { RiskRadar } from '../components/intelligence/RiskRadar';
 import { TrendEngine } from '../components/intelligence/TrendEngine';
@@ -12,6 +13,11 @@ import { PredictiveRisk } from '../components/intelligence/PredictiveRisk';
 import { RegionalBenchmark } from '../components/intelligence/RegionalBenchmark';
 import { AnomalyDetector } from '../components/intelligence/AnomalyDetector';
 import { ExportReport } from '../components/intelligence/ExportReport';
+import { ServiceCostPanel, type ServiceState } from '../components/intelligence/ServiceCostPanel';
+import { CostOfInactionEngine } from '../components/intelligence/CostOfInactionEngine';
+import { JurisdictionScoreTable } from '../components/intelligence/JurisdictionScoreTable';
+import { NFPAReminder } from '../components/ui/NFPAReminder';
+import type { UserJurisdiction } from '../data/jurisdictionData';
 import { demoIntelligence } from '../data/demoData';
 
 type ViewMode = 'operations' | 'risk' | 'financial' | 'people';
@@ -23,49 +29,73 @@ const viewModes: { id: ViewMode; label: string; icon: string; description: strin
   { id: 'people',     label: 'People', icon: '\uD83D\uDC65', description: 'Staffing correlation, training gaps, retention impact' },
 ];
 
-export function CorporateIntelligence() {
+export function BusinessIntelligence() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState<ViewMode>('operations');
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
+  const [activeScenario, setActiveScenario] = useState<Scenario | null>(null);
+  const [scenarioFields, setScenarioFields] = useState<Record<string, string>>({});
+  const [userJurisdictions, setUserJurisdictions] = useState<UserJurisdiction[]>([]);
+  const [serviceStates, setServiceStates] = useState<ServiceState[]>([]);
   const data = demoIntelligence;
 
+  const handleScenarioChange = (scenario: Scenario | null, fields: Record<string, string>) => {
+    setActiveScenario(scenario);
+    setScenarioFields(fields);
+  };
+
   return (
-    <div style={{ padding: '24px', backgroundColor: '#0f172a', minHeight: '100vh', fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif" }}>
+    <div style={{ padding: '24px', backgroundColor: '#F4F6FA', minHeight: '100vh', fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif" }}>
       {/* Breadcrumb */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
         <button
           onClick={() => navigate('/dashboard')}
           style={{
             background: 'transparent', border: 'none',
-            color: '#64748b', fontSize: '12px', cursor: 'pointer',
+            color: 'var(--text-secondary, #3D5068)', fontSize: '12px', cursor: 'pointer',
             padding: 0, fontFamily: 'system-ui',
           }}
         >
           Dashboard
         </button>
-        <span style={{ color: '#334155', fontSize: '12px' }}>{'\u203A'}</span>
-        <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 600, fontFamily: 'system-ui' }}>
-          Corporate Intelligence
+        <span style={{ color: '#D1D9E6', fontSize: '12px' }}>{'\u203A'}</span>
+        <span style={{ color: 'var(--text-primary, #0B1628)', fontSize: '12px', fontWeight: 600, fontFamily: 'system-ui' }}>
+          Business Intelligence
         </span>
       </div>
 
+      {/* NFPA Reminder — always visible */}
+      <NFPAReminder />
+
       {/* Page Header */}
-      <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <h1 style={{ color: '#ffffff', fontSize: '24px', fontWeight: 800, margin: 0 }}>
-            Corporate Intelligence
-          </h1>
-          <p style={{ color: '#64748b', fontSize: '13px', margin: '4px 0 0' }}>
-            {data.orgName} &middot; {data.period} analysis &middot; {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
+      <div style={{ marginBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 style={{
+              color: 'var(--text-primary, #0B1628)', fontSize: '22px', fontWeight: 800,
+              margin: 0, fontFamily: 'system-ui',
+            }}>
+              Business Intelligence
+            </h1>
+            <span style={{
+              background: '#EEF1F7', border: '1px solid #D1D9E6',
+              borderRadius: '20px', padding: '3px 10px',
+              color: 'var(--text-secondary, #3D5068)', fontSize: '11px', fontFamily: 'system-ui',
+            }}>
+              {'\u2295'} AI-Powered
+            </span>
+          </div>
+          <ExportReport data={data} />
         </div>
-        <ExportReport data={data} />
+        <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: '12px', margin: '6px 0 0', fontFamily: 'system-ui' }}>
+          {data.orgName} &middot; {data.analysisPeriod} analysis &middot; {data.reportDate}
+        </p>
       </div>
 
       {/* View Mode Selector */}
       <div style={{
         display: 'flex', gap: '8px', marginBottom: '24px',
-        borderBottom: '1px solid #1e293b', paddingBottom: '0',
+        borderBottom: '1px solid #D1D9E6', paddingBottom: '0',
         overflowX: 'auto',
       }}>
         {viewModes.map(v => (
@@ -78,7 +108,7 @@ export function CorporateIntelligence() {
               backgroundColor: 'transparent',
               border: 'none',
               borderBottom: activeView === v.id ? '2px solid #A08C5A' : '2px solid transparent',
-              color: activeView === v.id ? '#A08C5A' : '#64748b',
+              color: activeView === v.id ? '#A08C5A' : 'var(--text-secondary, #3D5068)',
               fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif",
               fontSize: '13px',
               fontWeight: activeView === v.id ? 700 : 500,
@@ -92,13 +122,60 @@ export function CorporateIntelligence() {
         ))}
       </div>
 
-      {/* AI Executive Summary — always visible, content adapts to view */}
-      <ExecutiveSummaryCard
-        data={data}
-        viewMode={activeView}
-        loading={aiSummaryLoading}
-        setLoading={setAiSummaryLoading}
-      />
+      {/* Scenario Intelligence Engine — always visible, all tabs */}
+      <ScenarioEngine onScenarioChange={handleScenarioChange} />
+
+      {/* View-specific content */}
+      {activeView === 'operations' && (
+        <>
+          <JurisdictionScoreTable userJurisdictions={userJurisdictions} onChange={setUserJurisdictions} />
+          <div style={{ marginTop: '16px' }}>
+            <ComplianceHeatMap data={data} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+            <TrendEngine data={data} />
+            <AnomalyDetector data={data} />
+          </div>
+          <RegionalBenchmark data={data} />
+        </>
+      )}
+
+      {activeView === 'risk' && (
+        <>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <ThreatIntelligence data={data} />
+            <RiskRadar data={data} />
+          </div>
+          <PredictiveRisk data={data} />
+        </>
+      )}
+
+      {activeView === 'financial' && (
+        <>
+          <BusinessImpactPanel data={data} />
+          <ServiceCostPanel onStateChange={setServiceStates} />
+          <CostOfInactionEngine serviceStates={serviceStates} />
+          <OpportunityEngine data={data} />
+        </>
+      )}
+
+      {activeView === 'people' && (
+        <>
+          <StaffingCorrelation data={data} />
+        </>
+      )}
+
+      {/* AI Executive Summary — always visible, bottom of page, all tabs */}
+      <div style={{ marginTop: '20px' }}>
+        <ExecutiveSummaryCard
+          data={data}
+          viewMode={activeView}
+          loading={aiSummaryLoading}
+          setLoading={setAiSummaryLoading}
+          activeScenario={activeScenario}
+          scenarioFields={scenarioFields}
+        />
+      </div>
 
       {/* Risk Banner — always visible if critical issues exist */}
       {data.complianceMatrix.some(l => l.riskLevel === 'critical') && (
@@ -122,41 +199,6 @@ export function CorporateIntelligence() {
             </p>
           </div>
         </div>
-      )}
-
-      {/* View-specific content */}
-      {activeView === 'operations' && (
-        <>
-          <ComplianceHeatMap data={data} />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
-            <TrendEngine data={data} />
-            <AnomalyDetector data={data} />
-          </div>
-          <RegionalBenchmark data={data} />
-        </>
-      )}
-
-      {activeView === 'risk' && (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <ThreatIntelligence data={data} />
-            <RiskRadar data={data} />
-          </div>
-          <PredictiveRisk data={data} />
-        </>
-      )}
-
-      {activeView === 'financial' && (
-        <>
-          <BusinessImpactPanel data={data} />
-          <OpportunityEngine data={data} />
-        </>
-      )}
-
-      {activeView === 'people' && (
-        <>
-          <StaffingCorrelation data={data} />
-        </>
       )}
     </div>
   );

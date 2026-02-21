@@ -30,7 +30,7 @@ const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
   { id: 'requirements', label: 'Requirements', icon: EvidlyIcon },
   { id: 'overview', label: 'Compliance Overview', icon: Target },
   { id: 'sb476', label: 'SB 476 Tracker', icon: Scale },
-  { id: 'admin', label: 'Admin', icon: Settings2 },
+  { id: 'admin', label: 'Administration', icon: Settings2 },
   { id: 'pricing', label: 'Pricing', icon: CreditCard },
 ];
 

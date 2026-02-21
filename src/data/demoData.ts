@@ -543,7 +543,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
   { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 §7.8)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 (2024) Chapter 7)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
 ];
 
 export interface ScoreImpactItem {
@@ -3049,10 +3049,10 @@ export const playbookTemplates: PlaybookTemplate[] = [
     color: '#0369a1',
     stepCount: 6,
     estimatedMinutes: 120,
-    regulatoryBasis: 'FDA Food Code 4-301.11; NFPA 96 (2024) §12.4',
+    regulatoryBasis: 'FDA Food Code 4-301.11; NFPA 96 (2024) Table 12.4',
     steps: [
       { id: 'ef-1', stepNumber: 1, title: 'Identify & Assess', description: 'Determine what equipment failed, whether it is a total or partial failure, what food/operations are affected, and if there is a safety hazard (gas leak, electrical, water). If safety hazard exists: evacuate the area and call 911 or the utility company.', actionItems: [{ id: 'ef-1a', label: 'Identify failed equipment', required: true }, { id: 'ef-1b', label: 'Assess total vs partial failure', required: true }, { id: 'ef-1c', label: 'Identify affected food/operations', required: true }, { id: 'ef-1d', label: 'Check for safety hazards', required: true }], photoRequired: true, photoPrompt: 'Photo equipment error display, current temperature, visible damage' },
-      { id: 'ef-2', stepNumber: 2, title: 'Food Protection', description: 'Walk-in cooler failure: transfer food to backup unit or coolers with ice. Freezer failure: keep door closed (holds 48 hrs if full). Hot-holding failure: serve within 4 hours or reheat to 165°F. Dishwasher failure: switch to 3-compartment sink. Hood system failure: CEASE ALL COOKING OPERATIONS per NFPA 96 (2024).', actionItems: [{ id: 'ef-2a', label: 'Transfer at-risk food to backup storage', required: true }, { id: 'ef-2b', label: 'Begin temperature monitoring every 30 min', required: true }, { id: 'ef-2c', label: 'Cease cooking if hood system failed', required: false }], photoRequired: true, photoPrompt: 'Photo food transfer process and temperature readings', criticalWarning: 'Hood system failure = NO COOKING until repaired (NFPA 96-2024). Cannot operate cooking equipment without functioning exhaust hood.', regulatoryReference: 'NFPA 96 (2024) §12.4; FDA Food Code 4-301.11' },
+      { id: 'ef-2', stepNumber: 2, title: 'Food Protection', description: 'Walk-in cooler failure: transfer food to backup unit or coolers with ice. Freezer failure: keep door closed (holds 48 hrs if full). Hot-holding failure: serve within 4 hours or reheat to 165°F. Dishwasher failure: switch to 3-compartment sink. Hood system failure: CEASE ALL COOKING OPERATIONS per NFPA 96 (2024).', actionItems: [{ id: 'ef-2a', label: 'Transfer at-risk food to backup storage', required: true }, { id: 'ef-2b', label: 'Begin temperature monitoring every 30 min', required: true }, { id: 'ef-2c', label: 'Cease cooking if hood system failed', required: false }], photoRequired: true, photoPrompt: 'Photo food transfer process and temperature readings', criticalWarning: 'Hood system failure = NO COOKING until repaired (NFPA 96-2024). Cannot operate cooking equipment without functioning exhaust hood.', regulatoryReference: 'NFPA 96 (2024) Table 12.4; FDA Food Code 4-301.11' },
       { id: 'ef-3', stepNumber: 3, title: 'Contact Repair Service', description: 'Call equipment repair service from your vendor directory. Request emergency/priority service. Record ticket number, estimated arrival, and estimated repair time. If repair will take >24 hours, arrange temporary equipment rental.', actionItems: [{ id: 'ef-3a', label: 'Contact equipment vendor/service', required: true }, { id: 'ef-3b', label: 'Record service ticket number', required: true }, { id: 'ef-3c', label: 'Record estimated repair timeline', required: true }, { id: 'ef-3d', label: 'Arrange temp equipment if >24hr repair', required: false }], photoRequired: false, notePrompt: 'Record vendor name, ticket #, ETA, and estimated cost' },
       { id: 'ef-4', stepNumber: 4, title: 'Operational Adjustment', description: 'Modify menu if needed based on what equipment is down. Notify staff of operational changes. If must close: notify customers, update online hours, post signage. Document estimated revenue impact for insurance.', actionItems: [{ id: 'ef-4a', label: 'Adjust menu/operations as needed', required: true }, { id: 'ef-4b', label: 'Brief staff on changes', required: true }, { id: 'ef-4c', label: 'Document revenue impact', required: true }], photoRequired: false, notePrompt: 'Record menu changes and estimated revenue impact' },
       { id: 'ef-5', stepNumber: 5, title: 'Repair & Restoration', description: 'Document the repair: what was wrong, what was fixed, parts replaced, cost. Verify equipment operating properly post-repair (temperature reaches safe range within expected time). Return food to repaired equipment only after verified safe.', actionItems: [{ id: 'ef-5a', label: 'Document repair details and cost', required: true }, { id: 'ef-5b', label: 'Verify equipment operating properly', required: true }, { id: 'ef-5c', label: 'Return food only after verified safe', required: true }], photoRequired: true, photoPrompt: 'Photo repaired equipment operating normally with temp display' },
@@ -3635,7 +3635,7 @@ export const copilotInsights: CopilotInsight[] = [
     locationName: 'Downtown Kitchen',
     insightType: 'alert',
     severity: 'warning',
-    title: 'Regulatory Update: NFPA 96 §12.4 — Exhaust fan inspection clarified',
+    title: 'Regulatory Update: NFPA 96 (2024) Table 12.4 — Exhaust fan inspection clarified',
     message: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately. Effective July 1, 2026.\n\nWhat you need to do:\nEnsure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
     sourceModule: 'regulatory',
     actionType: 'view_report',
@@ -3993,12 +3993,13 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
   },
 ];
 
-// ── Corporate Intelligence Demo Data ──────────────────────────────
+// ── Business Intelligence Demo Data ──────────────────────────────
 
 export const demoIntelligence = {
   orgName: 'Pacific Coast Dining',
-  reportDate: new Date().toISOString(),
+  reportDate: 'February 20, 2026',
   period: '90 days',
+  analysisPeriod: '90 days',
 
   complianceMatrix: [
     {
@@ -4067,7 +4068,7 @@ export const demoIntelligence = {
   ],
 
   orgMetrics: {
-    totalOpenItems: 12,
+    totalOpenItems: 11,
     criticalLocations: 1,
     highRiskLocations: 1,
     permitExpirationsNext30Days: 3,
@@ -4076,6 +4077,8 @@ export const demoIntelligence = {
     totalEstimatedRiskExposure: 520500,
     totalEstimatedSavings: 341000,
     inspectionsDueNext90Days: 2,
+    inspectionsDue30Days: 2,
+    certificatesExpiring30Days: 1,
     staffTurnoverOrgAvg: 0.32,
   },
 
@@ -4099,6 +4102,36 @@ export const demoIntelligence = {
       openItems: Math.min(10, 2 + Math.floor(i / 12)),
     })),
   } as Record<string, { day: number; checklistRate: number; tempLogRate: number; openItems: number }[]>,
+
+  threats: [
+    {
+      id: 'threat_1',
+      severity: 'critical' as const,
+      title: 'University Dining reinspection deadline',
+      description: 'Action Required status with 6 open items. Reinspection window closes March 1.',
+      daysToImpact: 9,
+      location: 'University Dining',
+      regulatoryBasis: 'Stanislaus County DPH reinspection protocol',
+    },
+    {
+      id: 'threat_2',
+      severity: 'high' as const,
+      title: 'Airport Cafe Fire Safety Fail \u2014 hood cleaning certificate expires in 18 days',
+      description: 'Certificate expiration will compound existing Fire Safety Fail status.',
+      daysToImpact: 18,
+      location: 'Airport Cafe',
+      regulatoryBasis: 'NFPA 96 (2024) Table 12.4',
+    },
+    {
+      id: 'threat_3',
+      severity: 'high' as const,
+      title: 'Staff turnover at 51% \u2014 University Dining compliance decline accelerating',
+      description: 'Turnover rate 3\u00D7 org average. Checklist completion dropped 24 points in 60 days.',
+      daysToImpact: 30,
+      location: 'University Dining',
+      regulatoryBasis: 'Internal compliance trend analysis',
+    },
+  ],
 
   upcomingRegulatoryChanges: [
     {

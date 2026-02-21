@@ -156,15 +156,15 @@ export const CPP_SERVICES: ServiceLine[] = [
     fullDescription: `Scheduled exhaust fan service including belt tension and condition check, motor bearing lubrication, fan blade cleaning and balance inspection, airflow performance verification, and written service documentation with EvidLY upload. Identifies worn belts, degraded bearings, and imbalanced blades before they cause fan failure and force an emergency kitchen closure.`,
     nfpaReference: 'NFPA 96 (2024) Chapter 11 — Air Movement. Verify specific section requirements with your AHJ.',
     additionalRegs: [
-      'NFPA 96 (2024) Chapter 11 — Air Movement. Verify specific section requirements with your AHJ.',
-      'NFPA 96 (2024) Chapter 11 — Air Movement. Verify specific section requirements with your AHJ.',
+      'NFPA 96 (2024) Chapter 11 — Air Movement (fan maintenance). Verify specific section requirements with your AHJ.',
+      'NFPA 96 (2024) Chapter 11 — Air Movement (airflow performance). Verify specific section requirements with your AHJ.',
     ],
-    frequency: 'Quarterly recommended; minimum semi-annual per NFPA 96 Chapter 11',
+    frequency: 'Quarterly recommended; minimum semi-annual per NFPA 96 (2024) Chapter 11',
     businessBenefit: `Your exhaust fan is the engine of your kitchen. When it underperforms, your hood loses capture effectiveness — heat, smoke, and grease-laden air escape the capture zone and affect food quality, staff comfort, and fire risk simultaneously. When it fails completely, the kitchen stops. Fan Performance Management prevents the scenario every operator fears: a fan belt snapping at 11am on a Friday during a full house, followed by 1–4 days of zero revenue while a replacement is sourced, installed, and inspected.`,
     operationalImpact: `A failed exhaust fan forces an immediate kitchen shutdown — fire code prohibits cooking under a non-functional hood system. Emergency fan replacement typically takes 1–4 days including sourcing, scheduling, installation, and sign-off. Every one of those days is lost revenue that cannot be recovered. A worn but still-running fan is nearly as costly — reduced airflow increases grease bypass into the ductwork, directly accelerating the rate at which the duct accumulates grease and requires cleaning.`,
     whyOperatorsSkipIt: `"The fan is running so it's fine." Operators wait for complete failure before servicing, unaware that a degraded fan is costing them more in accelerated duct buildup and is one belt snap from a forced closure.`,
     rebuttal: `A running fan is not the same as a performing fan. A worn belt slips under load, reducing airflow by 20–40% while the fan appears to operate normally. This reduced capture velocity means grease that should travel up the duct settles on surfaces around the hood instead — accelerating buildup between cleanings and creating fire risk. Fan failure doesn't announce itself. It happens at the worst possible moment, and the downtime cost exceeds years of preventive service cost in a single event.`,
-    complianceConsequence: `Non-performing exhaust system = NFPA 96 Chapter 11 violation. AHJ inspectors increasingly check fan maintenance records during fire safety visits. A fan with no service history in 2+ years is an inspection red flag regardless of visual condition.`,
+    complianceConsequence: `Non-performing exhaust system = NFPA 96 (2024) Chapter 11 violation. Verify specific section requirements with your AHJ. AHJ inspectors increasingly check fan maintenance records during fire safety visits. A fan with no service history in 2+ years is an inspection red flag regardless of visual condition.`,
     costDrivers: [
       {
         id: 'daily_revenue',
@@ -203,14 +203,14 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Revenue loss from fan failure and emergency kitchen closure',
         formula: 'Daily revenue × closure duration (1–4 days for emergency fan replacement including sourcing, scheduling, installation)',
-        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — kitchen cannot operate without compliant exhaust system',
+        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — kitchen cannot operate without compliant exhaust system. Verify specific section requirements with your AHJ.',
         probability: 'High',
         calculate: (i) => ({ low: (i.daily_revenue || 0) * 1, high: (i.daily_revenue || 0) * 4 }),
       },
       {
         riskLabel: 'Emergency fan motor/unit replacement (reactive vs. preventive)',
         formula: 'Per fan: $1,500–$6,000 emergency replacement vs. $150–$400 quarterly preventive service',
-        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — fan maintenance requirement',
+        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — fan maintenance requirement. Verify specific section requirements with your AHJ.',
         probability: 'High',
         calculate: (i) => ({ low: (i.num_fans || 1) * 1500, high: (i.num_fans || 1) * 6000 }),
       },
@@ -227,7 +227,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Fire risk increase from compromised hood capture performance',
         formula: 'Fan underperformance is a contributing factor in commercial kitchen fires. Exposure calculated from daily revenue × operating days × estimated probability increase.',
-        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — airflow performance as fire safety requirement',
+        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — airflow performance as fire safety requirement. Verify specific section requirements with your AHJ.',
         probability: 'Medium',
         calculate: (i) => ({
           low: (i.daily_revenue || 0) * 300 * 0.02,
@@ -243,21 +243,21 @@ export const CPP_SERVICES: ServiceLine[] = [
   {
     id: 'filter_exchange',
     name: 'Filter Exchange Management',
-    shortDescription: 'Scheduled replacement of hood baffle filters with professionally cleaned certified units — NFPA 96 Chapter 9 and Clean Water Act §402 compliant',
+    shortDescription: 'Scheduled replacement of hood baffle filters with professionally cleaned certified units — NFPA 96 (2024) Chapter 9 and Clean Water Act §402 compliant',
     fullDescription: `Scheduled exchange of kitchen exhaust hood baffle filters. Used filters are removed and replaced with pre-cleaned certified units on every visit. Removed filters are cleaned at a licensed facility — not in a dish sink or parking lot. Service includes grease weight documentation per filter (a direct fire risk indicator), condition assessment, and EvidLY documentation upload. Eliminates the Clean Water Act exposure from washing grease-laden filters into any drain connected to the sewer or storm system.`,
     nfpaReference: 'NFPA 96 (2024) Chapter 9 — Grease Removal Devices. Verify specific section requirements with your AHJ.',
     additionalRegs: [
-      'NFPA 96 (2024) Chapter 9 — Grease Removal Devices. Verify specific section requirements with your AHJ.',
+      'NFPA 96 (2024) Chapter 9 — Grease Removal Devices (filter condition). Verify specific section requirements with your AHJ.',
       'Clean Water Act §402 — NPDES permit requirements',
       'Clean Water Act §301 — prohibition on unpermitted pollutant discharge',
       'California Porter-Cologne Water Quality Control Act',
     ],
     frequency: 'Monthly to quarterly based on cooking volume and filter saturation rate',
     businessBenefit: `Clean, properly maintained baffle filters are the first and most cost-effective line of defense in the exhaust system. They capture grease before it enters the duct — reducing duct grease load by 40–60%, directly extending the required cleaning interval under NFPA 96 Table 12.4 and reducing that cost. Filter Exchange also eliminates a federal liability that most operators don't know they have: washing grease-laden filters in any sink connected to a drain is a Clean Water Act violation every time it happens.`,
-    operationalImpact: `Saturated filters restrict hood airflow, increase kitchen heat, and allow grease to bypass directly into the duct system — accelerating the rate at which the duct becomes non-compliant. Missing or damaged filters are an immediate NFPA 96 Chapter 9 citation. Every kitchen washing its own filters in a dish sink is generating a potential Clean Water Act violation — a federal issue governed by the same law that applies to industrial discharge, not just a local health code issue.`,
+    operationalImpact: `Saturated filters restrict hood airflow, increase kitchen heat, and allow grease to bypass directly into the duct system — accelerating the rate at which the duct becomes non-compliant. Missing or damaged filters are an immediate NFPA 96 (2024) Chapter 9 citation. Every kitchen washing its own filters in a dish sink is generating a potential Clean Water Act violation — a federal issue governed by the same law that applies to industrial discharge, not just a local health code issue.`,
     whyOperatorsSkipIt: `"We wash them ourselves to save money." Operators don't realize on-site filter washing is a federal water quality violation, and that the grease discharged accelerates grease trap failures and municipal surcharges that cost more than filter exchange.`,
     rebuttal: `Washing grease-laden baffle filters in any sink connected to the municipal sewer or a storm drain is an unpermitted discharge of a pollutant under the Clean Water Act — a federal violation with penalties up to $25,000 per day. This is not theoretical or rarely enforced. Beyond the legal exposure, grease discharged from filter washing is the primary driver of grease trap overload, which causes emergency pump-outs and municipal surcharges. Most operators who calculate their annual grease trap costs vs. filter exchange costs find filter exchange is cheaper — before counting the federal liability.`,
-    complianceConsequence: `Missing, damaged, or improperly maintained filters = NFPA 96 Chapter 9 violation on fire inspection. On-site filter washing = potential Clean Water Act federal violation + California Regional Water Board enforcement exposure.`,
+    complianceConsequence: `Missing, damaged, or improperly maintained filters = NFPA 96 (2024) Chapter 9 violation on fire inspection. On-site filter washing = potential Clean Water Act federal violation + California Regional Water Board enforcement exposure.`,
     costDrivers: [
       {
         id: 'num_filters',
@@ -314,7 +314,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Additional hood cleaning frequency from saturated filter grease bypass into ductwork',
         formula: 'Degraded filters allow 40–60% more grease into ductwork — typically requires 1–2 additional cleaning cycles per year',
-        regulatoryBasis: 'NFPA 96 (2024) Chapter 9 — filter performance directly affects duct grease accumulation rate',
+        regulatoryBasis: 'NFPA 96 (2024) Chapter 9 — filter performance directly affects duct grease accumulation rate. Verify specific section requirements with your AHJ.',
         probability: 'High',
         calculate: () => ({ low: 300, high: 1200 }),
       },
@@ -336,9 +336,9 @@ export const CPP_SERVICES: ServiceLine[] = [
     name: 'Rooftop Grease Containment',
     shortDescription: 'Containment system installation and service for exhaust fan rooftop discharge — protects roof membrane from accelerated grease degradation and eliminates stormwater exposure',
     fullDescription: `Installation and scheduled service of rooftop grease containment systems that capture grease discharged onto the roof surface from exhaust fans. Service includes system installation, grease collection and certified disposal, roof surface inspection and condition documentation, and EvidLY service record upload. Prevents the compounding chemical damage that destroys commercial roofing membranes and eliminates the stormwater discharge liability created by grease washing off the roof.`,
-    nfpaReference: 'NFPA 96 (2024) Chapter 11 — Air Movement. Verify specific section requirements with your AHJ.',
+    nfpaReference: 'NFPA 96 (2024) Chapter 11 — Air Movement (grease collection and disposal). Verify specific section requirements with your AHJ.',
     additionalRegs: [
-      'NFPA 96 (2024) Chapter 11 — Air Movement. Verify specific section requirements with your AHJ.',
+      'NFPA 96 (2024) Chapter 11 — Air Movement (exhaust system rooftop). Verify specific section requirements with your AHJ.',
       'Clean Water Act §402 — NPDES stormwater permit (grease roof runoff)',
       'Local fire codes — rooftop grease accumulation as fire hazard',
     ],
@@ -347,7 +347,7 @@ export const CPP_SERVICES: ServiceLine[] = [
     operationalImpact: `Grease discharged from exhaust fans does not wash away — it accumulates, concentrates during rain events, and chemically attacks petroleum-based roofing membranes (TPO, EPDM, modified bitumen). The degradation is invisible from inside the building until the roof leaks. By the time water intrusion is detected, the membrane damage is already extensive. Rooftop grease accumulation is also increasingly flagged by AHJs during fire safety inspections in California as fire code awareness of this hazard increases.`,
     whyOperatorsSkipIt: `"Out of sight, out of mind." The roof is never inspected by the operator between re-roofing projects. Grease accumulates over years before the damage manifests — by then the repair bill dwarfs what containment service would have cost over the entire period.`,
     rebuttal: `Every exhaust fan on a commercial kitchen roof discharges grease onto the roof surface every hour of operation. That grease doesn't evaporate — it bonds to the membrane, hardens with UV exposure, and creates a chemical reaction that degrades the roofing material beneath it. TPO and EPDM membranes are particularly susceptible. A single affected section costs thousands to cut out and patch. A full roof replacement on a commercial kitchen is a major unplanned capital expenditure. Grease containment service costs less per year than one patch repair — and documents your maintenance posture for insurance purposes.`,
-    complianceConsequence: `Visible rooftop grease accumulation = NFPA 96 Chapter 11 violation on fire inspection. AHJs in California are increasingly including rooftop grease in commercial kitchen fire safety reviews. Stormwater grease discharge from roof runoff can trigger NPDES enforcement.`,
+    complianceConsequence: `Visible rooftop grease accumulation = NFPA 96 (2024) Chapter 11 violation on fire inspection. Verify specific section requirements with your AHJ. AHJs in California are increasingly including rooftop grease in commercial kitchen fire safety reviews. Stormwater grease discharge from roof runoff can trigger NPDES enforcement.`,
     costDrivers: [
       {
         id: 'roof_sqft',

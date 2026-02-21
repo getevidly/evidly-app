@@ -1,134 +1,475 @@
-import {
-  LayoutDashboard,
-  ClipboardCheck,
-  Thermometer,
-  AlertTriangle,
-  FileText,
-  Wrench,
-  Users,
-  ShoppingBag,
-  Shield,
-  Brain,
-  BarChart3,
-  Trophy,
-  Camera,
-  Bell,
-  Scale,
-  MapPin,
-  Settings,
-  HelpCircle,
-  Eye,
-  GraduationCap,
-  Newspaper,
-  Store,
-  Calendar,
-  Cog,
-  Flame,
-  Radio,
-  Radar,
-  type LucideIcon,
-} from 'lucide-react';
 import type { UserRole } from '../contexts/RoleContext';
 
 // ── Types ────────────────────────────────────────────────
 
-export interface SidebarSubItem {
+export interface NavItem {
   id: string;
   label: string;
-  route: string;
+  path: string;
+  icon: string;
+  roles: string[];
+  description: string;
 }
 
-export interface SidebarNavItem {
+export interface SidebarSection {
   id: string;
   label: string;
-  icon: LucideIcon;
-  route: string;
-  roles: UserRole[];
-  dividerAfter?: boolean;
-  requiresAdmin?: boolean;
-  subItems?: SidebarSubItem[];
+  icon: string;
+  roles: string[];
+  tooltipTitle: string;
+  tooltipDescription: string;
+  items: NavItem[];
 }
 
-// ── Role shorthands ──────────────────────────────────────
+export interface RoleHomeItem {
+  label: string;
+  labelEs: string;
+  path: string;
+  icon: string;
+  description: string;
+  descriptionEs: string;
+}
 
-const ALL: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager', 'kitchen_staff'];
-const MGMT: UserRole[] = ['owner_operator'];
-const MGMT_EXEC: UserRole[] = ['owner_operator', 'executive'];
-const COMPLIANCE: UserRole[] = ['owner_operator', 'compliance_manager'];
-const OPS: UserRole[] = ['owner_operator', 'chef', 'kitchen_manager'];
+export interface RoleSidebarConfig {
+  home: RoleHomeItem;
+  sections: SidebarSection[];
+}
 
-// ── Master Nav Items ─────────────────────────────────────
-// QR Scan REMOVED (now on bottom bar only)
-// Incidents CONSOLIDATED with sub-items (replaces incident-reporting, incident-playbook, report-issue)
+// ── Nav Item Registry ────────────────────────────────────
+// Define every possible nav item once. Roles field is vestigial
+// since visibility is now determined by per-role configs below.
 
-export const SIDEBAR_NAV_ITEMS: SidebarNavItem[] = [
-  // ── UNGROUPED (always visible at top) ──
-  { id: 'dashboard',           label: 'Dashboard',           icon: LayoutDashboard,  route: '/dashboard',             roles: ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager'] },
-  { id: 'my-tasks',            label: 'My Tasks',            icon: ClipboardCheck,   route: '/dashboard',             roles: ['kitchen_staff'], dividerAfter: true },
-  { id: 'calendar',            label: 'Calendar',            icon: Calendar,         route: '/calendar',              roles: ALL },
+const I: Record<string, NavItem> = {
+  // ── Daily Operations ──
+  checklists: {
+    id: 'checklists', label: 'Checklists', path: '/checklists', icon: '✓',
+    roles: [], description: 'Opening, closing, food safety, and custom daily task lists with completion tracking.',
+  },
+  temperatures: {
+    id: 'temperatures', label: 'Temperature Logs', path: '/temp-logs', icon: '🌡️',
+    roles: [], description: 'Record temperatures manually, via QR scan, or from IoT sensors — storage, receiving, and cooking.',
+  },
+  incidents: {
+    id: 'incidents', label: 'Incidents', path: '/incidents', icon: '⚠️',
+    roles: [], description: 'Log and track food safety or compliance incidents with timestamped, immutable records.',
+  },
 
-  // ── DAILY OPERATIONS ──
-  { id: 'checklists',          label: 'Checklists',          icon: ClipboardCheck,   route: '/checklists',            roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'kitchen_staff'] },
-  { id: 'temperatures',        label: 'Temperatures',        icon: Thermometer,      route: '/temp-logs',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager'] },
-  { id: 'log-temp',            label: 'Log Temp',            icon: Thermometer,      route: '/temp-logs',             roles: ['kitchen_staff'] },
-  { id: 'iot-monitoring',      label: 'IoT Monitoring',      icon: Radio,            route: '/iot-monitoring',        roles: ['owner_operator', 'chef', 'kitchen_manager'] },
-  { id: 'fire-safety',         label: 'Fire Safety',         icon: Flame,            route: '/fire-safety',           roles: ['owner_operator', 'compliance_manager', 'facilities_manager'] },
-  {
-    id: 'incidents',
-    label: 'Incidents',
-    icon: AlertTriangle,
-    route: '/incidents',
-    roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'],
-    subItems: [
-      { id: 'incident-report',    label: 'Report',    route: '/incidents' },
-      { id: 'incident-playbooks', label: 'Playbooks', route: '/playbooks' },
-      { id: 'incident-history',   label: 'History',   route: '/playbooks?tab=analytics' },
+  // ── Compliance ──
+  documents: {
+    id: 'documents', label: 'Documents', path: '/documents', icon: '📋',
+    roles: [], description: 'Compliance certificates, inspection reports, permits, and signed documentation — organized and searchable.',
+  },
+  selfInspection: {
+    id: 'self-inspection', label: 'Self-Inspection', path: '/self-inspection', icon: '🔍',
+    roles: [], description: 'Run a self-inspection using the same criteria your health department or fire authority applies.',
+  },
+  regulatory: {
+    id: 'regulatory', label: 'Regulatory Tracking', path: '/regulatory-alerts', icon: '📅',
+    roles: [], description: 'Track upcoming inspections, permit renewals, certificate expirations, and regulatory deadlines.',
+  },
+  reporting: {
+    id: 'reporting', label: 'Reporting', path: '/reports', icon: '📊',
+    roles: [], description: 'Export compliance summaries, inspection history, and documentation packages for auditors or clients.',
+  },
+  correctiveActions: {
+    id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
+    roles: [], description: 'Track and resolve compliance violations with documented corrective action plans and follow-up verification.',
+  },
+  vendorCertifications: {
+    id: 'vendor-certifications', label: 'Vendor Certifications', path: '/vendor-certifications', icon: '📄',
+    roles: [], description: 'Verify and track vendor compliance certifications, insurance documents, and licensing status.',
+  },
+
+  // ── Insights ──
+  analytics: {
+    id: 'analytics', label: 'Analytics', path: '/analysis', icon: '📈',
+    roles: [], description: 'Trend data for compliance scores, incident frequency, and checklist completion across locations and time.',
+  },
+  auditLog: {
+    id: 'audit-log', label: 'Audit Log', path: '/audit-trail', icon: '🔒',
+    roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
+  },
+  benchmarks: {
+    id: 'benchmarks', label: 'Benchmarks', path: '/benchmarks', icon: '🏆',
+    roles: [], description: 'Compare your compliance performance against industry benchmarks, peer operators, and your own historical baseline.',
+  },
+  businessIntelligence: {
+    id: 'business-intelligence', label: 'Business Intelligence', path: '/business-intelligence', icon: '💡',
+    roles: [], description: 'AI executive briefings, scenario intelligence engine, jurisdiction scores, and risk analysis across your full portfolio.',
+  },
+  iotDashboard: {
+    id: 'iot-dashboard', label: 'IoT Dashboard', path: '/iot-monitoring', icon: '📡',
+    roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
+  },
+  jurisdictionIntelligence: {
+    id: 'jurisdiction-intelligence', label: 'Jurisdiction Intelligence', path: '/jurisdiction', icon: '⚖️',
+    roles: [], description: 'Jurisdiction-specific compliance scoring, regulatory requirements, and authority-having-jurisdiction mapping.',
+  },
+  scoreTable: {
+    id: 'score-table', label: 'ScoreTable', path: '/scoring-breakdown', icon: '🎯',
+    roles: [], description: 'Detailed compliance score breakdown by pillar — food safety, fire safety, and vendor compliance.',
+  },
+  violationTrends: {
+    id: 'violation-trends', label: 'Violation Trends', path: '/violation-trends', icon: '📉',
+    roles: [], description: 'Analyze violation patterns over time to identify systemic issues and improvement opportunities.',
+  },
+
+  // ── Tools ──
+  selfDiagnosis: {
+    id: 'self-diagnosis', label: 'Self-Diagnosis', path: '/self-diagnosis', icon: '🔧',
+    roles: [], description: 'Troubleshoot equipment issues, get resolution steps, attach photo + video, and notify your vendor — in under 2 minutes.',
+  },
+  reportIssue: {
+    id: 'report-issue', label: 'Report an Issue', path: '/incidents', icon: '🚨',
+    roles: [], description: 'Report a people, process, or safety incident with timestamped records.',
+  },
+  exportCenter: {
+    id: 'export-center', label: 'Export Center', path: '/export-center', icon: '📤',
+    roles: [], description: 'Export compliance reports, documentation packages, and data extracts in multiple formats.',
+  },
+
+  // ── Equipment (Facilities subcategories) ──
+  equipment: {
+    id: 'equipment', label: 'Equipment', path: '/equipment', icon: '⚙️',
+    roles: [], description: 'Asset register for all kitchen equipment with service history, maintenance dates, and warranty tracking.',
+  },
+  hoodExhaust: {
+    id: 'hood-exhaust', label: 'Hood and Exhaust', path: '/equipment/hood-exhaust', icon: '🏭',
+    roles: [], description: 'Hood and exhaust system maintenance, cleaning schedules, and fire suppression inspections.',
+  },
+  hvac: {
+    id: 'hvac', label: 'HVAC', path: '/equipment/hvac', icon: '❄️',
+    roles: [], description: 'Heating, ventilation, and air conditioning system maintenance and service records.',
+  },
+  iceMachines: {
+    id: 'ice-machines', label: 'Ice Machines', path: '/equipment/ice-machines', icon: '🧊',
+    roles: [], description: 'Ice machine maintenance, cleaning schedules, and water quality monitoring.',
+  },
+  refrigeration: {
+    id: 'refrigeration', label: 'Refrigeration', path: '/equipment/refrigeration', icon: '🥶',
+    roles: [], description: 'Walk-in coolers, freezers, and refrigeration units — temperature monitoring and service records.',
+  },
+  suppressionSystems: {
+    id: 'suppression-systems', label: 'Suppression Systems', path: '/equipment/suppression-systems', icon: '🧯',
+    roles: [], description: 'Fire suppression system inspections, certifications, and maintenance compliance.',
+  },
+
+  // ── Service (Facilities) ──
+  certsDocs: {
+    id: 'certs-docs', label: 'Certifications and Documents', path: '/documents', icon: '📋',
+    roles: [], description: 'Equipment certifications, service documentation, and compliance records.',
+  },
+  serviceCalendar: {
+    id: 'service-calendar', label: 'Service Calendar', path: '/calendar', icon: '📅',
+    roles: [], description: 'Scheduled maintenance, vendor service appointments, and inspection dates.',
+  },
+  serviceReporting: {
+    id: 'service-reporting', label: 'Service Reporting', path: '/reports', icon: '📊',
+    roles: [], description: 'Service history reports, maintenance compliance summaries, and vendor performance data.',
+  },
+  vendors: {
+    id: 'vendors', label: 'Vendors', path: '/vendors', icon: '🤝',
+    roles: [], description: 'Service providers on file — hood cleaning, HVAC, pest, plumbing, roofing, and fire suppression.',
+  },
+
+  // ── Food Safety (Chef) ──
+  allergenTracking: {
+    id: 'allergen-tracking', label: 'Allergen Tracking', path: '/allergen-tracking', icon: '⚠️',
+    roles: [], description: 'Track allergen presence in menu items, cross-contamination risks, and allergen-free preparation zones.',
+  },
+  coolingLogs: {
+    id: 'cooling-logs', label: 'Cooling Logs', path: '/cooling-logs', icon: '❄️',
+    roles: [], description: 'Record cooling times and temperatures for cooked foods to ensure safe cooling compliance.',
+  },
+  haccp: {
+    id: 'haccp', label: 'HACCP Control Points', path: '/haccp', icon: '🛡️',
+    roles: [], description: 'Monitor critical control points, hazard analysis, and HACCP plan compliance.',
+  },
+  receivingLog: {
+    id: 'receiving-log', label: 'Receiving Log', path: '/receiving-log', icon: '📦',
+    roles: [], description: 'Log incoming deliveries with temperature checks, quality inspections, and supplier verification.',
+  },
+
+  // ── Administration ──
+  billing: {
+    id: 'billing', label: 'Billing', path: '/billing', icon: '💳',
+    roles: [], description: 'Manage your EvidLY subscription, payment method, and invoice history.',
+  },
+  locations: {
+    id: 'locations', label: 'Locations', path: '/org-hierarchy', icon: '📍',
+    roles: [], description: 'Add, edit, or configure locations including jurisdiction mapping and compliance requirements.',
+  },
+  settings: {
+    id: 'settings', label: 'Settings', path: '/settings', icon: '⚙️',
+    roles: [], description: 'Account preferences, notification settings, language, and platform configuration.',
+  },
+  team: {
+    id: 'team', label: 'Team', path: '/team', icon: '👥',
+    roles: [], description: 'Manage staff roles, access levels, and location assignments across your organization.',
+  },
+
+  // ── Help ──
+  help: {
+    id: 'help', label: 'Help', path: '/help', icon: '❓',
+    roles: [], description: 'Documentation, training guides, support chat, and contact options.',
+  },
+};
+
+// ── Section builder helper ───────────────────────────────
+
+function section(
+  id: string, label: string, icon: string,
+  tooltipTitle: string, tooltipDescription: string,
+  items: NavItem[],
+): SidebarSection {
+  return { id, label, icon, roles: [], tooltipTitle, tooltipDescription, items };
+}
+
+// ── Per-Role Sidebar Configurations ──────────────────────
+
+const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+
+  // ── STAFF ─────────────────────────────────────────────
+  kitchen_staff: {
+    home: {
+      label: 'Today', labelEs: 'Hoy',
+      path: '/dashboard', icon: '🏠',
+      description: 'Your daily tasks, checklists, and priorities at a glance.',
+      descriptionEs: 'Sus tareas diarias, listas de verificación y prioridades.',
+    },
+    sections: [
+      section('tasks', 'Tasks', '✓',
+        'Tasks', 'Your assigned checklists and temperature logs for today.',
+        [I.checklists, I.temperatures],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Report issues and diagnose equipment problems.',
+        [I.reportIssue, I.selfDiagnosis],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
     ],
   },
 
-  // ── RECORDS & ASSETS ──
-  { id: 'documents',           label: 'Documents',           icon: FileText,         route: '/documents',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
-  { id: 'equipment',           label: 'Equipment',           icon: Cog,              route: '/equipment',             roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
-  { id: 'haccp',               label: 'HACCP',               icon: Shield,           route: '/haccp',                 roles: ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager'] },
-  { id: 'vendors',             label: 'Vendors',             icon: ShoppingBag,      route: '/vendors',               roles: ['owner_operator', 'chef', 'kitchen_manager', 'facilities_manager'] },
-  { id: 'photos',              label: 'Photos',              icon: Camera,           route: '/photo-evidence',        roles: ['owner_operator', 'kitchen_staff'] },
-  { id: 'training',            label: 'Training',            icon: GraduationCap,    route: '/training',              roles: ['owner_operator', 'chef', 'kitchen_manager', 'kitchen_staff'] },
+  // ── CHEF ──────────────────────────────────────────────
+  chef: {
+    home: {
+      label: 'Kitchen', labelEs: 'Cocina',
+      path: '/dashboard', icon: '👨‍🍳',
+      description: 'Kitchen operations dashboard — tasks, temps, and team overview.',
+      descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
+    },
+    sections: [
+      section('food-safety', 'Food Safety', '🛡️',
+        'Food Safety', 'Temperature logs, HACCP control points, allergen tracking, and food receiving.',
+        [I.allergenTracking, I.coolingLogs, I.haccp, I.receivingLog, I.temperatures],
+      ),
+      section('team', 'Team', '👥',
+        'Team', 'Checklists and incident tracking for your kitchen team.',
+        [I.checklists, I.incidents],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Equipment troubleshooting and vendor notification.',
+        [I.selfDiagnosis],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
 
-  // ── COMPLIANCE & INSIGHTS ──
-  { id: 'compliance',          label: 'Compliance Overview',  icon: Scale,            route: '/scoring-breakdown',     roles: ['owner_operator', 'executive', 'compliance_manager'] },
-  { id: 'self-inspection',     label: 'Self-Inspection',     icon: ClipboardCheck,   route: '/self-inspection',       roles: COMPLIANCE },
-  { id: 'inspector',           label: 'Inspector View',      icon: Eye,              route: '/inspector-view',        roles: COMPLIANCE },
-  { id: 'ai-copilot',          label: 'AI Copilot',          icon: Brain,            route: '/copilot',               roles: ['owner_operator', 'chef', 'kitchen_manager'] },
-  { id: 'regulatory',          label: 'Regulatory Updates',  icon: Newspaper,        route: '/regulatory-alerts',     roles: ['owner_operator', 'executive', 'compliance_manager'] },
-  { id: 'reporting',           label: 'Reporting',           icon: BarChart3,        route: '/reports',               roles: ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'chef', 'kitchen_manager'] },
-  { id: 'alerts',              label: 'Alerts',              icon: Bell,             route: '/analysis',              roles: ['owner_operator', 'compliance_manager', 'facilities_manager'] },
+  // ── MANAGER (kitchen_manager) ─────────────────────────
+  kitchen_manager: {
+    home: {
+      label: 'Dashboard', labelEs: 'Panel',
+      path: '/dashboard', icon: '🏠',
+      description: 'Your compliance overview — scores, open items, alerts, and priorities.',
+      descriptionEs: 'Su resumen de cumplimiento — puntuaciones, alertas y prioridades.',
+    },
+    sections: [
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Everything your team does every day to maintain compliance — checklists, temperature logs, and incident reporting.',
+        [I.checklists, I.incidents, I.temperatures],
+      ),
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Documentation, regulatory tracking, reporting, and self-inspection tools.',
+        [I.documents, I.regulatory, I.reporting, I.selfInspection],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Equipment troubleshooting and vendor notification.',
+        [I.selfDiagnosis],
+      ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Team management and account settings.',
+        [I.settings, I.team],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
 
-  // ── ENTERPRISE ──
-  { id: 'locations',           label: 'Locations',           icon: MapPin,           route: '/org-hierarchy',         roles: MGMT_EXEC },
-  { id: 'benchmarks',          label: 'Benchmarks',          icon: BarChart3,        route: '/benchmarks',            roles: MGMT_EXEC },
-  { id: 'risk-score',          label: 'Risk Score',          icon: Shield,           route: '/insurance-risk',        roles: MGMT_EXEC },
-  { id: 'leaderboard',         label: 'Leaderboard',         icon: Trophy,           route: '/leaderboard',           roles: MGMT_EXEC },
-  { id: 'corp-intelligence',   label: 'Corporate Intel',     icon: Radar,            route: '/corporate-intelligence', roles: ['executive', 'owner_operator'] },
-  { id: 'marketplace',         label: 'Marketplace',         icon: Store,            route: '/marketplace',           roles: MGMT },
+  // ── COMPLIANCE MANAGER ────────────────────────────────
+  compliance_manager: {
+    home: {
+      label: 'Dashboard', labelEs: 'Panel',
+      path: '/dashboard', icon: '🏠',
+      description: 'Compliance overview — scoring, regulatory status, and inspection readiness.',
+      descriptionEs: 'Resumen de cumplimiento — puntuaciones, estado regulatorio y preparación.',
+    },
+    sections: [
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Corrective actions, documentation, regulatory tracking, reporting, self-inspections, and vendor certifications.',
+        [I.correctiveActions, I.documents, I.regulatory, I.reporting, I.selfInspection, I.vendorCertifications],
+      ),
+      section('insights', 'Insights', '💡',
+        'Insights', 'AI-powered analysis — audit logs, intelligence dashboards, jurisdiction scoring, and violation trends.',
+        [I.auditLog, I.businessIntelligence, I.iotDashboard, I.jurisdictionIntelligence, I.scoreTable, I.violationTrends],
+      ),
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Incident tracking and temperature monitoring.',
+        [I.incidents, I.temperatures],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Export compliance data and diagnose equipment issues.',
+        [I.exportCenter, I.selfDiagnosis],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
 
-  // ── ADMIN ──
-  { id: 'team',                label: 'Team',                icon: Users,            route: '/team',                  roles: ['owner_operator', 'executive', 'chef', 'kitchen_manager'] },
-  { id: 'system-admin',        label: 'System Admin',        icon: Cog,              route: '/admin/onboard-client',  roles: MGMT },
-  { id: 'settings',            label: 'Settings',            icon: Settings,         route: '/settings',              roles: ['owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'facilities_manager'] },
-  { id: 'help',                label: 'Help & Support',      icon: HelpCircle,       route: '/help',                  roles: ALL },
+  // ── FACILITIES MANAGER ────────────────────────────────
+  facilities_manager: {
+    home: {
+      label: 'Equipment', labelEs: 'Equipos',
+      path: '/dashboard', icon: '⚙️',
+      description: 'Equipment status, maintenance schedules, and vendor services.',
+      descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
+    },
+    sections: [
+      section('equipment', 'Equipment', '⚙️',
+        'Equipment', 'Equipment categories — hoods, HVAC, ice machines, refrigeration, and fire suppression systems.',
+        [I.hoodExhaust, I.hvac, I.iceMachines, I.refrigeration, I.suppressionSystems],
+      ),
+      section('service', 'Service', '🤝',
+        'Service', 'Certifications, self-diagnosis, service scheduling, reporting, and vendor management.',
+        [I.certsDocs, I.selfDiagnosis, I.serviceCalendar, I.serviceReporting, I.vendors],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
 
-  // ── EVIDLY ADMIN ONLY ──
-  { id: 'usage-analytics',     label: 'Usage Analytics',     icon: BarChart3,        route: '/admin/usage-analytics', roles: MGMT, requiresAdmin: true },
-];
+  // ── OWNER / OPERATOR ──────────────────────────────────
+  owner_operator: {
+    home: {
+      label: 'Portfolio', labelEs: 'Portafolio',
+      path: '/dashboard', icon: '🏢',
+      description: 'Multi-location compliance portfolio — scores, alerts, and operational status.',
+      descriptionEs: 'Portafolio de cumplimiento multi-ubicación — puntuaciones, alertas y estado operativo.',
+    },
+    sections: [
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Checklists, incident tracking, and temperature monitoring across all locations.',
+        [I.checklists, I.incidents, I.temperatures],
+      ),
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Corrective actions, documentation, regulatory tracking, reporting, and self-inspection tools.',
+        [I.correctiveActions, I.documents, I.regulatory, I.reporting, I.selfInspection],
+      ),
+      section('insights', 'Insights', '💡',
+        'Insights', 'AI-powered analysis — analytics, audit logs, business intelligence, IoT monitoring, jurisdiction scoring, and compliance scores.',
+        [I.analytics, I.auditLog, I.businessIntelligence, I.iotDashboard, I.jurisdictionIntelligence, I.scoreTable],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Equipment troubleshooting and vendor notification.',
+        [I.selfDiagnosis],
+      ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Billing, location setup, account settings, team management, and vendor directory.',
+        [I.billing, I.locations, I.settings, I.team, I.vendors],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
 
-// ── Filtered nav items for a role ────────────────────────
+  // ── EXECUTIVE ─────────────────────────────────────────
+  executive: {
+    home: {
+      label: 'Insights Dashboard', labelEs: 'Panel de Perspectivas',
+      path: '/dashboard', icon: '📊',
+      description: 'Organization-wide analytics, benchmarks, and strategic compliance insights.',
+      descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
+    },
+    sections: [
+      section('insights', 'Insights', '💡',
+        'Insights', 'AI-powered analysis — analytics, audit logs, benchmarks, business intelligence, IoT monitoring, and compliance scores.',
+        [I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.iotDashboard, I.scoreTable],
+      ),
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Regulatory tracking and compliance reporting.',
+        [I.regulatory, I.reporting],
+      ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Billing and account settings.',
+        [I.billing, I.settings],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [I.help],
+      ),
+    ],
+  },
+};
 
-export function getNavItemsForRole(role: UserRole, isEvidlyAdmin: boolean = false): SidebarNavItem[] {
-  return SIDEBAR_NAV_ITEMS.filter(item => {
-    if (item.requiresAdmin && !isEvidlyAdmin) return false;
-    return item.roles.includes(role);
-  });
+// ── Public API ───────────────────────────────────────────
+
+/** Get the full sidebar configuration for a role */
+export function getRoleConfig(role: UserRole): RoleSidebarConfig {
+  return ROLE_CONFIGS[role];
 }
+
+/** Get the home/dashboard NavItem for a role (with role-specific label) */
+export function getHomeItemForRole(role: UserRole): NavItem {
+  const config = ROLE_CONFIGS[role];
+  return {
+    id: 'dashboard',
+    label: config.home.label,
+    path: config.home.path,
+    icon: config.home.icon,
+    roles: ['all'],
+    description: config.home.description,
+  };
+}
+
+/** Get sections for a role (backward-compatible wrapper) */
+export const getSectionsForRole = (role: string): SidebarSection[] => {
+  const config = ROLE_CONFIGS[role as UserRole];
+  return config ? config.sections : [];
+};
+
+// ── Backward compat — DASHBOARD_ITEM (deprecated, use getHomeItemForRole) ──
+
+export const DASHBOARD_ITEM: NavItem = {
+  id: 'dashboard',
+  label: 'Dashboard',
+  path: '/dashboard',
+  icon: '🏠',
+  roles: ['all'],
+  description: "Your compliance overview — scores, open items, alerts, and today's priorities at a glance.",
+};
 
 // ── Test mode detection ──────────────────────────────────
 
@@ -164,45 +505,6 @@ export interface DemoRoleDefinition {
   i18nKey: string;
   i18nDescKey: string;
 }
-
-// ── Sidebar sections for collapsible groups ─────────────
-
-export interface SidebarSection {
-  id: string;
-  label: string;
-  itemIds: string[];
-}
-
-export const SIDEBAR_SECTIONS: SidebarSection[] = [
-  {
-    id: 'operations',
-    label: 'Daily Operations',
-    itemIds: ['checklists', 'temperatures', 'log-temp', 'iot-monitoring', 'fire-safety', 'incidents'],
-  },
-  {
-    id: 'records',
-    label: 'Records & Assets',
-    itemIds: ['documents', 'equipment', 'haccp', 'vendors', 'photos', 'training'],
-  },
-  {
-    id: 'compliance',
-    label: 'Compliance & Insights',
-    itemIds: ['compliance', 'self-inspection', 'inspector', 'ai-copilot', 'regulatory', 'reporting', 'alerts'],
-  },
-  {
-    id: 'enterprise',
-    label: 'Enterprise',
-    itemIds: ['locations', 'benchmarks', 'risk-score', 'leaderboard', 'corp-intelligence', 'marketplace'],
-  },
-  {
-    id: 'admin',
-    label: 'Admin',
-    itemIds: ['team', 'system-admin', 'usage-analytics'],
-  },
-];
-
-/** Items that are always visible at top, never grouped into sections */
-export const UNGROUPED_IDS = ['dashboard', 'my-tasks', 'calendar'];
 
 export const DEMO_ROLES: DemoRoleDefinition[] = [
   {

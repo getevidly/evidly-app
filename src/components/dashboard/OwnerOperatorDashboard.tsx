@@ -369,7 +369,7 @@ const FIRE_EQUIPMENT_ALERTS = [
 ];
 
 function fireEquipDotColor(status: string | undefined): string {
-  if (!status) return '#94a3b8';
+  if (!status) return '#6B7F96';
   if (status === 'current') return '#22c55e';
   if (status === 'due_soon') return '#eab308';
   // overdue, expired, or anything else
@@ -424,7 +424,7 @@ function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
                   <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#fffbeb', color: '#d97706' }}>{t('status.atRisk')}</span>
                 )}
                 {fireStatus === 'unknown' && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#94a3b8' }}>{t('status.unknown')}</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: '#6B7F96' }}>{t('status.unknown')}</span>
                 )}
               </div>
               {/* Equipment status bars */}

@@ -47,6 +47,7 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ServiceCostPanel, type ServiceState } from '../components/intelligence/ServiceCostPanel';
 import { CostOfInactionEngine } from '../components/intelligence/CostOfInactionEngine';
+import { RiskScenarioEngine } from '../components/intelligence/RiskScenarioEngine';
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -108,7 +109,7 @@ export function ComplianceIntelligence() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa', ...F }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
       {/* Header */}
       <header className="px-4 sm:px-6 py-3" style={{ backgroundColor: '#002855' }}>
         <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
@@ -365,6 +366,7 @@ function CommandCenterTab() {
           ))}
         </div>
       </div>
+
     </div>
   );
 }
@@ -858,6 +860,12 @@ function RiskTab() {
           ))}
         </div>
       </div>
+
+      {/* Risk Scenario Engine */}
+      <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#EEF1F7', padding: '16px', border: '1px solid #D1D9E6' }}>
+        <RiskScenarioEngine />
+      </div>
+
     </div>
   );
 }
@@ -1556,15 +1564,15 @@ function PlatformTab() {
   return (
     <div className="space-y-6">
       {/* C-Suite Pitch Banner */}
-      <div className="rounded-xl p-4 sm:p-6" style={{ background: 'linear-gradient(135deg, #002855 0%, #1e4d6b 100%)' }}>
+      <div className="rounded-xl p-4 sm:p-6" style={{ background: '#EEF1F7', border: '1px solid #D1D9E6' }}>
         <div className="max-w-3xl">
-          <h2 className="text-xl font-bold text-white mb-1">{cSuitePitch.headline}</h2>
-          <p className="text-white/70 text-sm mb-4">{cSuitePitch.subheadline}</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-1">{cSuitePitch.headline}</h2>
+          <p className="text-gray-500 text-sm mb-4">{cSuitePitch.subheadline}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {cSuitePitch.valueProps.map((prop, i) => (
               <div key={i} className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-[#d4af37] flex-shrink-0 mt-0.5" />
-                <span className="text-white/90 text-xs">{prop}</span>
+                <span className="text-gray-700 text-xs">{prop}</span>
               </div>
             ))}
           </div>
