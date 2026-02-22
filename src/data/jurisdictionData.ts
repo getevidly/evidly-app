@@ -13,6 +13,20 @@ export interface JurisdictionScore {
   publicResultsUrl: string;
   nfpaAdoption?: string;
   lastVerified: string;
+  gradingThresholds?: {
+    good?: string;
+    satisfactory?: string;
+    unsatisfactory?: string;
+  };
+  closureTrigger?: string;
+  reinspectionPolicy?: string;
+  transparencyNotes?: string;
+  verificationStatus?: 'verified' | 'partial' | 'unverified';
+  trafficLightMapping?: {
+    green: { label: string; condition: string };
+    yellow: { label: string; condition: string };
+    red: { label: string; condition: string };
+  };
 }
 
 export interface UserJurisdiction {
@@ -29,14 +43,20 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     id: 'fresno_county_food',
     agencyName: 'Fresno County Dept. of Public Health — Environmental Health',
     county: 'Fresno', state: 'CA', pillar: 'food_safety',
-    gradingScale: 'A / B / C / Closure',
-    passingThreshold: 'A (90–100) or B (80–89)',
+    gradingScale: 'Major violations / Minor violations',
+    passingThreshold: 'No uncorrected major violations at time of inspection',
     inspectionFrequency: '1–3× per year based on risk category',
-    transparencyLevel: 'high',
+    transparencyLevel: 'low',
+    transparencyNotes: 'Fresno County Civil Grand Jury 2023-24 ("Eat At Your Own Risk") found: website difficult to navigate, inspection reports hard to find, some reports show No Data Returned. Reports exist but public access is poor in practice.',
     agencyWebsite: 'https://www.co.fresno.ca.us/departments/public-health-and-planning/public-health/environmental-health',
     agencyPhone: '(559) 600-3357',
     publicResultsUrl: 'https://www.co.fresno.ca.us/departments/public-health-and-planning/public-health/environmental-health/food-facility-inspection-reports',
-    lastVerified: '2026-02-01',
+    lastVerified: '2026-02-22',
+    trafficLightMapping: {
+      green: { label: 'Compliant', condition: 'No open major violations — all minors corrected or noted' },
+      yellow: { label: 'Warning', condition: 'Open minor violations only — no major violations at last inspection' },
+      red: { label: 'Action Required', condition: 'One or more uncorrected major violations — reinspection likely required' },
+    },
   },
   {
     id: 'fresno_city_fire',
@@ -57,14 +77,26 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     id: 'merced_county_food',
     agencyName: 'Merced County Dept. of Public Health — Environmental Health',
     county: 'Merced', state: 'CA', pillar: 'food_safety',
-    gradingScale: 'Compliant / Non-Compliant / Closed',
-    passingThreshold: 'Compliant',
+    gradingScale: 'Good / Satisfactory / Unsatisfactory',
+    gradingThresholds: {
+      good: '0–6 violations',
+      satisfactory: '7–13 violations',
+      unsatisfactory: '14+ violations',
+    },
+    passingThreshold: 'Good (0–6 violations) or Satisfactory (7–13 violations)',
+    closureTrigger: 'Unsatisfactory (14+ violations) or imminent health hazard',
     inspectionFrequency: '1–3× per year based on risk',
     transparencyLevel: 'high',
+    transparencyNotes: 'Merced County Environmental Health publishes findings with explanations. High accessibility for operators and public.',
     agencyWebsite: 'https://www.co.merced.ca.us/156/Environmental-Health',
     agencyPhone: '(209) 381-1100',
     publicResultsUrl: 'https://www.co.merced.ca.us/156/Environmental-Health',
-    lastVerified: '2026-02-01',
+    lastVerified: '2026-02-22',
+    trafficLightMapping: {
+      green: { label: 'Good', condition: '0–6 violations at time of inspection' },
+      yellow: { label: 'Satisfactory', condition: '7–13 violations at time of inspection' },
+      red: { label: 'Unsatisfactory', condition: '14 or more violations — reinspection required' },
+    },
   },
   {
     id: 'merced_city_fire',
@@ -85,14 +117,23 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
     id: 'stanislaus_county_food',
     agencyName: 'Stanislaus County Environmental Resources — Environmental Health',
     county: 'Stanislaus', state: 'CA', pillar: 'food_safety',
-    gradingScale: 'A / B / C / Closure',
-    passingThreshold: 'A (90+) or B (80–89)',
+    gradingScale: 'Major violations / Minor violations',
+    passingThreshold: 'No uncorrected major violations at time of inspection',
+    closureTrigger: 'Imminent health hazard or multiple uncorrected major violations',
+    reinspectionPolicy: 'Required after major violation citation. Correction window: 30 days.',
     inspectionFrequency: '1–3× per year',
-    transparencyLevel: 'high',
+    transparencyLevel: 'medium',
+    transparencyNotes: 'Stanislaus County Environmental Resources publishes inspection results. Verification of full public access methodology is pending JIE crawl.',
+    verificationStatus: 'partial',
     agencyWebsite: 'https://www.stancounty.com/er/environmental-health/',
     agencyPhone: '(209) 525-6700',
     publicResultsUrl: 'https://www.stancounty.com/er/environmental-health/food-safety.shtm',
-    lastVerified: '2026-02-01',
+    lastVerified: '2026-02-22',
+    trafficLightMapping: {
+      green: { label: 'Compliant', condition: 'No open major violations — all minors corrected or noted' },
+      yellow: { label: 'Warning', condition: 'Open minor violations only — no major violations at last inspection' },
+      red: { label: 'Action Required', condition: 'One or more uncorrected major violations — reinspection required within 30 days' },
+    },
   },
   {
     id: 'modesto_fire',
