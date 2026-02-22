@@ -103,7 +103,7 @@
  * | Cooling — Stage 2       | 70→41°F in 4hr   | jurisdictions.ts, migration  | FDA §3-501.14     | ✅     |
  * | Danger zone             | 41-135°F | playbook-ai-assistant mock             | FDA §3-501.16     | ✅     |
  * | Walk-in cooler          | 32-41°F  | industryTemplates.ts                   | Industry standard | ✅     |
- * | Walk-in freezer         | -10-0°F  | industryTemplates.ts                   | Industry standard | ✅     |
+ * | Walk-in freezer         | 0°F or below | industryTemplates.ts               | FDA/CalCode       | ✅     |
  * | Hot hold                | 135°F+   | industryTemplates.ts                   | Industry standard | ✅     |
  *
  * ═══════════════════════════════════════════════════════════════

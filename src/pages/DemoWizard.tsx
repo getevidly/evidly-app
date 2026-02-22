@@ -37,7 +37,7 @@ interface DemoLead {
 
 const TEMP_EQUIPMENT = [
   { name: 'Walk-in Cooler', range: '32-41°F', icon: '❄️' },
-  { name: 'Walk-in Freezer', range: '-10 to 0°F', icon: '🧊' },
+  { name: 'Walk-in Freezer', range: '0°F or below', icon: '🧊' },
   { name: 'Prep Cooler', range: '32-41°F', icon: '🥗' },
   { name: 'Hot Hold Cabinet', range: '135°F+', icon: '🔥' },
 ];

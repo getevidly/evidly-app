@@ -25,14 +25,17 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
   // 7 equipment items matching the demo equipment list (Ice Machine excluded)
   const eqDefs = [
-    { id: '1', name: 'Walk-in Cooler #1', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
-    { id: '2', name: 'Walk-in Cooler #2', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
-    { id: '3', name: 'Walk-in Freezer', type: 'freezer', base: -5, spread: 5, min: -10, max: 0 },
-    { id: '4', name: 'Prep Table Cooler', type: 'cooler', base: 36.5, spread: 3.5, min: 33, max: 40 },
-    { id: '5', name: 'Hot Holding Unit', type: 'hot_hold', base: 150, spread: 15, min: 135, max: 165 },
-    { id: '6', name: 'Salad Bar', type: 'cooler', base: 37, spread: 4, min: 33, max: 41 },
-    // Ice Machine removed — tracked under Equipment cleaning schedule, not temp monitoring
-    { id: '8', name: 'Blast Chiller', type: 'cooler', base: 35.5, spread: 2.5, min: 33, max: 38 },
+    // Storage equipment (Current Readings tab)
+    { id: '1', name: 'Walk-in Cooler #1', type: 'storage_cold', base: 36.5, spread: 1.5, min: 35, max: 38 },
+    { id: '2', name: 'Walk-in Cooler #2', type: 'storage_cold', base: 36.5, spread: 1.5, min: 35, max: 38 },
+    { id: '3', name: 'Walk-in Freezer', type: 'storage_frozen', base: -5, spread: 5, min: -Infinity, max: 0 },
+    { id: '8', name: 'Blast Chiller', type: 'storage_cold', base: 35.5, spread: 2.5, min: 33, max: 38 },
+    // Holding equipment (Hot/Cold Holding tab)
+    { id: '4', name: 'Prep Table Cooler', type: 'holding_cold', base: 36.5, spread: 3.5, min: 33, max: 41 },
+    { id: '5', name: 'Hot Holding Unit', type: 'holding_hot', base: 150, spread: 15, min: 135, max: 165 },
+    { id: '6', name: 'Salad Bar', type: 'holding_cold', base: 37, spread: 4, min: 33, max: 41 },
+    { id: '9', name: 'Steam Table', type: 'holding_hot', base: 155, spread: 12, min: 135, max: 190 },
+    { id: '10', name: 'Cold Well', type: 'holding_cold', base: 37, spread: 3, min: 33, max: 41 },
   ];
 
   // Readings every 3 hours: 6am, 9am, 12pm, 3pm, 6pm, 9pm
@@ -90,7 +93,7 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
         // Assign input method: ~10% iot_sensor (coolers/freezers), ~8% qr_scan, rest manual
         const methodRand = pRand(seed * 4 + 53);
         const inputMethod: 'manual' | 'qr_scan' | 'iot_sensor' =
-          (eq.type === 'cooler' || eq.type === 'freezer') && methodRand < 0.10 ? 'iot_sensor'
+          (eq.type.startsWith('storage_') || eq.type === 'cooler' || eq.type === 'freezer') && methodRand < 0.10 ? 'iot_sensor'
           : methodRand < 0.18 ? 'qr_scan'
           : 'manual';
 
@@ -100,8 +103,8 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
 
         // CCP mapping from equipment type
         const ccpNumber: string | null =
-          eq.type === 'cooler' || eq.type === 'freezer' ? 'CCP-01'
-          : eq.type === 'hot_hold' ? 'CCP-02'
+          eq.type.includes('cold') || eq.type.includes('frozen') || eq.type === 'cooler' || eq.type === 'freezer' ? 'CCP-01'
+          : eq.type.includes('hot') || eq.type === 'hot_hold' ? 'CCP-02'
           : null;
 
         history.push({
@@ -135,6 +138,7 @@ export const equipmentColors: Record<string, string> = {
   'Prep Table Cooler': '#059669',
   'Hot Holding Unit': '#dc2626',
   'Salad Bar': '#16a34a',
-  // Ice Machine removed from temp monitoring
   'Blast Chiller': '#8b5cf6',
+  'Steam Table': '#ea580c',
+  'Cold Well': '#0d9488',
 };

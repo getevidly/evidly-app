@@ -15,7 +15,7 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
     name: 'Restaurant (Full-Service)',
     items: [
       { name: 'Walk-in Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
-      { name: 'Walk-in Freezer (-10-0°F)', enabled: true, required: true, category: 'temperature_logs' },
+      { name: 'Walk-in Freezer (0°F or below)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Prep Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Hot Holding (135°F+)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Opening Checklist', enabled: true, required: true, category: 'checklists' },
@@ -36,7 +36,7 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
     name: 'Restaurant (Quick-Service)',
     items: [
       { name: 'Walk-in Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
-      { name: 'Walk-in Freezer (-10-0°F)', enabled: true, required: true, category: 'temperature_logs' },
+      { name: 'Walk-in Freezer (0°F or below)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Prep Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Opening Checklist', enabled: true, required: true, category: 'checklists' },
       { name: 'Closing Checklist', enabled: true, required: true, category: 'checklists' },
@@ -56,7 +56,7 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
     name: 'Hotel',
     items: [
       { name: 'Walk-in Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
-      { name: 'Walk-in Freezer (-10-0°F)', enabled: true, required: true, category: 'temperature_logs' },
+      { name: 'Walk-in Freezer (0°F or below)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Prep Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Hot Holding (135°F+)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Banquet Hot Boxes', enabled: true, required: true, category: 'temperature_logs' },
@@ -80,7 +80,7 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
     name: 'Healthcare / Senior Living',
     items: [
       { name: 'Walk-in Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
-      { name: 'Walk-in Freezer (-10-0°F)', enabled: true, required: true, category: 'temperature_logs' },
+      { name: 'Walk-in Freezer (0°F or below)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Prep Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Hot Holding (135°F+)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Patient Meal Temperature Log', enabled: true, required: true, category: 'temperature_logs' },
@@ -105,7 +105,7 @@ export const INDUSTRY_TEMPLATES: Record<string, IndustryTemplate> = {
     name: 'Education (K-12)',
     items: [
       { name: 'Walk-in Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
-      { name: 'Walk-in Freezer (-10-0°F)', enabled: true, required: true, category: 'temperature_logs' },
+      { name: 'Walk-in Freezer (0°F or below)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Prep Cooler (32-41°F)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Hot Holding (135°F+)', enabled: true, required: true, category: 'temperature_logs' },
       { name: 'Opening Checklist', enabled: true, required: true, category: 'checklists' },

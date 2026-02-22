@@ -30,14 +30,14 @@ const DEMO_COMPLIANCE_ALERTS: ComplianceAlert[] = [
   {
     id: 'cb-airport-fire',
     locationName: 'Airport Cafe',
-    pillar: 'fire safety compliance',
+    pillar: 'Fire Safety',
     score: 69,
     severity: 'critical',
   },
   {
     id: 'cb-university-fire',
     locationName: 'University Dining',
-    pillar: 'fire safety compliance',
+    pillar: 'Fire Safety',
     score: 56,
     severity: 'critical',
   },
@@ -79,11 +79,9 @@ export function ComplianceBanner({ isSingleLocation }: { isSingleLocation?: bool
         const isWarning = alert.severity === 'warning';
         const borderColor = isWarning ? '#d97706' : '#DC2626';
 
-        // Single-location: omit location name, capitalize pillar
-        const pillarCap = alert.pillar.charAt(0).toUpperCase() + alert.pillar.slice(1);
         const title = isSingleLocation
-          ? `${pillarCap} is ${isWarning ? 'approaching ' : ''}out of compliance`
-          : `${alert.locationName} ${alert.pillar} is ${isWarning ? 'approaching ' : ''}out of compliance`;
+          ? `${alert.pillar} is ${isWarning ? 'at risk' : 'non-compliant'}`
+          : `${alert.locationName} — ${alert.pillar} is ${isWarning ? 'at risk' : 'non-compliant'}`;
 
         return (
           <div

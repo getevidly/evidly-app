@@ -22,7 +22,7 @@ interface MatchedEquipment {
 // Equipment lookup with temp ranges, type, and CCP mapping
 const EQUIPMENT_RANGES: Record<string, { minTemp: number; maxTemp: number; type: string; ccp: string; thresholdLabel: string }> = {
   'eq-1': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
-  'eq-2': { minTemp: -10, maxTemp: 0, type: 'Freezer', ccp: 'CCP-01', thresholdLabel: '≤0°F' },
+  'eq-2': { minTemp: -Infinity, maxTemp: 0, type: 'Freezer', ccp: 'CCP-01', thresholdLabel: '≤0°F' },
   'eq-3': { minTemp: 135, maxTemp: 165, type: 'Hot Holding', ccp: 'CCP-02', thresholdLabel: '≥135°F' },
   'eq-4': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
   'eq-5': { minTemp: 33, maxTemp: 41, type: 'Cold Storage', ccp: 'CCP-01', thresholdLabel: '≤41°F' },
@@ -189,7 +189,7 @@ export function TempLogScan() {
             <div className="bg-[#eef4f8] rounded-lg p-3 text-center">
               <p className="text-xs text-gray-500 mb-1">Required: {matched.thresholdLabel} ({matched.ccp})</p>
               <p className="text-lg font-bold" style={{ color: '#1e4d6b' }}>
-                {matched.minTemp}°F – {matched.maxTemp}°F
+                {matched.type === 'Freezer' ? `${matched.maxTemp}°F or below` : `${matched.minTemp}°F – ${matched.maxTemp}°F`}
               </p>
             </div>
 

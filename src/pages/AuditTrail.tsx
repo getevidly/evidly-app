@@ -55,7 +55,7 @@ const HISTORY_KEY = 'evidly_audit_trail_history';
 
 const EQUIPMENT = [
   { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 },
-  { name: 'Walk-in Freezer', type: 'Freezer', min: -10, max: 0 },
+  { name: 'Walk-in Freezer', type: 'Freezer', min: -Infinity, max: 0 },
   { name: 'Prep Cooler', type: 'Cooler', min: 34, max: 41 },
   { name: 'Hot Hold Unit #1', type: 'Hot Hold', min: 135, max: 165 },
   { name: 'Hot Hold Unit #2', type: 'Hot Hold', min: 135, max: 165 },
@@ -118,10 +118,11 @@ function generateTempLogs(days: number, location: string | null) {
       const checksPerDay = rnd(6, 8);
       for (let c = 0; c < checksPerDay; c++) {
         const eq = pick(EQUIPMENT);
-        const baseTemp = (eq.min + eq.max) / 2;
-        const variance = (eq.max - eq.min) * 0.6;
+        const effectiveMin = eq.min === -Infinity ? -10 : eq.min;
+        const baseTemp = (effectiveMin + eq.max) / 2;
+        const variance = (eq.max - effectiveMin) * 0.6;
         let temp = Math.round((baseTemp + (Math.random() - 0.5) * variance) * 10) / 10;
-        if (Math.random() < 0.05) temp = eq.type === 'Hot Hold' ? eq.min - rnd(5, 15) : eq.max + rnd(2, 8);
+        if (Math.random() < 0.05) temp = eq.type === 'Hot Hold' ? effectiveMin - rnd(5, 15) : eq.max + rnd(2, 8);
         const inRange = temp >= eq.min && temp <= eq.max;
         const ts = new Date(now - d * 86400000 - rnd(0, 86400000));
         logs.push({
@@ -132,7 +133,7 @@ function generateTempLogs(days: number, location: string | null) {
           equipment: eq.name,
           equipmentType: eq.type,
           reading: temp,
-          range: `${eq.min}°F – ${eq.max}°F`,
+          range: eq.type === 'Freezer' ? `${eq.max}°F or below` : `${eq.min}°F – ${eq.max}°F`,
           pass: inRange,
           user: pick(USERS),
           location: loc,

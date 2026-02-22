@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useCallback, Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Plus, Thermometer, Check, X, Clock, Package, ChevronDown, ChevronUp, Download, TrendingUp, Play, StopCircle, AlertTriangle, Wifi, WifiOff, Radio, Pen, Battery, Signal, QrCode, Pencil, BarChart3 } from 'lucide-react';
@@ -108,6 +108,18 @@ const CATEGORY_TEMP_CONFIG: Record<string, { tempRequired: boolean; maxTemp?: nu
   'canned_shelf_stable':       { tempRequired: false, label: 'Canned / Shelf-Stable' },
 };
 
+// Equipment classification: which tab each type belongs to
+const STORAGE_TYPES = ['storage_cold', 'storage_frozen', 'cooler', 'freezer'];
+const HOLDING_COLD_TYPES = ['holding_cold', 'cold_holding'];
+const HOLDING_HOT_TYPES = ['holding_hot', 'hot_hold', 'hot_holding'];
+const HOLDING_TYPES = [...HOLDING_COLD_TYPES, ...HOLDING_HOT_TYPES];
+
+const isStorageEquipment = (type: string) => STORAGE_TYPES.includes(type);
+const isHoldingEquipment = (type: string) => HOLDING_TYPES.includes(type);
+const isHoldingCold = (type: string) => HOLDING_COLD_TYPES.includes(type);
+const isHoldingHot = (type: string) => HOLDING_HOT_TYPES.includes(type);
+const isFreezerType = (type: string) => type === 'storage_frozen' || type === 'freezer';
+
 export function TempLogs() {
   const navigate = useNavigate();
   const { profile } = useAuth();
@@ -190,14 +202,42 @@ export function TempLogs() {
     }
   }, [profile]);
 
-  // Timer for active cooldowns
+  // Live countdown timer — 1-second interval for active cooldowns
+  const [, setTimerTick] = useState(0);
   useEffect(() => {
+    if (cooldowns.length === 0) return;
     const timer = setInterval(() => {
-      setCooldowns([...cooldowns]); // Force re-render to update timers
-    }, 60000); // Update every minute
-
+      setTimerTick(t => t + 1); // Force re-render every second
+    }, 1000);
     return () => clearInterval(timer);
-  }, [cooldowns]);
+  }, [cooldowns.length]);
+
+  // Persist active cooldowns to localStorage
+  const COOLDOWN_STORAGE_KEY = 'evidly_active_cooldowns';
+  const saveCooldownsToStorage = useCallback((items: Cooldown[]) => {
+    const serializable = items.map(c => ({
+      ...c,
+      startTime: c.startTime.toISOString(),
+      checks: c.checks.map(ch => ({ ...ch, time: ch.time.toISOString() })),
+    }));
+    localStorage.setItem(COOLDOWN_STORAGE_KEY, JSON.stringify(serializable));
+  }, []);
+
+  // Load cooldowns from localStorage on mount (resume timers)
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(COOLDOWN_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const restored: Cooldown[] = parsed.map((c: any) => ({
+          ...c,
+          startTime: new Date(c.startTime),
+          checks: c.checks.map((ch: any) => ({ ...ch, time: new Date(ch.time) })),
+        }));
+        if (restored.length > 0) setCooldowns(restored);
+      }
+    } catch { /* ignore corrupt storage */ }
+  }, []);
 
   const loadDemoData = () => {
     const now = new Date();
@@ -207,13 +247,15 @@ export function TempLogs() {
       return d;
     };
 
-    // 7 equipment items: 4 already logged today (green), 3 pending (amber)
-    // Ice Machine excluded — tracked under Equipment cleaning schedule
+    // Equipment classification:
+    // storage_cold / storage_frozen → Current Readings tab only
+    // holding_cold / holding_hot → Hot/Cold Holding tab only
     const demoEquipment: TemperatureEquipment[] = [
+      // ── Storage equipment (Current Readings only) ──
       {
         id: '1',
         name: 'Walk-in Cooler #1',
-        equipment_type: 'cooler',
+        equipment_type: 'storage_cold',
         min_temp: 35,
         max_temp: 38,
         unit: 'F',
@@ -228,7 +270,7 @@ export function TempLogs() {
       {
         id: '2',
         name: 'Walk-in Cooler #2',
-        equipment_type: 'cooler',
+        equipment_type: 'storage_cold',
         min_temp: 35,
         max_temp: 38,
         unit: 'F',
@@ -243,8 +285,8 @@ export function TempLogs() {
       {
         id: '3',
         name: 'Walk-in Freezer',
-        equipment_type: 'freezer',
-        min_temp: -10,
+        equipment_type: 'storage_frozen',
+        min_temp: -Infinity,
         max_temp: 0,
         unit: 'F',
         location: 'Downtown Kitchen',
@@ -256,11 +298,27 @@ export function TempLogs() {
         },
       },
       {
+        id: '8',
+        name: 'Blast Chiller',
+        equipment_type: 'storage_cold',
+        min_temp: 33,
+        max_temp: 38,
+        unit: 'F',
+        location: 'University Dining',
+        last_check: {
+          temperature_value: 35,
+          created_at: new Date(now.getTime() - 14 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'John Smith',
+        },
+      },
+      // ── Holding equipment (Hot/Cold Holding tab only) ──
+      {
         id: '4',
         name: 'Prep Table Cooler',
-        equipment_type: 'cooler',
+        equipment_type: 'holding_cold',
         min_temp: 33,
-        max_temp: 40,
+        max_temp: 41,
         unit: 'F',
         location: 'Airport Cafe',
         last_check: {
@@ -270,11 +328,10 @@ export function TempLogs() {
           recorded_by_name: 'Mike Johnson',
         },
       },
-      // 4 not-yet-logged today (with yesterday's readings for context)
       {
         id: '5',
         name: 'Hot Holding Unit',
-        equipment_type: 'hot_hold',
+        equipment_type: 'holding_hot',
         min_temp: 135,
         max_temp: 165,
         unit: 'F',
@@ -289,7 +346,7 @@ export function TempLogs() {
       {
         id: '6',
         name: 'Salad Bar',
-        equipment_type: 'cooler',
+        equipment_type: 'holding_cold',
         min_temp: 33,
         max_temp: 41,
         unit: 'F',
@@ -301,21 +358,34 @@ export function TempLogs() {
           recorded_by_name: 'Emma Davis',
         },
       },
-      // Ice Machine removed from temp monitoring — tracked under Equipment
-      // cleaning/maintenance schedule per FDA Model Food Code §4-602.11
       {
-        id: '8',
-        name: 'Blast Chiller',
-        equipment_type: 'cooler',
-        min_temp: 33,
-        max_temp: 38,
+        id: '9',
+        name: 'Steam Table',
+        equipment_type: 'holding_hot',
+        min_temp: 135,
+        max_temp: 190,
         unit: 'F',
-        location: 'University Dining',
+        location: 'Downtown Kitchen',
         last_check: {
-          temperature_value: 35,
-          created_at: new Date(now.getTime() - 14 * 60 * 60 * 1000).toISOString(),
+          temperature_value: 152,
+          created_at: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
           is_within_range: true,
-          recorded_by_name: 'John Smith',
+          recorded_by_name: 'Sarah Chen',
+        },
+      },
+      {
+        id: '10',
+        name: 'Cold Well',
+        equipment_type: 'holding_cold',
+        min_temp: 33,
+        max_temp: 41,
+        unit: 'F',
+        location: 'Downtown Kitchen',
+        last_check: {
+          temperature_value: 39,
+          created_at: new Date(now.getTime() - 5.5 * 60 * 60 * 1000).toISOString(),
+          is_within_range: true,
+          recorded_by_name: 'Sarah Chen',
         },
       },
     ];
@@ -917,11 +987,16 @@ export function TempLogs() {
   };
 
   const getLoggedTodayCount = () => {
-    return equipment.filter(eq => getEquipmentState(eq) === 'logged').length;
+    return equipment.filter(eq => isStorageEquipment(eq.equipment_type) && getEquipmentState(eq) === 'logged').length;
+  };
+
+  const getStorageEquipmentCount = () => {
+    return equipment.filter(eq => isStorageEquipment(eq.equipment_type)).length;
   };
 
   const getSortedEquipment = () => {
-    let filtered = equipment;
+    // Current Readings tab: storage equipment only
+    let filtered = equipment.filter(eq => isStorageEquipment(eq.equipment_type));
 
     if (locationFilter !== 'all') {
       filtered = filtered.filter(eq => eq.location === locationFilter);
@@ -1125,7 +1200,7 @@ export function TempLogs() {
   };
 
   // Cooldown functions
-  const formatCooldownTime = (startTime: Date) => {
+  const formatCooldownElapsed = (startTime: Date) => {
     const now = new Date();
     const diff = now.getTime() - startTime.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -1133,19 +1208,55 @@ export function TempLogs() {
     return `${hours}h ${minutes}m`;
   };
 
-  const getCooldownStatus = (cooldown: Cooldown) => {
+  const getCooldownCountdown = (cooldown: Cooldown) => {
     const now = new Date();
-    const elapsed = (now.getTime() - cooldown.startTime.getTime()) / (1000 * 60 * 60); // hours
+    const elapsedMs = now.getTime() - cooldown.startTime.getTime();
     const currentTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
 
-    // Stage 1: 135°F to 70°F within 2 hours
+    // Determine deadline based on phase
+    const phase1DeadlineMs = 2 * 60 * 60 * 1000; // 2 hours
+    const totalDeadlineMs = 6 * 60 * 60 * 1000;  // 6 hours
+
+    let deadlineMs: number;
+    let phase: 1 | 2;
+    let phaseLabel: string;
+
+    if (currentTemp > 70) {
+      phase = 1;
+      deadlineMs = phase1DeadlineMs;
+      phaseLabel = `Reach 70°F by ${format(new Date(cooldown.startTime.getTime() + phase1DeadlineMs), 'h:mm a')}`;
+    } else {
+      phase = 2;
+      deadlineMs = totalDeadlineMs;
+      phaseLabel = `Reach 41°F by ${format(new Date(cooldown.startTime.getTime() + totalDeadlineMs), 'h:mm a')}`;
+    }
+
+    const remainingMs = Math.max(0, deadlineMs - elapsedMs);
+    const isOverdue = remainingMs <= 0;
+    const totalSec = Math.floor(remainingMs / 1000);
+    const hours = Math.floor(totalSec / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+
+    // Color state: green >30min, amber ≤30min, red = overdue
+    let color: 'green' | 'amber' | 'red' = 'green';
+    if (isOverdue) color = 'red';
+    else if (remainingMs <= 30 * 60 * 1000) color = 'amber';
+
+    return { hours, minutes, seconds, phase, phaseLabel, isOverdue, color, remainingMs };
+  };
+
+  const getCooldownStatus = (cooldown: Cooldown) => {
+    const now = new Date();
+    const elapsed = (now.getTime() - cooldown.startTime.getTime()) / (1000 * 60 * 60);
+    const currentTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
+
     if (currentTemp > 70) {
       if (elapsed > 2) return 'failed';
       if (elapsed > 1.5) return 'warning';
       return 'on-track';
     }
 
-    // Stage 2: 70°F to 41°F within 6 hours total (4 more hours)
     if (currentTemp > 41) {
       if (elapsed > 6) return 'failed';
       if (elapsed > 5) return 'warning';
@@ -1161,11 +1272,9 @@ export function TempLogs() {
     const elapsed = (now.getTime() - cooldown.startTime.getTime()) / (1000 * 60 * 60);
 
     if (currentTemp > 70) {
-      // Stage 1
       const progress = ((cooldown.startTemp - currentTemp) / (cooldown.startTemp - 70)) * 100;
       return { stage: 1, progress: Math.min(100, Math.max(0, progress)), elapsed, limit: 2 };
     } else {
-      // Stage 2
       const progress = ((70 - currentTemp) / (70 - 41)) * 100;
       return { stage: 2, progress: Math.min(100, Math.max(0, progress)), elapsed, limit: 6 };
     }
@@ -1188,7 +1297,9 @@ export function TempLogs() {
       status: 'active',
     };
 
-    setCooldowns([...cooldowns, newCooldown]);
+    const updated = [...cooldowns, newCooldown];
+    setCooldowns(updated);
+    saveCooldownsToStorage(updated);
     setShowStartCooldown(false);
     setCooldownForm({
       itemName: '',
@@ -1211,13 +1322,13 @@ export function TempLogs() {
 
     const updatedCooldowns = cooldowns.map(c => {
       if (c.id === selectedCooldown.id) {
-        const updatedChecks = [...c.checks, newCheck];
-        return { ...c, checks: updatedChecks };
+        return { ...c, checks: [...c.checks, newCheck] };
       }
       return c;
     });
 
     setCooldowns(updatedCooldowns);
+    saveCooldownsToStorage(updatedCooldowns);
     setShowCooldownCheckModal(false);
     setSelectedCooldown(null);
     setCooldownCheckTemp('');
@@ -1241,7 +1352,9 @@ export function TempLogs() {
       completedAt: new Date(),
     };
 
-    setCooldowns(cooldowns.filter(c => c.id !== cooldownId));
+    const remaining = cooldowns.filter(c => c.id !== cooldownId);
+    setCooldowns(remaining);
+    saveCooldownsToStorage(remaining);
     setCompletedCooldowns([completedCooldown, ...completedCooldowns]);
     showSuccessToast(`Cooldown completed for ${cooldown.itemName}`);
   };
@@ -1413,15 +1526,15 @@ export function TempLogs() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium text-gray-700">Today's Progress</span>
-                  <span className="text-sm font-bold text-[#1e4d6b]">{getLoggedTodayCount()} of {equipment.length} logged</span>
+                  <span className="text-sm font-bold text-[#1e4d6b]">{getLoggedTodayCount()} of {getStorageEquipmentCount()} logged</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
                     className="h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${equipment.length > 0 ? (getLoggedTodayCount() / equipment.length) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === equipment.length ? '#16a34a' : '#d4af37' }}
+                    style={{ width: `${getStorageEquipmentCount() > 0 ? (getLoggedTodayCount() / getStorageEquipmentCount()) * 100 : 0}%`, backgroundColor: getLoggedTodayCount() === getStorageEquipmentCount() ? '#16a34a' : '#d4af37' }}
                   />
                 </div>
-                {getLoggedTodayCount() === equipment.length && (
+                {getLoggedTodayCount() === getStorageEquipmentCount() && (
                   <p className="text-xs text-green-600 font-medium mt-1">All equipment logged — great job!</p>
                 )}
               </div>
@@ -1468,7 +1581,10 @@ export function TempLogs() {
                   <div className="mb-4">{getStatusBadge(eq)}</div>
 
                   <div className="text-sm text-gray-600 mb-4">
-                    {t('tempLogs.range')} {eq.min_temp}°{eq.unit} - {eq.max_temp}°{eq.unit}
+                    {isFreezerType(eq.equipment_type)
+                      ? `Must remain: 0°${eq.unit} or below`
+                      : `${t('tempLogs.range')} ${eq.min_temp}°${eq.unit} - ${eq.max_temp}°${eq.unit}`
+                    }
                   </div>
 
                   <button
@@ -2252,58 +2368,89 @@ export function TempLogs() {
                   {cooldowns.map(cooldown => {
                     const progress = getCooldownProgress(cooldown);
                     const status = getCooldownStatus(cooldown);
+                    const countdown = getCooldownCountdown(cooldown);
                     const currentTemp = cooldown.checks[cooldown.checks.length - 1].temperature;
+                    const lastCheck = cooldown.checks[cooldown.checks.length - 1];
+                    const lastCheckAgo = formatDistanceToNow(lastCheck.time, { addSuffix: true });
+
+                    const timerBg = countdown.color === 'red' ? 'bg-red-900' : countdown.color === 'amber' ? 'bg-amber-800' : 'bg-gray-800';
+                    const timerBorder = countdown.color === 'red' ? 'border-red-500' : countdown.color === 'amber' ? 'border-amber-500' : 'border-green-500';
+                    const timerText = countdown.color === 'red' ? 'text-red-400' : countdown.color === 'amber' ? 'text-amber-400' : 'text-green-400';
+                    const borderColor = countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1e4d6b';
 
                     return (
-                      <div key={cooldown.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ border: '2px solid #1e4d6b' }}>
-                        <div className="flex justify-between items-start mb-4">
+                      <div key={cooldown.id} className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ border: `2px solid ${borderColor}` }}>
+                        <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h4 className="text-xl font-bold text-gray-900">{cooldown.itemName}</h4>
+                            <h4 className="text-lg font-bold text-gray-900">{cooldown.itemName} — Cooling in Progress</h4>
                             <p className="text-sm text-gray-600">{cooldown.location}</p>
-                            <p className="text-xs text-gray-500">Started by {cooldown.startedBy}</p>
                           </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-gray-900 text-center">
-                              {formatCooldownTime(cooldown.startTime)}
-                            </div>
-                            <p className="text-xs text-gray-500">{t('tempLogs.elapsed')}</p>
-                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-bold shrink-0 ${
+                            status === 'on-track' ? 'bg-green-100 text-green-800' :
+                            status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {status === 'on-track' ? 'On Track' : status === 'warning' ? 'Warning' : 'Overdue'}
+                          </span>
                         </div>
 
-                        <div className="mb-4">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-medium text-gray-700">
-                              {progress.stage === 1 ? t('tempLogs.stage1') : t('tempLogs.stage2')} {progress.stage === 1 ? `${cooldown.startTemp}°F → 70°F` : '70°F → 41°F'}
-                              {progress.stage === 1 && <span className="ml-1 text-xs text-amber-600 font-normal">(CA: from cooked temp)</span>}
-                            </span>
-                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                              status === 'on-track' ? 'bg-green-100 text-green-800' :
-                              status === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
-                              {status === 'on-track' ? t('tempLogs.onTrack') : status === 'warning' ? t('tempLogs.warning') : t('tempLogs.failed')}
-                            </span>
+                        <p className="text-xs text-gray-500 mb-3">
+                          Started: {format(cooldown.startTime, 'h:mm a')} at {cooldown.startTemp}°F
+                          <span className="mx-1.5">|</span>Elapsed: {formatCooldownElapsed(cooldown.startTime)}
+                        </p>
+
+                        {/* Phase label */}
+                        <div className="text-sm font-semibold text-gray-700 mb-2">
+                          PHASE {countdown.phase}: {countdown.phaseLabel}
+                        </div>
+
+                        {/* Live countdown timer */}
+                        <div className={`${timerBg} rounded-xl p-4 mb-4 border ${timerBorder}`}>
+                          {countdown.isOverdue ? (
+                            <div className="text-center">
+                              <p className="text-red-400 text-xs font-bold uppercase tracking-wider mb-1">Time Exceeded</p>
+                              <div className="font-mono text-4xl font-bold text-red-400 tracking-wider">
+                                00 : 00 : 00
+                              </div>
+                              <p className="text-red-400/70 text-xs mt-1">Corrective action required</p>
+                            </div>
+                          ) : (
+                            <div className="text-center">
+                              <div className={`font-mono text-4xl font-bold ${timerText} tracking-wider`}>
+                                {String(countdown.hours).padStart(2, '0')} : {String(countdown.minutes).padStart(2, '0')} : {String(countdown.seconds).padStart(2, '0')}
+                              </div>
+                              <div className={`flex justify-center gap-8 text-xs ${timerText}/60 mt-1`}>
+                                <span>hrs</span><span>min</span><span>sec</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Current temp + last check */}
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="text-xs text-gray-500">Current</p>
+                            <p className="text-2xl font-bold text-gray-900">{currentTemp}°F</p>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-3">
+                          <p className="text-xs text-gray-400">logged {lastCheckAgo}</p>
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="mb-4">
+                          <div className="w-full bg-gray-200 rounded-full h-2.5">
                             <div
-                              className={`h-3 rounded-full transition-all ${
-                                progress.stage === 1 ? 'bg-[#1e4d6b]' : 'bg-[#22c55e]'
-                              }`}
-                              style={{ width: `${progress.progress}%` }}
+                              className="h-2.5 rounded-full transition-all"
+                              style={{
+                                width: `${progress.progress}%`,
+                                backgroundColor: countdown.color === 'red' ? '#dc2626' : countdown.color === 'amber' ? '#f59e0b' : '#1e4d6b',
+                              }}
                             />
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {progress.elapsed.toFixed(1)}h / {progress.limit}h limit
-                          </p>
-                        </div>
-
-                        <div className="mb-4">
-                          <p className="text-sm text-gray-600 mb-2">{t('tempLogs.currentTemperature')}</p>
-                          <div className="text-3xl font-bold text-gray-900 text-center">{currentTemp}°F</div>
+                          <p className="text-xs text-gray-500 mt-1 text-right">{Math.round(progress.progress)}% cooled</p>
                         </div>
 
                         {/* Mini chart */}
-                        <div className="mb-4" style={{ height: '100px' }}>
+                        <div className="mb-4" style={{ height: '80px' }}>
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={cooldown.checks.map(check => ({
                               temp: check.temperature,
@@ -2327,7 +2474,7 @@ export function TempLogs() {
                             }}
                             className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150 font-medium"
                           >
-                            {t('tempLogs.logCheck')}
+                            + Log Temperature Now
                           </button>
                           <button
                             onClick={() => handleCompleteCooldown(cooldown.id)}
@@ -2441,7 +2588,7 @@ export function TempLogs() {
           // Get threshold for sensor
           const getThreshold = (sensor: IoTSensor) => {
             const zone = sensor.zone.toLowerCase();
-            if (zone.includes('freezer')) return { min: -10, max: 0 };
+            if (zone.includes('freezer')) return { min: -Infinity, max: 0 };
             if (zone.includes('cooler') || zone.includes('walk-in') || zone.includes('reach-in') || zone.includes('salad') || zone.includes('beverage') || zone.includes('display')) return { min: 32, max: 41 };
             if (zone.includes('hot')) return { min: 135, max: 200 };
             if (zone.includes('dry')) return { min: 50, max: 75 };
@@ -2647,7 +2794,18 @@ export function TempLogs() {
         })()}
 
         {/* Hot/Cold Holding Tab */}
-        {activeTab === 'holding' && (
+        {activeTab === 'holding' && (() => {
+          const holdingEquip = equipment.filter(eq => isHoldingEquipment(eq.equipment_type));
+          const coldHolding = holdingEquip.filter(eq => isHoldingCold(eq.equipment_type));
+          const hotHolding = holdingEquip.filter(eq => isHoldingHot(eq.equipment_type));
+          // Compliance badge: count holding equipment with valid recent readings
+          const holdingCompliant = holdingEquip.filter(eq => {
+            if (!eq.last_check) return false;
+            const ageMin = (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60);
+            return eq.last_check.is_within_range && ageMin <= 240;
+          }).length;
+
+          return (
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-4">
@@ -2655,8 +2813,8 @@ export function TempLogs() {
                   <h2 className="text-lg font-bold text-gray-900">Hot/Cold Holding Status</h2>
                   <p className="text-xs text-gray-500 mt-0.5">CalCode §113996 — Temperature holding compliance</p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                  {equipment.filter(eq => eq.last_check?.is_within_range !== false).length}/{equipment.length} Compliant
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${holdingCompliant === holdingEquip.length ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                  {holdingCompliant}/{holdingEquip.length} Compliant
                 </span>
               </div>
 
@@ -2669,39 +2827,54 @@ export function TempLogs() {
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900">Cold Holding</h3>
-                      <p className="text-xs text-gray-500">Must remain ≤ 41°F</p>
+                      <p className="text-xs text-gray-500">Must remain ≤ 41°F — check every 4 hours</p>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    {equipment.filter(eq => eq.equipment_type === 'cooler' || eq.equipment_type === 'cold_holding').map(eq => {
+                    {coldHolding.map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
                       const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > 120;
-                      const isDueSoon = lastCheckAge > 90 && lastCheckAge <= 120;
+                      const isOverdue = lastCheckAge > 240; // 4 hours
+                      const isDueSoon = lastCheckAge > 210 && lastCheckAge <= 240; // 3.5-4 hours
                       return (
-                        <div key={eq.id} className={`flex items-center justify-between py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : 'border-gray-100'}`}>
-                          <div className="flex items-center gap-2">
-                            {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
-                            <span className="text-sm text-gray-900">{eq.name}</span>
-                            {isOverdue && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">CHECK OVERDUE</span>
-                            )}
-                            {isDueSoon && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">CHECK DUE SOON</span>
-                            )}
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 min-w-0">
+                              {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
+                              <span className="text-sm text-gray-900 truncate">{eq.name}</span>
+                              {isOverdue && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
+                              )}
+                              {isDueSoon && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <div className="text-right">
+                                <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
+                                  {eq.last_check?.temperature_value ?? '--'}°F
+                                </span>
+                                {eq.last_check && (
+                                  <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => handleLogTemp(eq)}
+                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1e4d6b] text-white hover:bg-[#163a52] transition-colors whitespace-nowrap"
+                              >
+                                + Log
+                              </button>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
-                              {eq.last_check?.temperature_value ?? '--'}°F
-                            </span>
-                            {eq.last_check && (
-                              <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
-                            )}
-                          </div>
+                          {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
+                            <div className="mt-1 flex items-center gap-1 text-[10px] text-blue-600">
+                              <Radio className="h-3 w-3" /> IoT sensor reading
+                            </div>
+                          )}
                         </div>
                       );
                     })}
-                    {equipment.filter(eq => eq.equipment_type === 'cooler' || eq.equipment_type === 'cold_holding').length === 0 && (
+                    {coldHolding.length === 0 && (
                       <p className="text-sm text-gray-400 text-center py-4">No cold holding equipment</p>
                     )}
                   </div>
@@ -2715,39 +2888,54 @@ export function TempLogs() {
                     </div>
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900">Hot Holding</h3>
-                      <p className="text-xs text-gray-500">Must remain ≥ 135°F</p>
+                      <p className="text-xs text-gray-500">Must remain ≥ 135°F — check every 4 hours</p>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    {equipment.filter(eq => eq.equipment_type === 'hot_hold' || eq.equipment_type === 'hot_holding').map(eq => {
+                    {hotHolding.map(eq => {
                       const inRange = eq.last_check?.is_within_range ?? true;
                       const lastCheckAge = eq.last_check ? (Date.now() - new Date(eq.last_check.created_at).getTime()) / (1000 * 60) : Infinity;
-                      const isOverdue = lastCheckAge > 120;
-                      const isDueSoon = lastCheckAge > 90 && lastCheckAge <= 120;
+                      const isOverdue = lastCheckAge > 240; // 4 hours
+                      const isDueSoon = lastCheckAge > 210 && lastCheckAge <= 240; // 3.5-4 hours
                       return (
-                        <div key={eq.id} className={`flex items-center justify-between py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : 'border-gray-100'}`}>
-                          <div className="flex items-center gap-2">
-                            {inRange ? <Check className="h-4 w-4 text-green-500" /> : <AlertTriangle className="h-4 w-4 text-red-500" />}
-                            <span className="text-sm text-gray-900">{eq.name}</span>
-                            {isOverdue && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700">CHECK OVERDUE</span>
-                            )}
-                            {isDueSoon && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700">CHECK DUE SOON</span>
-                            )}
+                        <div key={eq.id} className={`py-2 px-3 bg-white rounded-lg border ${isOverdue ? 'border-red-300 bg-red-50/30' : isDueSoon ? 'border-amber-300 bg-amber-50/30' : !inRange ? 'border-red-300' : 'border-gray-100'}`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 min-w-0">
+                              {inRange && !isOverdue ? <Check className="h-4 w-4 text-green-500 shrink-0" /> : <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />}
+                              <span className="text-sm text-gray-900 truncate">{eq.name}</span>
+                              {isOverdue && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 shrink-0">CHECK OVERDUE</span>
+                              )}
+                              {isDueSoon && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 shrink-0">DUE SOON</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <div className="text-right">
+                                <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
+                                  {eq.last_check?.temperature_value ?? '--'}°F
+                                </span>
+                                {eq.last_check && (
+                                  <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => handleLogTemp(eq)}
+                                className="ml-1 px-2 py-1 text-xs font-semibold rounded-md bg-[#1e4d6b] text-white hover:bg-[#163a52] transition-colors whitespace-nowrap"
+                              >
+                                + Log
+                              </button>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <span className={`text-sm font-semibold ${inRange ? 'text-green-700' : 'text-red-700'}`}>
-                              {eq.last_check?.temperature_value ?? '--'}°F
-                            </span>
-                            {eq.last_check && (
-                              <p className="text-xs text-gray-400">{formatDistanceToNow(new Date(eq.last_check.created_at), { addSuffix: true })}</p>
-                            )}
-                          </div>
+                          {eq.last_check?.recorded_by_name === 'IoT Sensor' && (
+                            <div className="mt-1 flex items-center gap-1 text-[10px] text-blue-600">
+                              <Radio className="h-3 w-3" /> IoT sensor reading
+                            </div>
+                          )}
                         </div>
                       );
                     })}
-                    {equipment.filter(eq => eq.equipment_type === 'hot_hold' || eq.equipment_type === 'hot_holding').length === 0 && (
+                    {hotHolding.length === 0 && (
                       <p className="text-sm text-gray-400 text-center py-4">No hot holding equipment</p>
                     )}
                   </div>
@@ -2768,7 +2956,8 @@ export function TempLogs() {
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (() => {
@@ -3099,7 +3288,10 @@ export function TempLogs() {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-gray-900">{entry.equipment_name}</h4>
                         <p className="text-sm text-gray-600">
-                          {t('tempLogs.range')} {entry.min_temp}°F - {entry.max_temp}°F
+                          {entry.min_temp === -Infinity
+                            ? `Must remain: ${entry.max_temp}°F or below`
+                            : `${t('tempLogs.range')} ${entry.min_temp}°F - ${entry.max_temp}°F`
+                          }
                         </p>
                       </div>
 
