@@ -207,7 +207,8 @@ export function TempLogs() {
       return d;
     };
 
-    // 8 equipment items: 4 already logged today (green), 4 pending (amber)
+    // 7 equipment items: 4 already logged today (green), 3 pending (amber)
+    // Ice Machine excluded — tracked under Equipment cleaning schedule
     const demoEquipment: TemperatureEquipment[] = [
       {
         id: '1',
@@ -300,21 +301,8 @@ export function TempLogs() {
           recorded_by_name: 'Emma Davis',
         },
       },
-      {
-        id: '7',
-        name: 'Ice Machine',
-        equipment_type: 'freezer',
-        min_temp: 28,
-        max_temp: 32,
-        unit: 'F',
-        location: 'Downtown Kitchen',
-        last_check: {
-          temperature_value: 30,
-          created_at: new Date(now.getTime() - 20 * 60 * 60 * 1000).toISOString(),
-          is_within_range: true,
-          recorded_by_name: 'John Smith',
-        },
-      },
+      // Ice Machine removed from temp monitoring — tracked under Equipment
+      // cleaning/maintenance schedule per FDA Model Food Code §4-602.11
       {
         id: '8',
         name: 'Blast Chiller',

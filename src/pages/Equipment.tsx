@@ -403,6 +403,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2024-07-08', warrantyProvider: 'Manitowoc Ice', warrantyTerms: '3-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-01-08', maintenanceInterval: 'Quarterly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 8, replacementCost: 6000,
+    pillar: 'food_safety' as const,
     notes: 'Maintenance overdue — monthly cleaning cycle and condenser service past due. Scale buildup reported. FDA Food Code §4-602.11 requires food contact surfaces (including ice machines) cleaned at frequency to prevent buildup. Schedule descaling ASAP.',
     serviceHistory: [
       { date: '2025-10-08', vendor: 'CleanAir HVAC', type: 'Quarterly Maintenance', cost: 325, notes: 'Cleaned condenser, sanitized bin. Noted early scale buildup.' },
@@ -516,6 +517,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     warrantyExpiry: '2025-03-15', warrantyProvider: 'Hoshizaki', warrantyTerms: '3-year parts and labor',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Monthly',
     linkedVendor: 'CleanAir HVAC', usefulLifeYears: 10, replacementCost: 8500,
+    pillar: 'food_safety' as const,
     notes: 'Monthly cleaning on schedule. Last deep clean July 2025. Water filter due March 2026. FDA Food Code §4-602.11 — food contact surface, monthly cleaning minimum.',
     serviceHistory: [
       { date: '2026-01-28', vendor: 'CleanAir HVAC', type: 'Monthly Cleaning & Sanitize', cost: 150, notes: 'Cleaning cycle run, bin sanitized, ice quality good.' },
@@ -1155,6 +1157,7 @@ export function Equipment() {
                     <thead><tr>
                       <th style={thStyle}>{t('pages.equipment.task')}</th><th style={thStyle}>{t('pages.equipment.interval')}</th>
                       <th style={thStyle}>{t('pages.equipment.lastCompleted')}</th><th style={thStyle}>{t('pages.equipment.nextDue')}</th><th style={thStyle}>{t('pages.equipment.status')}</th>
+                      <th style={thStyle}></th>
                     </tr></thead>
                     <tbody>
                       {selected.schedule.map((s, i) => {
@@ -1166,6 +1169,17 @@ export function Equipment() {
                             <td style={tdStyle}>{format(new Date(s.lastDone), 'MMM d, yyyy')}</td>
                             <td style={tdStyle}>{format(new Date(s.nextDue), 'MMM d, yyyy')}</td>
                             <td style={tdStyle}><span style={badge(ms.label, ms.color, ms.bg)}>{ms.label}</span></td>
+                            <td style={tdStyle}>
+                              <button
+                                onClick={() => alert(`✓ ${s.task} logged for ${selected.name} — ${format(new Date(), 'MMM d, yyyy h:mm a')}`)}
+                                className="px-2.5 py-1 text-xs font-semibold rounded-md transition-colors"
+                                style={{ backgroundColor: '#1e4d6b', color: 'white' }}
+                                onMouseEnter={e => { (e.target as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
+                                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1e4d6b'; }}
+                              >
+                                {s.task.toLowerCase().includes('clean') ? 'Log Cleaning' : 'Log'}
+                              </button>
+                            </td>
                           </tr>
                         );
                       })}

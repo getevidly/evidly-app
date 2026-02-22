@@ -533,7 +533,7 @@ export const needsAttentionItems: NeedsAttentionItem[] = [
   { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
   { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
   // University Dining - 12 items
-  { id: '10', title: '8 Temperature Checks Missed', detail: 'University Dining — missed this week', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '10', title: '5 Temperature Checks Missed', detail: 'University Dining — missed this week (Ice Machine excluded, tracked under Equipment)', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '11', title: 'Opening Checklists Missed 3 Days', detail: 'University Dining — Feb 3, 4, 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '12', title: 'HACCP Monitoring Overdue', detail: 'University Dining — no logs this month', color: 'red', url: '/haccp', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '13', title: 'Fire Suppression 4 Months Overdue', detail: 'Valley Fire — due Jan 10', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
@@ -602,7 +602,7 @@ export const scoreImpactData: ScoreImpactItem[] = [
   { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
 
   // ─── University Dining ─── Operational (62/100)
-  { status: 'overdue', label: '8 Temperature Checks Missed This Week', impact: '0 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },
+  { status: 'overdue', label: '5 Temperature Checks Missed This Week', impact: '+10 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },
   { status: 'overdue', label: 'Opening Checklists Missed 3 Days', impact: '+10 of 30', action: 'Complete Now', actionLink: '/checklists', pillar: 'Food Safety', locationId: '3' },
   { status: 'current', label: 'Incident Resolution (24-48 hrs avg)', impact: '+8 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
   { status: 'overdue', label: 'HACCP Monitoring Not Done This Month', impact: '0 of 15', action: 'Start HACCP Review', actionLink: '/haccp', pillar: 'Food Safety', locationId: '3' },

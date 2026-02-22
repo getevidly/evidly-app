@@ -125,13 +125,99 @@ const DEMO_DEADLINES: DeadlineItem[] = [
   { id: 'd5', label: 'Health permit renewal', location: 'Downtown Kitchen', dueDate: 'Apr 10', daysLeft: 53, severity: 'normal', route: '/documents' },
 ];
 
-const DEMO_IMPACT: ImpactItem[] = [
-  { id: 'i1', action: 'Complete 8 missed temperature logs', points: 7, location: 'University Dining', pillar: 'Food Safety', severity: 'critical', route: '/temp-logs?location=university' },
-  { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Fire Safety', severity: 'critical', route: '/vendors' },
-  { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Fire Safety', severity: 'critical', route: '/documents' },
-  { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' },
-  { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' },
-];
+/**
+ * Dynamically compute missed temperature logs for demo mode.
+ *
+ * A temp log is "missed" when ALL of these are true:
+ *   1. The equipment has an active monitoring schedule (all demo equipment does)
+ *   2. The required check interval (4 h) has passed since the LAST logged entry
+ *   3. The current time is within operating hours (6 AM – 10 PM)
+ *
+ * Overnight gaps are NOT counted — if the last check was before yesterday's
+ * close, the clock starts at today's operating-hours start (6 AM).
+ *
+ * Ice machines are excluded (tracked under Equipment cleaning/maintenance).
+ */
+const OPERATING_START = 6;   // 6 AM
+const OPERATING_END   = 22;  // 10 PM
+const CHECK_INTERVAL_MS = 4 * 60 * 60 * 1000; // 4 hours
+
+function computeMissedTempLogs(): { total: number; byLocation: Record<string, number> } {
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // Outside operating hours → no checks expected → zero missed
+  if (currentHour < OPERATING_START || currentHour >= OPERATING_END) {
+    return { total: 0, byLocation: {} };
+  }
+
+  const todayAt = (h: number, m: number) => {
+    const d = new Date(now); d.setHours(h, m, 0, 0); return d;
+  };
+  const operatingStartToday = todayAt(OPERATING_START, 0);
+
+  // Demo equipment (mirrors TempLogs demo data, Ice Machine excluded)
+  const demoEquipment = [
+    { name: 'Walk-in Cooler #1', location: 'Downtown Kitchen', lastCheck: todayAt(6, 0) },
+    { name: 'Walk-in Cooler #2', location: 'Downtown Kitchen', lastCheck: todayAt(6, 15) },
+    { name: 'Walk-in Freezer',   location: 'Downtown Kitchen', lastCheck: todayAt(6, 30) },
+    { name: 'Prep Table Cooler', location: 'Airport Cafe',     lastCheck: todayAt(6, 45) },
+    { name: 'Hot Holding Unit',  location: 'University Dining', lastCheck: new Date(now.getTime() - 18 * 60 * 60 * 1000) },
+    { name: 'Salad Bar',         location: 'Airport Cafe',      lastCheck: new Date(now.getTime() - 16 * 60 * 60 * 1000) },
+    { name: 'Blast Chiller',     location: 'University Dining', lastCheck: new Date(now.getTime() - 14 * 60 * 60 * 1000) },
+  ];
+
+  const byLocation: Record<string, number> = {};
+  let total = 0;
+
+  for (const eq of demoEquipment) {
+    // If last check was before today's opening, treat operating start as the
+    // effective "last check" so overnight gaps are never penalised.
+    const effective = eq.lastCheck < operatingStartToday ? operatingStartToday : eq.lastCheck;
+    if (now.getTime() - effective.getTime() > CHECK_INTERVAL_MS) {
+      total++;
+      byLocation[eq.location] = (byLocation[eq.location] || 0) + 1;
+    }
+  }
+
+  return { total, byLocation };
+}
+
+const LOC_ROUTE: Record<string, string> = {
+  'University Dining': '/temp-logs?location=university',
+  'Airport Cafe':      '/temp-logs?location=airport',
+  'Downtown Kitchen':  '/temp-logs?location=downtown',
+};
+
+function buildDemoImpact(): ImpactItem[] {
+  const { total, byLocation } = computeMissedTempLogs();
+  const items: ImpactItem[] = [];
+
+  // Only add a missed-temp-log impact item when there are actual misses
+  if (total > 0) {
+    // Pick the location with the most missed logs for the top alert
+    const topLoc = Object.entries(byLocation).sort((a, b) => b[1] - a[1])[0];
+    items.push({
+      id: 'i1',
+      action: `Complete ${total} missed temperature log${total === 1 ? '' : 's'}`,
+      points: Math.min(total, 10),
+      location: topLoc[0],
+      pillar: 'Food Safety',
+      severity: total >= 4 ? 'critical' : 'warning',
+      route: LOC_ROUTE[topLoc[0]] || '/temp-logs',
+    });
+  }
+
+  // Other (non-temp) impact items — always included
+  items.push(
+    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Fire Safety', severity: 'critical', route: '/vendors' },
+    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Fire Safety', severity: 'critical', route: '/documents' },
+    { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' },
+    { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' },
+  );
+
+  return items;
+}
 
 const DEMO_ALERTS: AlertItem[] = [
   { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' },
@@ -149,7 +235,7 @@ const DEMO_ACTIVITY: ActivityItem[] = [
 
 const DEMO_MODULE_STATUSES: ModuleStatus[] = [
   { id: 'mod-checklists', label: 'Checklists', metric: '2/3 complete', status: 'warning', route: '/checklists' },
-  { id: 'mod-temp', label: 'Temp Logs', metric: '14/36 logged', status: 'warning', route: '/temp-logs' },
+  { id: 'mod-temp', label: 'Temp Logs', metric: '14/35 logged', status: 'warning', route: '/temp-logs' },
   { id: 'mod-equipment', label: 'Equipment', metric: '2 overdue', status: 'critical', route: '/equipment' },
   { id: 'mod-haccp', label: 'HACCP', metric: '6 plans active', status: 'good', route: '/haccp' },
   { id: 'mod-training', label: 'Training', metric: '89% compliant', status: 'good', route: '/training' },
@@ -170,7 +256,7 @@ function buildDemoPayload(): DashboardPayload {
     tasks: DEMO_TASKS,
     deadlines: DEMO_DEADLINES,
     alerts: DEMO_ALERTS,
-    impact: DEMO_IMPACT,
+    impact: buildDemoImpact(),
     activity: DEMO_ACTIVITY,
     moduleStatuses: DEMO_MODULE_STATUSES,
     trendData: DEMO_TREND_DATA,
@@ -241,7 +327,7 @@ export function useDashboardData(): {
         tasks: DEMO_TASKS, // Real task wiring deferred to production
         deadlines: DEMO_DEADLINES,
         alerts: DEMO_ALERTS,
-        impact: DEMO_IMPACT,
+        impact: buildDemoImpact(),
         activity: result.activity,
         moduleStatuses: DEMO_MODULE_STATUSES,
         trendData: DEMO_TREND_DATA,

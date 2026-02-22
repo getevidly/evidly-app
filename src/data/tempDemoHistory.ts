@@ -23,7 +23,7 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
   const history: TempHistoryEntry[] = [];
   const staff = ['Sarah Chen', 'Mike Johnson', 'Emma Davis', 'John Smith'];
 
-  // 8 equipment items matching the demo equipment list
+  // 7 equipment items matching the demo equipment list (Ice Machine excluded)
   const eqDefs = [
     { id: '1', name: 'Walk-in Cooler #1', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
     { id: '2', name: 'Walk-in Cooler #2', type: 'cooler', base: 36.5, spread: 1.5, min: 35, max: 38 },
@@ -31,7 +31,7 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
     { id: '4', name: 'Prep Table Cooler', type: 'cooler', base: 36.5, spread: 3.5, min: 33, max: 40 },
     { id: '5', name: 'Hot Holding Unit', type: 'hot_hold', base: 150, spread: 15, min: 135, max: 165 },
     { id: '6', name: 'Salad Bar', type: 'cooler', base: 37, spread: 4, min: 33, max: 41 },
-    { id: '7', name: 'Ice Machine', type: 'freezer', base: 30, spread: 2, min: 28, max: 32 },
+    // Ice Machine removed — tracked under Equipment cleaning schedule, not temp monitoring
     { id: '8', name: 'Blast Chiller', type: 'cooler', base: 35.5, spread: 2.5, min: 33, max: 38 },
   ];
 
@@ -78,10 +78,7 @@ export function generateTempDemoHistory(now: Date): TempHistoryEntry[] {
         if (eq.id === '6' && pRand(seed * 3 + 13) < 0.05) {
           temp = 41 + pRand(seed * 5 + 3) * 3; // 41-44
         }
-        // Ice Machine: occasional spike above 32 (~4%)
-        if (eq.id === '7' && pRand(seed * 3 + 37) < 0.04) {
-          temp = 32 + pRand(seed * 5 + 19) * 2; // 32-34
-        }
+        // Ice Machine removed from temp monitoring
         // Blast Chiller: occasional drift above 38 (~3%)
         if (eq.id === '8' && pRand(seed * 3 + 41) < 0.03) {
           temp = 38 + pRand(seed * 5 + 23) * 2; // 38-40
@@ -138,6 +135,6 @@ export const equipmentColors: Record<string, string> = {
   'Prep Table Cooler': '#059669',
   'Hot Holding Unit': '#dc2626',
   'Salad Bar': '#16a34a',
-  'Ice Machine': '#0891b2',
+  // Ice Machine removed from temp monitoring
   'Blast Chiller': '#8b5cf6',
 };
