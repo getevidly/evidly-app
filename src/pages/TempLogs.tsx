@@ -1313,16 +1313,6 @@ export function TempLogs() {
             {t('tempLogs.currentReadings')}
           </button>
           <button
-            onClick={() => setActiveTab('history')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
-              activeTab === 'history'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {t('tempLogs.history')}
-          </button>
-          <button
             onClick={() => setActiveTab('receiving')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
               activeTab === 'receiving'
@@ -1331,6 +1321,17 @@ export function TempLogs() {
             }`}
           >
             {t('tempLogs.receiving')}
+          </button>
+          <button
+            onClick={() => setActiveTab('holding')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'holding'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Thermometer className="h-3.5 w-3.5" />
+            Hot/Cold Holding
           </button>
           <button
             onClick={() => setActiveTab('cooldown')}
@@ -1354,17 +1355,6 @@ export function TempLogs() {
             IoT Live View
           </button>
           <button
-            onClick={() => setActiveTab('holding')}
-            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
-              activeTab === 'holding'
-                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            <Thermometer className="h-3.5 w-3.5" />
-            Hot/Cold Holding
-          </button>
-          <button
             onClick={() => setActiveTab('analytics')}
             className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap flex items-center gap-1.5 ${
               activeTab === 'analytics'
@@ -1374,6 +1364,16 @@ export function TempLogs() {
           >
             <BarChart3 className="h-3.5 w-3.5" />
             Analytics
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`px-3 sm:px-4 py-2 font-medium whitespace-nowrap ${
+              activeTab === 'history'
+                ? 'border-b-2 border-[#d4af37] text-[#1e4d6b]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            {t('tempLogs.history')}
           </button>
         </div>
 
