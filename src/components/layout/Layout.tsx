@@ -12,6 +12,7 @@ import { DemoBanner } from '../DemoBanner';
 import MobileStickyBar from '../MobileStickyBar';
 import { QuickSwitcher } from '../QuickSwitcher';
 import { ReferralTouchpoint } from '../ReferralTouchpoint';
+import { BiweeklyReferralBanner } from '../BiweeklyReferralBanner';
 import { DemoCTABar } from '../DemoCTABar';
 import { DemoWatermark } from '../DemoWatermark';
 import { DemoRestrictions } from '../DemoRestrictions';
@@ -124,6 +125,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
       <AIChatPanel hidden={anyTourActive} />
       <ReferralTouchpoint />
+      <BiweeklyReferralBanner />
       <QuickSwitcher />
       <DemoCTABar />
       <DemoWatermark />
