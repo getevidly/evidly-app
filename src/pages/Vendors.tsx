@@ -20,6 +20,13 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { EmptyState } from '../components/EmptyState';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import {
+  VENDOR_CATEGORIES,
+  SERVICE_TYPE_TO_CATEGORY,
+  getRequiredCategories,
+  getCategoryById,
+} from '../config/vendorCategories';
+import { Search } from 'lucide-react';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -217,6 +224,12 @@ export function Vendors() {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteForm, setInviteForm] = useState({ companyName: '', email: '', serviceType: 'Hood Cleaning' });
+  const [showAddVendorModal, setShowAddVendorModal] = useState(false);
+  const [showAddManuallyForm, setShowAddManuallyForm] = useState(false);
+  const [addVendorForm, setAddVendorForm] = useState({
+    companyName: '', category: '', contactName: '', phone: '', email: '', address: '', notes: '',
+  });
+  const [manualVendors, setManualVendors] = useState<ConsolidatedVendor[]>([]);
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -272,7 +285,10 @@ export function Vendors() {
     fetchVendors();
   }, [isDemoMode, profile?.organization_id]);
 
-  const consolidatedVendors = isDemoMode ? demoVendorList : liveVendors.length > 0 ? liveVendors : demoVendorList;
+  const consolidatedVendors = useMemo(() => {
+    const base = isDemoMode ? demoVendorList : liveVendors.length > 0 ? liveVendors : demoVendorList;
+    return [...base, ...manualVendors];
+  }, [isDemoMode, demoVendorList, liveVendors, manualVendors]);
 
   // Helper: get vendor's effective status for display (location-aware)
   const getDisplayStatus = (vendor: ConsolidatedVendor): 'current' | 'overdue' | 'upcoming' => {
@@ -310,6 +326,28 @@ export function Vendors() {
       return true;
     });
   }, [consolidatedVendors, statusFilter, serviceFilter, locationFilter]);
+
+  // Group filtered vendors by category
+  const groupedVendors = useMemo(() => {
+    const groups: Record<string, { category: { id: string; name: string }; vendors: ConsolidatedVendor[] }> = {};
+    filteredVendors.forEach((vendor) => {
+      const catId = SERVICE_TYPE_TO_CATEGORY[vendor.serviceType] || 'other';
+      const cat = getCategoryById(catId);
+      const catName = cat?.name || vendor.serviceType;
+      if (!groups[catId]) groups[catId] = { category: { id: catId, name: catName }, vendors: [] };
+      groups[catId].vendors.push(vendor);
+    });
+    // Sort by VENDOR_CATEGORIES order, then any extras
+    const ordered = VENDOR_CATEGORIES.filter((c) => groups[c.id]).map((c) => groups[c.id]);
+    const extras = Object.entries(groups).filter(([id]) => !VENDOR_CATEGORIES.some((c) => c.id === id)).map(([, g]) => g);
+    return [...ordered, ...extras];
+  }, [filteredVendors]);
+
+  // Find required service categories without a vendor
+  const missingRequiredCategories = useMemo(() => {
+    const coveredCatIds = new Set(consolidatedVendors.map((v) => SERVICE_TYPE_TO_CATEGORY[v.serviceType]).filter(Boolean));
+    return getRequiredCategories().filter((c) => !coveredCatIds.has(c.id));
+  }, [consolidatedVendors]);
 
   const selectedVendor = selectedVendorId ? consolidatedVendors.find((v) => v.id === selectedVendorId) : null;
   const selectedDocs = selectedVendor ? (VENDOR_DOCUMENTS[selectedVendor.id] || []) : [];
@@ -989,7 +1027,7 @@ export function Vendors() {
 
   // ── List View ──────────────────────────────────────────────────
 
-  const SERVICE_TYPES = ['Hood Cleaning', 'Fire Suppression', 'Pest Control', 'HVAC Service', 'Grease Trap'];
+  const SERVICE_TYPES = [...new Set(consolidatedVendors.map((v) => v.serviceType))];
 
   return (
     <>
@@ -1023,7 +1061,7 @@ export function Vendors() {
               <span>Invite a Vendor</span>
             </button>
             <button
-              onClick={() => showToast('Add Vendor form coming soon.')}
+              onClick={() => setShowAddVendorModal(true)}
               className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
               <Plus className="h-5 w-5" />
@@ -1090,9 +1128,16 @@ export function Vendors() {
               </div>
             )}
 
-            {/* Vendor Cards */}
-            {!loading && <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredVendors.map((vendor) => {
+            {/* Vendor Cards — Grouped by Category */}
+            {!loading && groupedVendors.length > 0 && groupedVendors.map((group) => (
+              <div key={group.category.id} className="space-y-3">
+                <div className="flex items-center gap-2 pt-2">
+                  <Building2 className="h-4 w-4 text-[#1e4d6b]" />
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">{group.category.name}</h3>
+                  <span className="text-xs text-gray-400">({group.vendors.length})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {group.vendors.map((vendor) => {
                 const displayStatus = getDisplayStatus(vendor);
                 const displayLocations = getDisplayLocations(vendor);
                 return (
@@ -1225,7 +1270,38 @@ export function Vendors() {
                 </div>
                 );
               })}
-            </div>}
+            </div>
+              </div>
+            ))}
+
+            {/* Required Services Without a Vendor */}
+            {!loading && missingRequiredCategories.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
+                <div className="flex items-start gap-3 mb-3">
+                  <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-base font-semibold text-amber-800">Required Services Without a Vendor</h3>
+                    <p className="text-sm text-amber-700 mt-1">These regulatory-required services have no assigned vendor — a compliance gap.</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
+                  {missingRequiredCategories.map((cat) => (
+                    <div key={cat.id} className="flex items-center justify-between bg-white rounded-lg border border-amber-200 p-3">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{cat.name}</p>
+                        <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
+                      </div>
+                      <button
+                        onClick={() => setShowAddVendorModal(true)}
+                        className="text-xs text-[#1e4d6b] hover:underline font-medium whitespace-nowrap ml-2"
+                      >
+                        Add Vendor
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {!loading && filteredVendors.length === 0 && (
               <EmptyState
@@ -1421,6 +1497,225 @@ export function Vendors() {
                   className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
                 >
                   Send Invitation
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Add Vendor Choice Modal */}
+      {showAddVendorModal && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowAddVendorModal(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <div className="p-4 sm:p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-gray-900">Add a Vendor</h3>
+                  <button onClick={() => setShowAddVendorModal(false)} className="text-gray-400 hover:text-gray-600">
+                    <XCircle className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4 sm:p-6 space-y-3">
+                <button
+                  onClick={() => { setShowAddVendorModal(false); navigate('/marketplace'); }}
+                  className="w-full text-left border border-gray-200 rounded-lg p-4 hover:border-[#1e4d6b] hover:bg-[#eef4f8] transition-colors group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                      <Search className="h-5 w-5 text-[#1e4d6b]" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">Choose from vendor directory</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Browse vendors already in the EvidLY network. Pre-populated with contact info.</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-300 mt-1 flex-shrink-0" />
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowAddVendorModal(false); setShowAddManuallyForm(true); }}
+                  className="w-full text-left border border-gray-200 rounded-lg p-4 hover:border-[#1e4d6b] hover:bg-[#eef4f8] transition-colors group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                      <Plus className="h-5 w-5 text-[#1e4d6b]" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">Add your own vendor</p>
+                      <p className="text-sm text-gray-500 mt-0.5">Enter your vendor's details manually.</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-300 mt-1 flex-shrink-0" />
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Add Manually Form Modal */}
+      {showAddManuallyForm && (
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowAddManuallyForm(false)} />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-md max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="p-4 sm:p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-[#eef4f8] rounded-lg">
+                      <Plus className="h-5 w-5 text-[#1e4d6b]" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">Add Vendor Manually</h3>
+                      <p className="text-sm text-gray-500">Enter your vendor's details</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowAddManuallyForm(false)} className="text-gray-400 hover:text-gray-600">
+                    <XCircle className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-4 sm:p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Vendor Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    value={addVendorForm.companyName}
+                    onChange={(e) => setAddVendorForm({ ...addVendorForm, companyName: e.target.value })}
+                    placeholder="e.g., Valley Fire Systems"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category <span className="text-red-500">*</span></label>
+                  <select
+                    value={addVendorForm.category}
+                    onChange={(e) => setAddVendorForm({ ...addVendorForm, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  >
+                    <option value="">Select a category...</option>
+                    {VENDOR_CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
+                  <input
+                    type="text"
+                    value={addVendorForm.contactName}
+                    onChange={(e) => setAddVendorForm({ ...addVendorForm, contactName: e.target.value })}
+                    placeholder="e.g., John Smith"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input
+                      type="tel"
+                      value={addVendorForm.phone}
+                      onChange={(e) => setAddVendorForm({ ...addVendorForm, phone: e.target.value })}
+                      placeholder="(555) 123-4567"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input
+                      type="email"
+                      value={addVendorForm.email}
+                      onChange={(e) => setAddVendorForm({ ...addVendorForm, email: e.target.value })}
+                      placeholder="vendor@example.com"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                  <input
+                    type="text"
+                    value={addVendorForm.address}
+                    onChange={(e) => setAddVendorForm({ ...addVendorForm, address: e.target.value })}
+                    placeholder="123 Main St, City, State"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea
+                    value={addVendorForm.notes}
+                    onChange={(e) => setAddVendorForm({ ...addVendorForm, notes: e.target.value })}
+                    placeholder="Any additional details..."
+                    rows={2}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
+                  />
+                </div>
+              </div>
+              <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowAddManuallyForm(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!addVendorForm.companyName || !addVendorForm.category) {
+                      showToast('Please fill in vendor name and category.');
+                      return;
+                    }
+                    const cat = getCategoryById(addVendorForm.category);
+                    const serviceType = cat?.name || addVendorForm.category;
+
+                    if (!isDemoMode && profile?.organization_id) {
+                      const { data: vendorData, error: vendorError } = await supabase
+                        .from('vendors')
+                        .insert({
+                          company_name: addVendorForm.companyName,
+                          contact_name: addVendorForm.contactName,
+                          email: addVendorForm.email,
+                          phone: addVendorForm.phone,
+                          service_type: serviceType,
+                          status: 'current',
+                        })
+                        .select('id')
+                        .single();
+                      if (!vendorError && vendorData) {
+                        await supabase.from('vendor_client_relationships').insert({
+                          vendor_id: vendorData.id,
+                          organization_id: profile.organization_id,
+                          status: 'active',
+                        });
+                      }
+                    }
+
+                    // Add to local state for immediate display
+                    const newVendor: ConsolidatedVendor = {
+                      id: 'manual-' + Date.now(),
+                      companyName: addVendorForm.companyName,
+                      contactName: addVendorForm.contactName,
+                      email: addVendorForm.email,
+                      phone: addVendorForm.phone,
+                      serviceType,
+                      locations: [],
+                      overallStatus: 'current',
+                      pendingDocuments: 0,
+                      totalDocuments: 0,
+                      autoRequestEnabled: false,
+                      coiExpiration: '',
+                      coiStatus: 'current',
+                    };
+                    setManualVendors((prev) => [...prev, newVendor]);
+                    showToast('Vendor added successfully');
+                    setShowAddManuallyForm(false);
+                    setAddVendorForm({ companyName: '', category: '', contactName: '', phone: '', email: '', address: '', notes: '' });
+                  }}
+                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
+                >
+                  Add Vendor
                 </button>
               </div>
             </div>
