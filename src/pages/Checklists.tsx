@@ -469,12 +469,15 @@ interface HACCPSummaryCCP {
   name: string;
   limit: string;
   status: 'in_limit' | 'deviation' | 'no_data';
+  deviationTime?: string;       // e.g. '11:30 AM'
+  caCreated?: boolean;           // corrective action exists for today
+  locationName?: string;         // for multi-location display
 }
 
 const DEMO_HACCP_SUMMARY: HACCPSummaryCCP[] = [
   { name: 'Cooking Temperature', limit: '165°F+', status: 'in_limit' },
   { name: 'Cold Holding', limit: '41°F−', status: 'in_limit' },
-  { name: 'Hot Holding', limit: '135°F+', status: 'deviation' },
+  { name: 'Hot Holding', limit: '135°F+', status: 'deviation', deviationTime: '11:30 AM', caCreated: true, locationName: 'Airport Cafe' },
   { name: 'Cooling', limit: '2hr rule', status: 'in_limit' },
   { name: 'Sanitizer Concentration', limit: '200ppm+', status: 'in_limit' },
 ];
@@ -522,11 +525,21 @@ function HACCPSummaryCard() {
                   {ccp.name}
                 </span>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <span className="text-xs text-gray-500 w-16 text-right">{ccp.limit}</span>
                 <span className={`text-xs font-semibold w-20 text-right ${isDev ? 'text-red-600' : 'text-green-600'}`}>
                   {isDev ? 'DEVIATION' : 'IN LIMIT'}
                 </span>
+                {isDev && (
+                  <span className="text-[11px] text-gray-500 whitespace-nowrap">
+                    {ccp.locationName && <>{ccp.locationName} · </>}
+                    {ccp.deviationTime && <>{ccp.deviationTime} · </>}
+                    {ccp.caCreated
+                      ? <span className="text-green-700 font-medium">CA Created ✓</span>
+                      : <span className="text-red-600 font-medium">CA Pending</span>
+                    }
+                  </span>
+                )}
               </div>
             </div>
           );
@@ -540,7 +553,12 @@ function HACCPSummaryCard() {
       >
         <span className={`text-xs font-medium ${deviations > 0 ? 'text-red-700' : 'text-green-700'}`}>
           {deviations > 0
-            ? `${deviations} deviation${deviations > 1 ? 's' : ''} — corrective action required`
+            ? (() => {
+                const allCACreated = DEMO_HACCP_SUMMARY
+                  .filter(c => c.status === 'deviation')
+                  .every(c => c.caCreated);
+                return `${deviations} deviation${deviations > 1 ? 's' : ''} — corrective action ${allCACreated ? 'created' : 'required'}`;
+              })()
             : 'All control points in limit'
           }
         </span>
@@ -1410,9 +1428,6 @@ export function Checklists() {
           <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
         </div>
 
-        {/* HACCP Control Points Summary */}
-        <HACCPSummaryCard />
-
         {/* View Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
           <button
@@ -1810,6 +1825,9 @@ export function Checklists() {
           </div>
           );
         })()}
+
+        {/* HACCP Control Points Summary — below checklists (checklists feed HACCP) */}
+        <HACCPSummaryCard />
       </div>
 
       {/* Create Template Modal */}
