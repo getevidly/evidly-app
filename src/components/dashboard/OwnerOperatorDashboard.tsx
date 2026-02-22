@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ChevronRight, AlertTriangle,
+  AlertTriangle, Check,
   Thermometer, ClipboardList, FileUp, Bot,
-  CheckCircle2, Hammer, Clock, AlertCircle,
+  CheckCircle2, Hammer, AlertCircle,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -22,7 +22,7 @@ import { ComplianceBanner } from './shared/ComplianceBanner';
 
 
 // ================================================================
-// ELEMENT 4: LOCATION STATUS ROW (traffic light)
+// LOCATION STATUS ROW (traffic light)
 // ================================================================
 
 interface LocationStatusInfo {
@@ -35,7 +35,7 @@ interface LocationStatusInfo {
 function getLocationStatusInfo(
   loc: LocationWithScores,
   jieScore: LocationScore | null,
-  jurisdictionData: LocationJurisdiction | null,
+  _jurisdictionData: LocationJurisdiction | null,
 ): LocationStatusInfo {
   const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
   const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
@@ -90,7 +90,7 @@ function LocationStatusRow({ info, navigate }: { info: LocationStatusInfo; navig
 
 
 // ================================================================
-// ELEMENT 6: TODAY'S TASKS (flat list, no tabs)
+// TODAY'S TASKS (flat list, no tabs)
 // ================================================================
 
 const MAX_VISIBLE_TASKS = 6;
@@ -135,7 +135,7 @@ function TodaysTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
               </div>
               <div className="text-right shrink-0">
                 <p className={`text-[11px] ${isOverdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
-                  {isOverdue ? `Due by ${task.time}` : task.time}
+                  {task.time}
                 </p>
               </div>
             </button>
@@ -256,7 +256,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 
 // ================================================================
-// MAIN COMPONENT — 6 ELEMENTS ONLY
+// MAIN COMPONENT — 5 ELEMENTS ONLY
 // ================================================================
 
 export default function OwnerOperatorDashboard() {
@@ -272,7 +272,10 @@ export default function OwnerOperatorDashboard() {
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
-  // Build location status rows (Element 4)
+  // Single vs multi-location detection
+  const isSingleLocation = data.locations.length === 1;
+
+  // Build location status rows
   const locationStatusRows = useMemo(
     () => data.locations.map(loc => {
       const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -281,7 +284,14 @@ export default function OwnerOperatorDashboard() {
     [data.locations, jieScores, jurisdictions],
   );
 
-  // ONE priority alert — highest severity, most recent (Element 5)
+  // Multi-location: only show red and yellow rows (filter out green)
+  const nonGreenRows = useMemo(
+    () => locationStatusRows.filter(r => r.status !== 'all_clear'),
+    [locationStatusRows],
+  );
+  const allGreen = !isSingleLocation && nonGreenRows.length === 0;
+
+  // ONE priority alert — highest severity, most recent
   const topAlert = useMemo(() => {
     if (data.impact.length === 0) return null;
     const sorted = [...data.impact].sort((a, b) => {
@@ -291,9 +301,18 @@ export default function OwnerOperatorDashboard() {
     return sorted[0];
   }, [data.impact]);
 
-  // Today's date for Portfolio header (Element 3)
+  // Conditional referral: only show when all locations >= 80 AND zero critical/high alerts
+  const showReferral = useMemo(() => {
+    const allCompliant = data.locations.every(l => l.score >= 80);
+    const noCriticalOrHighAlerts = !data.impact.some(
+      i => i.severity === 'critical' || i.severity === 'warning',
+    );
+    return allCompliant && noCriticalOrHighAlerts;
+  }, [data.locations, data.impact]);
+
+  // Date line — no year, quiet context
   const todayStr = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+    weekday: 'long', month: 'long', day: 'numeric',
   });
 
   if (loading) return <DashboardSkeleton />;
@@ -308,47 +327,32 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* ─── ELEMENT 1: Compliance Warning Banners ──────────────── */}
+      {/* Date line — right-aligned, quiet context */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4">
-        <ComplianceBanner />
+        <p className="text-right" style={{ color: '#9CA3AF', fontSize: '13px' }}>
+          {todayStr}
+        </p>
       </div>
 
-      {/* ─── ELEMENT 2: Referral Banner ─────────────────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-6">
-        <ReferralBanner
-          referralCode={demoReferral.referralCode}
-          referralUrl={demoReferral.referralUrl}
-          mealsGenerated={demoReferral.mealsGenerated}
-        />
-      </div>
-
-      {/* ─── ELEMENT 3: Portfolio Overview + Date ───────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-6">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-semibold" style={{ color: '#6B7280' }}>Portfolio Overview</span>
-          <span className="text-sm" style={{ color: '#6B7280' }}>{todayStr}</span>
-        </div>
-      </div>
-
-      {/* ─── ELEMENT 4: Location Traffic Light Rows ─────────────── */}
+      {/* ─── ELEMENT 1: Compliance Warning Banners ──────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
-          {locationStatusRows.map(info => (
-            <LocationStatusRow key={info.locId} info={info} navigate={navigate} />
-          ))}
-        </div>
+        <ComplianceBanner isSingleLocation={isSingleLocation} />
       </div>
 
-      {/* ─── ELEMENT 5: ONE Priority Alert ──────────────────────── */}
+      {/* ─── ELEMENT 2: Today's Tasks ───────────────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <TodaysTasks navigate={navigate} tasks={data.tasks} />
+      </div>
+
+      {/* ─── ELEMENT 3: ONE Priority Alert ──────────────────────── */}
       {topAlert && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-6">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
           <button
             type="button"
             onClick={() => navigate(topAlert.route)}
             className="w-full flex items-start gap-3 p-4 rounded-lg text-left transition-colors hover:opacity-90"
             style={{
               backgroundColor: 'white',
-              borderLeft: `4px solid ${topAlert.severity === 'critical' ? '#DC2626' : '#F59E0B'}`,
               border: `1px solid ${topAlert.severity === 'critical' ? '#fecaca' : '#fde68a'}`,
               borderLeftWidth: 4,
               borderLeftColor: topAlert.severity === 'critical' ? '#DC2626' : '#F59E0B',
@@ -371,10 +375,37 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* ─── ELEMENT 6: Today's Tasks ───────────────────────────── */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-6">
-        <TodaysTasks navigate={navigate} tasks={data.tasks} />
-      </div>
+      {/* ─── ELEMENT 4: Location Status Rows (multi-location only) ── */}
+      {!isSingleLocation && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          {allGreen ? (
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2">
+                <Check size={16} style={{ color: '#16a34a' }} />
+                <span className="text-sm" style={{ color: '#6B7280' }}>All locations compliant</span>
+              </div>
+              <span className="text-sm" style={{ color: '#6B7280' }}>{todayStr}</span>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg overflow-hidden" style={{ border: '1px solid #e5e7eb' }}>
+              {nonGreenRows.map(info => (
+                <LocationStatusRow key={info.locId} info={info} navigate={navigate} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── ELEMENT 5: Referral Banner (conditional) ─────────────── */}
+      {showReferral && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+          <ReferralBanner
+            referralCode={demoReferral.referralCode}
+            referralUrl={demoReferral.referralUrl}
+            mealsGenerated={demoReferral.mealsGenerated}
+          />
+        </div>
+      )}
 
       {/* Quick Actions Bar */}
       <QuickActionsBar navigate={navigate} />

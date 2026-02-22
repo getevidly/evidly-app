@@ -8,6 +8,8 @@
  * - Clear: score returns above 80 → banner auto-dismissed
  *
  * Dismiss state persisted in localStorage (demo mode).
+ *
+ * Single-location mode: omits location name from banner title.
  */
 
 import { useState, useMemo } from 'react';
@@ -53,7 +55,7 @@ function setDismissedBanners(ids: Set<string>) {
   localStorage.setItem('evidly_dismissed_compliance_banners', JSON.stringify([...ids]));
 }
 
-export function ComplianceBanner() {
+export function ComplianceBanner({ isSingleLocation }: { isSingleLocation?: boolean }) {
   const navigate = useNavigate();
   const [dismissed, setDismissed] = useState<Set<string>>(getDismissedBanners);
 
@@ -72,26 +74,36 @@ export function ComplianceBanner() {
   if (visibleAlerts.length === 0) return null;
 
   return (
-    <div className="space-y-2 mb-4">
+    <div className="space-y-4">
       {visibleAlerts.map(alert => {
         const isWarning = alert.severity === 'warning';
+        const borderColor = isWarning ? '#d97706' : '#DC2626';
+
+        // Single-location: omit location name, capitalize pillar
+        const pillarCap = alert.pillar.charAt(0).toUpperCase() + alert.pillar.slice(1);
+        const title = isSingleLocation
+          ? `${pillarCap} is ${isWarning ? 'approaching ' : ''}out of compliance`
+          : `${alert.locationName} ${alert.pillar} is ${isWarning ? 'approaching ' : ''}out of compliance`;
+
         return (
           <div
             key={alert.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg"
+            className="flex items-center gap-3"
             style={{
-              backgroundColor: isWarning ? '#fffbeb' : '#fef2f2',
-              border: `1px solid ${isWarning ? '#fde68a' : '#fecaca'}`,
+              backgroundColor: '#FFFFFF',
+              borderLeft: `4px solid ${borderColor}`,
+              borderRadius: '8px',
+              padding: '16px',
             }}
           >
             <AlertTriangle
               size={18}
               className="shrink-0"
-              style={{ color: isWarning ? '#d97706' : '#dc2626' }}
+              style={{ color: borderColor }}
             />
             <div className="flex-1 min-w-0">
               <p className="text-[13px] font-semibold" style={{ color: isWarning ? '#92400e' : '#991b1b' }}>
-                {alert.locationName} {alert.pillar} is {isWarning ? 'approaching' : ''} out of compliance
+                {title}
               </p>
               <p className="text-[11px]" style={{ color: isWarning ? '#a16207' : '#b91c1c' }}>
                 Score: {alert.score} — {isWarning ? 'action recommended' : 'immediate action required'}
@@ -102,7 +114,7 @@ export function ComplianceBanner() {
               onClick={() => navigate('/compliance')}
               className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0"
               style={{
-                backgroundColor: isWarning ? '#d97706' : '#dc2626',
+                backgroundColor: borderColor,
                 color: '#fff',
               }}
             >
