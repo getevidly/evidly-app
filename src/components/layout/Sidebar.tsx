@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { EvidlyLogo } from '../ui/EvidlyLogo';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
@@ -12,6 +11,7 @@ import {
   getRoleConfig,
   getSectionsForRole,
   checkTestMode,
+  DEMO_ROLES,
   type NavItem,
   type SidebarSection,
 } from '../../config/sidebarConfig';
@@ -394,24 +394,36 @@ export function Sidebar() {
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
       <div className="flex flex-col h-full" style={{ backgroundColor: branding.colors.sidebarBg }}>
         {/* Logo */}
-        <div className="flex items-center flex-shrink-0 px-6 py-5">
+        <div className="flex-shrink-0 px-6 py-5">
           {branding.brandName === 'EvidLY' ? (
-            <>
-              <EvidlyIcon size={36} />
-              <div className="ml-3">
-                <EvidlyLogo width={140} showTagline={false} />
+            <div>
+              <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
+                <span style={{ color: '#A08C5A' }}>Evid</span>
+                <span style={{ color: '#FFFFFF' }}>LY</span>
+              </span>
+              <div style={{
+                fontSize: '10px',
+                letterSpacing: '0.15em',
+                color: '#A08C5A',
+                fontWeight: 600,
+                marginTop: '2px',
+              }}>
+                COMPLIANCE SIMPLIFIED
               </div>
-            </>
+              <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px', fontFamily: 'system-ui, sans-serif' }}>
+                {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
+              </div>
+            </div>
           ) : (
-            <>
+            <div>
               <EvidlyIcon size={36} />
-              <div className="ml-3">
+              <div className="ml-3" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
                 <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
                   {branding.brandName}
                 </span>
                 <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
               </div>
-            </>
+            </div>
           )}
         </div>
 

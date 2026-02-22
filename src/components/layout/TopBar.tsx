@@ -406,13 +406,12 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             <div className="hidden md:flex items-center ml-2" style={{ gap: '8px' }}>
               <EvidlyIcon size={28} />
               <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-                <span style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: '15px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.3px' }}>
-                  <span style={{ color: '#A08C5A' }}>E</span>
-                  <span style={{ color: '#ffffff' }}>vid</span>
-                  <span style={{ color: '#A08C5A' }}>LY</span>
+                <span style={{ fontFamily: "Syne, system-ui, sans-serif", fontSize: '15px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.3px' }}>
+                  <span style={{ color: '#A08C5A' }}>Evid</span>
+                  <span style={{ color: '#ffffff' }}>LY</span>
                 </span>
-                <span style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: '8px', fontWeight: 600, color: '#78909C', letterSpacing: '2px', marginTop: '2px' }}>
-                  {t('topBar.complianceSimplified').toUpperCase()}
+                <span style={{ fontFamily: "system-ui, sans-serif", fontSize: '8px', fontWeight: 600, color: '#A08C5A', letterSpacing: '0.15em', marginTop: '2px' }}>
+                  COMPLIANCE SIMPLIFIED
                 </span>
               </div>
             </div>
