@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LogOut } from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -292,8 +294,14 @@ export function Sidebar() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
+  const { signOut } = useAuth();
   const { branding } = useBranding();
   const { t, locale } = useTranslation();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/login');
+  };
 
   const isTestMode = useMemo(() => checkTestMode(), []);
 
@@ -527,16 +535,6 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Touchpoint 5: Refer a Kitchen link */}
-        <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">
-          <button
-            onClick={() => navigate('/referrals')}
-            style={{ fontSize: 11, color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontWeight: 500 }}
-          >
-            \uD83C\uDF7D\uFE0F {t('nav.referKitchen')}
-          </button>
-        </div>
-
         {/* Powered by EvidLY badge (white-label only) */}
         {branding.poweredByVisible && (
           <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">
@@ -554,6 +552,17 @@ export function Sidebar() {
 
         {/* Demo upgrade badge */}
         <SidebarUpgradeBadge />
+
+        {/* Logout button — pinned to bottom */}
+        <div className="flex-shrink-0 border-t border-white/10">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <LogOut size={16} />
+            <span className="text-sm">Log Out</span>
+          </button>
+        </div>
       </div>
     </div>
   );
