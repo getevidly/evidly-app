@@ -29,9 +29,8 @@ import {
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
 import {
-  BOTTOM_NAV_ITEMS,
-  KITCHEN_STAFF_NAV_ITEMS,
-  BOTTOM_NAV_PATHS,
+  getBottomNavItems,
+  getBottomNavPaths,
 } from '../../config/navConfig';
 import { getRoleConfig } from '../../config/sidebarConfig';
 
@@ -94,16 +93,17 @@ export function MobileTabBar() {
   const isActive = (path: string) => location.pathname === path;
   const isKitchen = userRole === 'kitchen_staff';
 
-  const mainTabs = isKitchen ? KITCHEN_STAFF_NAV_ITEMS : BOTTOM_NAV_ITEMS;
+  const mainTabs = getBottomNavItems(userRole);
 
   // Build More drawer sections from sidebar config, filtering out bottom-bar items
   const moreSections = useMemo(() => {
     if (isKitchen) return [];
     const config = getRoleConfig(userRole);
+    const bottomPaths = getBottomNavPaths(userRole);
     return config.sections
       .map(s => ({
         ...s,
-        items: s.items.filter(item => !BOTTOM_NAV_PATHS.has(item.path)),
+        items: s.items.filter(item => !bottomPaths.has(item.path)),
       }))
       .filter(s => s.items.length > 0);
   }, [userRole, isKitchen]);
