@@ -20,9 +20,8 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
-import { ReferralBanner } from '../referral/ReferralBanner';
-import { K2CWidget } from '../referral/K2CWidget';
 import { demoReferral } from '../../data/demoData';
+import { SelfDiagCard } from './shared/SelfDiagCard';
 
 // --------------- Demo Data ---------------
 
@@ -196,27 +195,46 @@ export default function KitchenStaffTaskList() {
             locationName={DEMO_STAFF_LOCATION}
           />
 
-          {/* K2C Referral Banner */}
-          <ReferralBanner
-            referralCode={demoReferral.referralCode}
-            referralUrl={demoReferral.referralUrl}
-            mealsGenerated={demoReferral.mealsGenerated}
-          />
+          {/* ============================================================ */}
+          {/* ABOVE THE FOLD — Task count + progress bar                   */}
+          {/* ============================================================ */}
 
-          {/* Alert Banner */}
-          <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
-
-          {/* K2C Widget */}
-          <div style={{ maxWidth: 320 }}>
-            <K2CWidget
-              mealsGenerated={demoReferral.mealsGenerated}
-              referralsCount={demoReferral.referralsCount}
-              monthsFree={demoReferral.monthsFree}
-              onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
-            />
+          {/* Task count — large + progress bar */}
+          <div
+            className="rounded-xl p-5 text-center"
+            style={{
+              backgroundColor: '#fff',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            }}
+          >
+            <p className="text-4xl font-bold" style={{ color: getProgressColor(progressPct) }}>
+              {doneCount} / {totalTasks}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">{s.tasksDone(doneCount, totalTasks)}</p>
+            <div className="w-full bg-gray-200 rounded-full mt-3" style={{ height: 14 }}>
+              <div
+                className="rounded-full transition-all duration-500 ease-out"
+                style={{
+                  width: `${progressPct}%`,
+                  height: 14,
+                  backgroundColor: getProgressColor(progressPct),
+                }}
+              />
+            </div>
           </div>
 
-          {/* My Shift Progress */}
+          {/* ONE overdue alert or next task due */}
+          <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
+
+          {/* ============================================================ */}
+          {/* BELOW THE FOLD                                                */}
+          {/* ============================================================ */}
+
+          {/* Self-Diagnosis — Kitchen Problem */}
+          <SelfDiagCard />
+
+          {/* My Shift Progress (section header) */}
           <div>
             <p
               className="text-xs font-semibold uppercase mb-2 flex items-center"

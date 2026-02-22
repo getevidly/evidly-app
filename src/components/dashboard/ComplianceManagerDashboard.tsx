@@ -24,9 +24,6 @@ import {
   JIE_LOC_MAP, KEYFRAMES,
   stagger, DEMO_ROLE_NAMES,
 } from './shared/constants';
-import { ReferralBanner } from '../referral/ReferralBanner';
-import { K2CWidget } from '../referral/K2CWidget';
-import { demoReferral } from '../../data/demoData';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
@@ -421,19 +418,95 @@ export default function ComplianceManagerDashboard() {
         </DashboardHero>
       </div>
 
-      {/* K2C Referral Banner */}
+      {/* ============================================================ */}
+      {/* ABOVE THE FOLD — Score is this role's primary tool            */}
+      {/* ============================================================ */}
+
+      {/* Portfolio Score — large, prominent */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
-        <ReferralBanner
-          referralCode={demoReferral.referralCode}
-          referralUrl={demoReferral.referralUrl}
-          mealsGenerated={demoReferral.mealsGenerated}
-        />
+        <div
+          className="rounded-xl p-6 text-center"
+          style={{
+            backgroundColor: '#fff',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          }}
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-2">Portfolio Compliance Score</p>
+          <p className="text-5xl font-bold" style={{ color: '#d97706' }}>72<span className="text-2xl text-gray-400">%</span></p>
+          <p className="text-xs text-gray-500 mt-1">Across 3 locations · 1 critical, 1 at risk, 1 compliant</p>
+        </div>
+      </div>
+
+      {/* 4 Metric Tiles — Score · Open CAs · Next Deadline · Docs Current */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/compliance')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Score</p>
+            <p className="text-xl font-bold" style={{ color: '#92400e' }}>72%</p>
+            <p className="text-[11px] text-amber-700">At risk</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/corrective-actions')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Open CAs</p>
+            <p className="text-xl font-bold text-red-700">4</p>
+            <p className="text-[11px] text-red-600">1 critical</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/calendar')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Next Deadline</p>
+            <p className="text-lg font-bold" style={{ color: '#92400e' }}>Feb 22</p>
+            <p className="text-[11px] text-amber-700">Reinspection</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/documents')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Docs Current</p>
+            <p className="text-xl font-bold text-green-700">11/12</p>
+            <p className="text-[11px] text-green-600">1 expiring</p>
+          </button>
+        </div>
+      </div>
+
+      {/* ONE most urgent corrective action */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
+        <button
+          type="button"
+          onClick={() => navigate('/dashboard?location=university')}
+          className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all hover:shadow-md"
+          style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
+        >
+          <AlertCircle size={20} className="text-red-500 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-red-900">University Dining — 3 open major violations</p>
+            <p className="text-xs text-red-700 mt-0.5">Reinspection due Feb 22 · Stanislaus County DEH</p>
+          </div>
+          <span className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0" style={{ backgroundColor: '#dc2626' }}>
+            View All &rarr;
+          </span>
+        </button>
       </div>
 
       {/* ============================================================ */}
-      {/* CONTENT                                                       */}
+      {/* BELOW THE FOLD                                                */}
       {/* ============================================================ */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 space-y-6">
 
         {/* Alert Banners */}
         <div style={stagger(2)}>
@@ -445,16 +518,6 @@ export default function ComplianceManagerDashboard() {
 
         {/* Where Do I Start? */}
         <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} tooltipContent={useTooltip('urgentItems', userRole)} />
-
-        {/* K2C Widget */}
-        <div style={{ maxWidth: 320 }}>
-          <K2CWidget
-            mealsGenerated={demoReferral.mealsGenerated}
-            referralsCount={demoReferral.referralsCount}
-            monthsFree={demoReferral.monthsFree}
-            onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
-          />
-        </div>
 
         {/* ============================================================ */}
         {/* 1. LOCATION COMPLIANCE OVERVIEW                              */}

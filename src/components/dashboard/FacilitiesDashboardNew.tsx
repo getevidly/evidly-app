@@ -21,6 +21,10 @@ import { TabbedDetailSection } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { FACILITIES_EVENTS, FACILITIES_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { SelfDiagCard } from './shared/SelfDiagCard';
+import { ServiceCostSection } from './shared/ServiceCostSection';
+import { ComplianceBanner } from './shared/ComplianceBanner';
+import { NFPAReminder } from '../ui/NFPAReminder';
 
 // --------------- Demo Data ---------------
 
@@ -188,6 +192,12 @@ export default function FacilitiesDashboardNew() {
     route: item.actionRoute,
   }));
 
+  // Equipment status counts for exception-based view
+  const equipmentOverdue = DEMO_EQUIPMENT_ALERTS.filter(e => e.severity === 'critical').length;
+  const equipmentWarning = DEMO_EQUIPMENT_ALERTS.filter(e => e.severity === 'warning').length;
+  const equipmentCurrent = DEMO_EQUIPMENT_ALERTS.filter(e => !e.alert).length;
+  const allCurrent = equipmentOverdue === 0 && equipmentWarning === 0;
+
   return (
     <div className="space-y-6" style={FONT}>
       {/* Steel-Slate Hero Banner */}
@@ -197,26 +207,100 @@ export default function FacilitiesDashboardNew() {
         locationName={locationName}
       />
 
-      {/* Fire Safety Hero — Jurisdiction-Native */}
+      {/* Compliance Score Banner — threshold-based alerts */}
+      <ComplianceBanner />
+
+      {/* ============================================================ */}
+      {/* ABOVE THE FOLD — Exception-based equipment status             */}
+      {/* ============================================================ */}
+
+      {/* Equipment Issue Status — red/yellow/green counts */}
+      <Card>
+        <div className="flex items-center gap-2 mb-3">
+          <Wrench size={16} className="text-gray-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            Equipment Status
+          </h3>
+          <SectionTooltip content={useTooltip('equipmentCard', userRole)} />
+        </div>
+        {allCurrent ? (
+          <div className="flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+            <CheckCircle2 size={18} className="text-green-500" />
+            <p className="text-sm font-medium text-green-800">All equipment current — nothing overdue</p>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            {equipmentOverdue > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-red-500" />
+                <span className="text-sm font-semibold text-red-700">{equipmentOverdue} Overdue</span>
+              </div>
+            )}
+            {equipmentWarning > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-amber-500" />
+                <span className="text-sm font-semibold text-amber-700">{equipmentWarning} Due Soon</span>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-green-500" />
+              <span className="text-sm font-semibold text-green-700">{equipmentCurrent} Current</span>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* ONE Overdue Item — most urgent, only if exists */}
+      {!allCurrent && (
+        <Card>
+          {(() => {
+            const urgentItem = DEMO_FACILITIES_ATTENTION[0];
+            if (!urgentItem) return null;
+            return (
+              <button
+                type="button"
+                onClick={() => navigate(urgentItem.actionRoute)}
+                className="w-full flex items-center gap-3 text-left"
+              >
+                <AlertTriangle size={18} className="text-amber-500 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900">{urgentItem.title}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{urgentItem.detail}</p>
+                </div>
+                <span className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0" style={{ backgroundColor: '#d97706', color: '#fff' }}>
+                  {urgentItem.actionLabel} &rarr;
+                </span>
+              </button>
+            );
+          })()}
+        </Card>
+      )}
+
+      {/* ============================================================ */}
+      {/* BELOW THE FOLD                                                */}
+      {/* ============================================================ */}
+
+      {/* NFPA Monthly Reminder */}
+      <NFPAReminder />
+
+      {/* Self-Diagnosis — Kitchen Problem */}
+      <SelfDiagCard />
+
+      {/* Service Cost & Risk Calculator */}
+      <ServiceCostSection />
+
+      {/* Where Do I Start */}
+      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
+
+      {/* Fire Safety Detail — moved below fold, no score shown */}
       <Card>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <Flame size={24} style={{ color: fireStatus === 'passing' ? '#16a34a' : '#dc2626' }} />
             <div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => navigate('/fire-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Fire Safety</button>
+                <button type="button" onClick={() => navigate('/fire-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Fire Safety Equipment</button>
                 <SectionTooltip content={useTooltip('fireSafety', userRole)} />
-                <button
-                  type="button"
-                  onClick={() => navigate('/fire-safety')}
-                  className={`text-sm font-bold px-2.5 py-0.5 rounded-full hover:opacity-80 transition-opacity ${
-                    fireStatus === 'passing'
-                      ? 'bg-green-50 text-green-700'
-                      : 'bg-red-50 text-red-700'
-                  }`}
-                >
-                  {fireGrade}
-                </button>
               </div>
               <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
             </div>
@@ -244,9 +328,6 @@ export default function FacilitiesDashboardNew() {
           />
         )}
       </Card>
-
-      {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
 
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">

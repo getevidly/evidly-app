@@ -27,7 +27,6 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { FireStatusBars } from '../shared/FireStatusBars';
 import { GOLD, NAVY, PAGE_BG, MUTED, BODY_TEXT, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, statusColor, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
-import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
 import { ReferralBanner } from '../referral/ReferralBanner';
 import { K2CWidget } from '../referral/K2CWidget';
@@ -36,6 +35,10 @@ import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { OWNER_OPERATOR_EVENTS, OWNER_OPERATOR_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { SelfDiagCard } from './shared/SelfDiagCard';
+import { ServiceCostSection } from './shared/ServiceCostSection';
+import { ComplianceBanner } from './shared/ComplianceBanner';
+import { NFPAReminder } from '../ui/NFPAReminder';
 
 
 function gradingTypeLabel(gradingType: string | null): string {
@@ -49,10 +52,120 @@ function gradingTypeLabel(gradingType: string | null): string {
   }
 }
 
-// AlertBanners — now uses shared component from ../shared/AlertBanner
 
 // ================================================================
-// LOCATION CARD — JURISDICTION-NATIVE
+// EXCEPTION-BASED LOCATION STATUS ROW
+// ================================================================
+
+interface LocationStatusInfo {
+  locId: string;
+  name: string;
+  status: 'all_clear' | 'warning' | 'action_required';
+  statusText: string;
+}
+
+function getLocationStatusInfo(
+  loc: LocationWithScores,
+  jieScore: LocationScore | null,
+  jurisdictionData: LocationJurisdiction | null,
+): LocationStatusInfo {
+  const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
+  const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
+  const fireDetails = jieScore?.fireSafety?.details as Record<string, any> | null;
+
+  // Determine overall status and text
+  if (foodStatus === 'failing' || fireStatus === 'failing') {
+    // Count issues
+    const issues: string[] = [];
+    if (foodStatus === 'failing') {
+      const summary = (jieScore?.foodSafety?.details as Record<string, any>)?.summary;
+      issues.push(summary || 'Food safety violations');
+    }
+    if (fireStatus === 'failing') {
+      issues.push('Fire safety non-compliant');
+    }
+    return {
+      locId: loc.id,
+      name: loc.name,
+      status: 'action_required',
+      statusText: issues.join(' \u00b7 '),
+    };
+  }
+
+  if (foodStatus === 'at_risk' || fireStatus === 'at_risk') {
+    const issues: string[] = [];
+    if (foodStatus === 'at_risk') issues.push('Food safety at risk');
+    if (fireStatus === 'at_risk') issues.push('Fire cert due soon');
+    // Check fire equipment details for due_soon items
+    if (fireDetails) {
+      if (fireDetails.hoodStatus === 'due_soon') issues.push('Hood cert due soon');
+      if (fireDetails.ansulStatus === 'due_soon') issues.push('Ansul cert due soon');
+    }
+    return {
+      locId: loc.id,
+      name: loc.name,
+      status: 'warning',
+      statusText: issues.join(' \u00b7 '),
+    };
+  }
+
+  return {
+    locId: loc.id,
+    name: loc.name,
+    status: 'all_clear',
+    statusText: 'All Clear',
+  };
+}
+
+function LocationStatusRow({ info, navigate }: { info: LocationStatusInfo; navigate: (path: string) => void }) {
+  const dotColor = info.status === 'all_clear' ? '#16a34a'
+    : info.status === 'warning' ? '#d97706'
+    : '#dc2626';
+
+  const bgColor = info.status === 'all_clear' ? undefined
+    : info.status === 'warning' ? '#fffbeb'
+    : '#fef2f2';
+
+  const borderColor = info.status === 'all_clear' ? '#e5e7eb'
+    : info.status === 'warning' ? '#fde68a'
+    : '#fecaca';
+
+  return (
+    <button
+      type="button"
+      onClick={() => navigate(`/dashboard?location=${info.locId}`)}
+      className="w-full flex items-center gap-3 p-4 rounded-xl text-left transition-all hover:shadow-md"
+      style={{
+        backgroundColor: bgColor || '#fff',
+        border: `1px solid ${borderColor}`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+      }}
+    >
+      {/* Status dot */}
+      <span
+        className="shrink-0 rounded-full"
+        style={{ width: 12, height: 12, backgroundColor: dotColor }}
+      />
+      {/* Location name */}
+      <span className="text-sm font-semibold flex-1" style={{ color: BODY_TEXT }}>
+        {info.name}
+      </span>
+      {/* Status text */}
+      <span
+        className="text-xs font-medium"
+        style={{ color: info.status === 'all_clear' ? '#16a34a' : info.status === 'warning' ? '#92400e' : '#991b1b' }}
+      >
+        {info.statusText}
+      </span>
+      {/* Arrow */}
+      <ChevronRight size={16} className="text-gray-300 shrink-0" />
+    </button>
+  );
+}
+
+
+// ================================================================
+// LOCATION CARD — JURISDICTION-NATIVE (moved below fold)
 // ================================================================
 
 function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, onToggleExpand }: {
@@ -79,7 +192,7 @@ function LocationCardJurisdiction({ loc, jieScore, jurisdictionData, expanded, o
   const fireAgencyPhone = jurisdictionData?.fireSafety?.agency_phone ?? '';
   const fireAgencyWebsite = jurisdictionData?.fireSafety?.agency_website ?? '';
 
-  // Fire equipment status from jieScore details (populated from DEMO_LOCATION_GRADE_OVERRIDES)
+  // Fire equipment status from jieScore details
   const fireDetails = jieScore?.fireSafety?.details as Record<string, any> | null;
 
   return (
@@ -367,14 +480,6 @@ const FIRE_EQUIPMENT_ALERTS = [
   { id: 'fa-2', label: 'Ansul system annual cert expires in 12 days', location: 'Airport Cafe', severity: 'warning' as const, route: '/equipment/EQ-009' },
   { id: 'fa-3', label: 'Exhaust fan belt replacement overdue', location: 'Downtown Kitchen', severity: 'warning' as const, route: '/equipment/EQ-017' },
 ];
-
-function fireEquipDotColor(status: string | undefined): string {
-  if (!status) return '#6B7F96';
-  if (status === 'current') return '#22c55e';
-  if (status === 'due_soon') return '#eab308';
-  // overdue, expired, or anything else
-  return '#ef4444';
-}
 
 function WidgetFireSafety({ navigate, locations, jieScores, jurisdictions }: {
   navigate: (path: string) => void;
@@ -709,6 +814,18 @@ export default function OwnerOperatorDashboard() {
   // Multi-location check
   const isMultiLocation = locs.length > 1;
 
+  // Build exception-based location status rows
+  const locationStatusRows = useMemo(
+    () => locs.map(loc => {
+      const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
+      return getLocationStatusInfo(loc, jieScores[jieLocId] || null, jurisdictions[jieLocId] || null);
+    }),
+    [locs, jieScores, jurisdictions],
+  );
+
+  // Determine if there are any issues (for priority action section)
+  const hasIssues = locationStatusRows.some(r => r.status !== 'all_clear');
+
   // Build priority items from impact data for WhereDoIStartSection
   const priorityItems: PriorityItem[] = useMemo(
     () => data.impact.map(item => ({
@@ -758,46 +875,77 @@ export default function OwnerOperatorDashboard() {
       <style>{KEYFRAMES}</style>
 
       {/* ============================================================ */}
-      {/* HERO — shared DashboardHero with dual-authority panels       */}
+      {/* ABOVE THE FOLD — Exception-based                             */}
       {/* ============================================================ */}
+
+      {/* HERO — Greeting + company + location count (NO score panels) */}
       <div style={stagger(0)} className="px-4 sm:px-6 pt-4">
         <DashboardHero
           firstName={DEMO_ROLE_NAMES.owner_operator.firstName}
           orgName={companyName || DEMO_ORG.name}
           subtitle={`${DEMO_ORG.locationCount} locations \u00b7 California`}
           onSubtitleClick={() => navigate('/org-hierarchy')}
-        >
-          <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
-        </DashboardHero>
+        />
       </div>
 
+      {/* Compliance Score Banner — threshold-based alerts */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4">
+        <ComplianceBanner />
+      </div>
+
+      {/* LOCATION ISSUE STATUS — exception-based */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(1)}>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">
+          Location Status
+        </h3>
+        <div className="space-y-2">
+          {locationStatusRows.map(info => (
+            <LocationStatusRow key={info.locId} info={info} navigate={navigate} />
+          ))}
+        </div>
+      </div>
+
+      {/* ONE PRIORITY ACTION — only if issues exist */}
+      {hasIssues && priorityItems.length > 0 && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-4" style={stagger(2)}>
+          <WhereDoIStartSection items={[priorityItems[0]]} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+        </div>
+      )}
+
       {/* ============================================================ */}
-      {/* K2C REFERRAL BANNER                                          */}
+      {/* BELOW THE FOLD                                                */}
       {/* ============================================================ */}
-      <div className="px-4 sm:px-6 mt-4">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 space-y-6">
+
+        {/* NFPA Monthly Reminder */}
+        <NFPAReminder />
+
+        {/* Self-Diagnosis — Kitchen Problem */}
+        <SelfDiagCard />
+
+        {/* Service Cost & Risk Calculator */}
+        <ServiceCostSection />
+
+        {/* K2C Referral Banner — Owner only */}
         <ReferralBanner
           referralCode={demoReferral.referralCode}
           referralUrl={demoReferral.referralUrl}
           mealsGenerated={demoReferral.mealsGenerated}
         />
-      </div>
-
-      {/* ============================================================ */}
-      {/* CONTENT                                                       */}
-      {/* ============================================================ */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
 
         {/* Error Banner */}
         {error && <ErrorBanner message={error} onRetry={refresh} />}
 
-        {/* Alert Banners */}
+        {/* Alert Banners — full list */}
         {visibleAlerts.length > 0 && (
           <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
         )}
         <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
-        {/* Where Do I Start — priority actions from impact data */}
-        <WhereDoIStartSection items={priorityItems} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+        {/* Where Do I Start — full priority actions */}
+        {priorityItems.length > 1 && (
+          <WhereDoIStartSection items={priorityItems} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+        )}
 
         {/* K2C Widget */}
         <div style={{ maxWidth: 320 }}>
@@ -809,7 +957,7 @@ export default function OwnerOperatorDashboard() {
           />
         </div>
 
-        {/* Location Cards — only if multi-location */}
+        {/* Location Cards — detailed jurisdiction view */}
         {isMultiLocation && (
           <div style={stagger(3)}>
             <div className="flex items-center justify-between mb-3">
@@ -851,7 +999,7 @@ export default function OwnerOperatorDashboard() {
           </ErrorBoundary>
         </div>
 
-        {/* Tabbed Detail Section — replaces customizable widget grid */}
+        {/* Tabbed Detail Section */}
         <div style={stagger(5)}>
           <TabbedDetailSection tabs={detailTabs} defaultTab="tasks" />
         </div>

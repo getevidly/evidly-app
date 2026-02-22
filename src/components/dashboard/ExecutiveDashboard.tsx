@@ -25,9 +25,6 @@ import {
   DEMO_WEEKLY_ACTIVITY,
 } from '../../data/demoData';
 import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, DEMO_ROLE_NAMES } from './shared/constants';
-import { ReferralBanner } from '../referral/ReferralBanner';
-import { K2CWidget } from '../referral/K2CWidget';
-import { demoReferral } from '../../data/demoData';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
@@ -434,21 +431,93 @@ export default function ExecutiveDashboard() {
         <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
       </DashboardHero>
 
-      {/* K2C Referral Banner */}
+      {/* ============================================================ */}
+      {/* ABOVE THE FOLD                                                */}
+      {/* ============================================================ */}
+
+      {/* AI Intelligence Brief — dominant dark card */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
-        <ReferralBanner
-          referralCode={demoReferral.referralCode}
-          referralUrl={demoReferral.referralUrl}
-          mealsGenerated={demoReferral.mealsGenerated}
-        />
+        <div
+          className="rounded-xl p-6"
+          style={{
+            background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <EvidlyIcon size={18} />
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">AI Intelligence Brief</span>
+          </div>
+          <p className="text-white text-sm font-medium leading-relaxed mb-2">
+            University Dining has 3 overdue fire equipment inspections creating <span className="font-bold text-red-300">$12,400 potential liability exposure</span>.
+            Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week may trigger regulatory action.
+          </p>
+          <p className="text-slate-300 text-xs">
+            Portfolio risk is elevated. Recommend prioritizing University reinspection and Airport temp monitoring.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/compliance-copilot')}
+            className="mt-3 text-xs font-semibold px-4 py-2 rounded-lg"
+            style={{ backgroundColor: 'rgba(196,154,43,0.2)', color: GOLD, border: `1px solid ${GOLD}40` }}
+          >
+            Ask AI Advisor &rarr;
+          </button>
+        </div>
+      </div>
+
+      {/* 4 Metric Tiles — Portfolio %, Risk $, Locations, Next Deadline */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <button
+            type="button"
+            onClick={() => navigate('/compliance')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Portfolio Score</p>
+            <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>72%</p>
+            <p className="text-[11px] text-gray-500 mt-0.5">Across 3 locations</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/risk-score')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Risk Exposure</p>
+            <p className="text-2xl font-bold text-red-700">$12.4K</p>
+            <p className="text-[11px] text-red-600 mt-0.5">Potential liability</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/org-hierarchy')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Locations</p>
+            <p className="text-2xl font-bold" style={{ color: BODY_TEXT }}>3</p>
+            <p className="text-[11px] text-gray-500 mt-0.5">1 needs attention</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/calendar')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Next Deadline</p>
+            <p className="text-lg font-bold" style={{ color: '#92400e' }}>Feb 28</p>
+            <p className="text-[11px] text-amber-700 mt-0.5">Reinspection due</p>
+          </button>
+        </div>
       </div>
 
       {/* ============================================================ */}
-      {/* CONTENT                                                       */}
+      {/* BELOW THE FOLD                                                */}
       {/* ============================================================ */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 space-y-6">
 
-        {/* Alert Banners (locked) */}
+        {/* Alert Banners */}
         {visibleAlerts.length > 0 && (
           <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
         )}
@@ -456,16 +525,6 @@ export default function ExecutiveDashboard() {
 
         {/* Where Do I Start? — executive-focused priorities */}
         <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
-
-        {/* K2C Widget */}
-        <div style={{ maxWidth: 320 }}>
-          <K2CWidget
-            mealsGenerated={demoReferral.mealsGenerated}
-            referralsCount={demoReferral.referralsCount}
-            monthsFree={demoReferral.monthsFree}
-            onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
-          />
-        </div>
 
         {/* Schedule Calendar */}
         <ErrorBoundary level="widget">
@@ -478,7 +537,7 @@ export default function ExecutiveDashboard() {
           />
         </ErrorBoundary>
 
-        {/* Customizable Widget Section */}
+        {/* Widget Section */}
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-gray-700">{t('cards.yourDashboard')}</h3>
