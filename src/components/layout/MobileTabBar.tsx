@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  Home,
   Thermometer,
   ClipboardList,
   FileText,
@@ -20,15 +19,70 @@ import {
   Target,
   Network,
   Camera,
-  GraduationCap,
   Wrench,
   Calendar,
   TrendingUp,
   Lightbulb,
   Snowflake,
+  Flame,
 } from 'lucide-react';
-import { useRole, UserRole } from '../../contexts/RoleContext';
+import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
+import {
+  BOTTOM_NAV_ITEMS,
+  KITCHEN_STAFF_NAV_ITEMS,
+  BOTTOM_NAV_PATHS,
+} from '../../config/navConfig';
+import { getRoleConfig } from '../../config/sidebarConfig';
+
+// ── Path → Lucide icon mapping for More drawer ──────────
+const PATH_ICON: Record<string, any> = {
+  '/corrective-actions': AlertCircle,
+  '/documents': FileText,
+  '/fire-safety': Flame,
+  '/haccp': ClipboardCheck,
+  '/incidents': AlertTriangle,
+  '/regulatory-alerts': AlertCircle,
+  '/reports': BarChart3,
+  '/self-inspection': ClipboardCheck,
+  '/services': Wrench,
+  '/vendor-certifications': FileText,
+  '/ai-advisor': Brain,
+  '/analysis': TrendingUp,
+  '/audit-trail': ClipboardList,
+  '/benchmarks': Target,
+  '/business-intelligence': Lightbulb,
+  '/business-intelligence?view=financial': TrendingUp,
+  '/iot-monitoring': Thermometer,
+  '/jurisdiction': Network,
+  '/scoring-breakdown': Target,
+  '/violation-trends': TrendingUp,
+  '/self-diagnosis': Wrench,
+  '/export-center': FileText,
+  '/calendar': Calendar,
+  '/inspector-view': Camera,
+  '/billing': FileText,
+  '/equipment': Settings,
+  '/equipment/hood-exhaust': Settings,
+  '/equipment/hvac': Snowflake,
+  '/equipment/ice-machines': Settings,
+  '/equipment/refrigeration': Thermometer,
+  '/equipment/suppression-systems': Flame,
+  '/org-hierarchy': Network,
+  '/settings': Settings,
+  '/team': Users,
+  '/vendors': Store,
+  '/help': HelpCircle,
+  '/allergen-tracking': AlertTriangle,
+  '/cooling-logs': Snowflake,
+  '/receiving-log': FileText,
+  '/checklists': ClipboardList,
+  '/temp-logs': Thermometer,
+};
+
+function getIconForPath(path: string): any {
+  return PATH_ICON[path] || PATH_ICON[path.split('?')[0]] || HelpCircle;
+}
 
 export function MobileTabBar() {
   const location = useLocation();
@@ -40,115 +94,19 @@ export function MobileTabBar() {
   const isActive = (path: string) => location.pathname === path;
   const isKitchen = userRole === 'kitchen_staff';
 
-  // Role-specific primary tabs (per NAV-SPEC-1)
-  // Kitchen staff: 5 dedicated tabs, no More button
-  // All other roles: 4 tabs + More button
-  const tabsByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
-    kitchen_staff: [
-      { path: '/dashboard', icon: Home, label: 'Today' },
-      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-      { path: '/incidents', icon: AlertTriangle, label: 'Report' },
-    ],
-    chef: [
-      { path: '/dashboard', icon: Home, label: 'Kitchen' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
-      { path: '/cooling-logs', icon: Snowflake, label: 'Cooling' },
-      { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-    ],
-    kitchen_manager: [
-      { path: '/dashboard', icon: Home, label: 'Dashboard' },
-      { path: '/checklists', icon: ClipboardList, label: 'Lists' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-    ],
-    compliance_manager: [
-      { path: '/dashboard', icon: Home, label: 'Dashboard' },
-      { path: '/corrective-actions', icon: AlertCircle, label: 'Actions' },
-      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
-      { path: '/business-intelligence', icon: Lightbulb, label: 'Insights' },
-    ],
-    facilities_manager: [
-      { path: '/dashboard', icon: Home, label: 'Equipment' },
-      { path: '/calendar', icon: Calendar, label: 'Calendar' },
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-    ],
-    owner_operator: [
-      { path: '/dashboard', icon: Home, label: 'Portfolio' },
-      { path: '/business-intelligence', icon: Lightbulb, label: 'Intel' },
-      { path: '/scoring-breakdown', icon: Target, label: 'Scores' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-    ],
-    executive: [
-      { path: '/dashboard', icon: Home, label: 'Insights' },
-      { path: '/business-intelligence', icon: Lightbulb, label: 'Intel' },
-      { path: '/scoring-breakdown', icon: Target, label: 'Scores' },
-      { path: '/analysis', icon: TrendingUp, label: 'Analytics' },
-    ],
-  };
+  const mainTabs = isKitchen ? KITCHEN_STAFF_NAV_ITEMS : BOTTOM_NAV_ITEMS;
 
-  // Role-specific "More" items (kitchen_staff has none — all 5 tabs are primary)
-  const moreByRole: Record<UserRole, { path: string; icon: any; label: string }[]> = {
-    kitchen_staff: [],
-    chef: [
-      { path: '/haccp', icon: ClipboardCheck, label: 'HACCP' },
-      { path: '/allergen-tracking', icon: AlertTriangle, label: 'Allergens' },
-      { path: '/receiving-log', icon: FileText, label: 'Receiving' },
-      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    kitchen_manager: [
-      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
-      { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
-      { path: '/team', icon: Users, label: 'Team' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    compliance_manager: [
-      { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
-      { path: '/iot-monitoring', icon: Thermometer, label: 'IoT' },
-      { path: '/self-diagnosis', icon: Wrench, label: 'Diagnosis' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    facilities_manager: [
-      { path: '/equipment', icon: Settings, label: 'Equipment' },
-      { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    owner_operator: [
-      { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
-      { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
-      { path: '/incidents', icon: AlertCircle, label: 'Incidents' },
-      { path: '/documents', icon: FileText, label: 'Documents' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/self-inspection', icon: ClipboardCheck, label: 'Inspect' },
-      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
-      { path: '/vendors', icon: Store, label: 'Vendors' },
-      { path: '/team', icon: Users, label: 'Team' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-    executive: [
-      { path: '/audit-trail', icon: ClipboardList, label: 'Audit Log' },
-      { path: '/regulatory-alerts', icon: AlertCircle, label: 'Regulatory' },
-      { path: '/reports', icon: BarChart3, label: 'Reporting' },
-      { path: '/billing', icon: FileText, label: 'Billing' },
-      { path: '/settings', icon: Settings, label: 'Settings' },
-      { path: '/help', icon: HelpCircle, label: 'Help' },
-    ],
-  };
-
-  const mainTabs = tabsByRole[userRole];
-  const moreItems = moreByRole[userRole];
+  // Build More drawer sections from sidebar config, filtering out bottom-bar items
+  const moreSections = useMemo(() => {
+    if (isKitchen) return [];
+    const config = getRoleConfig(userRole);
+    return config.sections
+      .map(s => ({
+        ...s,
+        items: s.items.filter(item => !BOTTOM_NAV_PATHS.has(item.path)),
+      }))
+      .filter(s => s.items.length > 0);
+  }, [userRole, isKitchen]);
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -166,15 +124,15 @@ export function MobileTabBar() {
       {/* More menu backdrop */}
       {showMoreMenu && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
           onClick={() => setShowMoreMenu(false)}
         />
       )}
 
-      {/* More menu drawer (not shown for kitchen) */}
+      {/* More menu drawer (not shown for kitchen staff) */}
       {!isKitchen && (
         <div
-          className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-sm transition-transform duration-300 ease-out z-40 md:hidden ${
+          className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-sm transition-transform duration-300 ease-out z-40 lg:hidden ${
             showMoreMenu ? 'translate-y-0' : 'translate-y-full'
           }`}
           style={{ maxHeight: '70vh' }}
@@ -189,35 +147,40 @@ export function MobileTabBar() {
             </button>
           </div>
           <div className="p-4 overflow-y-auto" style={{ maxHeight: 'calc(70vh - 140px)' }}>
-            <div className="grid grid-cols-3 gap-4">
-              {moreItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => handleNavigation(item.path)}
-                    className={`flex flex-col items-center justify-center p-4 rounded-lg min-h-[80px] transition-all duration-150 ${
-                      active
-                        ? 'bg-[#d4af37]/10'
-                        : 'hover:bg-gray-100'
-                    }`}
-                    style={active ? { boxShadow: 'inset 0 -2px 0 #d4af37' } : undefined}
-                  >
-                    <Icon
-                      className={`h-6 w-6 mb-2 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
-                    />
-                    <span
-                      className={`text-xs font-medium text-center ${
-                        active ? 'text-[#d4af37]' : 'text-gray-500'
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {moreSections.map((sec) => (
+              <div key={sec.id} className="mb-4">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                  {sec.label}
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {sec.items.map((item) => {
+                    const Icon = getIconForPath(item.path);
+                    const active = isActive(item.path);
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavigation(item.path)}
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg min-h-[72px] transition-all duration-150 ${
+                          active ? 'bg-[#d4af37]/10' : 'hover:bg-gray-100'
+                        }`}
+                        style={active ? { boxShadow: 'inset 0 -2px 0 #d4af37' } : undefined}
+                      >
+                        <Icon
+                          className={`h-5 w-5 mb-1.5 ${active ? 'text-[#d4af37]' : 'text-gray-400'}`}
+                        />
+                        <span
+                          className={`text-[10px] font-medium text-center leading-tight ${
+                            active ? 'text-[#d4af37]' : 'text-gray-500'
+                          }`}
+                        >
+                          {item.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
           <div className="p-4 border-t border-gray-200">
             <button
@@ -231,8 +194,8 @@ export function MobileTabBar() {
         </div>
       )}
 
-      {/* Bottom tab bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 md:hidden h-14 safe-area-bottom">
+      {/* Bottom tab bar — visible below lg (1024px) */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40 lg:hidden h-14 safe-area-bottom">
         <div className="grid grid-cols-5 h-full">
           {mainTabs.map((tab) => {
             const Icon = tab.icon;

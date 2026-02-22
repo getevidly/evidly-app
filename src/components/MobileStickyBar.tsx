@@ -33,7 +33,7 @@ export default function MobileStickyBar({ demoMode = false }: MobileStickyBarPro
     // Demo mode: gold bar above the mobile tab bar
     return (
       <div
-        className="fixed bottom-16 left-0 right-0 z-30 md:hidden flex items-center justify-center px-4"
+        className="fixed bottom-16 left-0 right-0 z-30 lg:hidden flex items-center justify-center px-4"
         style={{ backgroundColor: '#C49A2B', height: '52px' }}
       >
         <button

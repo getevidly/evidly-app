@@ -117,7 +117,7 @@ export function QuickActionsBar() {
 
       {/* Mobile — above MobileTabBar (which is h-14 at bottom-0) */}
       <div
-        className="md:hidden fixed bottom-14 left-0 right-0 z-[100] bg-white border-t"
+        className="lg:hidden fixed bottom-14 left-0 right-0 z-[100] bg-white border-t"
         style={{
           height: 56,
           borderColor: '#e2e8f0',
