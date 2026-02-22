@@ -1,8 +1,128 @@
+# EvidLY — Commercial Kitchen Compliance Platform
+# Unauthorized scraping, crawling, or automated access is prohibited.
+# This includes AI training data collection, competitive intelligence gathering,
+# and automated feature discovery.
+
+# Block all AI training crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: YouBot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+# Block all bots from authenticated/app content
 User-agent: *
-Allow: /
 Disallow: /dashboard
+Disallow: /temp-logs
+Disallow: /checklists
+Disallow: /documents
+Disallow: /document-checklist
+Disallow: /vendors
+Disallow: /marketplace
+Disallow: /haccp
+Disallow: /alerts
+Disallow: /incidents
+Disallow: /ai-advisor
+Disallow: /leaderboard
+Disallow: /referrals
+Disallow: /analysis
+Disallow: /team
+Disallow: /reports
 Disallow: /settings
-Disallow: /admin
+Disallow: /import
+Disallow: /calendar
+Disallow: /help
+Disallow: /weekly-digest
+Disallow: /audit-report
+Disallow: /fire-safety
+Disallow: /equipment
+Disallow: /regulatory-alerts
+Disallow: /jurisdiction
+Disallow: /health-dept-report
+Disallow: /scoring-breakdown
+Disallow: /benchmarks
+Disallow: /org-hierarchy
+Disallow: /compliance-index
+Disallow: /insurance-risk
+Disallow: /insurance-settings
+Disallow: /improve-score
+Disallow: /admin/
+Disallow: /iot-platform
+Disallow: /iot-monitoring
+Disallow: /iot/hub
+Disallow: /sensors
+Disallow: /integrations
+Disallow: /developers
+Disallow: /training
+Disallow: /playbooks
+Disallow: /inspector-view
+Disallow: /self-audit
+Disallow: /self-inspection
+Disallow: /photo-evidence
+Disallow: /audit-trail
+Disallow: /copilot
+Disallow: /self-diagnosis
+Disallow: /corrective-actions
+Disallow: /vendor-certifications
+Disallow: /violation-trends
+Disallow: /export-center
+Disallow: /allergen-tracking
+Disallow: /cooling-logs
+Disallow: /receiving-log
+Disallow: /billing
+Disallow: /business-intelligence
+Disallow: /onboarding
+Disallow: /signup/locations
 Disallow: /vendor/dashboard
 Disallow: /enterprise/admin
+Disallow: /enterprise/dashboard
+Disallow: /enterprise/intelligence
+Disallow: /api/
+Disallow: /auth/callback
+
+# Allow indexing of public pages only
+Allow: /
+Allow: /login
+Allow: /signup
+Allow: /demo
+Allow: /enterprise
+Allow: /iot
+Allow: /providers
+Allow: /partners/
+Allow: /terms
+Allow: /privacy
+Allow: /verify/
+Allow: /passport/
+
+# Crawl delay for any allowed crawlers
+Crawl-delay: 10
+
+# Sitemap
 Sitemap: https://evidly.com/sitemap.xml
