@@ -424,7 +424,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'AI-powered analysis, analytics, business intelligence, and service ROI.',
-        [I.aiInsights, I.analytics, I.businessIntelligence, I.serviceROI],
+        [I.aiInsights, I.analytics, I.businessIntelligence, I.jurisdictionIntelligence, I.serviceROI],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Inspector arrival mode and self-diagnosis.',
@@ -452,7 +452,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('insights', 'Insights', '💡',
         'Insights', 'AI-powered analysis — analytics, audit logs, benchmarks, business intelligence, IoT monitoring, and compliance scores.',
-        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.iotDashboard, I.scoreTable],
+        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.iotDashboard, I.jurisdictionIntelligence, I.scoreTable],
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Fire safety, HACCP, regulatory tracking, compliance reporting, and services.',
