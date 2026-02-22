@@ -2,6 +2,7 @@ import { useRole } from '../contexts/RoleContext';
 import OwnerOperatorDashboard from '../components/dashboard/OwnerOperatorDashboard';
 import ExecutiveDashboard from '../components/dashboard/ExecutiveDashboard';
 import ComplianceManagerDashboard from '../components/dashboard/ComplianceManagerDashboard';
+import ChefDashboard from '../components/dashboard/ChefDashboard';
 import KitchenManagerDashboard from '../components/dashboard/KitchenManagerDashboard';
 import KitchenStaffTaskList from '../components/dashboard/KitchenStaffTaskList';
 import FacilitiesDashboardNew from '../components/dashboard/FacilitiesDashboardNew';
@@ -21,7 +22,7 @@ export function Dashboard() {
     case 'compliance_manager':
       return <ComplianceManagerDashboard />;
     case 'chef':
-      return <KitchenManagerDashboard />;
+      return <ChefDashboard />;
     case 'facilities_manager':
       return <FacilitiesDashboardNew />;
     case 'kitchen_manager':

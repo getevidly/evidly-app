@@ -66,6 +66,19 @@ const DEMO_TEAM = [
 
 const DEMO_PROGRESS = 52;
 
+const CHEF_FOOD_SAFETY_LOCATIONS = [
+  { name: 'Downtown Kitchen', jurisdiction: 'Fresno County', status: 'Compliant', detail: 'No Open Majors' },
+  { name: 'Airport Cafe', jurisdiction: 'Merced County', status: 'Satisfactory', detail: 'Satisfactory' },
+  { name: 'University Dining', jurisdiction: 'Stanislaus County', status: 'Action Required', detail: '3 Major Open' },
+];
+
+const HACCP_TILES = [
+  { id: 'cooking', label: 'Cooking', status: 'green' as const, detail: 'All within range' },
+  { id: 'walkin', label: 'Walk-in', status: 'green' as const, detail: '37.8\u00B0F — normal' },
+  { id: 'hothold', label: 'Hot Hold', status: 'yellow' as const, detail: 'Station 2 trending low' },
+  { id: 'cooling', label: 'Cooling', status: 'green' as const, detail: 'Last log 45 min ago' },
+];
+
 // --------------- Helpers ---------------
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -121,41 +134,41 @@ function getChecklistBgTint(status: DemoChecklist['status']): string {
 }
 
 // ===============================================
-// HEALTH STATUS TILE
+// HACCP STATUS TILE
 // ===============================================
 
-function HealthTile({ label, status, detail, navigate, route }: {
-  label: string;
-  status: 'green' | 'yellow' | 'red';
-  detail: string;
-  navigate: (path: string) => void;
-  route: string;
-}) {
-  const bgColor = status === 'green' ? '#f0fdf4' : status === 'yellow' ? '#fffbeb' : '#fef2f2';
-  const borderColor = status === 'green' ? '#bbf7d0' : status === 'yellow' ? '#fde68a' : '#fecaca';
-  const dotColor = status === 'green' ? '#16a34a' : status === 'yellow' ? '#d97706' : '#dc2626';
+function HACCPTile({ tile, navigate }: { tile: typeof HACCP_TILES[0]; navigate: (path: string) => void }) {
+  const bgColor = tile.status === 'green' ? '#f0fdf4'
+    : tile.status === 'yellow' ? '#fffbeb'
+    : '#fef2f2';
+  const borderColor = tile.status === 'green' ? '#bbf7d0'
+    : tile.status === 'yellow' ? '#fde68a'
+    : '#fecaca';
+  const dotColor = tile.status === 'green' ? '#16a34a'
+    : tile.status === 'yellow' ? '#d97706'
+    : '#dc2626';
 
   return (
     <button
       type="button"
-      onClick={() => navigate(route)}
+      onClick={() => navigate('/temp-logs')}
       className="rounded-xl p-4 text-left transition-all hover:shadow-md"
       style={{ backgroundColor: bgColor, border: `1px solid ${borderColor}` }}
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-        <span className="text-sm font-semibold text-gray-900">{label}</span>
+        <span className="text-sm font-semibold text-gray-900">{tile.label}</span>
       </div>
-      <p className="text-xs text-gray-600">{detail}</p>
+      <p className="text-xs text-gray-600">{tile.detail}</p>
     </button>
   );
 }
 
 // ===============================================
-// KITCHEN MANAGER DASHBOARD
+// CHEF DASHBOARD
 // ===============================================
 
-export default function KitchenManagerDashboard() {
+export default function ChefDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
   const { companyName } = useDemo();
@@ -165,12 +178,12 @@ export default function KitchenManagerDashboard() {
   const hasMultipleLocations = accessibleLocations.length > 1;
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
-  const KM_LOC_NAMES: Record<string, string> = {
+  const LOC_NAMES: Record<string, string> = {
     downtown: 'Downtown Kitchen',
     airport: 'Airport Cafe',
     university: 'University Dining',
   };
-  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
+  const locationName = LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
 
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);
@@ -195,62 +208,55 @@ export default function KitchenManagerDashboard() {
       />
 
       {/* ============================================================ */}
-      {/* ABOVE THE FOLD — Kitchen Health                               */}
+      {/* ABOVE THE FOLD — HACCP Status                                 */}
       {/* ============================================================ */}
 
-      {/* 4 health status tiles */}
+      {/* HACCP 2x2 tiles */}
       <div>
-        <SectionHeader>Kitchen Health<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+        <SectionHeader>HACCP Status<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
-          <HealthTile label="Food Safety" status="green" detail="Compliant — no open majors" navigate={navigate} route="/compliance" />
-          <HealthTile label="Fire Safety" status="green" detail="All equipment current" navigate={navigate} route="/fire-safety" />
-          <HealthTile label="Temp Logs" status="yellow" detail="Prep cooler needs logging" navigate={navigate} route="/temp-logs" />
-          <HealthTile label="Team Tasks" status="yellow" detail="52% complete — midday open" navigate={navigate} route="/checklists" />
+          {HACCP_TILES.map(tile => (
+            <HACCPTile key={tile.id} tile={tile} navigate={navigate} />
+          ))}
         </div>
       </div>
 
-      {/* Priority alert */}
-      {priorityItems.length > 0 && (
+      {/* CCP alert if any out of range */}
+      {HACCP_TILES.some(t => t.status !== 'green') && (
         <Card>
           <button
             type="button"
-            onClick={() => navigate(priorityItems[0].route)}
+            onClick={() => navigate('/temp-logs')}
             className="w-full flex items-center gap-3 text-left"
           >
             <AlertTriangle size={18} className="text-amber-500 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900">{priorityItems[0].title}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{priorityItems[0].detail}</p>
+              <p className="text-sm font-semibold text-gray-900">Hot Hold Station 2 trending low</p>
+              <p className="text-xs text-gray-500 mt-0.5">Check holding temperature immediately</p>
             </div>
             <span className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0" style={{ backgroundColor: '#d97706' }}>
-              {priorityItems[0].actionLabel} &rarr;
+              Check &rarr;
             </span>
           </button>
         </Card>
       )}
 
-      {/* Team Progress with progress bars */}
+      {/* Team on Shift (compact) */}
       <Card>
-        <SectionHeader>Team Progress</SectionHeader>
-        <div className="space-y-3">
-          {DEMO_TEAM.map(member => {
-            const pct = Math.round((member.done / member.total) * 100);
-            return (
-              <button key={member.name} type="button" onClick={() => navigate('/team')} className="w-full flex items-center gap-3 text-left hover:bg-gray-50 rounded-lg p-1 -m-1 transition-colors">
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
-                  style={{ backgroundColor: '#1e4d6b' }}
-                >
-                  {member.name.charAt(0)}
-                </div>
-                <span className="text-sm font-medium text-gray-900 w-16">{member.name}</span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: getProgressColor(pct) }} />
-                </div>
-                <span className="text-xs text-gray-500 w-12 text-right">{member.done}/{member.total}</span>
-              </button>
-            );
-          })}
+        <SectionHeader>Team on Shift</SectionHeader>
+        <div className="space-y-2">
+          {DEMO_TEAM.map(member => (
+            <div key={member.name} className="flex items-center gap-3">
+              <div
+                className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
+                style={{ backgroundColor: '#1e4d6b' }}
+              >
+                {member.name.charAt(0)}
+              </div>
+              <span className="text-sm font-medium text-gray-900 flex-1">{member.name}</span>
+              <span className="text-xs text-gray-500">{member.done}/{member.total} done</span>
+            </div>
+          ))}
         </div>
       </Card>
 
@@ -302,6 +308,44 @@ export default function KitchenManagerDashboard() {
           </p>
         </div>
       </Card>
+
+      {/* Food Safety locations */}
+      <div>
+        <SectionHeader>{t('cards.foodSafety')}<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+        <div className="space-y-2">
+          {CHEF_FOOD_SAFETY_LOCATIONS.map(loc => {
+            const statusColor = loc.status === 'Compliant' ? '#16a34a'
+              : loc.status === 'Action Required' ? '#dc2626'
+              : '#d97706';
+            const statusBg = loc.status === 'Compliant' ? '#dcfce7'
+              : loc.status === 'Action Required' ? '#fef2f2'
+              : '#fef3c7';
+            return (
+              <button
+                key={loc.name}
+                type="button"
+                onClick={() => navigate('/compliance')}
+                className="w-full rounded-lg p-4 text-left hover:shadow-md transition-shadow"
+                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)', backgroundColor: '#fff', borderLeft: `3px solid ${statusColor}` }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-semibold text-gray-900">{loc.name}</span>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: statusBg, color: statusColor }}
+                  >
+                    {loc.status === 'Compliant' ? t('status.compliant') : loc.status === 'Action Required' ? t('status.actionRequired') : t('status.satisfactory')}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{loc.jurisdiction}</span>
+                  <span className="text-xs text-gray-500">{loc.detail === 'No Open Majors' ? t('status.noOpenMajors') : loc.detail === 'Satisfactory' ? t('status.satisfactory') : loc.detail}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Checklists */}
       <div>
