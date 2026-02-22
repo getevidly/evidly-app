@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import {
   X, Upload, FileText, Loader2,
-  ChevronDown, Trash2, Sparkles,
+  ChevronDown, Trash2, Sparkles, Pencil,
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import {
@@ -112,6 +112,15 @@ export function SmartUploadModal({
     // Auto-classify all pending files
     classifyFiles(updatedFiles);
   }, [files, batchMode, maxFiles, presetDocType, presetDocLabel]);
+
+  // Auto-expand first low-confidence file after classification completes
+  useEffect(() => {
+    if (expandedIndex !== null) return;
+    const lowConfIdx = files.findIndex(
+      (f) => f.status === 'classified' && (f.classification?.confidence ?? 0) < 0.7,
+    );
+    if (lowConfIdx !== -1) setExpandedIndex(lowConfIdx);
+  }, [files]);
 
   const classifyFiles = async (allFiles: ClassifiedFile[]) => {
     const pending = allFiles.filter((f) => f.status === 'pending');
@@ -541,9 +550,36 @@ function FileClassificationCard({
         />
       </button>
 
+      {/* "Wrong category?" link — visible when collapsed and confidence >= 70% */}
+      {!expanded && confidence >= 0.7 && (
+        <button
+          className="flex items-center gap-1 px-4 pb-2 text-xs transition-colors"
+          style={{ color: '#6b7280' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#1e4d6b'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
+          onClick={onToggle}
+        >
+          <Pencil size={11} />
+          Wrong category?
+        </button>
+      )}
+
       {/* Expanded detail — edit form */}
       {expanded && (
         <div className="px-4 pb-4 space-y-3 border-t border-gray-100 pt-3">
+          {/* Low-confidence banner */}
+          {confidence < 0.7 && (
+            <div
+              className="text-xs rounded-md p-3 flex items-center gap-2"
+              style={{ backgroundColor: '#fef9c3', color: '#854d0e', border: '1px solid #fde68a' }}
+            >
+              <span>⚠️</span>
+              <span>
+                <span className="font-semibold">Low confidence</span> — please verify or select the correct category below.
+              </span>
+            </div>
+          )}
+
           {/* AI Summary */}
           {c?.summary && (
             <div
@@ -578,11 +614,20 @@ function FileClassificationCard({
                   }}
                 >
                   <option value="">Select type...</option>
-                  {DOCUMENT_TYPE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
+                  {PILLAR_OPTIONS.map((pillar) => (
+                    <optgroup key={pillar.value} label={`${pillar.icon} ${pillar.label}`}>
+                      {DOCUMENT_TYPE_OPTIONS
+                        .filter((o) => o.pillar === pillar.value)
+                        .map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                    </optgroup>
                   ))}
+                  <optgroup label="Other">
+                    <option value="unknown">Other / Unknown</option>
+                  </optgroup>
                 </select>
               </div>
             )}

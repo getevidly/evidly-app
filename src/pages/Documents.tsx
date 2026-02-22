@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload } from 'lucide-react';
+import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload, Pencil } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
 import { DemoModeBanner } from '../components/DemoModeBanner';
 import { EmptyState } from '../components/EmptyState';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
+import { DOCUMENT_TYPE_OPTIONS, PILLAR_OPTIONS } from '../lib/documentClassifier';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { ShareModal } from '../components/ShareModal';
 import { useRole } from '../contexts/RoleContext';
@@ -27,6 +28,8 @@ interface Document {
   status: string;
   location: string;
   provided_by?: string;
+  categorization_source?: 'ai' | 'manual';
+  manual_category_override?: boolean;
 }
 
 interface SharedItem {
@@ -169,6 +172,7 @@ export function Documents() {
   const [docPhotos, setDocPhotos] = useState<PhotoRecord[]>([]);
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const [editingDocId, setEditingDocId] = useState<string | null>(null);
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
     ? ['All Locations', ...docAccessibleLocs.map(l => l.locationName)]
@@ -284,6 +288,18 @@ export function Documents() {
     } else {
       setSelectedDocs([...selectedDocs, docId]);
     }
+  };
+
+  const handleCategoryChange = (docId: string, newCategory: string) => {
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === docId
+          ? { ...d, category: newCategory, categorization_source: 'manual' as const, manual_category_override: true }
+          : d,
+      ),
+    );
+    setEditingDocId(null);
+    toast.success('Category updated');
   };
 
   const categories = ['License', 'Permit', 'Certificate', 'Insurance', 'Training', 'Other'];
@@ -632,9 +648,46 @@ export function Documents() {
                               </div>
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap hidden sm:table-cell">
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {categoryLabelMap[doc.category] || doc.category}
-                              </span>
+                              {editingDocId === doc.id ? (
+                                <select
+                                  autoFocus
+                                  className="border border-gray-300 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] bg-white"
+                                  defaultValue={doc.category}
+                                  onChange={(e) => handleCategoryChange(doc.id, e.target.value)}
+                                  onBlur={() => setEditingDocId(null)}
+                                >
+                                  {PILLAR_OPTIONS.map((pillar) => (
+                                    <optgroup key={pillar.value} label={`${pillar.icon} ${pillar.label}`}>
+                                      {DOCUMENT_TYPE_OPTIONS
+                                        .filter((o) => o.pillar === pillar.value)
+                                        .map((opt) => (
+                                          <option key={opt.value} value={mapPillarToCategory(opt.pillar)}>
+                                            {opt.label}
+                                          </option>
+                                        ))}
+                                    </optgroup>
+                                  ))}
+                                  <optgroup label="Other">
+                                    <option value="Other">Other / Unknown</option>
+                                  </optgroup>
+                                </select>
+                              ) : (
+                                <div className="flex items-center gap-1.5">
+                                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {categoryLabelMap[doc.category] || doc.category}
+                                  </span>
+                                  {doc.categorization_source === 'manual' && (
+                                    <span
+                                      title="Manually categorized"
+                                      className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium"
+                                      style={{ backgroundColor: '#fef3c7', color: '#92400e' }}
+                                    >
+                                      <Pencil size={9} />
+                                      Manual
+                                    </span>
+                                  )}
+                                </div>
+                              )}
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600 hidden sm:table-cell">
                               {doc.location}
@@ -650,6 +703,15 @@ export function Documents() {
                             </td>
                             <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                               <div className="flex space-x-2">
+                                <button
+                                  onClick={() => setEditingDocId(editingDocId === doc.id ? null : doc.id)}
+                                  style={{ color: editingDocId === doc.id ? '#d4af37' : '#6b7280' }}
+                                  onMouseEnter={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#1e4d6b'; }}
+                                  onMouseLeave={(e) => { if (editingDocId !== doc.id) e.currentTarget.style.color = '#6b7280'; }}
+                                  title="Edit category"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </button>
                                 <button
                                   onClick={() => handleShareDocument(doc.title)}
                                   style={{ color: '#1e4d6b' }}
@@ -758,16 +820,21 @@ export function Documents() {
           onClose={() => setShowSmartUpload(false)}
           onSave={(classifiedFiles: ClassifiedFile[]) => {
             // Add classified files as new documents in the local list
-            const newDocs: Document[] = classifiedFiles.map((cf, i) => ({
-              id: `ai-${Date.now()}-${i}`,
-              title: cf.overrides.documentLabel || cf.file.name,
-              category: mapPillarToCategory(cf.overrides.pillar),
-              expiration_date: cf.overrides.expiryDate || null,
-              created_at: new Date().toISOString(),
-              status: 'active',
-              location: selectedLocation === 'All Locations' ? 'Downtown Kitchen' : selectedLocation,
-              provided_by: cf.overrides.vendorName || undefined,
-            }));
+            const newDocs: Document[] = classifiedFiles.map((cf, i) => {
+              const wasEdited = cf.overrides.documentType !== (cf.classification?.documentType ?? '');
+              return {
+                id: `ai-${Date.now()}-${i}`,
+                title: cf.overrides.documentLabel || cf.file.name,
+                category: mapPillarToCategory(cf.overrides.pillar),
+                expiration_date: cf.overrides.expiryDate || null,
+                created_at: new Date().toISOString(),
+                status: 'active',
+                location: selectedLocation === 'All Locations' ? 'Downtown Kitchen' : selectedLocation,
+                provided_by: cf.overrides.vendorName || undefined,
+                categorization_source: wasEdited ? 'manual' as const : 'ai' as const,
+                manual_category_override: wasEdited,
+              };
+            });
             setDocuments((prev) => [...newDocs, ...prev]);
             setShowSmartUpload(false);
           }}
