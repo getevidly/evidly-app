@@ -32,11 +32,6 @@ import { ReferralBanner } from '../referral/ReferralBanner';
 import { K2CWidget } from '../referral/K2CWidget';
 import { demoReferral } from '../../data/demoData';
 import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
-import { CalendarCard } from './shared/CalendarCard';
-import { OWNER_OPERATOR_EVENTS, OWNER_OPERATOR_CALENDAR } from '../../data/calendarDemoEvents';
-import { ErrorBoundary } from '../ErrorBoundary';
-import { SelfDiagCard } from './shared/SelfDiagCard';
-import { ServiceCostSection } from './shared/ServiceCostSection';
 import { ComplianceBanner } from './shared/ComplianceBanner';
 import { NFPAReminder } from '../ui/NFPAReminder';
 
@@ -912,6 +907,11 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
+      {/* TODAY'S TASKS — tabbed section above the fold */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6" style={stagger(3)}>
+        <TabbedDetailSection tabs={detailTabs} defaultTab="tasks" />
+      </div>
+
       {/* ============================================================ */}
       {/* BELOW THE FOLD                                                */}
       {/* ============================================================ */}
@@ -919,12 +919,6 @@ export default function OwnerOperatorDashboard() {
 
         {/* NFPA Monthly Reminder */}
         <NFPAReminder />
-
-        {/* Self-Diagnosis — Kitchen Problem */}
-        <SelfDiagCard />
-
-        {/* Service Cost & Risk Calculator */}
-        <ServiceCostSection />
 
         {/* K2C Referral Banner — Owner only */}
         <ReferralBanner
@@ -959,7 +953,7 @@ export default function OwnerOperatorDashboard() {
 
         {/* Location Cards — detailed jurisdiction view */}
         {isMultiLocation && (
-          <div style={stagger(3)}>
+          <div style={stagger(4)}>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-gray-700 flex items-center">{t('cards.locations')} ({locs.length})<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
             </div>
@@ -985,24 +979,6 @@ export default function OwnerOperatorDashboard() {
             </div>
           </div>
         )}
-
-        {/* Schedule Calendar */}
-        <div style={stagger(4)}>
-          <ErrorBoundary level="widget">
-            <CalendarCard
-              events={OWNER_OPERATOR_EVENTS}
-              typeColors={OWNER_OPERATOR_CALENDAR.typeColors}
-              typeLabels={OWNER_OPERATOR_CALENDAR.typeLabels}
-              navigate={navigate}
-              tooltipContent={useTooltip('scheduleCalendar', userRole)}
-            />
-          </ErrorBoundary>
-        </div>
-
-        {/* Tabbed Detail Section */}
-        <div style={stagger(5)}>
-          <TabbedDetailSection tabs={detailTabs} defaultTab="tasks" />
-        </div>
 
         {/* Footer */}
         <EvidlyFooter />
