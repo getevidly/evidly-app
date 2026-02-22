@@ -263,7 +263,7 @@ export const COUNTY_TEMPLATES: Record<CountyTemplate, CountyTemplateConfig> = {
 
 // ── Demo Data Generators ───────────────────────────────────
 
-const FACILITY_INFO: Record<string, FacilityInfo> = {
+export const FACILITY_INFO: Record<string, FacilityInfo> = {
   'downtown': {
     name: 'Downtown Kitchen',
     address: '1245 Fulton Street, Fresno, CA 93721',
