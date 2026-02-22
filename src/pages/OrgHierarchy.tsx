@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
-  Building2,
+  Building2, Upload,
 } from 'lucide-react';
 import { LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 
@@ -383,6 +384,7 @@ function collectLocations(node: OrgTreeNode): OrgTreeNode[] {
 // ── Main Page ────────────────────────────────────────────────
 
 export function OrgHierarchy() {
+  const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState('');
   const selectedNode = selectedId ? findTreeNode(orgTree, selectedId) : null;
 
@@ -401,13 +403,22 @@ export function OrgHierarchy() {
           <h1 className="text-gray-900 font-bold text-2xl">Organization Hierarchy</h1>
           <p className="text-gray-500 text-sm mt-1">Compliance status across your locations</p>
         </div>
-        <button
-          onClick={() => toast.info('Hierarchy configuration \u2014 coming soon')}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
-        >
-          <Settings className="h-4 w-4" />
-          Hierarchy Config
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate('/import?type=locations')}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1e4d6b] text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors cursor-pointer"
+          >
+            <Upload className="h-4 w-4" />
+            Import
+          </button>
+          <button
+            onClick={() => toast.info('Hierarchy configuration \u2014 coming soon')}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+          >
+            <Settings className="h-4 w-4" />
+            Hierarchy Config
+          </button>
+        </div>
       </div>
 
       {/* Two-column layout */}

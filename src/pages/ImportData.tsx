@@ -1,6 +1,7 @@
-import { useState, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
 import {
   Upload,
@@ -68,6 +69,7 @@ const STEP_LABELS = ['Select Type', 'Upload File', 'Preview', 'Import'];
 
 export function ImportData() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } =
     useDemoGuard();
 
@@ -82,12 +84,25 @@ export function ImportData() {
     success: number;
     failed: number;
     errors: string[];
+    invitationsSent?: number;
   } | null>(null);
   const [skipErrors, setSkipErrors] = useState(true);
   const [dragOver, setDragOver] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Pre-select data type from ?type= query param (deep-link from per-page Import buttons)
+  useEffect(() => {
+    const typeParam = searchParams.get('type');
+    if (typeParam && !dataType) {
+      const validTypes: ImportDataType[] = ['equipment', 'vendors', 'team', 'temperature_logs', 'documents', 'locations'];
+      if (validTypes.includes(typeParam as ImportDataType)) {
+        setDataType(typeParam as ImportDataType);
+        setStep(2);
+      }
+    }
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Derived
   const schema = dataType ? getImportSchema(dataType) : null;
@@ -101,12 +116,29 @@ export function ImportData() {
   // File handling
   // -----------------------------------------------------------------------
 
+  const processRows = useCallback(
+    (rows: Record<string, string>[], name: string) => {
+      if (!dataType) return;
+      setParsedRows(rows);
+      if (rows.length === 0) {
+        toast.error('The file contains no data rows.');
+        return;
+      }
+      const summary = validateImportData(dataType, rows);
+      setValidation(summary);
+      setStep(3);
+      toast.success(`Parsed ${rows.length} rows from ${name}`);
+    },
+    [dataType]
+  );
+
   const handleFile = useCallback(
     (file: File) => {
       if (!dataType) return;
 
-      if (!file.name.toLowerCase().endsWith('.csv')) {
-        toast.error('Please upload a CSV file');
+      const ext = file.name.toLowerCase().split('.').pop();
+      if (ext !== 'csv' && ext !== 'xlsx') {
+        toast.error('Please upload a .csv or .xlsx file');
         return;
       }
 
@@ -117,30 +149,43 @@ export function ImportData() {
 
       setFileName(file.name);
 
-      Papa.parse<Record<string, string>>(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (results) => {
-          if (results.errors.length > 0) {
-            toast.error(`CSV parsing error: ${results.errors[0].message}`);
+      if (ext === 'xlsx') {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = e.target?.result;
+            const workbook = XLSX.read(data, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json<Record<string, string>>(sheet, { defval: '' });
+            // Ensure all values are strings
+            const stringRows = rows.map(row => {
+              const out: Record<string, string> = {};
+              for (const [k, v] of Object.entries(row)) {
+                out[k] = String(v ?? '');
+              }
+              return out;
+            });
+            processRows(stringRows, file.name);
+          } catch {
+            toast.error('Failed to parse Excel file. Please check the file format.');
           }
-
-          const rows = results.data as Record<string, string>[];
-          setParsedRows(rows);
-
-          if (rows.length === 0) {
-            toast.error('The file contains no data rows.');
-            return;
-          }
-
-          const summary = validateImportData(dataType, rows);
-          setValidation(summary);
-          setStep(3);
-          toast.success(`Parsed ${rows.length} rows from ${file.name}`);
-        },
-      });
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        Papa.parse<Record<string, string>>(file, {
+          header: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.errors.length > 0) {
+              toast.error(`CSV parsing error: ${results.errors[0].message}`);
+            }
+            processRows(results.data as Record<string, string>[], file.name);
+          },
+        });
+      }
     },
-    [dataType]
+    [dataType, processRows]
   );
 
   const onFileInputChange = useCallback(
@@ -217,14 +262,30 @@ export function ImportData() {
           ).length;
           const failedCount = rowsToImport.length - successCount;
 
+          // For team imports, count rows with email and trigger invitations
+          let invitationsSent = 0;
+          if (dataType === 'team') {
+            const emailRows = rowsToImport.filter(
+              (r) => r.status !== 'error' && r.data.email && r.data.email.trim()
+            );
+            invitationsSent = emailRows.length;
+            // Trigger demo invitation for each email
+            emailRows.forEach((r) => {
+              toast.success(`Invitation sent to ${r.data.email} as ${r.data.role || 'Staff'}`);
+            });
+          }
+
           setImportResult({
             success: successCount,
             failed: failedCount,
             errors: [],
+            invitationsSent: dataType === 'team' ? invitationsSent : undefined,
           });
           setImporting(false);
           toast.success(
-            `Successfully imported ${successCount} ${dataType} records`
+            dataType === 'team'
+              ? `Imported ${successCount} team members, ${invitationsSent} invitation${invitationsSent !== 1 ? 's' : ''} sent`
+              : `Successfully imported ${successCount} ${dataType} records`
           );
         } else {
           setTimeout(processBatch, 500);
@@ -325,7 +386,7 @@ export function ImportData() {
           What would you like to import?
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          Choose a data type to get started with your CSV import.
+          Choose a data type to get started with your import.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -369,10 +430,10 @@ export function ImportData() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-bold text-[#1e4d6b] mb-1">
-            Upload {schema?.label} CSV
+            Upload {schema?.label} Data
           </h2>
           <p className="text-sm text-gray-500">
-            Upload a CSV file with your {schema?.label?.toLowerCase()} data, or
+            Upload a CSV or Excel file with your {schema?.label?.toLowerCase()} data, or
             download our template first.
           </p>
         </div>
@@ -427,13 +488,13 @@ export function ImportData() {
           }`}
         />
         <p className="text-base font-medium text-gray-700 mb-1">
-          Drag a CSV file here or click to browse
+          Drag a file here or click to browse
         </p>
-        <p className="text-sm text-gray-400">Accepts .csv files up to 10MB</p>
+        <p className="text-sm text-gray-400">Accepts .csv, .xlsx files up to 10MB</p>
         <input
           ref={fileInputRef}
           type="file"
-          accept=".csv"
+          accept=".csv,.xlsx"
           onChange={onFileInputChange}
           className="hidden"
         />
@@ -648,9 +709,16 @@ export function ImportData() {
                 {importResult.failed} rows skipped due to errors
               </p>
             )}
+            {importResult.invitationsSent != null && (
+              <p className="text-sm text-green-600 font-medium mb-1">
+                {importResult.invitationsSent} invitation{importResult.invitationsSent !== 1 ? 's' : ''} sent
+              </p>
+            )}
             <p className="text-sm text-gray-500 mb-6">
               Your {schema?.label?.toLowerCase()} data has been successfully
-              imported.
+              imported.{dataType === 'team' && importResult.invitationsSent
+                ? ' Team members with email addresses have been sent invitations.'
+                : ''}
             </p>
 
             <div className="flex items-center justify-center gap-3">
@@ -709,7 +777,7 @@ export function ImportData() {
               Bulk Data Import
             </h1>
             <p className="text-sm text-gray-500">
-              Import equipment, vendors, team members, and more from CSV files.
+              Import equipment, vendors, team members, and more from CSV or Excel files.
             </p>
           </div>
         </div>

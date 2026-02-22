@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
@@ -148,6 +149,7 @@ function DocStatusBadge({ status, label }: { status: 'current' | 'expiring' | 'e
 }
 
 export function Documents() {
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { profile } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -326,6 +328,13 @@ export function Documents() {
             <p className="text-sm text-gray-600 mt-1">{t('pages.documents.subtitle')}</p>
           </div>
           <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={() => navigate('/import?type=documents')}
+              className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Import</span>
+            </button>
             {selectedDocs.length > 0 && activeTab === 'documents' && (
               <button
                 onClick={handleShareMultiple}

@@ -4,7 +4,7 @@ import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, AlertTriangle, Clock,
   MapPin, X, Calendar, TrendingUp, TrendingDown, Edit3, Truck, Package, Loader2, CheckCircle, Link2, Phone, Mail,
-  Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed, QrCode, Printer,
+  Radio, Wifi, WifiOff, Battery, Signal, Flame, UtensilsCrossed, QrCode, Printer, Upload,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { QRCodeSVG } from 'qrcode.react';
@@ -779,6 +779,12 @@ export function Equipment() {
               <option value="fire_safety">{t('pages.equipment.fireSafety')}</option>
               <option value="food_safety">{t('pages.equipment.foodSafety')}</option>
             </select>
+            <button
+              onClick={() => navigate('/import?type=equipment')}
+              className="flex items-center gap-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] text-sm font-medium"
+            >
+              <Upload className="h-4 w-4" /> Import
+            </button>
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"

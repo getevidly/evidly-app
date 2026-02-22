@@ -1054,6 +1054,13 @@ export function Vendors() {
           </div>
           <div className="flex items-center gap-2 self-start">
             <button
+              onClick={() => navigate('/import?type=vendors')}
+              className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+            >
+              <Upload className="h-4 w-4" />
+              <span>Import</span>
+            </button>
+            <button
               onClick={() => guardAction('invite', 'vendor management', () => setShowInviteModal(true))}
               className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
             >
