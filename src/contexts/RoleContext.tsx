@@ -29,7 +29,7 @@ const ALL_LOCATIONS: LocationAssignment[] = [
 ];
 
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
-  owner_operator: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
+  owner_operator: ALL_LOCATIONS,                       // All locations — owner sees everything
   executive: ALL_LOCATIONS,
   compliance_manager: ALL_LOCATIONS,                // All locations — compliance spans org
   chef: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]],       // Downtown + Airport (same as kitchen_manager)

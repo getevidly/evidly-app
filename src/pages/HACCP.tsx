@@ -1258,7 +1258,15 @@ export function HACCP() {
         )}
 
         {/* ── Plans Tab ─────────────────────────────────────── */}
-        {!loading && activeTab === 'plans' && !selectedPlan && (
+        {!loading && activeTab === 'plans' && !selectedPlan && filteredPlans.length === 0 && (
+          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+            <Shield className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+            <p className="text-sm font-semibold text-gray-700">No HACCP monitoring data yet</p>
+            <p className="text-xs text-gray-500 mt-1">Complete a checklist to populate control points for this location.</p>
+          </div>
+        )}
+
+        {!loading && activeTab === 'plans' && !selectedPlan && filteredPlans.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredPlans.map((plan) => {
               const compliance = getPlanCompliance(plan);
