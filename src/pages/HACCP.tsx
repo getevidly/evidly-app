@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
@@ -354,9 +354,13 @@ export function HACCP() {
   const initialTab = (searchParams.get('tab') as 'plans' | 'monitoring' | 'corrective' | 'template') || 'plans';
   const [activeTab, setActiveTab] = useState<'plans' | 'monitoring' | 'corrective' | 'template'>(initialTab);
   const [selectedPlan, setSelectedPlan] = useState<HACCPPlan | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState('all');
+  const urlLocation = searchParams.get('location') || '';
+  const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
   const { getAccessibleLocations, userRole } = useRole();
   const haccpAccessibleLocs = getAccessibleLocations();
+  // Owner/Exec see condensed overview unless drilling into a specific location
+  const isCondensedView = (userRole === 'owner_operator' || userRole === 'executive') && !urlLocation;
+  const navigate = useNavigate();
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
@@ -946,6 +950,160 @@ export function HACCP() {
 
   // Inspector Package date range
   const [exportRange, setExportRange] = useState<'7' | '30' | '90' | 'all'>('30');
+
+  // ── Owner / Executive condensed view ──────────────────────────────
+  if (isCondensedView) {
+    const REVERSE_LOC_MAP: Record<string, string> = { '1': 'downtown', '2': 'airport', '3': 'university' };
+
+    // Build per-location CCP summaries
+    const locationSummaries = haccpAccessibleLocs.map(loc => {
+      const lid = LOCATION_ID_MAP[loc.locationUrlId];
+      const ccps = allPlans.flatMap(p => p.ccps).filter(c => c.locationId === lid);
+      const deviations = ccps.filter(c => !c.isWithinLimit);
+      const openCAs = allCorrectiveActions.filter(a => a.locationId === lid && (a.status === 'open' || a.status === 'in_progress'));
+      return {
+        locationName: loc.locationName,
+        locationUrlId: loc.locationUrlId,
+        totalCCPs: ccps.length,
+        deviations,
+        deviationCount: deviations.length,
+        openCACount: openCAs.length,
+        allClear: deviations.length === 0,
+      };
+    });
+
+    const totalDeviations = locationSummaries.reduce((s, l) => s + l.deviationCount, 0);
+    const totalOpenCAs = locationSummaries.reduce((s, l) => s + l.openCACount, 0);
+
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'HACCP' }]} />
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+              <h1 className="text-2xl font-bold text-gray-900">HACCP Status</h1>
+            </div>
+            <p className="text-sm text-gray-500">
+              {haccpAccessibleLocs.length > 1 ? 'All Locations' : haccpAccessibleLocs[0]?.locationName} — {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
+
+          {/* Summary stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+              <p className="text-sm text-gray-500 font-medium mb-1">Active CCPs</p>
+              <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{allPlans.flatMap(p => p.ccps).length}</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
+              <p className="text-sm text-gray-500 font-medium mb-1">Deviations</p>
+              <p className="text-2xl font-bold" style={{ color: totalDeviations > 0 ? '#DC2626' : '#22c55e' }}>{totalDeviations}</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#f59e0b' : '#22c55e'}` }}>
+              <p className="text-sm text-gray-500 font-medium mb-1">Open Corrective Actions</p>
+              <p className="text-2xl font-bold" style={{ color: totalOpenCAs > 0 ? '#f59e0b' : '#22c55e' }}>{totalOpenCAs}</p>
+            </div>
+          </div>
+
+          {/* Per-location rows */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100">
+              <h2 className="text-sm font-semibold text-gray-700">Location Status</h2>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {locationSummaries.map(loc => (
+                <div
+                  key={loc.locationUrlId}
+                  className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {loc.allClear ? (
+                      <CheckCircle className="h-5 w-5 shrink-0" style={{ color: '#22c55e' }} />
+                    ) : (
+                      <AlertTriangle className="h-5 w-5 shrink-0" style={{ color: '#DC2626' }} />
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-gray-900">{loc.locationName}</p>
+                      <p className="text-xs text-gray-500">
+                        {loc.allClear
+                          ? 'All CCPs in limit'
+                          : `${loc.deviationCount} deviation${loc.deviationCount !== 1 ? 's' : ''} — ${loc.deviations.map(d => d.hazard.split(' (')[0].split(' from ')[0].split(' in ')[0].split(' during ')[0]).join(', ')}`
+                        }
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/haccp?location=${loc.locationUrlId}`)}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-md shrink-0 transition-colors"
+                    style={{ backgroundColor: '#1e4d6b', color: '#fff' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = '#1e4d6b'; }}
+                  >
+                    View Details
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Open corrective actions (if any) */}
+          {totalOpenCAs > 0 && (
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="px-5 py-3 border-b border-gray-100">
+                <h2 className="text-sm font-semibold text-gray-700">Open Corrective Actions</h2>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {allCorrectiveActions
+                  .filter(a => a.status === 'open' || a.status === 'in_progress')
+                  .map(ca => {
+                    const locName = haccpAccessibleLocs.find(l => LOCATION_ID_MAP[l.locationUrlId] === ca.locationId)?.locationName || 'Unknown';
+                    return (
+                      <div key={ca.id} className="px-5 py-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-gray-900">{ca.ccpNumber}: {ca.ccpHazard.split(' (')[0]}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{locName} — {ca.deviation}</p>
+                            <p className="text-xs mt-1" style={{ color: '#1e4d6b' }}>Action: {ca.actionTaken.substring(0, 120)}{ca.actionTaken.length > 120 ? '...' : ''}</p>
+                          </div>
+                          <span
+                            className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+                            style={{
+                              backgroundColor: ca.status === 'open' ? '#fef2f2' : '#fef9c3',
+                              color: ca.status === 'open' ? '#991b1b' : '#854d0e',
+                            }}
+                          >
+                            {ca.status === 'open' ? 'Open' : 'In Progress'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                }
+              </div>
+            </div>
+          )}
+
+          {/* Export button for owner */}
+          {canExportPackage && (
+            <div className="flex justify-end">
+              <button
+                onClick={handleExportInspectorPackage}
+                className="inline-flex items-center px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors"
+                style={{ backgroundColor: '#1e4d6b' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export Inspector Package
+              </button>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

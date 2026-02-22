@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Plus, CheckSquare, Clock, Edit2, Trash2, Play, X, Check, ChevronRight, User, AlertTriangle, CheckCircle, Shield } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -461,6 +462,100 @@ const PREBUILT_TEMPLATES = {
     }),
   },
 };
+
+// ── HACCP Summary Card (demo data — mirrors HACCP.tsx CCPs) ─────
+
+interface HACCPSummaryCCP {
+  name: string;
+  limit: string;
+  status: 'in_limit' | 'deviation' | 'no_data';
+}
+
+const DEMO_HACCP_SUMMARY: HACCPSummaryCCP[] = [
+  { name: 'Cooking Temperature', limit: '165°F+', status: 'in_limit' },
+  { name: 'Cold Holding', limit: '41°F−', status: 'in_limit' },
+  { name: 'Hot Holding', limit: '135°F+', status: 'deviation' },
+  { name: 'Cooling', limit: '2hr rule', status: 'in_limit' },
+  { name: 'Sanitizer Concentration', limit: '200ppm+', status: 'in_limit' },
+];
+
+function HACCPSummaryCard() {
+  const nav = useNavigate();
+  const deviations = DEMO_HACCP_SUMMARY.filter(c => c.status === 'deviation').length;
+  const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  return (
+    <div
+      className="bg-white rounded-lg overflow-hidden"
+      style={{ border: '1px solid #e5e7eb' }}
+    >
+      {/* Header */}
+      <div
+        className="flex items-center justify-between px-5 py-3"
+        style={{ borderBottom: '1px solid #F0F0F0' }}
+      >
+        <div className="flex items-center gap-2">
+          <Shield size={16} style={{ color: '#1e4d6b' }} />
+          <h3 className="text-sm font-semibold" style={{ color: '#0B1628' }}>
+            HACCP Control Points
+          </h3>
+        </div>
+        <span className="text-xs text-gray-500">Today, {todayStr.split(', ').slice(1).join(', ')}</span>
+      </div>
+
+      {/* CCP rows */}
+      <div className="px-5 py-3 space-y-2">
+        {DEMO_HACCP_SUMMARY.map(ccp => {
+          const isDev = ccp.status === 'deviation';
+          return (
+            <div
+              key={ccp.name}
+              className="flex items-center justify-between py-1"
+              style={isDev ? { color: '#dc2626' } : undefined}
+            >
+              <div className="flex items-center gap-2">
+                {isDev
+                  ? <AlertTriangle size={14} className="text-red-500 shrink-0" />
+                  : <CheckCircle size={14} className="text-green-500 shrink-0" />
+                }
+                <span className={`text-[13px] ${isDev ? 'font-semibold text-red-700' : 'text-gray-800'}`}>
+                  {ccp.name}
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-gray-500 w-16 text-right">{ccp.limit}</span>
+                <span className={`text-xs font-semibold w-20 text-right ${isDev ? 'text-red-600' : 'text-green-600'}`}>
+                  {isDev ? 'DEVIATION' : 'IN LIMIT'}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <div
+        className="flex items-center justify-between px-5 py-3"
+        style={{ borderTop: '1px solid #F0F0F0', backgroundColor: deviations > 0 ? '#fef2f2' : '#f0fdf4' }}
+      >
+        <span className={`text-xs font-medium ${deviations > 0 ? 'text-red-700' : 'text-green-700'}`}>
+          {deviations > 0
+            ? `${deviations} deviation${deviations > 1 ? 's' : ''} — corrective action required`
+            : 'All control points in limit'
+          }
+        </span>
+        <button
+          type="button"
+          onClick={() => nav('/haccp')}
+          className="text-xs font-semibold transition-colors hover:underline"
+          style={{ color: '#1e4d6b' }}
+        >
+          View &rarr;
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function Checklists() {
   const { profile } = useAuth();
@@ -1314,6 +1409,9 @@ export function Checklists() {
           <h1 className="text-2xl font-bold text-gray-900">{t('checklists.title')}</h1>
           <p className="text-sm text-gray-600 mt-1">{t('checklists.subtitle')}</p>
         </div>
+
+        {/* HACCP Control Points Summary */}
+        <HACCPSummaryCard />
 
         {/* View Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 overflow-x-auto">
