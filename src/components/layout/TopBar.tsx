@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, MapPin, User, Users, Building2, Lock, Eye, EyeOff, BarChart3, Globe, Search, Settings, HelpCircle } from 'lucide-react';
+import { ChevronDown, MapPin, User, Users, Building2, Lock, Eye, EyeOff, Globe, Search, Settings, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
@@ -26,7 +26,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, locations, selectedLocation, onLocationChange, demoMode = false }: TopBarProps) {
-  const { profile, signOut, isEvidlyAdmin } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLocationMenu, setShowLocationMenu] = useState(false);
@@ -377,21 +377,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     >
                       {t('nav.settings')}
                     </button>
-                    {(isEvidlyAdmin || isDemoMode) && (
-                      <>
-                        <div className="border-t border-gray-200 my-1" />
-                        <button
-                          onClick={() => {
-                            navigate('/admin/usage-analytics');
-                            setShowUserMenu(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors duration-150 flex items-center gap-2 font-medium"
-                        >
-                          <BarChart3 className="h-4 w-4" />
-                          {t('nav.usageAnalytics')}
-                        </button>
-                      </>
-                    )}
+                    <div className="border-t border-gray-200 my-1" />
                     <button
                       onClick={handleSignOut}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
