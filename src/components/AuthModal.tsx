@@ -66,8 +66,8 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
               <path d="M28 6L50 14V28C50 43.5 40.5 52.5 28 58C15.5 52.5 6 43.5 6 28V14L28 6Z" fill="#1e4d6b"/>
               <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span style={{ fontWeight:'bold',fontSize:'20px' }}>
-              <span style={{ color:'#d4af37' }}>Evid</span><span style={{ color:'#1b4965' }}>LY</span>
+            <span style={{ fontFamily:'Syne, system-ui, sans-serif',fontWeight:800,fontSize:'20px' }}>
+              <span style={{ color:'#A08C5A' }}>Evid</span><span style={{ color:'#1e4d6b' }}>LY</span>
             </span>
           </div>
           <h2 style={{ fontSize:'24px',fontWeight:'bold',color:'#111',margin:'0' }}>{mode === 'login' ? 'Welcome back' : 'Create your account'}</h2>

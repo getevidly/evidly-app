@@ -13,9 +13,9 @@ export default function Footer() {
                   <path d="M22 32L26 36L34 26" stroke="#d4af37" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="font-['Outfit'] text-[1.25rem] font-bold tracking-tight">
-                <span className="text-white">Evid</span>
-                <span className="text-[var(--color-gold)]">LY</span>
+              <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '20px' }}>
+                <span style={{ color: '#A08C5A' }}>Evid</span>
+                <span style={{ color: '#FFFFFF' }}>LY</span>
               </span>
             </div>
             <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed">
