@@ -139,6 +139,10 @@ const I: Record<string, NavItem> = {
     id: 'service-roi', label: 'Service ROI', path: '/business-intelligence?view=financial', icon: '💰',
     roles: [], description: 'Calculate the return on investment for compliance services and cost of non-compliance.',
   },
+  services: {
+    id: 'services', label: 'Services', path: '/services', icon: '🛠️',
+    roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
+  },
 
   // ── Equipment (Facilities subcategories) ──
   equipment: {
@@ -244,7 +248,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   // ── STAFF ─────────────────────────────────────────────
   kitchen_staff: {
     home: {
-      label: 'Today', labelEs: 'Hoy',
+      label: 'Dashboard', labelEs: 'Panel',
       path: '/dashboard', icon: '🏠',
       description: 'Your daily tasks, checklists, and priorities at a glance.',
       descriptionEs: 'Sus tareas diarias, listas de verificación y prioridades.',
@@ -268,7 +272,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   // ── CHEF ──────────────────────────────────────────────
   chef: {
     home: {
-      label: 'Kitchen', labelEs: 'Cocina',
+      label: 'Dashboard', labelEs: 'Panel',
       path: '/dashboard', icon: '👨‍🍳',
       description: 'Kitchen operations dashboard — tasks, temps, and team overview.',
       descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
@@ -303,19 +307,19 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     },
     sections: [
       section('daily', 'Daily Operations', '✓',
-        'Daily Operations', 'Everything your team does every day to maintain compliance — checklists, temperature logs, and incident reporting.',
+        'Daily Operations', 'Checklists, temperature logs, and incident reporting.',
         [I.checklists, I.incidents, I.temperatures],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documentation, regulatory tracking, reporting, and self-inspection tools.',
-        [I.documents, I.regulatory, I.reporting, I.selfInspection],
+        'Compliance', 'Documentation, regulatory tracking, reporting, self-inspection, and services.',
+        [I.documents, I.regulatory, I.reporting, I.selfInspection, I.services],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Equipment troubleshooting and vendor notification.',
         [I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Team management and account settings.',
+        'Administration', 'Account settings and team management.',
         [I.settings, I.team],
       ),
       section('help', 'Help', '❓',
@@ -335,8 +339,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     },
     sections: [
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Corrective actions, documentation, regulatory tracking, reporting, self-inspections, and vendor certifications.',
-        [I.correctiveActions, I.documents, I.regulatory, I.reporting, I.selfInspection, I.vendorCertifications],
+        'Compliance', 'Corrective actions, documentation, regulatory tracking, reporting, self-inspections, services, and vendor certifications.',
+        [I.correctiveActions, I.documents, I.regulatory, I.reporting, I.selfInspection, I.services, I.vendorCertifications],
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'AI-powered analysis — audit logs, intelligence dashboards, jurisdiction scoring, and violation trends.',
@@ -360,7 +364,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   // ── FACILITIES MANAGER ────────────────────────────────
   facilities_manager: {
     home: {
-      label: 'Equipment', labelEs: 'Equipos',
+      label: 'Dashboard', labelEs: 'Panel',
       path: '/dashboard', icon: '⚙️',
       description: 'Equipment status, maintenance schedules, and vendor services.',
       descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
@@ -371,8 +375,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.hoodExhaust, I.hvac, I.iceMachines, I.refrigeration, I.suppressionSystems],
       ),
       section('service', 'Service', '🤝',
-        'Service', 'Certifications, self-diagnosis, service scheduling, reporting, and vendor management.',
-        [I.certsDocs, I.selfDiagnosis, I.serviceCalendar, I.serviceReporting, I.vendors],
+        'Service', 'Certifications, self-diagnosis, service scheduling, reporting, services, and vendor management.',
+        [I.certsDocs, I.selfDiagnosis, I.serviceCalendar, I.serviceReporting, I.services, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
@@ -384,31 +388,31 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   // ── OWNER / OPERATOR ──────────────────────────────────
   owner_operator: {
     home: {
-      label: 'Portfolio', labelEs: 'Portafolio',
+      label: 'Dashboard', labelEs: 'Panel',
       path: '/dashboard', icon: '🏢',
-      description: 'Multi-location compliance portfolio — scores, alerts, and operational status.',
-      descriptionEs: 'Portafolio de cumplimiento multi-ubicación — puntuaciones, alertas y estado operativo.',
+      description: 'Multi-location compliance overview — alerts, tasks, and operational status.',
+      descriptionEs: 'Resumen de cumplimiento multi-ubicación — alertas, tareas y estado operativo.',
     },
     sections: [
       section('daily', 'Daily Operations', '✓',
-        'Daily Operations', 'Checklists and temperature monitoring across all locations.',
-        [I.checklists, I.temperatures],
+        'Daily Operations', 'Calendar, checklists, and temperature monitoring across all locations.',
+        [I.calendar, I.checklists, I.temperatures],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documents, incidents, corrective actions, self-inspection, and regulatory tracking.',
-        [I.documents, I.incidents, I.selfInspection, I.regulatory, I.correctiveActions],
+        'Compliance', 'Corrective actions, documents, incidents, regulatory tracking, self-inspection, and services.',
+        [I.correctiveActions, I.documents, I.incidents, I.regulatory, I.selfInspection, I.services],
       ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis — business intelligence, analytics, and service ROI.',
-        [I.businessIntelligence, I.analytics, I.serviceROI],
+        'Insights', 'Analytics, business intelligence, and service ROI.',
+        [I.analytics, I.businessIntelligence, I.serviceROI],
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, self-diagnosis, and inspector arrival mode.',
-        [I.calendar, I.selfDiagnosis, I.inspectorArrival],
+        'Tools', 'Inspector arrival mode and self-diagnosis.',
+        [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, location setup, team management, and billing.',
-        [I.equipment, I.locations, I.team, I.billing],
+        'Administration', 'Billing, equipment, locations, settings, team, and vendors.',
+        [I.billing, I.equipment, I.locations, I.settings, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
@@ -420,7 +424,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   // ── EXECUTIVE ─────────────────────────────────────────
   executive: {
     home: {
-      label: 'Insights Dashboard', labelEs: 'Panel de Perspectivas',
+      label: 'Dashboard', labelEs: 'Panel',
       path: '/dashboard', icon: '📊',
       description: 'Organization-wide analytics, benchmarks, and strategic compliance insights.',
       descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
@@ -431,8 +435,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.iotDashboard, I.scoreTable],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Regulatory tracking and compliance reporting.',
-        [I.regulatory, I.reporting],
+        'Compliance', 'Regulatory tracking, compliance reporting, and services.',
+        [I.regulatory, I.reporting, I.services],
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Billing and account settings.',

@@ -7,14 +7,11 @@ import { useDemo } from '../../contexts/DemoContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
-import { locations as demoLocations } from '../../data/demoData';
-import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import {
   getHomeItemForRole,
   getRoleConfig,
   getSectionsForRole,
   checkTestMode,
-  LOCATION_VISIBLE_ROLES,
   type NavItem,
   type SidebarSection,
 } from '../../config/sidebarConfig';
@@ -286,19 +283,6 @@ const SidebarNavItem: React.FC<{
   );
 };
 
-// ── Jurisdiction status dot color ─────────────────────────
-
-function getStatusDotColor(locUrlId: string): string {
-  const overrideKey = `demo-loc-${locUrlId}`;
-  const override = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
-  if (!override) return '#6b7280';
-  const foodStatus = override.foodSafety.status;
-  if (foodStatus === 'failing') return '#dc2626';
-  if (foodStatus === 'at_risk') return '#d97706';
-  if (foodStatus === 'passing') return '#16a34a';
-  return '#6b7280';
-}
-
 const COLLAPSED_SECTIONS_KEY = 'evidly-sidebar-sections';
 
 // ── Sidebar component ───────────────────────────────────
@@ -356,16 +340,6 @@ export function Sidebar() {
     }
     setHoveredSection(sectionId);
   };
-
-  // ── Location section ──
-  const showLocations = LOCATION_VISIBLE_ROLES.includes(userRole);
-  const visibleLocations = useMemo(() => {
-    if (!showLocations) return [];
-    if (userRole === 'kitchen_staff') {
-      return demoLocations.filter(loc => loc.urlId === 'downtown');
-    }
-    return demoLocations;
-  }, [showLocations, userRole]);
 
   // ── Description helper (locale-aware) ──
   const getDescription = useCallback((item: NavItem): string => {
@@ -540,45 +514,6 @@ export function Sidebar() {
             );
           })}
         </nav>
-
-        {/* Locations \u2014 pinned to bottom, role-based visibility */}
-        {showLocations && visibleLocations.length > 0 && (
-          <div className="flex-shrink-0 border-t border-white/10 px-3 py-3">
-            <div className="flex items-center justify-between px-2 mb-2">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">{t('nav.sectionLocations')}</span>
-              {userRole === 'owner_operator' && (
-                <span
-                  onClick={() => navigate('/org-hierarchy')}
-                  className="text-[10px] text-gray-500 hover:text-[#d4af37] cursor-pointer transition-colors"
-                >
-                  {t('nav.editLocations')}
-                </span>
-              )}
-            </div>
-            {visibleLocations.map(loc => {
-              const dotColor = getStatusDotColor(loc.urlId);
-              const params = new URLSearchParams(window.location.search);
-              const currentLoc = params.get('location');
-              const isActive = currentLoc === loc.urlId;
-              return (
-                <div
-                  key={loc.id}
-                  onClick={() => navigate(`/dashboard?location=${loc.urlId}`)}
-                  className={`flex items-center px-2 py-1.5 rounded-md cursor-pointer transition-colors duration-150 ${
-                    isActive ? 'bg-[#1e3a5f] text-white' : 'text-gray-300 hover:bg-[#1e3a5f] hover:text-white'
-                  }`}
-                  {...(isTestMode ? { 'data-testid': `nav-location-${loc.urlId}` } : {})}
-                >
-                  <span
-                    className="w-2 h-2 rounded-full flex-shrink-0 mr-2"
-                    style={{ backgroundColor: dotColor }}
-                  />
-                  <span className="text-xs font-medium truncate">{loc.name}</span>
-                </div>
-              );
-            })}
-          </div>
-        )}
 
         {/* Touchpoint 5: Refer a Kitchen link */}
         <div className="flex-shrink-0 border-t border-white/10 px-4 py-2">
