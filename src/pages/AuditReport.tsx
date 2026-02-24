@@ -291,7 +291,7 @@ const statusBg = (s: string) => {
 
 export function AuditReport() {
   const reportRef = useRef<HTMLDivElement>(null);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   // Config state
   const [dateRange, setDateRange] = useState<DateRange>('30');
@@ -768,7 +768,7 @@ export function AuditReport() {
                         </div>
                         <div>
                           <h4 className="font-bold text-lg text-gray-900">Overall Compliance Score</h4>
-                          <p className="text-sm text-gray-600">Weighted: Food Safety (55%) + Fire Safety (45%)</p>
+                          <p className="text-sm text-gray-600">Food Safety Score + Fire Safety Score</p>
                           <p className="text-xs mt-1 font-semibold" style={{ color: getScoreColor(summary.complianceScore) }}>
                             {summary.complianceScore >= 90 ? 'Inspection Ready' : summary.complianceScore >= 70 ? 'Needs Attention' : 'Critical'}
                           </p>
@@ -1176,6 +1176,7 @@ export function AuditReport() {
         onClose={() => setShowUpgrade(false)}
         feature={upgradeFeature}
         action={upgradeAction}
+        onOverride={handleOverride}
       />
     </>
   );

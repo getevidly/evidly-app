@@ -211,7 +211,7 @@ export default function VendorDetail() {
                     Request Document
                   </button>
                   <button
-                    onClick={() => toast.info('Upload coming soon')}
+                    onClick={() => toast.info('Upload (Demo)')}
                     className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 min-h-[44px]"
                   >
                     <Upload className="h-4 w-4 mr-2" />

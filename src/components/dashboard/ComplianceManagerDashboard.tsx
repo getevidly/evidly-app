@@ -151,9 +151,14 @@ export default function ComplianceManagerDashboard() {
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
-  // Dismissed alerts (session-only)
+  // Dismissed alerts (session-only), capped at 2 highest severity
+  const SEVERITY_ORDER: Record<string, number> = { critical: 0, warning: 1, info: 2 };
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
-  const visibleAlerts = COMPLIANCE_ALERTS.filter(a => !dismissedAlerts.has(a.id));
+  const allVisibleAlerts = COMPLIANCE_ALERTS
+    .filter(a => !dismissedAlerts.has(a.id))
+    .sort((a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9));
+  const hasMoreAlerts = allVisibleAlerts.length > 2;
+  const visibleAlerts = allVisibleAlerts.slice(0, 2);
   const handleDismissAlert = (id: string) => {
     setDismissedAlerts(prev => new Set(prev).add(id));
   };
@@ -514,6 +519,16 @@ export default function ComplianceManagerDashboard() {
             <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
           )}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
+          {hasMoreAlerts && (
+            <button
+              type="button"
+              onClick={() => navigate('/regulatory-alerts')}
+              className="mt-2 text-xs font-medium hover:underline"
+              style={{ color: NAVY }}
+            >
+              {t('cards.viewAll')} alerts &rarr;
+            </button>
+          )}
         </div>
 
         {/* Where Do I Start? */}

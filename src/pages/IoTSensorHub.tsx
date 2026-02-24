@@ -918,7 +918,7 @@ function AnalyticsTab({ data }: { data: { coolerTotal: number; coolerInRange: nu
 // ═══════════════════════════════════════════════════════════════════════════
 
 function SettingsTab() {
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [globalConfig, setGlobalConfig] = useState({
     highTempF: 41, lowTempF: -10, humidityHigh: 70, humidityLow: 20, batteryLowPct: 20,
     defaultPollingMin: 5, autoLogCompliance: true, dataRetentionDays: 90,
@@ -1031,7 +1031,7 @@ Content-Type: application/json
       </div>
     </div>
     {showUpgrade && (
-      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
     )}
     </>
   );

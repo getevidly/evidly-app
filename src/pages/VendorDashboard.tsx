@@ -218,7 +218,7 @@ export function VendorDashboard() {
           <div className="space-y-2">
             {[
               { label: 'Respond to New Leads', count: vendorLeads.filter(l => l.status === 'new').length, action: () => setActiveTab('leads'), icon: Send, color: 'text-blue-600' },
-              { label: 'View Messages', count: unreadMessages, action: () => toast.info('Messages panel coming soon'), icon: MessageSquare, color: 'text-purple-600' },
+              { label: 'View Messages', count: unreadMessages, action: () => toast.info('View Messages (Demo)'), icon: MessageSquare, color: 'text-purple-600' },
               { label: 'Upload Credential', count: expiringCredentials.length, action: () => setActiveTab('documents'), icon: Upload, color: 'text-amber-600' },
               { label: 'Respond to Reviews', count: vendorReviews.filter(r => !r.vendorResponse).length, action: () => setActiveTab('reviews'), icon: Star, color: 'text-yellow-600' },
             ].map(a => (
@@ -342,7 +342,7 @@ export function VendorDashboard() {
               <div className="flex gap-2">
                 {lead.status === 'new' && (
                   <>
-                    <button onClick={() => toast.info(`Quote form for ${lead.operatorOrg} coming soon`)} className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
+                    <button onClick={() => toast.info(`Quote for ${lead.operatorOrg} (Demo)`)} className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]">
                       <Send className="h-3.5 w-3.5 inline mr-1.5" />Send Quote
                     </button>
                     <button onClick={() => toast.info('Lead declined (demo)')} className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50">
@@ -746,7 +746,7 @@ export function VendorDashboard() {
                   <button
                     onClick={() => {
                       if (isCurrent) return;
-                      toast.info(`Upgrade to ${plan.name} coming soon`);
+                      toast.info(`Upgrade to ${plan.name} (Demo)`);
                     }}
                     className={`w-full py-2 text-sm font-medium rounded-lg transition-colors ${
                       isCurrent
@@ -796,7 +796,7 @@ export function VendorDashboard() {
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={() => toast.info('Notification center coming soon')} className="relative p-2 text-gray-500 hover:text-gray-700">
+              <button onClick={() => toast.info('Notifications (Demo)')} className="relative p-2 text-gray-500 hover:text-gray-700">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
               </button>

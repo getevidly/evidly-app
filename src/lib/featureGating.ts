@@ -5,6 +5,7 @@ export interface FeatureDefinition {
   name: string;
   description: string;
   requiredTier: PlanTier;
+  enabled: boolean;             // Admin kill-switch: false = disabled platform-wide
   previewType: 'blur' | 'sample' | 'locked';
   upgradeTier: PlanTier;       // The tier they need to upgrade TO
   upgradePrice: string;         // e.g., "$149/mo"
@@ -18,12 +19,18 @@ const TIER_LEVEL: Record<PlanTier, number> = {
   enterprise: 3,
 };
 
-export function hasAccess(userTier: PlanTier, requiredTier: PlanTier): boolean {
+export function hasAccess(userTier: PlanTier, requiredTier: PlanTier, featureId?: string): boolean {
+  if (featureId && !isFeatureEnabled(featureId)) return false;
   return TIER_LEVEL[userTier] >= TIER_LEVEL[requiredTier];
 }
 
 export function getTierLevel(tier: PlanTier): number {
   return TIER_LEVEL[tier];
+}
+
+/** Universal admin kill-switch. Returns false if feature is globally disabled. */
+export function isFeatureEnabled(featureId: string): boolean {
+  return FEATURES[featureId]?.enabled ?? true;
 }
 
 export const FEATURES: Record<string, FeatureDefinition> = {
@@ -32,6 +39,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'AI Predictive Insights',
     description: 'AI-powered pattern analysis that predicts compliance risks before they become violations.',
     requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
     previewType: 'blur',
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
@@ -42,6 +50,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'Industry Benchmarks',
     description: 'Compare your compliance scores against industry averages and top performers.',
     requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
     previewType: 'sample',
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
@@ -52,6 +61,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'Insurance Risk Score',
     description: 'Risk rating aligned with insurer underwriting criteria to help reduce your premiums.',
     requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
     previewType: 'sample',
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
@@ -62,6 +72,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'Advanced Analytics',
     description: 'Deep-dive charts, custom date ranges, trend analysis, and exportable analytics.',
     requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
     previewType: 'blur',
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
@@ -72,6 +83,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'AI Training Recommendations',
     description: 'Personalized staff training suggestions based on compliance gaps and patterns.',
     requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
     previewType: 'locked',
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
@@ -82,6 +94,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'Enterprise Dashboard',
     description: 'Multi-location comparison, portfolio analytics, and executive reporting.',
     requiredTier: 'enterprise',
+    enabled: false,               // Enable only for enterprise accounts
     previewType: 'blur',
     upgradeTier: 'enterprise',
     upgradePrice: 'Custom',
@@ -92,6 +105,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'Custom Compliance Rules',
     description: 'Add your organization-specific checklist items and scoring rules.',
     requiredTier: 'enterprise',
+    enabled: true,
     previewType: 'locked',
     upgradeTier: 'enterprise',
     upgradePrice: 'Custom',
@@ -102,6 +116,7 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'API Access',
     description: 'Programmatic access to compliance data via REST API.',
     requiredTier: 'enterprise',
+    enabled: true,
     previewType: 'locked',
     upgradeTier: 'enterprise',
     upgradePrice: 'Custom',
@@ -112,10 +127,34 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     name: 'SSO / SAML',
     description: 'Single sign-on integration with your identity provider.',
     requiredTier: 'enterprise',
+    enabled: true,
     previewType: 'locked',
     upgradeTier: 'enterprise',
     upgradePrice: 'Custom',
     upgradeLabel: 'Enterprise',
+  },
+  // ── AI Features (merged from aiTier.ts) ────────────────────────────
+  'predictive-alerts': {
+    id: 'predictive-alerts',
+    name: 'AI Predictive Alerts',
+    description: 'Proactive alerts that predict compliance failures before they happen using pattern analysis.',
+    requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
+    previewType: 'blur',
+    upgradeTier: 'professional',
+    upgradePrice: '$149/mo',
+    upgradeLabel: 'Professional',
+  },
+  'health-dept-drafts': {
+    id: 'health-dept-drafts',
+    name: 'Health Dept AI Drafts',
+    description: 'AI-generated response drafts for health department inquiries and inspection follow-ups.',
+    requiredTier: 'professional',
+    enabled: false,               // Needs data to accumulate
+    previewType: 'sample',
+    upgradeTier: 'professional',
+    upgradePrice: '$149/mo',
+    upgradeLabel: 'Professional',
   },
 };
 
@@ -127,7 +166,7 @@ export function getFeatureDefinition(id: string): FeatureDefinition | undefined 
 export function getFeatureBadge(featureId: string, userTier: PlanTier): 'PRO' | 'ENT' | null {
   const feature = FEATURES[featureId];
   if (!feature) return null;
-  if (hasAccess(userTier, feature.requiredTier)) return null;
+  if (hasAccess(userTier, feature.requiredTier, featureId)) return null;
   if (feature.requiredTier === 'enterprise') return 'ENT';
   return 'PRO';
 }

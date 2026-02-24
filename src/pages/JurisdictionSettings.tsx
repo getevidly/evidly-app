@@ -1,11 +1,12 @@
 // TODO: i18n
 import { type ReactNode, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, MapPin, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
   Award, Calendar, Wrench, ClipboardList, Building2, RotateCcw,
-  Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight,
+  Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight, ArrowRight,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -27,6 +28,7 @@ import {
 } from '../lib/jurisdictionEngine';
 import { CALIFORNIA_STATE_LAWS } from '../lib/californiaLaws';
 import { JURISDICTION_DATABASE, type JurisdictionScore } from '../data/jurisdictionData';
+import { getCountyProfile, extractCountySlug } from '../lib/jurisdictionScoring';
 
 // ── Helper functions ────────────────────────────────────────────
 
@@ -120,6 +122,31 @@ const REGULATION_SUMMARIES: Record<string, string> = {
   'cfc-title24-part9': 'Fire suppression, hood cleaning, Class K extinguishers',
   'ab-1228': 'Fast food chains 60+ locations: $20/hr minimum wage',
 };
+
+// ── Location name → urlId mapping (for scoring-breakdown link) ──
+
+const LOCATION_URL_ID: Record<string, string> = {
+  'Downtown Kitchen': 'downtown',
+  'Airport Cafe': 'airport',
+  'University Dining': 'university',
+};
+
+// Look up jurisdictionData entries for a given county name (e.g. "Fresno County" → "Fresno")
+function getJurisdictionDataForCounty(countyField: string): { food?: JurisdictionScore; fire?: JurisdictionScore } {
+  const countyName = countyField.replace(/\s*County\s*$/i, '').trim();
+  return {
+    food: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'food_safety'),
+    fire: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'fire_safety'),
+  };
+}
+
+function getTransparencyBadge(level: 'high' | 'medium' | 'low'): { label: string; className: string } {
+  switch (level) {
+    case 'high': return { label: 'Public Records', className: 'bg-green-100 text-green-700 border-green-200' };
+    case 'medium': return { label: 'Limited Public', className: 'bg-amber-100 text-amber-700 border-amber-200' };
+    case 'low': return { label: 'FOIA Required', className: 'bg-gray-100 text-gray-600 border-gray-200' };
+  }
+}
 
 // ── Expandable Description Component ────────────────────────────
 
@@ -373,7 +400,7 @@ function AddLocationDialog({
                         Don't see your jurisdiction?{' '}
                         <button
                           type="button"
-                          onClick={() => { setShowDropdown(false); toast.info('More jurisdictions coming soon. Contact support@evidly.com for priority onboarding.'); }}
+                          onClick={() => { setShowDropdown(false); toast.info('Request Jurisdiction (Demo) — Contact support@evidly.com for priority onboarding.'); }}
                           className="text-[#1e4d6b] font-medium hover:underline"
                         >
                           Request it here
@@ -651,6 +678,7 @@ function RegulationToggle({
 // ── Main Page Component ─────────────────────────────────────────
 
 export function JurisdictionSettings() {
+  const navigate = useNavigate();
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
@@ -1198,49 +1226,169 @@ export function JurisdictionSettings() {
                 </CollapsibleSection>
 
                 {/* 4b. Inspection Grading System */}
-                <CollapsibleSection
-                  icon={<EvidlyIcon size={16} />}
-                  title="Inspection Grading System"
-                >
-                  {inspectionSystem ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-500">System type:</span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getInspectionSystemBadge(inspectionSystem.type).color}`}>
-                          {getInspectionSystemBadge(inspectionSystem.type).label}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">{inspectionSystem.details}</p>
-                      {inspectionSystem.grades && inspectionSystem.grades.length > 0 && (
-                        <div className="mt-3">
-                          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-                            Grade Ranges
-                          </h4>
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
-                                <th className="pb-2 pr-4">Grade</th>
-                                <th className="pb-2">Score Range</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {inspectionSystem.grades.map((grade, i) => (
-                                <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
-                                  <td className="py-2 pr-4 font-medium text-gray-700">{grade.label}</td>
-                                  <td className="py-2 text-gray-600">{grade.range}</td>
+                {(() => {
+                  const jData = getJurisdictionDataForCounty(location.county);
+                  const countySlug = extractCountySlug(location.county);
+                  const scoringProfile = getCountyProfile(countySlug);
+                  return (
+                    <CollapsibleSection
+                      icon={<EvidlyIcon size={16} />}
+                      title="Inspection Grading System"
+                    >
+                      {inspectionSystem ? (
+                        <div className="space-y-4">
+                          {/* System type + transparency badge */}
+                          <div className="flex items-center gap-3 flex-wrap">
+                            <span className="text-sm text-gray-500">System type:</span>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-semibold rounded-full border ${getInspectionSystemBadge(inspectionSystem.type).color}`}>
+                              {getInspectionSystemBadge(inspectionSystem.type).label}
+                            </span>
+                            {jData.food && (
+                              <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full border ${getTransparencyBadge(jData.food.transparencyLevel).className}`}>
+                                {getTransparencyBadge(jData.food.transparencyLevel).label}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600">{inspectionSystem.details}</p>
+
+                          {/* Grade Ranges */}
+                          {inspectionSystem.grades && inspectionSystem.grades.length > 0 && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                                Grade Ranges
+                              </h4>
+                              <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                    <th className="pb-2 pr-4">Grade</th>
+                                    <th className="pb-2">Score Range</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {inspectionSystem.grades.map((grade, i) => (
+                                    <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                                      <td className="py-2 pr-4 font-medium text-gray-700">{grade.label}</td>
+                                      <td className="py-2 text-gray-600">{grade.range}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+
+                          {/* A) Point Deductions */}
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                              Point Deductions
+                            </h4>
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="text-left text-xs text-gray-500 uppercase tracking-wide border-b border-gray-200">
+                                  <th className="pb-2 pr-4">Violation Severity</th>
+                                  <th className="pb-2">Points Deducted</th>
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                              </thead>
+                              <tbody>
+                                {[
+                                  { label: 'Critical violation', pts: scoringProfile.deductions.critical },
+                                  { label: 'Major violation', pts: scoringProfile.deductions.major },
+                                  { label: 'Minor violation', pts: scoringProfile.deductions.minor },
+                                  { label: 'Good retail practice', pts: scoringProfile.deductions.good_practice },
+                                ].map((row, i) => (
+                                  <tr key={i} className={i % 2 === 1 ? 'bg-gray-50' : ''}>
+                                    <td className="py-2 pr-4 font-medium text-gray-700">{row.label}</td>
+                                    <td className="py-2 text-gray-600">{row.pts > 0 ? `−${row.pts} pts` : '—'}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Starting score: {scoringProfile.startingScore} · County: {scoringProfile.countyName}
+                            </p>
+                          </div>
+
+                          {/* B) Traffic Light Mapping */}
+                          {jData.food?.trafficLightMapping && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                                Inspection Outcome Indicators
+                              </h4>
+                              <div className="space-y-2">
+                                {([
+                                  { key: 'green' as const, color: 'bg-green-500', borderColor: 'border-green-200', bgColor: 'bg-green-50' },
+                                  { key: 'yellow' as const, color: 'bg-amber-400', borderColor: 'border-amber-200', bgColor: 'bg-amber-50' },
+                                  { key: 'red' as const, color: 'bg-red-500', borderColor: 'border-red-200', bgColor: 'bg-red-50' },
+                                ]).map(({ key, color, borderColor, bgColor }) => {
+                                  const mapping = jData.food!.trafficLightMapping![key];
+                                  return (
+                                    <div key={key} className={`flex items-start gap-3 p-2.5 rounded-lg border ${borderColor} ${bgColor}`}>
+                                      <div className={`w-3 h-3 rounded-full mt-0.5 flex-shrink-0 ${color}`} />
+                                      <div>
+                                        <span className="text-sm font-semibold text-gray-800">{mapping.label}</span>
+                                        <p className="text-xs text-gray-600 mt-0.5">{mapping.condition}</p>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* C) Closure & Re-inspection Policy */}
+                          {(jData.food?.closureTrigger || jData.food?.reinspectionPolicy) && (
+                            <div>
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                                Closure Triggers &amp; Re-inspection
+                              </h4>
+                              <div className="space-y-2 text-sm">
+                                {jData.food.closureTrigger && (
+                                  <div className="flex items-start gap-2">
+                                    <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                    <div>
+                                      <span className="font-medium text-gray-700">Closure trigger:</span>{' '}
+                                      <span className="text-gray-600">{jData.food.closureTrigger}</span>
+                                    </div>
+                                  </div>
+                                )}
+                                {jData.food.reinspectionPolicy && (
+                                  <div className="flex items-start gap-2">
+                                    <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                                    <div>
+                                      <span className="font-medium text-gray-700">Re-inspection:</span>{' '}
+                                      <span className="text-gray-600">{jData.food.reinspectionPolicy}</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* D) Transparency Notes */}
+                          {jData.food?.transparencyNotes && (
+                            <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                              <p className="text-xs text-gray-600">
+                                <strong>Transparency:</strong> {jData.food.transparencyNotes}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* E) NFPA Adoption (fire safety) */}
+                          {jData.fire?.nfpaAdoption && (
+                            <div className="p-3 rounded-lg bg-orange-50 border border-orange-200">
+                              <p className="text-xs text-gray-700">
+                                <strong>NFPA 96 Adoption:</strong> {jData.fire.nfpaAdoption}
+                              </p>
+                            </div>
+                          )}
                         </div>
+                      ) : (
+                        <p className="text-sm text-gray-500 italic">
+                          No inspection grading system data available for this jurisdiction level.
+                        </p>
                       )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 italic">
-                      No inspection grading system data available for this jurisdiction level.
-                    </p>
-                  )}
-                </CollapsibleSection>
+                    </CollapsibleSection>
+                  );
+                })()}
 
                 {/* 5. Service Frequencies */}
                 <CollapsibleSection
@@ -1486,22 +1634,33 @@ export function JurisdictionSettings() {
                 </CollapsibleSection>
 
                 {/* Override Controls */}
-                <div className="px-3 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center gap-3 flex-wrap">
-                  <button
-                    onClick={() =>
-                      toast.info('Override available for Management roles')
-                    }
-                    className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
-                  >
-                    Override
-                  </button>
-                  <button
-                    onClick={() => toast.info('Reset to defaults coming soon')}
-                    className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 flex items-center gap-1.5"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    Reset to Default
-                  </button>
+                <div className="px-3 sm:px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() =>
+                        toast.info('Override available for Management roles')
+                      }
+                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
+                    >
+                      Override
+                    </button>
+                    <button
+                      onClick={() => toast.info('Reset to Defaults (Demo)')}
+                      className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 flex items-center gap-1.5"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      Reset to Default
+                    </button>
+                  </div>
+                  {LOCATION_URL_ID[location.locationName] && (
+                    <button
+                      onClick={() => navigate(`/scoring-breakdown?location=${LOCATION_URL_ID[location.locationName]}`)}
+                      className="text-xs font-medium text-[#1e4d6b] hover:text-[#163a52] flex items-center gap-1 transition-colors"
+                    >
+                      View scoring breakdown
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -1554,7 +1713,7 @@ export function JurisdictionSettings() {
                         <p className="text-xs text-gray-500">{gap.detail}</p>
                       </div>
                       <button
-                        onClick={() => toast.info(`${gap.action || 'Action'} coming soon`)}
+                        onClick={() => toast.info(`${gap.action || 'Action'} (Demo)`)}
                         className="px-3 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
                       >
                         {getGapActionLabel(gap.category)}
@@ -1613,7 +1772,7 @@ export function JurisdictionSettings() {
                       </p>
                     </div>
                     <button
-                      onClick={() => toast.info(`Compliance plan for ${law.billNumber} coming soon`)}
+                      onClick={() => toast.info(`Compliance Plan for ${law.billNumber} (Demo)`)}
                       className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
                       style={{ backgroundColor: '#1e4d6b' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}

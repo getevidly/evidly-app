@@ -1,51 +1,18 @@
-import { useEffect } from 'react';
-import { X, Sparkles } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useRole } from '../contexts/RoleContext';
-import { canBookMeeting } from '../config/sidebarConfig';
-
-const COPY: Record<string, { headline: string; body: string }> = {
-  edit: {
-    headline: 'Unlock Editing',
-    body: 'Start your free trial to edit and manage your records in real-time.',
-  },
-  download: {
-    headline: 'Unlock Downloads',
-    body: 'Start your free trial to download compliance reports, inspection documents, and inspection trails.',
-  },
-  delete: {
-    headline: 'Unlock Full Management',
-    body: 'Start your free trial to fully manage your records — add, edit, and remove as needed.',
-  },
-  export: {
-    headline: 'Unlock Exports',
-    body: 'Start your free trial to export your data as PDF, CSV, or send directly to inspectors.',
-  },
-  print: {
-    headline: 'Unlock Printing',
-    body: 'Start your free trial to print compliance reports and inspection-ready documents.',
-  },
-  invite: {
-    headline: 'Unlock Team Features',
-    body: 'Start your free trial to invite your team and assign roles across your locations.',
-  },
-  settings: {
-    headline: 'Unlock Settings',
-    body: 'Start your free trial to customize your compliance settings, alerts, and workflows.',
-  },
-};
+import { useEffect, useState } from 'react';
+import { X, Lock } from 'lucide-react';
 
 interface DemoUpgradePromptProps {
   action: string;
   featureName?: string;
   onClose: () => void;
+  onOverride?: () => void;
 }
 
-export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradePromptProps) {
-  const navigate = useNavigate();
-  const { userRole } = useRole();
-  const showBooking = canBookMeeting(userRole);
-  const copy = COPY[action] || COPY.edit;
+const OVERRIDE_CODE = 'EVIDLY-DEMO-OVERRIDE';
+
+export function DemoUpgradePrompt({ action: _action, featureName: _featureName, onClose, onOverride }: DemoUpgradePromptProps) {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
 
   // Close on Escape key
   useEffect(() => {
@@ -55,6 +22,16 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (code.trim() === OVERRIDE_CODE) {
+      setError('');
+      onOverride?.();
+    } else {
+      setError('Invalid code.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" onClick={onClose}>
@@ -66,10 +43,10 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
         {/* Header */}
         <div className="bg-[#1e4d6b] px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-[#d4af37]/20 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-[#d4af37]" />
+            <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+              <Lock className="h-5 w-5 text-white" />
             </div>
-            <h3 className="text-lg font-bold text-white">{copy.headline}</h3>
+            <h3 className="text-lg font-bold text-white">Demo Mode</h3>
           </div>
           <button
             onClick={onClose}
@@ -81,38 +58,42 @@ export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradeP
 
         {/* Body */}
         <div className="px-6 py-6">
-          <p className="text-gray-600 text-sm leading-relaxed">
-            {copy.body}
-            {featureName && (
-              <span className="font-medium text-gray-800"> Manage your {featureName} and more.</span>
-            )}
+          <p className="text-gray-700 text-sm leading-relaxed mb-5">
+            This action is disabled in demo mode.
           </p>
 
-          <div className="mt-5 space-y-3">
-            <button
-              onClick={() => { onClose(); navigate('/signup'); }}
-              className="w-full py-3 px-4 bg-[#d4af37] hover:bg-[#c49a2b] text-[#1e4d6b] font-bold rounded-lg transition-colors text-sm"
-            >
-              Start Free Trial — $99/month
-            </button>
-            {showBooking && (
-              <button
-                onClick={() => { onClose(); navigate('/enterprise'); }}
-                className="w-full py-2.5 px-4 text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] rounded-lg transition-colors"
-              >
-                Schedule a Demo Call
-              </button>
+          <form onSubmit={handleSubmit}>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+              Override Code
+            </label>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => { setCode(e.target.value); setError(''); }}
+              placeholder="Enter override code"
+              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b]"
+              autoFocus
+            />
+            {error && (
+              <p className="text-red-600 text-xs mt-1.5">{error}</p>
             )}
-          </div>
 
-          <div className="mt-4 text-center">
-            <button
-              onClick={onClose}
-              className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              Maybe Later
-            </button>
-          </div>
+            <div className="mt-5 flex gap-3">
+              <button
+                type="submit"
+                className="flex-1 py-2.5 px-4 bg-[#1e4d6b] hover:bg-[#163a52] text-white font-medium rounded-lg transition-colors text-sm"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 py-2.5 px-4 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

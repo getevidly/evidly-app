@@ -29,13 +29,12 @@ const en = {
     dashboard: 'Dashboard',
     temperatures: 'Temperatures',
     checklists: 'Checklists',
-    haccp: 'HACCP',
     vendorServices: 'Vendor Services',
     marketplace: 'Marketplace',
     equipment: 'Equipment',
     documentation: 'Documentation',
     calendar: 'Calendar',
-    incidentLog: 'Incident Log',
+    incidentLog: 'Incidents',
     reporting: 'Reporting',
     auditReport: 'Inspection Report',
     scoreBreakdown: 'Compliance Overview',
@@ -146,6 +145,7 @@ const en = {
     serviceCalendar: 'Service Calendar',
     serviceReporting: 'Service Reporting',
     analytics: 'Analytics',
+    intelligence: 'Compliance Intelligence',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -592,7 +592,7 @@ const en = {
 
   // ── Incident Log / Corrective Actions ───────────────
   incidents: {
-    title: 'Incident Log',
+    title: 'Incidents',
     subtitle: 'Track incidents from report through verified resolution',
     reportIncident: 'Report Incident',
     // KPI cards
@@ -631,7 +631,7 @@ const en = {
     assigned: 'Assigned',
     verified: 'Verified',
     // Detail view
-    backToIncidentLog: 'Back to Incident Log',
+    backToIncidentLog: 'Back to Incidents',
     takeAction: 'Take Action',
     resolve: 'Resolve',
     verify: 'Verify',
@@ -1470,13 +1470,12 @@ const es: typeof en = {
     dashboard: 'Panel',
     temperatures: 'Temperaturas',
     checklists: 'Listas de Verificación',
-    haccp: 'HACCP',
     vendorServices: 'Servicios de Proveedores',
     marketplace: 'Mercado',
     equipment: 'Equipos',
     documentation: 'Documentación',
     calendar: 'Calendario',
-    incidentLog: 'Registro de Incidentes',
+    incidentLog: 'Incidentes',
     reporting: 'Reportes',
     auditReport: 'Informe de Inspección',
     scoreBreakdown: 'Desglose de Puntuación',
@@ -1583,6 +1582,7 @@ const es: typeof en = {
     serviceCalendar: 'Calendario de Servicio',
     serviceReporting: 'Reportes de Servicio',
     analytics: 'Analítica',
+    intelligence: 'Inteligencia de Cumplimiento',
   },
 
   common: {
@@ -2004,7 +2004,7 @@ const es: typeof en = {
   },
 
   incidents: {
-    title: 'Registro de Incidentes',
+    title: 'Incidentes',
     subtitle: 'Seguimiento de incidentes desde el reporte hasta la resolución verificada',
     reportIncident: 'Reportar Incidente',
     openIncidents: 'Incidentes Abiertos',
@@ -2037,7 +2037,7 @@ const es: typeof en = {
     reported: 'Reportado',
     assigned: 'Asignado',
     verified: 'Verificado',
-    backToIncidentLog: 'Volver al Registro de Incidentes',
+    backToIncidentLog: 'Volver a Incidentes',
     takeAction: 'Tomar Acción',
     resolve: 'Resolver',
     verify: 'Verificar',

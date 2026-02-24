@@ -218,7 +218,7 @@ export function DocumentChecklist() {
               <button
                 className="text-sm font-medium hover:underline"
                 style={{ color: '#1e4d6b' }}
-                onClick={() => toast.info('Viewer coming soon.')}
+                onClick={() => toast.info('View Document (Demo)')}
               >
                 View
               </button>

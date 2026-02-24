@@ -58,7 +58,7 @@ export default function Passport() {
   const locationData = {
     name: loc.name,
     address: loc.address,
-    overall: scores.overall,
+    overall: null as number | null, // DEPRECATED — no composite score
     foodSafety: scores.foodSafety,
     fireSafety: scores.fireSafety,
   };
@@ -207,27 +207,48 @@ export default function Passport() {
             <p className="text-sm text-gray-500">Last updated: {today}</p>
           </div>
 
-          {/* Overall Score Ring */}
+          {/* Pillar Score Rings */}
           <div className="mb-16">
-            <div className="flex flex-col items-center justify-center mb-8">
-              <div className="relative w-64 h-64">
-                <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="128" cy="128" r="110" stroke="#e5e7eb" strokeWidth="16" fill="none" />
-                  <circle
-                    cx="128" cy="128" r="110"
-                    stroke={getScoreColor(locationData.overall)}
-                    strokeWidth="16" fill="none"
-                    strokeDasharray={`${2 * Math.PI * 110}`}
-                    strokeDashoffset={`${2 * Math.PI * 110 * (1 - locationData.overall / 100)}`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-7xl font-bold" style={{ color: getScoreColor(locationData.overall) }}>{locationData.overall}</div>
-                  <div className="text-lg text-gray-600 font-medium">
-                    {locationData.overall >= 90 ? 'Compliant' : locationData.overall >= 70 ? 'Needs Attention' : 'Critical'}
+            <div className="flex items-center justify-center gap-8 mb-8">
+              {/* Food Safety Ring */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-40 h-40">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
+                    <circle
+                      cx="80" cy="80" r="68"
+                      stroke={getScoreColor(locationData.foodSafety)}
+                      strokeWidth="12" fill="none"
+                      strokeDasharray={`${2 * Math.PI * 68}`}
+                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.foodSafety / 100)}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.foodSafety) }}>{locationData.foodSafety}</div>
                   </div>
                 </div>
+                <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
+              </div>
+              {/* Fire Safety Ring */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-40 h-40">
+                  <svg className="w-full h-full transform -rotate-90">
+                    <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
+                    <circle
+                      cx="80" cy="80" r="68"
+                      stroke={getScoreColor(locationData.fireSafety)}
+                      strokeWidth="12" fill="none"
+                      strokeDasharray={`${2 * Math.PI * 68}`}
+                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.fireSafety / 100)}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.fireSafety) }}>{locationData.fireSafety}</div>
+                  </div>
+                </div>
+                <div className="text-sm font-medium text-gray-600 mt-2">Fire Safety</div>
               </div>
             </div>
           </div>

@@ -1,3 +1,4 @@
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import {
@@ -354,7 +355,7 @@ const statusBg = (s: string) => {
 
 export function AuditTrail() {
   const reportRef = useRef<HTMLDivElement>(null);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   // Config state
   const [dateRange, setDateRange] = useState<DateRange>('30');
@@ -661,7 +662,7 @@ export function AuditTrail() {
       `}</style>
 
       <div className="no-print">
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reporting', href: '/reports' }, { label: 'Inspection Trail' }]} />
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Reporting', href: '/reports' }, { label: 'Inspection Trail & Chain of Custody' }]} />
       </div>
 
       <div className="space-y-6">
@@ -669,7 +670,7 @@ export function AuditTrail() {
         <div className="no-print flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Inspection Trail & Chain of Custody</h1>
-            <p className="text-sm text-gray-600 mt-1">Generate tamper-evident compliance reports with full evidence chain</p>
+            <p className="text-sm text-gray-600 mt-1">Tamper-evident compliance records with full chain of custody</p>
           </div>
           {!generated && (
             <button
@@ -1394,6 +1395,7 @@ export function AuditTrail() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
+        onOverride={handleOverride}
       />
     </>
   );

@@ -2,9 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UtensilsCrossed, Flame,
-  Thermometer, ClipboardList,
-  CheckCircle2, BarChart3, LineChart as LineChartIcon,
-  Settings2, ArrowUp, ArrowDown, Eye, EyeOff, Users, AlertCircle, FileText,
+  BarChart3, LineChart as LineChartIcon,
 } from 'lucide-react';
 import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { useDemo } from '../../contexts/DemoContext';
@@ -17,18 +15,13 @@ import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
-import { FireStatusBars } from '../shared/FireStatusBars';
-import { DEMO_LOCATION_GRADE_OVERRIDES } from '../../data/demoJurisdictions';
 import {
   LOCATIONS_WITH_SCORES,
   DEMO_ORG,
-  DEMO_WEEKLY_ACTIVITY,
 } from '../../data/demoData';
-import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, stagger, DEMO_ROLE_NAMES } from './shared/constants';
+import { GOLD, NAVY, PAGE_BG, BODY_TEXT, MUTED, FONT, JIE_LOC_MAP, KEYFRAMES, DEMO_ROLE_NAMES } from './shared/constants';
 import { DashboardHero } from './shared/DashboardHero';
 import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
-import { WhereDoIStartSection, type PriorityItem } from './shared/WhereDoIStartSection';
-import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { EXECUTIVE_EVENTS, EXECUTIVE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
@@ -51,102 +44,6 @@ const EXEC_ALERTS: AlertItem[] = [
   { id: 'ea1', severity: 'critical', message: 'University Dining Fire Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Fire Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' },
   { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' },
 ];
-
-// ================================================================
-// EXECUTIVE PRIORITY ITEMS
-// ================================================================
-
-const EXEC_PRIORITY_ITEMS: PriorityItem[] = [
-  {
-    id: 'ep1',
-    severity: 'critical',
-    title: 'University location needs attention',
-    detail: 'Fire Safety dropped below 65 — 3 equipment inspections overdue',
-    actionLabel: 'Take Action',
-    route: '/dashboard?location=university',
-  },
-  {
-    id: 'ep2',
-    severity: 'warning',
-    title: 'Review Airport location scoring',
-    detail: 'Walk-in cooler trending warm — 3 out-of-range readings this week',
-    actionLabel: 'View Details',
-    route: '/dashboard?location=airport',
-  },
-  {
-    id: 'ep3',
-    severity: 'info',
-    title: '3 documents expiring this month',
-    detail: 'Health permits and vendor certifications need renewal',
-    actionLabel: 'Review Docs',
-    route: '/documents',
-  },
-];
-
-// AlertBanners — now uses shared component from ../shared/AlertBanner
-
-// ================================================================
-// WIDGET: KPIs — This Week's Performance
-// ================================================================
-
-function WidgetKPIs({ navigate }: { navigate: (path: string) => void }) {
-  const { t } = useTranslation();
-  const kpiRoutes: Record<string, string> = {
-    'Temp Checks': '/temp-logs',
-    'Checklists': '/checklists',
-    'Documents': '/documents',
-    'Incidents': '/incidents',
-    'Team Activity': '/team',
-  };
-  const act = DEMO_WEEKLY_ACTIVITY;
-  const kpis = [
-    { icon: <Thermometer size={18} />, label: t('cards.tempChecks'), routeKey: 'Temp Checks', value: act.tempChecks.total, unit: 'logged', bar: act.tempChecks.onTimePercent, metric: String(act.tempChecks.onTimePercent), metricLabel: 'on time', trend: '\u2191 1.4 vs last week', status: 'good' as const },
-    { icon: <ClipboardList size={18} />, label: t('cards.checklists'), routeKey: 'Checklists', value: act.checklists.completed, unit: `of ${act.checklists.required}`, bar: act.checklists.percent, metric: String(act.checklists.percent), metricLabel: 'completion', trend: '\u2191 2.1 vs last week', status: 'good' as const },
-    { icon: <FileText size={18} />, label: t('cards.documents'), routeKey: 'Documents', value: act.documents.uploaded, unit: 'uploaded', bar: 85, metric: String(act.documents.expiringSoon), metricLabel: 'expiring soon', trend: '\u2014', status: 'warning' as const },
-    { icon: <AlertCircle size={18} />, label: t('cards.incidents'), routeKey: 'Incidents', value: act.incidents.total, unit: 'reported', bar: 75, metric: String(act.incidents.resolved), metricLabel: 'resolved', trend: `\u2193 ${act.incidents.open} open`, status: 'attention' as const },
-    { icon: <Users size={18} />, label: t('cards.teamActivity'), routeKey: 'Team Activity', value: act.activeTeam, unit: 'active staff', bar: 100, metric: '3', metricLabel: 'locations covered', trend: 'full coverage', status: 'good' as const },
-  ];
-
-  const statusColors = { good: '#16a34a', warning: '#d97706', attention: '#dc2626' };
-
-  return (
-    <div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        {kpis.map(kpi => {
-          const borderColor = statusColors[kpi.status];
-          return (
-            <button
-              key={kpi.routeKey}
-              type="button"
-              onClick={() => navigate(kpiRoutes[kpi.routeKey] || '/dashboard')}
-              className="rounded-xl p-3.5 transition-all hover:shadow-md cursor-pointer text-left"
-              style={{ borderTop: `3px solid ${borderColor}`, backgroundColor: '#fafbfc' }}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <span style={{ color: MUTED }}>{kpi.icon}</span>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">{kpi.label}</span>
-              </div>
-              <div className="mb-1">
-                <span style={{ fontSize: 28, fontWeight: 800, color: BODY_TEXT }}>{kpi.value}</span>
-                <span className="text-[11px] text-gray-400 ml-1.5">{kpi.unit}</span>
-              </div>
-              <div className="h-[3px] rounded-full bg-gray-100 overflow-hidden mb-2">
-                <div className="h-full rounded-full" style={{ width: `${kpi.bar}%`, backgroundColor: borderColor }} />
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold" style={{ color: borderColor }}>{kpi.metric}</span>
-                  <span className="text-[10px] text-gray-400 ml-1">{kpi.metricLabel}</span>
-                </div>
-                <span className="text-[10px] text-gray-400">{kpi.trend}</span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 // ================================================================
 // WIDGET: Location Status
@@ -254,25 +151,8 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
   );
 }
 
-
 // ================================================================
-// WIDGET CONFIG
-// ================================================================
-
-interface WidgetConfig {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  visible: boolean;
-}
-
-const DEFAULT_WIDGET_ORDER: WidgetConfig[] = [
-  { id: 'tabbedDetails', label: 'Key Metrics', icon: <LineChartIcon size={14} />, visible: true },
-  { id: 'locations', label: 'Location Status', icon: <Users size={14} />, visible: true },
-];
-
-// ================================================================
-// STRATEGIC ACTIONS BAR (fixed bottom — NOT customizable)
+// STRATEGIC ACTIONS BAR (fixed bottom)
 // ================================================================
 
 function StrategicActionsBar({ navigate }: { navigate: (path: string) => void }) {
@@ -347,6 +227,50 @@ function EvidlyFooter() {
 // MAIN COMPONENT
 // ================================================================
 
+// ================================================================
+// INTELLIGENCE BRIEF CARD (INTEL-HUB-1)
+// ================================================================
+
+function IntelligenceBriefCard({ navigate }: { navigate: (path: string) => void }) {
+  // Static demo data — top critical insight
+  const topInsight = {
+    title: 'Class I Recall: Romaine Lettuce E.coli O157:H7 — California Distribution',
+    headline: 'URGENT: Class I recall for romaine lettuce affects California distributors.',
+    action: 'Check inventory at all locations immediately',
+    criticalCount: 3,
+    highCount: 6,
+  };
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+      <button
+        type="button"
+        onClick={() => navigate('/intelligence')}
+        className="w-full rounded-xl p-4 text-left transition-all hover:shadow-md group"
+        style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: '#dc2626' }}>
+            <span className="text-white text-sm">🧠</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: '#991b1b' }}>Intelligence Alert</span>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-200 text-red-800">{topInsight.criticalCount} Critical</span>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800">{topInsight.highCount} High</span>
+            </div>
+            <p className="text-sm font-semibold leading-tight" style={{ color: '#991b1b' }}>{topInsight.title}</p>
+            <p className="text-xs mt-1" style={{ color: '#7f1d1d' }}>{topInsight.action}</p>
+          </div>
+          <span className="text-xs font-medium shrink-0 group-hover:translate-x-0.5 transition-transform" style={{ color: '#991b1b' }}>
+            View Full Intelligence →
+          </span>
+        </div>
+      </button>
+    </div>
+  );
+}
+
 export default function ExecutiveDashboard() {
   const navigate = useNavigate();
   const { companyName, isDemoMode } = useDemo();
@@ -362,66 +286,18 @@ export default function ExecutiveDashboard() {
 
   // Dismissed alerts (session-only)
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
-  const visibleAlerts = EXEC_ALERTS.filter(a => !dismissedAlerts.has(a.id));
   const handleDismissAlert = useCallback((id: string) => {
     setDismissedAlerts(prev => new Set(prev).add(id));
   }, []);
 
-  // Widget customization
-  const [widgets, setWidgets] = useState<WidgetConfig[]>(DEFAULT_WIDGET_ORDER);
-  const [customizing, setCustomizing] = useState(false);
-
-  const moveWidget = useCallback((index: number, dir: -1 | 1) => {
-    setWidgets(prev => {
-      const next = [...prev];
-      const target = index + dir;
-      if (target < 0 || target >= next.length) return prev;
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
-  }, []);
-
-  const toggleWidget = useCallback((id: string) => {
-    setWidgets(prev => prev.map(w => w.id === id ? { ...w, visible: !w.visible } : w));
-  }, []);
-
-  const visibleWidgets = widgets.filter(w => w.visible);
-
-  // Translated widget labels (can't use hooks at module level in DEFAULT_WIDGET_ORDER)
-  const widgetLabelMap: Record<string, string> = useMemo(() => ({
-    tabbedDetails: t('cards.keyMetrics'),
-    locations: t('cards.locationStatus'),
-  }), [t]);
-
-  // Tabbed detail section: Trend | Key Metrics
-  const tabbedTabs: TabDef[] = useMemo(() => [
-    {
-      id: 'keyMetrics',
-      label: t('cards.keyMetrics'),
-      content: <WidgetKPIs navigate={navigate} />,
-    },
-  ], [navigate, t]);
-
-  const renderWidget = (wid: string) => {
-    switch (wid) {
-      case 'tabbedDetails':
-        return (
-          <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-            <TabbedDetailSection tabs={tabbedTabs} defaultTab="keyMetrics" />
-          </div>
-        );
-      case 'locations': return <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />;
-      default: return null;
-    }
-  };
+  // Show only the highest-severity undismissed alert
+  const topAlert = EXEC_ALERTS.find(a => !dismissedAlerts.has(a.id));
 
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>
 
-      {/* ============================================================ */}
-      {/* HERO (shared DashboardHero + exec-specific children)         */}
-      {/* ============================================================ */}
+      {/* ── 1. HERO ─────────────────────────────────────────── */}
       <DashboardHero
         firstName={DEMO_ROLE_NAMES.executive.firstName}
         orgName={companyName || DEMO_ORG.name}
@@ -431,44 +307,12 @@ export default function ExecutiveDashboard() {
         <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
       </DashboardHero>
 
-      {/* ============================================================ */}
-      {/* ABOVE THE FOLD                                                */}
-      {/* ============================================================ */}
+      {/* ── 1b. INTELLIGENCE BRIEF CARD ────────────────────── */}
+      <IntelligenceBriefCard navigate={navigate} />
 
-      {/* AI Intelligence Brief — dominant dark card */}
+      {/* ── 2. KPI TILES (5: Score, Risk, Locations, Deadline, AI Risk) ── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
-        <div
-          className="rounded-xl p-6"
-          style={{
-            background: 'linear-gradient(135deg, #1c2a3f 0%, #263d56 50%, #2f4a66 100%)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          }}
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <EvidlyIcon size={18} />
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">AI Intelligence Brief</span>
-          </div>
-          <p className="text-white text-sm font-medium leading-relaxed mb-2">
-            University Dining has 3 overdue fire equipment inspections creating <span className="font-bold text-red-300">$12,400 potential liability exposure</span>.
-            Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week may trigger regulatory action.
-          </p>
-          <p className="text-slate-300 text-xs">
-            Portfolio risk is elevated. Recommend prioritizing University reinspection and Airport temp monitoring.
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/compliance-copilot')}
-            className="mt-3 text-xs font-semibold px-4 py-2 rounded-lg"
-            style={{ backgroundColor: 'rgba(196,154,43,0.2)', color: GOLD, border: `1px solid ${GOLD}40` }}
-          >
-            Ask AI Advisor &rarr;
-          </button>
-        </div>
-      </div>
-
-      {/* 4 Metric Tiles — Portfolio %, Risk $, Locations, Next Deadline */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <button
             type="button"
             onClick={() => navigate('/compliance')}
@@ -509,24 +353,37 @@ export default function ExecutiveDashboard() {
             <p className="text-lg font-bold" style={{ color: '#92400e' }}>Feb 28</p>
             <p className="text-[11px] text-amber-700 mt-0.5">Reinspection due</p>
           </button>
+          <button
+            type="button"
+            onClick={() => navigate('/ai-advisor')}
+            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            style={{ backgroundColor: '#f0f4ff', border: '1px solid #c7d2fe', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
+          >
+            <div className="flex items-center gap-1.5 mb-1">
+              <EvidlyIcon size={12} />
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">AI Risk Exposure</p>
+            </div>
+            <p className="text-2xl font-bold" style={{ color: '#4338ca' }}>$12.4K</p>
+            <p className="text-[11px] text-indigo-600 mt-0.5">AI-identified liability</p>
+          </button>
         </div>
       </div>
 
-      {/* ============================================================ */}
-      {/* BELOW THE FOLD                                                */}
-      {/* ============================================================ */}
+      {/* ── BELOW THE FOLD ──────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-8 space-y-6">
 
-        {/* Alert Banners */}
-        {visibleAlerts.length > 0 && (
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+        {/* 3. Single most-critical alert */}
+        {topAlert && (
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+            <AlertBanner alerts={[topAlert] as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
+          </div>
         )}
-        <AlertBanner alerts={visibleAlerts as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
 
-        {/* Where Do I Start? — executive-focused priorities */}
-        <WhereDoIStartSection items={EXEC_PRIORITY_ITEMS} staggerOffset={2} tooltipContent={useTooltip('urgentItems', userRole)} />
+        {/* 4. Location Status Cards */}
+        <WidgetLocations jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
 
-        {/* Schedule Calendar */}
+        {/* 5. Calendar */}
         <ErrorBoundary level="widget">
           <CalendarCard
             events={EXECUTIVE_EVENTS}
@@ -537,97 +394,11 @@ export default function ExecutiveDashboard() {
           />
         </ErrorBoundary>
 
-        {/* Widget Section */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-700">{t('cards.yourDashboard')}</h3>
-            <button
-              type="button"
-              onClick={() => setCustomizing(prev => !prev)}
-              className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-              style={{
-                color: customizing ? '#92400e' : NAVY,
-                backgroundColor: customizing ? '#fefce8' : '#f1f5f9',
-                border: customizing ? `1px solid ${GOLD}` : '1px solid transparent',
-              }}
-            >
-              {customizing ? <CheckCircle2 size={13} /> : <Settings2 size={13} />}
-              {customizing ? t('cards.doneCustomizing') : t('cards.customizeDashboard')}
-            </button>
-          </div>
-
-          {/* Customization instruction banner */}
-          {customizing && (
-            <div className="mb-4 p-2.5 rounded-lg text-[12px] font-medium text-center"
-              style={{ backgroundColor: '#fefce8', border: '1px solid #fde68a', color: '#92400e' }}>
-              Reorder with arrows &middot; Click to show/hide
-            </div>
-          )}
-
-          {/* Widget pills */}
-          {customizing && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {widgets.map(w => (
-                <button
-                  key={w.id}
-                  type="button"
-                  onClick={() => toggleWidget(w.id)}
-                  className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full transition-colors"
-                  style={w.visible ? {
-                    backgroundColor: '#fefce8',
-                    color: '#92400e',
-                    border: `1px solid ${GOLD}`,
-                  } : {
-                    backgroundColor: '#f9fafb',
-                    color: MUTED,
-                    border: '1px solid #e5e7eb',
-                    textDecoration: 'line-through',
-                  }}
-                >
-                  {w.visible ? <Eye size={12} /> : <EyeOff size={12} />}
-                  {widgetLabelMap[w.id] || w.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Widget grid */}
-          <div className="space-y-5">
-            {visibleWidgets.map((w, idx) => (
-              <div key={w.id} className="relative">
-                {customizing && (
-                  <div className="absolute -top-1 right-2 z-10 flex items-center gap-0.5 bg-white rounded-lg shadow-sm border border-gray-200 p-0.5">
-                    <button
-                      type="button"
-                      onClick={() => moveWidget(widgets.findIndex(wi => wi.id === w.id), -1)}
-                      className="p-1 rounded hover:bg-gray-100 transition-colors"
-                      disabled={idx === 0}
-                    >
-                      <ArrowUp size={12} className={idx === 0 ? 'text-gray-200' : 'text-gray-500'} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => moveWidget(widgets.findIndex(wi => wi.id === w.id), 1)}
-                      className="p-1 rounded hover:bg-gray-100 transition-colors"
-                      disabled={idx === visibleWidgets.length - 1}
-                    >
-                      <ArrowDown size={12} className={idx === visibleWidgets.length - 1 ? 'text-gray-200' : 'text-gray-500'} />
-                    </button>
-                  </div>
-                )}
-                <div style={customizing ? { border: `2px dashed ${GOLD}`, borderRadius: 16, padding: 2 } : undefined}>
-                  {renderWidget(w.id)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer (locked) */}
+        {/* Footer */}
         <EvidlyFooter />
       </div>
 
-      {/* Strategic Actions Bar (fixed bottom — NOT customizable) */}
+      {/* Strategic Actions Bar (fixed bottom) */}
       <StrategicActionsBar navigate={navigate} />
     </div>
   );

@@ -669,10 +669,6 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
-    food_safety_weight: null, // from jurisdictions table — null until verified
-    fire_safety_weight: null,
-    ops_weight: null,
-    docs_weight: null,
   },
 
   'demo-loc-airport': {
@@ -710,10 +706,6 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
-    food_safety_weight: null,
-    fire_safety_weight: null,
-    ops_weight: null,
-    docs_weight: null,
   },
 
   'demo-loc-university': {
@@ -751,9 +743,6 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
-    food_safety_weight: null,
-    fire_safety_weight: null,
-    ops_weight: null,
-    docs_weight: null,
   },
 };
+

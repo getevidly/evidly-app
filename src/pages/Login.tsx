@@ -37,7 +37,7 @@ export function Login() {
   }, [user, navigate]);
 
   const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-  const captchaEnabled = recaptchaKey && recaptchaKey !== '6Le_...your-site-key';
+  const captchaEnabled = false;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import {
   LayoutDashboard, Building2, Network, KeyRound, Users, Palette, FileText,
   LogOut, ChevronRight, ChevronDown, Award,
@@ -294,7 +295,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
                   const critItems = countCriticalItems(div);
                   const trend = nodeTrend(div.id);
                   return (
-                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => showToast(`Drill down to ${div.name} — coming soon`)}>
+                    <tr key={div.id} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onClick={() => showToast(`Drill into ${div.name} (Demo)`)}>
                       <td className="px-3 py-2.5">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: LEVEL_COLORS.division }} />
@@ -461,7 +462,7 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Export Inspection Log', icon: Download },
             { label: 'View All Alerts', icon: AlertTriangle },
           ].map(a => (
-            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">
+            <button key={a.label} onClick={() => showToast(`${a.label} (Demo)`)} className="flex items-center gap-2 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer text-left">
               <a.icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
               <span className="text-xs font-medium text-gray-700">{a.label}</span>
             </button>
@@ -480,7 +481,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <h3 className="text-sm font-semibold text-gray-900">All Tenants ({enterpriseTenants.length})</h3>
-        <button onClick={() => showToast('Provision New Tenant — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Provision Tenant (Demo)')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
           + New Tenant
         </button>
       </div>
@@ -581,7 +582,7 @@ function TenantManagementTab({ showToast }: { showToast: (msg: string) => void }
               {/* Actions */}
               <div className="flex items-center gap-2 mt-4 flex-wrap">
                 {['Edit Config', 'View Users', 'Test SSO', 'Export Data'].map(label => (
-                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName} — coming soon`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                  <button key={label} onClick={() => showToast(`${label} for ${t.displayName} (Demo)`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                     {label}
                   </button>
                 ))}
@@ -799,8 +800,8 @@ function HierarchyTab({ showToast }: { showToast: (msg: string) => void }) {
 
           <div className="flex items-center gap-2 flex-wrap">
             <button onClick={() => showToast('Hierarchy configuration saved')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>Save Config</button>
-            <button onClick={() => showToast('Add hierarchy level — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">+ Add Level</button>
-            <button onClick={() => showToast('Reset to default — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">Reset</button>
+            <button onClick={() => showToast('Add Level (Demo)')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">+ Add Level</button>
+            <button onClick={() => showToast('Reset to Default (Demo)')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">Reset</button>
           </div>
         </div>
       )}
@@ -1160,10 +1161,10 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
           />
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={() => showToast('Provision user — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => showToast('Provision User (Demo)')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
             <UserPlus className="h-3.5 w-3.5" /> Provision
           </button>
-          <button onClick={() => showToast('Export user list — coming soon')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+          <button onClick={() => showToast('Export Users (Demo)')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
             <Download className="h-3.5 w-3.5" /> Export
           </button>
           <button onClick={() => showToast('SCIM sync triggered')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
@@ -1221,7 +1222,7 @@ function UserDirectoryTab({ showToast }: { showToast: (msg: string) => void }) {
         </div>
         <div className="px-4 py-2 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
           <p className="text-[10px] text-gray-500">{filtered.length} of {enterpriseUsers.length} users</p>
-          <button onClick={() => showToast('Bulk actions — coming soon')} className="text-[10px] font-medium cursor-pointer" style={{ color: '#1e4d6b' }}>Bulk Actions</button>
+          <button onClick={() => showToast('Bulk Actions (Demo)')} className="text-[10px] font-medium cursor-pointer" style={{ color: '#1e4d6b' }}>Bulk Actions</button>
         </div>
       </div>
     </div>
@@ -1425,7 +1426,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
           <button onClick={() => setShowBuilder(!showBuilder)} className={`px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer border ${showBuilder ? 'border-blue-300 bg-blue-50 text-blue-700' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
             {showBuilder ? 'Close Builder' : 'Custom Report Builder'}
           </button>
-          <button onClick={() => showToast('Create template — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
+          <button onClick={() => showToast('New Template (Demo)')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer" style={{ backgroundColor: '#1e4d6b' }}>
             + New Template
           </button>
         </div>
@@ -1591,7 +1592,7 @@ function ReportsTab({ showToast }: { showToast: (msg: string) => void }) {
                 <button onClick={() => showToast(`Generating ${selectedTemplate.name}...`)} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
                   Generate Report
                 </button>
-                <button onClick={() => showToast('Edit template — coming soon')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+                <button onClick={() => showToast('Edit Template (Demo)')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
                   Edit
                 </button>
                 <button onClick={() => showToast('Template duplicated')} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
@@ -1653,7 +1654,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
             {enterpriseTenants.map(t => <option key={t.id} value={t.id}>{t.displayName.split(' ')[0]}</option>)}
           </select>
         </div>
-        <button onClick={() => showToast('Add integration — coming soon')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => showToast('Add Integration (Demo)')} className="px-3 py-1.5 rounded-lg text-white text-xs font-medium cursor-pointer min-h-[44px]" style={{ backgroundColor: '#1e4d6b' }}>
           + Add Integration
         </button>
       </div>
@@ -1705,7 +1706,7 @@ function IntegrationsTab({ showToast }: { showToast: (msg: string) => void }) {
                         )}
                       </div>
                     </div>
-                    <button onClick={() => showToast(`Configure ${intg.providerName} — coming soon`)} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer flex-shrink-0">
+                    <button onClick={() => showToast(`Configure ${intg.providerName} (Demo)`)} className="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer flex-shrink-0">
                       <Settings className="h-3.5 w-3.5 text-gray-400" />
                     </button>
                   </div>
@@ -1747,7 +1748,7 @@ function BulkOpsTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Assign Vendors', icon: Users },
             { label: 'Provision Users', icon: UserPlus },
           ].map(a => (
-            <button key={a.label} onClick={() => showToast(`${a.label} — coming soon`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
+            <button key={a.label} onClick={() => showToast(`${a.label} (Demo)`)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 cursor-pointer min-h-[44px]">
               <a.icon className="h-3.5 w-3.5" />
               {a.label}
             </button>

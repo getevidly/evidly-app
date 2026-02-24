@@ -1392,7 +1392,7 @@ export function TrainingHub() {
             <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => toast.info('AI Study Companion coming soon')}
+            <button onClick={() => toast.info('AI Study Companion (Demo)')}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={14} /> AI Study Companion
             </button>

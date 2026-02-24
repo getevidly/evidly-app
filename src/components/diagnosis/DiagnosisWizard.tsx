@@ -387,7 +387,7 @@ export const DiagnosisWizard: React.FC = () => {
                 const evidenceNote = evidence.length > 0 ? ` Evidence: ${evidence.join(', ')}.` : '';
 
                 toast.success(`Notification sent to Manager and Owner/Operator.${evidenceNote}`);
-                alert('Incident logged in EvidLY. In production, this creates a corrective action record with the diagnosis details and any attached evidence.');
+                toast.info('Incident logged in EvidLY. In production, this creates a corrective action record with the diagnosis details and any attached evidence.');
               }}
               style={{
                 flex: 1, background: '#1e4d6b', border: 'none',

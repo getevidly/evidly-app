@@ -22,6 +22,8 @@ export type TooltipSection =
 export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = {
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
   overallScore: {
+    platform_admin:
+      'Your combined food safety and fire safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
     owner_operator:
       'Your combined food safety and fire safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
     executive:
@@ -38,6 +40,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'This shows how your location is doing on health and safety. Complete your assigned tasks to keep it green.',
   },
   fireSafety: {
+    platform_admin:
+      'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     owner_operator:
       'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     executive:
@@ -54,6 +58,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Green means your kitchen\'s fire safety systems are current. If you see red, tell your manager immediately.',
   },
   urgentItems: {
+    platform_admin:
+      'High-priority items across all locations requiring immediate action. These carry the greatest regulatory and liability risk.',
     owner_operator:
       'High-priority items across all locations requiring immediate action. These carry the greatest regulatory and liability risk.',
     executive:
@@ -70,6 +76,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'These are your most important tasks right now. Complete them first before moving on to other assignments.',
   },
   todaysProgress: {
+    platform_admin:
+      'Daily checklist completion rate across all locations. Resets at midnight local time.',
     owner_operator:
       'Daily checklist completion rate across all locations. Resets at midnight local time.',
     executive:
@@ -86,6 +94,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Here\'s what\'s on your list for today. Check off each task as you complete it.',
   },
   locationCards: {
+    platform_admin:
+      'Each card reflects that location\'s active jurisdiction, verified scoring methodology, and current compliance posture.',
     owner_operator:
       'Each card reflects that location\'s active jurisdiction, verified scoring methodology, and current compliance posture.',
     executive:
@@ -105,6 +115,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
   // ── TOOLTIPS-2 (11 new sections) ──────────────────────────
 
   locationScoreCard: {
+    platform_admin:
+      'This location\'s combined food and fire compliance score under its active jurisdiction. Tap to drill into inspection history and open items.',
     owner_operator:
       'This location\'s combined food and fire compliance score under its active jurisdiction. Tap to drill into inspection history and open items.',
     executive:
@@ -121,6 +133,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'This is how your kitchen is doing. Green is good \u2014 complete your tasks to keep it that way.',
   },
   checklistCard: {
+    platform_admin:
+      'Daily operational checklists across all locations. Completion rates feed into compliance documentation and inspection readiness.',
     owner_operator:
       'Daily operational checklists across all locations. Completion rates feed into compliance documentation and inspection readiness.',
     executive:
@@ -137,6 +151,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Your tasks for today. Check off each one as you go \u2014 your manager can see your progress.',
   },
   incidentCard: {
+    platform_admin:
+      'Logged incidents across all locations. Each incident creates a compliance record \u2014 unresolved incidents are flagged during inspections.',
     owner_operator:
       'Logged incidents across all locations. Each incident creates a compliance record \u2014 unresolved incidents are flagged during inspections.',
     executive:
@@ -153,6 +169,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'If something goes wrong in the kitchen, log it here. Your manager will follow up.',
   },
   equipmentCard: {
+    platform_admin:
+      'Equipment assets across all locations with maintenance status. Overdue service on fire suppression or hood systems creates compliance risk.',
     owner_operator:
       'Equipment assets across all locations with maintenance status. Overdue service on fire suppression or hood systems creates compliance risk.',
     executive:
@@ -169,6 +187,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'If a piece of equipment isn\'t working right, tap here to report it.',
   },
   vendorCard: {
+    platform_admin:
+      'Vendors servicing your locations \u2014 hood cleaning, grease management, fire suppression, and more. Service records feed directly into compliance documentation.',
     owner_operator:
       'Vendors servicing your locations \u2014 hood cleaning, grease management, fire suppression, and more. Service records feed directly into compliance documentation.',
     executive:
@@ -185,6 +205,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Vendors may be on-site for scheduled maintenance. Your manager will let you know in advance.',
   },
   reportsCard: {
+    platform_admin:
+      'Compliance reports across all locations \u2014 inspection history, score trends, and documentation exports for audits or lender review.',
     owner_operator:
       'Compliance reports across all locations \u2014 inspection history, score trends, and documentation exports for audits or lender review.',
     executive:
@@ -201,6 +223,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'You don\'t have access to reports. Ask your manager if you need documentation.',
   },
   jurisdictionCard: {
+    platform_admin:
+      'Each location is mapped to its actual enforcement jurisdiction. Scores reflect that agency\'s verified methodology \u2014 not a generic standard.',
     owner_operator:
       'Each location is mapped to its actual enforcement jurisdiction. Scores reflect that agency\'s verified methodology \u2014 not a generic standard.',
     executive:
@@ -217,6 +241,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'This shows who inspects your kitchen and what the rules are.',
   },
   teamCard: {
+    platform_admin:
+      'Staff assignments and role access across all locations. Control who can view, edit, or export compliance data.',
     owner_operator:
       'Staff assignments and role access across all locations. Control who can view, edit, or export compliance data.',
     executive:
@@ -233,6 +259,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Your team and their contact information.',
   },
   auditLogCard: {
+    platform_admin:
+      'A timestamped record of every action taken in your compliance system \u2014 who did what and when. Immutable and exportable for regulatory review.',
     owner_operator:
       'A timestamped record of every action taken in your compliance system \u2014 who did what and when. Immutable and exportable for regulatory review.',
     executive:
@@ -249,6 +277,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'You don\'t have access to the audit log.',
   },
   alertBanner: {
+    platform_admin:
+      'Active alerts across all locations. Critical alerts require immediate action and affect your compliance standing.',
     owner_operator:
       'Active alerts across all locations. Critical alerts require immediate action and affect your compliance standing.',
     executive:
@@ -265,6 +295,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'If you see a red alert, tell your manager right away.',
   },
   bottomBarActions: {
+    platform_admin:
+      'Quick actions for your most common tasks \u2014 scan a QR code, log an incident, or start a checklist.',
     owner_operator:
       'Quick actions for your most common tasks \u2014 scan a QR code, log an incident, or start a checklist.',
     executive:
@@ -281,6 +313,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Your daily actions \u2014 tap to start a checklist, scan a station QR code, or report an issue.',
   },
   scheduleCalendar: {
+    platform_admin:
+      'Upcoming maintenance deadlines, vendor visits, permit renewals, and inspection windows across all locations.',
     owner_operator:
       'Upcoming maintenance deadlines, vendor visits, permit renewals, and inspection windows across all locations.',
     executive:
@@ -303,6 +337,8 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
 export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> = {
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
   overallScore: {
+    platform_admin:
+      'Su puntuación combinada de seguridad alimentaria y seguridad contra incendios en todas las ubicaciones, ponderada por la metodología verificada de cada jurisdicción. Esto es lo que los reguladores y auditores ven.',
     owner_operator:
       'Su puntuación combinada de seguridad alimentaria y seguridad contra incendios en todas las ubicaciones, ponderada por la metodología verificada de cada jurisdicción. Esto es lo que los reguladores y auditores ven.',
     executive:
@@ -319,6 +355,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Esto muestra cómo le va a su ubicación en salud y seguridad. Complete sus tareas asignadas para mantenerlo en verde.',
   },
   fireSafety: {
+    platform_admin:
+      'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
     owner_operator:
       'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
     executive:
@@ -335,6 +373,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Verde significa que los sistemas de seguridad contra incendios de su cocina están al día. Si ve rojo, informe a su gerente de inmediato.',
   },
   urgentItems: {
+    platform_admin:
+      'Elementos de alta prioridad en todas las ubicaciones que requieren acción inmediata. Estos conllevan el mayor riesgo regulatorio y de responsabilidad.',
     owner_operator:
       'Elementos de alta prioridad en todas las ubicaciones que requieren acción inmediata. Estos conllevan el mayor riesgo regulatorio y de responsabilidad.',
     executive:
@@ -351,6 +391,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Estas son sus tareas más importantes en este momento. Complételas primero antes de pasar a otras asignaciones.',
   },
   todaysProgress: {
+    platform_admin:
+      'Tasa de finalización de listas de verificación diarias en todas las ubicaciones. Se reinicia a medianoche hora local.',
     owner_operator:
       'Tasa de finalización de listas de verificación diarias en todas las ubicaciones. Se reinicia a medianoche hora local.',
     executive:
@@ -367,6 +409,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Esto es lo que tiene en su lista para hoy. Marque cada tarea a medida que la complete.',
   },
   locationCards: {
+    platform_admin:
+      'Cada tarjeta refleja la jurisdicción activa de esa ubicación, la metodología de puntuación verificada y la postura de cumplimiento actual.',
     owner_operator:
       'Cada tarjeta refleja la jurisdicción activa de esa ubicación, la metodología de puntuación verificada y la postura de cumplimiento actual.',
     executive:
@@ -386,6 +430,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
   // ── TOOLTIPS-2 (11 new sections) ──────────────────────────
 
   locationScoreCard: {
+    platform_admin:
+      'La puntuación combinada de cumplimiento alimentario e incendios de esta ubicación bajo su jurisdicción activa. Toque para profundizar en el historial de inspecciones y elementos abiertos.',
     owner_operator:
       'La puntuación combinada de cumplimiento alimentario e incendios de esta ubicación bajo su jurisdicción activa. Toque para profundizar en el historial de inspecciones y elementos abiertos.',
     executive:
@@ -402,6 +448,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Así le va a su cocina. Verde es bueno — complete sus tareas para mantenerlo así.',
   },
   checklistCard: {
+    platform_admin:
+      'Listas de verificación operativas diarias en todas las ubicaciones. Las tasas de finalización alimentan la documentación de cumplimiento y la preparación para inspecciones.',
     owner_operator:
       'Listas de verificación operativas diarias en todas las ubicaciones. Las tasas de finalización alimentan la documentación de cumplimiento y la preparación para inspecciones.',
     executive:
@@ -418,6 +466,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Sus tareas para hoy. Marque cada una a medida que avanza — su gerente puede ver su progreso.',
   },
   incidentCard: {
+    platform_admin:
+      'Incidentes registrados en todas las ubicaciones. Cada incidente crea un registro de cumplimiento — los incidentes sin resolver se señalan durante las inspecciones.',
     owner_operator:
       'Incidentes registrados en todas las ubicaciones. Cada incidente crea un registro de cumplimiento — los incidentes sin resolver se señalan durante las inspecciones.',
     executive:
@@ -434,6 +484,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Si algo sale mal en la cocina, regístrelo aquí. Su gerente dará seguimiento.',
   },
   equipmentCard: {
+    platform_admin:
+      'Activos de equipo en todas las ubicaciones con estado de mantenimiento. El servicio atrasado en sistemas de supresión de incendios o campanas crea riesgo de cumplimiento.',
     owner_operator:
       'Activos de equipo en todas las ubicaciones con estado de mantenimiento. El servicio atrasado en sistemas de supresión de incendios o campanas crea riesgo de cumplimiento.',
     executive:
@@ -450,6 +502,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Si un equipo no funciona correctamente, toque aquí para reportarlo.',
   },
   vendorCard: {
+    platform_admin:
+      'Proveedores que dan servicio a sus ubicaciones — limpieza de campanas, gestión de grasa, supresión de incendios y más. Los registros de servicio alimentan directamente la documentación de cumplimiento.',
     owner_operator:
       'Proveedores que dan servicio a sus ubicaciones — limpieza de campanas, gestión de grasa, supresión de incendios y más. Los registros de servicio alimentan directamente la documentación de cumplimiento.',
     executive:
@@ -466,6 +520,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Los proveedores pueden estar en el sitio para mantenimiento programado. Su gerente le informará con anticipación.',
   },
   reportsCard: {
+    platform_admin:
+      'Informes de cumplimiento en todas las ubicaciones — historial de inspecciones, tendencias de puntuación y exportaciones de documentación para auditorías o revisión de prestamistas.',
     owner_operator:
       'Informes de cumplimiento en todas las ubicaciones — historial de inspecciones, tendencias de puntuación y exportaciones de documentación para auditorías o revisión de prestamistas.',
     executive:
@@ -482,6 +538,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'No tiene acceso a informes. Consulte a su gerente si necesita documentación.',
   },
   jurisdictionCard: {
+    platform_admin:
+      'Cada ubicación está mapeada a su jurisdicción de aplicación real. Las puntuaciones reflejan la metodología verificada de esa agencia — no un estándar genérico.',
     owner_operator:
       'Cada ubicación está mapeada a su jurisdicción de aplicación real. Las puntuaciones reflejan la metodología verificada de esa agencia — no un estándar genérico.',
     executive:
@@ -498,6 +556,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Esto muestra quién inspecciona su cocina y cuáles son las reglas.',
   },
   teamCard: {
+    platform_admin:
+      'Asignaciones de personal y acceso por rol en todas las ubicaciones. Controle quién puede ver, editar o exportar datos de cumplimiento.',
     owner_operator:
       'Asignaciones de personal y acceso por rol en todas las ubicaciones. Controle quién puede ver, editar o exportar datos de cumplimiento.',
     executive:
@@ -514,6 +574,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Su equipo y su información de contacto.',
   },
   auditLogCard: {
+    platform_admin:
+      'Un registro con marca de tiempo de cada acción realizada en su sistema de cumplimiento — quién hizo qué y cuándo. Inmutable y exportable para revisión regulatoria.',
     owner_operator:
       'Un registro con marca de tiempo de cada acción realizada en su sistema de cumplimiento — quién hizo qué y cuándo. Inmutable y exportable para revisión regulatoria.',
     executive:
@@ -530,6 +592,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'No tiene acceso al registro de auditoría.',
   },
   alertBanner: {
+    platform_admin:
+      'Alertas activas en todas las ubicaciones. Las alertas críticas requieren acción inmediata y afectan su posición de cumplimiento.',
     owner_operator:
       'Alertas activas en todas las ubicaciones. Las alertas críticas requieren acción inmediata y afectan su posición de cumplimiento.',
     executive:
@@ -546,6 +610,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Si ve una alerta roja, informe a su gerente de inmediato.',
   },
   bottomBarActions: {
+    platform_admin:
+      'Acciones rápidas para sus tareas más comunes — escanear un código QR, registrar un incidente o iniciar una lista de verificación.',
     owner_operator:
       'Acciones rápidas para sus tareas más comunes — escanear un código QR, registrar un incidente o iniciar una lista de verificación.',
     executive:
@@ -562,6 +628,8 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Sus acciones diarias — toque para iniciar una lista de verificación, escanear un código QR de estación o reportar un problema.',
   },
   scheduleCalendar: {
+    platform_admin:
+      'Próximas fechas límite de mantenimiento, visitas de proveedores, renovaciones de permisos y ventanas de inspección en todas las ubicaciones.',
     owner_operator:
       'Próximas fechas límite de mantenimiento, visitas de proveedores, renovaciones de permisos y ventanas de inspección en todas las ubicaciones.',
     executive:
@@ -594,16 +662,16 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
 
   // Daily Operations
   'checklists':       { label: 'Checklists',          description: 'Daily task lists for food safety, temperature logs, and opening/closing procedures.' },
-  'temperatures':     { label: 'Temperatures',        description: 'Manual, QR, or IoT-based temperature recording for receiving, storage, and cooking.' },
+  'temperatures':     { label: 'Temperatures',        description: 'Manual, QR Code, or Internet of Things-based temperature recording for receiving, storage, and cooking.' },
   'log-temp':         { label: 'Log Temp',            description: 'Quick-log a temperature reading for your station.' },
-  'iot-monitoring':   { label: 'IoT Monitoring',      description: 'Live sensor data from connected temperature probes and equipment monitors.' },
+  'iot-monitoring':   { label: 'Internet of Things Monitoring',      description: 'Live sensor data from connected temperature probes and equipment monitors.' },
   'fire-safety':      { label: 'Fire Safety',         description: 'NFPA 96 compliance status \u2014 permits, hood cleaning, extinguishers, and suppression systems.' },
   'incidents':        { label: 'Incidents',           description: 'Log and track safety or compliance incidents. Each entry creates a timestamped compliance record.' },
 
   // Records & Assets
   'documents':        { label: 'Documents',           description: 'Compliance certificates, inspection reports, and permit documentation for all locations.' },
   'equipment':        { label: 'Equipment',           description: 'Asset register for all kitchen equipment with service history and next-due maintenance dates.' },
-  'haccp':            { label: 'HACCP',               description: 'Hazard Analysis and Critical Control Points \u2014 food safety plans and monitoring records.' },
+  'haccp':            { label: 'Hazard Analysis Critical Control Points',               description: 'Hazard Analysis and Critical Control Points \u2014 food safety plans and monitoring records.' },
   'vendors':          { label: 'Vendors',             description: 'Service providers assigned to your locations \u2014 hood cleaning, grease management, fire suppression, and more.' },
   'photos':           { label: 'Photos',              description: 'Photo evidence for inspections, incidents, and compliance documentation.' },
   'training':         { label: 'Training',            description: 'Staff training courses, certifications, and compliance education tracking.' },
@@ -612,7 +680,7 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'compliance':       { label: 'Compliance Overview',  description: 'Jurisdiction-verified scoring breakdown for food safety and fire safety across all locations.' },
   'self-inspection':  { label: 'Self-Inspection',     description: 'Run a self-inspection using the same criteria your health department or fire AHJ applies.' },
   'inspector':        { label: 'Inspector View',      description: 'See your location through an inspector\'s eyes \u2014 the same view they use during walkthroughs.' },
-  'ai-copilot':       { label: 'AI Copilot',          description: 'AI-powered compliance assistant for answering questions and generating action plans.' },
+  'ai-copilot':       { label: 'Artificial Intelligence Copilot',          description: 'Artificial Intelligence-powered compliance assistant for answering questions and generating action plans.' },
   'regulatory':       { label: 'Regulatory Updates',  description: 'Track upcoming inspection windows, permit renewals, and regulatory changes by jurisdiction.' },
   'reporting':        { label: 'Reporting',           description: 'Export compliance summaries, inspection history, and documentation packages for audits.' },
   'alerts':           { label: 'Alerts',              description: 'Active compliance alerts and notifications requiring attention across your locations.' },
@@ -642,9 +710,9 @@ export const sidebarTooltipContentEs: Record<string, SidebarTooltipItem> = {
 
   // Operaciones Diarias
   'checklists':       { label: 'Listas de Verificación', description: 'Listas de tareas diarias para seguridad alimentaria, registros de temperatura y procedimientos de apertura/cierre.' },
-  'temperatures':     { label: 'Temperaturas',         description: 'Registro de temperatura manual, por QR o IoT para recepción, almacenamiento y cocción.' },
+  'temperatures':     { label: 'Temperaturas',         description: 'Registro de temperatura manual, por QR Code o Internet of Things para recepción, almacenamiento y cocción.' },
   'log-temp':         { label: 'Registrar Temp',       description: 'Registre rápidamente una lectura de temperatura para su estación.' },
-  'iot-monitoring':   { label: 'Monitoreo IoT',        description: 'Datos en vivo de sensores de sondas de temperatura y monitores de equipo conectados.' },
+  'iot-monitoring':   { label: 'Monitoreo Internet of Things',        description: 'Datos en vivo de sensores de sondas de temperatura y monitores de equipo conectados.' },
   'fire-safety':      { label: 'Seguridad Contra Incendios', description: 'Estado de cumplimiento NFPA 96 — permisos, limpieza de campanas, extintores y sistemas de supresión.' },
   'incidents':        { label: 'Incidentes',           description: 'Registre y dé seguimiento a incidentes de seguridad o cumplimiento. Cada entrada crea un registro de cumplimiento con marca de tiempo.' },
 

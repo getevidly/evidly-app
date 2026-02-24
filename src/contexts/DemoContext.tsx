@@ -147,6 +147,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     try {
       sessionStorage.removeItem(DEMO_KEY);
       sessionStorage.removeItem(LEAD_KEY);
+      sessionStorage.removeItem('evidly_demo_override');
     } catch {}
   };
 

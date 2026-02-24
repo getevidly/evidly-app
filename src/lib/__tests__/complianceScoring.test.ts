@@ -5,23 +5,9 @@ import {
   getScoreStatus,
   getScoreInfo,
   getGraduatedPenalty,
-  DEFAULT_WEIGHTS,
 } from '../complianceScoring';
 
 describe('complianceScoring', () => {
-  // ─── PILLAR_WEIGHTS ───────────────────────────────────
-  describe('DEFAULT_WEIGHTS', () => {
-    it('Food Safety + Fire Safety weights sum to 1.0', () => {
-      const sum = DEFAULT_WEIGHTS.foodSafety + DEFAULT_WEIGHTS.fireSafety;
-      expect(sum).toBeCloseTo(1.0);
-    });
-
-    it('Food Safety = 55%, Fire Safety = 45%', () => {
-      expect(DEFAULT_WEIGHTS.foodSafety).toBe(0.55);
-      expect(DEFAULT_WEIGHTS.fireSafety).toBe(0.45);
-    });
-  });
-
   // ─── getScoreColor ─────────────────────────────────────
   describe('getScoreColor', () => {
     it('90+ → green', () => expect(getScoreColor(90)).toBe('#22c55e'));

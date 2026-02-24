@@ -9,7 +9,6 @@ export default function PassportDemo() {
   });
 
   const complianceData = {
-    overall: 92,
     foodSafety: 95,
     fireSafety: 89
   };
@@ -64,33 +63,38 @@ export default function PassportDemo() {
         </div>
 
         <div className="mb-16">
-          <div className="flex flex-col items-center justify-center mb-8">
-            <div className="relative w-64 h-64">
-              <svg className="w-full h-full transform -rotate-90">
-                <circle
-                  cx="128"
-                  cy="128"
-                  r="110"
-                  stroke="#e5e7eb"
-                  strokeWidth="16"
-                  fill="none"
-                />
-                <circle
-                  cx="128"
-                  cy="128"
-                  r="110"
-                  stroke="#10b981"
-                  strokeWidth="16"
-                  fill="none"
-                  strokeDasharray={`${2 * Math.PI * 110}`}
-                  strokeDashoffset={`${2 * Math.PI * 110 * (1 - complianceData.overall / 100)}`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-7xl font-bold text-[#1e4d6b]">{complianceData.overall}</div>
-                <div className="text-lg text-gray-600 font-medium">Compliant</div>
+          <div className="flex items-center justify-center gap-8 mb-8">
+            {/* Food Safety Ring */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-40 h-40">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
+                  <circle cx="80" cy="80" r="68" stroke="#10b981" strokeWidth="12" fill="none"
+                    strokeDasharray={`${2 * Math.PI * 68}`}
+                    strokeDashoffset={`${2 * Math.PI * 68 * (1 - complianceData.foodSafety / 100)}`}
+                    strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.foodSafety}</div>
+                </div>
               </div>
+              <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
+            </div>
+            {/* Fire Safety Ring */}
+            <div className="flex flex-col items-center">
+              <div className="relative w-40 h-40">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
+                  <circle cx="80" cy="80" r="68" stroke="#10b981" strokeWidth="12" fill="none"
+                    strokeDasharray={`${2 * Math.PI * 68}`}
+                    strokeDashoffset={`${2 * Math.PI * 68 * (1 - complianceData.fireSafety / 100)}`}
+                    strokeLinecap="round" />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.fireSafety}</div>
+                </div>
+              </div>
+              <div className="text-sm font-medium text-gray-600 mt-2">Fire Safety</div>
             </div>
           </div>
         </div>

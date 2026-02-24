@@ -187,7 +187,7 @@ export function VendorProfile() {
                 <Send className="h-4 w-4" /> Request Quote
               </button>
               <button
-                onClick={() => toast.info("Messaging feature coming soon")}
+                onClick={() => toast.info("Messaging (Demo)")}
                 className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor

@@ -18,6 +18,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
+import { FeatureGate } from '../components/FeatureGate';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { getAiTier, isFeatureAvailable } from '../lib/aiTier';
@@ -56,7 +57,7 @@ export function InsuranceSettings() {
   const { userRole } = useRole();
   const { isDemoMode, presenterMode } = useDemo();
   const aiTier = getAiTier(isDemoMode, presenterMode);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   const [sharingEnabled, setSharingEnabled] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
@@ -224,12 +225,7 @@ export function InsuranceSettings() {
           </div>
         </div>
 
-        {!isFeatureAvailable(aiTier, 'predictiveAlerts') ? (
-          <AiUpgradePrompt
-            feature="Insurance API Key Management"
-            description="Generate and manage API keys for insurance carriers to access your real-time risk score data through authenticated API endpoints."
-          />
-        ) : (
+        <FeatureGate featureId="ai-predictive-insights">
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
@@ -279,7 +275,7 @@ export function InsuranceSettings() {
               </div>
             </div>
           </div>
-        )}
+        </FeatureGate>
       </div>
 
       {/* API Documentation Preview */}
@@ -409,6 +405,7 @@ export function InsuranceSettings() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
+        onOverride={handleOverride}
       />
     </div>
   );

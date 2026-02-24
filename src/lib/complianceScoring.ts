@@ -36,21 +36,6 @@ export type IndustryVertical =
   | 'K12_EDUCATION'
   | 'HIGHER_EDUCATION';
 
-export interface PillarWeights {
-  foodSafety: number;
-  fireSafety: number;
-}
-
-export const INDUSTRY_WEIGHTS: Record<IndustryVertical, PillarWeights> = {
-  RESTAURANT:       { foodSafety: 0.55, fireSafety: 0.45 },
-  HEALTHCARE:       { foodSafety: 0.60, fireSafety: 0.40 },
-  SENIOR_LIVING:    { foodSafety: 0.60, fireSafety: 0.40 },
-  K12_EDUCATION:    { foodSafety: 0.55, fireSafety: 0.45 },
-  HIGHER_EDUCATION: { foodSafety: 0.55, fireSafety: 0.45 },
-};
-
-export const DEFAULT_WEIGHTS = INDUSTRY_WEIGHTS.RESTAURANT;
-
 // --------------- Color Thresholds (4-Tier) ---------------
 // Retained for UI components that need color-coding
 

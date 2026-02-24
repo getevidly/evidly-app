@@ -52,9 +52,9 @@ export function QuickSwitcher() {
       id: `loc-${loc.urlId}`,
       label: loc.name,
       sublabel: loc.address,
-      href: `/dashboard?location=${loc.urlId}`,
+      href: `/scoring-breakdown?location=${loc.urlId}`,
       type: 'location' as const,
-      score: locationScores[loc.urlId]?.overall ?? 0,
+      score: locationScores[loc.urlId]?.foodSafety ?? 0,
       icon: MapPin,
     })),
   []);

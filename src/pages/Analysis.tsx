@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info, Clock, ChevronDown, UserPlus, X, CheckCircle2, ShieldAlert, Eye, Loader2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
-import { scoreImpactData, locations, getWeights } from '../data/demoData';
+import { scoreImpactData, locations } from '../data/demoData';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -579,7 +579,7 @@ export function Analysis() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Predictive Alerts' }]} />
+      <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Analytics' }]} />
 
       {/* Toast */}
       {toastMessage && (
@@ -901,7 +901,7 @@ export function Analysis() {
               <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', marginBottom: '16px', ...F }}>Compliance Trends</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety ({Math.round(getWeights().foodSafety * 100)}% weight)</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Food Safety</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.foodSafety}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -917,7 +917,7 @@ export function Analysis() {
                   </p>
                 </div>
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety ({Math.round(getWeights().fireSafety * 100)}% weight)</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={currentTrends.fireSafety}>
                       <CartesianGrid strokeDasharray="3 3" />

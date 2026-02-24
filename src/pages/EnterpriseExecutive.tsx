@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import {
   TrendingUp, TrendingDown, MapPin, CheckCircle, AlertTriangle,
   ArrowUp, ArrowDown, Minus, ChevronRight, ExternalLink, X, Loader2, CheckCircle2,
@@ -185,7 +186,7 @@ export function EnterpriseExecutive() {
     if (node && node.children && node.children.length > 0) {
       setDrillDownNodeId(nodeId);
     } else {
-      showToast(`View ${node?.name || 'location'} detail — coming soon`);
+      showToast(`View ${node?.name || 'location'} (Demo)`);
     }
   }
 

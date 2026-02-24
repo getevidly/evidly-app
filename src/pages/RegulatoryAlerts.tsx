@@ -331,7 +331,7 @@ export function RegulatoryAlerts() {
                             <span className={action.completed ? 'text-gray-500' : 'text-gray-700'}>{action.text}</span>
                             {!action.completed && action.actionType === 'upload' && (
                               <button
-                                onClick={() => toast.info("File upload coming soon")}
+                                onClick={() => toast.info("File Upload (Demo)")}
                                 className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
                               >
                                 <Upload className="w-3 h-3" />

@@ -264,7 +264,7 @@ function createDemoPhotos(): GalleryPhoto[] {
 
 export function PhotoEvidencePage() {
   const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   // View mode
   const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -836,6 +836,7 @@ export function PhotoEvidencePage() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
+          onOverride={handleOverride}
         />
       )}
     </>

@@ -1,3 +1,4 @@
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -106,7 +107,7 @@ export function ComplianceIntelligence() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('command');
   const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
@@ -171,6 +172,7 @@ export function ComplianceIntelligence() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
+        onOverride={handleOverride}
       />
     </div>
   );

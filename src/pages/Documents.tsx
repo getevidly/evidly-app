@@ -171,7 +171,7 @@ export function Documents() {
   const [showPhotoCapture, setShowPhotoCapture] = useState(false);
   const [docPhotos, setDocPhotos] = useState<PhotoRecord[]>([]);
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
@@ -853,7 +853,7 @@ export function Documents() {
       </div>
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

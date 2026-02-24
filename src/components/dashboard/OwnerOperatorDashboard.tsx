@@ -2,11 +2,9 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle, Check,
-  Thermometer, ClipboardList, FileUp, Bot,
   CheckCircle2, Hammer, AlertCircle,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
-import { useTranslation } from '../../contexts/LanguageContext';
 import {
   useDashboardData,
   type TaskItem,
@@ -154,54 +152,6 @@ function TodaysTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
           View all {tasks.length} tasks &rarr;
         </button>
       )}
-    </div>
-  );
-}
-
-
-// ================================================================
-// QUICK ACTIONS BAR (bottom nav chrome)
-// ================================================================
-
-function QuickActionsBar({ navigate }: { navigate: (path: string) => void }) {
-  const { t } = useTranslation();
-  const actions = [
-    { icon: <Thermometer size={16} />, label: t('actions.logTemp'), route: '/temp-logs' },
-    { icon: <ClipboardList size={16} />, label: t('cards.checklists'), route: '/checklists' },
-    { icon: <FileUp size={16} />, label: t('actions.uploadDoc'), route: '/documents' },
-    { icon: <Bot size={16} />, label: t('actions.aiAdvisor'), route: '/compliance-copilot' },
-  ];
-
-  return (
-    <div
-      className="fixed bottom-0 left-0 right-0 z-[9998] flex items-center justify-center gap-2 sm:gap-4 px-4"
-      style={{
-        height: 56,
-        backgroundColor: 'white',
-        borderTop: '1px solid #e5e7eb',
-        boxShadow: '0 -2px 8px rgba(0,0,0,0.06)',
-      }}
-    >
-      {actions.map(a => (
-        <button
-          key={a.label}
-          type="button"
-          onClick={() => navigate(a.route)}
-          className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg text-[13px] transition-colors min-h-[44px]"
-          style={{ color: '#6b7280', backgroundColor: '#f9fafb' }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = '#fefce8';
-            (e.currentTarget as HTMLElement).style.border = `1px solid ${GOLD}`;
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = '#f9fafb';
-            (e.currentTarget as HTMLElement).style.border = '1px solid transparent';
-          }}
-        >
-          {a.icon}
-          <span className="hidden sm:inline">{a.label}</span>
-        </button>
-      ))}
     </div>
   );
 }
@@ -407,8 +357,6 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* Quick Actions Bar */}
-      <QuickActionsBar navigate={navigate} />
     </div>
   );
 }

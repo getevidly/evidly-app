@@ -9,6 +9,7 @@ export interface NavItem {
   icon: string;
   roles: string[];
   description: string;
+  badge?: string;
 }
 
 export interface SidebarSection {
@@ -19,6 +20,7 @@ export interface SidebarSection {
   tooltipTitle: string;
   tooltipDescription: string;
   items: NavItem[];
+  path?: string;
 }
 
 export interface RoleHomeItem {
@@ -47,11 +49,19 @@ const I: Record<string, NavItem> = {
   },
   temperatures: {
     id: 'temperatures', label: 'Temperature Logs', path: '/temp-logs', icon: '🌡️',
-    roles: [], description: 'Record temperatures manually, via QR scan, or from IoT sensors — storage, receiving, and cooking.',
+    roles: [], description: 'Record temperatures manually, via QR Code scan, or from Internet of Things sensors — storage, receiving, and cooking.',
   },
   incidents: {
     id: 'incidents', label: 'Incidents', path: '/incidents', icon: '⚠️',
     roles: [], description: 'Log and track food safety or compliance incidents with timestamped, immutable records.',
+  },
+  incidentsViewOnly: {
+    id: 'incidents', label: 'Incidents 👁', path: '/incidents', icon: '⚠️',
+    roles: [], description: '(View) Review incident reports and compliance issues across locations.',
+  },
+  temperaturesViewOnly: {
+    id: 'temperatures', label: 'Temperature Logs 👁', path: '/temp-logs', icon: '🌡️',
+    roles: [], description: '(View) Review temperature monitoring records and compliance history.',
   },
 
   // ── Compliance ──
@@ -75,26 +85,27 @@ const I: Record<string, NavItem> = {
     id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
     roles: [], description: 'Track and resolve compliance violations with documented corrective action plans and follow-up verification.',
   },
-  vendorCertifications: {
-    id: 'vendor-certifications', label: 'Vendor Certifications', path: '/vendor-certifications', icon: '📄',
-    roles: [], description: 'Verify and track vendor compliance certifications, insurance documents, and licensing status.',
-  },
   fireSafety: {
     id: 'fire-safety', label: 'Fire Safety', path: '/fire-safety', icon: '🔥',
     roles: [], description: 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
   },
 
   // ── Insights ──
+  intelligence: {
+    id: 'intelligence', label: 'Compliance Intelligence', path: '/intelligence', icon: '🧠',
+    roles: [], description: 'EvidLY Intelligence — cross-location pattern detection, predictive risk scoring, and proactive compliance recommendations.',
+    badge: 'NEW',
+  },
   aiInsights: {
-    id: 'ai-insights', label: 'AI Insights', path: '/ai-advisor', icon: '🤖',
-    roles: [], description: 'AI-powered compliance advisor — ask questions, get recommendations, and analyze trends.',
+    id: 'ai-insights', label: 'Artificial Intelligence Insights', path: '/ai-advisor', icon: '🤖',
+    roles: [], description: 'Artificial Intelligence-powered compliance advisor — ask questions, get recommendations, and analyze trends.',
   },
   analytics: {
-    id: 'analytics', label: 'Analytics', path: '/analysis', icon: '📈',
+    id: 'analytics', label: 'Predictive Analytics', path: '/analysis', icon: '📈',
     roles: [], description: 'Trend data for compliance scores, incident frequency, and checklist completion across locations and time.',
   },
   auditLog: {
-    id: 'audit-log', label: 'Audit Log', path: '/audit-trail', icon: '🔒',
+    id: 'audit-log', label: 'Inspection Trail & Chain of Custody', path: '/audit-trail', icon: '🔒',
     roles: [], description: 'Immutable timestamped record of every action taken in EvidLY — required for regulatory documentation.',
   },
   benchmarks: {
@@ -103,37 +114,21 @@ const I: Record<string, NavItem> = {
   },
   businessIntelligence: {
     id: 'business-intelligence', label: 'Business Intelligence', path: '/business-intelligence', icon: '💡',
-    roles: [], description: 'AI executive briefings, scenario intelligence engine, jurisdiction scores, and risk analysis across your full portfolio.',
+    roles: [], description: 'Artificial Intelligence executive briefings, scenario intelligence engine, jurisdiction scores, and risk analysis across your full portfolio.',
   },
   iotDashboard: {
-    id: 'iot-dashboard', label: 'IoT Dashboard', path: '/iot-monitoring', icon: '📡',
+    id: 'iot-dashboard', label: 'Internet of Things Dashboard', path: '/iot-monitoring', icon: '📡',
     roles: [], description: 'Real-time sensor data — temperature sensors, refrigeration monitoring, and automated compliance readings.',
   },
   jurisdictionIntelligence: {
     id: 'jurisdiction-intelligence', label: 'Jurisdiction Intelligence', path: '/jurisdiction', icon: '⚖️',
     roles: [], description: 'Jurisdiction-specific compliance scoring, regulatory requirements, and authority-having-jurisdiction mapping.',
   },
-  scoreTable: {
-    id: 'score-table', label: 'ScoreTable', path: '/scoring-breakdown', icon: '🎯',
-    roles: [], description: 'Detailed compliance score breakdown by pillar — food safety, fire safety, and vendor compliance.',
-  },
-  violationTrends: {
-    id: 'violation-trends', label: 'Violation Trends', path: '/violation-trends', icon: '📉',
-    roles: [], description: 'Analyze violation patterns over time to identify systemic issues and improvement opportunities.',
-  },
 
   // ── Tools ──
   selfDiagnosis: {
     id: 'self-diagnosis', label: 'Self-Diagnosis', path: '/self-diagnosis', icon: '🔧',
     roles: [], description: 'Troubleshoot equipment issues, get resolution steps, attach photo + video, and notify your vendor — in under 2 minutes.',
-  },
-  reportIssue: {
-    id: 'report-issue', label: 'Report an Issue', path: '/incidents', icon: '🚨',
-    roles: [], description: 'Report a people, process, or safety incident with timestamped records.',
-  },
-  exportCenter: {
-    id: 'export-center', label: 'Export Center', path: '/export-center', icon: '📤',
-    roles: [], description: 'Export compliance reports, documentation packages, and data extracts in multiple formats.',
   },
   calendar: {
     id: 'calendar', label: 'Calendar', path: '/calendar', icon: '📅',
@@ -143,82 +138,50 @@ const I: Record<string, NavItem> = {
     id: 'inspector-arrival', label: 'Inspector Arrival Mode', path: '/inspector-view', icon: '🏛️',
     roles: [], description: 'Instant access mode when an inspector arrives — surfaces documents, recent logs, and compliance status.',
   },
+  iotSensors: {
+    id: 'iot-sensors', label: 'Internet of Things Sensors', path: '/sensors', icon: '📡',
+    roles: [], description: 'Add, configure, and manage Internet of Things temperature sensors across your locations.',
+  },
+  foodSafetyOverview: {
+    id: 'food-safety-overview', label: 'Food Safety', path: '/scoring-breakdown', icon: '🍽️',
+    roles: [], description: 'Food safety compliance scoring, critical control points, and inspection readiness overview.',
+  },
   serviceROI: {
-    id: 'service-roi', label: 'Service ROI', path: '/business-intelligence?view=financial', icon: '💰',
+    id: 'service-roi', label: 'Service Return on Investment', path: '/business-intelligence', icon: '💰',
     roles: [], description: 'Calculate the return on investment for compliance services and cost of non-compliance.',
   },
   services: {
-    id: 'services', label: 'Services', path: '/services', icon: '🛠️',
-    roles: [], description: 'Log and track vendor-provided service records — hood cleaning, HVAC, pest control, and fire suppression.',
+    id: 'services', label: 'Vendor Services', path: '/services', icon: '🛠️',
+    roles: [], description: 'Log and track vendor-provided service records — hood cleaning, Heating Ventilation and Air Conditioning, pest control, and fire suppression.',
   },
 
   // ── Equipment (Facilities subcategories) ──
+  allEquipment: {
+    id: 'all-equipment', label: 'All Equipment', path: '/equipment', icon: '📦',
+    roles: [], description: 'Full equipment registry — all kitchen assets, service history, and maintenance schedules.',
+  },
   equipment: {
     id: 'equipment', label: 'Equipment', path: '/equipment', icon: '⚙️',
     roles: [], description: 'Asset register for all kitchen equipment with service history, maintenance dates, and warranty tracking.',
   },
-  hoodExhaust: {
-    id: 'hood-exhaust', label: 'Hood and Exhaust', path: '/equipment/hood-exhaust', icon: '🏭',
-    roles: [], description: 'Hood and exhaust system maintenance, cleaning schedules, and fire suppression inspections.',
-  },
-  hvac: {
-    id: 'hvac', label: 'HVAC', path: '/equipment/hvac', icon: '❄️',
-    roles: [], description: 'Heating, ventilation, and air conditioning system maintenance and service records.',
-  },
-  iceMachines: {
-    id: 'ice-machines', label: 'Ice Machines', path: '/equipment/ice-machines', icon: '🧊',
-    roles: [], description: 'Ice machine maintenance, cleaning schedules, and water quality monitoring.',
-  },
-  refrigeration: {
-    id: 'refrigeration', label: 'Refrigeration', path: '/equipment/refrigeration', icon: '🥶',
-    roles: [], description: 'Walk-in coolers, freezers, and refrigeration units — temperature monitoring and service records.',
-  },
-  suppressionSystems: {
-    id: 'suppression-systems', label: 'Suppression Systems', path: '/equipment/suppression-systems', icon: '🧯',
-    roles: [], description: 'Fire suppression system inspections, certifications, and maintenance compliance.',
-  },
 
   // ── Service (Facilities) ──
-  certsDocs: {
-    id: 'certs-docs', label: 'Certifications and Documents', path: '/documents', icon: '📋',
-    roles: [], description: 'Equipment certifications, service documentation, and compliance records.',
-  },
-  serviceCalendar: {
-    id: 'service-calendar', label: 'Service Calendar', path: '/calendar', icon: '📅',
-    roles: [], description: 'Scheduled maintenance, vendor service appointments, and inspection dates.',
-  },
   serviceReporting: {
-    id: 'service-reporting', label: 'Service Reporting', path: '/reports', icon: '📊',
+    id: 'service-reporting', label: 'Reporting', path: '/reports', icon: '📊',
     roles: [], description: 'Service history reports, maintenance compliance summaries, and vendor performance data.',
   },
   vendors: {
     id: 'vendors', label: 'Vendors', path: '/vendors', icon: '🤝',
-    roles: [], description: 'Service providers on file — hood cleaning, HVAC, pest, plumbing, roofing, and fire suppression.',
+    roles: [], description: 'Service providers on file — hood cleaning, Heating Ventilation and Air Conditioning, pest, plumbing, roofing, and fire suppression.',
   },
 
   // ── Food Safety (Chef) ──
-  allergenTracking: {
-    id: 'allergen-tracking', label: 'Allergen Tracking', path: '/allergen-tracking', icon: '⚠️',
-    roles: [], description: 'Track allergen presence in menu items, cross-contamination risks, and allergen-free preparation zones.',
-  },
-  coolingLogs: {
-    id: 'cooling-logs', label: 'Cooling Logs', path: '/cooling-logs', icon: '❄️',
-    roles: [], description: 'Record cooling times and temperatures for cooked foods to ensure safe cooling compliance.',
-  },
   haccp: {
-    id: 'haccp', label: 'HACCP Control Points', path: '/haccp', icon: '🛡️',
-    roles: [], description: 'Monitor critical control points, hazard analysis, and HACCP plan compliance.',
-  },
-  receivingLog: {
-    id: 'receiving-log', label: 'Receiving Log', path: '/receiving-log', icon: '📦',
-    roles: [], description: 'Log incoming deliveries with temperature checks, quality inspections, and supplier verification.',
+    id: 'haccp', label: 'Hazard Analysis Critical Control Points', path: '/haccp', icon: '🛡️',
+    roles: [], description: 'Monitor critical control points, hazard analysis, and Hazard Analysis Critical Control Points plan compliance.',
   },
 
   // ── Administration ──
-  billing: {
-    id: 'billing', label: 'Billing', path: '/billing', icon: '💳',
-    roles: [], description: 'Manage your EvidLY subscription, payment method, and invoice history.',
-  },
   locations: {
     id: 'locations', label: 'Locations', path: '/org-hierarchy', icon: '📍',
     roles: [], description: 'Add, edit, or configure locations including jurisdiction mapping and compliance requirements.',
@@ -245,13 +208,58 @@ function section(
   id: string, label: string, icon: string,
   tooltipTitle: string, tooltipDescription: string,
   items: NavItem[],
+  path?: string,
 ): SidebarSection {
-  return { id, label, icon, roles: [], tooltipTitle, tooltipDescription, items };
+  return { id, label, icon, roles: [], tooltipTitle, tooltipDescription, items, ...(path ? { path } : {}) };
 }
 
 // ── Per-Role Sidebar Configurations ──────────────────────
 
 const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
+
+  // ── PLATFORM ADMIN (Arthur — software owner) ──────────
+  platform_admin: {
+    home: {
+      label: 'Dashboard', labelEs: 'Panel',
+      path: '/dashboard', icon: '🛡️',
+      description: 'Platform admin — full access to every feature, every location, every tool.',
+      descriptionEs: 'Administrador de plataforma — acceso total a todas las funciones.',
+    },
+    sections: [
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Calendar, checklists, and temperature monitoring across all locations.',
+        [I.calendar, I.checklists, I.temperatures, I.incidents],
+      ),
+      section('food-safety', 'Food Safety', '🛡️',
+        'Food Safety', 'Hazard Analysis Critical Control Points plans and critical control points.',
+        [I.haccp],
+      ),
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Every compliance tool — documents, inspections, corrective actions, regulatory tracking, fire safety, and more.',
+        [I.correctiveActions, I.documents, I.fireSafety, I.foodSafetyOverview, I.inspectorArrival, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
+      ),
+      section('insights', 'Insights', '💡',
+        'Insights', 'Artificial Intelligence advisor, analytics, audit logs, benchmarks, business intelligence, compliance intelligence, Internet of Things, and service Return on Investment.',
+        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.intelligence, I.iotDashboard, I.serviceROI],
+      ),
+      section('equipment', 'Equipment', '⚙️',
+        'Equipment', 'Full equipment registry — all kitchen assets, service history, and maintenance schedules.',
+        [I.allEquipment],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Self-diagnosis and inspector arrival mode.',
+        [I.inspectorArrival, I.selfDiagnosis],
+      ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, and vendors.',
+        [I.equipment, I.iotSensors, I.locations, I.settings, I.team, I.vendors],
+      ),
+      section('help', 'Help', '❓',
+        'Help', 'Documentation, support, and contact options.',
+        [], '/help',
+      ),
+    ],
+  },
 
   // ── STAFF ─────────────────────────────────────────────
   kitchen_staff: {
@@ -262,17 +270,17 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       descriptionEs: 'Sus tareas diarias, listas de verificación y prioridades.',
     },
     sections: [
-      section('tasks', 'Tasks', '✓',
-        'Tasks', 'Your assigned checklists and temperature logs for today.',
+      section('tasks', 'Daily Operations', '✓',
+        'Daily Operations', 'Your assigned checklists, temperature logs, and daily tasks.',
         [I.checklists, I.temperatures],
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Report issues and diagnose equipment problems.',
-        [I.reportIssue, I.selfDiagnosis],
+        'Tools', 'Diagnose equipment problems.',
+        [I.selfDiagnosis],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -286,25 +294,37 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
     },
     sections: [
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Calendar for inspections, deadlines, and service appointments.',
+        [I.calendar],
+      ),
       section('food-safety', 'Food Safety', '🛡️',
-        'Food Safety', 'Temperature logs, HACCP control points, allergen tracking, and food receiving.',
-        [I.allergenTracking, I.coolingLogs, I.haccp, I.receivingLog, I.temperatures],
+        'Food Safety', 'Temperature logs and Hazard Analysis Critical Control Points.',
+        [I.haccp, I.temperatures],
       ),
       section('team', 'Team', '👥',
         'Team', 'Checklists and incident tracking for your kitchen team.',
         [I.checklists, I.incidents],
       ),
+      section('compliance', 'Compliance', '📋',
+        'Compliance', 'Food safety scoring, corrective action tracking, and resolution.',
+        [I.correctiveActions, I.foodSafetyOverview],
+      ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis and recommendations.',
+        'Insights', 'Artificial Intelligence-powered analysis and recommendations.',
         [I.aiInsights],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Equipment troubleshooting and vendor notification.',
         [I.selfDiagnosis],
       ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Team management.',
+        [I.team],
+      ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -319,16 +339,16 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     },
     sections: [
       section('daily', 'Daily Operations', '✓',
-        'Daily Operations', 'Checklists, temperature logs, and incident reporting.',
-        [I.checklists, I.incidents, I.temperatures],
+        'Daily Operations', 'Calendar, checklists, corrective actions, and temperature logs.',
+        [I.calendar, I.checklists, I.correctiveActions, I.temperatures],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Documentation, HACCP, regulatory tracking, reporting, self-inspection, and services.',
-        [I.documents, I.fireSafety, I.haccp, I.regulatory, I.reporting, I.selfInspection, I.services],
+        'Compliance', 'Documentation, food safety, Hazard Analysis Critical Control Points, incidents, regulatory tracking, reporting, self-inspection, and services.',
+        [I.documents, I.foodSafetyOverview, I.haccp, I.incidents, I.regulatory, I.reporting, I.selfInspection, I.services],
       ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis and recommendations.',
-        [I.aiInsights],
+        'Insights', 'Artificial Intelligence-powered analysis, analytics, and recommendations.',
+        [I.aiInsights, I.analytics],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Equipment troubleshooting and vendor notification.',
@@ -340,7 +360,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -354,25 +374,25 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       descriptionEs: 'Resumen de cumplimiento — puntuaciones, estado regulatorio y preparación.',
     },
     sections: [
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Checklists, calendar, and temperature monitoring.',
+        [I.calendar, I.checklists, I.temperaturesViewOnly],
+      ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Corrective actions, documentation, HACCP, regulatory tracking, reporting, self-inspections, services, and vendor certifications.',
-        [I.correctiveActions, I.documents, I.fireSafety, I.haccp, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services, I.vendorCertifications],
+        'Compliance', 'Corrective actions, documentation, fire safety, Hazard Analysis Critical Control Points, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, and services.',
+        [I.correctiveActions, I.documents, I.fireSafety, I.haccp, I.incidentsViewOnly, I.inspectorArrival, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
       ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis — audit logs, intelligence dashboards, and violation trends.',
-        [I.aiInsights, I.auditLog, I.businessIntelligence, I.iotDashboard, I.scoreTable, I.violationTrends],
+        'Insights', 'Artificial Intelligence-powered analysis — audit logs, business intelligence, intelligence, and Internet of Things monitoring.',
+        [I.aiInsights, I.auditLog, I.businessIntelligence, I.intelligence, I.iotDashboard],
       ),
-      section('daily', 'Daily Operations', '✓',
-        'Daily Operations', 'Incident tracking and temperature monitoring.',
-        [I.incidents, I.temperatures],
-      ),
-      section('tools', 'Tools', '🔧',
-        'Tools', 'Export compliance data and diagnose equipment issues.',
-        [I.exportCenter, I.selfDiagnosis],
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Account settings.',
+        [I.settings],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -386,21 +406,41 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
     },
     sections: [
+      section('calendar-section', 'Calendar', '📅',
+        'Calendar', 'Inspections, permit renewals, service appointments, and compliance deadlines.',
+        [], '/calendar',
+      ),
       section('equipment', 'Equipment', '⚙️',
-        'Equipment', 'Equipment categories — hoods, HVAC, ice machines, refrigeration, and fire suppression systems.',
-        [I.hoodExhaust, I.hvac, I.iceMachines, I.refrigeration, I.suppressionSystems],
+        'Equipment', 'Full equipment registry — all kitchen assets, service history, and maintenance schedules.',
+        [I.allEquipment],
+      ),
+      section('daily', 'Daily Operations', '✓',
+        'Daily Operations', 'Task scheduling and daily operations.',
+        [I.checklists],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Fire safety compliance and inspection readiness.',
-        [I.fireSafety],
+        'Compliance', 'Fire safety compliance, incidents, inspector view, and inspection readiness.',
+        [I.fireSafety, I.incidents, I.inspectorArrival],
       ),
       section('service', 'Service', '🤝',
-        'Service', 'Certifications, self-diagnosis, service scheduling, reporting, services, and vendor management.',
-        [I.certsDocs, I.selfDiagnosis, I.serviceCalendar, I.serviceReporting, I.services, I.vendors],
+        'Service', 'Reporting, vendor services, and vendor management.',
+        [I.serviceReporting, I.services, I.vendors],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Equipment troubleshooting, vendor notification, and service Return on Investment.',
+        [I.selfDiagnosis, I.serviceROI],
+      ),
+      section('insights', 'Insights', '💡',
+        'Insights', 'Internet of Things sensor monitoring.',
+        [I.iotDashboard],
+      ),
+      section('administration', 'Administration', '⚙️',
+        'Administration', 'Equipment, Internet of Things sensors, account settings, team management, and vendors.',
+        [I.equipment, I.iotSensors, I.settings, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -419,24 +459,24 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.calendar, I.checklists, I.temperatures],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Corrective actions, documents, HACCP, incidents, regulatory tracking, self-inspection, and services.',
-        [I.correctiveActions, I.documents, I.fireSafety, I.haccp, I.incidents, I.jurisdictionIntelligence, I.regulatory, I.selfInspection, I.services],
+        'Compliance', 'Corrective actions, documents, food safety, Hazard Analysis Critical Control Points, incidents, regulatory tracking, reporting, self-inspection, and vendor services.',
+        [I.correctiveActions, I.documents, I.fireSafety, I.foodSafetyOverview, I.haccp, I.incidents, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
       ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis, analytics, business intelligence, and service ROI.',
-        [I.aiInsights, I.analytics, I.businessIntelligence, I.serviceROI],
+        'Insights', 'Artificial Intelligence-powered analysis, analytics, audit logs, benchmarks, business intelligence, intelligence, Internet of Things monitoring, and service Return on Investment.',
+        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.intelligence, I.iotDashboard, I.serviceROI],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Inspector arrival mode and self-diagnosis.',
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Billing, equipment, locations, settings, team, and vendors.',
-        [I.billing, I.equipment, I.locations, I.settings, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, and vendors.',
+        [I.equipment, I.iotSensors, I.locations, I.settings, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -450,21 +490,29 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
     },
     sections: [
+      section('calendar-section', 'Calendar', '📅',
+        'Calendar', 'Inspections, permit renewals, service appointments, and compliance deadlines.',
+        [], '/calendar',
+      ),
       section('insights', 'Insights', '💡',
-        'Insights', 'AI-powered analysis — analytics, audit logs, benchmarks, business intelligence, IoT monitoring, and compliance scores.',
-        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.iotDashboard, I.scoreTable],
+        'Insights', 'Artificial Intelligence-powered analysis — analytics, audit logs, benchmarks, business intelligence, intelligence, and Internet of Things monitoring.',
+        [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.intelligence, I.iotDashboard],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Fire safety, HACCP, jurisdiction intelligence, regulatory tracking, compliance reporting, and services.',
-        [I.fireSafety, I.haccp, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
+        'Compliance', 'Fire safety, incidents, jurisdiction intelligence, regulatory tracking, compliance reporting, and vendor services.',
+        [I.fireSafety, I.incidentsViewOnly, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
+      ),
+      section('tools', 'Tools', '🔧',
+        'Tools', 'Service Return on Investment analysis.',
+        [I.serviceROI],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Billing and account settings.',
-        [I.billing, I.settings],
+        'Administration', 'Account settings.',
+        [I.settings],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
-        [I.help],
+        [], '/help',
       ),
     ],
   },
@@ -522,11 +570,11 @@ export function checkTestMode(): boolean {
 
 // ── Roles that see the bottom Locations section ──────────
 
-export const LOCATION_VISIBLE_ROLES: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'kitchen_staff'];
+export const LOCATION_VISIBLE_ROLES: UserRole[] = ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'chef', 'kitchen_manager', 'kitchen_staff'];
 
 // ── Roles that can book meetings / see Calendly CTAs ─────
 
-export const BOOKING_ROLES: UserRole[] = ['executive', 'owner_operator', 'compliance_manager', 'facilities_manager'];
+export const BOOKING_ROLES: UserRole[] = ['platform_admin', 'executive', 'owner_operator', 'compliance_manager', 'facilities_manager'];
 
 export function canBookMeeting(role: UserRole): boolean {
   return BOOKING_ROLES.includes(role);
@@ -543,6 +591,13 @@ export interface DemoRoleDefinition {
 }
 
 export const DEMO_ROLES: DemoRoleDefinition[] = [
+  {
+    role: 'platform_admin',
+    label: 'Platform Admin',
+    description: 'Full platform access — every feature, every route, every tool',
+    i18nKey: 'topBar.platformAdmin',
+    i18nDescKey: 'topBar.roleDescPlatformAdmin',
+  },
   {
     role: 'owner_operator',
     label: 'Owner / Operator',

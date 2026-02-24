@@ -18,8 +18,8 @@ export function FeatureGate({ featureId, children, fallback }: FeatureGateProps)
   // Unknown feature or demo mode → show everything
   if (!feature || isDemoMode) return <>{children}</>;
 
-  // User has access → show feature
-  if (hasAccess(currentTier, feature.requiredTier)) return <>{children}</>;
+  // Check admin kill-switch + tier access
+  if (hasAccess(currentTier, feature.requiredTier, featureId)) return <>{children}</>;
 
   // Locked → show fallback or preview
   if (fallback) return <>{fallback}</>;

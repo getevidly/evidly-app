@@ -70,7 +70,7 @@ const STEP_LABELS = ['Select Type', 'Upload File', 'Preview', 'Import'];
 export function ImportData() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } =
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } =
     useDemoGuard();
 
   // Wizard state
@@ -818,6 +818,7 @@ export function ImportData() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
+          onOverride={handleOverride}
         />
       )}
     </div>

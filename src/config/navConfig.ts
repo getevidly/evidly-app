@@ -38,6 +38,12 @@ export const KITCHEN_STAFF_NAV_ITEMS: BottomNavItem[] = [
 
 /** Role-specific bottom nav (4 items + More button) */
 const ROLE_NAV_ITEMS: Record<Exclude<UserRole, 'kitchen_staff'>, BottomNavItem[]> = {
+  platform_admin: [
+    { path: '/dashboard', icon: Home, label: 'Dashboard' },
+    { path: '/checklists', icon: ClipboardList, label: 'Checklists' },
+    { path: '/calendar', icon: Calendar, label: 'Calendar' },
+    { path: '/temp-logs', icon: Thermometer, label: 'Temps' },
+  ],
   owner_operator: [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/checklists', icon: ClipboardList, label: 'Checklists' },

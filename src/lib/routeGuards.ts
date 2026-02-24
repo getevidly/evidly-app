@@ -6,29 +6,30 @@ import type { UserRole } from '../contexts/RoleContext';
 
 const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   // Insights — roles with the Insights sidebar section
-  ['/analysis',              ['owner_operator', 'executive', 'compliance_manager']],
+  ['/analysis',              ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/audit-trail',           ['owner_operator', 'executive', 'compliance_manager']],
-  ['/benchmarks',            ['executive']],
+  ['/benchmarks',            ['owner_operator', 'executive']],
   ['/business-intelligence', ['owner_operator', 'executive', 'compliance_manager']],
-  ['/iot-monitoring',        ['owner_operator', 'executive', 'compliance_manager']],
+  ['/intelligence',          ['owner_operator', 'executive', 'compliance_manager']],
+  ['/iot-monitoring',        ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/jurisdiction',          ['owner_operator', 'executive', 'compliance_manager']],
-  ['/scoring-breakdown',     ['owner_operator', 'executive', 'compliance_manager']],
+  ['/scoring-breakdown',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/violation-trends',      ['owner_operator', 'compliance_manager']],
 
   // Compliance — not kitchen_staff
-  ['/corrective-actions',    ['owner_operator', 'compliance_manager']],
-  ['/vendor-certifications', ['compliance_manager']],
+  ['/corrective-actions',    ['owner_operator', 'compliance_manager', 'chef', 'kitchen_manager']],
+  ['/vendor-certifications', ['owner_operator', 'compliance_manager']],
   ['/export-center',         ['compliance_manager']],
 
   // Equipment / Facilities
   ['/equipment',             ['facilities_manager', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/vendors',               ['facilities_manager', 'owner_operator', 'executive']],
-  ['/calendar',              ['facilities_manager', 'owner_operator']],
+  ['/calendar',              ['facilities_manager', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef']],
 
   // Administration
   ['/billing',               ['owner_operator', 'executive']],
   ['/org-hierarchy',         ['owner_operator', 'executive']],
-  ['/team',                  ['owner_operator', 'executive', 'kitchen_manager']],
+  ['/team',                  ['owner_operator', 'executive', 'kitchen_manager', 'chef', 'facilities_manager']],
   ['/admin/',                ['owner_operator', 'executive']],
 
   // Enterprise — owner/exec only
@@ -41,6 +42,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
  * Returns true if the route is unrestricted or the role is in the allow-list.
  */
 export function isRouteAllowedForRole(pathname: string, role: UserRole): boolean {
+  // Platform admin has access to every route — no restrictions
+  if (role === 'platform_admin') return true;
+
   for (const [prefix, allowedRoles] of ROUTE_ROLE_MAP) {
     const match = prefix.endsWith('/')
       ? pathname.startsWith(prefix)

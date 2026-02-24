@@ -34,6 +34,7 @@ const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
   'analytics':              "Datos de tendencias para puntuaciones de cumplimiento, frecuencia de incidentes y finalizaci\u00F3n de listas de verificaci\u00F3n.",
   'benchmarks':             "Compare el rendimiento de cumplimiento entre ubicaciones, regiones o per\u00EDodos de tiempo.",
   'self-diagnosis':         "Diagnostique problemas de equipo, obtenga pasos de resoluci\u00F3n, adjunte video y notifique a su proveedor.",
+  'all-equipment':          "Registro completo de equipos \u2014 todos los activos de cocina, historial de servicio y calendarios de mantenimiento.",
   'equipment':              "Registro de activos para todo el equipo de cocina con historial de servicio y fechas de mantenimiento.",
   'vendors':                "Proveedores de servicio asignados a sus ubicaciones \u2014 limpieza de campanas, gesti\u00F3n de grasa y m\u00E1s.",
   'locations':              "Agregue, edite o configure ubicaciones incluyendo mapeo de jurisdicci\u00F3n y requisitos de cumplimiento.",
@@ -64,6 +65,9 @@ const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
   'certs-docs':             "Certificaciones de equipos y documentaci\u00F3n de servicio.",
   'service-calendar':       "Mantenimiento programado y citas de servicio de proveedores.",
   'service-reporting':      "Informes de historial de servicio y cumplimiento de mantenimiento.",
+  'intelligence':           "EvidLY Intelligence — detección de patrones entre ubicaciones, puntuación predictiva de riesgos y recomendaciones proactivas.",
+  'iot-sensors':            "Agregar, configurar y gestionar sensores IoT de temperatura en sus ubicaciones.",
+  'food-safety-overview':   "Puntuación de cumplimiento de seguridad alimentaria, puntos de control críticos y preparación para inspecciones.",
 };
 
 // ── Section tooltip descriptions (ES) ────────────────────
@@ -82,6 +86,7 @@ const SECTION_DESCRIPTIONS_ES: Record<string, { title: string; description: stri
   'equipment':       { title: 'Equipos', description: 'Categor\u00EDas de equipos \u2014 campanas, HVAC, m\u00E1quinas de hielo, refrigeraci\u00F3n y sistemas de supresi\u00F3n.' },
   'service':         { title: 'Servicio', description: 'Certificaciones, diagn\u00F3stico, programaci\u00F3n de servicio, reportes y gesti\u00F3n de proveedores.' },
   'support':         { title: 'Soporte', description: 'Documentaci\u00F3n de ayuda, recursos de capacitaci\u00F3n y soporte directo.' },
+  'calendar-section': { title: 'Calendario', description: 'Inspecciones, renovaciones de permisos, citas de servicio y fechas l\u00EDmite de cumplimiento.' },
 };
 
 // ── Nav item id \u2192 i18n key mapping ──
@@ -98,6 +103,7 @@ const NAV_I18N: Record<string, string> = {
   'business-intelligence': 'nav.businessIntelligence',
   'benchmarks': 'nav.benchmarks',
   'self-diagnosis': 'nav.selfDiagnosis',
+  'all-equipment': 'nav.allEquipment',
   'equipment': 'nav.equipment',
   'vendors': 'nav.vendors',
   'locations': 'nav.locations',
@@ -128,6 +134,9 @@ const NAV_I18N: Record<string, string> = {
   'service-calendar': 'nav.serviceCalendar',
   'service-reporting': 'nav.serviceReporting',
   'analytics': 'nav.analytics',
+  'intelligence': 'nav.intelligence',
+  'iot-sensors': 'nav.iotSensors',
+  'food-safety-overview': 'nav.foodSafetyOverview',
 };
 
 // ── SectionTooltip ───────────────────────────────────────
@@ -135,25 +144,31 @@ const NAV_I18N: Record<string, string> = {
 const SectionTooltip: React.FC<{
   title: string;
   description: string;
-  items: { label: string; description: string }[];
+  items: { label: string; description: string; path: string }[];
   visible: boolean;
   anchorRect: { top: number; left: number; right: number } | null;
-}> = ({ title, description, items, visible, anchorRect }) => {
+  onItemClick: (path: string) => void;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+}> = ({ title, description, items, visible, anchorRect, onItemClick, onMouseEnter, onMouseLeave }) => {
   if (!visible || !anchorRect) return null;
   return (
-    <div style={{
-      position: 'fixed',
-      top: anchorRect.top,
-      left: anchorRect.right + 8,
-      width: 260,
-      background: '#1a2d4a',
-      border: '1px solid #2d4a6e',
-      borderRadius: 10,
-      padding: '12px 14px',
-      zIndex: 99999,
-      pointerEvents: 'none',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-    }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: anchorRect.top,
+        left: anchorRect.right + 8,
+        width: 260,
+        background: '#1a2d4a',
+        border: '1px solid #2d4a6e',
+        borderRadius: 10,
+        padding: '12px 14px',
+        zIndex: 99999,
+        boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+      }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
       <p style={{
         color: '#A08C5A', fontSize: 12, fontWeight: 800,
         margin: '0 0 6px', fontFamily: 'system-ui', textTransform: 'uppercase', letterSpacing: '0.5px',
@@ -168,7 +183,16 @@ const SectionTooltip: React.FC<{
       </p>
       <div style={{ borderTop: '1px solid #2d4a6e', paddingTop: 8 }}>
         {items.map((item, i) => (
-          <div key={i} style={{ marginBottom: 6 }}>
+          <div
+            key={i}
+            role="button"
+            tabIndex={0}
+            onClick={() => onItemClick(item.path)}
+            onKeyDown={(e) => { if (e.key === 'Enter') onItemClick(item.path); }}
+            style={{ marginBottom: 4, cursor: 'pointer', padding: '4px 6px', borderRadius: 6, transition: 'background 0.1s' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#243d5e'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+          >
             <p style={{ color: '#ffffff', fontSize: 11, fontWeight: 600, margin: '0 0 1px', fontFamily: 'system-ui' }}>
               {item.label}
             </p>
@@ -272,6 +296,23 @@ const SidebarNavItem: React.FC<{
         }}>
           {displayLabel}
         </span>
+        {item.badge && (
+          <span style={{
+            fontSize: 9,
+            fontWeight: 700,
+            fontFamily: 'system-ui',
+            color: '#ffffff',
+            backgroundColor: '#A08C5A',
+            padding: '1px 6px',
+            borderRadius: 9,
+            lineHeight: '16px',
+            letterSpacing: '0.5px',
+            flexShrink: 0,
+            marginLeft: 'auto',
+          }}>
+            {item.badge}
+          </span>
+        )}
       </button>
 
       {hovered && (
@@ -329,7 +370,8 @@ export function Sidebar() {
 
   const toggleSection = useCallback((sectionId: string) => {
     setCollapsed(prev => {
-      const next = { ...prev, [sectionId]: !prev[sectionId] };
+      const isCurrentlyCollapsed = prev[sectionId] !== false;
+      const next = { ...prev, [sectionId]: isCurrentlyCollapsed ? false : true };
       try { localStorage.setItem(COLLAPSED_SECTIONS_KEY, JSON.stringify(next)); } catch {}
       return next;
     });
@@ -339,14 +381,36 @@ export function Sidebar() {
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   const sectionRefs = React.useRef<Record<string, HTMLDivElement | null>>({});
   const [sectionRect, setSectionRect] = useState<{ top: number; left: number; right: number } | null>(null);
+  const tooltipTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleSectionEnter = (sectionId: string) => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+      tooltipTimeoutRef.current = null;
+    }
     const el = sectionRefs.current[sectionId];
     if (el) {
       const r = el.getBoundingClientRect();
       setSectionRect({ top: r.top, left: r.left, right: r.right });
     }
     setHoveredSection(sectionId);
+  };
+
+  const handleSectionLeave = () => {
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setHoveredSection(null);
+    }, 400);
+  };
+
+  const handleTooltipEnter = () => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+      tooltipTimeoutRef.current = null;
+    }
+  };
+
+  const handleTooltipLeave = () => {
+    setHoveredSection(null);
   };
 
   // ── Description helper (locale-aware) ──
@@ -397,6 +461,25 @@ export function Sidebar() {
       }
     };
   }, [isTestMode, visibleItemIds, userRole]);
+
+  // Auto-expand section containing the active route
+  useEffect(() => {
+    setCollapsed(prev => {
+      let changed = false;
+      const next = { ...prev };
+      for (const s of sections) {
+        if (next[s.id] !== false && s.items.some(item => location.pathname === item.path)) {
+          next[s.id] = false;
+          changed = true;
+        }
+      }
+      if (changed) {
+        try { localStorage.setItem(COLLAPSED_SECTIONS_KEY, JSON.stringify(next)); } catch {}
+        return next;
+      }
+      return prev;
+    });
+  }, [location.pathname, sections]);
 
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
@@ -472,8 +555,11 @@ export function Sidebar() {
 
           {/* Sections */}
           {sections.map(section => {
-            const isCollapsed = !!collapsed[section.id];
+            const isCollapsed = collapsed[section.id] !== false;
             const tooltipData = getSectionTooltip(section);
+            const hasActiveChild = section.items.some(
+              item => location.pathname === item.path || location.pathname.startsWith(item.path + '/')
+            ) || (section.path != null && location.pathname === section.path);
             return (
               <div key={section.id} className="mb-1">
                 {/* Section header */}
@@ -481,30 +567,81 @@ export function Sidebar() {
                   ref={el => { sectionRefs.current[section.id] = el; }}
                   style={{ position: 'relative' }}
                   onMouseEnter={() => handleSectionEnter(section.id)}
-                  onMouseLeave={() => setHoveredSection(null)}
+                  onMouseLeave={handleSectionLeave}
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleSection(section.id)}
-                    className="w-full flex items-center justify-between px-3 py-1.5 mt-1 cursor-pointer"
-                    style={{ background: 'none', border: 'none' }}
-                  >
-                    <span
-                      style={{
-                        color: '#A08C5A',
-                        fontSize: 9,
-                        fontWeight: 800,
-                        textTransform: 'uppercase' as const,
-                        letterSpacing: '1.2px',
-                        fontFamily: 'system-ui',
-                      }}
+                  {section.path && section.items.length === 0 ? (
+                    /* Flat navigation link — no toggle, no sub-items */
+                    <button
+                      type="button"
+                      onClick={() => navigate(section.path!)}
+                      className="w-full flex items-center px-3 py-1.5 mt-1 cursor-pointer"
+                      style={{ background: 'none', border: 'none' }}
                     >
-                      {section.label}
-                    </span>
-                    <span style={{ color: '#A08C5A', fontSize: 10 }}>
-                      {isCollapsed ? '\u25B6' : '\u25BC'}
-                    </span>
-                  </button>
+                      <span style={{
+                        color: location.pathname === section.path ? '#ffffff' : '#A08C5A',
+                        fontSize: 9, fontWeight: 800,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '1.2px', fontFamily: 'system-ui',
+                      }}>
+                        {section.label}
+                      </span>
+                    </button>
+                  ) : section.path ? (
+                    /* Navigable section — label navigates, arrow toggles */
+                    <div className="w-full flex items-center justify-between px-3 py-1.5 mt-1">
+                      <button
+                        type="button"
+                        onClick={() => navigate(section.path!)}
+                        style={{
+                          background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                          color: hasActiveChild ? '#ffffff' : '#A08C5A',
+                          fontSize: 9, fontWeight: 800,
+                          textTransform: 'uppercase' as const,
+                          letterSpacing: '1.2px', fontFamily: 'system-ui',
+                        }}
+                      >
+                        {section.label}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); toggleSection(section.id); }}
+                        style={{
+                          background: 'none', border: 'none', padding: '2px 0 2px 8px',
+                          cursor: 'pointer', color: '#A08C5A', fontSize: 10,
+                          display: 'inline-block',
+                          transition: 'transform 0.15s ease',
+                          transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                        }}
+                      >
+                        {'\u25B6'}
+                      </button>
+                    </div>
+                  ) : (
+                    /* Grouping section — full row toggles */
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(section.id)}
+                      className="w-full flex items-center justify-between px-3 py-1.5 mt-1 cursor-pointer"
+                      style={{ background: 'none', border: 'none' }}
+                    >
+                      <span style={{
+                        color: hasActiveChild ? '#ffffff' : '#A08C5A',
+                        fontSize: 9, fontWeight: 800,
+                        textTransform: 'uppercase' as const,
+                        letterSpacing: '1.2px', fontFamily: 'system-ui',
+                      }}>
+                        {section.label}
+                      </span>
+                      <span style={{
+                        color: '#A08C5A', fontSize: 10,
+                        display: 'inline-block',
+                        transition: 'transform 0.15s ease',
+                        transform: isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+                      }}>
+                        {'\u25B6'}
+                      </span>
+                    </button>
+                  )}
 
                   <SectionTooltip
                     title={tooltipData.title}
@@ -512,9 +649,13 @@ export function Sidebar() {
                     items={section.items.map(i => ({
                       label: getLabel(i),
                       description: getDescription(i),
+                      path: i.path,
                     }))}
                     visible={hoveredSection === section.id}
                     anchorRect={sectionRect}
+                    onItemClick={(path) => { navigate(path); setHoveredSection(null); }}
+                    onMouseEnter={handleTooltipEnter}
+                    onMouseLeave={handleTooltipLeave}
                   />
                 </div>
 

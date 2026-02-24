@@ -391,8 +391,8 @@ function SdksSection() {
     { lang: 'Python', icon: '🐍', install: 'pip install evidly-sdk', status: 'stable' },
     { lang: 'Ruby', icon: '💎', install: 'gem install evidly', status: 'beta' },
     { lang: 'Go', icon: '🔵', install: 'go get github.com/evidly/go-sdk', status: 'beta' },
-    { lang: 'PHP', icon: '🐘', install: 'composer require evidly/sdk', status: 'coming soon' },
-    { lang: 'C# / .NET', icon: '🟣', install: 'dotnet add package Evidly.SDK', status: 'coming soon' },
+    { lang: 'PHP', icon: '🐘', install: 'composer require evidly/sdk', status: 'planned' },
+    { lang: 'C# / .NET', icon: '🟣', install: 'dotnet add package Evidly.SDK', status: 'planned' },
   ];
 
   return (

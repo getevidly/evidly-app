@@ -53,7 +53,8 @@ export interface DigestData {
   orgName: string;
   weekStart: string;
   weekEnd: string;
-  overallScore: number;
+  foodSafetyScore: number;
+  fireSafetyScore: number;
   scoreTrend: number;
   locations: DigestLocationScore[];
   highlights: string[];
@@ -176,17 +177,24 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <div style="font-size:14px;color:#6b7280;margin-top:4px;">${data.orgName} &mdash; ${data.weekStart} to ${data.weekEnd}</div>
 </td></tr>
 
-<!-- OVERALL SCORE -->
+<!-- PILLAR SCORES -->
 <tr><td style="padding:16px 32px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f8fafc;border-radius:12px;border:1px solid #e2e8f0;">
   <tr>
     <td style="padding:20px 24px;text-align:center;width:120px;">
-      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.overallScore >= 90 ? '#22c55e' : data.overallScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.overallScore}</span>
+      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.foodSafetyScore >= 90 ? '#22c55e' : data.foodSafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
+        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.foodSafetyScore}</span>
       </div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Food Safety</div>
+    </td>
+    <td style="padding:20px 24px;text-align:center;width:120px;">
+      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.fireSafetyScore >= 90 ? '#22c55e' : data.fireSafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
+        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.fireSafetyScore}</span>
+      </div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Fire Safety</div>
     </td>
     <td style="padding:20px 24px;">
-      <div style="font-size:16px;font-weight:600;color:#1e4d6b;">Overall Compliance Score</div>
+      <div style="font-size:16px;font-weight:600;color:#1e4d6b;">Compliance Scores</div>
       <div style="font-size:14px;color:#6b7280;margin-top:4px;">vs last week: ${trendArrow(data.scoreTrend)}</div>
     </td>
   </tr>

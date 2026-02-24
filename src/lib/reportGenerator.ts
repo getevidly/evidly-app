@@ -1,3 +1,4 @@
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 // ============================================================
 // Health Department Report Generator Engine
 // ============================================================

@@ -41,7 +41,7 @@ interface ModuleDraft {
 
 export function CourseBuilder() {
   const navigate = useNavigate();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
 
   // Step 1: Basics
@@ -372,7 +372,7 @@ export function CourseBuilder() {
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '2px dashed #d1d5db', background: '#f9fafb', color: '#6b7280', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Plus size={16} /> Add Question
                 </button>
-                <button onClick={() => toast.info('AI question generation coming soon')}
+                <button onClick={() => toast.info('AI Generate Questions (Demo)')}
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 16px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                   <Brain size={16} /> AI Generate Questions
                 </button>
@@ -472,7 +472,7 @@ export function CourseBuilder() {
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: 'none', background: '#15803d', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <CheckCircle2 size={16} /> Publish Course
               </button>
-              <button onClick={() => toast.info('Student preview coming soon')}
+              <button onClick={() => toast.info('Preview as Student (Demo)')}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <Eye size={16} /> Preview as Student
               </button>
@@ -504,6 +504,7 @@ export function CourseBuilder() {
         onClose={() => setShowUpgrade(false)}
         feature={upgradeFeature}
         action={upgradeAction}
+        onOverride={handleOverride}
       />
     </div>
   );

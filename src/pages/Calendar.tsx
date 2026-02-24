@@ -1057,7 +1057,7 @@ export function Calendar() {
 
             {/* View toggle */}
             <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-              {(['month', 'week', 'day'] as ViewMode[]).map(v => (
+              {(['day', 'week', 'month'] as ViewMode[]).map(v => (
                 <button
                   key={v}
                   onClick={() => setView(v)}
@@ -1066,7 +1066,7 @@ export function Calendar() {
                     fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
                     backgroundColor: view === v ? '#1e4d6b' : 'white',
                     color: view === v ? 'white' : '#4b5563',
-                    borderRight: v !== 'day' ? '1px solid #e5e7eb' : 'none',
+                    borderRight: v !== 'month' ? '1px solid #e5e7eb' : 'none',
                     transition: 'all 0.15s',
                   }}
                 >

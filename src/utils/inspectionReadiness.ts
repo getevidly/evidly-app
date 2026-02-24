@@ -1,18 +1,13 @@
 // ============================================================
 // Inspection Readiness Scoring Engine
 // ============================================================
-// Two-Pillar Model: Food Safety (60%) + Fire Safety (40%)
+// Two-Pillar Model: Food Safety + Fire Safety (independent scores)
 // Vendor credentials fold into the pillar they serve.
 // ============================================================
 
 // --------------- Pillar & Component Weights ---------------
 
 export type InspectionPillar = 'food_safety' | 'fire_safety';
-
-export const PILLAR_WEIGHTS = {
-  food_safety: 0.60,
-  fire_safety: 0.40,
-} as const;
 
 export const COMPONENT_WEIGHTS = {
   operations: 0.50,
@@ -22,7 +17,7 @@ export const COMPONENT_WEIGHTS = {
 // --------------- Types ---------------
 
 export interface InspectionReadinessScore {
-  overall: number;            // 0-100
+  overall: number | null;     // DEPRECATED — no composite score
   foodSafety: {
     score: number;            // 0-100
     ops: number;              // 0-100
@@ -62,10 +57,9 @@ export function calculateInspectionReadiness(
 ): InspectionReadinessScore {
   const foodScore = (foodOps * COMPONENT_WEIGHTS.operations) + (foodDocs * COMPONENT_WEIGHTS.documentation);
   const fireScore = (fireOps * COMPONENT_WEIGHTS.operations) + (fireDocs * COMPONENT_WEIGHTS.documentation);
-  const overall = (foodScore * PILLAR_WEIGHTS.food_safety) + (fireScore * PILLAR_WEIGHTS.fire_safety);
 
   return {
-    overall: Math.round(overall),
+    overall: null, // DEPRECATED — pillars are independent
     foodSafety: { score: Math.round(foodScore), ops: Math.round(foodOps), docs: Math.round(foodDocs) },
     fireSafety: { score: Math.round(fireScore), ops: Math.round(fireOps), docs: Math.round(fireDocs) },
     jurisdiction,

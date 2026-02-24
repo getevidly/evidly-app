@@ -327,7 +327,7 @@ function correctiveAction(item: AuditItem, sectionName: string): string {
 // ---------------------------------------------------------------------------
 
 export function SelfAudit() {
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   // View state
   const [activeTab, setActiveTab] = useState<'audit' | 'history'>('audit');
@@ -1111,6 +1111,7 @@ export function SelfAudit() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
+          onOverride={handleOverride}
         />
       )}
     </div>

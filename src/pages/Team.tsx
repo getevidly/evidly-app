@@ -156,6 +156,7 @@ export function Team() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showBulkInviteModal, setShowBulkInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
@@ -170,7 +171,7 @@ export function Team() {
   const [resetMember, setResetMember] = useState<TeamMember | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
 
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   const isDemoMode = !profile?.organization_id;
 
@@ -289,6 +290,13 @@ export function Team() {
             .eq('id', invitation.id);
         }
       }
+
+      // Reset expiry to 7 days from now
+      const newExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      await supabase
+        .from('user_invitations')
+        .update({ expires_at: newExpiry })
+        .eq('id', invitation.id);
 
       fetchInvitations();
     } catch (error) {
@@ -438,13 +446,22 @@ export function Team() {
               </select>
             )}
             {canManageTeam() && (
-              <button
-                onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
-                className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
-              >
-                <Plus className="h-5 w-5" />
-                <span>Invite Member</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => guardAction('invite', 'team management', () => setShowInviteModal(true))}
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
+                >
+                  <Plus className="h-5 w-5" />
+                  <span>Invite Member</span>
+                </button>
+                <button
+                  onClick={() => guardAction('bulk-invite', 'team management', () => setShowBulkInviteModal(true))}
+                  className="flex items-center space-x-2 px-4 py-2 min-h-[44px] border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <Users className="h-5 w-5" />
+                  <span>Invite Multiple</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -491,7 +508,12 @@ export function Team() {
                         )}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {invitation.role} • Expires {new Date(invitation.expires_at).toLocaleDateString()}
+                        {invitation.role}
+                        {new Date(invitation.expires_at) < new Date() ? (
+                          <span className="ml-2 inline-flex items-center bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-medium">Expired</span>
+                        ) : (
+                          <span> • Expires {new Date(invitation.expires_at).toLocaleDateString()}</span>
+                        )}
                         {invitation.email_status === 'failed' && ' • Email failed'}
                         {invitation.sms_status === 'failed' && ' • SMS failed'}
                       </p>
@@ -1005,7 +1027,7 @@ export function Team() {
                 </div>
               ) : (
                 <div className="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg">
-                  Activity log coming soon
+                  Activity Log (Demo)
                 </div>
               )}
             </div>
@@ -1060,8 +1082,17 @@ export function Team() {
         onInviteSent={handleInviteSent}
       />
 
+      <TeamInviteModal
+        isOpen={showBulkInviteModal}
+        onClose={() => setShowBulkInviteModal(false)}
+        organizationId={profile?.organization_id || ''}
+        onInviteSent={handleInviteSent}
+        mode="bulk"
+        locations={accessibleLocations.map(l => ({ locationId: l.locationId, locationName: l.locationName }))}
+      />
+
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

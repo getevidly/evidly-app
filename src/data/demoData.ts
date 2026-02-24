@@ -1,28 +1,16 @@
 // Re-export scoring engine as single source of truth
 import {
-  INDUSTRY_WEIGHTS as ENGINE_WEIGHTS,
   getScoreColor,
   getScoreStatus,
   getScoreInfo,
   getGraduatedPenalty,
-  type PillarWeights,
   type IndustryVertical,
 } from '../lib/complianceScoring';
 
 export { getScoreColor, getScoreStatus, getScoreInfo, getGraduatedPenalty };
-export type { PillarWeights, IndustryVertical };
+export type { IndustryVertical };
 
-// Re-export for backwards compat — all imports come through here
-export const INDUSTRY_WEIGHTS = ENGINE_WEIGHTS;
-export const PILLAR_WEIGHTS = ENGINE_WEIGHTS.RESTAURANT;
-
-let currentIndustry: IndustryVertical = 'RESTAURANT';
-export function setIndustry(industry: IndustryVertical) {
-  currentIndustry = industry;
-}
-export function getWeights(): PillarWeights {
-  return INDUSTRY_WEIGHTS[currentIndustry] || PILLAR_WEIGHTS;
-}
+// Pillar weights REMOVED — Food Safety and Fire Safety are independent scores
 
 // Backwards-compatible wrapper — delegates to scoring engine
 export const getGrade = (score: number) => getScoreInfo(score);
@@ -122,30 +110,16 @@ export const locations: Location[] = [
 //   Defaults below are placeholders until Jurisdiction Intelligence is loaded.
 // ============================================================
 
-// Equal-weight defaults — real weights come from jurisdiction data (JIE)
-export const DEFAULT_WEIGHTS = {
-  foodSafetyWeight: 0.50,
-  fireSafetyWeight: 0.50,
-  opsWeight: 0.50,
-  docsWeight: 0.50,
-};
+// Component weights for pillar sub-scores (ops vs docs)
+const OPS_WEIGHT = 0.50;
+const DOCS_WEIGHT = 0.50;
 
 export function calcPillar(
   p: { ops: number; docs: number },
-  opsWeight = DEFAULT_WEIGHTS.opsWeight,
-  docsWeight = DEFAULT_WEIGHTS.docsWeight,
+  opsWeight = OPS_WEIGHT,
+  docsWeight = DOCS_WEIGHT,
 ): number {
   return Math.round(p.ops * opsWeight + p.docs * docsWeight);
-}
-
-export function calcReadiness(
-  food: { ops: number; docs: number },
-  fire: { ops: number; docs: number },
-  weights = DEFAULT_WEIGHTS,
-): number {
-  const foodScore = calcPillar(food, weights.opsWeight, weights.docsWeight);
-  const fireScore = calcPillar(fire, weights.opsWeight, weights.docsWeight);
-  return Math.round(foodScore * weights.foodSafetyWeight + fireScore * weights.fireSafetyWeight);
 }
 
 export const DEMO_ORG = {
@@ -180,17 +154,17 @@ export const DEMO_LOCATIONS = [
   },
 ];
 
-// Enrich with calculated scores using default weights
+// Enrich with calculated pillar scores (no composite overall)
 export const LOCATIONS_WITH_SCORES = DEMO_LOCATIONS.map(loc => ({
   ...loc,
   foodScore: calcPillar(loc.foodSafety),
   fireScore: calcPillar(loc.fireSafety),
-  score: calcReadiness(loc.foodSafety, loc.fireSafety),
+  score: null as number | null, // DEPRECATED — no composite score
 }));
 
 const _locs = LOCATIONS_WITH_SCORES;
 export const DEMO_ORG_SCORES = {
-  overall: Math.round(_locs.reduce((s, l) => s + l.score, 0) / _locs.length),
+  overall: null as number | null, // DEPRECATED — no composite score
   foodSafety: Math.round(_locs.reduce((s, l) => s + l.foodScore, 0) / _locs.length),
   fireSafety: Math.round(_locs.reduce((s, l) => s + l.fireScore, 0) / _locs.length),
 };
@@ -199,18 +173,18 @@ export const DEMO_ORG_SCORES = {
 // Derived from the exec 2-pillar model above. NO vendorCompliance.
 // Consumers that previously imported the old 3-pillar locationScores
 // should migrate to LOCATION_JURISDICTION_STATUS for display.
-export const locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number }> =
-  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { overall: loc.score, foodSafety: loc.foodScore, fireSafety: loc.fireScore }]));
+export const locationScores: Record<string, { overall: number | null; foodSafety: number; fireSafety: number }> =
+  Object.fromEntries(LOCATIONS_WITH_SCORES.map(loc => [loc.id, { overall: null, foodSafety: loc.foodScore, fireSafety: loc.fireScore }]));
 
-export const locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number }> = {
-  downtown: { foodSafety: 93, fireSafety: 89, overall: 91 },
-  airport: { foodSafety: 82, fireSafety: 76, overall: 79 },
-  university: { foodSafety: 67, fireSafety: 59, overall: 63 },
+export const locationScoresThirtyDaysAgo: Record<string, { overall: number | null; foodSafety: number; fireSafety: number }> = {
+  downtown: { foodSafety: 93, fireSafety: 89, overall: null },
+  airport: { foodSafety: 82, fireSafety: 76, overall: null },
+  university: { foodSafety: 67, fireSafety: 59, overall: null },
 };
 
 export const complianceScores = DEMO_ORG_SCORES;
 export const complianceScoresThirtyDaysAgo = {
-  overall: Math.round((91 + 79 + 63) / 3),
+  overall: null as number | null, // DEPRECATED — no composite score
   foodSafety: Math.round((93 + 82 + 67) / 3),
   fireSafety: Math.round((89 + 76 + 59) / 3),
 };

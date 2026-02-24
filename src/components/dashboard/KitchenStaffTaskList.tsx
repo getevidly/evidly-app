@@ -20,8 +20,6 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
-import { demoReferral } from '../../data/demoData';
-import { SelfDiagCard } from './shared/SelfDiagCard';
 
 // --------------- Demo Data ---------------
 
@@ -160,8 +158,6 @@ export default function KitchenStaffTaskList() {
     setDismissedAlerts(prev => new Set(prev).add(id));
   }, []);
 
-  const [referralNudge, setReferralNudge] = useState(false);
-
   const handleMarkDone = useCallback((taskId: string) => {
     setTasks(prev => prev.map(t => {
       if (t.id !== taskId) return t;
@@ -173,11 +169,6 @@ export default function KitchenStaffTaskList() {
       const m = minutes.toString().padStart(2, '0');
       return { ...t, status: 'done' as const, completedAt: `${h}:${m} ${ampm}` };
     }));
-    // Touchpoint 1: Show referral nudge 1 in 5 times, max 1 per session
-    if (Math.random() < 0.2 && !sessionStorage.getItem('referral_shown')) {
-      sessionStorage.setItem('referral_shown', 'true');
-      setReferralNudge(true);
-    }
   }, []);
 
   const getTaskDescription = (task: StaffTask) => lang === 'es' ? task.descriptionEs : task.description;
@@ -230,9 +221,6 @@ export default function KitchenStaffTaskList() {
           {/* ============================================================ */}
           {/* BELOW THE FOLD                                                */}
           {/* ============================================================ */}
-
-          {/* Self-Diagnosis — Kitchen Problem */}
-          <SelfDiagCard />
 
           {/* My Shift Progress (section header) */}
           <div>
@@ -409,37 +397,6 @@ export default function KitchenStaffTaskList() {
               {s.reportIssue}
             </button>
           </div>
-
-          {/* Referral nudge — shown after checklist task completion */}
-          {referralNudge && (
-            <div style={{
-              background: '#EEF1F7',
-              border: '1px solid #A08C5A',
-              borderRadius: '10px',
-              padding: '12px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '12px',
-              boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
-            }}>
-              <p style={{ fontSize: '12px', color: '#0B1628', margin: 0 }}>
-                All done! Know a kitchen still on paper?{' '}
-                <button
-                  onClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
-                  style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
-                >
-                  Share EvidLY →
-                </button>
-              </p>
-              <button
-                onClick={() => setReferralNudge(false)}
-                style={{ color: '#3D5068', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}
-              >
-                ×
-              </button>
-            </div>
-          )}
 
           {/* Calendar */}
           <CalendarCard

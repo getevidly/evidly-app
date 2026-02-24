@@ -321,6 +321,7 @@ export function InspectorView() {
     setShowUpgrade,
     upgradeAction,
     upgradeFeature,
+    handleOverride,
   } = useDemoGuard();
 
   const [showCertPanel, setShowCertPanel] = useState(false);
@@ -727,6 +728,7 @@ export function InspectorView() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
+          onOverride={handleOverride}
         />
       )}
     </>

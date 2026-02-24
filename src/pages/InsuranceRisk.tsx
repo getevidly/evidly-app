@@ -28,6 +28,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AiUpgradePrompt } from '../components/AiUpgradePrompt';
+import { FeatureGate } from '../components/FeatureGate';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { getAiTier, isFeatureAvailable } from '../lib/aiTier';
@@ -804,12 +805,7 @@ export function InsuranceRisk() {
           </div>
         </div>
 
-        {!isFeatureAvailable(aiTier, 'predictiveAlerts') ? (
-          <AiUpgradePrompt
-            feature="Insurance Risk Score API"
-            description="Give your insurance carrier direct, authenticated API access to your real-time risk score data — designed to support evidence-based underwriting conversations."
-          />
-        ) : (
+        <FeatureGate featureId="ai-predictive-insights">
           <div className="space-y-4">
             <div className="p-4 rounded-lg bg-gray-50 font-mono text-xs">
               <div className="text-gray-500 mb-2">// API Endpoint</div>
@@ -840,7 +836,7 @@ export function InsuranceRisk() {
               <span>Rate limits: 60 requests/minute, 1,000 requests/day per API key</span>
             </div>
           </div>
-        )}
+        </FeatureGate>
       </div>
 
       {/* Carrier Report & Share */}

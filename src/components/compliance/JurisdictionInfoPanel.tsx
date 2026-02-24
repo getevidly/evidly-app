@@ -132,20 +132,6 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
           Compliance Weights (Set by Jurisdiction)
         </span>
         <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
-          <div style={{ flex: 1, backgroundColor: '#E3F2FD', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#1565C0' }}>
-              {jurisdiction.foodSafetyWeight}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#1565C0' }}>Food Safety</div>
-          </div>
-          <div style={{ flex: 1, backgroundColor: '#FFF3E0', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#E65100' }}>
-              {jurisdiction.fireSafetyWeight}
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#E65100' }}>Fire Safety</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
           <div style={{ flex: 1, backgroundColor: '#F3E5F5', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
             <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#6A1B9A' }}>
               {jurisdiction.opsWeight}

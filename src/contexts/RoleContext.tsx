@@ -1,7 +1,9 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from './AuthContext';
+import { useDemo } from './DemoContext';
 
-export type UserRole = 'owner_operator' | 'executive' | 'compliance_manager' | 'chef' | 'facilities_manager' | 'kitchen_manager' | 'kitchen_staff';
+export type UserRole = 'platform_admin' | 'owner_operator' | 'executive' | 'compliance_manager' | 'chef' | 'facilities_manager' | 'kitchen_manager' | 'kitchen_staff';
 
 export interface LocationAssignment {
   locationId: string;
@@ -29,6 +31,7 @@ const ALL_LOCATIONS: LocationAssignment[] = [
 ];
 
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
+  platform_admin: ALL_LOCATIONS,                    // Platform admin sees everything
   owner_operator: ALL_LOCATIONS,                       // All locations — owner sees everything
   executive: ALL_LOCATIONS,
   compliance_manager: ALL_LOCATIONS,                // All locations — compliance spans org
@@ -72,9 +75,29 @@ interface RoleContextType {
 
 const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
-const VALID_ROLES: UserRole[] = ['owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager', 'kitchen_staff'];
+const VALID_ROLES: UserRole[] = ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'chef', 'facilities_manager', 'kitchen_manager', 'kitchen_staff'];
+
+/** Map a database user_profiles.role string to the UserRole type. */
+function dbRoleToUserRole(dbRole: string | undefined | null): UserRole {
+  const MAP: Record<string, UserRole> = {
+    platform_admin: 'platform_admin',
+    admin: 'owner_operator',
+    owner: 'owner_operator',
+    owner_operator: 'owner_operator',
+    executive: 'executive',
+    compliance_manager: 'compliance_manager',
+    chef: 'chef',
+    facilities_manager: 'facilities_manager',
+    kitchen_manager: 'kitchen_manager',
+    kitchen_staff: 'kitchen_staff',
+  };
+  return MAP[dbRole || ''] || 'owner_operator';
+}
 
 export function RoleProvider({ children }: { children: ReactNode }) {
+  const { profile, session } = useAuth();
+  const { isDemoMode } = useDemo();
+
   const [userRole, setUserRoleRaw] = useState<UserRole>(() => {
     try {
       const saved = localStorage.getItem('evidly-demo-role');
@@ -87,6 +110,16 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem('evidly-demo-role', role); } catch {}
   }, []);
   const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(INITIAL_TEMP_COVERAGE);
+
+  // ── Sync role from database when a real session exists ──
+  // When an authenticated user has a profile, use the database role.
+  // Demo mode uses the localStorage-based demo role switcher instead.
+  useEffect(() => {
+    if (!isDemoMode && session && profile?.role) {
+      const dbRole = dbRoleToUserRole(profile.role);
+      setUserRoleRaw(dbRole);
+    }
+  }, [isDemoMode, session, profile?.role]);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
     return ROLE_LOCATION_ASSIGNMENTS[userRole] || [];
@@ -102,15 +135,15 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [getAccessibleLocations, getAccessibleLocationUrlIds]);
 
   const canManageTeam = useCallback((): boolean => {
-    return userRole === 'executive' || userRole === 'owner_operator';
+    return userRole === 'platform_admin' || userRole === 'executive' || userRole === 'owner_operator';
   }, [userRole]);
 
   const canAccessBilling = useCallback((): boolean => {
-    return userRole === 'executive';
+    return userRole === 'platform_admin' || userRole === 'executive';
   }, [userRole]);
 
   const canAssignTempCoverage = useCallback((): boolean => {
-    return userRole === 'executive' || userRole === 'owner_operator';
+    return userRole === 'platform_admin' || userRole === 'executive' || userRole === 'owner_operator';
   }, [userRole]);
 
   const hasMultipleLocations = useCallback((): boolean => {

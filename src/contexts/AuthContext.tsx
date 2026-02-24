@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { syncOrgToIntelligence } from '../lib/intelligenceBridge';
 
 interface UserProfile {
   id: string;
@@ -96,6 +97,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // ── Intelligence bridge sync (fire-and-forget on profile load) ──
+  const intelligenceSyncedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const orgId = profile?.organization_id;
+    if (!orgId) return;
+    // Only sync once per org per session
+    if (intelligenceSyncedRef.current === orgId) return;
+    intelligenceSyncedRef.current = orgId;
+
+    (async () => {
+      try {
+        const [{ data: org }, { data: locations }] = await Promise.all([
+          supabase.from('organizations').select('name, subscription_tier').eq('id', orgId).maybeSingle(),
+          supabase.from('locations').select('name, jurisdiction_id, county').eq('organization_id', orgId),
+        ]);
+
+        syncOrgToIntelligence({
+          orgId,
+          orgName: org?.name || '',
+          subscriptionTier: org?.subscription_tier || 'founder',
+          jurisdictionIds: (locations || []).map((l: any) => l.jurisdiction_id).filter(Boolean),
+          locationCounties: (locations || []).map((l: any) => l.county).filter(Boolean),
+          locationNames: (locations || []).map((l: any) => l.name),
+          complianceSnapshot: null, // pushed separately when scores calculate
+        }).catch(() => {}); // explicit catch — never throw
+      } catch {
+        // silent — Intelligence sync must never break auth
+      }
+    })();
+  }, [profile?.organization_id]);
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({

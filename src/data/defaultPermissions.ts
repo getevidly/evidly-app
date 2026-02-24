@@ -17,6 +17,17 @@
 import type { UserRole } from '../contexts/RoleContext';
 
 export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
+  // ── Platform Admin — unrestricted access to everything ──────
+  platform_admin: [
+    'sidebar.*',
+    'dashboard.*',
+    'bottom.*',
+    'action.*',
+    'page.*',
+    'settings_access',
+    'help_access',
+  ],
+
   // ── Owner / Operator — full access ──────────────────────────
   owner_operator: [
     'sidebar.*',
@@ -31,12 +42,18 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Executive — org-wide analytics & strategy ───────────────
   executive: [
     'sidebar.dashboard',
+    'sidebar.ai-insights',
     'sidebar.analytics',
     'sidebar.audit-log',
     'sidebar.benchmarks',
     'sidebar.business-intelligence',
+    'sidebar.fire-safety',
+    'sidebar.intelligence',
     'sidebar.iot-dashboard',
+    'sidebar.jurisdiction-intelligence',
     'sidebar.score-table',
+    'sidebar.services',
+    'sidebar.violation-trends',
     'sidebar.regulatory',
     'sidebar.reporting',
     'sidebar.billing',
@@ -48,6 +65,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'dashboard.trend',
     'dashboard.kpis',
     'bottom.reports',
+    'bottom.locations',
     'bottom.benchmarks',
     'bottom.regulatory',
     'bottom.settings',
@@ -58,14 +76,20 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Compliance Manager — food safety, regulatory, inspections ─
   compliance_manager: [
     'sidebar.dashboard',
+    'sidebar.ai-insights',
+    'sidebar.checklists',
     'sidebar.corrective-actions',
     'sidebar.documents',
+    'sidebar.fire-safety',
+    'sidebar.haccp',
     'sidebar.regulatory',
     'sidebar.reporting',
     'sidebar.self-inspection',
+    'sidebar.services',
     'sidebar.vendor-certifications',
     'sidebar.audit-log',
     'sidebar.business-intelligence',
+    'sidebar.intelligence',
     'sidebar.iot-dashboard',
     'sidebar.jurisdiction-intelligence',
     'sidebar.score-table',
@@ -91,7 +115,9 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Chef — kitchen operations, checklists, temps, team ───────
   chef: [
     'sidebar.dashboard',
+    'sidebar.ai-insights',
     'sidebar.allergen-tracking',
+    'sidebar.calendar',
     'sidebar.cooling-logs',
     'sidebar.haccp',
     'sidebar.receiving-log',
@@ -105,6 +131,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'dashboard.tasks',
     'bottom.checklists',
     'bottom.temps',
+    'bottom.qr-scan',
     'bottom.team',
     'bottom.incidents',
     'settings_access',
@@ -114,20 +141,22 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Facilities Manager — equipment, vendors, fire safety ─────
   facilities_manager: [
     'sidebar.dashboard',
+    'sidebar.fire-safety',
     'sidebar.hood-exhaust',
     'sidebar.hvac',
     'sidebar.ice-machines',
+    'sidebar.incidents',
     'sidebar.refrigeration',
+    'sidebar.services',
     'sidebar.suppression-systems',
-    'sidebar.certs-docs',
     'sidebar.self-diagnosis',
-    'sidebar.service-calendar',
     'sidebar.service-reporting',
     'sidebar.vendors',
     'sidebar.help',
     'dashboard.hero',
     'dashboard.alerts',
     'dashboard.start',
+    'bottom.fire-safety',
     'bottom.equipment',
     'bottom.schedule',
     'bottom.vendors',
@@ -139,8 +168,13 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
   // ── Kitchen Manager — daily operations, checklists, team ─────
   kitchen_manager: [
     'sidebar.dashboard',
+    'sidebar.ai-insights',
+    'sidebar.calendar',
     'sidebar.checklists',
+    'sidebar.fire-safety',
+    'sidebar.haccp',
     'sidebar.incidents',
+    'sidebar.services',
     'sidebar.temperatures',
     'sidebar.documents',
     'sidebar.regulatory',
@@ -155,6 +189,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'dashboard.tasks',
     'bottom.checklists',
     'bottom.temps',
+    'bottom.qr-scan',
     'bottom.team',
     'bottom.incidents',
     'settings_access',

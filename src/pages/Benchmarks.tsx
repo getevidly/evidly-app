@@ -1,3 +1,4 @@
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import {
@@ -14,6 +15,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { locationScores, locations, complianceScores } from '../data/demoData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { FeatureGate } from '../components/FeatureGate';
 
 // ── Demo benchmark data ──────────────────────────────────────────────
 
@@ -169,8 +171,7 @@ export function Benchmarks() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
-  const isPremium = false; // Standard tier demo
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const reportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -440,42 +441,7 @@ export function Benchmarks() {
         </div>
 
         {/* ── Section 3: Subcategory Deep Dive ── */}
-        {!isPremium ? (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden relative">
-            <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Target className="h-5 w-5" style={{ color: '#1e4d6b' }} />
-                Subcategory Deep Dive
-                <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-bold rounded-full flex items-center gap-1">
-                  <Lock className="h-3 w-3" /> Premium
-                </span>
-              </h2>
-            </div>
-            <div className="p-4 sm:p-6 relative">
-              <div className="filter blur-sm pointer-events-none">
-                <div className="space-y-3">
-                  {SUBCATEGORY_DATA.slice(0, 4).map((item) => (
-                    <div key={item.name} className="flex items-center gap-4">
-                      <div className="w-52 text-sm text-gray-700">{item.name}</div>
-                      <ScoreBar value={typeof item.yours === 'number' ? Math.round(item.yours) : 0} color="#1e4d6b" />
-                      <div className="w-16 text-xs text-gray-500 text-right">Avg: {item.avg}{item.unit}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-                <div className="text-center">
-                  <Lock className="h-8 w-8 mx-auto mb-2" style={{ color: '#d4af37' }} />
-                  <p className="text-sm font-semibold text-gray-900 mb-1">Subcategory breakdowns are a Premium feature</p>
-                  <p className="text-xs text-gray-500 mb-3">Drill into 8 specific compliance metrics vs your peers</p>
-                  <button onClick={() => navigate('/settings?tab=billing')} className="px-4 py-2 rounded-lg text-xs font-bold text-white min-h-[44px]" style={{ backgroundColor: '#d4af37' }}>
-                    Upgrade to Premium
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
+        <FeatureGate featureId="industry-benchmarks">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-4 sm:px-6 py-4 border-b border-gray-100">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -494,7 +460,7 @@ export function Benchmarks() {
               ))}
             </div>
           </div>
-        )}
+        </FeatureGate>
 
         {/* ── Section 4: Where You Lead / Where You Lag ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -722,7 +688,7 @@ export function Benchmarks() {
                 {['LinkedIn', 'Facebook', 'X'].map(platform => (
                   <button
                     key={platform}
-                    onClick={() => toast.info(`Share to ${platform} — coming soon`)}
+                    onClick={() => toast.info(`Share to ${platform} (Demo)`)}
                     className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 hover:bg-gray-50"
                   >
                     {platform}
@@ -822,6 +788,7 @@ export function Benchmarks() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
+        onOverride={handleOverride}
       />
     </>
   );

@@ -252,7 +252,7 @@ function CompletedIncidentCard({ incident, onViewReport, guardAction }: { incide
 // ── Main Component ──────────────────────────────────────────
 export function IncidentPlaybooks() {
   const navigate = useNavigate();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('library');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'all'>('all');
@@ -531,6 +531,7 @@ export function IncidentPlaybooks() {
         onClose={() => setShowUpgrade(false)}
         feature={upgradeFeature}
         action={upgradeAction}
+        onOverride={handleOverride}
       />
     </div>
   );

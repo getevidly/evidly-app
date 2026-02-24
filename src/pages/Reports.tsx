@@ -1,19 +1,22 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
-import { Printer, Download, TrendingUp, ShieldX, Activity, Thermometer, FileText, ClipboardCheck } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Printer, Download, TrendingUp, ShieldX, Activity, Flame, FileText, ClipboardCheck } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useTranslation } from '../contexts/LanguageContext';
 
-import { complianceScores, locationScores, locations as demoLocations, getWeights } from '../data/demoData';
+import { locationScores, locationScoresThirtyDaysAgo, locations as demoLocations } from '../data/demoData';
+import { getScoreColor as scoringGetScoreColor, getScoreStatus } from '../lib/complianceScoring';
 
 type TabType = 'executive' | 'operational' | 'equipment' | 'team';
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, { bg: string; text: string; border: string }> = {
+    'Excellent': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
+    'Good': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
     'Inspection Ready': { bg: '#f0fdf4', text: '#166534', border: '#bbf7d0' },
     'Needs Attention': { bg: '#fffbeb', text: '#92400e', border: '#fef3c7' },
     'Critical': { bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
@@ -82,18 +85,14 @@ function ProgressBar({ value, color = '#1e4d6b' }: { value: number; color?: stri
   );
 }
 
-function getScoreColor(score: number): string {
-  if (score >= 90) return '#22c55e';
-  if (score >= 75) return '#eab308';
-  if (score >= 60) return '#f59e0b';
-  return '#ef4444';
-}
+// Delegate to complianceScoring.ts — single source of truth for thresholds
+const getScoreColor = scoringGetScoreColor;
 
 export function Reports() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
   const [dateRange, setDateRange] = useState('this-month');
@@ -120,43 +119,50 @@ export function Reports() {
 
   const scoreDataLocations = {
     'downtown': [
-      { week: 'Wk 1', score: 85 }, { week: 'Wk 2', score: 87 }, { week: 'Wk 3', score: 86 },
-      { week: 'Wk 4', score: 88 }, { week: 'Wk 5', score: 89 }, { week: 'Wk 6', score: 90 },
-      { week: 'Wk 7', score: 89 }, { week: 'Wk 8', score: 91 }, { week: 'Wk 9', score: 90 },
-      { week: 'Wk 10', score: 92 }, { week: 'Wk 11', score: 91 }, { week: 'Wk 12', score: 92 },
+      { week: 'Wk 1', foodSafety: 86, fireSafety: 82 }, { week: 'Wk 2', foodSafety: 87, fireSafety: 83 },
+      { week: 'Wk 3', foodSafety: 87, fireSafety: 83 }, { week: 'Wk 4', foodSafety: 88, fireSafety: 85 },
+      { week: 'Wk 5', foodSafety: 89, fireSafety: 86 }, { week: 'Wk 6', foodSafety: 90, fireSafety: 87 },
+      { week: 'Wk 7', foodSafety: 89, fireSafety: 86 }, { week: 'Wk 8', foodSafety: 91, fireSafety: 88 },
+      { week: 'Wk 9', foodSafety: 90, fireSafety: 87 }, { week: 'Wk 10', foodSafety: 92, fireSafety: 89 },
+      { week: 'Wk 11', foodSafety: 91, fireSafety: 88 }, { week: 'Wk 12', foodSafety: 92, fireSafety: 89 },
     ],
     'airport': [
-      { week: 'Wk 1', score: 64 }, { week: 'Wk 2', score: 65 }, { week: 'Wk 3', score: 66 },
-      { week: 'Wk 4', score: 67 }, { week: 'Wk 5', score: 66 }, { week: 'Wk 6', score: 68 },
-      { week: 'Wk 7', score: 69 }, { week: 'Wk 8', score: 68 }, { week: 'Wk 9', score: 69 },
-      { week: 'Wk 10', score: 71 }, { week: 'Wk 11', score: 70 }, { week: 'Wk 12', score: 70 },
+      { week: 'Wk 1', foodSafety: 66, fireSafety: 58 }, { week: 'Wk 2', foodSafety: 67, fireSafety: 59 },
+      { week: 'Wk 3', foodSafety: 67, fireSafety: 60 }, { week: 'Wk 4', foodSafety: 68, fireSafety: 61 },
+      { week: 'Wk 5', foodSafety: 68, fireSafety: 60 }, { week: 'Wk 6', foodSafety: 69, fireSafety: 62 },
+      { week: 'Wk 7', foodSafety: 70, fireSafety: 63 }, { week: 'Wk 8', foodSafety: 69, fireSafety: 62 },
+      { week: 'Wk 9', foodSafety: 70, fireSafety: 64 }, { week: 'Wk 10', foodSafety: 72, fireSafety: 65 },
+      { week: 'Wk 11', foodSafety: 71, fireSafety: 64 }, { week: 'Wk 12', foodSafety: 72, fireSafety: 65 },
     ],
     'university': [
-      { week: 'Wk 1', score: 42 }, { week: 'Wk 2', score: 44 }, { week: 'Wk 3', score: 46 },
-      { week: 'Wk 4', score: 48 }, { week: 'Wk 5', score: 47 }, { week: 'Wk 6', score: 49 },
-      { week: 'Wk 7', score: 51 }, { week: 'Wk 8', score: 50 }, { week: 'Wk 9', score: 52 },
-      { week: 'Wk 10', score: 53 }, { week: 'Wk 11', score: 53 }, { week: 'Wk 12', score: 54 },
+      { week: 'Wk 1', foodSafety: 44, fireSafety: 38 }, { week: 'Wk 2', foodSafety: 46, fireSafety: 40 },
+      { week: 'Wk 3', foodSafety: 47, fireSafety: 42 }, { week: 'Wk 4', foodSafety: 49, fireSafety: 44 },
+      { week: 'Wk 5', foodSafety: 48, fireSafety: 43 }, { week: 'Wk 6', foodSafety: 50, fireSafety: 45 },
+      { week: 'Wk 7', foodSafety: 52, fireSafety: 47 }, { week: 'Wk 8', foodSafety: 51, fireSafety: 46 },
+      { week: 'Wk 9', foodSafety: 53, fireSafety: 48 }, { week: 'Wk 10', foodSafety: 55, fireSafety: 50 },
+      { week: 'Wk 11', foodSafety: 55, fireSafety: 49 }, { week: 'Wk 12', foodSafety: 58, fireSafety: 52 },
     ],
   };
-  // All = average of 3 locations (e.g. Wk1: (82+65+52)/3 = 66)
-  const scoreDataByLocation: Record<string, { week: string; score: number }[]> = {
+  const scoreDataByLocation: Record<string, { week: string; foodSafety: number; fireSafety: number }[]> = {
     ...scoreDataLocations,
     'all': scoreDataLocations.downtown.map((item, i) => ({
       week: item.week,
-      score: Math.round((item.score + scoreDataLocations.airport[i].score + scoreDataLocations.university[i].score) / 3),
+      foodSafety: Math.round((item.foodSafety + scoreDataLocations.airport[i].foodSafety + scoreDataLocations.university[i].foodSafety) / 3),
+      fireSafety: Math.round((item.fireSafety + scoreDataLocations.airport[i].fireSafety + scoreDataLocations.university[i].fireSafety) / 3),
     })),
   };
   const scoreData = scoreDataByLocation[selectedLocation] || scoreDataByLocation['all'];
 
   const locationComparison = demoLocations.map(loc => {
     const scores = locationScores[loc.urlId];
+    const food = scores?.foodSafety || 0;
+    const fire = scores?.fireSafety || 0;
     return {
       location: loc.name,
-      score: scores?.overall || 0,
-      foodSafety: scores?.foodSafety || 0,
-      fireSafety: scores?.fireSafety || 0,
-      change: '+5%',
-      status: scores?.overall >= 90 ? 'Inspection Ready' : scores?.overall >= 70 ? 'Needs Attention' : 'Critical',
+      foodSafety: food,
+      fireSafety: fire,
+      foodStatus: getScoreStatus(food),
+      fireStatus: getScoreStatus(fire),
     };
   });
 
@@ -406,9 +412,9 @@ export function Reports() {
       let filename = '';
 
       if (activeTab === 'executive') {
-        csvContent = 'Location,Score,Change,Status\n';
+        csvContent = 'Location,Food Safety,Fire Safety,Food Status,Fire Status\n';
         locationComparison.forEach(r => {
-          csvContent += `"${r.location}",${r.score},"${r.change}","${r.status}"\n`;
+          csvContent += `"${r.location}",${r.foodSafety},${r.fireSafety},"${r.foodStatus}","${r.fireStatus}"\n`;
         });
         csvContent += '\nTop Issues\nIssue,Priority,Affected\n';
         topIssues.forEach(r => {
@@ -530,62 +536,74 @@ export function Reports() {
 
         {activeTab === 'executive' && (
           <div className="space-y-6">
+            {(() => {
+              const allScores = Object.values(locationScores);
+              const allPrev = Object.values(locationScoresThirtyDaysAgo);
+              const foodScore = selectedLocation !== 'all' && locationScores[selectedLocation]
+                ? locationScores[selectedLocation].foodSafety
+                : Math.round(allScores.reduce((s, l) => s + l.foodSafety, 0) / allScores.length);
+              const fireScore = selectedLocation !== 'all' && locationScores[selectedLocation]
+                ? locationScores[selectedLocation].fireSafety
+                : Math.round(allScores.reduce((s, l) => s + l.fireSafety, 0) / allScores.length);
+              const prevFood = selectedLocation !== 'all' && locationScoresThirtyDaysAgo[selectedLocation]
+                ? locationScoresThirtyDaysAgo[selectedLocation].foodSafety
+                : Math.round(allPrev.reduce((s, l) => s + l.foodSafety, 0) / allPrev.length);
+              const prevFire = selectedLocation !== 'all' && locationScoresThirtyDaysAgo[selectedLocation]
+                ? locationScoresThirtyDaysAgo[selectedLocation].fireSafety
+                : Math.round(allPrev.reduce((s, l) => s + l.fireSafety, 0) / allPrev.length);
+              const foodDelta = foodScore - prevFood;
+              const fireDelta = fireScore - prevFire;
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Activity className="h-5 w-5" style={{ color: '#A08C5A' }} />
+                      <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.foodSafety')} Score</h3>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-bold mb-2" style={{ color: '#A08C5A' }}>
+                      {foodScore}
+                    </div>
+                    <div className="flex items-center gap-1 mb-3">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium text-green-600">
+                        {foodDelta >= 0 ? '+' : ''}{foodDelta} pts {t('pages.reports.fromLastMonth')}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500 font-medium">CalCode / CDPH</div>
+                  </div>
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Flame className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+                      <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.fireSafety')} Score</h3>
+                    </div>
+                    <div className="text-4xl sm:text-5xl font-bold mb-2" style={{ color: '#1E2D4D' }}>
+                      {fireScore}
+                    </div>
+                    <div className="flex items-center gap-1 mb-3">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium text-green-600">
+                        {fireDelta >= 0 ? '+' : ''}{fireDelta} pts {t('pages.reports.fromLastMonth')}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500 font-medium">NFPA 96 / Cal Fire</div>
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                {t('pages.reports.overallComplianceScore')}{selectedLocName ? ` — ${selectedLocName}` : ''}
+                Score Trend{selectedLocName ? ` — ${selectedLocName}` : ''}
               </h3>
-              <div className="flex items-center gap-4 mb-4 flex-wrap">
-                {(() => {
-                  const overallScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].overall
-                    : complianceScores.overall;
-                  const overallColor = getScoreColor(overallScore);
-                  return (
-                    <div className="text-3xl sm:text-5xl font-bold text-center" style={{ color: overallColor }}>
-                      {overallScore}
-                    </div>
-                  );
-                })()}
-                <div className="flex items-center text-green-600">
-                  <TrendingUp className="h-5 w-5 mr-1" />
-                  <span className="font-medium">+{selectedLocation === 'downtown' ? '12' : selectedLocation === 'airport' ? '6' : selectedLocation === 'university' ? '3' : '8'}% {t('pages.reports.fromLastMonth')}</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                {(() => {
-                  const opScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].foodSafety : complianceScores.foodSafety;
-                  const eqScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                    ? locationScores[selectedLocation].fireSafety : complianceScores.fireSafety;
-                  const opColor = getScoreColor(opScore);
-                  const eqColor = getScoreColor(eqScore);
-                  return (
-                    <>
-                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${opColor}` }}>
-                        <div className="flex items-center justify-center gap-1.5 mb-1">
-                          <Activity className="h-3.5 w-3.5" style={{ color: opColor }} />
-                          <span className="text-sm text-gray-500 font-medium">{t('pages.reports.foodSafety')} ({Math.round(getWeights().foodSafety * 100)}%)</span>
-                        </div>
-                        <p className="text-xl font-bold text-center" style={{ color: opColor }}>{opScore}</p>
-                      </div>
-                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: `4px solid ${eqColor}` }}>
-                        <div className="flex items-center justify-center gap-1.5 mb-1">
-                          <Thermometer className="h-3.5 w-3.5" style={{ color: eqColor }} />
-                          <span className="text-sm text-gray-500 font-medium">{t('pages.reports.fireSafety')} ({Math.round(getWeights().fireSafety * 100)}%)</span>
-                        </div>
-                        <p className="text-xl font-bold text-center" style={{ color: eqColor }}>{eqScore}</p>
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={280}>
                 <LineChart data={scoreData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="week" />
                   <YAxis domain={[0, 100]} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="score" stroke="#1e4d6b" strokeWidth={2} dot={{ r: 3 }} />
+                  <Legend />
+                  <Line type="monotone" dataKey="foodSafety" name="Food Safety" stroke="#A08C5A" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="fireSafety" name="Fire Safety" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -599,21 +617,21 @@ export function Reports() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.location')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.overall')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.foodSafety')} ({Math.round(getWeights().foodSafety * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.fireSafety')} ({Math.round(getWeights().fireSafety * 100)}%)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.status')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.foodSafety')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.fireSafety')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.status')}</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {locationComparison.map((loc, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loc.location}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: getScoreColor(loc.score) }}>{loc.score}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: getScoreColor(loc.foodSafety) }}>{loc.foodSafety}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: getScoreColor(loc.fireSafety) }}>{loc.fireSafety}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <StatusBadge status={loc.status} />
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: '#A08C5A' }}>{loc.foodSafety}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: '#1E2D4D' }}>{loc.fireSafety}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell">
+                          <StatusBadge status={loc.foodStatus} />
+                          <span className="mx-1" />
+                          <StatusBadge status={loc.fireStatus} />
                         </td>
                       </tr>
                     ))}
@@ -673,7 +691,7 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{item.template}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={item.rate} color={item.rate >= 90 ? '#22c55e' : item.rate >= 75 ? '#eab308' : item.rate >= 60 ? '#f59e0b' : '#ef4444'} />
+                          <ProgressBar value={item.rate} color={getScoreColor(item.rate)} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium hidden sm:table-cell">{item.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium hidden sm:table-cell">{item.missed}</td>
@@ -963,7 +981,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium hidden sm:table-cell">{emp.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium hidden sm:table-cell">{emp.missed}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={emp.rate} color={emp.rate >= 90 ? '#22c55e' : emp.rate >= 75 ? '#eab308' : emp.rate >= 60 ? '#f59e0b' : '#ef4444'} />
+                          <ProgressBar value={emp.rate} color={getScoreColor(emp.rate)} />
                         </td>
                       </tr>
                     ))}
@@ -993,7 +1011,7 @@ export function Reports() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium hidden sm:table-cell">{training.completed}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium hidden sm:table-cell" style={{ color: training.pending > 0 ? '#d4af37' : '#22c55e' }}>{training.pending}</td>
                         <td className="px-6 py-4 text-sm">
-                          <ProgressBar value={training.rate} color={training.rate >= 90 ? '#22c55e' : training.rate >= 75 ? '#eab308' : training.rate >= 60 ? '#f59e0b' : '#ef4444'} />
+                          <ProgressBar value={training.rate} color={getScoreColor(training.rate)} />
                         </td>
                       </tr>
                     ))}
@@ -1040,7 +1058,7 @@ export function Reports() {
         )}
       </div>
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

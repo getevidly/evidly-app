@@ -11,7 +11,7 @@ interface HelpArticle {
 
 const helpArticles: HelpArticle[] = [
   { id: '1', title: 'Getting Started with EvidLY', category: 'Setup', summary: 'Complete setup guide — add locations, invite team, set up equipment, and start logging.', icon: BookOpen },
-  { id: '2', title: 'Understanding Your Compliance Score', category: 'Dashboard', summary: 'How the 2-pillar scoring works: Food Safety (55%) and Fire Safety (45%).', icon: FileText },
+  { id: '2', title: 'Understanding Your Compliance Score', category: 'Dashboard', summary: 'How the 2-pillar scoring works: Food Safety and Fire Safety.', icon: FileText },
   { id: '3', title: 'Temperature Logging Best Practices', category: 'Operations', summary: 'Set schedules, handle out-of-range readings, FDA cooldown tracking, and receiving logs.', icon: FileText },
   { id: '4', title: 'Setting Up Auto Document Requests', category: 'Vendors', summary: 'Configure automatic vendor document requests with secure upload links and reminders.', icon: FileText },
   { id: '5', title: 'Creating & Managing Checklists', category: 'Operations', summary: 'Build opening/closing checklists, customize templates, and track completion rates.', icon: FileText },

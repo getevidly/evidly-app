@@ -54,7 +54,7 @@ export function Settings() {
   });
   const [saving, setSaving] = useState(false);
   const [benchmarkOptIn, setBenchmarkOptIn] = useState(true);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
   const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
@@ -321,7 +321,7 @@ export function Settings() {
                   </div>
                   <div>
                     <button
-                      onClick={() => toast.info('Logo upload coming soon')}
+                      onClick={() => toast.info('Logo Upload (Demo)')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.chooseFile')}
@@ -402,7 +402,7 @@ export function Settings() {
                   ))}
                 </div>
                 <button
-                  onClick={() => toast.info('Add location coming soon')}
+                  onClick={() => toast.info('Add Location (Demo)')}
                   className="mt-3 px-4 py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600 w-full"
                 >
                   {t('settings.addLocation')}
@@ -943,7 +943,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Restaurant365 integration coming soon')}
+                      onClick={() => toast.info('Restaurant365 Integration (Demo)')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -968,7 +968,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Cintas integration coming soon')}
+                      onClick={() => toast.info('Cintas Integration (Demo)')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -993,7 +993,7 @@ export function Settings() {
                       </div>
                     </div>
                     <button
-                      onClick={() => toast.info('Ecolab integration coming soon')}
+                      onClick={() => toast.info('Ecolab Integration (Demo)')}
                       className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
                     >
                       {t('settings.connect')}
@@ -1690,7 +1690,7 @@ export function Settings() {
         </div>
       )}
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

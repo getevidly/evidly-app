@@ -1,7 +1,7 @@
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import type { PlanTier } from '../lib/featureGating';
-import { hasAccess, getFeatureDefinition } from '../lib/featureGating';
+import { hasAccess, getFeatureDefinition, isFeatureEnabled } from '../lib/featureGating';
 
 export function useSubscription() {
   const { profile } = useAuth();
@@ -51,7 +51,7 @@ export function useFeatureAccess(featureId: string): {
   }
 
   return {
-    hasAccess: hasAccess(currentTier, feature.requiredTier),
+    hasAccess: isFeatureEnabled(feature.id) && hasAccess(currentTier, feature.requiredTier, feature.id),
     feature,
     currentTier,
   };

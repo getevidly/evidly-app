@@ -18,7 +18,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: 'compliance-score',
     title: 'Compliance Score',
-    content: 'Your overall compliance score across 2 pillars: Food Safety (55%) and Fire Safety (45%). Click either pillar to see what\'s driving the score.',
+    content: 'Your compliance scores across 2 independent pillars: Food Safety and Fire Safety. Click either pillar to see what\'s driving the score.',
     placement: 'bottom',
   },
   {

@@ -37,8 +37,8 @@ export const helpDocs: Record<string, HelpDoc> = {
     title: 'Compliance Overview',
     steps: [
       'Your score is calculated automatically from two pillars',
-      'Food Safety (55%): temperature logs, checklists, corrective actions',
-      'Fire Safety (45%): hood cleaning, fire suppression, extinguisher records',
+      'Food Safety: temperature logs, checklists, corrective actions',
+      'Fire Safety: hood cleaning, fire suppression, extinguisher records',
       'View the breakdown on the Compliance Overview page',
       'Click "Improve Score" for specific recommendations',
     ],

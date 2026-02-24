@@ -430,7 +430,7 @@ export function HelpSupport() {
   // ── Contact Us ─────────────────────────────────────────────────
   function renderContact() {
     const openChat = () => {
-      try { (window as any).zE?.('messenger', 'open'); } catch { toast.info('Live chat coming soon'); }
+      try { (window as any).zE?.('messenger', 'open'); } catch { toast.info('Live Chat (Demo)'); }
     };
 
     return (
@@ -466,7 +466,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>📅</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Schedule a Call</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Book a 15-minute call with our support team at your convenience.</div>
-            <button onClick={() => toast.info('Booking link coming soon')} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
+            <button onClick={() => toast.info('Book Time (Demo)')} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
           </div>
         </div>
 

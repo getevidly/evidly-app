@@ -9,6 +9,7 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { locations } from '../data/demoData';
+import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -19,30 +20,30 @@ const LOCATION_OVERRIDE_KEY: Record<string, string> = {
 };
 
 const LOCATION_COUNTY: Record<string, string> = {
-  downtown: 'Fresno County',
-  airport: 'Merced County',
-  university: 'Stanislaus County',
+  downtown: 'Fresno',
+  airport: 'Merced',
+  university: 'Stanislaus',
 };
 
-// ── Jurisdiction methodology ─────────────────────────────────
+// ── Jurisdiction methodology (dynamic from jurisdictionData.ts) ──
 
-const JURISDICTION_INFO: Record<string, { name: string; system: string; description: string }> = {
-  downtown: {
-    name: 'Fresno County Dept of Public Health',
-    system: 'Violation-based (CalCode)',
-    description: 'Inspectors document major and minor violations. Major violations require reinspection unless corrected on-site. There are no letter grades or numeric scores.',
-  },
-  airport: {
-    name: 'Merced County Dept of Public Health',
-    system: 'Three-tier point rating',
-    description: 'Violations accumulate points. Good: 0\u20136 points | Satisfactory: 7\u201313 points | Unsatisfactory: 14+ points.',
-  },
-  university: {
-    name: 'Stanislaus County Environmental Resources',
-    system: 'Violation-based (CalCode)',
-    description: 'Inspectors enforce CalCode and document violations. No published letter grade or numeric scoring system.',
-  },
-};
+const FALLBACK_INFO = { name: 'California (Standard CalCode)', system: 'Violation-based (CalCode)', description: 'Standard CalCode inspection — violations documented by severity.' };
+
+function getJurisdictionInfo(locationUrlId: string): { name: string; system: string; description: string } {
+  const county = LOCATION_COUNTY[locationUrlId];
+  if (!county) return FALLBACK_INFO;
+  const entry = JURISDICTION_DATABASE.find(j => j.county === county && j.pillar === 'food_safety');
+  if (!entry) return FALLBACK_INFO;
+  return {
+    name: entry.agencyName,
+    system: entry.gradingScale,
+    description: [
+      `Passing: ${entry.passingThreshold}.`,
+      entry.closureTrigger ? `Closure: ${entry.closureTrigger}.` : '',
+      entry.reinspectionPolicy ? `Re-inspection: ${entry.reinspectionPolicy}` : '',
+    ].filter(Boolean).join(' '),
+  };
+}
 
 // ── Operational readiness (real internal metrics) ─────────────
 
@@ -116,8 +117,8 @@ export function ScoringBreakdown() {
   const selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
   const overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';
   const gradeData = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
-  const county = LOCATION_COUNTY[locationParam] || 'California';
-  const jurisdictionInfo = JURISDICTION_INFO[locationParam] || JURISDICTION_INFO['downtown'];
+  const county = (LOCATION_COUNTY[locationParam] || 'California') + ' County';
+  const jurisdictionInfo = getJurisdictionInfo(locationParam);
 
   const foodStatus = STATUS_COLORS[gradeData.foodSafety.status];
   const fireStatus = STATUS_COLORS[gradeData.fireSafety.status];
@@ -127,7 +128,7 @@ export function ScoringBreakdown() {
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
         { label: selectedLocation.name, href: `/dashboard?location=${locationParam}` },
-        { label: 'Compliance Overview' },
+        { label: 'Food Safety Overview' },
       ]} />
 
       {/* Header */}
@@ -139,7 +140,7 @@ export function ScoringBreakdown() {
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Compliance Overview</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Food Safety Overview</h1>
         <p className="text-gray-500 text-sm mt-1">
           {selectedLocation.name} &mdash; {county}
         </p>

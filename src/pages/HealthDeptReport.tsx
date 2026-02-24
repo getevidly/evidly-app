@@ -1,3 +1,4 @@
+// TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
 import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -98,7 +99,7 @@ export function HealthDeptReport() {
   const [isPaidTier, setIsPaidTier] = useState(true);
   const [generatedReport, setGeneratedReport] = useState<ReportType | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
 
   const [sections, setSections] = useState({
     facilityInfo: true,
@@ -1022,7 +1023,7 @@ export function HealthDeptReport() {
         )}
       </div>
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

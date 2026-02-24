@@ -49,6 +49,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   const canAccessHelp = usePermission('help_access');
 
   const roleLabels: Record<string, string> = {
+    platform_admin: t('topBar.platformAdmin') !== 'topBar.platformAdmin' ? t('topBar.platformAdmin') : 'Platform Admin',
     owner_operator: t('topBar.ownerOperator'),
     executive: t('topBar.executiveView'),
     compliance_manager: t('topBar.complianceManager'),
@@ -59,6 +60,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   };
 
   const demoRoleNames: Record<string, string> = {
+    platform_admin: 'Arthur Samuels',
     owner_operator: 'James Wilson',
     executive: 'David Chen',
     compliance_manager: 'Sarah Kim',
@@ -134,6 +136,11 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             <div className="text-xl font-semibold text-white">
               {isDemoMode ? companyName : profile?.organization_name || title}
             </div>
+            {userRole === 'platform_admin' && (
+              <span className="ml-2 px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1a2d4a] uppercase whitespace-nowrap">
+                Platform Admin
+              </span>
+            )}
           </div>
 
           <div className="ml-4 flex items-center md:ml-6 space-x-4">
@@ -301,9 +308,6 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                           setUserRole(role);
                           setShowRoleMenu(false);
                           navigate('/dashboard', { replace: true });
-                          if (isTestMode) {
-                            console.log(`[EvidLY Test] Role switched to: ${role} (${label})`);
-                          }
                         }}
                         className={`block w-full text-left px-4 py-2.5 transition-colors duration-150 ${
                           userRole === role

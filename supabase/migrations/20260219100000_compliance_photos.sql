@@ -63,7 +63,7 @@ CREATE POLICY "Users can view photos in their org"
   ON compliance_photos FOR SELECT
   USING (
     organization_id IN (
-      SELECT organization_id FROM profiles WHERE id = auth.uid()
+      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
     )
   );
 
@@ -71,7 +71,7 @@ CREATE POLICY "Users can insert photos in their org"
   ON compliance_photos FOR INSERT
   WITH CHECK (
     organization_id IN (
-      SELECT organization_id FROM profiles WHERE id = auth.uid()
+      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
     )
   );
 
@@ -79,7 +79,7 @@ CREATE POLICY "Managers can update photos in their org"
   ON compliance_photos FOR UPDATE
   USING (
     organization_id IN (
-      SELECT organization_id FROM profiles WHERE id = auth.uid()
+      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
       AND role IN ('executive', 'management')
     )
   );
@@ -88,7 +88,7 @@ CREATE POLICY "Managers can delete photos in their org"
   ON compliance_photos FOR DELETE
   USING (
     organization_id IN (
-      SELECT organization_id FROM profiles WHERE id = auth.uid()
+      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
       AND role IN ('executive', 'management')
     )
   );

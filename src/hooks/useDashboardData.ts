@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
+import { pushComplianceUpdate } from '../lib/intelligenceBridge';
 import {
   loadDashboardData,
   type ActivityItem,
@@ -11,11 +12,10 @@ import {
   DEMO_ORG_SCORES,
   DEMO_TREND_DATA,
   DEMO_ATTENTION_ITEMS,
-  DEFAULT_WEIGHTS,
   locationScoresThirtyDaysAgo,
   calcPillar,
-  calcReadiness,
 } from '../data/demoData';
+import { DEMO_INTELLIGENCE_INSIGHTS } from '../data/demoIntelligenceData';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ export interface LocationWithScores {
   status: 'good' | 'attention' | 'critical';
   foodScore: number;
   fireScore: number;
-  score: number;
+  score: number | null;
 }
 
 export interface TrendDataPoint {
@@ -86,14 +86,12 @@ export interface TrendDataPoint {
 }
 
 export interface DashboardWeights {
-  foodSafety: number;
-  fireSafety: number;
   ops: number;
   docs: number;
 }
 
 export interface DashboardPayload {
-  orgScores: { overall: number; foodSafety: number; fireSafety: number };
+  orgScores: { overall: number | null; foodSafety: number; fireSafety: number };
   locations: LocationWithScores[];
   locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }>;
   tasks: TaskItem[];
@@ -223,6 +221,19 @@ const DEMO_ALERTS: AlertItem[] = [
   { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' },
   { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' },
   { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Fire Safety', actionLabel: 'Schedule', route: '/equipment' },
+  // Intelligence-sourced alerts (critical/high insights)
+  ...DEMO_INTELLIGENCE_INSIGHTS
+    .filter(i => i.impact_level === 'critical' || i.impact_level === 'high')
+    .slice(0, 3)
+    .map((i, idx) => ({
+      id: `intel-${idx}`,
+      severity: (i.impact_level === 'critical' ? 'critical' : 'warning') as 'critical' | 'warning',
+      message: `[Intel] ${i.headline}`,
+      location: i.affected_counties[0] || 'All Locations',
+      pillar: i.affected_pillars[0] || 'Intelligence',
+      actionLabel: 'View Intel',
+      route: '/intelligence',
+    })),
 ];
 
 const DEMO_ACTIVITY: ActivityItem[] = [
@@ -261,12 +272,43 @@ function buildDemoPayload(): DashboardPayload {
     moduleStatuses: DEMO_MODULE_STATUSES,
     trendData: DEMO_TREND_DATA,
     weights: {
-      foodSafety: DEFAULT_WEIGHTS.foodSafetyWeight * 100,
-      fireSafety: DEFAULT_WEIGHTS.fireSafetyWeight * 100,
-      ops: DEFAULT_WEIGHTS.opsWeight * 100,
-      docs: DEFAULT_WEIGHTS.docsWeight * 100,
+      ops: 50,
+      docs: 50,
     },
   };
+}
+
+// ── Intelligence bridge: compliance push throttle ──────
+
+const BRIDGE_THROTTLE_KEY = 'evidly_intelligence_last_push';
+const BRIDGE_THROTTLE_MS = 60 * 60 * 1000; // 1 hour
+const BRIDGE_DELTA_THRESHOLD = 5; // only push when score delta > 5 points
+
+function shouldPushToIntelligence(
+  current: { foodSafety: number; fireSafety: number },
+  lastPushed: { foodSafety: number; fireSafety: number } | null,
+): boolean {
+  if (!lastPushed) return true;
+  return (
+    Math.abs(current.foodSafety - lastPushed.foodSafety) > BRIDGE_DELTA_THRESHOLD ||
+    Math.abs(current.fireSafety - lastPushed.fireSafety) > BRIDGE_DELTA_THRESHOLD
+  );
+}
+
+function isThrottled(): boolean {
+  try {
+    const last = localStorage.getItem(BRIDGE_THROTTLE_KEY);
+    if (!last) return false;
+    return Date.now() - Number(last) < BRIDGE_THROTTLE_MS;
+  } catch {
+    return false;
+  }
+}
+
+function markPushTimestamp(): void {
+  try {
+    localStorage.setItem(BRIDGE_THROTTLE_KEY, String(Date.now()));
+  } catch { /* ignore */ }
 }
 
 // ── Hook ───────────────────────────────────────────────
@@ -309,12 +351,12 @@ export function useDashboardData(): {
         ...loc,
         foodScore: calcPillar(loc.foodSafety),
         fireScore: calcPillar(loc.fireSafety),
-        score: calcReadiness(loc.foodSafety, loc.fireSafety),
+        score: null, // DEPRECATED — no composite score
       }));
 
       setData({
         orgScores: {
-          overall: result.complianceData.scores.overall,
+          overall: null, // DEPRECATED — no composite score
           foodSafety: result.complianceData.scores.foodSafety,
           fireSafety: result.complianceData.scores.fireSafety,
         },
@@ -332,10 +374,8 @@ export function useDashboardData(): {
         moduleStatuses: DEMO_MODULE_STATUSES,
         trendData: DEMO_TREND_DATA,
         weights: {
-          foodSafety: DEFAULT_WEIGHTS.foodSafetyWeight * 100,
-          fireSafety: DEFAULT_WEIGHTS.fireSafetyWeight * 100,
-          ops: DEFAULT_WEIGHTS.opsWeight * 100,
-          docs: DEFAULT_WEIGHTS.docsWeight * 100,
+          ops: 50,
+          docs: 50,
         },
       });
     } catch (err) {
@@ -353,6 +393,30 @@ export function useDashboardData(): {
     fetchData();
     return () => { mountedRef.current = false; };
   }, [fetchData]);
+
+  // ── Intelligence bridge: push compliance when scores change significantly ──
+  const lastPushedScoresRef = useRef<{ foodSafety: number; fireSafety: number } | null>(null);
+
+  useEffect(() => {
+    if (isDemo || !orgId || loading) return;
+
+    const current = {
+      foodSafety: data.orgScores.foodSafety,
+      fireSafety: data.orgScores.fireSafety,
+    };
+
+    if (!shouldPushToIntelligence(current, lastPushedScoresRef.current)) return;
+    if (isThrottled()) return;
+
+    lastPushedScoresRef.current = current;
+    markPushTimestamp();
+
+    pushComplianceUpdate(orgId, {
+      foodSafety: current.foodSafety,
+      fireSafety: current.fireSafety,
+      openItems: data.impact.length,
+    }).catch(() => {}); // fire and forget
+  }, [isDemo, orgId, loading, data.orgScores.foodSafety, data.orgScores.fireSafety, data.impact.length]);
 
   return { data, loading, error, refresh: fetchData };
 }

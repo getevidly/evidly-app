@@ -612,7 +612,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -1177,7 +1177,7 @@ export function Equipment() {
                             <td style={tdStyle}><span style={badge(ms.label, ms.color, ms.bg)}>{ms.label}</span></td>
                             <td style={tdStyle}>
                               <button
-                                onClick={() => alert(`✓ ${s.task} logged for ${selected.name} — ${format(new Date(), 'MMM d, yyyy h:mm a')}`)}
+                                onClick={() => toast.success(`✓ ${s.task} logged for ${selected.name} — ${format(new Date(), 'MMM d, yyyy h:mm a')}`)}
                                 className="px-2.5 py-1 text-xs font-semibold rounded-md transition-colors"
                                 style={{ backgroundColor: '#1e4d6b', color: 'white' }}
                                 onMouseEnter={e => { (e.target as HTMLElement).style.backgroundColor = '#2a6a8f'; }}
@@ -1789,7 +1789,7 @@ export function Equipment() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

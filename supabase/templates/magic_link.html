@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Magic Link — EvidLY</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f6fa;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6fa;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1E2D4D;padding:32px 40px;text-align:center;">
+              <h1 style="margin:0;font-size:28px;font-weight:700;color:#A08C5A;letter-spacing:0.5px;">EvidLY</h1>
+              <p style="margin:6px 0 0;font-size:13px;color:#8a9bba;letter-spacing:1px;">FOOD SAFETY COMPLIANCE</p>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:36px 40px 20px;">
+              <h2 style="margin:0 0 16px;font-size:22px;color:#1E2D4D;">Your Magic Link</h2>
+              <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#3D5068;">
+                Click the button below to sign in to your EvidLY account. This link will expire after use.
+              </p>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
+                <tr>
+                  <td style="background-color:#1E2D4D;border-radius:8px;">
+                    <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:600;color:#A08C5A;text-decoration:none;">
+                      Sign In to EvidLY
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 8px;font-size:13px;color:#6B7F96;line-height:1.5;">
+                If you didn't request this link, you can safely ignore this email.
+              </p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:20px 40px 28px;border-top:1px solid #e8edf5;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#8a9bba;">
+                &copy; {{ now.UTC.Year }} EvidLY &mdash; Food Safety Compliance Platform
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

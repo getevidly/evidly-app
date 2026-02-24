@@ -75,13 +75,15 @@ const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m 
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
 const BusinessIntelligence = lazy(() => import('./pages/CorporateIntelligence').then(m => ({ default: m.BusinessIntelligence })));
+const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub').then(m => ({ default: m.IntelligenceHub })));
 const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
 const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
 const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
 const SensorSetupWizard = lazy(() => import('./pages/SensorSetupWizard').then(m => ({ default: m.SensorSetupWizard })));
 const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ default: m.SensorDetail })));
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
-const ComingSoon = lazy(() => import('./pages/ComingSoon').then(m => ({ default: m.ComingSoon })));
+
+const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
@@ -104,6 +106,8 @@ const AuditTrail = lazy(() => import('./pages/AuditTrail').then(m => ({ default:
 const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m => ({ default: m.DocumentChecklist })));
 const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
+const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue'));
+const IntelligenceAdmin = lazy(() => import('./pages/admin/IntelligenceAdmin'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -141,6 +145,25 @@ import { PageExplanation } from './components/PageExplanation';
 import { AutoBreadcrumb } from './components/layout/AutoBreadcrumb';
 import { useRole } from './contexts/RoleContext';
 import { isRouteAllowedForRole } from './lib/routeGuards';
+import type { UserRole } from './contexts/RoleContext';
+
+/** Map a database user_profiles.role string to the demo UserRole enum.
+ *  Authenticated users use this instead of the demo RoleContext. */
+function dbRoleToUserRole(dbRole: string | undefined | null): UserRole {
+  const MAP: Record<string, UserRole> = {
+    platform_admin: 'platform_admin',
+    admin: 'owner_operator',
+    owner: 'owner_operator',
+    owner_operator: 'owner_operator',
+    executive: 'executive',
+    compliance_manager: 'compliance_manager',
+    chef: 'chef',
+    facilities_manager: 'facilities_manager',
+    kitchen_manager: 'kitchen_manager',
+    kitchen_staff: 'kitchen_staff',
+  };
+  return MAP[dbRole || ''] || 'owner_operator';
+}
 
 function LandingPage() {
   return (
@@ -166,7 +189,7 @@ function LandingPage() {
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
   const location = useLocation();
@@ -193,8 +216,12 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!isRouteAllowedForRole(location.pathname, userRole)) {
-    return <Navigate to="/dashboard" replace />;
+  // Authenticated users: EvidlyAdmin bypasses route guards; others use DB role
+  if (!isEvidlyAdmin) {
+    const effectiveRole = dbRoleToUserRole(profile?.role);
+    if (!isRouteAllowedForRole(location.pathname, effectiveRole)) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return <>{children}</>;
@@ -222,7 +249,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 function ProtectedLayout() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading, isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
   const location = useLocation();
@@ -244,8 +271,16 @@ function ProtectedLayout() {
   }
 
   // Role-based route guard — redirect to dashboard if role not allowed
-  if (!isRouteAllowedForRole(location.pathname, userRole)) {
-    return <Navigate to="/dashboard" replace />;
+  // Authenticated users: EvidlyAdmin bypasses guards; others use DB profile role
+  if (isDemoMode) {
+    if (!isRouteAllowedForRole(location.pathname, userRole)) {
+      return <Navigate to="/dashboard" replace />;
+    }
+  } else if (!isEvidlyAdmin) {
+    const effectiveRole = dbRoleToUserRole(profile?.role);
+    if (!isRouteAllowedForRole(location.pathname, effectiveRole)) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return (
@@ -351,11 +386,6 @@ function AppRoutes() {
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/fire-safety" element={<FireSafety />} />
           <Route path="/equipment" element={<Equipment />} />
-          <Route path="/equipment/hood-exhaust" element={<ComingSoon title="Hood and Exhaust" description="Hood and exhaust system maintenance, cleaning schedules, and fire suppression inspections." />} />
-          <Route path="/equipment/hvac" element={<ComingSoon title="HVAC" description="Heating, ventilation, and air conditioning system maintenance and service records." />} />
-          <Route path="/equipment/ice-machines" element={<ComingSoon title="Ice Machines" description="Ice machine maintenance, cleaning schedules, and water quality monitoring." />} />
-          <Route path="/equipment/refrigeration" element={<ComingSoon title="Refrigeration" description="Walk-in coolers, freezers, and refrigeration units — temperature monitoring and service records." />} />
-          <Route path="/equipment/suppression-systems" element={<ComingSoon title="Suppression Systems" description="Fire suppression system inspections, certifications, and maintenance compliance." />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
           <Route path="/regulatory-alerts" element={<RegulatoryAlerts />} />
@@ -396,17 +426,23 @@ function AppRoutes() {
           <Route path="/photo-evidence" element={<PhotoEvidencePage />} />
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />
+          <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
+          <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
+          <Route path="/admin/intelligence" element={<IntelligenceAdmin />} />
           {/* Stub routes for upcoming features */}
-          <Route path="/corrective-actions" element={<ComingSoon title="Corrective Actions" description="Track and resolve compliance violations with documented corrective action plans and follow-up verification." />} />
-          <Route path="/vendor-certifications" element={<ComingSoon title="Vendor Certifications" description="Verify and track vendor compliance certifications, insurance documents, and licensing status." />} />
-          <Route path="/violation-trends" element={<ComingSoon title="Violation Trends" description="Analyze violation patterns over time to identify systemic issues and improvement opportunities." />} />
-          <Route path="/export-center" element={<ComingSoon title="Export Center" description="Export compliance reports, documentation packages, and data extracts in multiple formats." />} />
-          <Route path="/allergen-tracking" element={<ComingSoon title="Allergen Tracking" description="Track allergen presence in menu items, cross-contamination risks, and allergen-free preparation zones." />} />
-          <Route path="/cooling-logs" element={<ComingSoon title="Cooling Logs" description="Record cooling times and temperatures for cooked foods to ensure safe cooling compliance." />} />
-          <Route path="/receiving-log" element={<ComingSoon title="Receiving Log" description="Log incoming deliveries with temperature checks, quality inspections, and supplier verification." />} />
-          <Route path="/billing" element={<ComingSoon title="Billing" description="Manage your EvidLY subscription, payment method, and invoice history." />} />
+          <Route path="/corrective-actions" element={<CorrectiveActions />} />
+          {/* Blueprint route aliases — FIX-03 */}
+          <Route path="/incident-playbook" element={<Navigate to="/playbooks" replace />} />
+          <Route path="/regulatory-tracking" element={<Navigate to="/regulatory-alerts" replace />} />
+          <Route path="/ai-insights" element={<Navigate to="/ai-advisor" replace />} />
+          <Route path="/analytics" element={<Navigate to="/analysis" replace />} />
+          <Route path="/compliance" element={<Navigate to="/compliance-index" replace />} />
+          <Route path="/locations" element={<Navigate to="/org-hierarchy" replace />} />
+          <Route path="/inspections" element={<Navigate to="/self-audit" replace />} />
+          <Route path="/certifications" element={<Navigate to="/training/certificates" replace />} />
+          <Route path="/sensor-dashboard" element={<Navigate to="/sensors" replace />} />
         </Route>
       </Routes>
     </>

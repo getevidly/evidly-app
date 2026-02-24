@@ -47,6 +47,7 @@ const PATH_ICON: Record<string, any> = {
   '/services': Wrench,
   '/vendor-certifications': FileText,
   '/ai-advisor': Brain,
+  '/intelligence': Brain,
   '/analysis': TrendingUp,
   '/audit-trail': ClipboardList,
   '/benchmarks': Target,

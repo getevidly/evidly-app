@@ -579,7 +579,7 @@ export function Checklists() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
@@ -1507,7 +1507,14 @@ export function Checklists() {
                 const iconColor = cl.status === 'complete' ? 'text-green-600' : cl.status === 'in_progress' ? 'text-yellow-600' : 'text-gray-400';
 
                 return (
-                  <div key={cl.id} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                  <div
+                    key={cl.id}
+                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
+                    onClick={() => {
+                      setActiveView('templates');
+                      toast.info(`${templateNameMap[cl.name] || cl.name} — ${cl.completed}/${cl.total} items complete`);
+                    }}
+                  >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-3">
                         <div className={`p-3 rounded-lg ${iconBg}`}>
@@ -2006,7 +2013,7 @@ export function Checklists() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
       )}
     </>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
 import { useOperatingHours, generateOpeningTimes, generateClosingTimes, DAY_LABELS, formatTime24to12 } from '../contexts/OperatingHoursContext';
 import {
   Building2, MapPin, Thermometer, ClipboardCheck, CheckCircle,
@@ -15,13 +16,7 @@ const INDUSTRIES = [
   { code: 'HIGHER_EDUCATION', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
 ];
 
-const WEIGHTS: Record<string, { foodSafety: number; fireSafety: number }> = {
-  RESTAURANT: { foodSafety: 60, fireSafety: 40 },
-  HEALTHCARE: { foodSafety: 60, fireSafety: 40 },
-  SENIOR_LIVING: { foodSafety: 60, fireSafety: 40 },
-  K12_EDUCATION: { foodSafety: 65, fireSafety: 35 },
-  HIGHER_EDUCATION: { foodSafety: 60, fireSafety: 40 },
-};
+// Pillar weights removed — Food Safety and Fire Safety are independent scores
 
 interface DemoLead {
   name: string;
@@ -55,11 +50,18 @@ export function DemoWizard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { enterDemo } = useDemo();
+  const { userRole } = useRole();
   const { updateLocationHours, addShift, setLocationHours, setShifts } = useOperatingHours();
 
+  // ── Bypass: Platform Admin skips the demo wizard entirely ──
   // ── Bypass: URL param ──────────────────────────────────
   const [bypassChecked, setBypassChecked] = useState(false);
   useEffect(() => {
+    if (userRole === 'platform_admin') {
+      enterDemo();
+      navigate('/dashboard', { replace: true });
+      return;
+    }
     const bypassKey = searchParams.get('bypass');
     const expectedKey = import.meta.env.VITE_DEMO_BYPASS_KEY;
     if (bypassKey && expectedKey && bypassKey === expectedKey) {
@@ -106,7 +108,7 @@ export function DemoWizard() {
   const [showShifts, setShowShifts] = useState(true);
 
   const selectedIndustry = INDUSTRIES.find(i => i.code === lead.industry);
-  const weights = WEIGHTS[lead.industry] || WEIGHTS.RESTAURANT;
+  // Pillar weights removed — Food Safety and Fire Safety are independent scores
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 10);
@@ -274,10 +276,10 @@ export function DemoWizard() {
                 )}
                 {lead.industry && (
                   <div className="bg-blue-50 rounded-lg p-4 mt-4">
-                    <p className="text-sm font-medium text-[#1e4d6b] mb-2">Your compliance scoring weights:</p>
+                    <p className="text-sm font-medium text-[#1e4d6b] mb-2">Your compliance pillars:</p>
                     <div className="flex gap-4 text-sm">
-                      <span>Food Safety: <strong>{weights.foodSafety}%</strong></span>
-                      <span>Fire Safety: <strong>{weights.fireSafety}%</strong></span>
+                      <span><strong>Food Safety</strong></span>
+                      <span><strong>Fire Safety</strong></span>
                     </div>
                   </div>
                 )}
@@ -505,7 +507,7 @@ export function DemoWizard() {
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Compliance dashboard with your {selectedIndustry?.label} scoring weights ({weights.foodSafety}/{weights.fireSafety})</span>
+                    <span>Compliance dashboard with {selectedIndustry?.label} Food Safety and Fire Safety scoring</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />

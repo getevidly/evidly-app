@@ -210,7 +210,7 @@ export default function ServicesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold" style={{ color: '#0B1628' }}>Services</h1>
+            <h1 className="text-2xl font-semibold" style={{ color: '#0B1628' }}>Vendor Services</h1>
             <p className="text-sm text-gray-500 mt-1">
               Track and log vendor-provided service records across your locations.
             </p>

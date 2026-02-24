@@ -75,16 +75,15 @@ export function QuickActionsBar() {
     return roleActions.filter(a => checkPermission(userRole, a.permission));
   }, [userRole]);
 
+  // Kitchen staff uses dedicated bottom nav — no quick actions
+  if (userRole === 'kitchen_staff') return null;
   if (actions.length === 0) return null;
-
-  // Kitchen staff: full-width (no sidebar offset)
-  const isKitchenStaff = userRole === 'kitchen_staff';
 
   return (
     <>
-      {/* Desktop — fixed bottom bar */}
+      {/* Desktop — fixed bottom bar (lg+ only, matches sidebar breakpoint) */}
       <div
-        className={`hidden md:flex fixed bottom-0 ${isKitchenStaff ? 'left-0' : 'left-0 lg:left-60'} right-0 z-[100] bg-white border-t justify-center items-center gap-6`}
+        className="hidden lg:flex fixed bottom-0 left-0 lg:left-60 right-0 z-[100] bg-white border-t justify-center items-center gap-6"
         style={{
           padding: '8px 32px',
           borderColor: '#e2e8f0',

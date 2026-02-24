@@ -400,7 +400,7 @@ export function OrgHierarchy() {
       {/* Page Header */}
       <div className="flex items-center justify-between flex-wrap gap-2 mb-5">
         <div>
-          <h1 className="text-gray-900 font-bold text-2xl">Organization Hierarchy</h1>
+          <h1 className="text-gray-900 font-bold text-2xl">Locations</h1>
           <p className="text-gray-500 text-sm mt-1">Compliance status across your locations</p>
         </div>
         <div className="flex items-center gap-2">
@@ -412,7 +412,7 @@ export function OrgHierarchy() {
             Import
           </button>
           <button
-            onClick={() => toast.info('Hierarchy configuration \u2014 coming soon')}
+            onClick={() => toast.info('Hierarchy Config (Demo)')}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <Settings className="h-4 w-4" />

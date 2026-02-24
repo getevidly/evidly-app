@@ -1,4 +1,10 @@
 /**
+ * DEPRECATED: Use featureGating.ts instead. This file will be removed post-launch.
+ *
+ * AI feature flags have been merged into the unified FEATURES registry in
+ * src/lib/featureGating.ts. New code should use <FeatureGate> or
+ * useFeatureAccess() from hooks/useSubscription.ts.
+ *
  * AI Tier — Pricing gate for AI Compliance Copilot features
  *
  * Standard ($99/mo): AI Chat (20 messages/day), weekly digest, basic pattern alerts
