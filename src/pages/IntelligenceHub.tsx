@@ -153,7 +153,7 @@ export function IntelligenceHub() {
   , [insights]);
 
   const lastUpdated = useMemo(() => {
-    const latest = sourceStatus.reduce((max, s) => {
+    const latest = (sourceStatus || []).reduce((max, s) => {
       const t = new Date(s.last_checked_at).getTime();
       return t > max ? t : max;
     }, 0);
@@ -161,8 +161,8 @@ export function IntelligenceHub() {
   }, [sourceStatus]);
 
   const sourceHealth = useMemo(() => {
-    const errCount = sourceStatus.filter(s => s.status === 'error').length;
-    const warnCount = sourceStatus.filter(s => s.status === 'warning').length;
+    const errCount = (sourceStatus || []).filter(s => s.status === 'error').length;
+    const warnCount = (sourceStatus || []).filter(s => s.status === 'warning').length;
     if (errCount > 0) return 'error';
     if (warnCount > 0) return 'warning';
     return 'healthy';
@@ -206,7 +206,8 @@ export function IntelligenceHub() {
           </div>
           <div>
             <h1 className="font-bold text-lg" style={{ color: BODY_TEXT }}>Compliance Intelligence</h1>
-            <div className="flex items-center gap-3 text-xs" style={{ color: TEXT_TERTIARY }}>
+            <p className="text-[11px] mt-0.5" style={{ color: MUTED }}>Live industry alerts, recalls, and regulatory updates — updated daily.</p>
+            <div className="flex items-center gap-3 text-xs mt-0.5" style={{ color: TEXT_TERTIARY }}>
               <span className="flex items-center gap-1">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -417,7 +418,7 @@ export function IntelligenceHub() {
 function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceInsight; selected: boolean; onSelect: () => void }) {
   const ic = IMPACT_COLORS[insight.impact_level];
   const CategoryIcon = CATEGORY_ICONS[insight.category] || Brain;
-  const pillarLabels = insight.affected_pillars.map(p => p === 'fire_safety' ? 'Fire' : p === 'food_safety' ? 'Food' : p);
+  const pillarLabels = (insight.affected_pillars || []).map(p => p === 'fire_safety' ? 'Fire' : p === 'food_safety' ? 'Food' : p);
 
   return (
     <button
@@ -450,7 +451,7 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
           <p className="text-[13px] font-semibold leading-tight line-clamp-2" style={{ color: BODY_TEXT }}>{insight.title}</p>
           <p className="text-[11px] mt-1 line-clamp-1" style={{ color: TEXT_TERTIARY }}>{insight.headline}</p>
           <div className="flex items-center gap-2 mt-1.5">
-            {insight.affected_counties.slice(0, 3).map(c => (
+            {(insight.affected_counties || []).slice(0, 3).map(c => (
               <span key={c} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                 {c.charAt(0).toUpperCase() + c.slice(1)}
               </span>
@@ -475,6 +476,7 @@ function InsightDetailView({
   onDismiss: () => void;
   onShare: () => void;
 }) {
+  const navigate = useNavigate();
   const ic = IMPACT_COLORS[insight.impact_level];
   const affectedLocs = getAffectedLocations(insight.affected_counties);
 
@@ -524,13 +526,13 @@ function InsightDetailView({
             </p>
 
             {/* Affected Locations */}
-            {biz.affected_locations.length > 0 && (
+            {(biz.affected_locations || []).length > 0 && (
               <div className="mb-3">
                 <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
                   Your Affected Locations
                 </h4>
                 <div className="space-y-1.5">
-                  {biz.affected_locations.map(loc => (
+                  {(biz.affected_locations || []).map(loc => (
                     <div key={loc.name} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>
                       <span className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{
                         backgroundColor: loc.risk_level === 'high' ? '#dc2626' : loc.risk_level === 'medium' ? '#d97706' : '#16a34a',
@@ -561,13 +563,13 @@ function InsightDetailView({
             )}
 
             {/* Personalized Actions */}
-            {biz.personalized_actions.length > 0 && (
+            {(biz.personalized_actions || []).length > 0 && (
               <div className="mb-3">
                 <h4 className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>
                   Recommended for Your Operations
                 </h4>
                 <ol className="space-y-1">
-                  {biz.personalized_actions.map((action, i) => (
+                  {(biz.personalized_actions || []).map((action, i) => (
                     <li key={i} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>
                       <span className="text-[10px] font-bold mt-0.5 shrink-0" style={{ color: GOLD }}>{i + 1}.</span>
                       <span>{action}</span>
@@ -588,7 +590,7 @@ function InsightDetailView({
       {/* Full Analysis */}
       <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
         <h3 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>Full Analysis</h3>
-        {insight.full_analysis.split('\n').map((para, i) => (
+        {(insight.full_analysis || '').split('\n').map((para, i) => (
           <p key={i} className="text-sm leading-relaxed mb-2" style={{ color: BODY_TEXT }}>{para}</p>
         ))}
       </div>
@@ -606,7 +608,7 @@ function InsightDetailView({
       <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
         <h3 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: TEXT_TERTIARY }}>Action Items</h3>
         <ol className="space-y-2">
-          {insight.action_items.map((item, idx) => {
+          {(insight.action_items || []).map((item, idx) => {
             const key = `${insight.id}-${idx}`;
             const checked = checkedActions.has(key);
             return (
@@ -671,6 +673,19 @@ function InsightDetailView({
         </div>
       )}
 
+      {/* Cross-reference: jurisdiction rules */}
+      {['enforcement_surge', 'enforcement_action', 'inspector_pattern', 'regulatory_change', 'regulatory_advisory'].includes(insight.category) && (
+        <button
+          onClick={() => navigate('/jurisdiction')}
+          className="flex items-center gap-2 w-full rounded-lg px-4 py-3 mb-4 text-xs font-medium transition-colors hover:opacity-80"
+          style={{ backgroundColor: '#eef4f8', color: '#1e4d6b', border: '1px solid #b8d4e8' }}
+        >
+          <Scale className="h-3.5 w-3.5" />
+          <span>See your jurisdiction's rules</span>
+          <ArrowRight className="h-3.5 w-3.5 ml-auto" />
+        </button>
+      )}
+
       {/* Bottom actions */}
       <div className="flex items-center gap-2 pt-2">
         <button onClick={onShare} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
@@ -731,7 +746,7 @@ function SourceStatusView({ sourceStatus, insightCount, criticalCount }: { sourc
                 <tr key={src.id} className="border-t" style={{ borderColor: BORDER_SUBTLE }}>
                   <td className="px-4 py-2.5 font-medium" style={{ color: BODY_TEXT }}>{src.name}</td>
                   <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type}</td>
-                  <td className="px-4 py-2.5" style={{ color: MUTED }}>{src.jurisdictions.join(', ')}</td>
+                  <td className="px-4 py-2.5" style={{ color: MUTED }}>{(src.jurisdictions || []).join(', ')}</td>
                   <td className="px-4 py-2.5" style={{ color: MUTED }}>{src.frequency}</td>
                   <td className="px-4 py-2.5" style={{ color: MUTED }}>{timeAgo(src.last_checked_at)}</td>
                   <td className="px-4 py-2.5 text-center font-semibold" style={{ color: src.new_events_this_week > 0 ? '#1e4d6b' : TEXT_TERTIARY }}>{src.new_events_this_week}</td>
@@ -790,7 +805,7 @@ function RecallDashboard({ recalls }: { recalls: RecallAlert[] }) {
                   <div className="mt-2 p-3 rounded-lg text-xs" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}` }}>
                     <p className="font-medium mb-2" style={{ color: BODY_TEXT }}>Affected counties in your coverage area:</p>
                     <div className="flex flex-wrap gap-1.5 mb-2">
-                      {r.affected_counties.map(c => {
+                      {(r.affected_counties || []).map(c => {
                         const loc = CLIENT_COUNTIES[c];
                         return (
                           <span key={c} className="px-2 py-0.5 rounded text-[10px] font-medium" style={{ backgroundColor: loc ? '#fef2f2' : PANEL_BG, color: loc ? '#991b1b' : MUTED }}>
@@ -887,11 +902,11 @@ function LegislativeTracker({ items, expandedId, onToggleExpand }: { items: Legi
               {item.compliance_deadline && <div><span className="font-semibold">Deadline:</span> {item.compliance_deadline}</div>}
               <div><span className="font-semibold">Cost/Location:</span> {formatCurrency(item.estimated_cost_per_location.low)}–{formatCurrency(item.estimated_cost_per_location.high)}</div>
             </div>
-            {item.auto_checklist_items.length > 0 && (
+            {(item.auto_checklist_items || []).length > 0 && (
               <div>
                 <h4 className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: TEXT_TERTIARY }}>Preparation Checklist</h4>
                 <ul className="space-y-1">
-                  {item.auto_checklist_items.map((ci, idx) => (
+                  {(item.auto_checklist_items || []).map((ci, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs" style={{ color: BODY_TEXT }}>
                       <span className="w-4 h-4 rounded border flex items-center justify-center shrink-0 mt-0.5" style={{ borderColor: CARD_BORDER }}>
                         <span className="text-[9px]" style={{ color: TEXT_TERTIARY }}>{idx + 1}</span>

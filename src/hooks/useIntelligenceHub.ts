@@ -110,29 +110,18 @@ export function useIntelligenceHub() {
 
   // ── Insight fetcher (closure — captures isDemoMode) ────
   const fetchInsights = async (demoProfile?: ClientProfile) => {
-    // Build query
+    // Build query — include published AND pending_review (no approval workflow yet)
+    // Exclude regulatory_updates — those appear on the dedicated /regulatory-updates page
     let query = supabase
       .from('intelligence_insights')
       .select('*')
-      .eq('status', 'published')
-      .order('published_at', { ascending: false });
+      .in('status', ['published', 'pending_review'])
+      .neq('category', 'regulatory_updates')
+      .order('created_at', { ascending: false });
 
     // Demo mode: filter to demo_eligible insights
     if (isDemoMode) {
       query = query.eq('is_demo_eligible', true);
-
-      // Jurisdiction filtering: sessionStorage override > profile counties
-      const filterCounties = getDemoJurisdictionFilter();
-      const counties = filterCounties.length > 0
-        ? filterCounties
-        : (demoProfile?.counties ?? []);
-
-      if (counties.length > 0) {
-        query = query.overlaps('affected_counties', [
-          ...counties,
-          'national', // always include national scope
-        ]);
-      }
 
       // Order by demo_priority for best demo experience
       query = query.order('demo_priority', { ascending: false });
@@ -144,7 +133,7 @@ export function useIntelligenceHub() {
 
     // Fallback: if database returns 0 results, use demoIntelligenceData.ts
     if (!insights || insights.length === 0) {
-      return DEMO_INTELLIGENCE_INSIGHTS;
+      return DEMO_INTELLIGENCE_INSIGHTS.filter(i => i.category !== 'regulatory_updates');
     }
 
     return insights.map(mapDbInsight);
@@ -233,7 +222,14 @@ export function useIntelligenceHub() {
   const legislativeItems = isDemoMode ? DEMO_LEGISLATIVE_ITEMS : [];
   const inspectorPatterns = isDemoMode ? DEMO_INSPECTOR_PATTERNS : [];
   const competitorEvents = isDemoMode ? DEMO_COMPETITOR_EVENTS : [];
-  const sourceStatus = isDemoMode ? DEMO_SOURCE_STATUS : [];
+
+  // Source status: reflect the 3 actual pipeline sources
+  const ACTIVE_SOURCES: SourceStatus[] = [
+    { id: 'openfda_enforcement', name: 'openFDA Food Enforcement (Recalls)', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: liveInsights.filter(i => i.category === 'recall_alert').length, status: 'healthy' },
+    { id: 'openfda_class1', name: 'openFDA Class I Recalls', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: 0, status: 'healthy' },
+    { id: 'openfda_adverse_events', name: 'openFDA Food Adverse Events', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: liveInsights.filter(i => i.category === 'outbreak_alert').length, status: 'healthy' },
+  ];
+  const sourceStatus = isDemoMode ? DEMO_SOURCE_STATUS : ACTIVE_SOURCES;
 
   // ── Actions ────────────────────────────────────────────
   const markAsRead = useCallback((id: string) => {

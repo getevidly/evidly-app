@@ -25,6 +25,7 @@ import {
   Lightbulb,
   Snowflake,
   Flame,
+  Scale,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -55,6 +56,7 @@ const PATH_ICON: Record<string, any> = {
   '/business-intelligence?view=financial': TrendingUp,
   '/iot-monitoring': Thermometer,
   '/jurisdiction': Network,
+  '/regulatory-updates': Scale,
   '/scoring-breakdown': Target,
   '/violation-trends': TrendingUp,
   '/self-diagnosis': Wrench,

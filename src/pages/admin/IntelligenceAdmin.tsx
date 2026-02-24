@@ -234,7 +234,7 @@ export function IntelligenceAdmin() {
     const pending = insights.filter(i => i.status === 'pending_review').length;
     const publishedWeek = insights.filter(i => i.status === 'published' && i.published_at && i.published_at >= weekAgo).length;
     const totalLive = insights.filter(i => i.status === 'published').length;
-    const pipelineInsights = insights.filter(i => i.source_id !== 'manual');
+    const pipelineInsights = insights.filter(i => i.source_name !== 'EvidLY Admin');
     const lastRun = pipelineInsights.length > 0 ? pipelineInsights[0].created_at : null;
     setStats({ pending, published_this_week: publishedWeek, total_live: totalLive, last_pipeline_run: lastRun });
   }, [isDemoMode, insights]);

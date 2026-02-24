@@ -363,6 +363,16 @@ authorization_url_path = "/oauth/consent"
 # Allow dynamic client registration
 allow_dynamic_registration = false
 
+# Intelligence functions handle their own auth (x-cron-secret / Bearer token)
+[functions.intelligence-collect]
+verify_jwt = false
+
+[functions.intelligence-approve]
+verify_jwt = false
+
+[functions.intelligence-webhook]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 # Supported request policies: `oneshot`, `per_worker`.

@@ -1,9 +1,8 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, MapPin, User, Users, Building2, Lock, Eye, EyeOff, Globe, Search, Settings, HelpCircle } from 'lucide-react';
+import { ChevronDown, MapPin, User, Users, Lock, Eye, EyeOff, Globe, Search, Settings, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ProfileModal } from '../ProfileModal';
-import { EvidlyIcon } from '../ui/EvidlyIcon';
 import { NotificationCenter } from '../NotificationCenter';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
@@ -130,14 +129,11 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
       <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1a2d4a] shadow-sm">
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-              <Building2 className="h-5 w-5 text-[#A08C5A]" />
-            </div>
-            <div className="text-xl font-semibold text-white">
+            <div className="text-sm md:text-base font-semibold text-white truncate max-w-[200px] lg:max-w-none">
               {isDemoMode ? companyName : profile?.organization_name || title}
             </div>
             {userRole === 'platform_admin' && (
-              <span className="ml-2 px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1a2d4a] uppercase whitespace-nowrap">
+              <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1a2d4a] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
@@ -393,18 +389,6 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               )}
             </div>
 
-            <div className="hidden md:flex items-center ml-2" style={{ gap: '8px' }}>
-              <EvidlyIcon size={28} />
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-                <span style={{ fontFamily: "Syne, system-ui, sans-serif", fontSize: '15px', fontWeight: 800, lineHeight: 1, letterSpacing: '-0.3px' }}>
-                  <span style={{ color: '#A08C5A' }}>Evid</span>
-                  <span style={{ color: '#ffffff' }}>LY</span>
-                </span>
-                <span style={{ fontFamily: "system-ui, sans-serif", fontSize: '8px', fontWeight: 600, color: '#A08C5A', letterSpacing: '0.15em', marginTop: '2px' }}>
-                  COMPLIANCE SIMPLIFIED
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

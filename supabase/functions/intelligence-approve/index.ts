@@ -99,7 +99,7 @@ Deno.serve(async (req: Request) => {
         supabase
           .from("intelligence_insights")
           .select("created_at")
-          .neq("source_id", "manual")
+          .neq("source_name", "EvidLY Admin")
           .order("created_at", { ascending: false })
           .limit(1),
       ]);

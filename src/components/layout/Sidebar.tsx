@@ -487,22 +487,24 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex-shrink-0 px-6 py-5">
           {branding.brandName === 'EvidLY' ? (
-            <div>
-              <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
-                <span style={{ color: '#A08C5A' }}>Evid</span>
-                <span style={{ color: '#FFFFFF' }}>LY</span>
-              </span>
-              <div style={{
-                fontSize: '10px',
-                letterSpacing: '0.15em',
-                color: '#A08C5A',
-                fontWeight: 600,
-                marginTop: '2px',
-              }}>
-                COMPLIANCE SIMPLIFIED
-              </div>
-              <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px', fontFamily: 'system-ui, sans-serif' }}>
-                {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
+            <div className="flex items-center" style={{ gap: '10px' }}>
+              <EvidlyIcon size={36} className="flex-shrink-0" />
+              <div>
+                <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
+                  <span style={{ color: '#A08C5A' }}>E</span><span style={{ color: '#FFFFFF' }}>vid</span><span style={{ color: '#A08C5A' }}>LY</span>
+                </span>
+                <div style={{
+                  fontSize: '10px',
+                  letterSpacing: '0.15em',
+                  color: '#A08C5A',
+                  fontWeight: 600,
+                  marginTop: '2px',
+                }}>
+                  COMPLIANCE SIMPLIFIED
+                </div>
+                <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px', fontFamily: 'system-ui, sans-serif' }}>
+                  {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
+                </div>
               </div>
             </div>
           ) : (

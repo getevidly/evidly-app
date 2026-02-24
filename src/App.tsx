@@ -76,6 +76,7 @@ const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').the
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
 const BusinessIntelligence = lazy(() => import('./pages/CorporateIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub').then(m => ({ default: m.IntelligenceHub })));
+const RegulatoryUpdates = lazy(() => import('./pages/RegulatoryUpdates').then(m => ({ default: m.RegulatoryUpdates })));
 const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
 const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
 const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
@@ -427,6 +428,7 @@ function AppRoutes() {
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />
           <Route path="/intelligence" element={<IntelligenceHub />} />
+          <Route path="/regulatory-updates" element={<RegulatoryUpdates />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />

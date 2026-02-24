@@ -1,12 +1,13 @@
 // TODO: i18n
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDemo } from '../contexts/DemoContext';
 import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, MapPin, Phone, ExternalLink,
   CheckCircle2, XCircle, AlertTriangle, Thermometer, FileText,
   Award, Calendar, Wrench, ClipboardList, Building2, RotateCcw,
-  Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight, ArrowRight,
+  Scale, DollarSign, Plus, Search, Zap, Clock, ToggleLeft, ToggleRight, ArrowRight, BookOpen,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -679,6 +680,7 @@ function RegulationToggle({
 
 export function JurisdictionSettings() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
@@ -747,9 +749,15 @@ export function JurisdictionSettings() {
       {/* Header */}
       <div className="mt-4 mb-6 flex items-start justify-between flex-wrap gap-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Jurisdiction Configuration</h1>
+          <div className="flex items-center gap-2.5">
+            <BookOpen className="w-6 h-6 text-[#1e4d6b]" />
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Know Your Inspector</h1>
+            <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b', border: '1px solid #b8d4e8' }}>
+              Reference
+            </span>
+          </div>
           <p className="text-sm text-gray-600 mt-1">
-            Auto-detect and configure compliance requirements based on location
+            Your jurisdiction's scoring system, inspector priorities, and violation patterns.
           </p>
         </div>
         <button
@@ -926,6 +934,27 @@ export function JurisdictionSettings() {
           </div>
         </div>
       ))}
+
+      {/* Empty state — live mode with no locations configured */}
+      {!isDemoMode && locationProfiles.length === 0 && addedLocations.length === 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center mb-6">
+          <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">No jurisdiction configured yet</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Set your county to see your inspector's scoring system, grading criteria, and violation patterns.
+          </p>
+          <button
+            onClick={() => setShowAddDialog(true)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-lg"
+            style={{ backgroundColor: '#1e4d6b' }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
+          >
+            <Plus className="w-4 h-4" />
+            Add Your First Location
+          </button>
+        </div>
+      )}
 
       {/* Per-Location Cards (existing demo locations) */}
       {locationProfiles.map(({ location, profile }) => {
