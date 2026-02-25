@@ -96,6 +96,11 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'EvidLY Intelligence — cross-location pattern detection, predictive risk scoring, and proactive compliance recommendations.',
     badge: 'NEW',
   },
+  rfpIntelligence: {
+    id: 'rfp-intelligence', label: 'RFP Monitor', path: '/admin/rfp-intelligence', icon: '📋',
+    roles: [], description: 'Government RFP and procurement opportunity monitoring with AI-powered relevance classification.',
+    badge: 'NEW',
+  },
   regulatoryUpdates: {
     id: 'regulatory-updates', label: 'Regulatory Updates', path: '/regulatory-updates', icon: '🏛️',
     roles: [], description: 'Live regulatory changes, new rules, and policy updates from federal, state, and local agencies.',
@@ -261,8 +266,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, and role permissions.',
+        [I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',

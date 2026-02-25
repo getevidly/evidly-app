@@ -109,6 +109,7 @@ const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => (
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
 const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue'));
 const IntelligenceAdmin = lazy(() => import('./pages/admin/IntelligenceAdmin'));
+const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -435,6 +436,7 @@ function AppRoutes() {
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/intelligence" element={<IntelligenceAdmin />} />
+          <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           {/* Blueprint route aliases — FIX-03 */}
