@@ -231,6 +231,79 @@ serve(async (req: Request) => {
       await supabase.from('score_calculations').insert(auditRecords);
     }
 
+    // ── STEP 7b: Write canonical snapshot (Phase 1 — V14 fix) ──
+    // Wrapped in try/catch — snapshot write failure must NOT break scoring response
+    let snapshotId: string | null = null;
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Fetch organization_id from locations table
+      const { data: locData } = await supabase
+        .from('locations')
+        .select('organization_id')
+        .eq('id', location_id)
+        .single();
+
+      if (locData?.organization_id) {
+        // Compute inputs_hash (SHA-256 of scoring inputs for reproducibility)
+        const hashPayload = JSON.stringify({
+          summary: complianceData.summary,
+          jurisdictionIds,
+          weights: overallScore.weightsUsed,
+        });
+        const encoder = new TextEncoder();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(hashPayload));
+        const inputsHash = Array.from(new Uint8Array(hashBuffer))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        // Derive operational metrics from compliance data
+        const tempTotal = complianceData.tempLogs.length;
+        const tempInRange = complianceData.tempLogs.filter((t: any) => t.in_range).length;
+        const checkTotal = complianceData.checklists.length;
+        const checkPassed = complianceData.checklists.filter((c: any) => c.all_items_passed).length;
+        const docTotal = complianceData.documents.length;
+        const docExpired = complianceData.summary.expiredDocs;
+
+        // UPSERT to compliance_score_snapshots on (location_id, score_date)
+        const { data: snapshotRow } = await supabase
+          .from('compliance_score_snapshots')
+          .upsert({
+            organization_id: locData.organization_id,
+            location_id,
+            score_date: today,
+            overall_score: overallScore.overallScore,
+            food_safety_score: overallScore.foodSafety.score,
+            fire_safety_score: overallScore.fireSafety.score,
+            vendor_score: null,
+            temp_readings_count: tempTotal,
+            temp_in_range_pct: tempTotal > 0 ? Math.round((tempInRange / tempTotal) * 100) : null,
+            checklists_completed_pct: checkTotal > 0 ? Math.round((checkPassed / checkTotal) * 100) : null,
+            documents_current_pct: docTotal > 0 ? Math.round(((docTotal - docExpired) / docTotal) * 100) : null,
+            model_version: '1.0',
+            scoring_engine: 'calculate-compliance-score',
+            inputs_hash: inputsHash,
+          }, { onConflict: 'location_id,score_date' })
+          .select('id')
+          .single();
+
+        snapshotId = snapshotRow?.id ?? null;
+
+        // Link audit trail records to this snapshot
+        if (snapshotId && save_to_audit !== false) {
+          await supabase
+            .from('score_calculations')
+            .update({ snapshot_id: snapshotId })
+            .eq('location_id', location_id)
+            .is('snapshot_id', null)
+            .gte('created_at', new Date(Date.now() - 60000).toISOString());
+        }
+      }
+    } catch (snapshotErr) {
+      // V14 fix is additive — snapshot failure must never break scoring response
+      console.error('[STEP 7b] Snapshot write failed:', (snapshotErr as Error).message);
+    }
+
     return new Response(JSON.stringify(overallScore), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
