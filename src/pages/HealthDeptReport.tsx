@@ -1,12 +1,12 @@
 // TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
   FileText, Download, Eye, AlertTriangle, CheckCircle, XCircle,
   Clock, Share2, Lock, ChevronDown, ChevronUp, ClipboardCheck,
   TrendingUp, TrendingDown, Building2, Users, Flame,
-  Package, AlertCircle, History, Mail, Link2, Send,
+  Package, AlertCircle, History, Mail, Link2, Send, Loader2,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -15,14 +15,20 @@ import {
   generateHealthDeptReport,
   COUNTY_TEMPLATES,
   getDemoReportHistory,
+  templateFromJurisdiction,
   type ReportConfig,
   type CountyTemplate,
+  type CountyTemplateConfig,
   type HealthDeptReport as ReportType,
+  type LiveScoreData,
+  type JurisdictionTemplateData,
   type SelfAuditItem,
   type MissingDocAlert,
   type ReportHistory,
 } from '../lib/reportGenerator';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { useDemo } from '../contexts/DemoContext';
+import { supabase } from '../lib/supabase';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Helpers ────────────────────────────────────────────────
@@ -99,7 +105,11 @@ export function HealthDeptReport() {
   const [isPaidTier, setIsPaidTier] = useState(true);
   const [generatedReport, setGeneratedReport] = useState<ReportType | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+  const reportRef = useRef<HTMLDivElement>(null);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { isDemoMode } = useDemo();
 
   const [sections, setSections] = useState({
     facilityInfo: true,
@@ -133,21 +143,143 @@ export function HealthDeptReport() {
   const missingDocs = preCheckReport.missingDocs;
   const hasCriticalMissing = missingDocs.some(d => d.severity === 'critical');
 
-  const handleGenerate = () => {
-    const report = generateHealthDeptReport({
-      locationId: selectedLocation,
-      countyTemplate,
-      dateRange,
-      sections,
-      isPaidTier,
-    });
-    setGeneratedReport(report);
-    setActiveView('preview');
+  const handleGenerate = async () => {
+    setGenerating(true);
+    try {
+      let liveScores: LiveScoreData | null = null;
+      let jurisdictionTemplate: CountyTemplateConfig | null = null;
+
+      // Phase 4: Fetch live data from Supabase when not in demo mode
+      if (!isDemoMode) {
+        const loc = locations.find(l => l.urlId === selectedLocation);
+        const locationId = loc?.id;
+        if (locationId) {
+          // Fetch latest compliance score snapshot
+          const { data: snapshot } = await supabase
+            .from('compliance_score_snapshots')
+            .select('id, overall_score, food_safety_score, fire_safety_score, vendor_score, score_date')
+            .eq('location_id', locationId)
+            .order('score_date', { ascending: false })
+            .limit(1)
+            .single();
+
+          if (snapshot) {
+            liveScores = {
+              overall: snapshot.overall_score,
+              foodSafety: snapshot.food_safety_score ?? snapshot.overall_score,
+              fireSafety: snapshot.fire_safety_score ?? snapshot.overall_score,
+              vendorScore: snapshot.vendor_score ?? undefined,
+              snapshotId: snapshot.id,
+              snapshotDate: snapshot.score_date,
+            };
+          }
+
+          // Fetch jurisdiction data for the location
+          const { data: jData } = await supabase
+            .from('location_jurisdictions')
+            .select('jurisdictions(county, agency_name, grading_type, grading_config, pass_threshold)')
+            .eq('location_id', locationId)
+            .eq('jurisdiction_layer', 'food_safety')
+            .limit(1)
+            .single();
+
+          if (jData?.jurisdictions) {
+            const j = jData.jurisdictions as any;
+            jurisdictionTemplate = templateFromJurisdiction({
+              county: j.county,
+              agencyName: j.agency_name,
+              gradingType: j.grading_type,
+              gradingConfig: j.grading_config,
+              passThreshold: j.pass_threshold,
+            });
+          }
+        }
+      }
+
+      const report = generateHealthDeptReport(
+        { locationId: selectedLocation, countyTemplate, dateRange, sections, isPaidTier },
+        liveScores,
+        jurisdictionTemplate,
+      );
+      setGeneratedReport(report);
+      setActiveView('preview');
+    } finally {
+      setGenerating(false);
+    }
   };
 
-  const handleDownloadPDF = () => {
-    guardAction('download', 'health department reports', () => {
-      toast.success('PDF download initiated');
+  const handleDownloadPDF = async () => {
+    guardAction('download', 'health department reports', async () => {
+      if (!reportRef.current) {
+        toast.error('No report to download. Generate a report first.');
+        return;
+      }
+      setPdfLoading(true);
+      try {
+        const html2canvas = (await import('html2canvas')).default;
+        const jsPDFModule = await import('jspdf');
+        const jsPDF = jsPDFModule.jsPDF || (jsPDFModule as any).default;
+
+        const canvas = await html2canvas(reportRef.current, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pageW = 210;
+        const pageH = 297;
+        const margin = 8;
+        const hdrH = 10;
+        const ftrH = 8;
+        const usableH = pageH - hdrH - ftrH;
+        const imgW = pageW - 2 * margin;
+        const imgH = (canvas.height * imgW) / canvas.width;
+
+        let heightLeft = imgH;
+        let pageIdx = 0;
+
+        while (heightLeft > 0 || pageIdx === 0) {
+          if (pageIdx > 0) pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', margin, hdrH - pageIdx * usableH, imgW, imgH);
+          heightLeft -= usableH;
+          pageIdx++;
+        }
+
+        // Brand every page with header, footer, page numbers
+        const total = pdf.getNumberOfPages();
+        const generatedAt = new Date().toLocaleString();
+        const reportTitle = `Health Dept Report — ${generatedReport?.facilityInfo.name || selectedLocation}`;
+        for (let i = 1; i <= total; i++) {
+          pdf.setPage(i);
+          // White-out header/footer zones
+          pdf.setFillColor(255, 255, 255);
+          pdf.rect(0, 0, pageW, hdrH, 'F');
+          pdf.rect(0, pageH - ftrH, pageW, ftrH, 'F');
+          // Header bar (EvidLY brand blue)
+          pdf.setFillColor(30, 77, 107);
+          pdf.rect(0, 0, pageW, hdrH, 'F');
+          pdf.setFontSize(7);
+          pdf.setTextColor(255, 255, 255);
+          pdf.text('EvidLY — Compliance Management Platform', margin, 6.5);
+          pdf.setTextColor(212, 175, 55); // Gold
+          pdf.text(reportTitle, pageW - margin, 6.5, { align: 'right' });
+          // Footer
+          pdf.setFontSize(6);
+          pdf.setTextColor(160, 160, 160);
+          pdf.text(generatedAt, margin, pageH - 3);
+          pdf.text(`Page ${i} of ${total}`, pageW - margin, pageH - 3, { align: 'right' });
+        }
+
+        pdf.save(`EvidLY-HealthDept-Report-${selectedLocation}.pdf`);
+        toast.success('PDF downloaded');
+      } catch {
+        toast.error('PDF generation failed. Try the Print button.');
+      } finally {
+        setPdfLoading(false);
+      }
     });
   };
 
@@ -357,10 +489,11 @@ export function HealthDeptReport() {
               {/* Generate Button */}
               <button
                 onClick={handleGenerate}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-semibold"
+                disabled={generating}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-semibold disabled:opacity-60"
               >
-                <FileText className="h-5 w-5" />
-                Generate Report
+                {generating ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileText className="h-5 w-5" />}
+                {generating ? 'Generating...' : 'Generate Report'}
               </button>
 
               {/* Tier Toggle (for demo) */}
@@ -437,9 +570,9 @@ export function HealthDeptReport() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <button onClick={handleDownloadPDF} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium">
-                      <Download className="h-4 w-4" />
-                      Download PDF
+                    <button onClick={handleDownloadPDF} disabled={pdfLoading} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium disabled:opacity-60">
+                      {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                      {pdfLoading ? 'Generating PDF...' : 'Download PDF'}
                     </button>
                     <button onClick={() => setShowShareModal(true)} className="flex items-center gap-2 px-4 py-2 min-h-[44px] bg-white text-[#1e4d6b] border border-[#1e4d6b] rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
                       <Share2 className="h-4 w-4" />
@@ -451,6 +584,8 @@ export function HealthDeptReport() {
                   </div>
                 </div>
 
+                {/* Phase 4: Wrap report content for PDF capture */}
+                <div ref={reportRef}>
                 {/* Report Header */}
                 <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 text-center" style={{ borderTop: `4px solid ${template.getGradeColor(generatedReport.complianceScore.overall)}` }}>
                   <div style={{ fontSize: 20, fontWeight: 700, color: '#1e4d6b', marginBottom: 4 }}>Health Department Inspection Compliance Report</div>
@@ -808,6 +943,7 @@ export function HealthDeptReport() {
                     ))}
                   </ul>
                 </div>
+                </div>{/* Close Phase 4 reportRef wrapper */}
               </div>
             )}
           </>

@@ -17,6 +17,25 @@ import { calculateJurisdictionScore, extractCountySlug } from './jurisdictionSco
 
 export type CountyTemplate = 'la' | 'san-diego' | 'kern' | 'orange' | 'sacramento' | 'generic';
 
+// Phase 4: Live data interfaces for Supabase-sourced scores
+export interface LiveScoreData {
+  overall: number;
+  foodSafety: number;
+  fireSafety: number;
+  vendorScore?: number;
+  snapshotId?: string;   // FK for audit chain
+  snapshotDate?: string;
+}
+
+export interface JurisdictionTemplateData {
+  county: string;
+  agencyName: string;
+  gradingType: string;       // 'letter_grade', 'color_placard', 'score_100', 'pass_fail'
+  gradingConfig: Record<string, any>;
+  passThreshold: number | null;
+  specialRequirements?: string[];
+}
+
 export interface ReportConfig {
   locationId: string;
   countyTemplate: CountyTemplate;
@@ -110,6 +129,8 @@ export interface ComplianceScoreSection {
   trend30Day: number;
   trend60Day: number;
   trend90Day: number;
+  snapshotId?: string;    // Phase 4: FK to compliance_score_snapshots
+  snapshotDate?: string;  // Phase 4: score_date from snapshot
 }
 
 export interface MissingDocAlert {
@@ -261,6 +282,44 @@ export const COUNTY_TEMPLATES: Record<CountyTemplate, CountyTemplateConfig> = {
     ],
   },
 };
+
+// ── Phase 4: Convert jurisdiction DB row → CountyTemplateConfig ──
+
+export function templateFromJurisdiction(j: JurisdictionTemplateData): CountyTemplateConfig {
+  const cfg = j.gradingConfig || {};
+
+  // Build grade function based on grading_type + grading_config from jurisdictions table
+  const getGrade = (score: number): string => {
+    // letter_grade / letter_grade_strict: {"A": [90,100], "B": [80,89], ...}
+    if (cfg.A) {
+      // Sort entries by min threshold descending so highest grade matches first
+      const gradeEntries = Object.entries(cfg)
+        .filter(([k]) => k !== 'fail_below' && k !== 'pass_requires')
+        .map(([label, range]) => ({ label, min: (range as number[])[0] }))
+        .sort((a, b) => b.min - a.min);
+      for (const { label, min } of gradeEntries) {
+        if (score >= min) return label;
+      }
+      return 'Fail';
+    }
+    // color_placard: {"green": {"max_majors": N}, ...} — score-based fallback
+    if (cfg.green) return score >= 90 ? 'GREEN' : score >= 70 ? 'YELLOW' : 'RED';
+    // pass/fail with explicit threshold
+    if (j.passThreshold != null) return score >= j.passThreshold ? 'PASS' : 'FAIL';
+    // score_100 / report_only / default
+    return score >= 90 ? 'Excellent' : score >= 70 ? 'Acceptable' : 'Needs Improvement';
+  };
+
+  return {
+    id: 'generic' as CountyTemplate,
+    name: `${j.county} County`,
+    gradingSystem: j.gradingType.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+    gradingDescription: `${j.agencyName} grading system`,
+    getGrade,
+    getGradeColor: (score: number) => score >= 90 ? '#22c55e' : score >= 70 ? '#eab308' : '#ef4444',
+    specialRequirements: j.specialRequirements || [],
+  };
+}
 
 // ── Demo Data Generators ───────────────────────────────────
 
@@ -500,10 +559,18 @@ function generateTrendData(locationUrlId: string): TrendDataPoint[] {
 
 // ── Main Report Generator ──────────────────────────────────
 
-export function generateHealthDeptReport(config: ReportConfig): HealthDeptReport {
+export function generateHealthDeptReport(
+  config: ReportConfig,
+  liveScores?: LiveScoreData | null,
+  jurisdictionTemplate?: CountyTemplateConfig | null,
+): HealthDeptReport {
   const loc = locations.find(l => l.urlId === config.locationId) || locations[0];
-  const scores = locationScores[config.locationId] || locationScores['downtown'];
-  const template = COUNTY_TEMPLATES[config.countyTemplate];
+  // Phase 4: Use live scores from compliance_score_snapshots when available, fall back to demo
+  const scores = liveScores
+    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, fireSafety: liveScores.fireSafety }
+    : (locationScores[config.locationId] || locationScores['downtown']);
+  // Phase 4: Use DB jurisdiction template when available, fall back to hardcoded COUNTY_TEMPLATES
+  const template = jurisdictionTemplate || COUNTY_TEMPLATES[config.countyTemplate];
 
   return {
     id: `RPT-${Date.now()}`,
@@ -533,6 +600,9 @@ export function generateHealthDeptReport(config: ReportConfig): HealthDeptReport
         trend30Day: config.locationId === 'downtown' ? 4 : config.locationId === 'airport' ? -4 : 1,
         trend60Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 3 : 6,
         trend90Day: config.locationId === 'downtown' ? 7 : config.locationId === 'airport' ? 6 : 12,
+        // Phase 4: Audit chain FK when live snapshot is used
+        snapshotId: liveScores?.snapshotId,
+        snapshotDate: liveScores?.snapshotDate,
       };
     })(),
     missingDocs: generateMissingDocs(config.locationId),
@@ -556,10 +626,17 @@ export interface InspectorVisit {
   qrPassportUrl: string;
 }
 
-export function startInspectorVisit(locationUrlId: string, countyTemplate: CountyTemplate = 'generic'): InspectorVisit {
+export function startInspectorVisit(
+  locationUrlId: string,
+  countyTemplate: CountyTemplate = 'generic',
+  liveScores?: LiveScoreData | null,
+  jurisdictionTemplate?: CountyTemplateConfig | null,
+): InspectorVisit {
   const loc = locations.find(l => l.urlId === locationUrlId) || locations[0];
-  const scores = locationScores[locationUrlId] || locationScores['downtown'];
-  const template = COUNTY_TEMPLATES[countyTemplate];
+  const scores = liveScores
+    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, fireSafety: liveScores.fireSafety }
+    : (locationScores[locationUrlId] || locationScores['downtown']);
+  const template = jurisdictionTemplate || COUNTY_TEMPLATES[countyTemplate];
 
   const report = generateHealthDeptReport({
     locationId: locationUrlId,
@@ -575,7 +652,7 @@ export function startInspectorVisit(locationUrlId: string, countyTemplate: Count
       complianceScore: true,
     },
     isPaidTier: true,
-  });
+  }, liveScores, jurisdictionTemplate);
 
   return {
     id: `VISIT-${Date.now()}`,
