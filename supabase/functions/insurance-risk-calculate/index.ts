@@ -111,16 +111,59 @@ async function calculateFireFactors(
   return { factors, score };
 }
 
-// Simplified food safety, documentation, and operational calculators
-// In production, these would query detailed compliance tables.
-// For now they use available data from the compliance scores.
+// Food safety, documentation, and operational calculators.
+// Phase 2 (V5 fix): reads from compliance_score_snapshots first,
+// falls back to previous insurance_risk_scores breakdown.
 async function calculateCategoryFactors(
   supabase: ReturnType<typeof createClient>,
   locationId: string,
   orgId: string,
   category: "food_safety" | "documentation" | "operations"
 ): Promise<{ factors: Factor[]; score: number }> {
-  // Fetch the latest compliance scores for this location
+  // ── Phase 2: Read from canonical compliance_score_snapshots ──
+  const { data: snapshots } = await supabase
+    .from("compliance_score_snapshots")
+    .select("food_safety_score, fire_safety_score, overall_score, temp_in_range_pct, checklists_completed_pct, documents_current_pct")
+    .eq("location_id", locationId)
+    .order("score_date", { ascending: false })
+    .limit(1);
+
+  const snapshot = snapshots?.[0];
+
+  if (snapshot) {
+    // Derive category score from canonical snapshot
+    let baseScore: number;
+    let reference: string;
+
+    if (category === "food_safety") {
+      baseScore = snapshot.food_safety_score ?? snapshot.overall_score ?? 50;
+      reference = "FDA Food Code (via compliance snapshot)";
+    } else if (category === "documentation") {
+      baseScore = snapshot.documents_current_pct ?? 50;
+      reference = "Carrier Requirements (via compliance snapshot)";
+    } else {
+      // operations: derive from temp + checklist metrics
+      const tempPct = snapshot.temp_in_range_pct ?? 80;
+      const checkPct = snapshot.checklists_completed_pct ?? 75;
+      baseScore = Math.round(tempPct * 0.6 + checkPct * 0.4);
+      reference = "Operational SOP (via compliance snapshot)";
+    }
+
+    const factors: Factor[] = [{
+      name: `${category.replace("_", " ")} assessment (canonical)`,
+      score: Math.round(baseScore),
+      weight: 1.0,
+      status: factorStatus(Math.round(baseScore)),
+      detail: `Score: ${Math.round(baseScore)}/100 (from compliance snapshot)`,
+      reference,
+      category,
+      improvement: "Review and improve compliance in this category",
+    }];
+
+    return { factors, score: Math.round(baseScore) };
+  }
+
+  // ── Fallback: read from previous insurance_risk_scores breakdown ──
   const { data: scores } = await supabase
     .from("insurance_risk_scores")
     .select("*")
@@ -149,7 +192,7 @@ async function calculateCategoryFactors(
     return { factors, score };
   }
 
-  // Fallback: derive score from existing category score
+  // Final fallback: derive score from existing category score column
   const categoryScoreMap: Record<string, string> = {
     food_safety: "food_safety_score",
     documentation: "documentation_score",
@@ -258,6 +301,21 @@ Deno.serve(async (req: Request) => {
             operations: { score: operations.score, weight: 0.10, factors: operations.factors },
           };
 
+          // Phase 2 (V12 fix): fetch latest snapshot ID for FK linkage
+          let scoreSnapshotId: string | null = null;
+          try {
+            const { data: snapRow } = await supabase
+              .from("compliance_score_snapshots")
+              .select("id")
+              .eq("location_id", loc.id)
+              .order("score_date", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            scoreSnapshotId = snapRow?.id ?? null;
+          } catch {
+            // Snapshot lookup failure is non-fatal
+          }
+
           // Upsert insurance_risk_scores
           const { data: scoreRecord } = await supabase
             .from("insurance_risk_scores")
@@ -273,6 +331,7 @@ Deno.serve(async (req: Request) => {
               category_breakdown: categoryBreakdown,
               factors_count: allFactors.length,
               calculated_at: new Date().toISOString(),
+              score_snapshot_id: scoreSnapshotId,
             })
             .select("id")
             .single();

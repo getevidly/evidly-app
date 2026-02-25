@@ -72,64 +72,87 @@ Deno.serve(async (req: Request) => {
 
     let ranksUpdated = 0;
 
+    // Calculate percentiles (simplified: based on distance from average)
+    const calcPct = (score: number, avg: number): number => {
+      const diff = score - avg;
+      return Math.max(5, Math.min(99, Math.round(50 + diff * 2.5)));
+    };
+
     for (const loc of locations) {
-      // Get the location's current scores from temp_logs, checklists, etc.
-      // Simplified: compute from recent compliance data
-      const [tempResult, checklistResult, docResult] = await Promise.all([
-        supabase
-          .from("temperature_logs")
-          .select("status", { count: "exact" })
-          .eq("location_id", loc.id)
-          .gte(
-            "recorded_at",
-            new Date(Date.now() - 30 * 86400000).toISOString(),
-          ),
-        supabase
-          .from("checklists")
-          .select("status", { count: "exact" })
-          .eq("location_id", loc.id)
-          .gte(
-            "created_at",
-            new Date(Date.now() - 30 * 86400000).toISOString(),
-          ),
-        supabase
-          .from("documents")
-          .select("id", { count: "exact" })
-          .eq("location_id", loc.id)
-          .not("expiration_date", "is", null),
-      ]);
+      // Phase 2 (V6 fix): read from canonical compliance_score_snapshots first
+      const { data: snapRows } = await supabase
+        .from("compliance_score_snapshots")
+        .select("id, overall_score, temp_in_range_pct, checklists_completed_pct, documents_current_pct")
+        .eq("location_id", loc.id)
+        .order("score_date", { ascending: false })
+        .limit(1);
 
-      // Compute basic scores (simplified)
-      const totalTemps = tempResult.count || 0;
-      const inRangeTemps = (tempResult.data || []).filter(
-        (t: any) => t.status === "in_range",
-      ).length;
-      const operationalScore = totalTemps > 0
-        ? Math.round((inRangeTemps / totalTemps) * 100)
-        : 80;
+      const snapshot = snapRows?.[0];
 
-      const totalChecklists = checklistResult.count || 0;
-      const completedChecklists = (checklistResult.data || []).filter(
-        (c: any) => c.status === "completed",
-      ).length;
-      const equipmentScore = totalChecklists > 0
-        ? Math.round((completedChecklists / totalChecklists) * 100)
-        : 75;
+      let overallScore: number;
+      let operationalScore: number;
+      let equipmentScore: number;
+      let documentationScore: number;
+      let scoreSnapshotId: string | null = null;
 
-      const docCount = docResult.count || 0;
-      const documentationScore = docCount > 5 ? 85 : 70;
+      if (snapshot) {
+        // Use canonical snapshot scores
+        scoreSnapshotId = snapshot.id;
+        operationalScore = snapshot.temp_in_range_pct ?? 80;
+        equipmentScore = snapshot.checklists_completed_pct ?? 75;
+        documentationScore = snapshot.documents_current_pct ?? 70;
+        overallScore = snapshot.overall_score;
+      } else {
+        // Fallback: compute from raw compliance data (pre-Phase 1 locations)
+        const [tempResult, checklistResult, docResult] = await Promise.all([
+          supabase
+            .from("temperature_logs")
+            .select("status", { count: "exact" })
+            .eq("location_id", loc.id)
+            .gte(
+              "recorded_at",
+              new Date(Date.now() - 30 * 86400000).toISOString(),
+            ),
+          supabase
+            .from("checklists")
+            .select("status", { count: "exact" })
+            .eq("location_id", loc.id)
+            .gte(
+              "created_at",
+              new Date(Date.now() - 30 * 86400000).toISOString(),
+            ),
+          supabase
+            .from("documents")
+            .select("id", { count: "exact" })
+            .eq("location_id", loc.id)
+            .not("expiration_date", "is", null),
+        ]);
 
-      const overallScore = Math.round(
-        operationalScore * 0.5 +
-          equipmentScore * 0.25 +
-          documentationScore * 0.25,
-      );
+        const totalTemps = tempResult.count || 0;
+        const inRangeTemps = (tempResult.data || []).filter(
+          (t: any) => t.status === "in_range",
+        ).length;
+        operationalScore = totalTemps > 0
+          ? Math.round((inRangeTemps / totalTemps) * 100)
+          : 80;
 
-      // Calculate percentiles (simplified: based on distance from average)
-      const calcPct = (score: number, avg: number): number => {
-        const diff = score - avg;
-        return Math.max(5, Math.min(99, Math.round(50 + diff * 2.5)));
-      };
+        const totalChecklists = checklistResult.count || 0;
+        const completedChecklists = (checklistResult.data || []).filter(
+          (c: any) => c.status === "completed",
+        ).length;
+        equipmentScore = totalChecklists > 0
+          ? Math.round((completedChecklists / totalChecklists) * 100)
+          : 75;
+
+        const docCount = docResult.count || 0;
+        documentationScore = docCount > 5 ? 85 : 70;
+
+        overallScore = Math.round(
+          operationalScore * 0.5 +
+            equipmentScore * 0.25 +
+            documentationScore * 0.25,
+        );
+      }
 
       const { error } = await supabase
         .from("location_benchmark_ranks")
@@ -146,6 +169,7 @@ Deno.serve(async (req: Request) => {
             documentationAvg,
           ),
           peer_group_size: locations.length,
+          score_snapshot_id: scoreSnapshotId,
         });
 
       if (!error) ranksUpdated++;
