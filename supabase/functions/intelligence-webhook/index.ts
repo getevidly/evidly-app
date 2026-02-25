@@ -13,10 +13,13 @@ const corsHeaders = {
  *
  * Auth: x-evidly-intelligence-secret header must match INTELLIGENCE_WEBHOOK_SECRET.
  *
+ * Phase 3 (V9 fix): All writes now go to intelligence_insights (not ai_insights)
+ * with source_type='webhook_inbound'.
+ *
  * Supported events:
- *   - new_insight:              Write to ai_insights + notifications, queue critical alerts
- *   - executive_snapshot_ready: Write to ai_insights so dashboard surfaces the brief
- *   - recall_alert:             Write critical recall alert to ai_insights
+ *   - new_insight:              Write to intelligence_insights + notifications
+ *   - executive_snapshot_ready: Write to intelligence_insights
+ *   - recall_alert:             Write critical recall alert to intelligence_insights
  */
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -61,21 +64,24 @@ Deno.serve(async (req: Request) => {
   // ── Handle events ────────────────────────────────────────
 
   if (payload.event === "new_insight") {
-    // Write to ai_insights so dashboard shows it immediately
-    await supabase.from("ai_insights").insert({
-      org_id: orgId,
-      title: payload.headline,
-      description: payload.summary || payload.headline,
-      type: "intelligence_alert",
-      severity: payload.impact_level,
-      category: payload.category,
-      metadata: {
+    // Phase 3 (V9 fix): write to intelligence_insights instead of ai_insights
+    await supabase.from("intelligence_insights").insert({
+      organization_id: orgId,
+      source_type: "webhook_inbound",
+      category: payload.category || "intelligence_alert",
+      impact_level: payload.impact_level || "medium",
+      urgency: payload.urgency || (payload.impact_level === "critical" ? "immediate" : "standard"),
+      title: payload.headline || "Intelligence Alert",
+      headline: (payload.headline || "Intelligence Alert").slice(0, 120),
+      summary: payload.summary || payload.headline || "",
+      status: "published",
+      source_name: "evidly_intelligence",
+      confidence_score: payload.confidence_score ?? 0.80,
+      affected_counties: payload.affected_counties || [],
+      raw_source_data: {
         intelligence_insight_id: payload.insight_id,
-        category: payload.category,
         action_items: payload.action_items,
-        affected_counties: payload.affected_counties,
         relevance_score: payload.relevance_score,
-        confidence_score: payload.confidence_score,
         source: "evidly_intelligence",
       },
     });
@@ -109,12 +115,20 @@ Deno.serve(async (req: Request) => {
   }
 
   if (payload.event === "executive_snapshot_ready") {
-    await supabase.from("ai_insights").insert({
-      org_id: orgId,
+    // Phase 3 (V9 fix): write to intelligence_insights
+    await supabase.from("intelligence_insights").insert({
+      organization_id: orgId,
+      source_type: "webhook_inbound",
+      category: "executive_snapshot",
+      impact_level: "low",
+      urgency: "informational",
       title: "Your Executive Intelligence Brief is ready",
-      type: "executive_snapshot",
-      severity: "informational",
-      metadata: {
+      headline: "Executive Intelligence Brief ready",
+      summary: "A new executive intelligence brief has been generated and is ready for review.",
+      status: "published",
+      source_name: "evidly_intelligence",
+      confidence_score: 1.00,
+      raw_source_data: {
         snapshot_id: payload.snapshot_id,
         share_token: payload.share_token,
         source: "evidly_intelligence",
@@ -123,12 +137,20 @@ Deno.serve(async (req: Request) => {
   }
 
   if (payload.event === "recall_alert") {
-    await supabase.from("ai_insights").insert({
-      org_id: orgId,
-      title: "\u26A0\uFE0F Recall Alert: " + payload.product_name,
-      type: "recall_alert",
-      severity: "critical",
-      metadata: {
+    // Phase 3 (V9 fix): write to intelligence_insights
+    await supabase.from("intelligence_insights").insert({
+      organization_id: orgId,
+      source_type: "webhook_inbound",
+      category: "recall_alert",
+      impact_level: "critical",
+      urgency: "immediate",
+      title: "Recall Alert: " + (payload.product_name || "Unknown Product"),
+      headline: ("Recall Alert: " + (payload.product_name || "Unknown Product")).slice(0, 120),
+      summary: `Critical recall alert for ${payload.product_name || "unknown product"}. Risk level: ${payload.risk_level || "unknown"}.`,
+      status: "published",
+      source_name: "evidly_intelligence",
+      confidence_score: 0.95,
+      raw_source_data: {
         recall_id: payload.recall_id,
         risk_level: payload.risk_level,
         source: "evidly_intelligence",

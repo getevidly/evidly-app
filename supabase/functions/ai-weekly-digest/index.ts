@@ -256,15 +256,20 @@ Return ONLY valid JSON. Only cite specific regulations or code sections you are 
 
         digestsCreated++;
 
-        // Create in-app notification
-        await supabase.from("ai_insights").insert({
+        // Phase 3 (V8 fix): write notification to intelligence_insights
+        await supabase.from("intelligence_insights").insert({
           organization_id: org.id,
-          insight_type: "digest",
-          severity: "info",
+          source_type: "ai_digest",
+          category: "weekly_digest",
+          impact_level: "low",
+          urgency: "informational",
           title: `Weekly Compliance Digest — ${periodStart.toLocaleDateString()} to ${periodEnd.toLocaleDateString()}`,
-          body: digestContent.summary,
-          data_references: [{ type: "digest", user_id: user.id }],
-          suggested_actions: [],
+          headline: `Weekly Digest ${periodStart.toLocaleDateString()}–${periodEnd.toLocaleDateString()}`,
+          summary: digestContent.summary || "Weekly compliance digest is ready for review.",
+          status: "published",
+          source_name: "evidly_internal",
+          confidence_score: 1.00,
+          raw_source_data: { type: "digest", user_id: user.id },
         });
 
         // Send email via Resend if configured

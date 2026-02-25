@@ -211,40 +211,32 @@ ${rawChangeText}`,
       const { data: locations } = await locQuery;
       const affectedLocations = locations || [];
 
-      // Create copilot insights (ai_insights) for each affected location
+      // Phase 3 (V8 fix): write to intelligence_insights instead of ai_insights
       if (affectedLocations.length > 0) {
-        const insights = affectedLocations.map((loc) => ({
+        const insights = affectedLocations.map((loc: any) => ({
           organization_id: loc.organization_id,
-          location_id: loc.id,
-          insight_type: "pattern" as const,
-          severity:
-            change.impact_level === "critical"
-              ? "urgent"
-              : change.impact_level === "moderate"
-              ? "advisory"
-              : "info",
+          source_type: "regulatory_monitor",
+          category: "regulatory_change",
+          impact_level: change.impact_level === "critical" ? "critical"
+            : change.impact_level === "moderate" ? "medium" : "low",
+          urgency: change.impact_level === "critical" ? "immediate" : "standard",
           title: `Regulatory Update: ${change.title}`,
-          body: `${change.summary}\n\nWhat you need to do:\n${change.impact_description}`,
-          data_references: {
+          headline: `Regulatory: ${change.title}`.slice(0, 120),
+          summary: `${change.summary}\n\nWhat you need to do:\n${change.impact_description}`,
+          status: "published",
+          source_name: "evidly_internal",
+          confidence_score: 0.90,
+          affected_pillars: change.affected_pillars || [],
+          raw_source_data: {
             changeId: change.id,
             sourceUrl: change.source_url,
             effectiveDate: change.effective_date,
             affectedPillars: change.affected_pillars,
+            location_id: loc.id,
           },
-          suggested_actions: [
-            {
-              action: "Review regulatory change details",
-              priority: change.impact_level === "critical" ? "high" : "medium",
-              type: "regulatory_change",
-            },
-          ],
-          status: "new",
-          expires_at: change.effective_date
-            ? new Date(change.effective_date).toISOString()
-            : new Date(Date.now() + 90 * 86400000).toISOString(),
         }));
 
-        await supabase.from("ai_insights").insert(insights);
+        await supabase.from("intelligence_insights").insert(insights);
       }
 
       // Send email for critical/moderate changes

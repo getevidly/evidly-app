@@ -757,6 +757,7 @@ Deno.serve(async (req: Request) => {
       source_url: fi.item.source_url,
       status: "pending_review",
       is_demo_eligible: insight.is_demo_eligible ?? false,
+      source_type: mapSourceType(insight.category || fi.source.category),
       category: insight.category || fi.source.category,
       severity,
       scope: insight.scope || fi.source.defaultScope,

@@ -181,20 +181,34 @@ Deno.serve(async (req: Request) => {
         }
       }
 
-      // ── Insert insights (deduplicate against recent ones) ────
+      // ── Insert insights (Phase 3: write to intelligence_insights, deduplicate) ──
       if (insights.length > 0) {
         // Check for existing recent insights with same title to avoid duplicates
         const { data: existing } = await supabase
-          .from("ai_insights")
+          .from("intelligence_insights")
           .select("title")
-          .eq("location_id", location.id)
+          .eq("source_type", "ai_prediction")
           .gte("created_at", new Date(now.getTime() - 7 * 86400000).toISOString());
 
         const existingTitles = new Set((existing || []).map((e: any) => e.title));
-        const newInsights = insights.filter((i) => !existingTitles.has(i.title));
+        const newInsights = insights.filter((i: any) => !existingTitles.has(i.title));
 
         if (newInsights.length > 0) {
-          const { error } = await supabase.from("ai_insights").insert(newInsights);
+          const mapped = newInsights.map((i: any) => ({
+            organization_id: i.organization_id,
+            source_type: "ai_prediction",
+            category: "ai_predictive_alert",
+            impact_level: i.severity === "urgent" ? "high" : i.severity === "advisory" ? "medium" : "low",
+            urgency: i.severity === "urgent" ? "immediate" : "standard",
+            title: i.title,
+            headline: i.title.slice(0, 120),
+            summary: i.body,
+            status: "published",
+            source_name: "evidly_internal",
+            confidence_score: 0.80,
+            raw_source_data: { data_references: i.data_references, suggested_actions: i.suggested_actions, location_id: i.location_id, expires_at: i.expires_at },
+          }));
+          const { error } = await supabase.from("intelligence_insights").insert(mapped);
           if (error) {
             console.error(
               `[ai-predictive-alerts] Error for ${location.name}:`,

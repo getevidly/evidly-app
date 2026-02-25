@@ -180,33 +180,25 @@ Return ONLY valid JSON. If you are unsure about a specific regulation or code se
       console.error("[ai-corrective-action-draft] Insert error:", caError);
     }
 
-    // Create an ai_insight notification about the draft
-    await supabase.from("ai_insights").insert({
-      location_id,
+    // Phase 3 (V8 fix): write notification to intelligence_insights
+    await supabase.from("intelligence_insights").insert({
       organization_id: location.organization_id,
-      insight_type: "auto_draft",
-      severity:
-        severity === "critical"
-          ? "urgent"
-          : severity === "major"
-            ? "advisory"
-            : "info",
+      source_type: "ai_corrective",
+      category: "corrective_action_draft",
+      impact_level: severity === "critical" ? "high" : severity === "major" ? "medium" : "low",
+      urgency: severity === "critical" ? "immediate" : "standard",
       title: `AI Corrective Action Draft: ${violation_title}`,
-      body: `An AI-generated corrective action plan is ready for review. Root cause: ${draftContent.root_cause}`,
-      data_references: [
-        {
-          type: "corrective_action",
-          id: caRecord?.id,
-          violation_id,
-        },
-      ],
-      suggested_actions: [
-        { action: "Review and approve the AI draft", priority: "high" },
-        {
-          action: draftContent.immediate_action,
-          priority: "high",
-        },
-      ],
+      headline: `Corrective Action: ${violation_title}`.slice(0, 120),
+      summary: `An AI-generated corrective action plan is ready for review. Root cause: ${draftContent.root_cause}`,
+      status: "published",
+      source_name: "evidly_internal",
+      confidence_score: 0.85,
+      raw_source_data: {
+        corrective_action_id: caRecord?.id,
+        violation_id,
+        location_id,
+        immediate_action: draftContent.immediate_action,
+      },
     });
 
     // Log the interaction
