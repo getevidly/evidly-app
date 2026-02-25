@@ -2,10 +2,10 @@
  * INTEL-HUB-1 / INTEL-PIPELINE-1 — Intelligence Hub data hook
  *
  * Both demo and live modes query the intelligence_insights DB table.
- * Demo mode: filters by is_demo_eligible=true, jurisdiction-filters by
- *   demoProfile.primary_counties, orders by demo_priority DESC.
- * Live mode: filters by organization_id OR is_demo_eligible=true.
- * Fallback: if DB returns 0 results or errors, uses static DEMO_* data.
+ * Demo mode: filters by is_demo_eligible=true, orders by demo_priority DESC.
+ *   Fallback: if DB returns 0 results, uses static DEMO_* data.
+ * Live mode: filters by status='published'. No demo fallback — shows empty state.
+ * Pipeline stats: fetched via intelligence-approve edge function (admin only).
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -45,6 +45,17 @@ export interface IntelligenceSubscription {
   delivery_sms_threshold: 'critical' | 'high';
   executive_snapshot_frequency: 'daily' | 'weekly' | 'monthly';
   executive_snapshot_recipients: string[];
+}
+
+/** Pipeline-level stats from the intelligence-approve edge function */
+export interface PipelineStats {
+  pending: number;
+  published_this_week: number;
+  total_live: number;
+  last_pipeline_run: string | null;
+  /** Derived client-side from published insights */
+  by_source: { source_id: string; source_name: string; count: number }[];
+  by_category: { category: string; count: number }[];
 }
 
 const DEFAULT_SUBSCRIPTION: IntelligenceSubscription = {
@@ -88,6 +99,61 @@ function mapDbInsight(row: any): IntelligenceInsight {
   };
 }
 
+/** Derive source status from published insights (live mode) */
+function deriveSourceStatus(insights: IntelligenceInsight[]): SourceStatus[] {
+  const map = new Map<string, SourceStatus>();
+  for (const i of insights) {
+    const key = i.source_id || i.source_name || 'unknown';
+    if (!map.has(key)) {
+      map.set(key, {
+        id: key,
+        name: i.source_name || key,
+        type: i.source_type || 'unknown',
+        jurisdictions: [],
+        frequency: 'Daily',
+        last_checked_at: i.published_at || i.created_at || new Date().toISOString(),
+        next_check_at: '',
+        new_events_this_week: 0,
+        status: 'healthy' as const,
+      });
+    }
+    const entry = map.get(key)!;
+    entry.new_events_this_week++;
+    // Track most recent timestamp
+    const ts = i.published_at || i.created_at;
+    if (ts && new Date(ts) > new Date(entry.last_checked_at)) {
+      entry.last_checked_at = ts;
+    }
+    // Aggregate counties as jurisdictions
+    for (const c of (i.affected_counties || [])) {
+      if (c && !entry.jurisdictions.includes(c)) {
+        entry.jurisdictions.push(c);
+      }
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => b.new_events_this_week - a.new_events_this_week);
+}
+
+/** Derive by_source and by_category breakdowns from published insights */
+function deriveBreakdowns(insights: IntelligenceInsight[]) {
+  const srcMap = new Map<string, { source_id: string; source_name: string; count: number }>();
+  const catMap = new Map<string, number>();
+  for (const i of insights) {
+    const srcKey = i.source_id || i.source_name || 'unknown';
+    const existing = srcMap.get(srcKey);
+    if (existing) {
+      existing.count++;
+    } else {
+      srcMap.set(srcKey, { source_id: srcKey, source_name: i.source_name || srcKey, count: 1 });
+    }
+    catMap.set(i.category, (catMap.get(i.category) || 0) + 1);
+  }
+  return {
+    by_source: Array.from(srcMap.values()).sort((a, b) => b.count - a.count),
+    by_category: Array.from(catMap.entries()).map(([category, count]) => ({ category, count })).sort((a, b) => b.count - a.count),
+  };
+}
+
 export function useIntelligenceHub() {
   const { isDemoMode } = useDemo();
   const { profile } = useAuth();
@@ -98,6 +164,7 @@ export function useIntelligenceHub() {
   // Live mode state
   const [liveInsights, setLiveInsights] = useState<IntelligenceInsight[]>([]);
   const [liveSnapshot, setLiveSnapshot] = useState<ExecutiveSnapshot | null>(null);
+  const [pipelineStats, setPipelineStats] = useState<PipelineStats | null>(null);
 
   // Read/dismissed tracking
   const [readIds, setReadIds] = useState<string[]>(() => loadFromStorage(READ_KEY, []));
@@ -108,22 +175,19 @@ export function useIntelligenceHub() {
     loadFromStorage(STORAGE_KEY, DEFAULT_SUBSCRIPTION),
   );
 
-  // ── Insight fetcher (closure — captures isDemoMode) ────
-  const fetchInsights = async (demoProfile?: ClientProfile) => {
-    // Build query — include published AND pending_review (no approval workflow yet)
-    // Exclude regulatory_updates — those appear on the dedicated /regulatory-updates page
+  // ── Insight fetcher ─────────────────────────────────────
+  const fetchInsights = async () => {
+    // Only show published (approved) insights — pending_review items stay in admin queue
     let query = supabase
       .from('intelligence_insights')
       .select('*')
-      .in('status', ['published', 'pending_review'])
+      .eq('status', 'published')
       .neq('category', 'regulatory_updates')
       .order('created_at', { ascending: false });
 
     // Demo mode: filter to demo_eligible insights
     if (isDemoMode) {
       query = query.eq('is_demo_eligible', true);
-
-      // Order by demo_priority for best demo experience
       query = query.order('demo_priority', { ascending: false });
     }
 
@@ -131,12 +195,38 @@ export function useIntelligenceHub() {
 
     if (queryErr) throw queryErr;
 
-    // Fallback: if database returns 0 results, use demoIntelligenceData.ts
+    // Fallback: only in demo mode — live mode should show empty state
     if (!insights || insights.length === 0) {
-      return DEMO_INTELLIGENCE_INSIGHTS.filter(i => i.category !== 'regulatory_updates');
+      if (isDemoMode) {
+        return DEMO_INTELLIGENCE_INSIGHTS.filter(i => i.category !== 'regulatory_updates');
+      }
+      return [];
     }
 
     return insights.map(mapDbInsight);
+  };
+
+  // ── Pipeline stats fetcher (admin-only edge function) ────
+  const fetchPipelineStats = async (publishedInsights: IntelligenceInsight[]) => {
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('intelligence-approve', {
+        body: { action: 'stats' },
+      });
+      if (fnErr || !data) return null;
+
+      const breakdowns = deriveBreakdowns(publishedInsights);
+      return {
+        pending: data.pending ?? 0,
+        published_this_week: data.published_this_week ?? 0,
+        total_live: data.total_live ?? 0,
+        last_pipeline_run: data.last_pipeline_run || null,
+        by_source: breakdowns.by_source,
+        by_category: breakdowns.by_category,
+      } as PipelineStats;
+    } catch {
+      // Non-admin users will get 401/403 — silently ignore
+      return null;
+    }
   };
 
   // ── Load data from Supabase (both demo and live) ──────
@@ -146,20 +236,18 @@ export function useIntelligenceHub() {
 
     (async () => {
       try {
-        // Resolve profile for jurisdiction filtering
-        let clientProfile: ClientProfile | undefined;
-        if (isDemoMode || !profile?.organization_id) {
-          clientProfile = getDemoClientProfile();
-        } else {
-          const built = await buildClientProfile(profile.organization_id);
-          if (built) clientProfile = built;
-        }
-
         // ── Insights query ──
-        const insightData = await fetchInsights(clientProfile);
+        const insightData = await fetchInsights();
 
         if (!cancelled) {
           setLiveInsights(insightData);
+        }
+
+        // ── Pipeline stats (live mode only, fire-and-forget) ──
+        if (!isDemoMode) {
+          fetchPipelineStats(insightData).then(stats => {
+            if (!cancelled && stats) setPipelineStats(stats);
+          });
         }
 
         // ── Executive snapshot query ──
@@ -184,17 +272,20 @@ export function useIntelligenceHub() {
         if (!cancelled) {
           if (snapshotData) {
             setLiveSnapshot(snapshotData.content as ExecutiveSnapshot);
-          } else {
-            // Fallback
+          } else if (isDemoMode) {
             setLiveSnapshot(DEMO_EXECUTIVE_SNAPSHOT);
+          } else {
+            setLiveSnapshot(null);
           }
         }
       } catch (e: any) {
         if (!cancelled) {
           setError(e.message || 'Failed to load intelligence data');
-          // On error, fall back to static data
-          setLiveInsights(DEMO_INTELLIGENCE_INSIGHTS);
-          setLiveSnapshot(DEMO_EXECUTIVE_SNAPSHOT);
+          // On error, fall back to static data only in demo mode
+          if (isDemoMode) {
+            setLiveInsights(DEMO_INTELLIGENCE_INSIGHTS);
+            setLiveSnapshot(DEMO_EXECUTIVE_SNAPSHOT);
+          }
         }
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -223,13 +314,11 @@ export function useIntelligenceHub() {
   const inspectorPatterns = isDemoMode ? DEMO_INSPECTOR_PATTERNS : [];
   const competitorEvents = isDemoMode ? DEMO_COMPETITOR_EVENTS : [];
 
-  // Source status: reflect the 3 actual pipeline sources
-  const ACTIVE_SOURCES: SourceStatus[] = [
-    { id: 'openfda_enforcement', name: 'openFDA Food Enforcement (Recalls)', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: liveInsights.filter(i => i.category === 'recall_alert').length, status: 'healthy' },
-    { id: 'openfda_class1', name: 'openFDA Class I Recalls', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: 0, status: 'healthy' },
-    { id: 'openfda_adverse_events', name: 'openFDA Food Adverse Events', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: new Date().toISOString(), next_check_at: '', new_events_this_week: liveInsights.filter(i => i.category === 'outbreak_alert').length, status: 'healthy' },
-  ];
-  const sourceStatus = isDemoMode ? DEMO_SOURCE_STATUS : ACTIVE_SOURCES;
+  // Source status: demo uses static list, live derives from published insights
+  const sourceStatus = useMemo(() => {
+    if (isDemoMode) return DEMO_SOURCE_STATUS;
+    return deriveSourceStatus(liveInsights);
+  }, [isDemoMode, liveInsights]);
 
   // ── Actions ────────────────────────────────────────────
   const markAsRead = useCallback((id: string) => {
@@ -303,6 +392,7 @@ export function useIntelligenceHub() {
     competitorEvents,
     sourceStatus,
     subscription,
+    pipelineStats,
     isLoading,
     error,
     markAsRead,

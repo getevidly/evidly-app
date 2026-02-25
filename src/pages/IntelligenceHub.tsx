@@ -14,7 +14,7 @@ import {
   RefreshCw, Settings, ChevronDown, ChevronUp, Sparkles,
   BookOpen, ArrowRight,
 } from 'lucide-react';
-import { useIntelligenceHub } from '../hooks/useIntelligenceHub';
+import { useIntelligenceHub, type PipelineStats } from '../hooks/useIntelligenceHub';
 import { ExecutiveSnapshotPanel } from '../components/intelligence/ExecutiveSnapshotPanel';
 import { IntelligenceSubscriptionSettings } from '../components/intelligence/IntelligenceSubscriptionSettings';
 import {
@@ -117,7 +117,7 @@ export function IntelligenceHub() {
   const {
     insights, executiveSnapshot, recalls, outbreaks,
     legislativeItems, inspectorPatterns, competitorEvents, sourceStatus,
-    subscription, isLoading, markAsRead, dismissInsight, requestSnapshot,
+    subscription, pipelineStats, isLoading, markAsRead, dismissInsight, requestSnapshot,
     updateSubscription,
   } = useIntelligenceHub();
 
@@ -383,6 +383,7 @@ export function IntelligenceHub() {
               sourceStatus={sourceStatus}
               insightCount={insights.length}
               criticalCount={criticalCount}
+              pipelineStats={pipelineStats}
             />
           )}
         </div>
@@ -712,18 +713,117 @@ function InsightDetailView({
 
 // ── VIEW C: Source Status ────────────────────────────────────────
 
-function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount }: { sourceStatus: import('../data/demoIntelligenceData').SourceStatus[]; insightCount: number; criticalCount: number }) {
+const REFINED_GOLD = '#A08C5A';
+const MIDNIGHT_NAVY = '#1E2D4D';
+
+function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount, pipelineStats }: {
+  sourceStatus: import('../data/demoIntelligenceData').SourceStatus[];
+  insightCount: number;
+  criticalCount: number;
+  pipelineStats: PipelineStats | null;
+}) {
   const sourceStatus = rawStatus || [];
-  const totalEvents = sourceStatus.reduce((s, src) => s + src.new_events_this_week, 0);
+
+  // Category display labels
+  const CATEGORY_LABELS: Record<string, string> = {
+    recall_alert: 'Recall Alerts',
+    outbreak_alert: 'Outbreak Alerts',
+    enforcement_surge: 'Enforcement Surges',
+    enforcement_action: 'Enforcement Actions',
+    regulatory_change: 'Regulatory Changes',
+    regulatory_advisory: 'Regulatory Advisories',
+    legislative_update: 'Legislative Updates',
+    weather_risk: 'Weather Risks',
+    inspector_pattern: 'Inspector Patterns',
+    competitor_activity: 'Competitor Activity',
+    supply_disruption: 'Supply Disruptions',
+    concession_advisory: 'Concession Advisories',
+    benchmark_shift: 'Benchmark Shifts',
+  };
 
   return (
     <div style={stagger(0)}>
-      {/* Stat tiles */}
+      {/* Pipeline overview (live mode — only shows if stats available) */}
+      {pipelineStats && (
+        <div className="mb-6">
+          <h3 className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: REFINED_GOLD }}>Intelligence Pipeline</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            {[
+              { label: 'Total Published', value: String(pipelineStats.total_live), color: MIDNIGHT_NAVY },
+              { label: 'Published This Week', value: String(pipelineStats.published_this_week), color: '#1e4d6b' },
+              { label: 'Pending Review', value: String(pipelineStats.pending), color: '#d97706' },
+              { label: 'Active Sources', value: String(sourceStatus.length), color: '#16a34a' },
+            ].map(tile => (
+              <div key={tile.label} className="rounded-xl p-3 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+                <div className="text-xl font-bold" style={{ color: tile.color }}>{tile.value}</div>
+                <div className="text-[10px] mt-0.5" style={{ color: TEXT_TERTIARY }}>{tile.label}</div>
+              </div>
+            ))}
+          </div>
+          {pipelineStats.last_pipeline_run && (
+            <p className="text-[10px] mb-4" style={{ color: TEXT_TERTIARY }}>
+              Last pipeline run: {timeAgo(pipelineStats.last_pipeline_run)}
+            </p>
+          )}
+
+          {/* By Category breakdown */}
+          {(pipelineStats.by_category || []).length > 0 && (
+            <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+              <h4 className="text-xs font-bold mb-3" style={{ color: BODY_TEXT }}>Published by Category</h4>
+              <div className="space-y-2">
+                {(pipelineStats.by_category || []).map(item => (
+                  <div key={item.category} className="flex items-center gap-2">
+                    <span className="text-xs w-36 truncate" style={{ color: MUTED }}>
+                      {CATEGORY_LABELS[item.category] || item.category.replace(/_/g, ' ')}
+                    </span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: PANEL_BG }}>
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.min(100, (item.count / Math.max(1, pipelineStats.total_live)) * 100)}%`,
+                          backgroundColor: REFINED_GOLD,
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold w-6 text-right" style={{ color: MIDNIGHT_NAVY }}>{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* By Source breakdown */}
+          {(pipelineStats.by_source || []).length > 0 && (
+            <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+              <h4 className="text-xs font-bold mb-3" style={{ color: BODY_TEXT }}>Published by Source</h4>
+              <div className="space-y-2">
+                {(pipelineStats.by_source || []).map(item => (
+                  <div key={item.source_id} className="flex items-center gap-2">
+                    <span className="text-xs w-48 truncate" style={{ color: MUTED }}>{item.source_name}</span>
+                    <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ backgroundColor: PANEL_BG }}>
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.min(100, (item.count / Math.max(1, pipelineStats.total_live)) * 100)}%`,
+                          backgroundColor: '#1e4d6b',
+                        }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold w-6 text-right" style={{ color: MIDNIGHT_NAVY }}>{item.count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Stat tiles (always shown) */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {[
-          { label: 'Insights This Week', value: String(insightCount), color: '#1e4d6b' },
+          { label: 'Published Insights', value: String(insightCount), color: '#1e4d6b' },
           { label: 'Critical Alerts', value: String(criticalCount), color: '#dc2626' },
-          { label: 'Sources Monitored', value: String(sourceStatus.length), color: '#16a34a' },
+          { label: 'Sources Active', value: String(sourceStatus.length), color: '#16a34a' },
         ].map(tile => (
           <div key={tile.label} className="rounded-xl p-4 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <div className="text-2xl font-bold" style={{ color: tile.color }}>{tile.value}</div>
@@ -733,41 +833,51 @@ function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount
       </div>
 
       {/* Source table */}
-      <div className="rounded-xl overflow-hidden" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
-        <div className="px-4 py-3 border-b" style={{ borderColor: BORDER_SUBTLE }}>
-          <h3 className="text-sm font-bold" style={{ color: BODY_TEXT }}>Intelligence Sources</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr style={{ backgroundColor: PANEL_BG }}>
-                <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Source</th>
-                <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Type</th>
-                <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Jurisdictions</th>
-                <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Frequency</th>
-                <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Last Checked</th>
-                <th className="text-center px-4 py-2 font-semibold" style={{ color: MUTED }}>Events</th>
-                <th className="text-center px-4 py-2 font-semibold" style={{ color: MUTED }}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sourceStatus.map(src => (
-                <tr key={src.id} className="border-t" style={{ borderColor: BORDER_SUBTLE }}>
-                  <td className="px-4 py-2.5 font-medium" style={{ color: BODY_TEXT }}>{src.name}</td>
-                  <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type || 'unknown'}</td>
-                  <td className="px-4 py-2.5" style={{ color: MUTED }}>{(src.jurisdictions || []).join(', ')}</td>
-                  <td className="px-4 py-2.5" style={{ color: MUTED }}>{src.frequency}</td>
-                  <td className="px-4 py-2.5" style={{ color: MUTED }}>{timeAgo(src.last_checked_at)}</td>
-                  <td className="px-4 py-2.5 text-center font-semibold" style={{ color: src.new_events_this_week > 0 ? '#1e4d6b' : TEXT_TERTIARY }}>{src.new_events_this_week}</td>
-                  <td className="px-4 py-2.5 text-center">
-                    <span className={`inline-block w-2 h-2 rounded-full ${src.status === 'healthy' ? 'bg-green-500' : src.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`} />
-                  </td>
+      {sourceStatus.length > 0 ? (
+        <div className="rounded-xl overflow-hidden" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+          <div className="px-4 py-3 border-b" style={{ borderColor: BORDER_SUBTLE }}>
+            <h3 className="text-sm font-bold" style={{ color: BODY_TEXT }}>Intelligence Sources</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr style={{ backgroundColor: PANEL_BG }}>
+                  <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Source</th>
+                  <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Type</th>
+                  <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Jurisdictions</th>
+                  <th className="text-left px-4 py-2 font-semibold" style={{ color: MUTED }}>Last Activity</th>
+                  <th className="text-center px-4 py-2 font-semibold" style={{ color: MUTED }}>Insights</th>
+                  <th className="text-center px-4 py-2 font-semibold" style={{ color: MUTED }}>Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {sourceStatus.map(src => (
+                  <tr key={src.id} className="border-t" style={{ borderColor: BORDER_SUBTLE }}>
+                    <td className="px-4 py-2.5 font-medium" style={{ color: BODY_TEXT }}>{src.name}</td>
+                    <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type || 'unknown'}</td>
+                    <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{(src.jurisdictions || []).slice(0, 3).join(', ')}{(src.jurisdictions || []).length > 3 ? ` +${(src.jurisdictions || []).length - 3}` : ''}</td>
+                    <td className="px-4 py-2.5" style={{ color: MUTED }}>{timeAgo(src.last_checked_at)}</td>
+                    <td className="px-4 py-2.5 text-center font-semibold" style={{ color: src.new_events_this_week > 0 ? '#1e4d6b' : TEXT_TERTIARY }}>{src.new_events_this_week}</td>
+                    <td className="px-4 py-2.5 text-center">
+                      <span className={`inline-block w-2 h-2 rounded-full ${src.status === 'healthy' ? 'bg-green-500' : src.status === 'warning' ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-xl p-8 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
+          <Brain className="h-10 w-10 mx-auto mb-3 opacity-30" style={{ color: REFINED_GOLD }} />
+          <p className="text-sm font-semibold mb-1" style={{ color: MIDNIGHT_NAVY }}>No published intelligence yet</p>
+          <p className="text-xs" style={{ color: TEXT_TERTIARY }}>
+            {pipelineStats && pipelineStats.pending > 0
+              ? `${pipelineStats.pending} item${pipelineStats.pending > 1 ? 's' : ''} pending review — approve them at /admin/intelligence`
+              : 'Intelligence items will appear here once collected and approved.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
