@@ -67,12 +67,12 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true }:
 }
 
 export function ExecutiveSnapshotPanel({ snapshot }: Props) {
-  const statusColors = {
+  const statusColors: Record<string, { bg: string; text: string; border: string }> = {
     good: { bg: '#f0fdf4', text: '#166534', border: '#86efac' },
     warning: { bg: '#fffbeb', text: '#92400e', border: '#fcd34d' },
     critical: { bg: '#fef2f2', text: '#991b1b', border: '#fca5a5' },
   };
-  const sc = statusColors[snapshot.overall_status];
+  const sc = (snapshot?.overall_status && statusColors[snapshot.overall_status]) || statusColors.warning;
 
   return (
     <div style={{ ...FONT }}>
@@ -83,19 +83,23 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         className="rounded-xl p-4 mb-5"
         style={{ backgroundColor: sc.bg, border: `1px solid ${sc.border}`, ...stagger(0) }}
       >
-        <p className="text-base font-bold leading-snug" style={{ color: sc.text }}>{snapshot.one_liner}</p>
+        <p className="text-base font-bold leading-snug" style={{ color: sc.text }}>{snapshot.one_liner || 'Executive briefing generated.'}</p>
       </div>
 
       {/* ── 2. KEY METRICS ROW ────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5" style={stagger(1)}>
-        {[
-          { label: 'Food Safety', value: String(snapshot.key_metrics.food_safety_score), trend: snapshot.key_metrics.food_safety_trend, color: '#16a34a' },
-          { label: 'Fire Safety', value: String(snapshot.key_metrics.fire_safety_score), trend: snapshot.key_metrics.fire_safety_trend, color: snapshot.key_metrics.fire_safety_trend >= 0 ? '#16a34a' : '#dc2626' },
-          { label: 'Open Risk Items', value: String(snapshot.key_metrics.open_risk_items), trend: 0, color: '#d97706' },
-          { label: 'Intel Alerts (7d)', value: String(snapshot.key_metrics.intelligence_alerts_7d), trend: 0, color: '#1e4d6b' },
-          { label: 'Reg. Pipeline', value: String(snapshot.key_metrics.regulatory_pipeline), trend: 0, color: '#7c3aed' },
-          { label: 'Financial Exposure', value: `${formatCurrency(snapshot.key_metrics.financial_exposure.low)}-${formatCurrency(snapshot.key_metrics.financial_exposure.high)}`, trend: 0, color: '#dc2626' },
-        ].map(m => (
+        {(() => {
+          const km = snapshot.key_metrics || {} as any;
+          const fe = km.financial_exposure || { low: 0, high: 0 };
+          return [
+            { label: 'Food Safety', value: String(km.food_safety_score ?? '--'), trend: km.food_safety_trend ?? 0, color: '#16a34a' },
+            { label: 'Fire Safety', value: String(km.fire_safety_score ?? '--'), trend: km.fire_safety_trend ?? 0, color: (km.fire_safety_trend ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
+            { label: 'Open Risk Items', value: String(km.open_risk_items ?? 0), trend: 0, color: '#d97706' },
+            { label: 'Intel Alerts (7d)', value: String(km.intelligence_alerts_7d ?? 0), trend: 0, color: '#1e4d6b' },
+            { label: 'Reg. Pipeline', value: String(km.regulatory_pipeline ?? 0), trend: 0, color: '#7c3aed' },
+            { label: 'Financial Exposure', value: `${formatCurrency(fe.low ?? 0)}-${formatCurrency(fe.high ?? 0)}`, trend: 0, color: '#dc2626' },
+          ];
+        })().map(m => (
           <div key={m.label} className="rounded-xl p-3 text-center" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
             <div className="text-xl font-bold" style={{ color: m.color }}>{m.value}</div>
             {m.trend !== 0 && <div className="flex justify-center mt-0.5"><TrendArrow value={m.trend} /></div>}
@@ -117,7 +121,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
           </button>
         </div>
         <div style={{ borderLeft: `4px solid ${GOLD}`, paddingLeft: '16px' }}>
-          {snapshot.executive_summary.split('\n').map((para, i) => (
+          {(snapshot.executive_summary || '').split('\n').map((para, i) => (
             <p key={i} className="text-sm leading-relaxed mb-2" style={{ color: BODY_TEXT }}>{para}</p>
           ))}
         </div>
@@ -127,7 +131,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       <CollapsibleSection title="Risk Heatmap" icon={Target}>
         <div style={{ width: '100%', height: 300 }}>
           <ResponsiveContainer>
-            <RadarChart data={snapshot.risk_heatmap}>
+            <RadarChart data={snapshot.risk_heatmap || []}>
               <PolarGrid stroke={BORDER_SUBTLE} />
               <PolarAngleAxis dataKey="dimension" tick={{ fontSize: 11, fill: MUTED }} />
               <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: TEXT_TERTIARY }} />
@@ -148,7 +152,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               <AlertTriangle className="h-3 w-3 inline mr-1" />Threats
             </h4>
             <ul className="space-y-2">
-              {snapshot.threats.map((t, i) => (
+              {(snapshot.threats || []).map((t, i) => (
                 <li key={i}>
                   <div className="text-xs font-semibold" style={{ color: '#991b1b' }}>{t.title}</div>
                   <div className="text-[11px]" style={{ color: '#7f1d1d' }}>{t.detail}</div>
@@ -162,7 +166,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               <TrendingUp className="h-3 w-3 inline mr-1" />Opportunities
             </h4>
             <ul className="space-y-2">
-              {snapshot.opportunities.map((o, i) => (
+              {(snapshot.opportunities || []).map((o, i) => (
                 <li key={i}>
                   <div className="text-xs font-semibold" style={{ color: '#166534' }}>{o.title}</div>
                   <div className="text-[11px]" style={{ color: '#14532d' }}>{o.detail}</div>
@@ -186,7 +190,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
               </tr>
             </thead>
             <tbody>
-              {snapshot.correlation_analysis.map((ca, i) => (
+              {(snapshot.correlation_analysis || []).map((ca, i) => (
                 <tr key={i} className="border-t" style={{ borderColor: BORDER_SUBTLE }}>
                   <td className="px-3 py-2" style={{ color: BODY_TEXT }}>{ca.external_event}</td>
                   <td className="px-3 py-2" style={{ color: BODY_TEXT }}>{ca.internal_impact}</td>
@@ -233,28 +237,30 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       </div>
 
       {/* ── 7. COMPETITOR LANDSCAPE ──────────────────── */}
+      {snapshot.competitor_landscape && (
       <CollapsibleSection title="Competitor Landscape" icon={Users}>
         <div className="flex items-center gap-4 mb-3">
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#fef2f2', border: '1px solid #fca5a5' }}>
-            <div className="text-xl font-bold" style={{ color: '#991b1b' }}>{snapshot.competitor_landscape.closures}</div>
+            <div className="text-xl font-bold" style={{ color: '#991b1b' }}>{snapshot.competitor_landscape.closures ?? 0}</div>
             <div className="text-[10px]" style={{ color: '#991b1b' }}>Closures</div>
           </div>
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
-            <div className="text-xl font-bold" style={{ color: '#92400e' }}>{snapshot.competitor_landscape.failed_inspections}</div>
+            <div className="text-xl font-bold" style={{ color: '#92400e' }}>{snapshot.competitor_landscape.failed_inspections ?? 0}</div>
             <div className="text-[10px]" style={{ color: '#92400e' }}>Failed Inspections</div>
           </div>
           <div className="rounded-lg p-3 text-center flex-1" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
-            <div className="text-sm font-bold capitalize" style={{ color: '#166534' }}>{snapshot.competitor_landscape.position}</div>
+            <div className="text-sm font-bold capitalize" style={{ color: '#166534' }}>{snapshot.competitor_landscape.position || 'N/A'}</div>
             <div className="text-[10px]" style={{ color: '#166534' }}>Your Position</div>
           </div>
         </div>
-        <p className="text-xs" style={{ color: MUTED }}>{snapshot.competitor_landscape.summary}</p>
+        <p className="text-xs" style={{ color: MUTED }}>{snapshot.competitor_landscape.summary || ''}</p>
       </CollapsibleSection>
+      )}
 
       {/* ── 8. REGULATORY FORECAST ───────────────────── */}
       <CollapsibleSection title="Regulatory Forecast" icon={Shield}>
         <div className="space-y-3">
-          {snapshot.regulatory_forecast.map((rf, i) => (
+          {(snapshot.regulatory_forecast || []).map((rf, i) => (
             <div key={i} className="rounded-lg p-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-bold" style={{ color: BODY_TEXT }}>{rf.title}</span>
@@ -282,26 +288,28 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
 
       {/* ── 9. FINANCIAL IMPACT ──────────────────────── */}
       <CollapsibleSection title="Financial Impact" icon={DollarSign}>
+        {snapshot.financial_impact && (
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
             <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#92400e' }}>Risk Exposure</div>
             <div className="text-lg font-bold" style={{ color: '#d97706' }}>
-              {formatCurrency(snapshot.financial_impact.risk_exposure.low)}–{formatCurrency(snapshot.financial_impact.risk_exposure.high)}
+              {formatCurrency(snapshot.financial_impact.risk_exposure?.low ?? 0)}–{formatCurrency(snapshot.financial_impact.risk_exposure?.high ?? 0)}
             </div>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac' }}>
             <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#166534' }}>Compliance Savings</div>
-            <div className="text-lg font-bold" style={{ color: '#16a34a' }}>{formatCurrency(snapshot.financial_impact.compliance_savings)}</div>
+            <div className="text-lg font-bold" style={{ color: '#16a34a' }}>{formatCurrency(snapshot.financial_impact.compliance_savings ?? 0)}</div>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ backgroundColor: '#fefdf5', border: `1px solid ${GOLD}` }}>
             <div className="text-[10px] font-bold uppercase mb-1" style={{ color: '#92400e' }}>ROI</div>
-            <div className="text-lg font-bold" style={{ color: GOLD }}>{snapshot.financial_impact.roi_ratio}</div>
+            <div className="text-lg font-bold" style={{ color: GOLD }}>{snapshot.financial_impact.roi_ratio || 'N/A'}</div>
           </div>
         </div>
+        )}
         {/* Cost drivers bar chart */}
         <div style={{ width: '100%', height: 200 }}>
           <ResponsiveContainer>
-            <BarChart data={snapshot.financial_impact.top_cost_drivers} layout="vertical" margin={{ left: 10, right: 20 }}>
+            <BarChart data={snapshot.financial_impact?.top_cost_drivers || []} layout="vertical" margin={{ left: 10, right: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={BORDER_SUBTLE} />
               <XAxis type="number" tick={{ fontSize: 10, fill: TEXT_TERTIARY }} tickFormatter={(v: number) => formatCurrency(v)} />
               <YAxis type="category" dataKey="label" tick={{ fontSize: 10, fill: MUTED }} width={180} />
@@ -315,7 +323,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       {/* ── 10. INSPECTOR INTELLIGENCE ────────────────── */}
       <CollapsibleSection title="Inspector Intelligence" icon={Shield}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {snapshot.inspector_intelligence.map(ip => (
+          {(snapshot.inspector_intelligence || []).map(ip => (
             <div key={ip.id} className="rounded-lg p-3" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold" style={{ color: BODY_TEXT }}>{ip.county} County</span>
@@ -341,7 +349,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
                 </div>
               </div>
               <div className="flex flex-wrap gap-1 mb-2">
-                {ip.focus_areas.map(fa => (
+                {(ip.focus_areas || []).map(fa => (
                   <span key={fa} className="px-1.5 py-0.5 rounded text-[9px]" style={{ backgroundColor: CARD_BG, color: MUTED }}>{fa}</span>
                 ))}
               </div>
@@ -366,7 +374,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
           </p>
         </div>
         <ol className="space-y-3">
-          {snapshot.strategic_recommendations.map((sr, i) => (
+          {(snapshot.strategic_recommendations || []).map((sr, i) => (
             <li key={i} className="rounded-lg p-3" style={{ backgroundColor: sr.immediate ? '#fef2f2' : PANEL_BG, border: `1px solid ${sr.immediate ? '#fca5a5' : BORDER_SUBTLE}` }}>
               <div className="flex items-center gap-2 mb-1">
                 <span
@@ -393,7 +401,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       {/* ── 12. FULL NARRATIVE ────────────────────────── */}
       <CollapsibleSection title="Full Narrative" icon={FileText} defaultOpen={false}>
         <div className="rounded-lg p-4" style={{ backgroundColor: '#fafbfc', border: `1px solid ${BORDER_SUBTLE}` }}>
-          {snapshot.full_narrative.split('\n').map((line, i) => {
+          {(snapshot.full_narrative || '').split('\n').map((line, i) => {
             if (line.match(/^[A-Z ]{4,}$/)) {
               return <h4 key={i} className="text-xs font-bold uppercase tracking-wider mt-4 mb-2" style={{ color: MUTED }}>{line}</h4>;
             }
@@ -411,7 +419,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
       {/* ── Footer ────────────────────────────────────── */}
       <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: PANEL_BG, border: `1px solid ${BORDER_SUBTLE}` }}>
         <p className="text-[10px] text-center" style={{ color: TEXT_TERTIARY }}>
-          Generated by EvidLY Intelligence | {new Date(snapshot.generated_at).toLocaleString()} | Sourced from {snapshot.source_count} monitored sources
+          Generated by EvidLY Intelligence | {snapshot.generated_at ? new Date(snapshot.generated_at).toLocaleString() : 'Just now'} | Sourced from {snapshot.source_count ?? 0} monitored sources
         </p>
       </div>
 

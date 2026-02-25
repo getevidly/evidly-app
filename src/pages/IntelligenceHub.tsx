@@ -25,12 +25,20 @@ import type { IntelligenceInsight, ImpactLevel, RecallAlert, LegislativeItem, Pe
 
 // ── Helpers ──────────────────────────────────────────────────────
 
-const IMPACT_COLORS: Record<ImpactLevel, { bg: string; text: string; border: string }> = {
+const IMPACT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   critical: { bg: '#fef2f2', text: '#991b1b', border: '#fca5a5' },
   high: { bg: '#fffbeb', text: '#92400e', border: '#fcd34d' },
   medium: { bg: '#eff6ff', text: '#1e40af', border: '#93c5fd' },
   low: { bg: '#f0fdf4', text: '#166534', border: '#86efac' },
 };
+
+const DEFAULT_IMPACT = { bg: '#f3f4f6', text: '#6b7280', border: '#d1d5db' };
+
+/** Safe lookup — always returns a valid {bg,text,border} triple */
+function getImpactColor(level: string | undefined | null) {
+  if (level && IMPACT_COLORS[level]) return IMPACT_COLORS[level];
+  return DEFAULT_IMPACT;
+}
 
 const CATEGORY_ICONS: Record<string, typeof Brain> = {
   enforcement_surge: Siren,
@@ -416,7 +424,7 @@ export function IntelligenceHub() {
 // ── Insight Feed Card ────────────────────────────────────────────
 
 function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceInsight; selected: boolean; onSelect: () => void }) {
-  const ic = IMPACT_COLORS[insight.impact_level];
+  const ic = getImpactColor(insight.impact_level);
   const CategoryIcon = CATEGORY_ICONS[insight.category] || Brain;
   const pillarLabels = (insight.affected_pillars || []).map(p => p === 'fire_safety' ? 'Fire' : p === 'food_safety' ? 'Food' : p);
 
@@ -477,8 +485,8 @@ function InsightDetailView({
   onShare: () => void;
 }) {
   const navigate = useNavigate();
-  const ic = IMPACT_COLORS[insight.impact_level];
-  const affectedLocs = getAffectedLocations(insight.affected_counties);
+  const ic = getImpactColor(insight.impact_level);
+  const affectedLocs = getAffectedLocations(insight.affected_counties || []);
 
   return (
     <div style={stagger(0)}>
@@ -548,7 +556,7 @@ function InsightDetailView({
             )}
 
             {/* Adjusted Financial Impact */}
-            {biz.financial_impact_adjusted.high > 0 && (
+            {biz.financial_impact_adjusted && biz.financial_impact_adjusted.high > 0 && (
               <div className="mb-3 p-2.5 rounded-lg" style={{ backgroundColor: '#fffbeb', border: '1px solid #fcd34d' }}>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold" style={{ color: '#92400e' }}>Your Exposure:</span>
@@ -637,7 +645,7 @@ function InsightDetailView({
       </div>
 
       {/* Cost Impact */}
-      {insight.estimated_cost_impact.high > 0 && (
+      {insight.estimated_cost_impact && insight.estimated_cost_impact.high > 0 && (
         <div className="rounded-xl p-4 mb-4" style={{ backgroundColor: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}>
           <h3 className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: TEXT_TERTIARY }}>Estimated Cost Impact</h3>
           <div className="flex items-center gap-3">
@@ -704,7 +712,8 @@ function InsightDetailView({
 
 // ── VIEW C: Source Status ────────────────────────────────────────
 
-function SourceStatusView({ sourceStatus, insightCount, criticalCount }: { sourceStatus: import('../data/demoIntelligenceData').SourceStatus[]; insightCount: number; criticalCount: number }) {
+function SourceStatusView({ sourceStatus: rawStatus, insightCount, criticalCount }: { sourceStatus: import('../data/demoIntelligenceData').SourceStatus[]; insightCount: number; criticalCount: number }) {
+  const sourceStatus = rawStatus || [];
   const totalEvents = sourceStatus.reduce((s, src) => s + src.new_events_this_week, 0);
 
   return (
@@ -745,7 +754,7 @@ function SourceStatusView({ sourceStatus, insightCount, criticalCount }: { sourc
               {sourceStatus.map(src => (
                 <tr key={src.id} className="border-t" style={{ borderColor: BORDER_SUBTLE }}>
                   <td className="px-4 py-2.5 font-medium" style={{ color: BODY_TEXT }}>{src.name}</td>
-                  <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type}</td>
+                  <td className="px-4 py-2.5 capitalize" style={{ color: MUTED }}>{src.type || 'unknown'}</td>
                   <td className="px-4 py-2.5" style={{ color: MUTED }}>{(src.jurisdictions || []).join(', ')}</td>
                   <td className="px-4 py-2.5" style={{ color: MUTED }}>{src.frequency}</td>
                   <td className="px-4 py-2.5" style={{ color: MUTED }}>{timeAgo(src.last_checked_at)}</td>
@@ -765,7 +774,8 @@ function SourceStatusView({ sourceStatus, insightCount, criticalCount }: { sourc
 
 // ── VIEW D: Recall Dashboard ─────────────────────────────────────
 
-function RecallDashboard({ recalls }: { recalls: RecallAlert[] }) {
+function RecallDashboard({ recalls: rawRecalls }: { recalls: RecallAlert[] }) {
+  const recalls = rawRecalls || [];
   const active = recalls.filter(r => r.status === 'active');
   const resolved = recalls.filter(r => r.status === 'resolved');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -848,7 +858,8 @@ function RecallDashboard({ recalls }: { recalls: RecallAlert[] }) {
 
 // ── VIEW E: Legislative Tracker ──────────────────────────────────
 
-function LegislativeTracker({ items, expandedId, onToggleExpand }: { items: LegislativeItem[]; expandedId: string | null; onToggleExpand: (id: string) => void }) {
+function LegislativeTracker({ items: rawItems, expandedId, onToggleExpand }: { items: LegislativeItem[]; expandedId: string | null; onToggleExpand: (id: string) => void }) {
+  const items = rawItems || [];
   return (
     <div style={stagger(0)}>
       <h2 className="text-lg font-bold mb-4" style={{ color: BODY_TEXT }}>Legislative Tracker</h2>

@@ -129,7 +129,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
                     <div key={src.id} className="flex items-center justify-between py-1">
                       <div className="flex-1">
                         <span className="text-xs font-medium" style={{ color: BODY_TEXT }}>{src.name}</span>
-                        <span className="text-[10px] ml-2" style={{ color: TEXT_TERTIARY }}>{src.jurisdictions.join(', ')}</span>
+                        <span className="text-[10px] ml-2" style={{ color: TEXT_TERTIARY }}>{(src.jurisdictions || []).join(', ')}</span>
                       </div>
                       <button
                         onClick={() => {
@@ -341,7 +341,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
           <div>
             <span className="text-[10px] font-semibold mb-1 block" style={{ color: TEXT_TERTIARY }}>Recipients</span>
             <div className="flex flex-wrap gap-1.5">
-              {subscription.executive_snapshot_recipients.map(email => (
+              {(subscription.executive_snapshot_recipients || []).map(email => (
                 <span key={email} className="px-2 py-1 rounded text-[10px] font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
                   {email}
                 </span>
