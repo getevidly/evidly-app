@@ -199,6 +199,12 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Manage staff roles, access levels, and location assignments across your organization.',
   },
 
+  // ── Permissions ──
+  rolesPermissions: {
+    id: 'roles-permissions', label: 'Role Permissions', path: '/settings/roles-permissions', icon: '🔐',
+    roles: [], description: 'Manage role-based permissions and user exceptions across your organization.',
+  },
+
   // ── Help ──
   help: {
     id: 'help', label: 'Help', path: '/help', icon: '❓',
@@ -255,8 +261,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, and vendors.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
+        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
@@ -475,8 +481,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, and vendors.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
+        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
@@ -511,8 +517,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.serviceROI],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Account settings.',
-        [I.settings],
+        'Administration', 'Account settings and role permissions.',
+        [I.settings, I.rolesPermissions],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',

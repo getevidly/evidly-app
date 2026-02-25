@@ -118,6 +118,7 @@ const TempLogQuick = lazy(() => import('./pages/TempLogQuick').then(m => ({ defa
 const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ default: m.TempLogScan })));
 const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
 const SelfDiagnosis = lazy(() => import('./pages/SelfDiagnosis').then(m => ({ default: m.SelfDiagnosis })));
+const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -380,6 +381,7 @@ function AppRoutes() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/branding" element={<BrandingSettings />} />
           <Route path="/settings/sensors" element={<IoTSensorHub />} />
+          <Route path="/settings/roles-permissions" element={<RolesPermissions />} />
           <Route path="/import" element={<ImportData />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/help" element={<Help />} />

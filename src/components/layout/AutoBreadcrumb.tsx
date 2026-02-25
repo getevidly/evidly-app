@@ -67,6 +67,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/self-diagnosis': 'Self-Diagnosis',
   '/iot-monitoring': 'Internet of Things Dashboard',
   '/jurisdiction-intelligence': 'Jurisdiction Intelligence',
+  '/settings/roles-permissions': 'Role Permissions',
 };
 
 // Parent routes for nested pages
@@ -76,6 +77,7 @@ const PARENT_ROUTES: Record<string, { label: string; href: string }> = {
   '/settings/integrations': { label: 'Settings', href: '/settings' },
   '/settings/api-keys': { label: 'Settings', href: '/settings' },
   '/settings/webhooks': { label: 'Settings', href: '/settings' },
+  '/settings/roles-permissions': { label: 'Settings', href: '/settings' },
   '/admin/onboard-client': { label: 'Administration', href: '/admin/onboard-client' },
   '/admin/usage-analytics': { label: 'Administration', href: '/admin/usage-analytics' },
   '/admin/regulatory-changes': { label: 'Administration', href: '/admin/regulatory-changes' },

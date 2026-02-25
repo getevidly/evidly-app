@@ -35,6 +35,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
 
   // Enterprise — owner/exec only
   ['/enterprise/',           ['owner_operator', 'executive']],
+
+  // Role permissions — owner/exec only
+  ['/settings/roles-permissions', ['owner_operator', 'executive']],
   ['/iot/hub',               ['owner_operator', 'executive', 'compliance_manager']],
 ];
 

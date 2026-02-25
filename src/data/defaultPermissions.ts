@@ -26,6 +26,11 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'page.*',
     'settings_access',
     'help_access',
+    'permission.manage_roles',
+    'billing.manage',
+    'org.delete',
+    'org.transfer_ownership',
+    'team.manage_roles',
   ],
 
   // ── Owner / Operator — full access ──────────────────────────
@@ -37,6 +42,11 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'page.*',
     'settings_access',
     'help_access',
+    'permission.manage_roles',
+    'billing.manage',
+    'org.delete',
+    'org.transfer_ownership',
+    'team.manage_roles',
   ],
 
   // ── Executive — org-wide analytics & strategy ───────────────
@@ -58,6 +68,7 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'sidebar.reporting',
     'sidebar.billing',
     'sidebar.settings',
+    'sidebar.roles-permissions',
     'sidebar.help',
     'dashboard.hero',
     'dashboard.alerts',
@@ -71,6 +82,11 @@ export const DEFAULT_PERMISSIONS: Record<UserRole, string[]> = {
     'bottom.settings',
     'settings_access',
     'help_access',
+    'permission.manage_roles',
+    'billing.manage',
+    'org.delete',
+    'org.transfer_ownership',
+    'team.manage_roles',
   ],
 
   // ── Compliance Manager — food safety, regulatory, inspections ─
