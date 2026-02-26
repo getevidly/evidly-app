@@ -17,6 +17,7 @@ import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP } from './shared/constants';
 import { ReferralBanner } from '../referral/ReferralBanner';
 import { demoReferral } from '../../data/demoData';
 import { ComplianceBanner } from './shared/ComplianceBanner';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 
 // ================================================================
@@ -282,6 +283,11 @@ export default function OwnerOperatorDashboard() {
         <p className="text-right" style={{ color: '#9CA3AF', fontSize: '13px' }}>
           {todayStr}
         </p>
+      </div>
+
+      {/* ─── ELEMENT 0: Onboarding Checklist ────────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <OnboardingChecklistCard />
       </div>
 
       {/* ─── ELEMENT 1: Compliance Warning Banners ──────────────── */}

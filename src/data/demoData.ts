@@ -125,6 +125,8 @@ export function calcPillar(
 export const DEMO_ORG = {
   name: 'Pacific Coast Dining',
   locationCount: 3,
+  industry_type: 'RESTAURANT',
+  planned_location_count: 3,
 };
 
 export const DEMO_LOCATIONS = [

@@ -487,36 +487,13 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex-shrink-0 px-6 py-5">
           {branding.brandName === 'EvidLY' ? (
-            <div className="flex items-center" style={{ gap: '10px' }}>
-              <EvidlyIcon size={36} className="flex-shrink-0" />
-              <div>
-                <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
-                  <span style={{ color: '#A08C5A' }}>E</span><span style={{ color: '#FFFFFF' }}>vid</span><span style={{ color: '#A08C5A' }}>LY</span>
-                </span>
-                <div style={{
-                  fontSize: '10px',
-                  letterSpacing: '0.15em',
-                  color: '#A08C5A',
-                  fontWeight: 600,
-                  marginTop: '2px',
-                }}>
-                  COMPLIANCE SIMPLIFIED
-                </div>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px', fontFamily: 'system-ui, sans-serif' }}>
-                  {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
-                </div>
-              </div>
-            </div>
+            <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
+              <span style={{ color: '#A08C5A' }}>E</span><span style={{ color: '#FFFFFF' }}>vid</span><span style={{ color: '#A08C5A' }}>LY</span>
+            </span>
           ) : (
-            <div>
-              <EvidlyIcon size={36} />
-              <div className="ml-3" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
-                <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
-                  {branding.brandName}
-                </span>
-                <p className="text-[10px] text-gray-400 -mt-0.5 tracking-wide">{branding.tagline}</p>
-              </div>
-            </div>
+            <span className="text-base font-bold leading-tight" style={{ color: branding.colors.sidebarText }}>
+              {branding.brandName}
+            </span>
           )}
         </div>
 
@@ -698,13 +675,28 @@ export function Sidebar() {
 
         {/* Logout button — pinned to bottom */}
         <div className="flex-shrink-0 border-t border-white/10">
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-4 py-3 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
-          >
-            <LogOut size={16} />
-            <span className="text-sm">Log Out</span>
-          </button>
+          <div className="flex items-center justify-between px-4 py-3">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors"
+            >
+              <LogOut size={16} />
+              <span className="text-sm">Log Out</span>
+            </button>
+            <span style={{
+              fontSize: 10,
+              fontWeight: 600,
+              fontFamily: 'system-ui, sans-serif',
+              color: '#94a3b8',
+              backgroundColor: 'rgba(148, 163, 184, 0.1)',
+              padding: '2px 8px',
+              borderRadius: 10,
+              lineHeight: '18px',
+              whiteSpace: 'nowrap' as const,
+            }}>
+              {DEMO_ROLES.find(r => r.role === userRole)?.label || 'Owner / Operator'}
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -117,7 +117,7 @@ export function IntelligenceHub() {
   const {
     insights, executiveSnapshot, recalls, outbreaks,
     legislativeItems, inspectorPatterns, competitorEvents, sourceStatus,
-    subscription, pipelineStats, isLoading, markAsRead, dismissInsight, requestSnapshot,
+    subscription, pipelineStats, lastUpdatedAt, isLoading, markAsRead, dismissInsight, requestSnapshot,
     updateSubscription,
   } = useIntelligenceHub();
 
@@ -161,12 +161,15 @@ export function IntelligenceHub() {
   , [insights]);
 
   const lastUpdated = useMemo(() => {
+    // Prefer the real DB timestamp from the edge function
+    if (lastUpdatedAt) return timeAgo(lastUpdatedAt);
+    // Fallback: derive from source status
     const latest = (sourceStatus || []).reduce((max, s) => {
       const t = new Date(s.last_checked_at).getTime();
       return t > max ? t : max;
     }, 0);
     return latest ? timeAgo(new Date(latest).toISOString()) : 'Unknown';
-  }, [sourceStatus]);
+  }, [lastUpdatedAt, sourceStatus]);
 
   const sourceHealth = useMemo(() => {
     const errCount = (sourceStatus || []).filter(s => s.status === 'error').length;

@@ -1,10 +1,12 @@
 /**
- * INTEL-HUB-1 / INTEL-PIPELINE-1 — Intelligence Hub data hook
+ * INTEL-HUB-1 / INTEL-PIPELINE-1 / INTEL-FEED-1 — Intelligence Hub data hook
  *
- * Both demo and live modes query the intelligence_insights DB table.
- * Demo mode: filters by is_demo_eligible=true, orders by demo_priority DESC.
- *   Fallback: if DB returns 0 results, uses static DEMO_* data.
- * Live mode: filters by status='published'. No demo fallback — shows empty state.
+ * Fetches intelligence insights via the `intelligence-feed` edge function
+ * which uses service_role to bypass RLS.
+ *
+ * Demo mode: returns all items (published + pending_review) from the DB.
+ *   Fallback: if edge function fails or returns 0 results, uses static DEMO_* data.
+ * Live mode: returns only published items. No demo fallback — shows empty state.
  * Pipeline stats: fetched via intelligence-approve edge function (admin only).
  */
 
@@ -99,7 +101,7 @@ function mapDbInsight(row: any): IntelligenceInsight {
   };
 }
 
-/** Derive source status from published insights (live mode) */
+/** Derive source status from actual insights */
 function deriveSourceStatus(insights: IntelligenceInsight[]): SourceStatus[] {
   const map = new Map<string, SourceStatus>();
   for (const i of insights) {
@@ -165,6 +167,7 @@ export function useIntelligenceHub() {
   const [liveInsights, setLiveInsights] = useState<IntelligenceInsight[]>([]);
   const [liveSnapshot, setLiveSnapshot] = useState<ExecutiveSnapshot | null>(null);
   const [pipelineStats, setPipelineStats] = useState<PipelineStats | null>(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 
   // Read/dismissed tracking
   const [readIds, setReadIds] = useState<string[]>(() => loadFromStorage(READ_KEY, []));
@@ -175,35 +178,29 @@ export function useIntelligenceHub() {
     loadFromStorage(STORAGE_KEY, DEFAULT_SUBSCRIPTION),
   );
 
-  // ── Insight fetcher ─────────────────────────────────────
-  const fetchInsights = async () => {
-    // Only show published (approved) insights — pending_review items stay in admin queue
-    let query = supabase
-      .from('intelligence_insights')
-      .select('*')
-      .eq('status', 'published')
-      .neq('category', 'regulatory_updates')
-      .order('created_at', { ascending: false });
+  // ── Insight fetcher via edge function ─────────────────
+  const fetchInsights = async (): Promise<{ insights: IntelligenceInsight[]; lastUpdated: string | null }> => {
+    const mode = isDemoMode ? 'demo' : 'live';
 
-    // Demo mode: filter to demo_eligible insights
-    if (isDemoMode) {
-      query = query.eq('is_demo_eligible', true);
-      query = query.order('demo_priority', { ascending: false });
+    const { data, error: fnErr } = await supabase.functions.invoke('intelligence-feed', {
+      body: { mode, limit: 50 },
+    });
+
+    if (fnErr) throw fnErr;
+    if (!data) throw new Error('No data returned from intelligence-feed');
+
+    const insights: IntelligenceInsight[] = (data.insights || []).map(mapDbInsight);
+    const lastUpdated: string | null = data.last_updated || null;
+
+    // Fallback: only in demo mode when edge function returns 0 results
+    if (insights.length === 0 && isDemoMode) {
+      return {
+        insights: DEMO_INTELLIGENCE_INSIGHTS.filter(i => i.category !== 'regulatory_updates'),
+        lastUpdated: null,
+      };
     }
 
-    const { data: insights, error: queryErr } = await query.limit(isDemoMode ? 15 : 50);
-
-    if (queryErr) throw queryErr;
-
-    // Fallback: only in demo mode — live mode should show empty state
-    if (!insights || insights.length === 0) {
-      if (isDemoMode) {
-        return DEMO_INTELLIGENCE_INSIGHTS.filter(i => i.category !== 'regulatory_updates');
-      }
-      return [];
-    }
-
-    return insights.map(mapDbInsight);
+    return { insights, lastUpdated };
   };
 
   // ── Pipeline stats fetcher (admin-only edge function) ────
@@ -229,18 +226,19 @@ export function useIntelligenceHub() {
     }
   };
 
-  // ── Load data from Supabase (both demo and live) ──────
+  // ── Load data (both demo and live) ──────
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
 
     (async () => {
       try {
-        // ── Insights query ──
-        const insightData = await fetchInsights();
+        // ── Insights via edge function ──
+        const { insights: insightData, lastUpdated } = await fetchInsights();
 
         if (!cancelled) {
           setLiveInsights(insightData);
+          setLastUpdatedAt(lastUpdated);
         }
 
         // ── Pipeline stats (live mode only, fire-and-forget) ──
@@ -254,16 +252,13 @@ export function useIntelligenceHub() {
         let snapQuery = supabase
           .from('executive_snapshots')
           .select('*')
-          .eq('status', 'published')
           .order('generated_at', { ascending: false })
           .limit(1);
 
-        if (isDemoMode || !profile?.organization_id) {
-          snapQuery = snapQuery.eq('is_demo_eligible', true);
-        } else {
-          snapQuery = snapQuery.or(
-            `organization_id.eq.${profile.organization_id},is_demo_eligible.eq.true`,
-          );
+        if (!isDemoMode && profile?.organization_id) {
+          snapQuery = snapQuery
+            .eq('status', 'published')
+            .or(`organization_id.eq.${profile.organization_id},is_demo_eligible.eq.true`);
         }
 
         const { data: snapshotData, error: snapErr } = await snapQuery.maybeSingle();
@@ -314,10 +309,11 @@ export function useIntelligenceHub() {
   const inspectorPatterns = isDemoMode ? DEMO_INSPECTOR_PATTERNS : [];
   const competitorEvents = isDemoMode ? DEMO_COMPETITOR_EVENTS : [];
 
-  // Source status: demo uses static list, live derives from published insights
+  // Source status: always derived from actual insights
   const sourceStatus = useMemo(() => {
+    if (liveInsights.length > 0) return deriveSourceStatus(liveInsights);
     if (isDemoMode) return DEMO_SOURCE_STATUS;
-    return deriveSourceStatus(liveInsights);
+    return [];
   }, [isDemoMode, liveInsights]);
 
   // ── Actions ────────────────────────────────────────────
@@ -393,6 +389,7 @@ export function useIntelligenceHub() {
     sourceStatus,
     subscription,
     pipelineStats,
+    lastUpdatedAt,
     isLoading,
     error,
     markAsRead,

@@ -1,0 +1,22 @@
+{
+  "name": "evidly-intelligence",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EvidLY Intelligence — standalone Supabase project for external data monitoring",
+  "scripts": {
+    "db:reset": "npx supabase db reset",
+    "db:migrate": "npx supabase migration up",
+    "db:status": "npx supabase migration list",
+    "functions:deploy": "npx supabase functions deploy",
+    "functions:serve": "npx supabase functions serve",
+    "start": "npx supabase start",
+    "stop": "npx supabase stop"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4"
+  },
+  "devDependencies": {
+    "supabase": "^2.22.0",
+    "typescript": "^5.5.0"
+  }
+}
