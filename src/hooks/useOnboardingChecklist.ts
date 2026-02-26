@@ -93,8 +93,9 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   // ── Load org profile + persisted state ────────────────
   useEffect(() => {
     if (isDemo) {
-      setOrgIndustry(DEMO_ORG_PROFILE.industry_type);
-      setOrgLocationCount(DEMO_ORG_PROFILE.planned_location_count);
+      const demoOrg = getDemoOrgInfo();
+      setOrgIndustry(demoOrg.industry);
+      setOrgLocationCount(demoOrg.locationCount);
       try {
         const stored = localStorage.getItem(DEMO_STORAGE_KEY);
         if (stored) setCompletedIds(new Set(JSON.parse(stored)));
