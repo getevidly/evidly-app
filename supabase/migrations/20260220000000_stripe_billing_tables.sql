@@ -33,16 +33,18 @@ ALTER TABLE stripe_customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Users can only read their own stripe_customers row
-CREATE POLICY "Users can view own stripe customer"
-  ON stripe_customers
-  FOR SELECT
-  USING (auth.uid() = user_id);
+DO $$ BEGIN
+  CREATE POLICY "Users can view own stripe customer"
+    ON stripe_customers FOR SELECT USING (auth.uid() = user_id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Users can only read their own subscriptions
-CREATE POLICY "Users can view own subscriptions"
-  ON subscriptions
-  FOR SELECT
-  USING (auth.uid() = user_id);
+DO $$ BEGIN
+  CREATE POLICY "Users can view own subscriptions"
+    ON subscriptions FOR SELECT USING (auth.uid() = user_id);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Service role (edge functions) can insert/update for any user
 -- This is handled automatically by the service_role key used in edge functions

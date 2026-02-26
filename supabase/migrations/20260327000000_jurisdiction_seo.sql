@@ -5,10 +5,11 @@
 -- ═══════════════════════════════════════════════════════════════════════
 
 -- ── Anon read policy: public jurisdiction pages ──
-CREATE POLICY "Jurisdictions readable by anon"
-  ON jurisdictions FOR SELECT
-  TO anon
-  USING (is_active = true);
+DO $$ BEGIN
+  CREATE POLICY "Jurisdictions readable by anon"
+    ON jurisdictions FOR SELECT TO anon USING (is_active = true);
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ── Data versioning columns ──
 ALTER TABLE jurisdictions

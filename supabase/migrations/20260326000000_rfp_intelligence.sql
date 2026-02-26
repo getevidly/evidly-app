@@ -100,64 +100,60 @@ ALTER TABLE rfp_classifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rfp_actions ENABLE ROW LEVEL SECURITY;
 
 -- rfp_sources policies
-CREATE POLICY "rfp_sources_select_authenticated"
-  ON rfp_sources FOR SELECT TO authenticated
-  USING (true);
-
-CREATE POLICY "rfp_sources_service_role_all"
-  ON rfp_sources FOR ALL TO service_role
-  USING (true) WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "rfp_sources_select_authenticated" ON rfp_sources FOR SELECT TO authenticated USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE POLICY "rfp_sources_service_role_all" ON rfp_sources FOR ALL TO service_role USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_listings policies
-CREATE POLICY "rfp_listings_select_authenticated"
-  ON rfp_listings FOR SELECT TO authenticated
-  USING (true);
-
-CREATE POLICY "rfp_listings_service_role_all"
-  ON rfp_listings FOR ALL TO service_role
-  USING (true) WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "rfp_listings_select_authenticated" ON rfp_listings FOR SELECT TO authenticated USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE POLICY "rfp_listings_service_role_all" ON rfp_listings FOR ALL TO service_role USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_classifications policies
-CREATE POLICY "rfp_classifications_select_authenticated"
-  ON rfp_classifications FOR SELECT TO authenticated
-  USING (true);
-
-CREATE POLICY "rfp_classifications_service_role_all"
-  ON rfp_classifications FOR ALL TO service_role
-  USING (true) WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "rfp_classifications_select_authenticated" ON rfp_classifications FOR SELECT TO authenticated USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE POLICY "rfp_classifications_service_role_all" ON rfp_classifications FOR ALL TO service_role USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- rfp_actions policies
-CREATE POLICY "rfp_actions_select_authenticated"
-  ON rfp_actions FOR SELECT TO authenticated
-  USING (true);
-
-CREATE POLICY "rfp_actions_service_role_all"
-  ON rfp_actions FOR ALL TO service_role
-  USING (true) WITH CHECK (true);
+DO $$ BEGIN
+  CREATE POLICY "rfp_actions_select_authenticated" ON rfp_actions FOR SELECT TO authenticated USING (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE POLICY "rfp_actions_service_role_all" ON rfp_actions FOR ALL TO service_role USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ============================================================================
 -- INDEXES
 -- ============================================================================
 
 -- rfp_sources indexes
-CREATE INDEX idx_rfp_sources_status ON rfp_sources(status);
-CREATE INDEX idx_rfp_sources_states ON rfp_sources USING GIN (states_covered);
+CREATE INDEX IF NOT EXISTS idx_rfp_sources_status ON rfp_sources(status);
+CREATE INDEX IF NOT EXISTS idx_rfp_sources_states ON rfp_sources USING GIN (states_covered);
 
 -- rfp_listings indexes
-CREATE INDEX idx_rfp_listings_source ON rfp_listings(source_id);
-CREATE INDEX idx_rfp_listings_state ON rfp_listings(state);
-CREATE INDEX idx_rfp_listings_status ON rfp_listings(status);
-CREATE INDEX idx_rfp_listings_due ON rfp_listings(due_date) WHERE due_date IS NOT NULL;
-CREATE INDEX idx_rfp_listings_naics ON rfp_listings(naics_code) WHERE naics_code IS NOT NULL;
-CREATE UNIQUE INDEX idx_rfp_listings_dedup ON rfp_listings(dedup_hash) WHERE dedup_hash IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_rfp_listings_source ON rfp_listings(source_id);
+CREATE INDEX IF NOT EXISTS idx_rfp_listings_state ON rfp_listings(state);
+CREATE INDEX IF NOT EXISTS idx_rfp_listings_status ON rfp_listings(status);
+CREATE INDEX IF NOT EXISTS idx_rfp_listings_due ON rfp_listings(due_date) WHERE due_date IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_rfp_listings_naics ON rfp_listings(naics_code) WHERE naics_code IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_rfp_listings_dedup ON rfp_listings(dedup_hash) WHERE dedup_hash IS NOT NULL;
 
 -- rfp_classifications indexes
-CREATE INDEX idx_rfp_class_rfp ON rfp_classifications(rfp_id);
-CREATE INDEX idx_rfp_class_score ON rfp_classifications(relevance_score DESC);
-CREATE INDEX idx_rfp_class_tier ON rfp_classifications(relevance_tier);
+CREATE INDEX IF NOT EXISTS idx_rfp_class_rfp ON rfp_classifications(rfp_id);
+CREATE INDEX IF NOT EXISTS idx_rfp_class_score ON rfp_classifications(relevance_score DESC);
+CREATE INDEX IF NOT EXISTS idx_rfp_class_tier ON rfp_classifications(relevance_tier);
 
 -- rfp_actions indexes
-CREATE INDEX idx_rfp_actions_rfp ON rfp_actions(rfp_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rfp_actions_rfp ON rfp_actions(rfp_id, created_at DESC);
 
 -- ============================================================================
 -- UPDATED_AT TRIGGER
@@ -167,13 +163,20 @@ RETURNS TRIGGER AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_rfp_actions_updated
-  BEFORE UPDATE ON rfp_actions
-  FOR EACH ROW EXECUTE FUNCTION update_rfp_updated_at();
+DO $$ BEGIN
+  CREATE TRIGGER trg_rfp_actions_updated
+    BEFORE UPDATE ON rfp_actions
+    FOR EACH ROW EXECUTE FUNCTION update_rfp_updated_at();
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
 
 -- ============================================================================
 -- SEED DATA: rfp_sources (100 rows)
 -- ============================================================================
+
+-- Only seed if table is empty (avoid duplicates on re-run)
+DO $$ BEGIN
+IF NOT EXISTS (SELECT 1 FROM rfp_sources LIMIT 1) THEN
 
 -- --------------------------------------------------------------------------
 -- FEDERAL SOURCES (6 rows)
@@ -1219,6 +1222,9 @@ INSERT INTO rfp_sources (name, url, source_type, coverage, states_covered, crawl
   'paused',
   '{"method":"web_scrape","keywords":["dietary","food service","long-term care","nursing facility"]}'::jsonb
 );
+
+END IF;
+END $$;
 
 -- ============================================================================
 -- END OF MIGRATION
