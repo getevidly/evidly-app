@@ -13,9 +13,7 @@
     <meta name="description" content="EvidLY automates commercial kitchen compliance — temperature monitoring, daily checklists, fire safety documentation, vendor management, and AI-powered insights. Trusted by Aramark at Yosemite National Park. Start your free trial." />
     <link rel="canonical" href="https://evidly.com" />
 
-    <!-- Prevent AI crawlers and scrapers -->
-    <meta name="robots" content="noindex, nofollow, nosnippet, noarchive, noimageindex" />
-    <meta name="googlebot" content="noindex, nofollow" />
+    <!-- Per-page robot directives via react-helmet-async (public pages: index,follow; app pages: noindex) -->
     <!-- Prevent caching by intermediaries -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
@@ -86,7 +84,7 @@
       (function() {
         if (localStorage.getItem('evidly-cookie-consent') === 'declined') return;
         var path = window.location.pathname;
-        var publicPaths = ['/', '/login', '/signup', '/enterprise', '/iot', '/providers', '/partners', '/verify', '/passport'];
+        var publicPaths = ['/', '/login', '/signup', '/enterprise', '/iot', '/providers', '/partners', '/verify', '/passport', '/compliance'];
         var isPublic = publicPaths.some(function(p) { return path === p || path.startsWith(p + '/'); });
         if (!isPublic) return;
         var zi = document.createElement('script');

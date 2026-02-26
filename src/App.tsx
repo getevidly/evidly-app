@@ -120,6 +120,8 @@ const TempLogScan = lazy(() => import('./pages/TempLogScan').then(m => ({ defaul
 const IoTMonitoring = lazy(() => import('./pages/IoTMonitoring'));
 const SelfDiagnosis = lazy(() => import('./pages/SelfDiagnosis').then(m => ({ default: m.SelfDiagnosis })));
 const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m => ({ default: m.RolesPermissions })));
+const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
+const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -334,6 +336,8 @@ function AppRoutes() {
         <Route path="/iot" element={<Suspense fallback={<PageSkeleton />}><IoTSensorLanding /></Suspense>} />
         <Route path="/terms" element={<Suspense fallback={<PageSkeleton />}><TermsOfService /></Suspense>} />
         <Route path="/privacy" element={<Suspense fallback={<PageSkeleton />}><PrivacyPolicy /></Suspense>} />
+        <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
+        <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />

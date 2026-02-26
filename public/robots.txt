@@ -120,6 +120,7 @@ Allow: /terms
 Allow: /privacy
 Allow: /verify/
 Allow: /passport/
+Allow: /compliance/
 
 # Crawl delay for any allowed crawlers
 Crawl-delay: 10

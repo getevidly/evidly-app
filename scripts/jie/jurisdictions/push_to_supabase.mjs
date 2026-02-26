@@ -164,12 +164,37 @@ function buildPatchBody(record) {
     notes: notes.slice(0, 1000),
     last_sync_at: nowIso,
     updated_at: nowIso,
+    last_crawled_at: nowIso,
+    crawl_confidence: validation.computed_confidence || "unknown",
   };
 }
 
 // ── Execute PATCH ───────────────────────────────────────────────────────
 
+async function fetchCurrentVersion(county, state) {
+  const params = new URLSearchParams({
+    state: `eq.${state}`,
+    county: `eq.${county}`,
+    select: "data_version",
+  });
+  try {
+    const resp = await fetch(`${REST_ENDPOINT}?${params}`, {
+      method: "GET",
+      headers: { ...HEADERS, Prefer: "return=representation" },
+    });
+    if (resp.ok) {
+      const rows = await resp.json();
+      return rows[0]?.data_version || 0;
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
 async function patchJurisdiction(county, state, body) {
+  // Fetch current data_version and increment
+  const currentVersion = await fetchCurrentVersion(county, state);
+  body.data_version = currentVersion + 1;
+
   const params = new URLSearchParams({
     state: `eq.${state}`,
     county: `eq.${county}`,
@@ -184,7 +209,7 @@ async function patchJurisdiction(county, state, body) {
     });
 
     if (resp.ok) {
-      return { ok: true, status: resp.status, msg: "OK" };
+      return { ok: true, status: resp.status, msg: `OK (v${body.data_version})` };
     } else {
       const errText = await resp.text();
       return { ok: false, status: resp.status, msg: errText };
