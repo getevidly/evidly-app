@@ -72,8 +72,8 @@ Deno.serve(async (req) => {
     for (const entry of scores || []) {
       const nodeName = entry.node?.name || entry.node_id;
       const overallScore = Number(entry.overall_score) || 0;
-      const equipmentScore = Number(entry.equipment_score) || 0;
-      const documentationScore = Number(entry.documentation_score) || 0;
+      const fireSafetyScore = Number(entry.fire_safety_score) || 0;
+      const foodSafetyScore = Number(entry.food_safety_score) || 0;
 
       // Critical: overall score below 75
       if (overallScore < 75) {
@@ -83,14 +83,14 @@ Deno.serve(async (req) => {
         alerts.push({ severity: "warning", node_name: nodeName, message: `Overall compliance score is below target at ${overallScore}`, score: overallScore });
       }
 
-      // Cert gap: equipment score below 70
-      if (equipmentScore < 70) {
-        alerts.push({ severity: "critical", node_name: nodeName, message: `Equipment certification gap detected - score ${equipmentScore}`, score: equipmentScore });
+      // Fire safety score below 70
+      if (fireSafetyScore < 70) {
+        alerts.push({ severity: "critical", node_name: nodeName, message: `Fire safety score below threshold - score ${fireSafetyScore}`, score: fireSafetyScore });
       }
 
-      // Vendor doc issues: documentation score below 70
-      if (documentationScore < 70) {
-        alerts.push({ severity: "critical", node_name: nodeName, message: `Vendor documentation deficiency detected - score ${documentationScore}`, score: documentationScore });
+      // Food safety score below 70
+      if (foodSafetyScore < 70) {
+        alerts.push({ severity: "critical", node_name: nodeName, message: `Food safety score below threshold - score ${foodSafetyScore}`, score: foodSafetyScore });
       }
     }
 
