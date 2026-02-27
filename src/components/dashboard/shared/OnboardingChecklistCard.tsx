@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Check, ChevronRight, X, Sparkles,
+  Check, ChevronRight, X, Sparkles, Lock,
   User, MapPin, Building2, Users,
   FileText, Truck, Thermometer,
 } from 'lucide-react';
@@ -14,6 +14,8 @@ const MIDNIGHT_NAVY = '#1E2D4D';
 const GREEN = '#16a34a';
 const STEP_BG_ACTIVE = '#FFFDF5';
 const STEP_BORDER_ACTIVE = ACCENT_GOLD;
+const LOCKED_BG = '#F8F9FB';
+const SKIPPED_COLOR = '#B0B8C5';
 
 // Step icons keyed by step id
 const STEP_ICONS: Record<string, typeof User> = {
@@ -31,7 +33,8 @@ export function OnboardingChecklistCard() {
   const {
     steps, completedCount, totalCount,
     isAllComplete, isDismissed, loading,
-    currentStepIndex, completeStep, skipStep, goToStep,
+    currentStepIndex, isStepUnlocked,
+    completeStep, skipStep, goToStep,
     dismiss,
   } = useOnboardingChecklist();
   const { triggerConfetti } = useConfetti();
@@ -120,28 +123,46 @@ export function OnboardingChecklistCard() {
       <div className="px-4 py-3 flex items-center gap-1" style={{ borderBottom: '1px solid #F0F0F0' }}>
         {steps.map((step, i) => {
           const isCompleted = step.completed;
+          const isSkipped = step.skipped && !isCompleted;
           const isCurrent = i === currentStepIndex;
+          const unlocked = isStepUnlocked(i);
+          const isLocked = !unlocked && !isCompleted;
+
           return (
             <button
               key={step.id}
               type="button"
-              onClick={() => goToStep(i)}
-              className="flex items-center gap-1 transition-all"
-              title={step.label}
-              aria-label={`Go to step ${i + 1}: ${step.label}`}
+              onClick={() => unlocked && goToStep(i)}
+              className={`flex items-center gap-1 transition-all ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              title={isLocked ? `Complete previous steps first` : step.label}
+              aria-label={isLocked ? `Step ${i + 1}: ${step.label} (locked)` : `Go to step ${i + 1}: ${step.label}`}
+              disabled={isLocked}
             >
-              {/* Dot / check */}
+              {/* Dot / check / lock */}
               <div
                 className="flex items-center justify-center rounded-full transition-all"
                 style={{
                   width: isCurrent ? 24 : 20,
                   height: isCurrent ? 24 : 20,
-                  backgroundColor: isCompleted ? GREEN : isCurrent ? ACCENT_GOLD : '#E8EDF5',
+                  backgroundColor: isCompleted
+                    ? GREEN
+                    : isSkipped
+                      ? SKIPPED_COLOR
+                      : isCurrent
+                        ? ACCENT_GOLD
+                        : isLocked
+                          ? '#E8EDF5'
+                          : '#E8EDF5',
                   border: isCurrent && !isCompleted ? `2px solid ${ACCENT_GOLD}` : 'none',
+                  opacity: isLocked ? 0.5 : 1,
                 }}
               >
                 {isCompleted ? (
                   <Check size={12} color="#FFFFFF" strokeWidth={3} />
+                ) : isSkipped ? (
+                  <ChevronRight size={10} color="#FFFFFF" strokeWidth={3} />
+                ) : isLocked ? (
+                  <Lock size={9} color="#9CA3AF" />
                 ) : (
                   <span
                     className="text-[10px] font-bold"
@@ -157,7 +178,7 @@ export function OnboardingChecklistCard() {
                   className="h-[2px] transition-all"
                   style={{
                     width: 12,
-                    backgroundColor: isCompleted ? GREEN : '#E8EDF5',
+                    backgroundColor: isCompleted ? GREEN : isSkipped ? SKIPPED_COLOR : '#E8EDF5',
                   }}
                 />
               )}
@@ -199,19 +220,24 @@ export function OnboardingChecklistCard() {
           <div className="flex items-center gap-2 mt-3 ml-[52px]">
             <button
               type="button"
-              onClick={() => {
-                completeStep(currentStep.id);
-                navigate(currentStep.route);
-              }}
+              onClick={() => navigate(currentStep.route)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold text-white transition-colors hover:opacity-90"
               style={{ backgroundColor: ACCENT_GOLD }}
             >
-              Let's Do This
+              {currentStep.actionLabel}
               <ChevronRight size={14} />
             </button>
             <button
               type="button"
-              onClick={skipStep}
+              onClick={() => completeStep(currentStep.id)}
+              className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-green-50"
+              style={{ color: GREEN }}
+            >
+              Mark Done
+            </button>
+            <button
+              type="button"
+              onClick={() => skipStep(currentStep.id)}
               className="px-3 py-1.5 rounded-md text-xs font-medium transition-colors hover:bg-black/5"
               style={{ color: '#6B7F96' }}
             >
@@ -221,46 +247,80 @@ export function OnboardingChecklistCard() {
         </div>
       )}
 
-      {/* Completed / remaining steps (collapsed) */}
+      {/* Completed / remaining / locked steps (collapsed list) */}
       <div className="px-3 pb-3">
         {steps.map((step, i) => {
           if (i === currentStepIndex) return null; // current step shown above
           const Icon = STEP_ICONS[step.id] || Sparkles;
+          const unlocked = isStepUnlocked(i);
+          const isLocked = !unlocked && !step.completed;
+          const isSkipped = step.skipped && !step.completed;
+
           return (
             <button
               key={step.id}
               type="button"
-              onClick={() => goToStep(i)}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-gray-50 text-left"
+              onClick={() => unlocked && goToStep(i)}
+              disabled={isLocked}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${
+                isLocked
+                  ? 'cursor-not-allowed'
+                  : 'hover:bg-gray-50 cursor-pointer'
+              }`}
+              style={isLocked ? { backgroundColor: LOCKED_BG } : undefined}
             >
               {/* Status indicator */}
               <div
                 className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
                 style={{
-                  backgroundColor: step.completed ? GREEN : '#FFFFFF',
-                  border: step.completed ? 'none' : '2px solid #D1D9E6',
+                  backgroundColor: step.completed
+                    ? GREEN
+                    : isSkipped
+                      ? SKIPPED_COLOR
+                      : isLocked
+                        ? '#E8EDF5'
+                        : '#FFFFFF',
+                  border: step.completed || isSkipped || isLocked ? 'none' : '2px solid #D1D9E6',
+                  opacity: isLocked ? 0.5 : 1,
                 }}
               >
                 {step.completed ? (
                   <Check size={10} color="#FFFFFF" strokeWidth={3} />
+                ) : isSkipped ? (
+                  <ChevronRight size={8} color="#FFFFFF" strokeWidth={3} />
+                ) : isLocked ? (
+                  <Lock size={8} color="#9CA3AF" />
                 ) : (
                   <span className="text-[9px] font-bold" style={{ color: '#9CA3AF' }}>{i + 1}</span>
                 )}
               </div>
 
               {/* Icon + label */}
-              <Icon size={14} style={{ color: step.completed ? '#9CA3AF' : '#6B7F96' }} className="shrink-0" />
+              <Icon
+                size={14}
+                style={{ color: step.completed || isLocked ? '#9CA3AF' : isSkipped ? SKIPPED_COLOR : '#6B7F96' }}
+                className="shrink-0"
+              />
               <span
                 className={`text-xs font-medium flex-1 ${step.completed ? 'line-through' : ''}`}
-                style={{ color: step.completed ? '#9CA3AF' : BODY_TEXT }}
+                style={{
+                  color: step.completed ? '#9CA3AF' : isLocked ? '#B0B8C5' : isSkipped ? SKIPPED_COLOR : BODY_TEXT,
+                }}
               >
                 {step.label}
+                {isSkipped && (
+                  <span className="ml-1.5 text-[10px] font-normal" style={{ color: SKIPPED_COLOR }}>
+                    (skipped)
+                  </span>
+                )}
               </span>
 
-              {/* Chevron for incomplete */}
-              {!step.completed && (
+              {/* Chevron for unlocked incomplete, lock for locked */}
+              {isLocked ? (
+                <Lock size={12} style={{ color: '#D1D9E6' }} className="shrink-0" />
+              ) : !step.completed && !isSkipped ? (
                 <ChevronRight size={12} style={{ color: '#9CA3AF' }} className="shrink-0" />
-              )}
+              ) : null}
             </button>
           );
         })}

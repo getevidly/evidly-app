@@ -19,6 +19,8 @@ export interface OnboardingStepDef {
   description: string;
   hint: string;
   route: string;
+  /** Contextual label for the action button */
+  actionLabel: string;
   section: 'getting_started' | 'safety_setup' | 'team_locations' | 'industry_specific';
   order: number;
   /** If set, step only shows for these industries. Omit = universal. */
@@ -27,6 +29,14 @@ export interface OnboardingStepDef {
   minTier?: LocationTier;
   /** Future paywall gating flag (not enforced yet). */
   featureGate?: string;
+  /** Supabase table to query for auto-completion (auth mode). */
+  completionTable?: string;
+  /** Column to match against orgId (default: 'organization_id'). */
+  completionOrgColumn?: string;
+  /** Minimum row count to be "complete" (default: 1). */
+  completionMinCount?: number;
+  /** For profile step: check this column is non-null on the user's profile row. */
+  completionProfileField?: string;
 }
 
 export const ONBOARDING_SECTIONS = [
@@ -43,8 +53,10 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Add your name, title, and contact info so your team knows who you are.',
     hint: 'Takes about 2 minutes',
     route: '/settings',
+    actionLabel: 'Set Up Profile',
     section: 'getting_started',
     order: 1,
+    completionProfileField: 'full_name',
   },
   // ── Step 2: First Location ──────────────────────────────
   {
@@ -53,8 +65,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Set up your first kitchen with address and jurisdiction auto-detection.',
     hint: 'We\'ll auto-detect your local health department requirements',
     route: '/org-hierarchy',
+    actionLabel: 'Add Location',
     section: 'getting_started',
     order: 2,
+    completionTable: 'locations',
+    completionMinCount: 1,
   },
   // ── Step 3: Additional Locations (multi/enterprise only) ─
   {
@@ -63,9 +78,12 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Register all your sites for unified compliance tracking across locations.',
     hint: 'You can always add more locations later',
     route: '/org-hierarchy',
+    actionLabel: 'Add More Locations',
     section: 'getting_started',
     order: 3,
     minTier: 'multi',
+    completionTable: 'locations',
+    completionMinCount: 2,
   },
   // ── Step 4: Invite Team ─────────────────────────────────
   {
@@ -74,8 +92,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Add staff members so they can log temps, complete checklists, and stay compliant.',
     hint: 'They\'ll get an email invitation to join',
     route: '/team',
+    actionLabel: 'Invite Team',
     section: 'team_locations',
     order: 1,
+    completionTable: 'profiles',
+    completionMinCount: 2,
   },
   // ── Step 5: Upload Documents ────────────────────────────
   {
@@ -84,8 +105,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Add your health permits, facility safety certificates, and insurance documents.',
     hint: 'Keeps everything in one place for inspections',
     route: '/documents',
+    actionLabel: 'Upload Documents',
     section: 'safety_setup',
     order: 1,
+    completionTable: 'documents',
+    completionMinCount: 1,
   },
   // ── Step 6: Add Vendors ─────────────────────────────────
   {
@@ -94,8 +118,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Register your food suppliers and service vendors for compliance tracking.',
     hint: 'Track certifications, insurance, and delivery records',
     route: '/vendors',
+    actionLabel: 'Add Vendors',
     section: 'team_locations',
     order: 2,
+    completionTable: 'vendors',
+    completionMinCount: 1,
   },
   // ── Step 7: Register Equipment ──────────────────────────
   {
@@ -104,8 +131,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     description: 'Add your refrigerators, freezers, and cooking equipment for temperature monitoring.',
     hint: 'Enables automated temp logging and alerts',
     route: '/equipment',
+    actionLabel: 'Add Equipment',
     section: 'safety_setup',
     order: 2,
+    completionTable: 'equipment',
+    completionMinCount: 1,
   },
 ];
 
