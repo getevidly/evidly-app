@@ -3,6 +3,7 @@ import { EvidlyIcon } from './ui/EvidlyIcon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
+import K2CPricingBadge from './K2CPricingBadge';
 
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -287,6 +288,9 @@ export default function Pricing() {
             </div>
           </div>
         </div>
+
+        {/* K2C Badge */}
+        <K2CPricingBadge />
 
         {/* Trust Statement */}
         <div className="text-center mt-12">

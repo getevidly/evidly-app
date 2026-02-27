@@ -142,9 +142,11 @@ import AIChatWidget from './components/landing/AIChatWidget';
 import AppInstallSection from './components/landing/AppInstallSection';
 import WebinarSection from './components/landing/WebinarSection';
 import MobileInstallBanner from './components/landing/MobileInstallBanner';
+import K2CBannerStrip from './components/K2CBannerStrip';
 import { CookieConsent } from './components/CookieConsent';
 import { usePageTracking } from './hooks/usePageTracking';
 
+const KitchenToCommunity = lazy(() => import('./pages/KitchenToCommunity'));
 const DemoBookingBanner = lazy(() => import('./components/landing/DemoBookingBanner'));
 import { PageSkeleton } from './components/LoadingSkeleton';
 import { Layout } from './components/layout/Layout';
@@ -179,6 +181,7 @@ function LandingPage() {
       <MobileInstallBanner />
       <Navigation />
       <Hero />
+      <K2CBannerStrip />
       <DailyOperations />
       <Features />
       <BeforeAfter />
@@ -342,6 +345,7 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
+        <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
         <Route path="/login" element={<PublicRoute><Suspense fallback={<PageSkeleton />}><Login /></Suspense></PublicRoute>} />
