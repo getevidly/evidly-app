@@ -7,13 +7,10 @@ import {
   type ActivityItem,
 } from '../lib/dashboardQueries';
 import {
-  DEMO_LOCATIONS,
   LOCATIONS_WITH_SCORES,
   DEMO_ORG_SCORES,
   DEMO_TREND_DATA,
-  DEMO_ATTENTION_ITEMS,
   locationScoresThirtyDaysAgo,
-  calcPillar,
 } from '../data/demoData';
 import { DEMO_INTELLIGENCE_INSIGHTS } from '../data/demoIntelligenceData';
 
@@ -278,6 +275,23 @@ function buildDemoPayload(): DashboardPayload {
   };
 }
 
+/** Empty payload for live mode — no hardcoded demo data */
+function buildEmptyPayload(): DashboardPayload {
+  return {
+    orgScores: { overall: null, foodSafety: 0, facilitySafety: 0 },
+    locations: [],
+    locationScoresPrev: {},
+    tasks: [],
+    deadlines: [],
+    alerts: [],
+    impact: [],
+    activity: [],
+    moduleStatuses: [],
+    trendData: [],
+    weights: { ops: 50, docs: 50 },
+  };
+}
+
 // ── Intelligence bridge: compliance push throttle ──────
 
 const BRIDGE_THROTTLE_KEY = 'evidly_intelligence_last_push';
@@ -325,7 +339,7 @@ export function useDashboardData(): {
   const orgId = profile?.organization_id;
   const isDemo = isDemoMode || !orgId;
 
-  const [data, setData] = useState<DashboardPayload>(buildDemoPayload);
+  const [data, setData] = useState<DashboardPayload>(() => isDemo ? buildDemoPayload() : buildEmptyPayload());
   const [loading, setLoading] = useState(!isDemo);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
@@ -346,17 +360,21 @@ export function useDashboardData(): {
       if (!mountedRef.current) return;
 
       // Map Supabase results into DashboardPayload
-      // Locations come with scores from the query layer
-      const locations: LocationWithScores[] = DEMO_LOCATIONS.map(loc => ({
-        ...loc,
-        foodScore: calcPillar(loc.foodSafety),
-        fireScore: calcPillar(loc.facilitySafety),
-        score: null, // DEPRECATED — no composite score
+      const locations: LocationWithScores[] = result.locations.map(loc => ({
+        id: loc.id || loc.urlId,
+        name: loc.name,
+        foodSafety: { ops: 0, docs: 0 },
+        facilitySafety: { ops: 0, docs: 0 },
+        trend: 0,
+        status: 'good' as const,
+        foodScore: 0,
+        fireScore: 0,
+        score: null,
       }));
 
       setData({
         orgScores: {
-          overall: null, // DEPRECATED — no composite score
+          overall: null,
           foodSafety: result.complianceData.scores.foodSafety,
           facilitySafety: result.complianceData.scores.facilitySafety,
         },
@@ -366,13 +384,13 @@ export function useDashboardData(): {
             ([id, s]) => [id, { foodSafety: s.foodSafety, facilitySafety: s.facilitySafety }],
           ),
         ),
-        tasks: DEMO_TASKS, // Real task wiring deferred to production
-        deadlines: DEMO_DEADLINES,
-        alerts: DEMO_ALERTS,
-        impact: buildDemoImpact(),
+        tasks: [],
+        deadlines: [],
+        alerts: [],
+        impact: [],
         activity: result.activity,
-        moduleStatuses: DEMO_MODULE_STATUSES,
-        trendData: DEMO_TREND_DATA,
+        moduleStatuses: [],
+        trendData: [],
         weights: {
           ops: 50,
           docs: 50,
@@ -381,8 +399,8 @@ export function useDashboardData(): {
     } catch (err) {
       if (!mountedRef.current) return;
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
-      // Fall back to demo data on error
-      setData(buildDemoPayload());
+      // Fall back to empty data on error — never show demo data in live mode
+      setData(buildEmptyPayload());
     } finally {
       if (mountedRef.current) setLoading(false);
     }

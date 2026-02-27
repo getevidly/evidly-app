@@ -48,6 +48,15 @@ export interface DashboardData {
   scoreImpact: ScoreImpactItem[];
 }
 
+// ── Empty results for live mode (no data yet) ───────────
+
+const EMPTY_SCORES: ComplianceScoresResult = {
+  scores: { overall: 0, foodSafety: 0, facilitySafety: 0 },
+  locationScores: {},
+  scoresThirtyDaysAgo: { overall: 0, foodSafety: 0, facilitySafety: 0 },
+  locationScoresThirtyDaysAgo: {},
+};
+
 // ────────────────────────────────────────────────────────
 // Fetch compliance scores — real DB or demo fallback
 // ────────────────────────────────────────────────────────
@@ -64,16 +73,16 @@ export async function fetchComplianceScores(organizationId?: string): Promise<Co
       .select('id', { count: 'exact', head: true })
       .eq('organization_id', organizationId);
 
-    // If no real data exists, fall back to demo
+    // If no real data exists, return empty scores
     if (!tempCount || tempCount === 0) {
-      return { scores: complianceScores, locationScores, scoresThirtyDaysAgo: complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo };
+      return EMPTY_SCORES;
     }
 
     // In a production build we would compute pillar scores from real data here.
-    // For now return demo scores — this path activates once the org has real temp logs.
-    return { scores: complianceScores, locationScores, scoresThirtyDaysAgo: complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo };
+    // For now return empty scores — this path activates once the org has real temp logs.
+    return EMPTY_SCORES;
   } catch {
-    return { scores: complianceScores, locationScores, scoresThirtyDaysAgo: complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo };
+    return EMPTY_SCORES;
   }
 }
 
@@ -91,7 +100,7 @@ export async function fetchLocations(organizationId?: string): Promise<Location[
       .eq('organization_id', organizationId)
       .limit(100);
 
-    if (!data || data.length === 0) return locations;
+    if (!data || data.length === 0) return [];
 
     return data.map((loc) => ({
       id: loc.id,
@@ -103,7 +112,7 @@ export async function fetchLocations(organizationId?: string): Promise<Location[
       actionItems: 0,
     }));
   } catch {
-    return locations;
+    return [];
   }
 }
 
@@ -135,9 +144,9 @@ export async function fetchTodaysProgress(organizationId?: string): Promise<Prog
       .select('id', { count: 'exact', head: true })
       .gte('completed_at', todayStart.toISOString());
 
-    // If no real data, return demo
+    // If no real data, return empty
     if ((!tempCount || tempCount === 0) && (!checkCount || checkCount === 0)) {
-      return DEMO_PROGRESS;
+      return {};
     }
 
     // Minimal real-data mapping (single bucket for now)
@@ -150,7 +159,7 @@ export async function fetchTodaysProgress(organizationId?: string): Promise<Prog
       },
     };
   } catch {
-    return DEMO_PROGRESS;
+    return {};
   }
 }
 
@@ -177,7 +186,7 @@ export async function fetchRecentActivity(organizationId?: string): Promise<Acti
       .order('recorded_at', { ascending: false })
       .limit(5);
 
-    if (!tempLogs || tempLogs.length === 0) return DEMO_ACTIVITY;
+    if (!tempLogs || tempLogs.length === 0) return [];
 
     // Convert real temp logs into activity items
     return tempLogs.map((log) => {
@@ -194,7 +203,7 @@ export async function fetchRecentActivity(organizationId?: string): Promise<Acti
       };
     });
   } catch {
-    return DEMO_ACTIVITY;
+    return [];
   }
 }
 
@@ -212,7 +221,7 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
       .eq('organization_id', organizationId)
       .limit(50);
 
-    if (!relationships || relationships.length === 0) return demoVendors;
+    if (!relationships || relationships.length === 0) return [];
 
     const vendorIds = relationships.map((r) => r.vendor_id);
 
@@ -222,7 +231,7 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
       .in('id', vendorIds)
       .limit(50);
 
-    if (!vendorRows || vendorRows.length === 0) return demoVendors;
+    if (!vendorRows || vendorRows.length === 0) return [];
 
     return vendorRows.map((v) => ({
       id: v.id,
@@ -238,7 +247,7 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
       locationId: '',
     }));
   } catch {
-    return demoVendors;
+    return [];
   }
 }
 
@@ -247,8 +256,9 @@ export async function fetchVendorServices(organizationId?: string): Promise<Vend
 // ────────────────────────────────────────────────────────
 
 export async function fetchNeedsAttention(organizationId?: string): Promise<NeedsAttentionItem[]> {
-  // For now always return demo — in production, derive from real compliance gaps
-  return needsAttentionItems;
+  if (!organizationId) return needsAttentionItems;
+  // Live mode: return empty — in production, derive from real compliance gaps
+  return [];
 }
 
 // ────────────────────────────────────────────────────────
@@ -256,8 +266,9 @@ export async function fetchNeedsAttention(organizationId?: string): Promise<Need
 // ────────────────────────────────────────────────────────
 
 export async function fetchScoreImpact(organizationId?: string): Promise<ScoreImpactItem[]> {
-  // For now always return demo — in production, derive from real compliance data
-  return scoreImpactData;
+  if (!organizationId) return scoreImpactData;
+  // Live mode: return empty — in production, derive from real compliance data
+  return [];
 }
 
 // ────────────────────────────────────────────────────────
