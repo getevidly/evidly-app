@@ -45,7 +45,7 @@ function loadLead(): DemoLead | null {
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const { session } = useAuth();
+  const { session, loading: authLoading } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
     try {
@@ -58,8 +58,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   // ── Core invariant: authenticated sessions are NEVER in demo mode ──
   // If a Supabase auth session exists, isDemoMode is always false
   // regardless of what sessionStorage says.
+  // ALSO: while auth is still loading, isDemoMode is false to prevent
+  // a race condition where session is null but user is actually logged in.
   const isAuthenticated = !!session?.user;
-  const isDemoMode = rawDemoMode && !isAuthenticated;
+  const isDemoMode = rawDemoMode && !isAuthenticated && !authLoading;
 
   // When user authenticates, clean up any stale demo state from sessionStorage
   useEffect(() => {
