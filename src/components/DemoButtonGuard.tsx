@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
 import { DemoUpgradePrompt } from './DemoUpgradePrompt';
@@ -21,6 +21,12 @@ export function DemoButtonGuard() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [upgradeAction, setUpgradeAction] = useState('');
 
+  // CRITICAL: This ref is updated synchronously during every render,
+  // so the click handler always sees the latest auth/demo state —
+  // even if useEffect cleanup hasn't run yet (race condition fix).
+  const shouldGuardRef = useRef(false);
+  shouldGuardRef.current = isDemoMode && !presenterMode && !authLoading && !session?.user;
+
   const handleClose = useCallback(() => setShowUpgrade(false), []);
 
   useEffect(() => {
@@ -28,6 +34,10 @@ export function DemoButtonGuard() {
     if (!isDemoMode || presenterMode || authLoading || session?.user) return;
 
     function handleClick(e: MouseEvent) {
+      // Re-verify at click time via ref — catches race conditions
+      // where auth state changed but effect cleanup hasn't run yet
+      if (!shouldGuardRef.current) return;
+
       const target = e.target as HTMLElement;
       if (!target) return;
 
@@ -94,7 +104,8 @@ export function DemoButtonGuard() {
     }
   }, [isDemoMode, showUpgrade]);
 
-  if (!showUpgrade) return null;
+  // CRITICAL: Never render for authenticated users, regardless of showUpgrade state
+  if (!shouldGuardRef.current || !showUpgrade) return null;
 
   return (
     <DemoUpgradePrompt

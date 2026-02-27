@@ -28,7 +28,6 @@ export function useDemoGuard() {
   const guardAction = useCallback(
     (action: string, featureName: string, callback: () => void) => {
       // While auth is still loading, always let the action through
-      // (ProtectedLayout already blocks rendering, but this is a safety net)
       if (authLoading) {
         callback();
         return;
@@ -38,23 +37,28 @@ export function useDemoGuard() {
         callback();
         return;
       }
+      // Not in demo mode: execute normally (check BEFORE presenter mode)
+      if (!isDemoMode) {
+        callback();
+        return;
+      }
       // Presenter mode: bypass all demo gating
-      if (isDemoMode && presenterMode) {
+      if (presenterMode) {
         callback();
         return;
       }
       // Demo mode (no auth): block the action, show upgrade prompt
-      if (isDemoMode) {
-        setUpgradeAction(action);
-        setUpgradeFeature(featureName);
-        setShowUpgrade(true);
-        return;
-      }
-      // Not in demo: execute normally
-      callback();
+      setUpgradeAction(action);
+      setUpgradeFeature(featureName);
+      setShowUpgrade(true);
     },
     [isDemoMode, presenterMode, session, authLoading]
   );
 
-  return { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode };
+  // CRITICAL: Never expose showUpgrade=true when not in demo mode.
+  // This prevents a race condition where showUpgrade lingers as true
+  // for one render cycle after isDemoMode flips to false.
+  const safeShowUpgrade = isDemoMode && !session?.user ? showUpgrade : false;
+
+  return { guardAction, showUpgrade: safeShowUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode };
 }
