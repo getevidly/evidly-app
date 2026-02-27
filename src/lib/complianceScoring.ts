@@ -107,6 +107,32 @@ export function getGraduatedPenalty(daysUntilDue: number, fullPenaltyPoints: num
   return 0;                                                  // 30+ days
 }
 
+// --------------- Solid-Fuel Cooking Classification ---------------
+
+/** Equipment types classified as solid-fuel cooking — triggers monthly hood cleaning per NFPA 96 Table 12.4 */
+export const SOLID_FUEL_EQUIPMENT_TYPES = new Set([
+  'Wood-Fired Oven', 'Charcoal Grill', 'Wood Smoker', 'Pellet Smoker',
+  'wood_fired_oven', 'charcoal_grill', 'wood_smoker', 'pellet_smoker',
+]);
+
+/** Cooking type classifications with required hood cleaning frequency in days */
+export const COOKING_TYPE_FREQUENCIES: Record<string, { label: string; frequencyDays: number; source: string }> = {
+  solid_fuel:     { label: 'Solid Fuel (wood/charcoal/pellet)', frequencyDays: 30,  source: 'NFPA 96-2024 Table 12.4' },
+  high_volume:    { label: 'High Volume (charbroiling, wok, deep frying)', frequencyDays: 90,  source: 'NFPA 96-2024 Table 12.4' },
+  moderate_volume:{ label: 'Moderate Volume (grilling, sautéing)', frequencyDays: 180, source: 'NFPA 96-2024 Table 12.4' },
+  low_volume:     { label: 'Low Volume (steam, baking, light cooking)', frequencyDays: 365, source: 'NFPA 96-2024 Table 12.4' },
+};
+
+/** Returns true if the equipment type is a solid-fuel cooking appliance */
+export function isSolidFuelEquipment(equipmentType: string): boolean {
+  return SOLID_FUEL_EQUIPMENT_TYPES.has(equipmentType);
+}
+
+/** Returns the required hood cleaning frequency for a cooking type (defaults to quarterly for unknown) */
+export function getHoodCleaningFrequencyDays(cookingType: string): number {
+  return COOKING_TYPE_FREQUENCIES[cookingType]?.frequencyDays ?? 90;
+}
+
 // --------------- Facility Safety Item Interfaces ---------------
 
 export interface FacilitySafetyItem {

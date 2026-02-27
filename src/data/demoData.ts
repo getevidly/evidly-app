@@ -664,9 +664,9 @@ export interface MarketplaceReview {
 }
 
 export const marketplaceCategories: MarketplaceCategory[] = [
-  { id: 'facility-safety', name: 'Facility Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems', 'Elevator Inspection', 'Pest Control'] },
+  { id: 'facility-safety', name: 'Facility Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems', 'Elevator Inspection', 'Pest Control', 'Grease Trap / FOG', 'Backflow Prevention'] },
   { id: 'food-safety', name: 'Food Safety', icon: 'ShieldCheck', subcategories: ['Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
-  { id: 'equipment', name: 'Equipment', icon: 'Cog', subcategories: ['HVAC Service', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Ice Machine', 'Plumbing'] },
+  { id: 'equipment', name: 'Equipment', icon: 'Cog', subcategories: ['HVAC Service', 'Refrigeration', 'Kitchen Equipment Repair', 'Ice Machine', 'Plumbing'] },
   { id: 'compliance', name: 'Compliance', icon: 'ClipboardCheck', subcategories: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development', 'Insurance Brokers'] },
 ];
 

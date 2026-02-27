@@ -170,6 +170,82 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
       'Log any pest activity between vendor visits. This helps your pest control operator target problem areas and satisfies inspector questions.',
   },
 
+  // ── Facility Safety — Grease Trap / FOG Compliance (4) ──────────────────
+  {
+    id: 'grease_trap_pumping_receipt',
+    name: 'Grease Trap Pumping Receipt / Manifest',
+    pillar: 'facility_safety',
+    required: true,
+    description:
+      'Service manifest from grease trap pumping showing date, gallons collected, hauler license, and receiving facility — required chain of custody for FOG compliance.',
+    whoProvides: 'Licensed FOG hauler',
+    renewalFrequency: 'Per service (monthly typical)',
+    helpText:
+      'Never let the hauler leave without a manifest. Many jurisdictions fine operators $10K-$50K+ for sewer overflows caused by undocumented grease disposal.',
+  },
+  {
+    id: 'grease_trap_inspection_report',
+    name: 'Grease Trap Inspection Report',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Periodic inspection report documenting trap condition, lid integrity, baffles, and structural integrity of grease traps or interceptors.',
+    whoProvides: 'Grease trap vendor or plumber',
+    renewalFrequency: 'Quarterly',
+    helpText:
+      'Inspections catch issues before they cause blockages. Document trap condition with photos if possible.',
+  },
+  {
+    id: 'grease_interceptor_maintenance_log',
+    name: 'Grease Interceptor Maintenance Log',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Ongoing maintenance log for large grease interceptors, tracking pumping frequency, volumes collected, and fill rate trends.',
+    whoProvides: 'Internal / grease trap vendor',
+    renewalFrequency: 'Ongoing',
+    helpText:
+      'Track fill rates to optimize pumping schedules. Interceptors at >75% capacity between pumpings may need more frequent service.',
+  },
+  {
+    id: 'fog_compliance_report',
+    name: 'FOG Compliance Report',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Compliance report for the local sewer district demonstrating proper Fats, Oil, and Grease management including disposal manifests and maintenance records.',
+    whoProvides: 'Internal / consultant',
+    renewalFrequency: 'Annual or per district request',
+    helpText:
+      'Some sewer districts require periodic FOG compliance reports. EvidLY can generate a downloadable report from your grease trap service history.',
+  },
+
+  // ── Facility Safety — Backflow Prevention (2 additional) ───────────────
+  {
+    id: 'backflow_preventer_certification',
+    name: 'Backflow Preventer Certification',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Annual certification that all backflow prevention devices (RPZ valves, double check valves) on your potable water supply are functioning correctly.',
+    whoProvides: 'Certified backflow tester',
+    renewalFrequency: 'Annual',
+    helpText:
+      'Most water districts require annual testing by an ABPA-certified tester. Non-compliance can result in water shutoff — immediate business closure risk.',
+  },
+  {
+    id: 'backflow_compliance_letter',
+    name: 'Backflow Annual Compliance Letter',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Letter from the water district confirming your backflow prevention devices have been tested and are in compliance for the current year.',
+    whoProvides: 'Water district',
+    renewalFrequency: 'Annual',
+    helpText:
+      'After your tester files results with the water district, request a compliance letter for your records. This proves compliance during health inspections.',
+  },
+
   // ── Food Safety (6) ─────────────────────────────────────────────────────
   {
     id: 'health_permit',
@@ -486,6 +562,30 @@ export const DEMO_CHECKLIST_STATUS: Record<
   },
   pest_activity_log: {
     status: 'pending',
+  },
+
+  // ── Facility Safety — Grease Trap / FOG ─────────────────────────────────
+  grease_trap_pumping_receipt: {
+    status: 'uploaded',
+    uploadedAt: '2026-01-25',
+    expiresAt: '2026-02-25',
+  },
+  grease_trap_inspection_report: {
+    status: 'pending',
+  },
+  grease_interceptor_maintenance_log: {
+    status: 'not_applicable',
+  },
+  fog_compliance_report: {
+    status: 'pending',
+  },
+
+  // ── Facility Safety — Backflow Prevention ──────────────────────────────
+  backflow_preventer_certification: {
+    status: 'pending',
+  },
+  backflow_compliance_letter: {
+    status: 'not_applicable',
   },
 
   // ── Food Safety ─────────────────────────────────────────────────────────

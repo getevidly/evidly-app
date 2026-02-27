@@ -207,6 +207,28 @@ const DEMO_CLASSIFICATIONS: Record<string, ClassificationResult> = {
     summary: 'Grease trap pumping service record. 500-gallon interior trap cleaned and pumped.',
     suggestedFields: { capacity: '500 gal' },
   },
+  fog_manifest: {
+    documentType: 'grease_trap_pumping_receipt',
+    documentLabel: 'FOG Pumping Manifest',
+    pillar: 'facility_safety',
+    vendorName: 'Central Valley Grease Services',
+    serviceDate: '2026-01-25',
+    expiryDate: '2026-02-25',
+    confidence: 0.90,
+    summary: 'FOG pumping manifest — 200 gallons collected from 500-gal trap. Disposed at Valley Rendering, manifest #CVG-2026-0125.',
+    suggestedFields: { gallons_collected: '200', manifest_number: 'CVG-2026-0125' },
+  },
+  backflow: {
+    documentType: 'backflow_preventer_certification',
+    documentLabel: 'Backflow Preventer Certification',
+    pillar: 'facility_safety',
+    vendorName: 'Valley Backflow Testing',
+    serviceDate: '2026-01-10',
+    expiryDate: '2027-01-10',
+    confidence: 0.91,
+    summary: 'Annual backflow preventer test report — RPZ valve passed. Results filed with water district.',
+    suggestedFields: { device_type: 'RPZ valve', result: 'pass' },
+  },
   unknown: {
     documentType: 'unknown',
     documentLabel: 'Unknown Document',
@@ -239,8 +261,12 @@ function pickDemoClassification(fileName: string): ClassificationResult {
     return DEMO_CLASSIFICATIONS.vendor_coi;
   if (lower.includes('business') && lower.includes('license'))
     return DEMO_CLASSIFICATIONS.business_license;
-  if (lower.includes('grease') || lower.includes('trap'))
+  if (lower.includes('fog') || lower.includes('manifest') || (lower.includes('grease') && lower.includes('manifest')))
+    return DEMO_CLASSIFICATIONS.fog_manifest;
+  if (lower.includes('grease') || lower.includes('trap') || lower.includes('interceptor'))
     return DEMO_CLASSIFICATIONS.grease_trap;
+  if (lower.includes('backflow') || lower.includes('rpz') || lower.includes('cross_connection'))
+    return DEMO_CLASSIFICATIONS.backflow;
 
   // For images default to fire extinguisher, PDFs default to hood cleaning
   const isImage = fileName.match(/\.(jpg|jpeg|png|webp)$/i);
@@ -303,6 +329,12 @@ export const DOCUMENT_TYPE_OPTIONS = [
   { value: 'elevator_permit', label: 'Elevator Operating Permit', pillar: 'facility_safety' },
   { value: 'pest_control_contract', label: 'Pest Control Contract', pillar: 'facility_safety' },
   { value: 'pest_activity_log', label: 'Pest Activity Log', pillar: 'facility_safety' },
+  { value: 'grease_trap_pumping_receipt', label: 'Grease Trap Pumping Manifest', pillar: 'facility_safety' },
+  { value: 'grease_trap_inspection_report', label: 'Grease Trap Inspection Report', pillar: 'facility_safety' },
+  { value: 'grease_interceptor_maintenance_log', label: 'Grease Interceptor Maintenance Log', pillar: 'facility_safety' },
+  { value: 'fog_compliance_report', label: 'FOG Compliance Report', pillar: 'facility_safety' },
+  { value: 'backflow_preventer_certification', label: 'Backflow Preventer Certification', pillar: 'facility_safety' },
+  { value: 'backflow_compliance_letter', label: 'Backflow Compliance Letter', pillar: 'facility_safety' },
   // Food Safety
   { value: 'health_permit', label: 'Health Department Permit', pillar: 'food_safety' },
   { value: 'food_handler_cert', label: 'Food Handler Certification', pillar: 'food_safety' },

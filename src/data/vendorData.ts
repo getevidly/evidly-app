@@ -82,6 +82,28 @@ export const DEMO_VENDORS: Vendor[] = [
     evidlyPartner: false,
     preferredContact: 'email',
   },
+  {
+    id: 'grease_trap_demo',
+    name: 'Central Valley Grease Services',
+    category: 'grease_trap',
+    phone: '5595550106',
+    email: 'dispatch@cvgrease.com',
+    contactName: 'Dispatch',
+    evidlyPartner: false,
+    preferredContact: 'both',
+    notes: 'Licensed FOG hauler · Monthly pumping · Manifests provided',
+  },
+  {
+    id: 'backflow_demo',
+    name: 'Valley Backflow Testing',
+    category: 'backflow',
+    phone: '5595550107',
+    email: 'schedule@valleybackflow.com',
+    contactName: 'Testing Scheduler',
+    evidlyPartner: false,
+    preferredContact: 'email',
+    notes: 'ABPA-Certified · Annual testing · Reports filed with water district',
+  },
 ];
 
 export const CATEGORY_VENDOR_MAP: Record<string, string[]> = {
@@ -90,6 +112,8 @@ export const CATEGORY_VENDOR_MAP: Record<string, string[]> = {
   refrigeration:  ['refrigeration', 'hvac', 'general'],
   cooking:        ['general'],
   grease_drain:   ['plumbing', 'hood_cleaning'],
+  grease_trap:    ['grease_trap', 'plumbing'],
+  backflow:       ['backflow', 'plumbing'],
   rooftop:        ['roofing', 'hood_cleaning'],
   hvac:           ['hvac'],
   pest:           ['pest'],
