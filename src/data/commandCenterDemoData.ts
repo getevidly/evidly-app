@@ -12,6 +12,8 @@ import type {
   CrawlExecution,
   CrawlSourceHealth,
   CommandCenterStats,
+  ActivityLogEntry,
+  AiTriageAssessment,
 } from '../types/commandCenter';
 
 // ── Helpers ──────────────────────────────────────────────────
@@ -222,6 +224,107 @@ const DEMO_SIGNALS: Signal[] = [
     updated_at: hoursAgo(6),
   },
 ];
+
+// ── AI Triage Assessments ────────────────────────────────────
+
+const AI_TRIAGE: Record<string, AiTriageAssessment> = {
+  'sig-001': {
+    recommended_action: 'approve',
+    confidence_breakdown: { relevance: 0.98, severity: 0.95, urgency: 0.99 },
+    reasoning: 'Class I recall with confirmed E. coli cases. Immediate client notification required. High relevance — 87 clients in affected distribution area.',
+    affected_client_count: 87,
+    suggested_game_plan: 'Send urgent recall alert, update receiving checklists to flag affected lot codes, add lot code verification to daily opening procedure.',
+  },
+  'sig-002': {
+    recommended_action: 'approve',
+    confidence_breakdown: { relevance: 0.90, severity: 0.88, urgency: 0.85 },
+    reasoning: 'Active outbreak investigation in Stanislaus County. No EvidLY clients directly implicated, but heightened inspector scrutiny expected. Advisory notification recommended.',
+    affected_client_count: 12,
+    suggested_game_plan: 'Send advisory to Stanislaus County clients. Remind about temperature log completion and checklist compliance during heightened scrutiny period.',
+  },
+  'sig-003': {
+    recommended_action: 'approve',
+    confidence_breakdown: { relevance: 0.92, severity: 0.78, urgency: 0.80 },
+    reasoning: 'Enforcement surge confirmed via county data. 47% citation increase is significant. Fresno County clients need proactive hood cleaning verification.',
+    affected_client_count: 23,
+    suggested_game_plan: 'Notify Fresno clients, update facility safety checklist with hood verification, consider scoring weight adjustment.',
+  },
+  'sig-004': {
+    recommended_action: 'defer',
+    confidence_breakdown: { relevance: 0.85, severity: 0.60, urgency: 0.40 },
+    reasoning: 'Legislative change still in committee. Effective date January 2027 gives ample preparation time. Monitor progress and prepare client advisory closer to signing.',
+    affected_client_count: 142,
+    suggested_game_plan: 'Draft client advisory about AB-2890 implications. Update training module to include ANSI certification path when bill status advances.',
+  },
+  'sig-005': {
+    recommended_action: 'defer',
+    confidence_breakdown: { relevance: 0.75, severity: 0.55, urgency: 0.30 },
+    reasoning: 'NFPA code update is industry-wide but AHJ adoption timeline unclear. Monitor local fire authority adoption before updating scoring rules.',
+    affected_client_count: 0,
+    suggested_game_plan: null,
+  },
+  'sig-006': {
+    recommended_action: 'dismiss',
+    confidence_breakdown: { relevance: 0.45, severity: 0.30, urgency: 0.20 },
+    reasoning: 'Competitor closures are informational only. No direct compliance impact on EvidLY clients. Could be used for sales/marketing but not a platform action item.',
+    affected_client_count: 0,
+    suggested_game_plan: null,
+  },
+  'sig-007': {
+    recommended_action: 'approve',
+    confidence_breakdown: { relevance: 0.88, severity: 0.35, urgency: 0.25 },
+    reasoning: 'EvidLY clients outperform benchmark by 7.9 points. Excellent retention/marketing opportunity. Low urgency but high value for client communication.',
+    affected_client_count: 142,
+    suggested_game_plan: 'Generate per-client benchmark comparison cards, send benchmark email to all active clients, update dashboard benchmark widget.',
+  },
+  'sig-008': {
+    recommended_action: 'escalate',
+    confidence_breakdown: { relevance: 0.95, severity: 0.90, urgency: 0.98 },
+    reasoning: 'Extreme heat + rolling blackout risk = food safety emergency for all Central Valley clients. Immediate notification needed about generator readiness and emergency temp monitoring.',
+    affected_client_count: 45,
+    suggested_game_plan: 'Emergency notification to all Central Valley clients. Verify generator readiness protocols. Activate emergency temp monitoring guidance.',
+  },
+};
+
+// ── Activity Logs ────────────────────────────────────────────
+
+const ACTIVITY_LOGS: Record<string, ActivityLogEntry[]> = {
+  'sig-001': [
+    { id: 'al-001-1', signal_id: 'sig-001', action: 'created', performed_by: 'system', notes: 'Signal detected from FDA Recalls & Safety Alerts crawler', created_at: hoursAgo(2) },
+  ],
+  'sig-002': [
+    { id: 'al-002-1', signal_id: 'sig-002', action: 'created', performed_by: 'system', notes: 'Signal detected from CDPH Outbreak Monitoring crawler', created_at: hoursAgo(5) },
+  ],
+  'sig-003': [
+    { id: 'al-003-1', signal_id: 'sig-003', action: 'created', performed_by: 'system', notes: 'Signal detected from Fresno County Environmental Health crawler', created_at: daysAgo(1) },
+    { id: 'al-003-2', signal_id: 'sig-003', action: 'reviewed', performed_by: 'arthur@getevidly.com', notes: 'Confirmed with county data. Need to notify affected clients.', created_at: hoursAgo(1) },
+  ],
+  'sig-004': [
+    { id: 'al-004-1', signal_id: 'sig-004', action: 'created', performed_by: 'system', notes: 'Signal detected from CA Legislative Tracker crawler', created_at: daysAgo(3) },
+    { id: 'al-004-2', signal_id: 'sig-004', action: 'reviewed', performed_by: 'arthur@getevidly.com', notes: 'Monitoring committee progress.', created_at: daysAgo(2) },
+    { id: 'al-004-3', signal_id: 'sig-004', action: 'approved', performed_by: 'arthur@getevidly.com', notes: 'Create game plan for client advisory + checklist template update.', created_at: daysAgo(1) },
+  ],
+  'sig-005': [
+    { id: 'al-005-1', signal_id: 'sig-005', action: 'created', performed_by: 'system', notes: 'Signal detected from NFPA Fire Code Updates crawler', created_at: daysAgo(7) },
+    { id: 'al-005-2', signal_id: 'sig-005', action: 'deferred', performed_by: 'arthur@getevidly.com', notes: 'Deferred — monitoring AHJ adoption timeline. Revisit in 2 weeks.', created_at: daysAgo(5) },
+  ],
+  'sig-006': [
+    { id: 'al-006-1', signal_id: 'sig-006', action: 'created', performed_by: 'system', notes: 'Signal detected from Competitor Activity Scanner', created_at: daysAgo(1) },
+  ],
+  'sig-007': [
+    { id: 'al-007-1', signal_id: 'sig-007', action: 'created', performed_by: 'system', notes: 'Signal detected from Industry benchmark data aggregation', created_at: daysAgo(2) },
+  ],
+  'sig-008': [
+    { id: 'al-008-1', signal_id: 'sig-008', action: 'created', performed_by: 'system', notes: 'Signal detected from NWS Weather Risk Monitor', created_at: hoursAgo(8) },
+    { id: 'al-008-2', signal_id: 'sig-008', action: 'escalated', performed_by: 'arthur@getevidly.com', notes: 'Escalated to ops team. Need emergency notification to all Central Valley clients.', created_at: hoursAgo(6) },
+  ],
+};
+
+// Enrich signals with AI triage and activity logs
+DEMO_SIGNALS.forEach(s => {
+  s.ai_triage = AI_TRIAGE[s.id];
+  s.activity_log = ACTIVITY_LOGS[s.id] || [];
+});
 
 // ── Tab 2: Game Plans ────────────────────────────────────────
 
@@ -595,4 +698,8 @@ export function getDemoSourceHealth(): CrawlSourceHealth[] {
 
 export function getDemoCommandCenterStats(): CommandCenterStats {
   return { ...DEMO_STATS };
+}
+
+export function getDemoActivityLogs(signalId: string): ActivityLogEntry[] {
+  return [...(ACTIVITY_LOGS[signalId] || [])];
 }

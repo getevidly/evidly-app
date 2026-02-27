@@ -1,9 +1,18 @@
 /**
- * COMMAND-CENTER-1 — Intelligence Command Center
+ * COMMAND-CENTER-2 — Intelligence Command Center (upgraded)
  *
  * Admin-only dashboard with 5 tabs for managing the intelligence pipeline.
  * Route: /admin/intelligence
  * Access: isEvidlyAdmin || isDemoMode
+ *
+ * Upgrades over v1:
+ *  - Signal Queue: 5-section review drawer, re-triage, create platform update, AI triage, activity log
+ *  - Game Plans: 4 kanban columns, linked signal, completion notes
+ *  - Platform Updates: validation checklist, impact preview, audit trail
+ *  - Notifications: email preview, send test, hold for digest, inline edit
+ *  - Crawl Health: alert banner, freshness matrix, run now, source toggle
+ *  - URL-synced tabs (?tab=signals)
+ *  - Auto-refresh indicator
  */
 
 import { useState, useMemo } from 'react';
@@ -26,8 +35,8 @@ import type {
   GamePlanStatus,
   PlatformUpdateStatus,
   NotificationStatus,
-  CrawlStatus,
   SourceHealthStatus,
+  ActivityLogEntry,
 } from '../../types/commandCenter';
 import {
   Brain,
@@ -44,19 +53,27 @@ import {
   Ban,
   ArrowRight,
   Search,
-  Filter,
   Target,
   Zap,
   FileText,
   Bell,
   Activity,
   RotateCcw,
-  Eye,
   Loader2,
-  X,
-  Calendar,
   Users,
-  Server,
+  Lightbulb,
+  ListChecks,
+  History,
+  PenLine,
+  MailCheck,
+  PauseCircle,
+  Eye,
+  Power,
+  Wifi,
+  WifiOff,
+  CircleDot,
+  ClipboardList,
+  ExternalLink,
 } from 'lucide-react';
 
 // ── Constants ────────────────────────────────────────────────
@@ -80,26 +97,27 @@ const SEVERITY_STYLES: Record<SignalSeverity, { dot: string; bg: string; border:
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }> = {
-  new:         { bg: '#dbeafe', text: '#1e40af', label: 'New' },
-  reviewed:    { bg: '#e0e7ff', text: '#4338ca', label: 'Reviewed' },
-  approved:    { bg: '#d1fae5', text: '#065f46', label: 'Approved' },
-  dismissed:   { bg: '#f3f4f6', text: '#6b7280', label: 'Dismissed' },
-  deferred:    { bg: '#fef3c7', text: '#92400e', label: 'Deferred' },
-  escalated:   { bg: '#fee2e2', text: '#991b1b', label: 'Escalated' },
-  draft:       { bg: '#f3f4f6', text: '#6b7280', label: 'Draft' },
-  active:      { bg: '#dbeafe', text: '#1e40af', label: 'Active' },
-  completed:   { bg: '#d1fae5', text: '#065f46', label: 'Completed' },
-  archived:    { bg: '#f3f4f6', text: '#6b7280', label: 'Archived' },
-  pending:     { bg: '#fef3c7', text: '#92400e', label: 'Pending' },
-  applied:     { bg: '#d1fae5', text: '#065f46', label: 'Applied' },
-  rolled_back: { bg: '#fee2e2', text: '#991b1b', label: 'Rolled Back' },
-  failed:      { bg: '#fee2e2', text: '#991b1b', label: 'Failed' },
-  sent:        { bg: '#d1fae5', text: '#065f46', label: 'Sent' },
-  cancelled:   { bg: '#f3f4f6', text: '#6b7280', label: 'Cancelled' },
-  success:     { bg: '#d1fae5', text: '#065f46', label: 'Success' },
-  partial:     { bg: '#fef3c7', text: '#92400e', label: 'Partial' },
-  timeout:     { bg: '#fee2e2', text: '#991b1b', label: 'Timeout' },
-  running:     { bg: '#dbeafe', text: '#1e40af', label: 'Running' },
+  new:              { bg: '#dbeafe', text: '#1e40af', label: 'New' },
+  reviewed:         { bg: '#e0e7ff', text: '#4338ca', label: 'Reviewed' },
+  approved:         { bg: '#d1fae5', text: '#065f46', label: 'Approved' },
+  dismissed:        { bg: '#f3f4f6', text: '#6b7280', label: 'Dismissed' },
+  deferred:         { bg: '#fef3c7', text: '#92400e', label: 'Deferred' },
+  escalated:        { bg: '#fee2e2', text: '#991b1b', label: 'Escalated' },
+  draft:            { bg: '#f3f4f6', text: '#6b7280', label: 'Draft' },
+  active:           { bg: '#dbeafe', text: '#1e40af', label: 'Active' },
+  completed:        { bg: '#d1fae5', text: '#065f46', label: 'Completed' },
+  archived:         { bg: '#f3f4f6', text: '#6b7280', label: 'Archived' },
+  pending:          { bg: '#fef3c7', text: '#92400e', label: 'Pending' },
+  applied:          { bg: '#d1fae5', text: '#065f46', label: 'Applied' },
+  rolled_back:      { bg: '#fee2e2', text: '#991b1b', label: 'Rolled Back' },
+  failed:           { bg: '#fee2e2', text: '#991b1b', label: 'Failed' },
+  sent:             { bg: '#d1fae5', text: '#065f46', label: 'Sent' },
+  cancelled:        { bg: '#f3f4f6', text: '#6b7280', label: 'Cancelled' },
+  held_for_digest:  { bg: '#e0e7ff', text: '#4338ca', label: 'Held for Digest' },
+  success:          { bg: '#d1fae5', text: '#065f46', label: 'Success' },
+  partial:          { bg: '#fef3c7', text: '#92400e', label: 'Partial' },
+  timeout:          { bg: '#fee2e2', text: '#991b1b', label: 'Timeout' },
+  running:          { bg: '#dbeafe', text: '#1e40af', label: 'Running' },
 };
 
 const HEALTH_STYLES: Record<SourceHealthStatus, { dot: string; label: string }> = {
@@ -178,6 +196,15 @@ function SeverityDot({ severity }: { severity: SignalSeverity }) {
   );
 }
 
+function SectionHeader({ icon: Icon, title }: { icon: typeof Brain; title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-2 mt-4 first:mt-0">
+      <Icon size={14} style={{ color: BRAND_BLUE }} />
+      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: TEXT_TERTIARY }}>{title}</span>
+    </div>
+  );
+}
+
 // ── Stats Bar ────────────────────────────────────────────────
 
 function StatsBar({ stats }: { stats: import('../../types/commandCenter').CommandCenterStats }) {
@@ -250,7 +277,7 @@ function TabBar({
   );
 }
 
-// ── Tab 1: Signal Queue ──────────────────────────────────────
+// ── Tab 1: Signal Queue (Enhanced) ──────────────────────────
 
 function SignalQueueTab({
   signals,
@@ -261,6 +288,7 @@ function SignalQueueTab({
   setFilters,
   resetFilters,
   reviewSignal,
+  createPlatformUpdateFromSignal,
 }: {
   signals: Signal[];
   filteredSignals: Signal[];
@@ -270,6 +298,7 @@ function SignalQueueTab({
   setFilters: React.Dispatch<React.SetStateAction<import('../../types/commandCenter').SignalFilterState>>;
   resetFilters: () => void;
   reviewSignal: (id: string, action: SignalReviewAction, notes?: string) => void;
+  createPlatformUpdateFromSignal: (signalId: string) => void;
 }) {
   const [reviewNotes, setReviewNotes] = useState('');
 
@@ -368,31 +397,80 @@ function SignalQueueTab({
                 {isExpanded ? <ChevronUp size={16} style={{ color: TEXT_TERTIARY }} /> : <ChevronDown size={16} style={{ color: TEXT_TERTIARY }} />}
               </button>
 
-              {/* Expanded detail */}
+              {/* Expanded 5-section review drawer */}
               {isExpanded && (
                 <div className="px-4 pb-4 border-t" style={{ borderColor: CARD_BORDER }}>
-                  <div className="mt-3 text-sm" style={{ color: TEXT_SECONDARY }}>{signal.summary}</div>
-
+                  {/* Section 1: What Changed */}
+                  <SectionHeader icon={AlertTriangle} title="What Changed" />
+                  <div className="text-sm" style={{ color: TEXT_SECONDARY }}>{signal.summary}</div>
                   {signal.affected_pillars.length > 0 && (
                     <div className="mt-2 flex items-center gap-2">
                       <span className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Pillars:</span>
                       {signal.affected_pillars.map(p => (
                         <span key={p} className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#eff6ff', color: '#1e40af' }}>
-                          {p.replace('_', ' ')}
+                          {p.replace(/_/g, ' ')}
                         </span>
                       ))}
                     </div>
                   )}
-
-                  {signal.review_notes && (
-                    <div className="mt-2 p-2 rounded text-xs" style={{ backgroundColor: '#f8fafc', color: TEXT_SECONDARY }}>
-                      <span className="font-medium">Review notes:</span> {signal.review_notes}
-                    </div>
+                  {signal.source_url && (
+                    <a
+                      href={signal.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex items-center gap-1 text-xs"
+                      style={{ color: BRAND_BLUE }}
+                    >
+                      <ExternalLink size={11} /> View source
+                    </a>
                   )}
 
-                  {/* Action bar */}
-                  {(signal.status === 'new' || signal.status === 'reviewed') && (
-                    <div className="mt-3 space-y-2">
+                  {/* Section 2: AI Triage Assessment */}
+                  {signal.ai_triage && (
+                    <>
+                      <SectionHeader icon={Lightbulb} title="AI Triage Assessment" />
+                      <div className="rounded-lg border p-3" style={{ backgroundColor: '#f8fafc', borderColor: CARD_BORDER }}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-xs font-medium" style={{ color: TEXT_PRIMARY }}>Recommended:</span>
+                          <StatusBadge status={signal.ai_triage.recommended_action === 're_triage' ? 'new' : signal.ai_triage.recommended_action === 'approve' ? 'approved' : signal.ai_triage.recommended_action === 'dismiss' ? 'dismissed' : signal.ai_triage.recommended_action === 'defer' ? 'deferred' : 'escalated'} />
+                          <span className="text-xs" style={{ color: TEXT_TERTIARY }}>
+                            ({signal.ai_triage.affected_client_count} clients affected)
+                          </span>
+                        </div>
+                        <div className="text-xs mb-2" style={{ color: TEXT_SECONDARY }}>
+                          {signal.ai_triage.reasoning}
+                        </div>
+                        <div className="flex gap-4">
+                          {Object.entries(signal.ai_triage.confidence_breakdown).map(([key, val]) => (
+                            <div key={key} className="text-center">
+                              <div className="text-xs font-medium" style={{ color: TEXT_PRIMARY }}>{Math.round(val * 100)}%</div>
+                              <div className="text-xs capitalize" style={{ color: TEXT_TERTIARY }}>{key}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Section 3: Suggested Game Plan */}
+                  {signal.ai_triage?.suggested_game_plan && (
+                    <>
+                      <SectionHeader icon={ListChecks} title="Suggested Game Plan" />
+                      <div className="text-xs p-3 rounded-lg border" style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0', color: '#065f46' }}>
+                        {signal.ai_triage.suggested_game_plan}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Section 4: Arthur's Action Panel */}
+                  <SectionHeader icon={Shield} title="Actions" />
+                  {signal.review_notes && (
+                    <div className="mb-2 p-2 rounded text-xs" style={{ backgroundColor: '#f8fafc', color: TEXT_SECONDARY }}>
+                      <span className="font-medium">Previous notes:</span> {signal.review_notes}
+                    </div>
+                  )}
+                  {(signal.status === 'new' || signal.status === 'reviewed' || signal.status === 'deferred') && (
+                    <div className="space-y-2">
                       <input
                         type="text"
                         placeholder="Add review notes (optional)..."
@@ -430,8 +508,58 @@ function SignalQueueTab({
                         >
                           <AlertTriangle size={13} /> Escalate
                         </button>
+                        <button
+                          onClick={() => createPlatformUpdateFromSignal(signal.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                          style={{ backgroundColor: `${BRAND_BLUE}15`, color: BRAND_BLUE }}
+                        >
+                          <FileText size={13} /> Create Platform Update
+                        </button>
                       </div>
                     </div>
+                  )}
+                  {/* Re-triage for already-reviewed signals */}
+                  {(signal.status === 'approved' || signal.status === 'dismissed' || signal.status === 'escalated') && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => reviewSignal(signal.id, 're_triage')}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                        style={{ backgroundColor: '#dbeafe', color: '#1e40af' }}
+                      >
+                        <RotateCcw size={13} /> Re-triage
+                      </button>
+                      <button
+                        onClick={() => createPlatformUpdateFromSignal(signal.id)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                        style={{ backgroundColor: `${BRAND_BLUE}15`, color: BRAND_BLUE }}
+                      >
+                        <FileText size={13} /> Create Platform Update
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Section 5: Activity Log */}
+                  {signal.activity_log && signal.activity_log.length > 0 && (
+                    <>
+                      <SectionHeader icon={History} title="Activity Log" />
+                      <div className="space-y-1.5">
+                        {signal.activity_log.map(entry => (
+                          <div key={entry.id} className="flex items-start gap-2 text-xs">
+                            <CircleDot size={10} className="mt-1 flex-shrink-0" style={{ color: TEXT_TERTIARY }} />
+                            <div>
+                              <span style={{ color: TEXT_PRIMARY }}>
+                                {entry.performed_by === 'system' ? 'System' : entry.performed_by.split('@')[0]}
+                              </span>
+                              <span style={{ color: TEXT_TERTIARY }}> {entry.action.replace(/_/g, ' ')} </span>
+                              <span style={{ color: TEXT_TERTIARY }}>&middot; {timeAgo(entry.created_at)}</span>
+                              {entry.notes && (
+                                <div className="mt-0.5" style={{ color: TEXT_SECONDARY }}>{entry.notes}</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
               )}
@@ -443,25 +571,32 @@ function SignalQueueTab({
   );
 }
 
-// ── Tab 2: Game Plans ────────────────────────────────────────
+// ── Tab 2: Game Plans (4-column Kanban) ──────────────────────
 
 function GamePlansTab({
   gamePlans,
+  signals,
   updateTaskStatus,
+  setActiveTab,
+  setSelectedSignalId,
 }: {
   gamePlans: GamePlan[];
+  signals: Signal[];
   updateTaskStatus: (planId: string, taskId: string, status: string) => void;
+  setActiveTab: (tab: CommandCenterTab) => void;
+  setSelectedSignalId: (id: string | null) => void;
 }) {
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
 
-  const columns: { status: GamePlanStatus; label: string; color: string }[] = [
-    { status: 'draft', label: 'Draft', color: '#6b7280' },
-    { status: 'active', label: 'Active', color: '#1e40af' },
-    { status: 'completed', label: 'Completed', color: '#065f46' },
+  const columns: { status: GamePlanStatus | 'archived'; label: string; color: string }[] = [
+    { status: 'draft', label: 'Pending', color: '#6b7280' },
+    { status: 'active', label: 'In Progress', color: '#1e40af' },
+    { status: 'completed', label: 'Complete', color: '#065f46' },
+    { status: 'archived', label: 'Dismissed', color: '#94a3b8' },
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
       {columns.map(col => {
         const plans = gamePlans.filter(p => p.status === col.status);
         return (
@@ -475,6 +610,7 @@ function GamePlansTab({
               {plans.map(plan => {
                 const isExpanded = expandedPlanId === plan.id;
                 const progress = plan.task_status.total > 0 ? Math.round((plan.task_status.completed / plan.task_status.total) * 100) : 0;
+                const linkedSignal = plan.signal_id ? signals.find(s => s.id === plan.signal_id) : null;
 
                 return (
                   <div
@@ -495,6 +631,17 @@ function GamePlansTab({
                         </div>
                         {isExpanded ? <ChevronUp size={14} style={{ color: TEXT_TERTIARY }} /> : <ChevronDown size={14} style={{ color: TEXT_TERTIARY }} />}
                       </div>
+
+                      {/* Linked signal */}
+                      {linkedSignal && (
+                        <button
+                          onClick={e => { e.stopPropagation(); setActiveTab('signals'); setSelectedSignalId(linkedSignal.id); }}
+                          className="mt-1 flex items-center gap-1 text-xs hover:underline"
+                          style={{ color: BRAND_BLUE }}
+                        >
+                          <Zap size={10} /> {linkedSignal.title.slice(0, 50)}...
+                        </button>
+                      )}
 
                       {/* Progress bar */}
                       <div className="mt-2">
@@ -568,7 +715,9 @@ function GamePlansTab({
                 );
               })}
               {plans.length === 0 && (
-                <div className="text-xs text-center py-6" style={{ color: TEXT_TERTIARY }}>No plans</div>
+                <div className="text-xs text-center py-6 rounded-lg border border-dashed" style={{ color: TEXT_TERTIARY, borderColor: CARD_BORDER }}>
+                  No plans
+                </div>
               )}
             </div>
           </div>
@@ -578,7 +727,7 @@ function GamePlansTab({
   );
 }
 
-// ── Tab 3: Platform Updates ──────────────────────────────────
+// ── Tab 3: Platform Updates (Enhanced) ──────────────────────
 
 function PlatformUpdatesTab({
   updates,
@@ -591,6 +740,7 @@ function PlatformUpdatesTab({
 }) {
   const [statusFilter, setStatusFilter] = useState<PlatformUpdateStatus | ''>('');
   const [confirmAction, setConfirmAction] = useState<{ id: string; type: 'apply' | 'rollback' } | null>(null);
+  const [checklist, setChecklist] = useState<Record<string, boolean>>({});
 
   const filtered = statusFilter
     ? updates.filter(u => u.status === statusFilter)
@@ -602,6 +752,15 @@ function PlatformUpdatesTab({
     scoring_rule: { label: 'Scoring', icon: '\uD83D\uDCCA' },
     template: { label: 'Template', icon: '\uD83D\uDCC4' },
   };
+
+  const VALIDATION_ITEMS = [
+    'I have reviewed the changes preview',
+    'I have confirmed the target entity is correct',
+    'I understand the impact on affected clients',
+  ];
+
+  const isValidated = (updateId: string) =>
+    VALIDATION_ITEMS.every((_, i) => checklist[`${updateId}-${i}`]);
 
   return (
     <div>
@@ -657,7 +816,7 @@ function PlatformUpdatesTab({
                     const after = JSON.stringify((update.changes_preview.after as Record<string, unknown>)?.[key]);
                     const changed = before !== after;
                     return (
-                      <div key={key} className="flex gap-2 mb-1">
+                      <div key={key} className="flex gap-2 mb-1 flex-wrap">
                         <span style={{ color: TEXT_TERTIARY }}>{key}:</span>
                         {changed ? (
                           <>
@@ -680,6 +839,27 @@ function PlatformUpdatesTab({
                 {update.applied_by && <> &middot; Applied by {update.applied_by.split('@')[0]} {timeAgo(update.applied_at)}</>}
                 {update.rolled_back_by && <> &middot; Rolled back by {update.rolled_back_by.split('@')[0]} {timeAgo(update.rolled_back_at)}</>}
               </div>
+
+              {/* Validation checklist (only for pending updates) */}
+              {update.status === 'pending' && (
+                <div className="mt-3 p-3 rounded-lg border" style={{ backgroundColor: '#fffbeb', borderColor: '#fde68a' }}>
+                  <div className="text-xs font-medium mb-2" style={{ color: '#92400e' }}>
+                    <ClipboardList size={12} className="inline mr-1" />
+                    Pre-apply validation
+                  </div>
+                  {VALIDATION_ITEMS.map((item, i) => (
+                    <label key={i} className="flex items-center gap-2 text-xs mb-1 cursor-pointer" style={{ color: TEXT_SECONDARY }}>
+                      <input
+                        type="checkbox"
+                        checked={!!checklist[`${update.id}-${i}`]}
+                        onChange={e => setChecklist(prev => ({ ...prev, [`${update.id}-${i}`]: e.target.checked }))}
+                        className="rounded"
+                      />
+                      {item}
+                    </label>
+                  ))}
+                </div>
+              )}
 
               {/* Actions */}
               <div className="mt-3 flex gap-2">
@@ -706,8 +886,10 @@ function PlatformUpdatesTab({
                     ) : (
                       <button
                         onClick={() => setConfirmAction({ id: update.id, type: 'apply' })}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                        disabled={!isValidated(update.id)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         style={{ backgroundColor: BRAND_BLUE }}
+                        title={!isValidated(update.id) ? 'Complete the validation checklist first' : undefined}
                       >
                         <Play size={12} /> Apply to Platform
                       </button>
@@ -754,24 +936,47 @@ function PlatformUpdatesTab({
   );
 }
 
-// ── Tab 4: Client Notifications ──────────────────────────────
+// ── Tab 4: Client Notifications (Enhanced) ──────────────────
 
 function NotificationsTab({
   notifications,
   approveNotification,
   sendNotification,
+  sendTestNotification,
+  holdForDigest,
+  editNotification,
   cancelNotification,
 }: {
   notifications: ClientNotification[];
   approveNotification: (id: string) => void;
   sendNotification: (id: string) => void;
+  sendTestNotification: (id: string) => void;
+  holdForDigest: (id: string) => void;
+  editNotification: (id: string, updates: { title?: string; body?: string }) => void;
   cancelNotification: (id: string) => void;
 }) {
   const [statusFilter, setStatusFilter] = useState<NotificationStatus | ''>('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editBody, setEditBody] = useState('');
+  const [previewId, setPreviewId] = useState<string | null>(null);
 
   const filtered = statusFilter
     ? notifications.filter(n => n.status === statusFilter)
     : notifications;
+
+  const startEdit = (n: ClientNotification) => {
+    setEditingId(n.id);
+    setEditTitle(n.title);
+    setEditBody(n.body);
+  };
+
+  const saveEdit = () => {
+    if (editingId) {
+      editNotification(editingId, { title: editTitle, body: editBody });
+      setEditingId(null);
+    }
+  };
 
   return (
     <div>
@@ -786,121 +991,273 @@ function NotificationsTab({
           <option value="draft">Draft</option>
           <option value="approved">Approved</option>
           <option value="sent">Sent</option>
+          <option value="held_for_digest">Held for Digest</option>
           <option value="cancelled">Cancelled</option>
         </select>
         <span className="text-xs" style={{ color: TEXT_TERTIARY }}>{filtered.length} notifications</span>
       </div>
 
       <div className="space-y-3">
-        {filtered.map(notif => (
-          <div
-            key={notif.id}
-            className="rounded-lg border p-4"
-            style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER }}
-          >
-            <div className="flex items-start gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <SeverityDot severity={notif.severity} />
-                  <StatusBadge status={notif.status} />
-                  <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: TEXT_SECONDARY }}>
-                    {notif.notification_type}
-                  </span>
-                </div>
-                <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>{notif.title}</div>
-                <div className="text-xs mt-1" style={{ color: TEXT_SECONDARY }}>{notif.body}</div>
+        {filtered.map(notif => {
+          const isEditing = editingId === notif.id;
+          const isPreviewing = previewId === notif.id;
 
-                {/* Target audience */}
-                <div className="mt-2 flex items-center gap-2 flex-wrap">
-                  <Users size={12} style={{ color: TEXT_TERTIARY }} />
-                  <span className="text-xs" style={{ color: TEXT_TERTIARY }}>
-                    {notif.target_audience === 'all' ? 'All clients' :
-                      notif.target_audience === 'by_jurisdiction' ? `Jurisdictions: ${notif.target_filter.jurisdictions?.join(', ') || 'none'}` :
-                        notif.target_audience === 'by_pillar' ? `Pillars: ${notif.target_filter.pillars?.join(', ') || 'none'}` :
-                          `${notif.target_filter.org_ids?.length || 0} specific orgs`}
-                  </span>
-                </div>
-
-                {/* Sent info */}
-                {notif.sent_at && (
-                  <div className="mt-1 text-xs" style={{ color: TEXT_TERTIARY }}>
-                    Sent {timeAgo(notif.sent_at)} to {notif.sent_count} clients
+          return (
+            <div
+              key={notif.id}
+              className="rounded-lg border p-4"
+              style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER }}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <SeverityDot severity={notif.severity} />
+                    <StatusBadge status={notif.status} />
+                    <span className="text-xs px-1.5 py-0.5 rounded" style={{ backgroundColor: '#f1f5f9', color: TEXT_SECONDARY }}>
+                      {notif.notification_type}
+                    </span>
                   </div>
-                )}
-                {notif.error_message && (
-                  <div className="mt-1 text-xs" style={{ color: '#dc2626' }}>{notif.error_message}</div>
+
+                  {/* Title (editable) */}
+                  {isEditing ? (
+                    <input
+                      value={editTitle}
+                      onChange={e => setEditTitle(e.target.value)}
+                      className="w-full text-sm font-medium px-2 py-1 rounded border mb-1"
+                      style={{ borderColor: BRAND_BLUE, color: TEXT_PRIMARY }}
+                    />
+                  ) : (
+                    <div className="text-sm font-medium" style={{ color: TEXT_PRIMARY }}>{notif.title}</div>
+                  )}
+
+                  {/* Body (editable) */}
+                  {isEditing ? (
+                    <textarea
+                      value={editBody}
+                      onChange={e => setEditBody(e.target.value)}
+                      rows={3}
+                      className="w-full text-xs px-2 py-1 rounded border mt-1"
+                      style={{ borderColor: BRAND_BLUE, color: TEXT_SECONDARY }}
+                    />
+                  ) : (
+                    <div className="text-xs mt-1" style={{ color: TEXT_SECONDARY }}>{notif.body}</div>
+                  )}
+
+                  {/* Target audience */}
+                  <div className="mt-2 flex items-center gap-2 flex-wrap">
+                    <Users size={12} style={{ color: TEXT_TERTIARY }} />
+                    <span className="text-xs" style={{ color: TEXT_TERTIARY }}>
+                      {notif.target_audience === 'all' ? 'All clients' :
+                        notif.target_audience === 'by_jurisdiction' ? `Jurisdictions: ${notif.target_filter.jurisdictions?.join(', ') || 'none'}` :
+                          notif.target_audience === 'by_pillar' ? `Pillars: ${notif.target_filter.pillars?.join(', ') || 'none'}` :
+                            `${notif.target_filter.org_ids?.length || 0} specific orgs`}
+                    </span>
+                  </div>
+
+                  {/* Sent info */}
+                  {notif.sent_at && (
+                    <div className="mt-1 text-xs" style={{ color: TEXT_TERTIARY }}>
+                      Sent {timeAgo(notif.sent_at)} to {notif.sent_count} clients
+                    </div>
+                  )}
+                  {notif.error_message && (
+                    <div className="mt-1 text-xs" style={{ color: '#dc2626' }}>{notif.error_message}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Email preview panel */}
+              {isPreviewing && (
+                <div className="mt-3 rounded-lg border p-4" style={{ backgroundColor: '#f8fafc', borderColor: CARD_BORDER }}>
+                  <div className="text-xs font-medium mb-2" style={{ color: TEXT_TERTIARY }}>Email Preview</div>
+                  <div className="rounded border bg-white p-4" style={{ borderColor: CARD_BORDER }}>
+                    <div className="text-xs mb-1" style={{ color: TEXT_TERTIARY }}>
+                      From: EvidLY Intelligence &lt;alerts@getevidly.com&gt;
+                    </div>
+                    <div className="text-xs mb-3" style={{ color: TEXT_TERTIARY }}>
+                      Subject: {notif.title}
+                    </div>
+                    <div className="border-t pt-3" style={{ borderColor: CARD_BORDER }}>
+                      <div className="text-sm font-medium mb-2" style={{ color: TEXT_PRIMARY }}>{notif.title}</div>
+                      <div className="text-xs whitespace-pre-wrap" style={{ color: TEXT_SECONDARY }}>{notif.body}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {isEditing ? (
+                  <>
+                    <button
+                      onClick={saveEdit}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                      style={{ backgroundColor: '#16a34a' }}
+                    >
+                      <CheckCircle2 size={12} /> Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                      style={{ color: TEXT_TERTIARY }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {/* Preview toggle */}
+                    <button
+                      onClick={() => setPreviewId(isPreviewing ? null : notif.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                      style={{ backgroundColor: '#f1f5f9', color: TEXT_SECONDARY }}
+                    >
+                      <Eye size={12} /> {isPreviewing ? 'Hide Preview' : 'Preview'}
+                    </button>
+
+                    {notif.status === 'draft' && (
+                      <>
+                        <button
+                          onClick={() => approveNotification(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                          style={{ backgroundColor: '#16a34a' }}
+                        >
+                          <CheckCircle2 size={12} /> Approve
+                        </button>
+                        <button
+                          onClick={() => startEdit(notif)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: '#f1f5f9', color: TEXT_SECONDARY }}
+                        >
+                          <PenLine size={12} /> Edit
+                        </button>
+                        <button
+                          onClick={() => holdForDigest(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: '#e0e7ff', color: '#4338ca' }}
+                        >
+                          <PauseCircle size={12} /> Hold for Digest
+                        </button>
+                        <button
+                          onClick={() => cancelNotification(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}
+                        >
+                          <Ban size={12} /> Cancel
+                        </button>
+                      </>
+                    )}
+                    {notif.status === 'approved' && (
+                      <>
+                        <button
+                          onClick={() => sendTestNotification(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: '#fef3c7', color: '#92400e' }}
+                        >
+                          <MailCheck size={12} /> Send Test
+                        </button>
+                        <button
+                          onClick={() => sendNotification(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
+                          style={{ backgroundColor: BRAND_BLUE }}
+                        >
+                          <Send size={12} /> Send Now
+                        </button>
+                        <button
+                          onClick={() => cancelNotification(notif.id)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                          style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}
+                        >
+                          <Ban size={12} /> Cancel
+                        </button>
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             </div>
-
-            {/* Actions */}
-            <div className="mt-3 flex gap-2">
-              {notif.status === 'draft' && (
-                <>
-                  <button
-                    onClick={() => approveNotification(notif.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                    style={{ backgroundColor: '#16a34a' }}
-                  >
-                    <CheckCircle2 size={12} /> Approve
-                  </button>
-                  <button
-                    onClick={() => cancelNotification(notif.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-                    style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                  >
-                    <Ban size={12} /> Cancel
-                  </button>
-                </>
-              )}
-              {notif.status === 'approved' && (
-                <>
-                  <button
-                    onClick={() => sendNotification(notif.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                    style={{ backgroundColor: BRAND_BLUE }}
-                  >
-                    <Send size={12} /> Send Now
-                  </button>
-                  <button
-                    onClick={() => cancelNotification(notif.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-                    style={{ backgroundColor: '#f3f4f6', color: '#6b7280' }}
-                  >
-                    <Ban size={12} /> Cancel
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// ── Tab 5: Crawl Health ──────────────────────────────────────
+// ── Tab 5: Crawl Health (Enhanced) ──────────────────────────
 
 function CrawlHealthTab({
   sourceHealth,
   crawlLog,
+  runCrawlNow,
+  toggleSourceMonitoring,
 }: {
   sourceHealth: CrawlSourceHealth[];
   crawlLog: CrawlExecution[];
+  runCrawlNow: (sourceId: string) => void;
+  toggleSourceMonitoring: (sourceId: string) => void;
 }) {
+  // Alert banner for sources with 3+ consecutive failures
+  const failingSources = sourceHealth.filter(s => s.error_count >= 3);
+
+  // Freshness color coding
+  function freshnessColor(lastCrawl: string | null): string {
+    if (!lastCrawl) return '#ef4444'; // red — never crawled
+    const mins = (Date.now() - new Date(lastCrawl).getTime()) / 60000;
+    if (mins < 60) return '#22c55e';     // green — <1 hour
+    if (mins < 360) return '#f59e0b';    // yellow — <6 hours
+    return '#ef4444';                     // red — >6 hours
+  }
+
   return (
     <div>
-      {/* Source health grid */}
+      {/* Alert banner */}
+      {failingSources.length > 0 && (
+        <div className="mb-4 rounded-lg border p-3" style={{ backgroundColor: '#fef2f2', borderColor: '#fecaca' }}>
+          <div className="flex items-center gap-2 text-sm font-medium" style={{ color: '#991b1b' }}>
+            <AlertTriangle size={16} />
+            {failingSources.length} source{failingSources.length > 1 ? 's' : ''} with consecutive failures
+          </div>
+          <div className="mt-1 text-xs" style={{ color: '#991b1b' }}>
+            {failingSources.map(s => s.source_name).join(', ')}
+          </div>
+        </div>
+      )}
+
+      {/* Data freshness matrix */}
+      <div className="mb-6">
+        <div className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Data Freshness</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+          {sourceHealth.map(source => (
+            <div
+              key={source.source_id}
+              className="rounded-lg border p-2 flex items-center gap-2"
+              style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER }}
+            >
+              <span
+                className="w-3 h-3 rounded-full flex-shrink-0"
+                style={{ backgroundColor: freshnessColor(source.last_crawl_at) }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-medium truncate" style={{ color: TEXT_PRIMARY }}>{source.source_name}</div>
+                <div className="text-xs" style={{ color: TEXT_TERTIARY }}>{timeAgo(source.last_crawl_at)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Source registry */}
       <div className="mb-6">
         <div className="text-sm font-semibold mb-3" style={{ color: TEXT_PRIMARY }}>Source Registry</div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {sourceHealth.map(source => {
             const health = HEALTH_STYLES[source.status] || HEALTH_STYLES.unknown;
+            const isDown = source.status === 'down' || source.status === 'error';
             return (
               <div
                 key={source.source_id}
                 className="rounded-lg border p-3"
-                style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER }}
+                style={{ backgroundColor: CARD_BG, borderColor: isDown ? '#fecaca' : CARD_BORDER }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
@@ -926,6 +1283,24 @@ function CrawlHealthTab({
                 <div className="mt-2 text-xs" style={{ color: TEXT_TERTIARY }}>
                   Last crawl: {timeAgo(source.last_crawl_at)}
                   {source.error_count > 0 && <span style={{ color: '#dc2626' }}> &middot; {source.error_count} errors</span>}
+                </div>
+                {/* Source actions */}
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => runCrawlNow(source.source_id)}
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium"
+                    style={{ backgroundColor: `${BRAND_BLUE}15`, color: BRAND_BLUE }}
+                  >
+                    <Play size={10} /> Run Now
+                  </button>
+                  <button
+                    onClick={() => toggleSourceMonitoring(source.source_id)}
+                    className="flex items-center gap-1 px-2 py-1 rounded text-xs font-medium"
+                    style={{ backgroundColor: '#f1f5f9', color: TEXT_SECONDARY }}
+                  >
+                    {source.status === 'down' ? <Wifi size={10} /> : <WifiOff size={10} />}
+                    {source.status === 'down' ? 'Enable' : 'Disable'}
+                  </button>
                 </div>
               </div>
             );
@@ -1017,15 +1392,22 @@ export default function CommandCenter() {
               Signal triage, game plans, platform updates, and crawl monitoring
             </p>
           </div>
-          <button
-            onClick={cc.refresh}
-            disabled={cc.loading}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-            style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER, border: '1px solid', color: TEXT_PRIMARY }}
-          >
-            <RefreshCw size={14} className={cc.loading ? 'animate-spin' : ''} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-3">
+            {cc.lastRefreshedAt && (
+              <span className="text-xs" style={{ color: TEXT_TERTIARY }}>
+                Updated {timeAgo(cc.lastRefreshedAt.toISOString())}
+              </span>
+            )}
+            <button
+              onClick={cc.refresh}
+              disabled={cc.loading}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER, border: '1px solid', color: TEXT_PRIMARY }}
+            >
+              <RefreshCw size={14} className={cc.loading ? 'animate-spin' : ''} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* Loading state */}
@@ -1060,12 +1442,16 @@ export default function CommandCenter() {
                 setFilters={cc.setFilters}
                 resetFilters={cc.resetFilters}
                 reviewSignal={cc.reviewSignal}
+                createPlatformUpdateFromSignal={cc.createPlatformUpdateFromSignal}
               />
             )}
             {cc.activeTab === 'game-plans' && (
               <GamePlansTab
                 gamePlans={cc.gamePlans}
+                signals={cc.signals}
                 updateTaskStatus={cc.updateTaskStatus}
+                setActiveTab={cc.setActiveTab}
+                setSelectedSignalId={cc.setSelectedSignalId}
               />
             )}
             {cc.activeTab === 'platform-updates' && (
@@ -1080,6 +1466,9 @@ export default function CommandCenter() {
                 notifications={cc.notifications}
                 approveNotification={cc.approveNotification}
                 sendNotification={cc.sendNotification}
+                sendTestNotification={cc.sendTestNotification}
+                holdForDigest={cc.holdForDigest}
+                editNotification={cc.editNotification}
                 cancelNotification={cc.cancelNotification}
               />
             )}
@@ -1087,6 +1476,8 @@ export default function CommandCenter() {
               <CrawlHealthTab
                 sourceHealth={cc.sourceHealth}
                 crawlLog={cc.crawlLog}
+                runCrawlNow={cc.runCrawlNow}
+                toggleSourceMonitoring={cc.toggleSourceMonitoring}
               />
             )}
           </>
@@ -1095,6 +1486,8 @@ export default function CommandCenter() {
         {/* Footer info */}
         <div className="mt-8 text-xs text-center" style={{ color: TEXT_TERTIARY }}>
           Intelligence Command Center &middot; {cc.stats.sources_healthy}/{cc.stats.sources_total} sources healthy &middot; Crawl success rate: {cc.stats.crawl_success_rate}%
+          {cc.activeTab === 'signals' && ' \u00B7 Auto-refresh: 30s'}
+          {cc.activeTab !== 'signals' && ' \u00B7 Auto-refresh: 60s'}
         </div>
       </div>
     </div>

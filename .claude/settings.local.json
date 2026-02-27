@@ -42,7 +42,10 @@
       "Bash(node scripts/rename-fire-to-facility.mjs:*)",
       "Bash(python:*)",
       "Bash(node scripts/rename-fire-to-facility-pass2.mjs:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nEDGE-FN-MONITOR-1 + COMMAND-CENTER-1 + FACILITY-SAFETY-RENAME: edge function health monitor, intelligence command center, fire→facility rename\n\n- Edge Function Health Monitor: /admin/system/edge-functions with health summary, registry table \\(18 functions\\), invocation timeline, error log, cron schedule, manual invoke\n- Intelligence Command Center: /admin/intelligence with 5 tabs \\(signals, game plans, platform updates, notifications, crawl health\\)\n- Shared invocation logger utility for Deno edge functions\n- System sidebar section for platform_admin \\(Edge Functions + Crawl Monitor\\)\n- Fire Safety → Facility Safety rename across codebase\n- 3 new DB migrations \\(command center tables, edge function monitor tables, data wipe\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nEDGE-FN-MONITOR-1 + COMMAND-CENTER-1 + FACILITY-SAFETY-RENAME: edge function health monitor, intelligence command center, fire→facility rename\n\n- Edge Function Health Monitor: /admin/system/edge-functions with health summary, registry table \\(18 functions\\), invocation timeline, error log, cron schedule, manual invoke\n- Intelligence Command Center: /admin/intelligence with 5 tabs \\(signals, game plans, platform updates, notifications, crawl health\\)\n- Shared invocation logger utility for Deno edge functions\n- System sidebar section for platform_admin \\(Edge Functions + Crawl Monitor\\)\n- Fire Safety → Facility Safety rename across codebase\n- 3 new DB migrations \\(command center tables, edge function monitor tables, data wipe\\)\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(node scripts/rename-fire-to-facility-pass3.mjs:*)",
+      "Bash(for uid in \"2ece0b47-edca-46e9-b382-4fc17701e2f7\" \"fa503123-ffac-401f-a2b5-eacdf909278f\" \"afc08249-d801-4798-96be-57f1d5f4e958\" \"98ce5852-50bd-4d03-8081-a88fea23a562\" \"ff2c69fb-42d1-4dd2-98c4-9d37f47abba0\" \"9a861ac4-11c7-49b3-b146-551fd59e9c22\")",
+      "Bash(do echo \"Deleting $uid...\")"
     ]
   }
 }
