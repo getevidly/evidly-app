@@ -253,7 +253,7 @@ export function FacilitiesDashboard() {
           <K2CWidget
             mealsGenerated={demoReferral.mealsGenerated}
             referralsCount={demoReferral.referralsCount}
-            monthsFree={demoReferral.monthsFree}
+            donationMultiplierMonths={demoReferral.donationMultiplierMonths}
             onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
           />
         </div>

@@ -257,8 +257,9 @@ export default function OwnerOperatorDashboard() {
     return sorted[0];
   }, [data.impact]);
 
-  // Conditional referral: only show when all locations >= 80 AND zero critical/high alerts
+  // Conditional referral: only show when has locations, all >= 80, AND zero critical/high alerts
   const showReferral = useMemo(() => {
+    if (data.locations.length === 0) return false;
     const allCompliant = data.locations.every(l => l.score >= 80);
     const noCriticalOrHighAlerts = !data.impact.some(
       i => i.severity === 'critical' || i.severity === 'warning',
@@ -364,6 +365,7 @@ export default function OwnerOperatorDashboard() {
             referralCode={demoReferral.referralCode}
             referralUrl={demoReferral.referralUrl}
             mealsGenerated={demoReferral.mealsGenerated}
+            isDemoMode={isDemoMode}
           />
         </div>
       )}

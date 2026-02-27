@@ -13,6 +13,7 @@ import { PredictiveRisk } from '../components/intelligence/PredictiveRisk';
 import { ExportReport } from '../components/intelligence/ExportReport';
 import { NFPAReminder } from '../components/ui/NFPAReminder';
 import { demoIntelligence } from '../data/demoData';
+import { useDemo } from '../contexts/DemoContext';
 import type { Scenario } from '../components/intelligence/ScenarioEngine';
 
 type ViewMode = 'operations' | 'risk' | 'financial' | 'people';
@@ -29,6 +30,7 @@ const F = "system-ui, -apple-system, 'Segoe UI', sans-serif";
 export function BusinessIntelligence() {
   const navigate = useNavigate();
   const bi = useBusinessIntelligence();
+  const { isDemoMode } = useDemo();
   const [activeView, setActiveView] = useState<ViewMode>('operations');
   const [aiSummaryLoading, setAiSummaryLoading] = useState(false);
   const [activeScenario, setActiveScenario] = useState<Scenario | null>(null);
@@ -37,7 +39,8 @@ export function BusinessIntelligence() {
   // demoIntelligence is still used for TrendEngine, AnomalyDetector, RegionalBenchmark,
   // PredictiveRisk, ExportReport, and ExecutiveSummaryCard which still consume the legacy shape.
   // These components can be rewired in a future pass.
-  const legacyData = demoIntelligence;
+  // Gate behind isDemoMode so live users see empty state instead of fake data.
+  const legacyData = isDemoMode ? demoIntelligence : null;
 
   // Facility safety documents expiring within 60 days
   const facilitySafetyDocs = (bi.expiringDocuments || []).filter(d =>
@@ -62,6 +65,63 @@ export function BusinessIntelligence() {
           boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
         }}>
           <p style={{ color: '#3D5068', fontSize: '14px', fontFamily: F }}>Loading Business Intelligence...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state for live mode
+  if (!isDemoMode) {
+    return (
+      <div style={{ padding: '24px', backgroundColor: '#F4F6FA', minHeight: '100vh', fontFamily: F }}>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px' }}>
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              background: 'transparent', border: 'none',
+              color: 'var(--text-secondary, #3D5068)', fontSize: '12px', cursor: 'pointer',
+              padding: 0, fontFamily: F,
+            }}
+          >
+            Dashboard
+          </button>
+          <span style={{ color: '#D1D9E6', fontSize: '12px' }}>{'\u203A'}</span>
+          <span style={{ color: 'var(--text-primary, #0B1628)', fontSize: '12px', fontWeight: 600, fontFamily: F }}>
+            Business Intelligence
+          </span>
+        </div>
+        {/* Page Header */}
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h1 style={{
+              color: 'var(--text-primary, #0B1628)', fontSize: '22px', fontWeight: 800,
+              margin: 0, fontFamily: F,
+            }}>
+              Business Intelligence
+            </h1>
+          </div>
+        </div>
+        {/* Empty state */}
+        <div style={{
+          background: '#FFFFFF', border: '1px solid #D1D9E6', borderRadius: '12px',
+          padding: '60px 40px', textAlign: 'center',
+          boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px', opacity: 0.3 }}>{'\uD83D\uDCCA'}</div>
+          <h2 style={{
+            color: 'var(--text-primary, #0B1628)', fontSize: '18px', fontWeight: 700,
+            margin: '0 0 8px', fontFamily: F,
+          }}>
+            No intelligence data available yet
+          </h2>
+          <p style={{
+            color: 'var(--text-secondary, #3D5068)', fontSize: '14px',
+            margin: 0, maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto',
+            lineHeight: 1.6, fontFamily: F,
+          }}>
+            Business intelligence data will appear once you have compliance history.
+          </p>
         </div>
       </div>
     );
@@ -108,7 +168,7 @@ export function BusinessIntelligence() {
               {'\u2295'} AI-Powered
             </span>
           </div>
-          <ExportReport data={legacyData} />
+          <ExportReport data={legacyData!} />
         </div>
         <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: '12px', margin: '6px 0 0', fontFamily: F }}>
           {bi.orgName} &middot; 90-day analysis &middot; {bi.reportDate}
@@ -224,17 +284,17 @@ export function BusinessIntelligence() {
           </div>
           <RiskDriversPanel riskAssessments={bi.riskAssessments} dimension="operational" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
-            <TrendEngine data={legacyData} />
-            <AnomalyDetector data={legacyData} />
+            <TrendEngine data={legacyData!} />
+            <AnomalyDetector data={legacyData!} />
           </div>
-          <RegionalBenchmark data={legacyData} />
+          <RegionalBenchmark data={legacyData!} />
         </>
       )}
 
       {activeView === 'risk' && (
         <>
           <RiskDriversPanel riskAssessments={bi.riskAssessments} dimension="liability" />
-          <PredictiveRisk data={legacyData} />
+          <PredictiveRisk data={legacyData!} />
         </>
       )}
 
@@ -253,7 +313,7 @@ export function BusinessIntelligence() {
       {/* AI Executive Summary */}
       <div style={{ marginTop: '20px' }}>
         <ExecutiveSummaryCard
-          data={legacyData}
+          data={legacyData!}
           viewMode={activeView}
           loading={aiSummaryLoading}
           setLoading={setAiSummaryLoading}

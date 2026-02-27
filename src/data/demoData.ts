@@ -34,10 +34,10 @@ export const demoReferral = {
   referralUrl: 'https://getevidly.com/ref/PACIFIC-COAST-DK',
   referralsCount: 2,
   mealsGenerated: 24,        // 2 referrals × 12 meals each
-  monthsFree: 2,
+  donationMultiplierMonths: 3, // doubles donation for 3 months per referral
   pendingReferrals: 1,
   leaderboardRank: 3,
-  networkPoints: 8,
+  communityImpactPoints: 8,
 };
 
 // ============================================================

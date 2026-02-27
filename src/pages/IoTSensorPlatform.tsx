@@ -12,6 +12,7 @@ import {
   MessageSquare, Brain, Cpu, Link2, Eye,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { useDemo } from '../contexts/DemoContext';
 import {
   iotSensors, iotSensorProviders, iotSensorReadings, iotSensorAlerts,
   iotSensorConfigs, iotIngestionLog, iotDefrostSchedules, iotDoorEvents,
@@ -723,6 +724,7 @@ function PricingTab() {
 
 export function IoTSensorPlatform() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [tab, setTab] = useState<Tab>('live');
 
@@ -744,6 +746,15 @@ export function IoTSensorPlatform() {
         </button>
       </div>
 
+      {/* Empty state for live mode */}
+      {!isDemoMode ? (
+        <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center">
+          <Radio className="h-12 w-12 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No IoT integrations configured yet</h3>
+          <p className="text-sm text-gray-500 max-w-md">Connect your first sensor platform to start ingesting temperature data automatically.</p>
+        </div>
+      ) : (
+      <>
       {/* Tab Bar */}
       <div className="flex items-center gap-1 p-1 rounded-xl bg-gray-100 mb-6 overflow-x-auto">
         {TABS.map(t => (
@@ -770,6 +781,8 @@ export function IoTSensorPlatform() {
       {tab === 'alerts' && <AlertConfig />}
       {tab === 'compliance' && <ComplianceImpactTab />}
       {tab === 'pricing' && <PricingTab />}
+      </>
+      )}
       {showUpgrade && (
         <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}

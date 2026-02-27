@@ -44,6 +44,7 @@ import {
   databaseTables, edgeFunctions, pricingTiers, enterpriseBundles, cSuitePitch,
   type AggregationStats,
 } from '../data/intelligenceData';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ServiceCostPanel, type ServiceState } from '../components/intelligence/ServiceCostPanel';
@@ -105,9 +106,24 @@ const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
 
 export function ComplianceIntelligence() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState<Tab>('command');
   const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+
+  if (!isDemoMode) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center max-w-md mx-auto">
+          <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Intelligence Data Yet</h2>
+          <p className="text-sm text-gray-500">
+            Compliance intelligence data will appear as regulatory signals are processed.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
@@ -172,7 +188,7 @@ export function ComplianceIntelligence() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-       
+
       />
     </div>
   );

@@ -482,8 +482,12 @@ const DEMO_HACCP_SUMMARY: HACCPSummaryCCP[] = [
   { name: 'Sanitizer Concentration', limit: '200ppm+', status: 'in_limit' },
 ];
 
-function HACCPSummaryCard() {
+function HACCPSummaryCard({ isDemoMode }: { isDemoMode: boolean }) {
   const nav = useNavigate();
+
+  // Only show demo HACCP data in demo mode
+  if (!isDemoMode) return null;
+
   const deviations = DEMO_HACCP_SUMMARY.filter(c => c.status === 'deviation').length;
   const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
@@ -1834,7 +1838,7 @@ export function Checklists() {
         })()}
 
         {/* HACCP Control Points Summary — below checklists (checklists feed HACCP) */}
-        <HACCPSummaryCard />
+        <HACCPSummaryCard isDemoMode={isDemoMode} />
       </div>
 
       {/* Create Template Modal */}

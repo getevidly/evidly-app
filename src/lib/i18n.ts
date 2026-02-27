@@ -146,6 +146,7 @@ const en = {
     serviceReporting: 'Service Reporting',
     analytics: 'Analytics',
     intelligence: 'Compliance Intelligence',
+    foodSafetyOverview: 'Food Safety Overview',
   },
 
   // ── Common ──────────────────────────────────────────
@@ -1583,6 +1584,7 @@ const es: typeof en = {
     serviceReporting: 'Reportes de Servicio',
     analytics: 'Analítica',
     intelligence: 'Inteligencia de Cumplimiento',
+    foodSafetyOverview: 'Resumen de Seguridad Alimentaria',
   },
 
   common: {

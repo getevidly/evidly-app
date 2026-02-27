@@ -1310,7 +1310,19 @@ export function Vendors() {
               </div>
             )}
 
-            {!loading && filteredVendors.length === 0 && (
+            {!loading && filteredVendors.length === 0 && consolidatedVendors.length === 0 && (
+              <EmptyState
+                icon={Building2}
+                title="No vendors added yet"
+                description="Add your first vendor to track compliance."
+                action={{
+                  label: 'Add Vendor',
+                  onClick: () => setShowAddVendorModal(true),
+                }}
+              />
+            )}
+
+            {!loading && filteredVendors.length === 0 && consolidatedVendors.length > 0 && (
               <EmptyState
                 icon={Building2}
                 title="No vendors match your filters"

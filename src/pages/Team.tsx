@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
 import { TeamInviteModal } from '../components/TeamInviteModal';
@@ -172,17 +173,19 @@ export function Team() {
   const [resetLoading, setResetLoading] = useState(false);
 
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-
-  const isDemoMode = !profile?.organization_id;
+  const { isDemoMode } = useDemo();
 
   useEffect(() => {
-    if (profile?.organization_id) {
+    if (isDemoMode) {
+      setMembers(DEMO_MEMBERS);
+    } else if (profile?.organization_id) {
       fetchTeam();
       fetchInvitations();
     } else {
-      setMembers(DEMO_MEMBERS);
+      // Live mode but no org — show empty state
+      setMembers([]);
     }
-  }, [profile]);
+  }, [profile, isDemoMode]);
 
   const fetchTeam = async () => {
     const { data } = await supabase
@@ -834,7 +837,7 @@ export function Team() {
           {filteredMembers.length === 0 && (
             <div className="text-center py-12">
               <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500">No team members found</p>
+              <p className="text-gray-600 font-medium">{!isDemoMode && members.length === 0 ? 'No team members yet. Add your first team member to get started.' : 'No team members found'}</p>
             </div>
           )}
         </div>

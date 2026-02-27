@@ -7,8 +7,9 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useTranslation } from '../contexts/LanguageContext';
+import { useDemo } from '../contexts/DemoContext';
 
-import { locationScores, locationScoresThirtyDaysAgo, locations as demoLocations } from '../data/demoData';
+import { locationScores as _demoLocationScores, locationScoresThirtyDaysAgo as _demoLocationScoresThirtyDaysAgo, locations as _demoLocationsRaw } from '../data/demoData';
 import { getScoreColor as scoringGetScoreColor, getScoreStatus } from '../lib/complianceScoring';
 
 type TabType = 'executive' | 'operational' | 'equipment' | 'team';
@@ -93,10 +94,16 @@ export function Reports() {
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { isDemoMode } = useDemo();
   const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
   const [dateRange, setDateRange] = useState('this-month');
   const [selectedLocation, setSelectedLocation] = useState('all');
+
+  // Gate all demo data behind isDemoMode
+  const locationScores = isDemoMode ? _demoLocationScores : {} as typeof _demoLocationScores;
+  const locationScoresThirtyDaysAgo = isDemoMode ? _demoLocationScoresThirtyDaysAgo : {} as typeof _demoLocationScoresThirtyDaysAgo;
+  const demoLocations = isDemoMode ? _demoLocationsRaw : [] as typeof _demoLocationsRaw;
 
   if (!['executive', 'owner_operator'].includes(userRole)) {
     return (
@@ -110,6 +117,28 @@ export function Reports() {
           </p>
         </div>
       </div>
+    );
+  }
+
+  // Empty state for live mode (no demo data)
+  if (!isDemoMode) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.reports.reporting') }]} />
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('pages.reports.reporting')}</h1>
+            <p className="text-sm text-gray-600 mt-1">{t('pages.reports.subtitle')}</p>
+          </div>
+          <div className="mt-8 flex flex-col items-center justify-center py-16">
+            <FileText className="h-16 w-16 text-gray-300 mb-4" />
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">No reports available yet</h2>
+            <p className="text-gray-500 text-center max-w-md">
+              Add locations and complete checklists to generate reports.
+            </p>
+          </div>
+        </div>
+      </>
     );
   }
 

@@ -193,14 +193,21 @@ export function TempLogs() {
   const [cooldownCheckTime, setCooldownCheckTime] = useState('');
 
   useEffect(() => {
-    if (profile?.organization_id) {
+    if (isDemoMode) {
+      loadDemoData();
+    } else if (profile?.organization_id) {
       fetchEquipment();
       fetchUsers();
       fetchHistory();
     } else {
-      loadDemoData();
+      // Live mode but no org — show empty state
+      setEquipment([]);
+      setUsers([]);
+      setHistory([]);
+      setCooldowns([]);
+      setCompletedCooldowns([]);
     }
-  }, [profile]);
+  }, [profile, isDemoMode]);
 
   // Live countdown timer — 1-second interval for active cooldowns
   const [, setTimerTick] = useState(0);
@@ -1607,8 +1614,8 @@ export function TempLogs() {
                 <div className="col-span-full">
                   <EmptyState
                     icon={Thermometer}
-                    title="No equipment configured yet"
-                    description="Add temperature monitoring equipment to start logging readings."
+                    title={!isDemoMode ? 'No temperature logs yet' : 'No equipment configured yet'}
+                    description={!isDemoMode ? 'Start logging to track trends.' : 'Add temperature monitoring equipment to start logging readings.'}
                   />
                 </div>
               )}
@@ -2231,8 +2238,8 @@ export function TempLogs() {
                 {getFilteredHistory().length === 0 && (
                   <EmptyState
                     icon={Clock}
-                    title="No temperature logs found"
-                    description="No logs match the selected date range and filters. Try adjusting your criteria."
+                    title={!isDemoMode && history.length === 0 ? 'No temperature logs yet' : 'No temperature logs found'}
+                    description={!isDemoMode && history.length === 0 ? 'Start logging to track trends.' : 'No logs match the selected date range and filters. Try adjusting your criteria.'}
                   />
                 )}
               </div>

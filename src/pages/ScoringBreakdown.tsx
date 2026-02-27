@@ -10,6 +10,7 @@ import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { locations } from '../data/demoData';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
+import { useDemo } from '../contexts/DemoContext';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -111,8 +112,25 @@ function StatusIcon({ status }: { status: string }) {
 
 export function ScoringBreakdown() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
+
+  // Live mode: show empty state (no Supabase query yet)
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+          <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+          <h2 className="text-lg font-semibold text-gray-700 mb-2">No food safety data yet</h2>
+          <p className="text-sm text-gray-500 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
+          <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1e4d6b] hover:underline">
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
   const overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';

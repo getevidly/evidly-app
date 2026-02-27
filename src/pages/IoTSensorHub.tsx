@@ -12,6 +12,7 @@ import {
   X, Plus, ArrowLeft, Wrench, Pause, Trash2, Mail, Phone, ChevronLeft, ChevronUp,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { useDemo } from '../contexts/DemoContext';
 import {
   iotSensorProviders, iotSensors, iotSensorReadings, iotSensorAlerts,
   iotSensorConfigs, iotIngestionLog, iotMaintenanceLog,
@@ -202,6 +203,7 @@ function DonutChart({ value, total, color, label }: { value: number; total: numb
 // ═══════════════════════════════════════════════════════════════════════════
 
 export function IoTSensorHub() {
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState<Tab>('monitor');
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
   const [fleetSearch, setFleetSearch] = useState('');
@@ -211,46 +213,51 @@ export function IoTSensorHub() {
   const [showWizard, setShowWizard] = useState(false);
   const [deviceDetailId, setDeviceDetailId] = useState<string | null>(null);
 
+  // Gate demo data behind isDemoMode
+  const sensors = isDemoMode ? iotSensors : [];
+  const alerts = isDemoMode ? iotSensorAlerts : [];
+  const readings = isDemoMode ? iotSensorReadings : [];
+
   // Computed values
-  const onlineCount = iotSensors.filter(s => s.status === 'online').length;
-  const warningCount = iotSensors.filter(s => s.status === 'warning').length;
-  const criticalAlerts = iotSensorAlerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
-  const totalReadingsToday = iotSensorReadings.length;
-  const locations = [...new Set(iotSensors.map(s => s.locationName))];
-  const providerSlugs = [...new Set(iotSensors.map(s => s.providerSlug))];
+  const onlineCount = sensors.filter(s => s.status === 'online').length;
+  const warningCount = sensors.filter(s => s.status === 'warning').length;
+  const criticalAlerts = alerts.filter(a => a.severity === 'critical' && !a.acknowledged).length;
+  const totalReadingsToday = readings.length;
+  const locations = [...new Set(sensors.map(s => s.locationName))];
+  const providerSlugs = [...new Set(sensors.map(s => s.providerSlug))];
 
   // Sorted sensors: anomalies first
   const sortedSensors = useMemo(() => {
     const priorityMap: Record<IoTSensor['status'], number> = { error: 0, warning: 1, offline: 2, online: 3 };
-    return [...iotSensors].sort((a, b) => priorityMap[a.status] - priorityMap[b.status]);
-  }, []);
+    return [...sensors].sort((a, b) => priorityMap[a.status] - priorityMap[b.status]);
+  }, [sensors]);
 
   // Filtered fleet
   const filteredFleet = useMemo(() => {
-    return iotSensors.filter(s => {
+    return sensors.filter(s => {
       if (fleetLocationFilter !== 'all' && s.locationName !== fleetLocationFilter) return false;
       if (fleetProviderFilter !== 'all' && s.providerSlug !== fleetProviderFilter) return false;
       if (fleetStatusFilter !== 'all' && s.status !== fleetStatusFilter) return false;
       if (fleetSearch && !s.name.toLowerCase().includes(fleetSearch.toLowerCase()) && !s.macAddress.toLowerCase().includes(fleetSearch.toLowerCase()) && !s.zone.toLowerCase().includes(fleetSearch.toLowerCase())) return false;
       return true;
     });
-  }, [fleetSearch, fleetLocationFilter, fleetProviderFilter, fleetStatusFilter]);
+  }, [sensors, fleetSearch, fleetLocationFilter, fleetProviderFilter, fleetStatusFilter]);
 
   // Analytics data
   const analyticsData = useMemo(() => {
-    const coolerReadings = iotSensorReadings.filter(r => {
-      const sensor = iotSensors.find(s => s.id === r.sensorId);
+    const coolerReadings = readings.filter(r => {
+      const sensor = sensors.find(s => s.id === r.sensorId);
       return sensor && (sensor.zone.toLowerCase().includes('cooler') || sensor.zone.toLowerCase().includes('freezer') || sensor.zone.toLowerCase().includes('display') || sensor.zone.toLowerCase().includes('salad') || sensor.zone.toLowerCase().includes('beverage') || sensor.zone.toLowerCase().includes('blast') || sensor.zone.toLowerCase().includes('cold'));
     });
     const inRange = coolerReadings.filter(r => {
-      const sensor = iotSensors.find(s => s.id === r.sensorId);
+      const sensor = sensors.find(s => s.id === r.sensorId);
       if (!sensor) return false;
       if (sensor.zone.toLowerCase().includes('freezer')) return r.temperatureF <= 0;
       return r.temperatureF <= 41;
     }).length;
     const byProvider: Record<string, number> = {};
-    iotSensorReadings.forEach(r => {
-      const sensor = iotSensors.find(s => s.id === r.sensorId);
+    readings.forEach(r => {
+      const sensor = sensors.find(s => s.id === r.sensorId);
       if (sensor) {
         const prov = iotSensorProviders.find(p => p.slug === sensor.providerSlug);
         const name = prov?.name || sensor.providerSlug;
@@ -258,7 +265,7 @@ export function IoTSensorHub() {
       }
     });
     return { coolerTotal: coolerReadings.length, coolerInRange: inRange, byProvider };
-  }, []);
+  }, [sensors, readings]);
 
   return (
     <div className="min-h-screen bg-gray-50" style={F}>
@@ -277,10 +284,12 @@ export function IoTSensorHub() {
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            {isDemoMode && (
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-50 border border-green-200">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span className="text-sm font-medium text-green-700">{onlineCount} sensors online</span>
             </div>
+            )}
             {criticalAlerts > 0 && (
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-50 border border-red-200">
                 <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
@@ -313,7 +322,13 @@ export function IoTSensorHub() {
 
       {/* ── Content ──────────────────────────────────────────────────── */}
       <main className="max-w-[1400px] mx-auto px-3 sm:px-6 py-6">
-        {deviceDetailId ? (
+        {!isDemoMode ? (
+          <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center">
+            <Thermometer className="h-12 w-12 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No sensors connected yet</h3>
+            <p className="text-sm text-gray-500 max-w-md">Connect your first sensor to start monitoring.</p>
+          </div>
+        ) : deviceDetailId ? (
           <DeviceDetailView sensorId={deviceDetailId} onBack={() => setDeviceDetailId(null)} />
         ) : (
           <>

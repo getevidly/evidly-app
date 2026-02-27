@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
-  Building2, Upload,
+  Building2, Upload, MapPin,
 } from 'lucide-react';
 import { LOCATION_JURISDICTION_STATUS } from '../data/demoData';
+import { useDemo } from '../contexts/DemoContext';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -385,8 +386,9 @@ function collectLocations(node: OrgTreeNode): OrgTreeNode[] {
 
 export function OrgHierarchy() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [selectedId, setSelectedId] = useState('');
-  const selectedNode = selectedId ? findTreeNode(orgTree, selectedId) : null;
+  const selectedNode = isDemoMode && selectedId ? findTreeNode(orgTree, selectedId) : null;
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
@@ -421,6 +423,15 @@ export function OrgHierarchy() {
         </div>
       </div>
 
+      {/* Empty state for live mode */}
+      {!isDemoMode ? (
+        <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+          <MapPin className="h-12 w-12 text-gray-300 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No locations added yet</h3>
+          <p className="text-sm text-gray-500 max-w-md">Add your first location to get started.</p>
+        </div>
+      ) : (
+      <>
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[40%_1px_1fr] gap-5 items-stretch">
         {/* Left column — Tree */}
@@ -452,6 +463,8 @@ export function OrgHierarchy() {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

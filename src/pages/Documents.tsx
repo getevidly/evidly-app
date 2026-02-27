@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Plus, FileText, Download, Trash2, Share2, Search, AlertTriangle, CheckCircle, Clock, Upload, Pencil } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { format, differenceInDays } from 'date-fns';
 import { DemoModeBanner } from '../components/DemoModeBanner';
@@ -155,9 +156,9 @@ export function Documents() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { profile } = useAuth();
+  const { isDemoMode } = useDemo();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [sharedItems, setSharedItems] = useState<SharedItem[]>([]);
-  const [demoMode, setDemoMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSmartUpload, setShowSmartUpload] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -243,18 +244,21 @@ export function Documents() {
   };
 
   useEffect(() => {
-    if (profile?.organization_id) {
-      setDemoMode(false);
-      fetchDocuments();
-    } else {
-      setDemoMode(true);
+    if (isDemoMode) {
       setTimeout(() => {
         setDocuments(SAMPLE_DOCUMENTS);
         setSharedItems(SHARED_ITEMS);
         setLoading(false);
       }, 500);
+    } else if (profile?.organization_id) {
+      fetchDocuments();
+    } else {
+      // Live mode but no org — show empty state
+      setDocuments([]);
+      setSharedItems([]);
+      setLoading(false);
     }
-  }, [profile]);
+  }, [profile, isDemoMode]);
 
   const fetchDocuments = async () => {
     setLoading(true);
@@ -336,7 +340,7 @@ export function Documents() {
     <>
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('pages.documents.title') }]} />
       <div className="space-y-6">
-        {demoMode && <DemoModeBanner />}
+        {isDemoMode && <DemoModeBanner />}
 
         <div className="flex justify-between items-center flex-wrap gap-2">
           <div>
@@ -568,8 +572,12 @@ export function Documents() {
               ) : filteredDocuments.length === 0 ? (
                 <EmptyState
                   icon={FileText}
-                  title={searchQuery ? t('pages.documents.noMatchingDocuments') : selectedCategory === 'All' ? t('pages.documents.noDocumentsYet') : t('pages.documents.noCategoryDocuments').replace('{{category}}', categoryLabelMap[selectedCategory] || selectedCategory)}
-                  description={searchQuery
+                  title={!isDemoMode && documents.length === 0
+                    ? 'No documents uploaded yet'
+                    : searchQuery ? t('pages.documents.noMatchingDocuments') : selectedCategory === 'All' ? t('pages.documents.noDocumentsYet') : t('pages.documents.noCategoryDocuments').replace('{{category}}', categoryLabelMap[selectedCategory] || selectedCategory)}
+                  description={!isDemoMode && documents.length === 0
+                    ? 'Upload your first document to keep everything in one place.'
+                    : searchQuery
                     ? t('pages.documents.noMatchingDescription')
                     : selectedCategory === 'All'
                     ? t('pages.documents.noDocumentsDescription')

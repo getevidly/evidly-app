@@ -6,14 +6,19 @@ interface ReferralBannerProps {
   mealsGenerated: number;
   headline?: string;
   subtext?: string;
+  isDemoMode?: boolean;
 }
 
 export const ReferralBanner: React.FC<ReferralBannerProps> = ({
   referralCode,
   referralUrl,
   mealsGenerated,
+  isDemoMode = false,
 }) => {
   const [copied, setCopied] = useState(false);
+
+  // K2C banner is only shown in demo mode
+  if (!isDemoMode) return null;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralUrl).then(() => {
@@ -71,7 +76,7 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
             margin: 0,
           }}>
             You've generated <strong style={{ color: '#A08C5A' }}>{mealsGenerated} meals</strong> so far.
-            Plus earn <strong style={{ color: '#A08C5A' }}>1 month free</strong> for every converted referral.
+            Each referral <strong style={{ color: '#A08C5A' }}>doubles your donation</strong> for 3 months.
           </p>
         </div>
 

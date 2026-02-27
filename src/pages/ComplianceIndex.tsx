@@ -9,6 +9,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -218,8 +219,24 @@ function QuarterlyTrendChart({ data }: { data: typeof SEASONAL_DATA }) {
 
 export function ComplianceIndex() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [expandedViolation, setExpandedViolation] = useState<number | null>(null);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+
+  if (!isDemoMode) {
+    return (
+      <>
+        <Breadcrumb items={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Benchmarks', href: '/benchmarks' }, { label: 'Compliance Index' }]} />
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center mt-6">
+          <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Compliance Index Data</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Add a location to start tracking compliance scores.
+          </p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

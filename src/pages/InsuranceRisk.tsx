@@ -425,7 +425,7 @@ export function InsuranceRisk() {
   const [shareScope, setShareScope] = useState({ overall: true, factors: true, trend: true, percentile: true, incidents: false, equipment: false });
   const [shareToken] = useState(() => crypto.randomUUID().replace(/-/g, '').slice(0, 24));
 
-  // Calculate scores
+  // Calculate scores (only meaningful in demo mode)
   const riskResult: InsuranceRiskResult = locationParam === 'all'
     ? calculateOrgInsuranceRiskScore()
     : calculateInsuranceRiskScore(locationParam);
@@ -433,12 +433,12 @@ export function InsuranceRisk() {
   const tierInfo = getInsuranceRiskTier(riskResult.overall);
 
   // Demo 12-month score trend
-  const SCORE_TREND = [
+  const SCORE_TREND = isDemoMode ? [
     { month: 'Mar', score: 82 }, { month: 'Apr', score: 83 }, { month: 'May', score: 85 },
     { month: 'Jun', score: 84 }, { month: 'Jul', score: 81 }, { month: 'Aug', score: 83 },
     { month: 'Sep', score: 86 }, { month: 'Oct', score: 88 }, { month: 'Nov', score: 90 },
     { month: 'Dec', score: 91 }, { month: 'Jan', score: 92 }, { month: 'Feb', score: riskResult.overall },
-  ];
+  ] : [];
 
   const handleLocationChange = (locId: string) => {
     const url = new URL(window.location.href);
@@ -466,6 +466,18 @@ export function InsuranceRisk() {
         </div>
       </div>
 
+      {/* Empty state for live mode */}
+      {!isDemoMode && (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Risk Data Available</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Add your equipment and documents to see your risk profile.
+          </p>
+        </div>
+      )}
+
+      {isDemoMode && (<>
       {/* Location Selector */}
       <div className="flex gap-2 mb-6 flex-wrap overflow-x-auto">
         <button
@@ -645,7 +657,7 @@ export function InsuranceRisk() {
                 <tr className="text-[11px] text-gray-400 uppercase tracking-wider border-b border-gray-100">
                   <th className="text-left py-2 font-semibold">Location</th>
                   <th className="text-center py-2 font-semibold">Overall</th>
-                  <th className="text-center py-2 font-semibold">Fire Risk</th>
+                  <th className="text-center py-2 font-semibold">Facility Safety</th>
                   <th className="text-center py-2 font-semibold">Food Safety</th>
                   <th className="text-center py-2 font-semibold hidden sm:table-cell">Documentation</th>
                   <th className="text-center py-2 font-semibold hidden sm:table-cell">Operational</th>
@@ -984,7 +996,7 @@ export function InsuranceRisk() {
         <h3 className="text-sm font-semibold text-gray-900 mb-3">Score Methodology</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'Fire Risk', weight: '40%', desc: '9 factors mapped to NFPA standards (2025 Edition)', color: '#ef4444' },
+            { label: 'Facility Safety', weight: '40%', desc: '9 factors mapped to NFPA standards (2025 Edition)', color: '#ef4444' },
             { label: 'Food Safety', weight: '30%', desc: '9 factors mapped to FDA Food Code', color: '#3b82f6' },
             { label: 'Documentation', weight: '20%', desc: '7 factors covering permits & certs', color: '#8b5cf6' },
             { label: 'Operational', weight: '10%', desc: '5 factors measuring consistency', color: '#06b6d4' },
@@ -1155,6 +1167,8 @@ export function InsuranceRisk() {
           </div>
         </div>
       )}
+
+      </>)}
 
       {/* Upgrade Modal */}
       {showUpgradeModal && (

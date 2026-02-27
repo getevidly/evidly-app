@@ -3,14 +3,14 @@ import React from 'react';
 interface K2CWidgetProps {
   mealsGenerated: number;
   referralsCount: number;
-  monthsFree: number;
+  donationMultiplierMonths?: number;
   onShareClick: () => void;
 }
 
 export const K2CWidget: React.FC<K2CWidgetProps> = ({
   mealsGenerated,
   referralsCount,
-  monthsFree,
+  donationMultiplierMonths = 3,
   onShareClick,
 }) => (
   <div style={{
@@ -49,7 +49,7 @@ export const K2CWidget: React.FC<K2CWidgetProps> = ({
       color: 'var(--text-secondary, #3D5068)',
       margin: '0 0 10px',
     }}>
-      {referralsCount} referrals · {monthsFree} months free earned
+      {referralsCount} referrals · donations doubled for {donationMultiplierMonths} months
     </p>
     <button
       onClick={onShareClick}
