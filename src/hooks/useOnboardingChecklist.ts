@@ -99,12 +99,10 @@ export interface UseOnboardingChecklistReturn {
   completeStep: (stepId: string) => void;
   /** Skip current step without completing — advance to next */
   skipStep: (stepId: string) => void;
+  /** Re-open a skipped step (remove from skipped set) */
+  unskipStep: (stepId: string) => void;
   /** Jump to a specific step index (only if unlocked) */
   goToStep: (index: number) => void;
-  /** Legacy toggle (still used by checklist mode) */
-  toggleStep: (stepId: string) => void;
-  /** Revert a completed step back to incomplete */
-  uncompleteStep: (stepId: string) => void;
   dismiss: () => void;
 }
 
@@ -305,42 +303,6 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   const completedKey = isDemo ? DEMO_STORAGE_KEY : authStorageKey(orgId);
   const skippedKey = isDemo ? DEMO_SKIPPED_KEY : authSkippedKey(orgId);
 
-  const toggleStep = useCallback((stepId: string) => {
-    setCompletedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(stepId)) next.delete(stepId); else next.add(stepId);
-      saveSet(completedKey, next);
-      return next;
-    });
-  }, [completedKey]);
-
-  /** Revert a completed step back to incomplete */
-  const uncompleteStep = useCallback((stepId: string) => {
-    setCompletedIds(prev => {
-      const next = new Set(prev);
-      next.delete(stepId);
-      saveSet(completedKey, next);
-      return next;
-    });
-    // Also clear skipped status so the step appears fresh
-    setSkippedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(stepId)) {
-        next.delete(stepId);
-        saveSet(skippedKey, next);
-      }
-      return next;
-    });
-    // If wizard was dismissed, un-dismiss so it reappears
-    if (isDismissed) {
-      setIsDismissed(false);
-      const key = isDemo ? DEMO_DISMISSED_KEY : authDismissedKey(orgId);
-      try { localStorage.removeItem(key); } catch { /* ignore */ }
-    }
-    // Reset manual step index so autoStepIndex picks up the uncompleted step
-    setManualStepIndex(null);
-  }, [completedKey, skippedKey, isDismissed, isDemo, orgId]);
-
   const completeStep = useCallback((stepId: string) => {
     setCompletedIds(prev => {
       const next = new Set(prev);
@@ -363,6 +325,15 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     setManualStepIndex(null);
   }, [skippedKey]);
 
+  const unskipStep = useCallback((stepId: string) => {
+    setSkippedIds(prev => {
+      const next = new Set(prev);
+      next.delete(stepId);
+      saveSet(skippedKey, next);
+      return next;
+    });
+  }, [skippedKey]);
+
   const goToStep = useCallback((index: number) => {
     if (index >= 0 && index < steps.length && isStepUnlocked(index)) {
       setManualStepIndex(index);
@@ -379,7 +350,7 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     steps, sections, completedCount, totalCount, isAllComplete,
     isDismissed, shouldShow, loading,
     currentStepIndex, isStepUnlocked,
-    completeStep, skipStep, goToStep,
-    toggleStep, uncompleteStep, dismiss,
+    completeStep, skipStep, unskipStep, goToStep,
+    dismiss,
   };
 }
