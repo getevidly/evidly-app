@@ -19,9 +19,17 @@ export function useIdleTimeout(options: UseIdleTimeoutOptions) {
   const optionsRef = useRef(options);
   optionsRef.current = options;
 
-  const lastActivityRef = useRef(Date.now());
+  const lastActivityRef = useRef((() => {
+    try {
+      const s = localStorage.getItem('evidly_last_activity');
+      return s ? parseInt(s, 10) : Date.now();
+    } catch { return Date.now(); }
+  })());
   const warningFiredRef = useRef(false);
-  const lockedRef = useRef(false);
+  const lockedRef = useRef((() => {
+    try { return localStorage.getItem('evidly_locked') === '1'; }
+    catch { return false; }
+  })());
 
   const recordActivity = useCallback(() => {
     if (!optionsRef.current.enabled || lockedRef.current) return;

@@ -20,7 +20,10 @@ export function InactivityProvider({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
   const { isDemoMode } = useDemo();
   const navigate = useNavigate();
-  const [isLocked, setIsLocked] = useState(false);
+  const [isLocked, setIsLocked] = useState(() => {
+    try { return localStorage.getItem('evidly_locked') === '1'; }
+    catch { return false; }
+  });
 
   // Only track inactivity for real authenticated users, not demo mode
   const enabled = !isDemoMode && !!user;
