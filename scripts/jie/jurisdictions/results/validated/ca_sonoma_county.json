@@ -23,7 +23,7 @@
     "reinspection_trigger": "Yellow or red placards require follow-up inspection. Major violations and permit suspensions trigger reinspections.",
     "public_disclosure": "Placards posted visibly at facility entrance. Inspection reports available online within 72 hours. Color-coded search available on county website."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Permit Sonoma Fire Prevention and Hazardous Materials Division",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "NFPA 96 compliance required. Commercial kitchen fire suppression systems must be inspected every 6 months by licensed fire protection company.",

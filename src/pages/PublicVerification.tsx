@@ -12,7 +12,7 @@ interface VerificationData {
   qualifyingPeriod: string;
   overallPercentile: number;
   foodSafetyPercentile: number;
-  fireSafetyPercentile: number;
+  facilitySafetyPercentile: number;
   verifiedSince: string;
 }
 
@@ -25,7 +25,7 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     qualifyingPeriod: 'Dec 2025 — Feb 2026',
     overallPercentile: 89,
     foodSafetyPercentile: 92,
-    fireSafetyPercentile: 87,
+    facilitySafetyPercentile: 87,
     verifiedSince: 'September 2025',
   },
   'DWN-2024-VRFD': {
@@ -36,7 +36,7 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     qualifyingPeriod: 'Sep 2025 — Nov 2025',
     overallPercentile: 82,
     foodSafetyPercentile: 85,
-    fireSafetyPercentile: 80,
+    facilitySafetyPercentile: 80,
     verifiedSince: 'June 2025',
   },
 };
@@ -136,7 +136,7 @@ export default function PublicVerification() {
             <h3 className="text-sm font-bold text-gray-900 mb-3">Category Rankings</h3>
             <div className="space-y-3">
               <PercentileBar label="Food Safety" value={data.foodSafetyPercentile} />
-              <PercentileBar label="Fire Safety" value={data.fireSafetyPercentile} />
+              <PercentileBar label="Facility Safety" value={data.facilitySafetyPercentile} />
             </div>
           </div>
 

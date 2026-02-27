@@ -250,7 +250,7 @@ function generateVendorRecords(location: string | null) {
 
 function generateDocuments(location: string | null) {
   const names = [
-    'Food Service License', 'Health Permit', 'Fire Safety Certificate', 'General Liability Insurance',
+    'Food Service License', 'Health Permit', 'Facility Safety Certificate', 'General Liability Insurance',
     'Food Handler Certificate — Sarah Chen', 'Hood Cleaning Certificate', 'Fire Suppression Inspection',
     'Pest Control Service Log', 'Building Safety Inspection', 'ServSafe Manager Cert',
   ];
@@ -279,7 +279,7 @@ function generateComplianceScores(location: string | null) {
     location: loc,
     overall: rnd(72, 96),
     foodSafety: rnd(75, 98),
-    fireSafety: rnd(68, 95),
+    facilitySafety: rnd(68, 95),
     trend: pick(['up', 'stable', 'down'] as const),
     lastUpdated: format(new Date(now - rnd(0, 3) * 86400000), 'MMM d, yyyy'),
   }));
@@ -355,7 +355,7 @@ const statusBg = (s: string) => {
 
 export function AuditTrail() {
   const reportRef = useRef<HTMLDivElement>(null);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Config state
   const [dateRange, setDateRange] = useState<DateRange>('30');
@@ -379,7 +379,7 @@ export function AuditTrail() {
     { id: 'equipment', label: 'Equipment', icon: Wrench, enabled: true, description: 'Equipment condition, warranty, service history' },
     { id: 'vendors', label: 'Vendor Services', icon: Truck, enabled: true, description: 'Service records and certifications' },
     { id: 'documents', label: 'Documents', icon: FileText, enabled: true, description: 'Licenses, permits, certifications' },
-    { id: 'compliance', label: 'Compliance Scores', icon: EvidlyIcon as any, enabled: true, description: 'Food safety and fire safety scores' },
+    { id: 'compliance', label: 'Compliance Scores', icon: EvidlyIcon as any, enabled: true, description: 'Food safety and facility safety scores' },
     { id: 'audit_activity', label: 'Inspection Activity', icon: ClipboardList, enabled: true, description: 'User actions with timestamps and devices' },
     { id: 'photos', label: 'Photo Evidence', icon: Camera, enabled: false, description: 'Photographic documentation' },
     { id: 'training', label: 'Training Records', icon: GraduationCap, enabled: false, description: 'Staff certifications and course completions' },
@@ -984,7 +984,7 @@ export function AuditTrail() {
                           <p className="text-sm font-semibold text-gray-900">{cs.location}</p>
                           <div className="flex gap-2 text-xs text-gray-500">
                             <span>Food: {cs.foodSafety}</span>
-                            <span>Fire: {cs.fireSafety}</span>
+                            <span>Fire: {cs.facilitySafety}</span>
                           </div>
                         </div>
                       </div>
@@ -1245,7 +1245,7 @@ export function AuditTrail() {
                             <th style={thStyle}>Location</th>
                             <th style={thStyle}>Overall</th>
                             <th style={thStyle}>Food Safety</th>
-                            <th style={thStyle}>Fire Safety</th>
+                            <th style={thStyle}>Facility Safety</th>
                             <th style={thStyle}>Trend</th>
                             <th style={thStyle}>Last Updated</th>
                           </tr>
@@ -1258,7 +1258,7 @@ export function AuditTrail() {
                                 <span className="font-bold" style={{ color: getScoreColor(cs.overall) }}>{cs.overall}</span>
                               </td>
                               <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.foodSafety) }}>{cs.foodSafety}</span></td>
-                              <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.fireSafety) }}>{cs.fireSafety}</span></td>
+                              <td style={tdStyle}><span className="font-medium" style={{ color: getScoreColor(cs.facilitySafety) }}>{cs.facilitySafety}</span></td>
                               <td style={tdStyle}>
                                 <span style={badge(
                                   cs.trend === 'up' ? '↑ Up' : cs.trend === 'down' ? '↓ Down' : '→ Stable',
@@ -1395,7 +1395,7 @@ export function AuditTrail() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-        onOverride={handleOverride}
+       
       />
     </>
   );

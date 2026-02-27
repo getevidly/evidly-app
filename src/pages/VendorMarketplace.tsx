@@ -560,7 +560,7 @@ export function VendorMarketplace() {
                 <h3 className="text-lg font-bold text-white">Are you a service provider?</h3>
               </div>
               <p className="text-sm text-white/80 max-w-lg">
-                List your business on EvidLY Marketplace. Reach commercial kitchens looking for hood cleaning, fire safety, pest control, and more. Free listing available — upgrade anytime.
+                List your business on EvidLY Marketplace. Reach commercial kitchens looking for hood cleaning, facility safety, pest control, and more. Free listing available — upgrade anytime.
               </p>
             </div>
             <button

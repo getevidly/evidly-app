@@ -64,22 +64,22 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
   { id: "ca_retail_food_code", name: "California Retail Food Code Enforcement", url: "https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx",
     type: "web_page", category: "enforcement_surge", defaultSeverity: "medium", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "CalCode enforcement actions and updates. Focus on common violations in commercial kitchens." },
-  // ══════ FIRE SAFETY (5 sources) ══════
+  // ══════ FACILITY SAFETY (5 sources) ══════
   { id: "ca_fire_marshal", name: "California State Fire Marshal Bulletins", url: "https://osfm.fire.ca.gov/divisions/fire-engineering-and-investigations/",
-    type: "web_page", category: "nfpa_update", defaultSeverity: "high", defaultScope: "regional", pillar: ["fire_safety"],
-    promptContext: "CA State Fire Marshal bulletins on commercial kitchen fire safety, hood/duct systems, NFPA 96 compliance, and suppression systems." },
+    type: "web_page", category: "nfpa_update", defaultSeverity: "high", defaultScope: "regional", pillar: ["facility_safety"],
+    promptContext: "CA State Fire Marshal bulletins on commercial kitchen facility safety, hood/duct systems, NFPA 96 compliance, and suppression systems." },
   { id: "nfpa_updates", name: "NFPA Alerts & Code Updates", url: "https://www.nfpa.org/news-blogs-and-articles/nfpa-journal",
-    type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["fire_safety"],
+    type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "NFPA code updates. Focus on NFPA 96 (commercial kitchen hoods/ducts), NFPA 17A (wet chemical suppression), NFPA 1 (Fire Code)." },
   { id: "calfire_incidents", name: "Cal Fire Incidents Affecting Commercial Structures", url: "https://www.fire.ca.gov/incidents",
-    type: "web_page", category: "seasonal_risk", defaultSeverity: "medium", defaultScope: "regional", pillar: ["fire_safety"],
-    promptContext: "Cal Fire incidents affecting commercial buildings and restaurants. Identify fire safety lessons for kitchen operators." },
+    type: "web_page", category: "seasonal_risk", defaultSeverity: "medium", defaultScope: "regional", pillar: ["facility_safety"],
+    promptContext: "Cal Fire incidents affecting commercial buildings and restaurants. Identify facility safety lessons for kitchen operators." },
   { id: "local_fire_citations", name: "Local Fire Dept Inspection Citations — Fresno, Merced, Stanislaus, Sacramento, LA",
     url: "https://data.ca.gov/dataset/fire-incidents",
-    type: "web_page", category: "inspection_trend", defaultSeverity: "medium", defaultScope: "local", pillar: ["fire_safety"],
+    type: "web_page", category: "inspection_trend", defaultSeverity: "medium", defaultScope: "local", pillar: ["facility_safety"],
     promptContext: "Fire inspection citations in Fresno, Merced, Stanislaus, Sacramento, and Los Angeles counties. Focus on commercial kitchen violations." },
   { id: "ikeca_bulletins", name: "IKECA Bulletins & Standards Updates", url: "https://www.ikeca.org/page/News",
-    type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["fire_safety"],
+    type: "web_page", category: "nfpa_update", defaultSeverity: "medium", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "IKECA kitchen exhaust cleaning standards and bulletins. Focus on cleaning frequency, documentation, and compliance." },
   // ══════ REGULATORY & LEGISLATIVE (7 sources) ══════
   { id: "ca_legislature_food", name: "California Legislature Food Service Bills",
@@ -87,7 +87,7 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     type: "web_page", category: "regulatory_change", defaultSeverity: "medium", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "California legislative bills affecting food service. Focus on new requirements, compliance deadlines, and financial impact." },
   { id: "cal_osha_citations", name: "Cal/OSHA Food Service Citations", url: "https://www.dir.ca.gov/dosh/citation-search.html",
-    type: "web_page", category: "enforcement_surge", defaultSeverity: "high", defaultScope: "regional", pillar: ["food_safety", "fire_safety"],
+    type: "web_page", category: "enforcement_surge", defaultSeverity: "high", defaultScope: "regional", pillar: ["food_safety", "facility_safety"],
     promptContext: "Cal/OSHA citations in food service. Focus on kitchen safety violations, burn prevention, slip/fall hazards, chemical exposure." },
   { id: "epa_grease_violations", name: "EPA Grease Trap & Environmental Violations", url: "https://echo.epa.gov/",
     type: "web_page", category: "enforcement_surge", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety"],
@@ -125,14 +125,14 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     promptContext: "NRA safety and compliance announcements. Focus on industry-wide safety standards and best practices." },
   { id: "cpsc_kitchen_recalls", name: "CPSC Kitchen Equipment Recalls (NSF, ANSI, UL)",
     url: "https://www.saferproducts.gov/RestWebServices/Recall?format=json&RecallDateStart=2025-01-01",
-    type: "json_api", category: "recall_alert", defaultSeverity: "high", defaultScope: "national", pillar: ["fire_safety", "food_safety"],
-    promptContext: "CPSC product recalls for kitchen equipment. Filter for commercial cooking equipment, appliances, fire safety devices." },
+    type: "json_api", category: "recall_alert", defaultSeverity: "high", defaultScope: "national", pillar: ["facility_safety", "food_safety"],
+    promptContext: "CPSC product recalls for kitchen equipment. Filter for commercial cooking equipment, appliances, facility safety devices." },
   { id: "kitchen_ventilation", name: "Commercial Kitchen Ventilation & Exhaust Technical Bulletins",
     url: "https://www.ashrae.org/about/news",
-    type: "web_page", category: "nfpa_update", defaultSeverity: "low", defaultScope: "national", pillar: ["fire_safety"],
+    type: "web_page", category: "nfpa_update", defaultSeverity: "low", defaultScope: "national", pillar: ["facility_safety"],
     promptContext: "ASHRAE ventilation/exhaust bulletins. Focus on commercial kitchen hood systems, make-up air, NFPA 96 compliance." },
   { id: "nafem_alerts", name: "Food Equipment Manufacturers Association Product Alerts", url: "https://www.nafem.org/all-news/",
-    type: "web_page", category: "recall_alert", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety", "fire_safety"],
+    type: "web_page", category: "recall_alert", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety", "facility_safety"],
     promptContext: "NAFEM product alerts. Focus on food equipment recalls, safety updates, and technology changes for commercial kitchens." },
   // ══════ REGULATORY UPDATES (8 sources) — feed Regulatory Updates page ══════
   { id: "federal_register_food", name: "Federal Register Food Safety Final Rules", url: "https://www.federalregister.gov/api/v1/documents?conditions%5Bagencies%5D%5B%5D=food-and-drug-administration&conditions%5Btype%5D%5B%5D=RULE&conditions%5Btopics%5D%5B%5D=food-safety&per_page=5&order=newest",
@@ -155,8 +155,8 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     type: "web_page", category: "regulatory_updates", defaultSeverity: "medium", defaultScope: "regional", pillar: ["food_safety"],
     promptContext: "California State Water Resources Control Board regulations on Fats, Oils, and Grease (FOG). Focus on grease trap requirements, FOG management plans, and wastewater discharge compliance for commercial kitchens." },
   { id: "ca_fire_code_adoption", name: "California Fire Code Adoption Updates", url: "https://osfm.fire.ca.gov/what-we-do/code-development-and-analysis/",
-    type: "web_page", category: "regulatory_updates", defaultSeverity: "high", defaultScope: "regional", pillar: ["fire_safety"],
-    promptContext: "California State Fire Marshal code adoption updates. Focus on California Fire Code Title 24 Part 9, NFPA 96 adoption timeline, and new fire safety requirements for commercial kitchens." },
+    type: "web_page", category: "regulatory_updates", defaultSeverity: "high", defaultScope: "regional", pillar: ["facility_safety"],
+    promptContext: "California State Fire Marshal code adoption updates. Focus on California Fire Code Title 24 Part 9, NFPA 96 adoption timeline, and new facility safety requirements for commercial kitchens." },
   { id: "fda_food_code_updates", name: "FDA Model Food Code Updates", url: "https://www.fda.gov/food/retail-food-protection/fda-food-code",
     type: "web_page", category: "regulatory_updates", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "FDA Model Food Code updates and supplements. Focus on changes that California and local jurisdictions are likely to adopt, and new best practices for food safety in commercial kitchens." },
@@ -198,8 +198,8 @@ Output ONLY valid JSON. No preamble. No markdown. No explanation outside the JSO
 
 function buildUserPrompt(rawData: any, source: IntelligenceSource): string {
   const ctx = source.promptContext ? `\nSource-specific context: ${source.promptContext}` : "";
-  const pillarHint = source.pillar.includes("fire_safety")
-    ? "\nThis is a FIRE SAFETY source — reference NFPA 96, CalCode Title 19, and fire suppression systems."
+  const pillarHint = source.pillar.includes("facility_safety")
+    ? "\nThis is a FACILITY SAFETY source — reference NFPA 96, CalCode Title 19, and fire suppression systems."
     : "\nThis is a FOOD SAFETY source — reference CalCode, FDA Food Code, and HACCP principles.";
   const rawJson = JSON.stringify(rawData, null, 2).slice(0, 3000);
   return `Transform this raw ${source.name} alert into an EvidLY intelligence insight for California \
@@ -552,7 +552,7 @@ function mapSourceType(category: string): string {
     regulatory_change: "regulatory",
     regulatory_updates: "regulatory",
     inspection_trend: "inspection",
-    nfpa_update: "fire_safety",
+    nfpa_update: "facility_safety",
     seasonal_risk: "weather",
   };
   return map[category] || category;

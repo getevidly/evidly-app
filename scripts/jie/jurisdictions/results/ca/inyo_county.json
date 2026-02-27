@@ -19,7 +19,7 @@
     "reinspection_trigger": "Not specified in available sources",
     "public_disclosure": "Inspection reports must be made available upon request per California Retail Food Code"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Local fire departments - specific AHJ not identified",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Semi-annual inspections required per California Fire Code and NFPA 96 standards",

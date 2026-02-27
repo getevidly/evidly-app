@@ -152,8 +152,8 @@ export interface ExecutiveSnapshot {
   key_metrics: {
     food_safety_score: number;
     food_safety_trend: number;
-    fire_safety_score: number;
-    fire_safety_trend: number;
+    facility_safety_score: number;
+    facility_safety_trend: number;
     open_risk_items: number;
     intelligence_alerts_7d: number;
     regulatory_pipeline: number;
@@ -202,13 +202,13 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
       'Pull your hood cleaning logs for all Fresno locations today',
       'Verify cleaning frequency meets NFPA 96 Table 12.4 for your cooking volume',
       'Confirm your vendor has documentation of last service with grease weight recorded',
-      'Schedule an unannounced self-inspection using the Fire Safety checklist this week',
+      'Schedule an unannounced self-inspection using the Facility Safety checklist this week',
       'Brief your kitchen managers on what inspectors are specifically looking for',
     ],
-    affected_pillars: ['fire_safety'],
+    affected_pillars: ['facility_safety'],
     affected_counties: ['fresno'],
     confidence_score: 0.82,
-    tags: ['hood cleaning', 'NFPA 96', 'Fresno', 'enforcement', 'fire safety'],
+    tags: ['hood cleaning', 'NFPA 96', 'Fresno', 'enforcement', 'facility safety'],
     estimated_cost_impact: { low: 2500, high: 45000, currency: 'USD', methodology: 'Based on closure order frequency and emergency service costs' },
     published_at: '2026-02-20T08:00:00Z',
     source_name: 'Fresno County Environmental Health',
@@ -225,7 +225,7 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
         'Verify your Fresno hood cleaning vendor has documentation with grease weight measurements',
         'Cross-check Yosemite NPS locations for similar documentation gaps before they become an issue',
       ],
-      industry_specific_note: 'As a national park concession operator, fire safety documentation failures at any location can trigger NPS concession compliance review across your entire portfolio.',
+      industry_specific_note: 'As a national park concession operator, facility safety documentation failures at any location can trigger NPS concession compliance review across your entire portfolio.',
     },
   },
   {
@@ -374,10 +374,10 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
       'Schedule a gap assessment against NFPA 96 2025 edition before April 1',
       'Review hood listing documentation for compliance with updated requirements',
       'Confirm grease duct clearances meet 2025 edition minimums',
-      'Update your fire safety checklist to reflect 2025 inspection documentation requirements',
+      'Update your facility safety checklist to reflect 2025 inspection documentation requirements',
       'Brief your hood cleaning vendor on 2025 edition changes before their next service visit',
     ],
-    affected_pillars: ['fire_safety'],
+    affected_pillars: ['facility_safety'],
     affected_counties: [],
     confidence_score: 0.88,
     tags: ['NFPA 96', '2025', 'fire code', 'Cal Fire', 'hood', 'suppression'],
@@ -400,7 +400,7 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
         'Coordinate dual-jurisdiction documentation with both NPS and Mariposa County fire marshal',
         'The Ahwahnee historic designation may require variance requests for duct clearance changes \u2014 start now',
       ],
-      industry_specific_note: 'NPS Concession Advisory CA-2026-008 already requires updated fire safety documentation. The NFPA 96 2025 transition creates a compounding compliance window. Address both simultaneously to avoid duplicated effort.',
+      industry_specific_note: 'NPS Concession Advisory CA-2026-008 already requires updated facility safety documentation. The NFPA 96 2025 transition creates a compounding compliance window. Address both simultaneously to avoid duplicated effort.',
     },
   },
   {
@@ -662,10 +662,10 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
     category: 'concession_advisory',
     impact_level: 'high',
     urgency: 'urgent',
-    title: 'NPS Concession Compliance Advisory \u2014 Yosemite Fire Safety Documentation Requirements Updated',
-    headline: 'National Park Service updated concession fire safety documentation requirements for Yosemite — dual-jurisdiction operators must comply by April 1.',
-    summary: 'The National Park Service issued Concession Advisory CA-2026-008 on February 14, 2026 updating fire safety documentation requirements for all commercial food service concessions in Yosemite National Park. The advisory adds photographic evidence requirements for monthly fire suppression inspections and mandates digital submission of all fire safety records through the NPS Concession Management System.',
-    full_analysis: 'NPS Concession Advisory CA-2026-008 modifies the documentation requirements under the Concession Management Improvement Act (P.L. 105-391) for Yosemite National Park food service operations. Key changes: (1) Monthly fire suppression system inspections must include date-stamped photographic evidence of agent levels, nozzle alignment, and piping integrity; (2) All fire safety records must be submitted digitally through the NPS Concession Management System within 48 hours of inspection; (3) Annual fire safety self-certification must reference specific NFPA 96 sections and include third-party verification signatures.\n\nThis advisory creates a dual-documentation requirement for operations in Mariposa County that are also subject to county fire marshal inspections. Operators must maintain separate documentation sets for NPS and county compliance, as submission formats and timelines differ. EvidLY\'s document management system can generate both formats from a single inspection record.',
+    title: 'NPS Concession Compliance Advisory \u2014 Yosemite Facility Safety Documentation Requirements Updated',
+    headline: 'National Park Service updated concession facility safety documentation requirements for Yosemite — dual-jurisdiction operators must comply by April 1.',
+    summary: 'The National Park Service issued Concession Advisory CA-2026-008 on February 14, 2026 updating facility safety documentation requirements for all commercial food service concessions in Yosemite National Park. The advisory adds photographic evidence requirements for monthly fire suppression inspections and mandates digital submission of all facility safety records through the NPS Concession Management System.',
+    full_analysis: 'NPS Concession Advisory CA-2026-008 modifies the documentation requirements under the Concession Management Improvement Act (P.L. 105-391) for Yosemite National Park food service operations. Key changes: (1) Monthly fire suppression system inspections must include date-stamped photographic evidence of agent levels, nozzle alignment, and piping integrity; (2) All facility safety records must be submitted digitally through the NPS Concession Management System within 48 hours of inspection; (3) Annual facility safety self-certification must reference specific NFPA 96 sections and include third-party verification signatures.\n\nThis advisory creates a dual-documentation requirement for operations in Mariposa County that are also subject to county fire marshal inspections. Operators must maintain separate documentation sets for NPS and county compliance, as submission formats and timelines differ. EvidLY\'s document management system can generate both formats from a single inspection record.',
     executive_brief: 'NPS documentation update affects dual-jurisdiction operators at Yosemite. Compliance requires photographic evidence and digital submission — EvidLY already captures both. Brief your facilities team on the April 1 deadline.',
     action_items: [
       'Review NPS Concession Advisory CA-2026-008 for your Yosemite locations',
@@ -674,10 +674,10 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
       'Verify your documentation meets both NPS and Mariposa County requirements',
       'Calendar the April 1, 2026 compliance deadline',
     ],
-    affected_pillars: ['fire_safety'],
+    affected_pillars: ['facility_safety'],
     affected_counties: ['mariposa'],
     confidence_score: 0.92,
-    tags: ['NPS', 'Yosemite', 'concession', 'fire safety', 'dual jurisdiction', 'documentation'],
+    tags: ['NPS', 'Yosemite', 'concession', 'facility safety', 'dual jurisdiction', 'documentation'],
     estimated_cost_impact: { low: 500, high: 3000, currency: 'USD', methodology: 'Documentation system setup, training, photo equipment' },
     published_at: '2026-02-14T08:00:00Z',
     source_name: 'National Park Service — Yosemite',
@@ -697,7 +697,7 @@ export const DEMO_INTELLIGENCE_INSIGHTS: IntelligenceInsight[] = [
         'Set up photographic evidence workflow for monthly fire suppression inspections at all 4 NPS locations',
         'Register for NPS Concession Management System digital submission — April 1 deadline is non-negotiable',
       ],
-      industry_specific_note: 'This advisory is specifically written for your operation type. Non-compliance risks concession agreement penalties, including potential non-renewal. Prioritize this above other fire safety items.',
+      industry_specific_note: 'This advisory is specifically written for your operation type. Non-compliance risks concession agreement penalties, including potential non-renewal. Prioritize this above other facility safety items.',
     },
   },
   {
@@ -839,17 +839,17 @@ export const DEMO_EXECUTIVE_SNAPSHOT: ExecutiveSnapshot = {
   key_metrics: {
     food_safety_score: 84,
     food_safety_trend: +2.1,
-    fire_safety_score: 77,
-    fire_safety_trend: -1.3,
+    facility_safety_score: 77,
+    facility_safety_trend: -1.3,
     open_risk_items: 7,
     intelligence_alerts_7d: 9,
     regulatory_pipeline: 4,
     financial_exposure: { low: 125000, high: 380000 },
   },
-  executive_summary: 'Pacific Coast Dining\'s compliance posture is stable with improving food safety metrics (+2.1 points, 30-day trend) offset by a fire safety decline (-1.3 points) driven by overdue equipment inspections at University Dining. Two critical external intelligence alerts require immediate action: an FDA Class I romaine lettuce recall affecting your supply chain, and an active salmonella investigation in Stanislaus County that will likely trigger unannounced inspections at your University Dining location this week.\n\nYour competitive position is strengthening — two competitor closures near Downtown and an industry-wide benchmark decline have moved your Downtown location into the 89th percentile. However, regulatory headwinds are building: NFPA 96 2025 edition enforcement begins July 1 (4-month preparation window), and AB-2890 food handler recertification is advancing with 73% passage probability. Financial exposure across all locations ranges from $125,000 to $380,000 if identified risks materialize without mitigation. Recommended immediate actions focus on recall response, Stanislaus County inspection readiness, and hood cleaning documentation at Fresno locations.',
+  executive_summary: 'Pacific Coast Dining\'s compliance posture is stable with improving food safety metrics (+2.1 points, 30-day trend) offset by a facility safety decline (-1.3 points) driven by overdue equipment inspections at University Dining. Two critical external intelligence alerts require immediate action: an FDA Class I romaine lettuce recall affecting your supply chain, and an active salmonella investigation in Stanislaus County that will likely trigger unannounced inspections at your University Dining location this week.\n\nYour competitive position is strengthening — two competitor closures near Downtown and an industry-wide benchmark decline have moved your Downtown location into the 89th percentile. However, regulatory headwinds are building: NFPA 96 2025 edition enforcement begins July 1 (4-month preparation window), and AB-2890 food handler recertification is advancing with 73% passage probability. Financial exposure across all locations ranges from $125,000 to $380,000 if identified risks materialize without mitigation. Recommended immediate actions focus on recall response, Stanislaus County inspection readiness, and hood cleaning documentation at Fresno locations.',
   risk_heatmap: [
     { dimension: 'Food Safety', score: 84, industry_avg: 77 },
-    { dimension: 'Fire Safety', score: 77, industry_avg: 74 },
+    { dimension: 'Facility Safety', score: 77, industry_avg: 74 },
     { dimension: 'Documentation', score: 82, industry_avg: 68 },
     { dimension: 'Regulatory', score: 71, industry_avg: 65 },
     { dimension: 'Market', score: 88, industry_avg: 72 },
@@ -887,7 +887,7 @@ export const DEMO_EXECUTIVE_SNAPSHOT: ExecutiveSnapshot = {
     compliance_savings: 47000,
     roi_ratio: '3.8x',
     top_cost_drivers: [
-      { label: 'Potential closure orders (fire safety)', amount: 85000 },
+      { label: 'Potential closure orders (facility safety)', amount: 85000 },
       { label: 'Recall-related costs (food safety)', amount: 45000 },
       { label: 'Regulatory fines (documentation gaps)', amount: 32000 },
       { label: 'Staffing turnover (compliance disruption)', amount: 28000 },
@@ -909,7 +909,7 @@ export const DEMO_EXECUTIVE_SNAPSHOT: ExecutiveSnapshot = {
     { priority: 4, recommendation: 'Complete NFPA 96 2025 gap assessment for all locations', rationale: 'July 1 enforcement deadline with 4-month preparation window. Documentation changes affect all locations.', estimated_impact: 'Ensures compliance by deadline, avoids $1,500-$15,000 remediation costs', timeframe: 'By April 1', immediate: false },
     { priority: 5, recommendation: 'Schedule preventive maintenance on Airport Cafe refrigeration', rationale: 'Walk-in cooler trending warm and CDPH clarified warmest-point measurement standard. Heat event in June will compound the issue.', estimated_impact: 'Prevents $3,200 average emergency maintenance cost during heat event', timeframe: 'Before May 30', immediate: false },
   ],
-  full_narrative: 'EVIDLY INTELLIGENCE EXECUTIVE BRIEF\nPacific Coast Dining — February 22, 2026\n\nOVERVIEW\nPacific Coast Dining operates three food service locations in the Central Valley: Downtown Kitchen (Fresno), Airport Cafe (Merced), and University Dining (Stanislaus). Overall compliance posture is stable with food safety trending positively (+2.1 points) and fire safety declining slightly (-1.3 points).\n\nCRITICAL ALERTS\nTwo critical alerts require immediate executive attention: (1) An FDA Class I recall for romaine lettuce with confirmed E.coli O157:H7 contamination affects California distributors serving all three locations. Immediate inventory verification and HACCP documentation are required. (2) An active salmonella investigation in Stanislaus County involving 14 cases linked to poultry will likely trigger unannounced inspections at University Dining. Two recent poultry temperature readings at University Dining were below the 165\u00B0F minimum, creating inspection vulnerability.\n\nENFORCEMENT LANDSCAPE\nFresno County has increased hood cleaning citations by 47% in Q1 2026, targeting documentation completeness. Merced County has rotated its lead inspector; the new inspector (Chen, #412) cites temperature log documentation gaps at 3x the previous rate. Stanislaus County enforcement will intensify due to the active outbreak investigation.\n\nREGULATORY FORECAST\nNFPA 96 2025 edition enforcement begins July 1, 2026, requiring gap assessments at all locations. AB-2890 food handler annual recertification has a 73% passage probability with a July 2027 compliance deadline. FDA has updated glove use guidance effective March 2026.\n\nFINANCIAL EXPOSURE\nTotal risk exposure ranges from $125,000 to $380,000 across all locations if identified risks materialize without mitigation. The primary cost drivers are potential fire safety closure orders ($85K), recall-related costs ($45K), and regulatory fines for documentation gaps ($32K). Current compliance investment generates an estimated 3.8x ROI through avoided incidents, fines, and insurance premium reductions.\n\nCOMPETITIVE POSITION\nTwo competitor closures near Downtown and an industry-wide benchmark decline have improved your relative competitive position. Downtown Kitchen now ranks in the 89th percentile for California food safety, up from the 84th percentile in Q3 2025.\n\nSTRATEGIC RECOMMENDATIONS\n1. [IMMEDIATE] Respond to romaine lettuce recall — verify inventory at all locations today\n2. [IMMEDIATE] Prepare University Dining for Stanislaus County inspection — focus on poultry temps\n3. [10 DAYS] Schedule hood cleaning at Downtown — ahead of Fresno enforcement surge\n4. [BY APRIL 1] Complete NFPA 96 2025 gap assessment at all locations\n5. [BY MAY 30] Schedule preventive maintenance on Airport Cafe refrigeration ahead of heat event',
+  full_narrative: 'EVIDLY INTELLIGENCE EXECUTIVE BRIEF\nPacific Coast Dining — February 22, 2026\n\nOVERVIEW\nPacific Coast Dining operates three food service locations in the Central Valley: Downtown Kitchen (Fresno), Airport Cafe (Merced), and University Dining (Stanislaus). Overall compliance posture is stable with food safety trending positively (+2.1 points) and facility safety declining slightly (-1.3 points).\n\nCRITICAL ALERTS\nTwo critical alerts require immediate executive attention: (1) An FDA Class I recall for romaine lettuce with confirmed E.coli O157:H7 contamination affects California distributors serving all three locations. Immediate inventory verification and HACCP documentation are required. (2) An active salmonella investigation in Stanislaus County involving 14 cases linked to poultry will likely trigger unannounced inspections at University Dining. Two recent poultry temperature readings at University Dining were below the 165\u00B0F minimum, creating inspection vulnerability.\n\nENFORCEMENT LANDSCAPE\nFresno County has increased hood cleaning citations by 47% in Q1 2026, targeting documentation completeness. Merced County has rotated its lead inspector; the new inspector (Chen, #412) cites temperature log documentation gaps at 3x the previous rate. Stanislaus County enforcement will intensify due to the active outbreak investigation.\n\nREGULATORY FORECAST\nNFPA 96 2025 edition enforcement begins July 1, 2026, requiring gap assessments at all locations. AB-2890 food handler annual recertification has a 73% passage probability with a July 2027 compliance deadline. FDA has updated glove use guidance effective March 2026.\n\nFINANCIAL EXPOSURE\nTotal risk exposure ranges from $125,000 to $380,000 across all locations if identified risks materialize without mitigation. The primary cost drivers are potential facility safety closure orders ($85K), recall-related costs ($45K), and regulatory fines for documentation gaps ($32K). Current compliance investment generates an estimated 3.8x ROI through avoided incidents, fines, and insurance premium reductions.\n\nCOMPETITIVE POSITION\nTwo competitor closures near Downtown and an industry-wide benchmark decline have improved your relative competitive position. Downtown Kitchen now ranks in the 89th percentile for California food safety, up from the 84th percentile in Q3 2025.\n\nSTRATEGIC RECOMMENDATIONS\n1. [IMMEDIATE] Respond to romaine lettuce recall — verify inventory at all locations today\n2. [IMMEDIATE] Prepare University Dining for Stanislaus County inspection — focus on poultry temps\n3. [10 DAYS] Schedule hood cleaning at Downtown — ahead of Fresno enforcement surge\n4. [BY APRIL 1] Complete NFPA 96 2025 gap assessment at all locations\n5. [BY MAY 30] Schedule preventive maintenance on Airport Cafe refrigeration ahead of heat event',
   source_count: 20,
 };
 
@@ -1084,4 +1084,6 @@ export const DEMO_SOURCE_STATUS: SourceStatus[] = [
   { id: 'src-18', name: 'Stanislaus Competitor Monitor', type: 'competitor', jurisdictions: ['Stanislaus'], frequency: 'Every 6 hours', last_checked_at: '2026-02-22T06:00:00Z', next_check_at: '2026-02-22T12:00:00Z', new_events_this_week: 1, status: 'healthy' },
   { id: 'src-19', name: 'Mariposa County Fire Marshal', type: 'county', jurisdictions: ['Mariposa'], frequency: 'Daily', last_checked_at: '2026-02-22T06:00:00Z', next_check_at: '2026-02-23T06:00:00Z', new_events_this_week: 0, status: 'healthy' },
   { id: 'src-20', name: 'Sacramento County DPH', type: 'county', jurisdictions: ['Sacramento'], frequency: 'Every 6 hours', last_checked_at: '2026-02-21T18:00:00Z', next_check_at: '2026-02-22T00:00:00Z', new_events_this_week: 1, status: 'warning' },
+  { id: 'src-21', name: 'CalRecycle Organics / SB 1383 Enforcement', type: 'state', jurisdictions: ['California'], frequency: 'Daily', last_checked_at: '2026-02-22T06:00:00Z', next_check_at: '2026-02-23T06:00:00Z', new_events_this_week: 1, status: 'healthy' },
+  { id: 'src-22', name: 'USDA Food and Nutrition Service (FNS)', type: 'federal', jurisdictions: ['National'], frequency: 'Daily', last_checked_at: '2026-02-22T05:00:00Z', next_check_at: '2026-02-23T05:00:00Z', new_events_this_week: 0, status: 'healthy' },
 ];

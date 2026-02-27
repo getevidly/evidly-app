@@ -41,7 +41,7 @@ interface AlertItem {
 }
 
 const EXEC_ALERTS: AlertItem[] = [
-  { id: 'ea1', severity: 'critical', message: 'University Dining Fire Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Fire Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' },
+  { id: 'ea1', severity: 'critical', message: 'University Dining Facility Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Facility Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' },
   { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' },
 ];
 
@@ -111,26 +111,26 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
                 )}
               </button>
 
-              {/* Fire Safety */}
+              {/* Facility Safety */}
               <button
                 type="button"
-                onClick={() => navigate('/fire-safety')}
+                onClick={() => navigate('/facility-safety')}
                 className="w-full p-3 rounded-lg mb-3 text-left transition-colors hover:opacity-90"
                 style={{ backgroundColor: '#f8fafc' }}
               >
                 <div className="flex items-center gap-2">
                   <Flame size={14} style={{ color: MUTED }} />
-                  <span className="text-[13px] text-gray-700 flex-1">{t('cards.fireSafety')}</span>
+                  <span className="text-[13px] text-gray-700 flex-1">{t('cards.facilitySafety')}</span>
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                    score?.fireSafety?.status === 'passing'
+                    score?.facilitySafety?.status === 'passing'
                       ? 'bg-green-50 text-green-700'
                       : 'bg-red-50 text-red-700'
                   }`}>
-                    {score?.fireSafety?.grade || t('status.pending')}
+                    {score?.facilitySafety?.grade || t('status.pending')}
                   </span>
                 </div>
-                {jur?.fireSafety?.agency_name && (
-                  <p className="text-[10px] text-gray-400 ml-6 mt-0.5">{jur.fireSafety.agency_name}</p>
+                {jur?.facilitySafety?.agency_name && (
+                  <p className="text-[10px] text-gray-400 ml-6 mt-0.5">{jur.facilitySafety.agency_name}</p>
                 )}
               </button>
 

@@ -51,7 +51,7 @@ export const ExportReport: React.FC<Props> = ({ data }) => {
     <div class="location-row">
       <div>
         <strong>${loc.locationName}</strong><br/>
-        <span style="font-size:12px;color:#94a3b8">${loc.jurisdiction} — Food: ${loc.foodSafetyStatus} · Fire: ${loc.fireSafetyVerdict}</span>
+        <span style="font-size:12px;color:#94a3b8">${loc.jurisdiction} — Food: ${loc.foodSafetyStatus} · Fire: ${loc.facilitySafetyVerdict}</span>
       </div>
       <div style="text-align:right">
         <span class="risk-${loc.riskLevel}" style="font-weight:700;text-transform:uppercase;font-size:12px">${loc.riskLevel}</span><br/>

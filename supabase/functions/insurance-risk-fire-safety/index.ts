@@ -1,7 +1,7 @@
 // ============================================================
-// Insurance Risk Fire Safety — Property insurance underwriting data
+// Insurance Risk Facility Safety — Property insurance underwriting data
 // ============================================================
-// Returns fire safety compliance details: hood cleaning dates,
+// Returns facility safety compliance details: hood cleaning dates,
 // suppression inspection dates, extinguisher status, NFPA (2025) compliance.
 // Critical for property insurance underwriting decisions.
 // ============================================================
@@ -90,7 +90,7 @@ Deno.serve(async (req: Request) => {
     if (!consent || consent.length === 0) {
       await supabase.from("insurance_api_logs").insert({
         api_key_id: keyRecord.id,
-        endpoint: "/risk-score/fire-safety",
+        endpoint: "/risk-score/facility-safety",
         request_method: "GET",
         location_id: locationId,
         response_code: 403,
@@ -99,7 +99,7 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Data sharing consent not granted for this location" }, 403);
     }
 
-    // ── Fetch fire safety factors ──
+    // ── Fetch facility safety factors ──
     const { data: latestScore } = await supabase
       .from("insurance_risk_scores")
       .select("id, fire_risk_score, calculated_at")
@@ -138,13 +138,13 @@ Deno.serve(async (req: Request) => {
     await supabase.from("insurance_api_requests").insert({
       api_key_id: keyRecord.id,
       organization_id: keyRecord.organization_id,
-      endpoint: "/risk-score/fire-safety",
+      endpoint: "/risk-score/facility-safety",
       response_status: 200,
     });
 
     await supabase.from("insurance_api_logs").insert({
       api_key_id: keyRecord.id,
-      endpoint: "/risk-score/fire-safety",
+      endpoint: "/risk-score/facility-safety",
       request_method: "GET",
       location_id: locationId,
       response_code: 200,
@@ -177,13 +177,13 @@ Deno.serve(async (req: Request) => {
       generated_at: new Date().toISOString(),
       api_version: "1.0",
       _links: {
-        self: `/risk-score/fire-safety?location_id=${locationId}`,
+        self: `/risk-score/facility-safety?location_id=${locationId}`,
         verify: "/risk-score/verify",
         history: `/risk-score/history?location_id=${locationId}`,
       },
     });
   } catch (error) {
-    console.error("Unexpected error in insurance-risk-fire-safety:", error);
+    console.error("Unexpected error in insurance-risk-facility-safety:", error);
     return jsonResponse({ error: "Internal server error" }, 500);
   }
 });

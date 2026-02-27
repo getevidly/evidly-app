@@ -93,7 +93,7 @@ CREATE TABLE intelligence_insights (
   relevance_score NUMERIC(5,2) NOT NULL DEFAULT 0 CHECK (relevance_score >= 0 AND relevance_score <= 100),
   confidence      NUMERIC(3,2) NOT NULL DEFAULT 0.5 CHECK (confidence >= 0 AND confidence <= 1),
   impact_level    TEXT CHECK (impact_level IN ('critical','high','medium','low')),
-  affected_pillars TEXT[] NOT NULL DEFAULT '{}',  -- e.g. '{food_safety,fire_safety}'
+  affected_pillars TEXT[] NOT NULL DEFAULT '{}',  -- e.g. '{food_safety,facility_safety}'
   jurisdictions   TEXT[] NOT NULL DEFAULT '{}',
   recommended_actions JSONB NOT NULL DEFAULT '[]',
   expires_at      TIMESTAMPTZ,

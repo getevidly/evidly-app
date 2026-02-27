@@ -19,7 +19,7 @@
     "reinspection_trigger": "Major violations require follow-up inspection - facilities may be closed for imminent health hazards",
     "public_disclosure": "Inspection reports made available to public on county website"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Tehama County Fire Department",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": null,
@@ -70,7 +70,7 @@
     "error_count": 0,
     "warning_count": 1,
     "warnings": [
-      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+      "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
     ],
     "import_eligible": true
   }

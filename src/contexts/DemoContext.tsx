@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 import { trackEvent } from '../utils/analytics';
 import { setDemoWriteGuard } from '../lib/supabaseGuard';
 
@@ -44,13 +45,33 @@ function loadLead(): DemoLead | null {
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const [isDemoMode, setIsDemoMode] = useState(() => {
+  const { session } = useAuth();
+
+  const [rawDemoMode, setRawDemoMode] = useState(() => {
     try {
       return sessionStorage.getItem(DEMO_KEY) === 'true';
     } catch {
       return false;
     }
   });
+
+  // ── Core invariant: authenticated sessions are NEVER in demo mode ──
+  // If a Supabase auth session exists, isDemoMode is always false
+  // regardless of what sessionStorage says.
+  const isAuthenticated = !!session?.user;
+  const isDemoMode = rawDemoMode && !isAuthenticated;
+
+  // When user authenticates, clean up any stale demo state from sessionStorage
+  useEffect(() => {
+    if (isAuthenticated && rawDemoMode) {
+      setRawDemoMode(false);
+      setDemoWriteGuard(false);
+      try {
+        sessionStorage.removeItem(DEMO_KEY);
+        sessionStorage.removeItem(LEAD_KEY);
+      } catch {}
+    }
+  }, [isAuthenticated, rawDemoMode]);
 
   const [demoLead, setDemoLeadState] = useState<DemoLead | null>(loadLead);
   const [tourActive, setTourActive] = useState(false);
@@ -131,7 +152,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   };
 
   const enterDemo = (lead?: DemoLead) => {
-    setIsDemoMode(true);
+    setRawDemoMode(true);
     trackEvent('demo_start');
     try { sessionStorage.setItem(DEMO_KEY, 'true'); } catch {}
     if (lead) {
@@ -141,13 +162,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   };
 
   const exitDemo = () => {
-    setIsDemoMode(false);
+    setRawDemoMode(false);
     setDemoLeadState(null);
     setTourActive(false);
     try {
       sessionStorage.removeItem(DEMO_KEY);
       sessionStorage.removeItem(LEAD_KEY);
-      sessionStorage.removeItem('evidly_demo_override');
     } catch {}
   };
 

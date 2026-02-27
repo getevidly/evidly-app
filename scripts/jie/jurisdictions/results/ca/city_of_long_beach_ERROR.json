@@ -1,0 +1,18 @@
+{
+  "jurisdiction_name": "City of Long Beach",
+  "state": "CA",
+  "error": "All 1 attempts failed. Last: Status 400",
+  "error_type": "api_400",
+  "_meta": {
+    "status": "all_retries_failed",
+    "attempts": 1,
+    "attempt_log": [
+      {
+        "attempt": 1,
+        "started_at": "2026-02-19T21:32:54.664590+00:00",
+        "error": "Status 400",
+        "error_type": "api_400"
+      }
+    ]
+  }
+}

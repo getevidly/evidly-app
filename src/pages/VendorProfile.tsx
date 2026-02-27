@@ -12,6 +12,8 @@ import {
   marketplaceVendors, marketplaceReviews, locations,
   type MarketplaceVendor, type MarketplaceReview, type MarketplaceTier,
 } from '../data/demoData';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Helper: Tier Badge ──────────────────────────────────────────
 function TierBadge({ tier }: { tier: MarketplaceTier }) {
@@ -66,6 +68,8 @@ export function VendorProfile() {
     () => marketplaceReviews.filter(r => r.vendorSlug === vendorSlug),
     [vendorSlug],
   );
+
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [activeTab, setActiveTab] = useState<'about' | 'credentials' | 'reviews' | 'services'>('about');
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -129,9 +133,11 @@ export function VendorProfile() {
 
   // ── Modal submit ────────────────────────────────────────────
   function handleSubmitRequest() {
-    toast.success(`Request sent to ${vendor!.companyName}`);
-    setShowRequestModal(false);
-    setRequestForm({ serviceType: '', location: '', preferredDates: '', description: '', urgency: 'Normal' });
+    guardAction('request', 'Vendor Services', () => {
+      toast.success(`Request sent to ${vendor!.companyName}`);
+      setShowRequestModal(false);
+      setRequestForm({ serviceType: '', location: '', preferredDates: '', description: '', urgency: 'Normal' });
+    });
   }
 
   // ── Render ──────────────────────────────────────────────────
@@ -187,7 +193,7 @@ export function VendorProfile() {
                 <Send className="h-4 w-4" /> Request Quote
               </button>
               <button
-                onClick={() => toast.info("Messaging (Demo)")}
+                onClick={() => guardAction('message', 'Vendor Services', () => toast.info("Messaging"))}
                 className="flex items-center gap-2 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Message Vendor
@@ -448,7 +454,7 @@ export function VendorProfile() {
             {/* Write a Review button */}
             <div className="mb-6">
               <button
-                onClick={() => toast.info("Reviews require a completed service")}
+                onClick={() => guardAction('review', 'Vendor Services', () => toast.info("Reviews require a completed service"))}
                 className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 <MessageSquare className="h-4 w-4" /> Write a Review
@@ -630,6 +636,14 @@ export function VendorProfile() {
             </div>
           </div>
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
       )}
     </div>
   );

@@ -15,13 +15,15 @@ import {
   type TrainingCategory,
 } from '../data/demoData';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 type ViewState = 'overview' | 'lesson' | 'quiz' | 'certificate';
 
 const CATEGORY_ICON: Record<TrainingCategory, typeof EvidlyIcon> = {
   food_safety_handler: EvidlyIcon,
   food_safety_manager: BookOpenCheck,
-  fire_safety: Flame,
+  facility_safety: Flame,
   compliance_ops: Settings2,
   custom: Brain,
 };
@@ -383,6 +385,7 @@ function AICompanion({ courseTitle }: { courseTitle: string }) {
 // ── Certificate View ─────────────────────────────────────────────────────────
 
 function CertificateView({ cert, course }: { cert: TrainingCertificate; course: TCourse }) {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   return (
     <div style={{ background: '#fff', borderRadius: 12, border: '2px solid #d4af37', padding: 40, textAlign: 'center', maxWidth: 600, margin: '0 auto' }}>
       <div style={{ borderBottom: '2px solid #d4af37', paddingBottom: 24, marginBottom: 24 }}>
@@ -413,10 +416,13 @@ function CertificateView({ cert, course }: { cert: TrainingCertificate; course: 
           </div>
         )}
       </div>
-      <button onClick={() => toast.info('Certificate PDF download (demo)')}
+      <button onClick={() => guardAction('download', 'Training Certificates', () => toast.info('Certificate PDF download (demo)'))}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 24px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
         <Download size={16} /> Download PDF
       </button>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }

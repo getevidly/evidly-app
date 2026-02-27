@@ -125,7 +125,7 @@ export function TempLogs() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [equipment, setEquipment] = useState<TemperatureEquipment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [history, setHistory] = useState<TempCheckCompletion[]>([]);
@@ -3449,7 +3449,7 @@ export function TempLogs() {
 
       {/* Demo Upgrade Prompt */}
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
 
       {/* Cooldown Check Modal */}

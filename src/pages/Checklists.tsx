@@ -46,7 +46,7 @@ interface ChecklistTemplateItem {
   requires_photo_on_fail?: boolean;
 }
 
-// ── Authority Labels (matches FireSafety.tsx pattern) ────────────
+// ── Authority Labels (matches FacilitySafety.tsx pattern) ────────────
 const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
   calcode: { label: 'CalCode', color: '#0369a1', bg: '#e0f2fe' },
   nfpa_96: { label: 'NFPA 96', color: '#b91c1c', bg: '#fef2f2' },
@@ -579,7 +579,7 @@ export function Checklists() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { t } = useTranslation();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
   const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
@@ -2013,7 +2013,7 @@ export function Checklists() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

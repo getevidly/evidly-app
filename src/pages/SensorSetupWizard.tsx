@@ -8,6 +8,8 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { iotSensorProviders } from '../data/demoData';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -89,6 +91,7 @@ const STEP_LABELS = ['Select Brand', 'Authenticate', 'Thresholds', 'Alerts', 'Fr
 
 export function SensorSetupWizard() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>(1);
   const [authenticating, setAuthenticating] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
@@ -336,7 +339,7 @@ export function SensorSetupWizard() {
                       className="flex-1 px-3 py-2.5 rounded-lg border border-gray-200 text-sm font-mono bg-gray-50 text-gray-600"
                     />
                     <button
-                      onClick={() => { navigator.clipboard.writeText(state.webhookUrl); toast.success('Webhook URL copied'); }}
+                      onClick={() => guardAction('copy', 'IoT Sensors', () => { navigator.clipboard.writeText(state.webhookUrl); toast.success('Webhook URL copied'); })}
                       className="px-3 py-2.5 rounded-lg text-sm font-medium border border-gray-200 hover:bg-gray-50"
                     >
                       Copy
@@ -738,6 +741,14 @@ export function SensorSetupWizard() {
           </button>
         </div>
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

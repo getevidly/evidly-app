@@ -107,7 +107,7 @@ function mapFireAhjType(fire) {
 function buildPatchBody(record) {
   const gs = record.grading_system || {};
   const insp = record.inspection_details || {};
-  const fire = record.fire_safety_authority || {};
+  const fire = record.facility_safety_authority || {};
   const reg = record.regulatory_framework || {};
   const validation = record._validation || {};
 

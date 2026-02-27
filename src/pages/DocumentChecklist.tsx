@@ -11,6 +11,8 @@ import {
   type OnboardingDocument,
 } from '../data/onboardingDocuments';
 import { SmartUploadModal, type ClassifiedFile } from '../components/SmartUploadModal';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -49,6 +51,7 @@ const CONDITIONAL_IDS = new Set([
 export function DocumentChecklist() {
   const { isDemoMode } = useDemo();
   const { profile } = useAuth();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // -- checklist state (seed from demo or blank) --
   const [checklist, setChecklist] = useState<Record<string, ChecklistEntry>>(() => {
@@ -111,7 +114,7 @@ export function DocumentChecklist() {
     return grouped;
   }, [documents]);
 
-  const PILLAR_DISPLAY_ORDER = ['fire_safety', 'food_safety', 'vendor', 'facility'];
+  const PILLAR_DISPLAY_ORDER = ['facility_safety', 'food_safety', 'vendor', 'facility'];
   const pillarOrder = useMemo(
     () => PILLAR_DISPLAY_ORDER.filter((k) => k in PILLAR_META),
     [],
@@ -264,7 +267,7 @@ export function DocumentChecklist() {
               style={{ backgroundColor: '#1e4d6b' }}
               onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#1e4d6b')}
-              onClick={() => openUpload(doc)}
+              onClick={() => guardAction('upload', 'Document Checklist', () => openUpload(doc))}
             >
               <Upload size={14} />
               Upload Document
@@ -272,7 +275,7 @@ export function DocumentChecklist() {
             {CONDITIONAL_IDS.has(doc.id) && (
               <button
                 className="text-sm text-gray-500 hover:text-gray-700 underline"
-                onClick={() => openNaModal(doc)}
+                onClick={() => guardAction('edit', 'Document Checklist', () => openNaModal(doc))}
               >
                 Not Applicable
               </button>
@@ -318,10 +321,10 @@ export function DocumentChecklist() {
             <p style={{ fontSize: '12px', color: '#15803d', marginTop: '8px' }}>
               Filed! Your vendor's other clients might need this too.{' '}
               <button
-                onClick={() => {
+                onClick={() => guardAction('share', 'Document Checklist', () => {
                   navigator.clipboard.writeText('https://getevidly.com/ref/PACIFIC-COAST-DK');
                   toast.success('Referral link copied!');
-                }}
+                })}
                 style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
               >
                 Share →
@@ -426,6 +429,14 @@ export function DocumentChecklist() {
       {/* ----------------------------------------------------------------- */}
       {/* Not Applicable Modal */}
       {/* ----------------------------------------------------------------- */}
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
+
       {naModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6 space-y-4">

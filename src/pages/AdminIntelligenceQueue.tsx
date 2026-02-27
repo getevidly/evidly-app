@@ -341,7 +341,7 @@ export function AdminIntelligenceQueue() {
                         {/* Pillars */}
                         {insight.affected_pillars?.map(p => (
                           <span key={p} className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600">
-                            {p === 'food_safety' ? 'Food' : p === 'fire_safety' ? 'Fire' : p}
+                            {p === 'food_safety' ? 'Food' : p === 'facility_safety' ? 'Fire' : p}
                           </span>
                         ))}
 

@@ -19,7 +19,7 @@
     "reinspection_trigger": "Not specified in available documentation",
     "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Mariposa County Fire Department",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standards (industry standard)",
@@ -72,7 +72,7 @@
     "error_count": 0,
     "warning_count": 1,
     "warnings": [
-      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+      "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
     ],
     "import_eligible": true
   }

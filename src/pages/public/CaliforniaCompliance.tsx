@@ -79,11 +79,11 @@ export function CaliforniaCompliance() {
     <>
       <Helmet>
         <title>California Food Safety Compliance by County | EvidLY</title>
-        <meta name="description" content="Food safety inspection requirements for all 58 California counties and 4 independent cities. Grading systems, scoring methods, fire safety AHJ data." />
+        <meta name="description" content="Food safety inspection requirements for all 58 California counties and 4 independent cities. Grading systems, scoring methods, facility safety AHJ data." />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://evidly.com/compliance/california" />
         <meta property="og:title" content="California Food Safety Compliance by County | EvidLY" />
-        <meta property="og:description" content="Food safety inspection requirements for all 58 California counties. Grading systems, scoring methods, and fire safety authority data." />
+        <meta property="og:description" content="Food safety inspection requirements for all 58 California counties. Grading systems, scoring methods, and facility safety authority data." />
         <meta property="og:url" content="https://evidly.com/compliance/california" />
       </Helmet>
 
@@ -204,7 +204,7 @@ export function CaliforniaCompliance() {
               Get compliance monitoring for your kitchen
             </h2>
             <p className="text-white/70 mb-6 max-w-lg mx-auto">
-              EvidLY automates food safety checklists, temperature logging, fire safety documentation,
+              EvidLY automates food safety checklists, temperature logging, facility safety documentation,
               and vendor compliance — tailored to your county's specific requirements.
             </p>
             <div className="flex justify-center gap-3">

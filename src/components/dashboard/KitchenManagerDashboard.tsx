@@ -203,7 +203,7 @@ export default function KitchenManagerDashboard() {
         <SectionHeader>Kitchen Health<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
           <HealthTile label="Food Safety" status="green" detail="Compliant — no open majors" navigate={navigate} route="/compliance" />
-          <HealthTile label="Fire Safety" status="green" detail="All equipment current" navigate={navigate} route="/fire-safety" />
+          <HealthTile label="Facility Safety" status="green" detail="All equipment current" navigate={navigate} route="/facility-safety" />
           <HealthTile label="Temp Logs" status="yellow" detail="Prep cooler needs logging" navigate={navigate} route="/temp-logs" />
           <HealthTile label="Team Tasks" status="yellow" detail="52% complete — midday open" navigate={navigate} route="/checklists" />
         </div>

@@ -19,7 +19,7 @@
     "reinspection_trigger": "Complaint investigations or suspected health hazards",
     "public_disclosure": "Inspection reports for food facilities from October 2021 to present available through public records request - results from last two inspections for all facilities tracked"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Not specifically identified - likely local fire departments within Solano County cities",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standard - 6 month intervals for commercial kitchen fire suppression systems",

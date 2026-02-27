@@ -16,7 +16,7 @@ const MIN_REMINDER_GAP_DAYS = 5;
 
 /** Pillar labels keyed by document_type prefix (used in email grouping). */
 const PILLAR_LABELS: Record<string, string> = {
-  fire: "Fire Safety",
+  fire: "Facility Safety",
   food: "Food Safety",
   vendor: "Vendor Compliance",
   facility: "Facility & General",

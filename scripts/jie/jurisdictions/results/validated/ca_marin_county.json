@@ -19,7 +19,7 @@
     "reinspection_trigger": "Violations found during routine inspection or complaints",
     "public_disclosure": "Food facility inspections are searchable through online portal and open data portal"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Southern Marin Fire Protection District and other local fire departments",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "ANSUL-style suppression systems required for commercial kitchens, with semi-annual inspections every 6 months per NFPA 96. Systems must undergo AHJ acceptance testing by fire marshal before approval.",

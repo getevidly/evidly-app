@@ -8,6 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useBranding } from '../../contexts/BrandingContext';
 import { SidebarUpgradeBadge } from '../SidebarUpgradeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
+import { useOrgType } from '../../hooks/useOrgType';
 import {
   getHomeItemForRole,
   getRoleConfig,
@@ -68,6 +69,11 @@ const SIDEBAR_ITEM_DESCRIPTIONS_ES: Record<string, string> = {
   'intelligence':           "EvidLY Intelligence — detección de patrones entre ubicaciones, puntuación predictiva de riesgos y recomendaciones proactivas.",
   'iot-sensors':            "Agregar, configurar y gestionar sensores IoT de temperatura en sus ubicaciones.",
   'food-safety-overview':   "Puntuación de cumplimiento de seguridad alimentaria, puntos de control críticos y preparación para inspecciones.",
+  'food-recovery':          "Seguimiento de desviación de residuos orgánicos, acuerdos de recuperación de alimentos y cumplimiento CalRecycle SB 1383.",
+  'usda-production-records': "Registros de producción de comidas del Programa de Nutrición Infantil del USDA, cumplimiento de patrones de comida y seguimiento de etiquetas CN.",
+  'command-center':          "Centro de comando de inteligencia — triaje de señales, planes de acción, actualizaciones de plataforma y monitoreo de rastreo.",
+  'edge-functions':          "Monitoreo de salud, línea de tiempo de invocaciones, registros de errores e invocación manual de funciones Edge de Supabase.",
+  'crawl-monitor':           "Salud del rastreo de inteligencia, tiempo de actividad de fuentes y registros de ejecución.",
 };
 
 // ── Section tooltip descriptions (ES) ────────────────────
@@ -87,6 +93,9 @@ const SECTION_DESCRIPTIONS_ES: Record<string, { title: string; description: stri
   'service':         { title: 'Servicio', description: 'Certificaciones, diagn\u00F3stico, programaci\u00F3n de servicio, reportes y gesti\u00F3n de proveedores.' },
   'support':         { title: 'Soporte', description: 'Documentaci\u00F3n de ayuda, recursos de capacitaci\u00F3n y soporte directo.' },
   'calendar-section': { title: 'Calendario', description: 'Inspecciones, renovaciones de permisos, citas de servicio y fechas l\u00EDmite de cumplimiento.' },
+  'food-recovery':   { title: 'Recuperaci\u00F3n de Alimentos', description: 'Seguimiento de desviaci\u00F3n de residuos org\u00E1nicos, acuerdos de recuperaci\u00F3n de alimentos y cumplimiento CalRecycle SB 1383.' },
+  'usda-k12':        { title: 'USDA K-12', description: 'Registros de producci\u00F3n de comidas del Programa de Nutrici\u00F3n Infantil del USDA y cumplimiento de patrones de comida.' },
+  'system':          { title: 'Sistema', description: 'Monitoreo de funciones Edge, estado de rastreo y diagnósticos de infraestructura.' },
 };
 
 // ── Nav item id \u2192 i18n key mapping ──
@@ -338,6 +347,7 @@ export function Sidebar() {
   const { signOut } = useAuth();
   const { branding } = useBranding();
   const { t, locale } = useTranslation();
+  const { orgType } = useOrgType();
 
   const handleLogout = async () => {
     await signOut();
@@ -346,8 +356,8 @@ export function Sidebar() {
 
   const isTestMode = useMemo(() => checkTestMode(), []);
 
-  // ── Per-role configuration ──
-  const roleConfig = useMemo(() => getRoleConfig(userRole), [userRole]);
+  // ── Per-role configuration (with org-type overlays) ──
+  const roleConfig = useMemo(() => getRoleConfig(userRole, orgType), [userRole, orgType]);
   const homeItem = useMemo(() => getHomeItemForRole(userRole), [userRole]);
   const sections = roleConfig.sections;
 

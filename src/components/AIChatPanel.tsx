@@ -39,7 +39,7 @@ function getDemoResponse(question: string): { text: string; suggestions: string[
     suggestions = ['Send renewal reminders', 'Which vendors are critical?', 'View all vendors'];
   } else {
     const ctx = getDemoContext();
-    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• Downtown Kitchen: Food Safety 94% ✅ · Fire Safety 88% ✅\n• Airport Cafe: Food Safety 72% ⚠️ · Fire Safety 62% 🔴\n• University Dining: Food Safety 62% 🔴 · Fire Safety 55% 🔴\n\n**Top priorities:**\n1. Renew University Dining health permit\n2. Complete missed temp checks at Airport Cafe\n3. Schedule overdue fire suppression inspection\n\nAsk me about compliance scores, temperatures, vendors, inspections, or corrective actions.`;
+    text = `Your organization **${ctx.orgName}** compliance status:\n\n**Quick Status:**\n• Downtown Kitchen: Food Safety 94% ✅ · Facility Safety 88% ✅\n• Airport Cafe: Food Safety 72% ⚠️ · Facility Safety 62% 🔴\n• University Dining: Food Safety 62% 🔴 · Facility Safety 55% 🔴\n\n**Top priorities:**\n1. Renew University Dining health permit\n2. Complete missed temp checks at Airport Cafe\n3. Schedule overdue fire suppression inspection\n\nAsk me about compliance scores, temperatures, vendors, inspections, or corrective actions.`;
     suggestions = ['Why did Airport score drop?', 'Am I inspection ready?', 'What actions are overdue?'];
   }
 

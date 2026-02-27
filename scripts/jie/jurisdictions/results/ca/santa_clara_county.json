@@ -33,7 +33,7 @@
     "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days to ensure major violations remain corrected",
     "public_disclosure": "All inspection results, placards, and scores publicly available through SCCDineOut web application and posted placards at facilities"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Santa Clara County Fire Marshal's Office (operated by Santa Clara County Fire Department)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen hood and duct extinguishing system permits required with specific submittal and inspection requirements including bag/balloon tests and functional testing",

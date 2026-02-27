@@ -35,7 +35,7 @@ const DEMO_RESPONSES: Record<string, { reply: string; cta: 'try_demo' | 'book_ca
     cta: 'try_demo',
   },
   default: {
-    reply: "Great question! Commercial kitchen compliance covers food safety (FDA Food Code, state health codes), fire safety (NFPA 96, hood cleaning), and vendor management. EvidLY automates tracking for all three. Want to see how it works?",
+    reply: "Great question! Commercial kitchen compliance covers food safety (FDA Food Code, state health codes), facility safety (NFPA 96, hood cleaning), and vendor management. EvidLY automates tracking for all three. Want to see how it works?",
     cta: 'try_demo',
   },
 };

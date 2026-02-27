@@ -13,7 +13,7 @@ interface CompletionRequest {
 const CERT_TYPE_MAP: Record<string, string> = {
   food_safety_handler: 'food_handler',
   food_safety_manager: 'food_manager_prep',
-  fire_safety: 'fire_safety',
+  facility_safety: 'facility_safety',
   compliance_ops: 'custom',
   custom: 'custom',
 };
@@ -21,14 +21,14 @@ const CERT_TYPE_MAP: Record<string, string> = {
 const VALIDITY_YEARS: Record<string, number> = {
   food_safety_handler: 3,
   food_safety_manager: 5,
-  fire_safety: 1,
+  facility_safety: 1,
 };
 
 function generateCertNumber(type: string): string {
   const prefix: Record<string, string> = {
     food_handler: 'EVD-FH',
     food_manager_prep: 'EVD-FM',
-    fire_safety: 'EVD-FS',
+    facility_safety: 'EVD-FS',
     custom: 'EVD-CU',
   };
   const year = new Date().getFullYear();
@@ -200,12 +200,12 @@ Deno.serve(async (req: Request) => {
     .eq('id', enrollment.location_id)
     .maybeSingle();
 
-  // Auto-enroll in fire safety if completed food handler
+  // Auto-enroll in facility safety if completed food handler
   if (course.category === 'food_safety_handler') {
     const { data: fireCourse } = await supabase
       .from('training_courses')
       .select('id')
-      .eq('category', 'fire_safety')
+      .eq('category', 'facility_safety')
       .eq('is_active', true)
       .eq('is_system_course', true)
       .limit(1)
@@ -228,7 +228,7 @@ Deno.serve(async (req: Request) => {
           enrollment_reason: 'new_hire',
           status: 'not_started',
         });
-        actions.push('auto_enrolled_fire_safety');
+        actions.push('auto_enrolled_facility_safety');
       }
     }
   }

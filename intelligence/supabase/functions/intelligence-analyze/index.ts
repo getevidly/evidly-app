@@ -70,7 +70,7 @@ Deno.serve(async (req: Request) => {
   "action_items": string[] (exactly 3-5 specific things operators should do, starting with immediate actions),
   "impact_level": "critical" | "high" | "medium" | "low" | "informational",
   "urgency": "immediate" | "urgent" | "standard" | "monitor",
-  "affected_pillars": ("food_safety" | "fire_safety")[],
+  "affected_pillars": ("food_safety" | "facility_safety")[],
   "affected_counties": string[] (lowercase county names),
   "confidence_score": number between 0 and 1 (be honest, 0.5 if uncertain),
   "tags": string[] (5-10 relevant keywords),

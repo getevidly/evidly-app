@@ -19,7 +19,7 @@
     "reinspection_trigger": "Violations noted during routine inspections require follow-up verification",
     "public_disclosure": "The two most recent routine inspections and any subsequent reinspections are posted online. Inspection reports are available for public review upon request as required by California Public Records Act."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Not specified - likely local fire authority or CAL FIRE",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "NFPA 96 standards apply - commercial kitchen hood fire suppression systems require semi-annual inspections by licensed fire protection companies",

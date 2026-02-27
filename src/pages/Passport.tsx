@@ -5,6 +5,8 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useParams, useNavigate } from 'react-router-dom';
 import { locations, locationScores, LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 import { FACILITY_INFO } from '../lib/reportGenerator';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // Static jurisdiction metadata keyed by county
 const JURISDICTION_META: Record<string, {
@@ -36,6 +38,7 @@ const JURISDICTION_META: Record<string, {
 export default function Passport() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const passportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -60,7 +63,7 @@ export default function Passport() {
     address: loc.address,
     overall: null as number | null, // DEPRECATED — no composite score
     foodSafety: scores.foodSafety,
-    fireSafety: scores.fireSafety,
+    facilitySafety: scores.facilitySafety,
   };
 
   // Build activity items from real jurisdiction status
@@ -72,10 +75,10 @@ export default function Passport() {
     recentActivity.push({ icon: AlertCircle, text: `Food Safety: ${jurisdictionStatus.foodSafety.gradeDisplay} (${jurisdictionStatus.foodSafety.authority})`, status: 'warning' });
   }
 
-  if (jurisdictionStatus.fireSafety.status === 'passing') {
-    recentActivity.push({ icon: CheckCircle2, text: `Fire Safety: ${jurisdictionStatus.fireSafety.gradeDisplay} (${jurisdictionStatus.fireSafety.authority})`, status: 'success' });
+  if (jurisdictionStatus.facilitySafety.status === 'passing') {
+    recentActivity.push({ icon: CheckCircle2, text: `Facility Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'success' });
   } else {
-    recentActivity.push({ icon: AlertCircle, text: `Fire Safety: ${jurisdictionStatus.fireSafety.gradeDisplay} (${jurisdictionStatus.fireSafety.authority})`, status: 'warning' });
+    recentActivity.push({ icon: AlertCircle, text: `Facility Safety: ${jurisdictionStatus.facilitySafety.gradeDisplay} (${jurisdictionStatus.facilitySafety.authority})`, status: 'warning' });
   }
 
   // Static activity items per location
@@ -102,7 +105,7 @@ export default function Passport() {
   const getScoreColor = (s: number) =>
     s >= 90 ? '#22c55e' : s >= 75 ? '#eab308' : s >= 60 ? '#f59e0b' : '#ef4444';
 
-  const handleDownloadPDF = async () => {
+  const doDownloadPDF = async () => {
     if (!passportRef.current) return;
     setPdfLoading(true);
     try {
@@ -159,10 +162,14 @@ export default function Passport() {
 
       pdf.save(`EvidLY-Passport-${loc.urlId}-${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch {
-      alert('PDF generation failed. Please try again.');
+      // PDF generation failed — no-op in guarded context
     } finally {
       setPdfLoading(false);
     }
+  };
+
+  const handleDownloadPDF = () => {
+    guardAction('download', 'Vendor Passport', () => { doDownloadPDF(); });
   };
 
   return (
@@ -230,25 +237,25 @@ export default function Passport() {
                 </div>
                 <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
               </div>
-              {/* Fire Safety Ring */}
+              {/* Facility Safety Ring */}
               <div className="flex flex-col items-center">
                 <div className="relative w-40 h-40">
                   <svg className="w-full h-full transform -rotate-90">
                     <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
                     <circle
                       cx="80" cy="80" r="68"
-                      stroke={getScoreColor(locationData.fireSafety)}
+                      stroke={getScoreColor(locationData.facilitySafety)}
                       strokeWidth="12" fill="none"
                       strokeDasharray={`${2 * Math.PI * 68}`}
-                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.fireSafety / 100)}`}
+                      strokeDashoffset={`${2 * Math.PI * 68 * (1 - locationData.facilitySafety / 100)}`}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.fireSafety) }}>{locationData.fireSafety}</div>
+                    <div className="text-4xl font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</div>
                   </div>
                 </div>
-                <div className="text-sm font-medium text-gray-600 mt-2">Fire Safety</div>
+                <div className="text-sm font-medium text-gray-600 mt-2">Facility Safety</div>
               </div>
             </div>
           </div>
@@ -271,11 +278,11 @@ export default function Passport() {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="font-semibold text-gray-700">Fire Safety</span>
-                  <span className="font-bold" style={{ color: getScoreColor(locationData.fireSafety) }}>{locationData.fireSafety}</span>
+                  <span className="font-semibold text-gray-700">Facility Safety</span>
+                  <span className="font-bold" style={{ color: getScoreColor(locationData.facilitySafety) }}>{locationData.facilitySafety}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.fireSafety}%`, backgroundColor: getScoreColor(locationData.fireSafety) }} />
+                  <div className="h-3 rounded-full transition-all" style={{ width: `${locationData.facilitySafety}%`, backgroundColor: getScoreColor(locationData.facilitySafety) }} />
                 </div>
               </div>
             </div>
@@ -363,6 +370,14 @@ export default function Passport() {
           </a>
         </div>
       </footer>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

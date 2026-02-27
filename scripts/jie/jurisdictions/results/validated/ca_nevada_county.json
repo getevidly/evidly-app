@@ -19,7 +19,7 @@
     "reinspection_trigger": "Unknown - specific reinspection criteria not found",
     "public_disclosure": "Unknown - public disclosure requirements not specified on official sources"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Unknown - specific fire authority not identified for Nevada County commercial kitchen inspections",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": "Semi-annual (every 6 months) inspection required per NFPA 17A standards for wet chemical fire suppression systems",
@@ -69,7 +69,7 @@
     "error_count": 0,
     "warning_count": 1,
     "warnings": [
-      "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+      "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
     ],
     "import_eligible": true
   }

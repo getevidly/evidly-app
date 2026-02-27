@@ -508,7 +508,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
     }
 
     if (location.locationName === 'Airport Cafe') {
-      // Missing 5 documents and 1 cert — includes CFC fire safety gaps
+      // Missing 5 documents and 1 cert — includes CFC facility safety gaps
       const gaps: ComplianceGap[] = [
         { category: 'document', item: 'Fire Inspection Certificate', status: 'expiring', detail: 'Fire inspection certificate expires in 14 days', action: 'Schedule fire inspection' },
         { category: 'document', item: 'Hood Cleaning Certificate', status: 'missing', detail: 'No hood cleaning certificate on file — last cleaning was 7 months ago', action: 'Schedule hood cleaning and upload certificate' },

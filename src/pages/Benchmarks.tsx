@@ -19,9 +19,9 @@ import { FeatureGate } from '../components/FeatureGate';
 
 // ── Demo benchmark data ──────────────────────────────────────────────
 
-const INDUSTRY_AVG = { overall: 79, foodSafety: 79, fireSafety: 76 };
-const VERTICAL_AVG = { overall: 82, foodSafety: 82, fireSafety: 78 };
-const GEOGRAPHIC_AVG = { overall: 81, foodSafety: 80, fireSafety: 77 };
+const INDUSTRY_AVG = { overall: 79, foodSafety: 79, facilitySafety: 76 };
+const VERTICAL_AVG = { overall: 82, foodSafety: 82, facilitySafety: 78 };
+const GEOGRAPHIC_AVG = { overall: 81, foodSafety: 80, facilitySafety: 77 };
 
 function percentile(yourScore: number, avg: number): number {
   const diff = yourScore - avg;
@@ -96,9 +96,9 @@ const BADGE_TIERS = [
 ];
 
 const LOCATION_RANKS = [
-  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, fireSafety: 88, badge: 'excellence' },
-  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, fireSafety: 62, badge: null },
-  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, fireSafety: 55, badge: null },
+  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, facilitySafety: 88, badge: 'excellence' },
+  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, facilitySafety: 62, badge: null },
+  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, facilitySafety: 55, badge: null },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -171,7 +171,7 @@ export function Benchmarks() {
   const navigate = useNavigate();
   const { userRole } = useRole();
   const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const reportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -417,7 +417,7 @@ export function Benchmarks() {
                 <tbody className="divide-y divide-gray-100">
                   {[
                     { cat: 'Food Safety', yours: complianceScores.foodSafety, vert: VERTICAL_AVG.foodSafety, ind: INDUSTRY_AVG.foodSafety },
-                    { cat: 'Fire Safety', yours: complianceScores.fireSafety, vert: VERTICAL_AVG.fireSafety, ind: INDUSTRY_AVG.fireSafety },
+                    { cat: 'Facility Safety', yours: complianceScores.facilitySafety, vert: VERTICAL_AVG.facilitySafety, ind: INDUSTRY_AVG.facilitySafety },
                     { cat: 'Overall', yours: complianceScores.overall, vert: VERTICAL_AVG.overall, ind: INDUSTRY_AVG.overall },
                   ].map((row) => {
                     const pct = percentile(row.yours, row.ind);
@@ -574,7 +574,7 @@ export function Benchmarks() {
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Score</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3">Industry Pct</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Food Safety</th>
-                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Fire Safety</th>
+                    <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Facility Safety</th>
                     <th className="text-center text-xs font-semibold text-gray-500 uppercase pb-3 hidden sm:table-cell">Badge</th>
                   </tr>
                 </thead>
@@ -591,7 +591,7 @@ export function Benchmarks() {
                       <td className="py-3 text-center text-sm font-bold" style={{ color: '#1e4d6b' }}>{loc.score}</td>
                       <td className="py-3 text-center"><PercentileBadge pct={loc.industryPct} /></td>
                       <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.foodSafety}</td>
-                      <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.fireSafety}</td>
+                      <td className="py-3 text-center text-sm text-gray-600 hidden sm:table-cell">{loc.facilitySafety}</td>
                       <td className="py-3 text-center hidden sm:table-cell">
                         {loc.badge ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold" style={{ backgroundColor: '#f1f5f9', color: '#3D5068' }}>
@@ -620,7 +620,7 @@ export function Benchmarks() {
                 </div>
                 <div className="flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                  <span><strong>University Dining</strong> has declined 8 points in Fire Safety over 3 months — correlates with manager vacancy Aug-Oct.</span>
+                  <span><strong>University Dining</strong> has declined 8 points in Facility Safety over 3 months — correlates with manager vacancy Aug-Oct.</span>
                 </div>
               </div>
             </div>
@@ -788,7 +788,7 @@ export function Benchmarks() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-        onOverride={handleOverride}
+       
       />
     </>
   );

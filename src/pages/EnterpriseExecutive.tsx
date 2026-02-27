@@ -143,7 +143,7 @@ export function EnterpriseExecutive() {
       worstLocation: findWorstInSubtree(c),
       criticalItems: countCriticalBelow(c, 75),
       foodSafety: c.foodSafety,
-      fireSafety: c.fireSafety,
+      facilitySafety: c.facilitySafety,
     }));
   }, [drillDownNodeId, activeNode]);
 
@@ -295,10 +295,10 @@ export function EnterpriseExecutive() {
                 <p className="text-[10px] text-gray-400">Food Safety</p>
               </div>
               <div>
-                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.fireSafety : latestTrend.fireSafety) }}>
-                  {drillDownNodeId ? activeNode.fireSafety : latestTrend.fireSafety}%
+                <p className="text-sm font-bold" style={{ color: scoreColor(drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety) }}>
+                  {drillDownNodeId ? activeNode.facilitySafety : latestTrend.facilitySafety}%
                 </p>
-                <p className="text-[10px] text-gray-400">Fire Safety</p>
+                <p className="text-[10px] text-gray-400">Facility Safety</p>
               </div>
             </div>
           </div>

@@ -65,6 +65,9 @@ export interface OnboardingChecklistSection {
 }
 
 export interface UseOnboardingChecklistReturn {
+  /** Flat ordered list of visible steps with completion status */
+  steps: Array<OnboardingStepDef & { completed: boolean }>;
+  /** Grouped by section (legacy compat) */
   sections: OnboardingChecklistSection[];
   completedCount: number;
   totalCount: number;
@@ -72,6 +75,15 @@ export interface UseOnboardingChecklistReturn {
   isDismissed: boolean;
   shouldShow: boolean;
   loading: boolean;
+  /** Index of the current active wizard step */
+  currentStepIndex: number;
+  /** Mark current step complete and advance to next */
+  completeStep: (stepId: string) => void;
+  /** Skip current step without completing — advance to next */
+  skipStep: () => void;
+  /** Jump to a specific step index */
+  goToStep: (index: number) => void;
+  /** Legacy toggle (still used by checklist mode) */
   toggleStep: (stepId: string) => void;
   dismiss: () => void;
 }
@@ -81,6 +93,7 @@ export interface UseOnboardingChecklistReturn {
 export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
   const isDemo = isDemoMode || !profile?.organization_id;
   const orgId = profile?.organization_id || '';
 
@@ -89,6 +102,7 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
   const [isDismissed, setIsDismissed] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [manualStepIndex, setManualStepIndex] = useState<number | null>(null);
 
   // ── Load org profile + persisted state ────────────────
   useEffect(() => {
@@ -138,21 +152,38 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     [orgIndustry, orgLocationCount],
   );
 
+  // ── Flat step list with completion ────────────────────
+  const steps = useMemo(
+    () => visibleSteps.map(s => ({ ...s, completed: completedIds.has(s.id) })),
+    [visibleSteps, completedIds],
+  );
+
   // ── Group into sections ───────────────────────────────
   const sections = useMemo(() => {
     const sectionMap = new Map<string, Array<OnboardingStepDef & { completed: boolean }>>();
-    for (const step of visibleSteps) {
+    for (const step of steps) {
       if (!sectionMap.has(step.section)) sectionMap.set(step.section, []);
-      sectionMap.get(step.section)!.push({ ...step, completed: completedIds.has(step.id) });
+      sectionMap.get(step.section)!.push(step);
     }
     return ONBOARDING_SECTIONS
       .filter(s => sectionMap.has(s.id))
       .map(s => ({ id: s.id, label: s.label, steps: sectionMap.get(s.id)! }));
-  }, [visibleSteps, completedIds]);
+  }, [steps]);
 
   const totalCount = visibleSteps.length;
   const completedCount = visibleSteps.filter(s => completedIds.has(s.id)).length;
   const isAllComplete = totalCount > 0 && completedCount === totalCount;
+  const shouldShow = !isDismissed && !isAllComplete && !loading && ALLOWED_ROLES.has(userRole);
+
+  // ── Auto-detect current step: first incomplete step ───
+  const autoStepIndex = useMemo(() => {
+    const idx = steps.findIndex(s => !s.completed);
+    return idx === -1 ? steps.length - 1 : idx;
+  }, [steps]);
+
+  const currentStepIndex = manualStepIndex !== null && manualStepIndex < steps.length
+    ? manualStepIndex
+    : autoStepIndex;
 
   // ── Persist completion ────────────────────────────────
   const persistCompletion = useCallback((ids: Set<string>) => {
@@ -169,11 +200,42 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     });
   }, [persistCompletion]);
 
+  const completeStep = useCallback((stepId: string) => {
+    setCompletedIds(prev => {
+      const next = new Set(prev);
+      next.add(stepId);
+      persistCompletion(next);
+      return next;
+    });
+    // Auto-advance: clear manual override so autoStepIndex picks up next incomplete
+    setManualStepIndex(null);
+  }, [persistCompletion]);
+
+  const skipStep = useCallback(() => {
+    // Move to next step without marking complete
+    setManualStepIndex(prev => {
+      const current = prev !== null ? prev : autoStepIndex;
+      const next = current + 1;
+      return next < steps.length ? next : current;
+    });
+  }, [autoStepIndex, steps.length]);
+
+  const goToStep = useCallback((index: number) => {
+    if (index >= 0 && index < steps.length) {
+      setManualStepIndex(index);
+    }
+  }, [steps.length]);
+
   const dismiss = useCallback(() => {
     setIsDismissed(true);
     const key = isDemo ? DEMO_DISMISSED_KEY : authDismissedKey(orgId);
     try { localStorage.setItem(key, 'true'); } catch { /* ignore */ }
   }, [isDemo, orgId]);
 
-  return { sections, completedCount, totalCount, isAllComplete, isDismissed, loading, toggleStep, dismiss };
+  return {
+    steps, sections, completedCount, totalCount, isAllComplete,
+    isDismissed, shouldShow, loading,
+    currentStepIndex, completeStep, skipStep, goToStep,
+    toggleStep, dismiss,
+  };
 }

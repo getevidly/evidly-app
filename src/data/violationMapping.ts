@@ -17,7 +17,7 @@ export interface ViolationMapping {
   /** County-specific severity overrides (county slug → severity) */
   countyOverrides?: Partial<Record<string, ViolationSeverity>>;
   /** Which pillar this maps to */
-  pillar: 'Food Safety' | 'Fire Safety';
+  pillar: 'Food Safety' | 'Facility Safety';
 }
 
 /**
@@ -73,7 +73,7 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     calCodeSection: '§114157',
     description: 'Missing or non-functional probe thermometer',
     defaultSeverity: 'minor',
-    pillar: 'Fire Safety',
+    pillar: 'Facility Safety',
   },
   {
     evidlyItem: 'hood_cleaning',
@@ -83,14 +83,14 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     countyOverrides: {
       kern: 'major',
     },
-    pillar: 'Fire Safety',
+    pillar: 'Facility Safety',
   },
   {
     evidlyItem: 'fire_suppression',
     calCodeSection: 'NFPA 96 Chapter 9',
     description: 'Fire suppression system inspection expired',
     defaultSeverity: 'critical',
-    pillar: 'Fire Safety',
+    pillar: 'Facility Safety',
   },
   {
     evidlyItem: 'pest_control',
@@ -149,14 +149,14 @@ export const VIOLATION_MAPPINGS: ViolationMapping[] = [
     countyOverrides: {
       kern: 'major',
     },
-    pillar: 'Fire Safety',
+    pillar: 'Facility Safety',
   },
   {
     evidlyItem: 'equipment_maintenance',
     calCodeSection: '§114130',
     description: 'Equipment maintenance overdue',
     defaultSeverity: 'minor',
-    pillar: 'Fire Safety',
+    pillar: 'Facility Safety',
   },
 ];
 

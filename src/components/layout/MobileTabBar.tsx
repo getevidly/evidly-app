@@ -26,6 +26,7 @@ import {
   Snowflake,
   Flame,
   Scale,
+  Shield,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -39,7 +40,7 @@ import { getRoleConfig } from '../../config/sidebarConfig';
 const PATH_ICON: Record<string, any> = {
   '/corrective-actions': AlertCircle,
   '/documents': FileText,
-  '/fire-safety': Flame,
+  '/facility-safety': Flame,
   '/haccp': ClipboardCheck,
   '/incidents': AlertTriangle,
   '/regulatory-alerts': AlertCircle,
@@ -75,6 +76,7 @@ const PATH_ICON: Record<string, any> = {
   '/team': Users,
   '/vendors': Store,
   '/help': HelpCircle,
+  '/insurance-risk': Shield,
   '/allergen-tracking': AlertTriangle,
   '/cooling-logs': Snowflake,
   '/receiving-log': FileText,

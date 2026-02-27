@@ -60,7 +60,7 @@ export const CPP_SERVICES: ServiceLine[] = [
     id: 'hood_cleaning',
     name: 'Hood & Duct Cleaning',
     shortDescription: 'NFPA 96 (2024) Table 12.4 compliant exhaust system cleaning with IKECA-certified documentation',
-    fullDescription: `Complete cleaning of hood filters, plenum, ducts, and fans per NFPA 96 (2024) Table 12.4 frequency schedules. Includes before/after photography, grease weight documentation, IKECA-certified service certificate, and automatic upload to your EvidLY fire safety record.`,
+    fullDescription: `Complete cleaning of hood filters, plenum, ducts, and fans per NFPA 96 (2024) Table 12.4 frequency schedules. Includes before/after photography, grease weight documentation, IKECA-certified service certificate, and automatic upload to your EvidLY facility safety record.`,
     nfpaReference: 'NFPA 96 (2024) Table 12.4',
     additionalRegs: [
       'NFPA 96 (2024) Chapter 11 — Procedures for the Use of the System',
@@ -68,11 +68,11 @@ export const CPP_SERVICES: ServiceLine[] = [
       'CalCode §114149.1',
     ],
     frequency: 'Monthly, Quarterly, Semi-Annual, or Annual — per NFPA 96 (2024) Table 12.4 based on cooking type and volume',
-    businessBenefit: `Hood cleaning is not just a compliance checkbox — it is the foundation of kitchen fire safety. A clean duct system means lower fire risk, lower insurance premiums, and a certificate that protects you when the AHJ or insurance adjuster comes calling. Operators with documented NFPA 96 cleaning history have a measurable advantage in claim disputes.`,
-    operationalImpact: `Expired or missing certificate = immediate Fire Safety FAIL in EvidLY. AHJ can issue a closure notice without warning. Insurance carriers can deny fire claims when NFPA 96 maintenance records are absent at the time of loss — turning a covered event into a total business loss.`,
+    businessBenefit: `Hood cleaning is not just a compliance checkbox — it is the foundation of kitchen facility safety. A clean duct system means lower fire risk, lower insurance premiums, and a certificate that protects you when the AHJ or insurance adjuster comes calling. Operators with documented NFPA 96 cleaning history have a measurable advantage in claim disputes.`,
+    operationalImpact: `Expired or missing certificate = immediate Facility Safety FAIL in EvidLY. AHJ can issue a closure notice without warning. Insurance carriers can deny fire claims when NFPA 96 maintenance records are absent at the time of loss — turning a covered event into a total business loss.`,
     whyOperatorsSkipIt: `"It looks clean" or extending intervals past NFPA 96 Table 12.4 schedules to reduce costs.`,
     rebuttal: `Grease accumulation in ducts is invisible to the naked eye and irrelevant to inspection — what the AHJ checks is the certificate date and frequency. A duct that "looks fine" can carry significant grease buildup behind the baffle that ignites from a single flare-up. The certificate protects you legally and financially even more than the cleaning protects you physically.`,
-    complianceConsequence: `No current certificate = Fire Safety FAIL in EvidLY and on AHJ inspection. Insurance policy may be voided for fire events occurring after certificate expiration.`,
+    complianceConsequence: `No current certificate = Facility Safety FAIL in EvidLY and on AHJ inspection. Insurance policy may be voided for fire events occurring after certificate expiration.`,
     costDrivers: [
       {
         id: 'daily_revenue',
@@ -164,7 +164,7 @@ export const CPP_SERVICES: ServiceLine[] = [
     operationalImpact: `A failed exhaust fan forces an immediate kitchen shutdown — fire code prohibits cooking under a non-functional hood system. Emergency fan replacement typically takes 1–4 days including sourcing, scheduling, installation, and sign-off. Every one of those days is lost revenue that cannot be recovered. A worn but still-running fan is nearly as costly — reduced airflow increases grease bypass into the ductwork, directly accelerating the rate at which the duct accumulates grease and requires cleaning.`,
     whyOperatorsSkipIt: `"The fan is running so it's fine." Operators wait for complete failure before servicing, unaware that a degraded fan is costing them more in accelerated duct buildup and is one belt snap from a forced closure.`,
     rebuttal: `A running fan is not the same as a performing fan. A worn belt slips under load, reducing airflow by 20–40% while the fan appears to operate normally. This reduced capture velocity means grease that should travel up the duct settles on surfaces around the hood instead — accelerating buildup between cleanings and creating fire risk. Fan failure doesn't announce itself. It happens at the worst possible moment, and the downtime cost exceeds years of preventive service cost in a single event.`,
-    complianceConsequence: `Non-performing exhaust system = NFPA 96 (2024) Chapter 11 violation. Verify specific section requirements with your AHJ. AHJ inspectors increasingly check fan maintenance records during fire safety visits. A fan with no service history in 2+ years is an inspection red flag regardless of visual condition.`,
+    complianceConsequence: `Non-performing exhaust system = NFPA 96 (2024) Chapter 11 violation. Verify specific section requirements with your AHJ. AHJ inspectors increasingly check fan maintenance records during facility safety visits. A fan with no service history in 2+ years is an inspection red flag regardless of visual condition.`,
     costDrivers: [
       {
         id: 'daily_revenue',
@@ -227,7 +227,7 @@ export const CPP_SERVICES: ServiceLine[] = [
       {
         riskLabel: 'Fire risk increase from compromised hood capture performance',
         formula: 'Fan underperformance is a contributing factor in commercial kitchen fires. Exposure calculated from daily revenue × operating days × estimated probability increase.',
-        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — airflow performance as fire safety requirement. Verify specific section requirements with your AHJ.',
+        regulatoryBasis: 'NFPA 96 (2024) Chapter 11 — airflow performance as facility safety requirement. Verify specific section requirements with your AHJ.',
         probability: 'Medium',
         calculate: (i) => ({
           low: (i.daily_revenue || 0) * 300 * 0.02,
@@ -344,10 +344,10 @@ export const CPP_SERVICES: ServiceLine[] = [
     ],
     frequency: 'Quarterly service; monthly visual inspection recommended',
     businessBenefit: `Your commercial roof is a major capital asset. A properly installed grease containment system costs a fraction of a single membrane patch repair — and a fraction of a percent of a full roof replacement. The containment system also prevents rooftop grease from becoming a fire ignition source and stops the stormwater discharge liability that occurs when grease washes off the roof in rain events. For an operator who already reinvests in their building, this is straightforward asset protection with a clear and calculable ROI.`,
-    operationalImpact: `Grease discharged from exhaust fans does not wash away — it accumulates, concentrates during rain events, and chemically attacks petroleum-based roofing membranes (TPO, EPDM, modified bitumen). The degradation is invisible from inside the building until the roof leaks. By the time water intrusion is detected, the membrane damage is already extensive. Rooftop grease accumulation is also increasingly flagged by AHJs during fire safety inspections in California as fire code awareness of this hazard increases.`,
+    operationalImpact: `Grease discharged from exhaust fans does not wash away — it accumulates, concentrates during rain events, and chemically attacks petroleum-based roofing membranes (TPO, EPDM, modified bitumen). The degradation is invisible from inside the building until the roof leaks. By the time water intrusion is detected, the membrane damage is already extensive. Rooftop grease accumulation is also increasingly flagged by AHJs during facility safety inspections in California as fire code awareness of this hazard increases.`,
     whyOperatorsSkipIt: `"Out of sight, out of mind." The roof is never inspected by the operator between re-roofing projects. Grease accumulates over years before the damage manifests — by then the repair bill dwarfs what containment service would have cost over the entire period.`,
     rebuttal: `Every exhaust fan on a commercial kitchen roof discharges grease onto the roof surface every hour of operation. That grease doesn't evaporate — it bonds to the membrane, hardens with UV exposure, and creates a chemical reaction that degrades the roofing material beneath it. TPO and EPDM membranes are particularly susceptible. A single affected section costs thousands to cut out and patch. A full roof replacement on a commercial kitchen is a major unplanned capital expenditure. Grease containment service costs less per year than one patch repair — and documents your maintenance posture for insurance purposes.`,
-    complianceConsequence: `Visible rooftop grease accumulation = NFPA 96 (2024) Chapter 11 violation on fire inspection. Verify specific section requirements with your AHJ. AHJs in California are increasingly including rooftop grease in commercial kitchen fire safety reviews. Stormwater grease discharge from roof runoff can trigger NPDES enforcement.`,
+    complianceConsequence: `Visible rooftop grease accumulation = NFPA 96 (2024) Chapter 11 violation on fire inspection. Verify specific section requirements with your AHJ. AHJs in California are increasingly including rooftop grease in commercial kitchen facility safety reviews. Stormwater grease discharge from roof runoff can trigger NPDES enforcement.`,
     costDrivers: [
       {
         id: 'roof_sqft',

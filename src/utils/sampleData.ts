@@ -12,7 +12,7 @@ export const SAMPLE_DATA = {
   complianceScore: 76,
   complianceBreakdown: {
     foodSafety: 91,
-    fireSafety: 73,
+    facilitySafety: 73,
   },
   locations: [
     {

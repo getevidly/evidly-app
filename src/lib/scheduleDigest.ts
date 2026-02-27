@@ -73,7 +73,7 @@ async function gatherDigestData(org: OrgDigestConfig): Promise<DigestData> {
     weekStart: fmt(weekStart),
     weekEnd: fmt(weekEnd),
     foodSafetyScore: 0,
-    fireSafetyScore: 0,
+    facilitySafetyScore: 0,
     scoreTrend: 0,
     locations: [],
     highlights: [],

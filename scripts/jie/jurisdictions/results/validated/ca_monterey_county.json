@@ -19,7 +19,7 @@
     "reinspection_trigger": "Complaint investigations, follow-up inspections for violations, permit inspections may be scheduled in advance",
     "public_disclosure": "Two most recent inspection reports available through MC Food Inspection Findings mobile app. Facilities must maintain most recent routine inspection report on-site for public review upon request per California Retail Food Code requirements. Gold Seal status visible to public through app and posted at facility."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Monterey County Regional Fire Protection District (for unincorporated areas) and local city fire departments (for incorporated cities)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems must be inspected every 6 months per NFPA 96 standards by licensed fire protection companies",

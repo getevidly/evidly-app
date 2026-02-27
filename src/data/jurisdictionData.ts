@@ -3,7 +3,7 @@ export interface JurisdictionScore {
   agencyName: string;
   county: string;
   state: string;
-  pillar: 'food_safety' | 'fire_safety';
+  pillar: 'food_safety' | 'facility_safety';
   gradingScale: string;
   passingThreshold: string;
   inspectionFrequency: string;
@@ -61,7 +61,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'fresno_city_fire',
     agencyName: 'City of Fresno Fire Department — Fire Prevention Bureau',
-    county: 'Fresno', state: 'CA', pillar: 'fire_safety',
+    county: 'Fresno', state: 'CA', pillar: 'facility_safety',
     gradingScale: 'Pass / Fail / Conditional',
     passingThreshold: 'Pass — all NFPA 96 (2024) requirements met',
     inspectionFrequency: 'Annual + complaint-triggered',
@@ -101,7 +101,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'merced_city_fire',
     agencyName: 'City of Merced Fire Department — Fire Prevention',
-    county: 'Merced', state: 'CA', pillar: 'fire_safety',
+    county: 'Merced', state: 'CA', pillar: 'facility_safety',
     gradingScale: 'Pass / Fail',
     passingThreshold: 'Pass',
     inspectionFrequency: 'Annual',
@@ -138,7 +138,7 @@ export const JURISDICTION_DATABASE: JurisdictionScore[] = [
   {
     id: 'modesto_fire',
     agencyName: 'City of Modesto Fire Department — Fire Prevention Division',
-    county: 'Stanislaus', state: 'CA', pillar: 'fire_safety',
+    county: 'Stanislaus', state: 'CA', pillar: 'facility_safety',
     gradingScale: 'Pass / Fail / Conditional',
     passingThreshold: 'Pass',
     inspectionFrequency: 'Annual',

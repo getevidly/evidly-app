@@ -17,7 +17,7 @@ export interface DemoScoreResult {
   locationName: string;
   overallScore: number;
   foodSafety: { score: number; ops: number; docs: number };
-  fireSafety: { score: number; ops: number; docs: number };
+  facilitySafety: { score: number; ops: number; docs: number };
   jurisdictionGrade: string;
   gradeDisplay: string;
   passFail: string;
@@ -58,10 +58,10 @@ export function calculateDemoScore(
       ops: location.foodSafety.ops,
       docs: location.foodSafety.docs,
     },
-    fireSafety: {
-      score: Math.round(location.fireSafety.ops * opsW + location.fireSafety.docs * docsW),
-      ops: location.fireSafety.ops,
-      docs: location.fireSafety.docs,
+    facilitySafety: {
+      score: Math.round(location.facilitySafety.ops * opsW + location.facilitySafety.docs * docsW),
+      ops: location.facilitySafety.ops,
+      docs: location.facilitySafety.docs,
     },
     jurisdictionGrade: gradeResult.grade,
     gradeDisplay: gradeResult.display,

@@ -5,6 +5,8 @@ import { ArrowLeft, Phone, Mail, MapPin, Calendar, FileText, CheckCircle, XCircl
 import { vendors } from '../data/demoData';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { VendorContactActions } from '../components/VendorContactActions';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface VendorDocument {
   name: string;
@@ -69,6 +71,7 @@ export default function VendorDetail() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const vendor = vendors.find(v => v.id === vendorId);
   const documents = DEMO_DOCUMENTS[vendorId || ''] || [];
@@ -211,7 +214,7 @@ export default function VendorDetail() {
                     Request Document
                   </button>
                   <button
-                    onClick={() => toast.info('Upload (Demo)')}
+                    onClick={() => guardAction('upload', 'Vendor Documents', () => toast.info('Upload'))}
                     className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 min-h-[44px]"
                   >
                     <Upload className="h-4 w-4 mr-2" />
@@ -247,7 +250,7 @@ export default function VendorDetail() {
                     </div>
                     {doc.status === 'on-file' && (
                       <button
-                        onClick={() => toast.info('Downloading ' + doc.name)}
+                        onClick={() => guardAction('download', 'Vendor Documents', () => toast.info('Downloading ' + doc.name))}
                         className="flex items-center mt-2 md:mt-0 min-h-[44px] px-2 hover:opacity-70"
                         style={{ color: '#1e4d6b' }}
                       >
@@ -327,10 +330,10 @@ export default function VendorDetail() {
                 Cancel
               </button>
               <button
-                onClick={() => {
+                onClick={() => guardAction('send', 'Vendor Documents', () => {
                   setShowRequestModal(false);
                   toast.success('Document request sent');
-                }}
+                })}
                 className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] min-h-[44px]"
               >
                 Send Request
@@ -338,6 +341,14 @@ export default function VendorDetail() {
             </div>
           </div>
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
       )}
     </div>
   );

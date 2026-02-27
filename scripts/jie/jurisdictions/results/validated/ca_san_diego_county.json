@@ -36,7 +36,7 @@
     "reinspection_trigger": "Any facility not receiving an 'A' grade on routine inspection is re-inspected. Facilities with scores below 70 or certain major violations result in automatic closure until compliance.",
     "public_disclosure": "Grade cards must be displayed near public entrance during hours of operation. Inspection reports are public information available through SD Food Info website and California Public Records Act requests."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "San Diego County Fire Marshal Program (for unincorporated areas) / City Fire Departments (for incorporated cities)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Kitchen fire suppression systems must be inspected every 6 months per NFPA 96. Quarterly inspections required for high-volume 24-hour operations.",

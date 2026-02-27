@@ -19,7 +19,7 @@
     "reinspection_trigger": "Re-inspection fees are charged for violations requiring follow-up, temporary food facilities subject to re-inspection and/or closure if requirements not met at initial inspection",
     "public_disclosure": "Unable to verify public disclosure requirements from available sources"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "CAL FIRE (California Department of Forestry and Fire Protection) Tuolumne-Calaveras Unit and local fire departments",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems required per NFPA 96, inspected every 6 months by licensed fire protection companies per industry standards",

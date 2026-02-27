@@ -28,7 +28,7 @@ export default function Hero() {
             </div>
             <h1 className="font-['Outfit'] font-extrabold leading-[1.15] tracking-[-0.02em] mb-5" style={{ fontSize: 'clamp(2rem, 3.5vw, 2.75rem)' }}>
               <span className="text-[var(--color-blue)]">One platform for </span>
-              <span className="text-[var(--color-gold)]">fire safety, food safety, and vendor compliance</span>
+              <span className="text-[var(--color-gold)]">facility safety, food safety, and vendor compliance</span>
             </h1>
             <p className="text-[1.1rem] text-[var(--color-text-light)] leading-[1.7] mb-7">
               Accurate records your team can trust. Eliminate manual errors, pass every inspection with verified data, and catch problems before inspectors do.

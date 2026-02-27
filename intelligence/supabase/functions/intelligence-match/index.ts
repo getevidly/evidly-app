@@ -107,7 +107,7 @@ Deno.serve(async (req: Request) => {
     if ((insight.confidence || 0) > 0.8) relevanceScore += 0.15;
 
     // +0.15 if pillar overlap with client metadata
-    const clientPillars: string[] = client.metadata?.pillar_focus || ["food_safety", "fire_safety"];
+    const clientPillars: string[] = client.metadata?.pillar_focus || ["food_safety", "facility_safety"];
     const insightPillars: string[] = insight.affected_pillars || [];
     if (insightPillars.length > 0 && clientPillars.some((p: string) => insightPillars.includes(p))) {
       relevanceScore += 0.15;

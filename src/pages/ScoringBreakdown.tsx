@@ -121,7 +121,7 @@ export function ScoringBreakdown() {
   const jurisdictionInfo = getJurisdictionInfo(locationParam);
 
   const foodStatus = STATUS_COLORS[gradeData.foodSafety.status];
-  const fireStatus = STATUS_COLORS[gradeData.fireSafety.status];
+  const fireStatus = STATUS_COLORS[gradeData.facilitySafety.status];
 
   return (
     <div className="space-y-6">
@@ -224,13 +224,13 @@ export function ScoringBreakdown() {
           </div>
         </CollapsibleSection>
 
-        {/* Fire Safety */}
+        {/* Facility Safety */}
         <CollapsibleSection
-          title="Fire Safety"
+          title="Facility Safety"
           icon={<span className="text-lg">&#128293;</span>}
           badge={
             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${fireStatus.bg} ${fireStatus.text} ${fireStatus.border}`}>
-              {gradeData.fireSafety.grade}
+              {gradeData.facilitySafety.grade}
             </span>
           }
           defaultOpen
@@ -245,10 +245,10 @@ export function ScoringBreakdown() {
                 />
                 <div className="flex-1">
                   <div className={`text-lg font-bold ${fireStatus.text}`}>
-                    {gradeData.fireSafety.gradeDisplay}
+                    {gradeData.facilitySafety.gradeDisplay}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">
-                    {gradeData.fireSafety.summary}
+                    {gradeData.facilitySafety.summary}
                   </div>
                 </div>
               </div>
@@ -258,10 +258,10 @@ export function ScoringBreakdown() {
             <div>
               <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Equipment &amp; Permit Status</div>
               <FireStatusBars
-                permitStatus={gradeData.fireSafety.permitStatus}
-                hoodStatus={gradeData.fireSafety.hoodStatus}
-                extinguisherStatus={gradeData.fireSafety.extinguisherStatus}
-                ansulStatus={gradeData.fireSafety.ansulStatus}
+                permitStatus={gradeData.facilitySafety.permitStatus}
+                hoodStatus={gradeData.facilitySafety.hoodStatus}
+                extinguisherStatus={gradeData.facilitySafety.extinguisherStatus}
+                ansulStatus={gradeData.facilitySafety.ansulStatus}
               />
             </div>
           </div>

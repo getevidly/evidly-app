@@ -37,8 +37,8 @@ function getLocationStatusInfo(
   _jurisdictionData: LocationJurisdiction | null,
 ): LocationStatusInfo {
   const foodStatus = jieScore?.foodSafety?.status ?? 'unknown';
-  const fireStatus = jieScore?.fireSafety?.status ?? 'unknown';
-  const fireDetails = jieScore?.fireSafety?.details as Record<string, any> | null;
+  const fireStatus = jieScore?.facilitySafety?.status ?? 'unknown';
+  const fireDetails = jieScore?.facilitySafety?.details as Record<string, any> | null;
 
   if (foodStatus === 'failing' || fireStatus === 'failing') {
     const issues: string[] = [];

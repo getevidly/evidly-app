@@ -93,7 +93,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
           const fe = km.financial_exposure || { low: 0, high: 0 };
           return [
             { label: 'Food Safety', value: String(km.food_safety_score ?? '--'), trend: km.food_safety_trend ?? 0, color: '#16a34a' },
-            { label: 'Fire Safety', value: String(km.fire_safety_score ?? '--'), trend: km.fire_safety_trend ?? 0, color: (km.fire_safety_trend ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
+            { label: 'Facility Safety', value: String(km.facility_safety_score ?? '--'), trend: km.facility_safety_trend ?? 0, color: (km.facility_safety_trend ?? 0) >= 0 ? '#16a34a' : '#dc2626' },
             { label: 'Open Risk Items', value: String(km.open_risk_items ?? 0), trend: 0, color: '#d97706' },
             { label: 'Intel Alerts (7d)', value: String(km.intelligence_alerts_7d ?? 0), trend: 0, color: '#1e4d6b' },
             { label: 'Reg. Pipeline', value: String(km.regulatory_pipeline ?? 0), trend: 0, color: '#7c3aed' },

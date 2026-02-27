@@ -32,7 +32,7 @@
     "reinspection_trigger": "Follow-up within the week if violations found during inspection; facilities with two yellow placards in a row require food safety course attendance",
     "public_disclosure": "Color-coded placards must be displayed prominently; inspection results available online through food facility inspection database and mobile app"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Contra Costa County Fire Protection District",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial cooking hood fire suppression systems required every six months per NFPA 96 by licensed fire protection companies",

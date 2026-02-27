@@ -233,7 +233,7 @@ export function Vendors() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
@@ -1739,7 +1739,7 @@ export function Vendors() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

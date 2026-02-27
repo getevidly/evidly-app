@@ -113,7 +113,7 @@ function factorStatus(score: number): InsuranceRiskFactor['status'] {
 // Plus derived factors for visual checks, bare metal, shutoff, pull station, alarm, docs
 
 export function calculateFireRiskScore(locationId: string): InsuranceRiskCategory {
-  const equipItems = getImpactItems(locationId, 'Fire Safety');
+  const equipItems = getImpactItems(locationId, 'Facility Safety');
   const hoodVendor = getVendor(locationId, 'Hood Cleaning');
   const fireVendor = getVendor(locationId, 'Fire Suppression');
 
@@ -143,7 +143,7 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
   // Factor 4: Monthly visual checks documented
   // Derive from overall equipment condition and operational consistency
   const locScores = locationScores[locationId];
-  const visualCheckScore = locScores ? Math.min(100, Math.round(locScores.fireSafety * 1.05)) : 50;
+  const visualCheckScore = locScores ? Math.min(100, Math.round(locScores.facilitySafety * 1.05)) : 50;
 
   // Factor 5: Cleaning to bare metal verified
   const bareMetalScore = hoodScore >= 90 ? 100 : hoodScore >= 50 ? 70 : 30;
@@ -154,10 +154,10 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
     greaseVendor?.status === 'upcoming' ? 75 : 95;
 
   // Factor 7: Manual pull station accessible and tested
-  const pullStationScore = locScores ? Math.min(100, Math.round(locScores.fireSafety * 1.02)) : 50;
+  const pullStationScore = locScores ? Math.min(100, Math.round(locScores.facilitySafety * 1.02)) : 50;
 
   // Factor 8: Fire alarm system current
-  const alarmScore = locScores ? Math.min(100, Math.round((locScores.fireSafety + locScores.fireSafety) / 2 * 1.05)) : 50;
+  const alarmScore = locScores ? Math.min(100, Math.round((locScores.facilitySafety + locScores.facilitySafety) / 2 * 1.05)) : 50;
 
   // Factor 9: Documentation of all above on file
   const docScore = locScores ? Math.round(locScores.foodSafety * 0.95) : 50;
@@ -171,7 +171,7 @@ export function calculateFireRiskScore(locationId: string): InsuranceRiskCategor
     { name: 'Automatic fuel/electric shutoff tested', score: shutoffScore, weight: 0.10, status: factorStatus(shutoffScore), detail: shutoffScore >= 80 ? 'Shutoff systems tested and documented' : 'Shutoff testing overdue or undocumented', reference: 'NFPA 96 (2024) Chapter 10' },
     { name: 'Manual pull station accessible and tested', score: pullStationScore, weight: 0.08, status: factorStatus(pullStationScore), detail: pullStationScore >= 80 ? 'Pull station accessible and tested' : 'Pull station testing needed', reference: 'NFPA 17A-2025' },
     { name: 'Fire alarm system current', score: alarmScore, weight: 0.08, status: factorStatus(alarmScore), detail: alarmScore >= 80 ? 'Fire alarm monitoring current' : 'Fire alarm inspection needed', reference: 'NFPA 72-2025' },
-    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All fire safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96 (2024) Chapter 14' },
+    { name: 'Documentation on file and accessible', score: docScore, weight: 0.06, status: factorStatus(docScore), detail: docScore >= 80 ? 'All facility safety records on file' : 'Documentation gaps detected', reference: 'NFPA 96 (2024) Chapter 14' },
   ];
 
   const score = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0));
@@ -311,7 +311,7 @@ export function calculateOperationalRiskScore(locationId: string): InsuranceRisk
   const vendorRegScore = overdueVendors === 0 ? 95 : overdueVendors === 1 ? 60 : 25;
 
   // Factor 3: Equipment maintenance adherence
-  const equipItems = getImpactItems(locationId, 'Fire Safety');
+  const equipItems = getImpactItems(locationId, 'Facility Safety');
   const maintItem = equipItems.find(i => i.label.toLowerCase().includes('maintenance'));
   const maintImpact = maintItem ? parseImpact(maintItem.impact) : { pct: 70 };
   const maintScore = maintImpact.pct;

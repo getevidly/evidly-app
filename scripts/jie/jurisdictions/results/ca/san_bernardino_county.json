@@ -40,7 +40,7 @@
     "reinspection_trigger": "C grade (70-79) requires mandatory follow-up inspection. Facilities scoring below 70 are temporarily closed. High-risk facilities include those with C grades, multiple B grades, or repeated 4-point violations.",
     "public_disclosure": "Letter grade cards must be posted in front window or approved location. Inspection reports available online since 2006 and on Yelp partnership."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "San Bernardino County Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Kitchen hood and duct extinguishing systems must be connected to fire alarm systems. Semi-annual inspections required per NFPA 96 standards.",

@@ -19,10 +19,10 @@ import {
 // ────────────────────────────────────────────────────────
 
 export interface ComplianceScoresResult {
-  scores: { overall: number; foodSafety: number; fireSafety: number };
-  locationScores: Record<string, { overall: number; foodSafety: number; fireSafety: number }>;
-  scoresThirtyDaysAgo: { overall: number; foodSafety: number; fireSafety: number };
-  locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; fireSafety: number }>;
+  scores: { overall: number; foodSafety: number; facilitySafety: number };
+  locationScores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>;
+  scoresThirtyDaysAgo: { overall: number; foodSafety: number; facilitySafety: number };
+  locationScoresThirtyDaysAgo: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>;
 }
 
 export interface ProgressData {

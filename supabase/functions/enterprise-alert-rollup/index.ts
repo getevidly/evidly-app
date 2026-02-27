@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
     for (const entry of scores || []) {
       const nodeName = entry.node?.name || entry.node_id;
       const overallScore = Number(entry.overall_score) || 0;
-      const fireSafetyScore = Number(entry.fire_safety_score) || 0;
+      const facilitySafetyScore = Number(entry.facility_safety_score) || 0;
       const foodSafetyScore = Number(entry.food_safety_score) || 0;
 
       // Critical: overall score below 75
@@ -84,8 +84,8 @@ Deno.serve(async (req) => {
       }
 
       // Fire safety score below 70
-      if (fireSafetyScore < 70) {
-        alerts.push({ severity: "critical", node_name: nodeName, message: `Fire safety score below threshold - score ${fireSafetyScore}`, score: fireSafetyScore });
+      if (facilitySafetyScore < 70) {
+        alerts.push({ severity: "critical", node_name: nodeName, message: `Fire safety score below threshold - score ${facilitySafetyScore}`, score: facilitySafetyScore });
       }
 
       // Food safety score below 70

@@ -9,7 +9,7 @@ const DEMO_DIGEST: DigestData = {
   weekStart: 'Feb 3, 2026',
   weekEnd: 'Feb 9, 2026',
   foodSafetyScore: 81,
-  fireSafetyScore: 70,
+  facilitySafetyScore: 70,
   scoreTrend: 2,
   locations: [
     { name: 'Downtown Kitchen', overall: 92, trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' },

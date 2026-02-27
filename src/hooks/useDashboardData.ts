@@ -70,7 +70,7 @@ export interface LocationWithScores {
   id: string;
   name: string;
   foodSafety: { ops: number; docs: number };
-  fireSafety: { ops: number; docs: number };
+  facilitySafety: { ops: number; docs: number };
   trend: number;
   status: 'good' | 'attention' | 'critical';
   foodScore: number;
@@ -82,7 +82,7 @@ export interface TrendDataPoint {
   date: string;
   overall: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
 }
 
 export interface DashboardWeights {
@@ -91,9 +91,9 @@ export interface DashboardWeights {
 }
 
 export interface DashboardPayload {
-  orgScores: { overall: number | null; foodSafety: number; fireSafety: number };
+  orgScores: { overall: number | null; foodSafety: number; facilitySafety: number };
   locations: LocationWithScores[];
-  locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }>;
+  locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }>;
   tasks: TaskItem[];
   deadlines: DeadlineItem[];
   alerts: AlertItem[];
@@ -208,8 +208,8 @@ function buildDemoImpact(): ImpactItem[] {
 
   // Other (non-temp) impact items — always included
   items.push(
-    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Fire Safety', severity: 'critical', route: '/vendors' },
-    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Fire Safety', severity: 'critical', route: '/documents' },
+    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Facility Safety', severity: 'critical', route: '/vendors' },
+    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Facility Safety', severity: 'critical', route: '/documents' },
     { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' },
     { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' },
   );
@@ -220,7 +220,7 @@ function buildDemoImpact(): ImpactItem[] {
 const DEMO_ALERTS: AlertItem[] = [
   { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' },
   { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' },
-  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Fire Safety', actionLabel: 'Schedule', route: '/equipment' },
+  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Facility Safety', actionLabel: 'Schedule', route: '/equipment' },
   // Intelligence-sourced alerts (critical/high insights)
   ...DEMO_INTELLIGENCE_INSIGHTS
     .filter(i => i.impact_level === 'critical' || i.impact_level === 'high')
@@ -250,14 +250,14 @@ const DEMO_MODULE_STATUSES: ModuleStatus[] = [
   { id: 'mod-equipment', label: 'Equipment', metric: '2 overdue', status: 'critical', route: '/equipment' },
   { id: 'mod-haccp', label: 'HACCP', metric: '6 plans active', status: 'good', route: '/haccp' },
   { id: 'mod-training', label: 'Training', metric: '89% compliant', status: 'good', route: '/training' },
-  { id: 'mod-fire', label: 'Fire Safety', metric: '3 alerts', status: 'critical', route: '/fire-safety' },
+  { id: 'mod-fire', label: 'Facility Safety', metric: '3 alerts', status: 'critical', route: '/facility-safety' },
 ];
 
 function buildDemoPayload(): DashboardPayload {
   // Build 30-day-ago per-location scores for trend comparisons
-  const locationScoresPrev: Record<string, { foodSafety: number; fireSafety: number }> = {};
+  const locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }> = {};
   for (const [locId, prev] of Object.entries(locationScoresThirtyDaysAgo)) {
-    locationScoresPrev[locId] = { foodSafety: prev.foodSafety, fireSafety: prev.fireSafety };
+    locationScoresPrev[locId] = { foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety };
   }
 
   return {
@@ -285,13 +285,13 @@ const BRIDGE_THROTTLE_MS = 60 * 60 * 1000; // 1 hour
 const BRIDGE_DELTA_THRESHOLD = 5; // only push when score delta > 5 points
 
 function shouldPushToIntelligence(
-  current: { foodSafety: number; fireSafety: number },
-  lastPushed: { foodSafety: number; fireSafety: number } | null,
+  current: { foodSafety: number; facilitySafety: number },
+  lastPushed: { foodSafety: number; facilitySafety: number } | null,
 ): boolean {
   if (!lastPushed) return true;
   return (
     Math.abs(current.foodSafety - lastPushed.foodSafety) > BRIDGE_DELTA_THRESHOLD ||
-    Math.abs(current.fireSafety - lastPushed.fireSafety) > BRIDGE_DELTA_THRESHOLD
+    Math.abs(current.facilitySafety - lastPushed.facilitySafety) > BRIDGE_DELTA_THRESHOLD
   );
 }
 
@@ -350,7 +350,7 @@ export function useDashboardData(): {
       const locations: LocationWithScores[] = DEMO_LOCATIONS.map(loc => ({
         ...loc,
         foodScore: calcPillar(loc.foodSafety),
-        fireScore: calcPillar(loc.fireSafety),
+        fireScore: calcPillar(loc.facilitySafety),
         score: null, // DEPRECATED — no composite score
       }));
 
@@ -358,12 +358,12 @@ export function useDashboardData(): {
         orgScores: {
           overall: null, // DEPRECATED — no composite score
           foodSafety: result.complianceData.scores.foodSafety,
-          fireSafety: result.complianceData.scores.fireSafety,
+          facilitySafety: result.complianceData.scores.facilitySafety,
         },
         locations,
         locationScoresPrev: Object.fromEntries(
           Object.entries(result.complianceData.locationScoresThirtyDaysAgo).map(
-            ([id, s]) => [id, { foodSafety: s.foodSafety, fireSafety: s.fireSafety }],
+            ([id, s]) => [id, { foodSafety: s.foodSafety, facilitySafety: s.facilitySafety }],
           ),
         ),
         tasks: DEMO_TASKS, // Real task wiring deferred to production
@@ -395,14 +395,14 @@ export function useDashboardData(): {
   }, [fetchData]);
 
   // ── Intelligence bridge: push compliance when scores change significantly ──
-  const lastPushedScoresRef = useRef<{ foodSafety: number; fireSafety: number } | null>(null);
+  const lastPushedScoresRef = useRef<{ foodSafety: number; facilitySafety: number } | null>(null);
 
   useEffect(() => {
     if (isDemo || !orgId || loading) return;
 
     const current = {
       foodSafety: data.orgScores.foodSafety,
-      fireSafety: data.orgScores.fireSafety,
+      facilitySafety: data.orgScores.facilitySafety,
     };
 
     if (!shouldPushToIntelligence(current, lastPushedScoresRef.current)) return;
@@ -413,10 +413,10 @@ export function useDashboardData(): {
 
     pushComplianceUpdate(orgId, {
       foodSafety: current.foodSafety,
-      fireSafety: current.fireSafety,
+      facilitySafety: current.facilitySafety,
       openItems: data.impact.length,
     }).catch(() => {}); // fire and forget
-  }, [isDemo, orgId, loading, data.orgScores.foodSafety, data.orgScores.fireSafety, data.impact.length]);
+  }, [isDemo, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
 
   return { data, loading, error, refresh: fetchData };
 }

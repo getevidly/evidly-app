@@ -18,7 +18,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: 'compliance-score',
     title: 'Compliance Score',
-    content: 'Your compliance scores across 2 independent pillars: Food Safety and Fire Safety. Click either pillar to see what\'s driving the score.',
+    content: 'Your compliance scores across 2 independent pillars: Food Safety and Facility Safety. Click either pillar to see what\'s driving the score.',
     placement: 'bottom',
   },
   {
@@ -36,7 +36,7 @@ const TOUR_STEPS: TourStep[] = [
   {
     target: 'ai-advisor-nav',
     title: 'AI Compliance Advisor',
-    content: 'Ask any compliance question — FDA regulations, HACCP requirements, health code interpretations. Trained on food safety and fire safety standards.',
+    content: 'Ask any compliance question — FDA regulations, HACCP requirements, health code interpretations. Trained on food safety and facility safety standards.',
     placement: 'right',
   },
 ];

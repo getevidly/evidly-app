@@ -64,7 +64,7 @@ Search for the given topic and return ONLY a valid JSON array. No other text. Ea
   "relevance": "high" | "medium" | "low",
   "impact_level": "critical" | "high" | "medium" | "low" | "informational",
   "category": one of: enforcement_action, regulatory_change, outbreak_alert, recall_alert, inspector_pattern, competitor_activity, legislative_update, weather_risk, vendor_alert, industry_trend, enforcement_surge, seasonal_risk, market_intelligence, financial_impact, acquisition_signal,
-  "affected_pillars": array of "food_safety" and/or "fire_safety",
+  "affected_pillars": array of "food_safety" and/or "facility_safety",
   "affected_counties": array of county names (lowercase),
   "tags": array of relevant keywords
 }

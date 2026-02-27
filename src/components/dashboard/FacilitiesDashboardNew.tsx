@@ -178,10 +178,10 @@ export default function FacilitiesDashboardNew() {
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
   const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen';
 
-  const fireGrade = override?.fireSafety?.grade || 'Pending';
-  const fireDisplay = override?.fireSafety?.gradeDisplay || 'Pending Verification';
-  const fireSummary = override?.fireSafety?.summary || '';
-  const fireStatus = override?.fireSafety?.status || 'unknown';
+  const fireGrade = override?.facilitySafety?.grade || 'Pending';
+  const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
+  const fireSummary = override?.facilitySafety?.summary || '';
+  const fireStatus = override?.facilitySafety?.status || 'unknown';
 
   const priorityItems: PriorityItem[] = DEMO_FACILITIES_ATTENTION.map(item => ({
     id: item.id,
@@ -292,15 +292,15 @@ export default function FacilitiesDashboardNew() {
       {/* Where Do I Start */}
       <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
 
-      {/* Fire Safety Detail — moved below fold, no score shown */}
+      {/* Facility Safety Detail — moved below fold, no score shown */}
       <Card>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-3">
             <Flame size={24} style={{ color: fireStatus === 'passing' ? '#16a34a' : '#dc2626' }} />
             <div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => navigate('/fire-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Fire Safety Equipment</button>
-                <SectionTooltip content={useTooltip('fireSafety', userRole)} />
+                <button type="button" onClick={() => navigate('/facility-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Facility Safety Equipment</button>
+                <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
               </div>
               <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
             </div>
@@ -321,10 +321,10 @@ export default function FacilitiesDashboardNew() {
         {/* Status indicators */}
         {override && (
           <FireStatusBars
-            permitStatus={override.fireSafety.permitStatus}
-            hoodStatus={override.fireSafety.hoodStatus}
-            extinguisherStatus={override.fireSafety.extinguisherStatus}
-            ansulStatus={override.fireSafety.ansulStatus}
+            permitStatus={override.facilitySafety.permitStatus}
+            hoodStatus={override.facilitySafety.hoodStatus}
+            extinguisherStatus={override.facilitySafety.extinguisherStatus}
+            ansulStatus={override.facilitySafety.ansulStatus}
           />
         )}
       </Card>

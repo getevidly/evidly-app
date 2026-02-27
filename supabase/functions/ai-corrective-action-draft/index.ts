@@ -110,7 +110,7 @@ Deno.serve(async (req: Request) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-5-20250929",
         max_tokens: 1500,
-        system: `You are a food safety and fire safety compliance expert for commercial kitchens. Equipment items (hood cleaning, fire suppression systems, grease traps, fire extinguishers, exhaust systems) are FIRE SAFETY issues under NFPA 96 (2025 Edition) — never categorize them as food/health safety. Ice machines are FOOD SAFETY issues (food contact surfaces per FDA §4-602.11) — never categorize ice machine cleaning as fire safety. Generate a corrective action plan for a commercial kitchen violation. Return a JSON object with these fields:
+        system: `You are a food safety and facility safety compliance expert for commercial kitchens. Equipment items (hood cleaning, fire suppression systems, grease traps, fire extinguishers, exhaust systems) are FACILITY SAFETY issues under NFPA 96 (2025 Edition) — never categorize them as food/health safety. Ice machines are FOOD SAFETY issues (food contact surfaces per FDA §4-602.11) — never categorize ice machine cleaning as facility safety. Generate a corrective action plan for a commercial kitchen violation. Return a JSON object with these fields:
 {
   "root_cause": "Brief root cause analysis",
   "immediate_action": "What should be done right now",

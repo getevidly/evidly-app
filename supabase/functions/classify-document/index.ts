@@ -42,7 +42,7 @@ Your job is to analyze uploaded documents and extract key metadata.
 
 DOCUMENT TYPES YOU KNOW:
 
-Fire Safety (pillar: fire_safety):
+Facility Safety (pillar: facility_safety):
 - hood_cleaning_cert: Hood/exhaust cleaning certificate
 - fire_suppression_report: Fire suppression system inspection (Ansul, Amerex, etc.)
 - fire_extinguisher_tag: Fire extinguisher inspection tag or certificate
@@ -73,7 +73,7 @@ RESPOND ONLY WITH VALID JSON matching this exact schema:
 {
   "documentType": "string (from the list above, or 'unknown')",
   "documentLabel": "string (human-readable name)",
-  "pillar": "fire_safety | food_safety | vendor | facility | unknown",
+  "pillar": "facility_safety | food_safety | vendor | facility | unknown",
   "vendorName": "string or null",
   "serviceDate": "YYYY-MM-DD or null",
   "expiryDate": "YYYY-MM-DD or null",

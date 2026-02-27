@@ -15,6 +15,8 @@ import {
   BookOpen, ArrowRight,
 } from 'lucide-react';
 import { useIntelligenceHub, type PipelineStats } from '../hooks/useIntelligenceHub';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { ExecutiveSnapshotPanel } from '../components/intelligence/ExecutiveSnapshotPanel';
 import { IntelligenceSubscriptionSettings } from '../components/intelligence/IntelligenceSubscriptionSettings';
 import {
@@ -114,6 +116,7 @@ function getAffectedLocations(counties: string[]): string[] {
 
 export function IntelligenceHub() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const {
     insights, executiveSnapshot, recalls, outbreaks,
     legislativeItems, inspectorPatterns, competitorEvents, sourceStatus,
@@ -365,7 +368,8 @@ export function IntelligenceHub() {
                 });
               }}
               onDismiss={() => { dismissInsight(selectedInsight.id); setSelectedInsightId(null); setViewState('sources'); }}
-              onShare={() => { alert('Share link copied to clipboard (demo)'); }}
+              onShare={() => guardAction('share', 'Intelligence Hub', () => { /* no-op */ })}
+              onCreateAction={() => guardAction('create', 'Corrective Actions', () => { /* no-op */ })}
             />
           )}
 
@@ -406,7 +410,8 @@ export function IntelligenceHub() {
                 });
               }}
               onDismiss={() => { dismissInsight(selectedInsight.id); setSelectedInsightId(null); setViewState('sources'); }}
-              onShare={() => { alert('Share link copied to clipboard (demo)'); }}
+              onShare={() => guardAction('share', 'Intelligence Hub', () => { /* no-op */ })}
+              onCreateAction={() => guardAction('create', 'Corrective Actions', () => { /* no-op */ })}
             />
           )}
           {viewState === 'snapshot' && executiveSnapshot && (
@@ -421,6 +426,14 @@ export function IntelligenceHub() {
           )}
         </div>
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }
@@ -430,7 +443,7 @@ export function IntelligenceHub() {
 function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceInsight; selected: boolean; onSelect: () => void }) {
   const ic = getImpactColor(insight.impact_level);
   const CategoryIcon = CATEGORY_ICONS[insight.category] || Brain;
-  const pillarLabels = (insight.affected_pillars || []).map(p => p === 'fire_safety' ? 'Fire' : p === 'food_safety' ? 'Food' : p);
+  const pillarLabels = (insight.affected_pillars || []).map(p => p === 'facility_safety' ? 'Fire' : p === 'food_safety' ? 'Food' : p);
 
   return (
     <button
@@ -480,13 +493,14 @@ function InsightCard({ insight, selected, onSelect }: { insight: IntelligenceIns
 // ── VIEW A: Insight Detail ───────────────────────────────────────
 
 function InsightDetailView({
-  insight, checkedActions, onToggleAction, onDismiss, onShare,
+  insight, checkedActions, onToggleAction, onDismiss, onShare, onCreateAction,
 }: {
   insight: IntelligenceInsight;
   checkedActions: Set<string>;
   onToggleAction: (idx: number) => void;
   onDismiss: () => void;
   onShare: () => void;
+  onCreateAction: () => void;
 }) {
   const navigate = useNavigate();
   const ic = getImpactColor(insight.impact_level);
@@ -706,7 +720,7 @@ function InsightDetailView({
         <button onClick={onDismiss} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors" style={{ backgroundColor: PANEL_BG, color: MUTED }}>
           <Trash2 className="h-3.5 w-3.5" /> Dismiss
         </button>
-        <button onClick={() => alert('Corrective action created (demo)')} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={onCreateAction} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: '#1e4d6b' }}>
           <Zap className="h-3.5 w-3.5" /> Create Corrective Action
         </button>
       </div>

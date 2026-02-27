@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Wrench, Calendar, Truck, FileText, CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -53,6 +55,7 @@ export function ServiceRecordEntry() {
   const { equipmentId } = useParams<{ equipmentId: string }>();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const equipment = EQUIPMENT_NAMES[equipmentId || ''];
 
@@ -89,19 +92,21 @@ export function ServiceRecordEntry() {
     e.preventDefault();
     if (!canSubmit) return;
 
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      toast.success('Service record saved successfully', {
-        description: `${SERVICE_TYPES.find(t => t.value === form.serviceType)?.label || form.serviceType} recorded for ${equipment?.name || equipmentId}`,
-      });
-      if (form.passFail === 'fail') {
-        toast.warning('Equipment flagged as "Needs Repair"', {
-          description: 'Facilities manager has been notified.',
+    guardAction('save', 'Service Records', () => {
+      setSubmitting(true);
+      setTimeout(() => {
+        setSubmitting(false);
+        toast.success('Service record saved successfully', {
+          description: `${SERVICE_TYPES.find(t => t.value === form.serviceType)?.label || form.serviceType} recorded for ${equipment?.name || equipmentId}`,
         });
-      }
-      navigate(`/equipment/${equipmentId}`);
-    }, 800);
+        if (form.passFail === 'fail') {
+          toast.warning('Equipment flagged as "Needs Repair"', {
+            description: 'Facilities manager has been notified.',
+          });
+        }
+        navigate(`/equipment/${equipmentId}`);
+      }, 800);
+    });
   };
 
   return (
@@ -275,7 +280,7 @@ export function ServiceRecordEntry() {
               <p className="text-xs text-gray-400 mt-1">PDF, JPG, PNG up to 25MB</p>
               <button
                 type="button"
-                onClick={() => toast.info('Document upload available in full version')}
+                onClick={() => guardAction('upload', 'Service Records', () => toast.info('Document upload available in full version'))}
                 className="mt-3 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-50"
               >
                 Browse Files
@@ -309,6 +314,14 @@ export function ServiceRecordEntry() {
 
       {/* Bottom padding */}
       <div className="h-20" />
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

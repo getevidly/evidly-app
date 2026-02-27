@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { EquipmentQRCode } from '../components/EquipmentQRCode';
 import { format } from 'date-fns';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -27,7 +29,7 @@ interface EquipmentItem {
   warrantyExpiry: string; warrantyProvider: string; warrantyTerms: string; warrantyContact?: string;
   condition: Condition; nextMaintenanceDue: string; maintenanceInterval: string;
   linkedVendor: string; usefulLifeYears: number; replacementCost: number;
-  status?: EquipmentStatus; pillar?: 'fire_safety' | 'food_safety';
+  status?: EquipmentStatus; pillar?: 'facility_safety' | 'food_safety';
   notes: string; serviceHistory: ServiceRecord[]; schedule: ScheduleItem[];
 }
 
@@ -41,7 +43,7 @@ function statusInfo(s?: EquipmentStatus) { const m: Record<string, { label: stri
 function warrantyInfo(exp: string) { const d = daysBetween(NOW, exp); if (d < 0) return { label: 'Expired', color: '#dc2626', bg: '#fef2f2' }; if (d <= 90) return { label: 'Expiring Soon', color: '#d97706', bg: '#fffbeb' }; return { label: 'Active', color: '#16a34a', bg: '#f0fdf4' }; }
 function maintenanceInfo(nextDue: string) { const d = daysBetween(NOW, nextDue); if (d < 0) return { label: `${Math.abs(d)}d overdue`, color: '#dc2626', bg: '#fef2f2', overdue: true }; if (d <= 7) return { label: `Due in ${d}d`, color: '#d97706', bg: '#fffbeb', overdue: false }; if (d <= 30) return { label: `Due in ${d}d`, color: '#2563eb', bg: '#eff6ff', overdue: false }; return { label: format(new Date(nextDue), 'MMM d, yyyy'), color: '#6b7280', bg: '#f9fafb', overdue: false }; }
 const FIRE_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
-function getPillar(eq: EquipmentItem): 'fire_safety' | 'food_safety' { return eq.pillar || (FIRE_TYPES.has(eq.type) ? 'fire_safety' : 'food_safety'); }
+function getPillar(eq: EquipmentItem): 'facility_safety' | 'food_safety' { return eq.pillar || (FIRE_TYPES.has(eq.type) ? 'facility_safety' : 'food_safety'); }
 
 const badge = (text: string, color: string, bg: string): React.CSSProperties => ({
   fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '6px',
@@ -65,6 +67,7 @@ export function EquipmentDetail() {
   const { equipmentId } = useParams<{ equipmentId: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<DetailTab>('overview');
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const equipment = useMemo(() => {
     return DEMO_EQUIPMENT.find(e => e.id === equipmentId) || null;
@@ -86,7 +89,7 @@ export function EquipmentDetail() {
   }
 
   const pillar = getPillar(equipment);
-  const isFire = pillar === 'fire_safety';
+  const isFire = pillar === 'facility_safety';
   const st = statusInfo(equipment.status);
   const w = warrantyInfo(equipment.warrantyExpiry);
   const m = maintenanceInfo(equipment.nextMaintenanceDue);
@@ -115,9 +118,9 @@ export function EquipmentDetail() {
               <p className="text-sm text-gray-600 mt-0.5">{equipment.make} {equipment.model} · S/N: {equipment.serial}</p>
               <div className="flex gap-2 mt-3 flex-wrap">
                 <span style={badge(st.label, st.color, st.bg)}>{st.label}</span>
-                <span style={{ ...badge(isFire ? 'Fire Safety' : 'Food Safety', isFire ? '#b91c1c' : '#166534', isFire ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <span style={{ ...badge(isFire ? 'Facility Safety' : 'Food Safety', isFire ? '#b91c1c' : '#166534', isFire ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                   {isFire ? <Flame size={10} /> : <UtensilsCrossed size={10} />}
-                  {isFire ? 'Fire Safety' : 'Food Safety'}
+                  {isFire ? 'Facility Safety' : 'Food Safety'}
                 </span>
                 <span style={badge(equipment.condition, conditionColor(equipment.condition), conditionBg(equipment.condition))}>{equipment.condition}</span>
                 <span style={badge(`Warranty: ${w.label}`, w.color, w.bg)}>Warranty: {w.label}</span>
@@ -188,7 +191,7 @@ export function EquipmentDetail() {
                     <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">QR Temperature Label</h3>
                   </div>
                   <button
-                    onClick={() => toast.info('Printing QR labels for all equipment (Demo)')}
+                    onClick={() => guardAction('print', 'Equipment', () => toast.info('Printing QR labels for all equipment'))}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border hover:bg-gray-50 transition-colors"
                     style={{ color: NAVY, borderColor: '#b8d4e8' }}
                   >
@@ -298,6 +301,14 @@ export function EquipmentDetail() {
 
       {/* Bottom padding */}
       <div className="h-20" />
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

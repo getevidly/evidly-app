@@ -32,7 +32,7 @@ export interface BusinessUnitScorecard {
   worstLocation: { name: string; score: number } | null;
   criticalItems: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
 }
 
 export interface RegulatoryOverlay {
@@ -49,7 +49,7 @@ export interface PredictedScore {
   confidence: 'high' | 'medium' | 'low';
 }
 
-export type ComplianceCategory = 'overall' | 'foodSafety' | 'fireSafety';
+export type ComplianceCategory = 'overall' | 'foodSafety' | 'facilitySafety';
 
 // ── Enterprise tenant ────────────────────────────────────────────
 export const enterpriseTenant = enterpriseTenants.find(t => t.id === 'ent-pcdining')!;
@@ -68,7 +68,7 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     worstLocation: { name: 'Temple University', score: 68 },
     criticalItems: 3,
     foodSafety: 93.1,
-    fireSafety: 89.4,
+    facilitySafety: 89.4,
   },
   {
     id: 'h-healthcare',
@@ -79,7 +79,7 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     worstLocation: null,
     criticalItems: 0,
     foodSafety: 96.2,
-    fireSafety: 93.0,
+    facilitySafety: 93.0,
   },
   {
     id: 'h-destinations',
@@ -90,7 +90,7 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     worstLocation: { name: 'Badger Pass', score: 74 },
     criticalItems: 1,
     foodSafety: 90.1,
-    fireSafety: 86.2,
+    facilitySafety: 86.2,
   },
   {
     id: 'h-corrections',
@@ -101,7 +101,7 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     worstLocation: null,
     criticalItems: 0,
     foodSafety: 88.3,
-    fireSafety: 83.7,
+    facilitySafety: 83.7,
   },
   {
     id: 'h-sports',
@@ -112,7 +112,7 @@ export const businessUnitScorecard: BusinessUnitScorecard[] = [
     worstLocation: { name: 'SoCal District', score: 85 },
     criticalItems: 2,
     foodSafety: 90.2,
-    fireSafety: 85.8,
+    facilitySafety: 85.8,
   },
 ];
 

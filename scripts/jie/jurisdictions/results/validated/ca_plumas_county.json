@@ -19,7 +19,7 @@
     "reinspection_trigger": "Serious violations trigger re-inspection date setup",
     "public_disclosure": "Food inspection reports available for area food facilities - specific posting requirements not detailed"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Multiple local Fire Protection Districts and Community Service Districts - 14 total agencies",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen hood fire suppression systems must have inspections every six months by licensed fire protection company per NFPA 96",

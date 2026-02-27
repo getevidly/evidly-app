@@ -19,7 +19,7 @@
     "reinspection_trigger": "Major violations require follow-up inspection - facilities may be closed for imminent health hazards",
     "public_disclosure": "Inspection reports made available to public on county website"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Tehama County Fire Department",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": null,

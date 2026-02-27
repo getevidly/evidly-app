@@ -23,7 +23,7 @@
     "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days; red placard facilities closed until violations corrected",
     "public_disclosure": "Color-coded placards (green/yellow/red) must be posted where public can see them; numerical scores available through online database"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "San Francisco Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "All commercial cooking equipment must be protected by UL 300-compliant fire extinguishing systems; system serviced every 6 months and after activation",

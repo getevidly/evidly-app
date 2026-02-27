@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  calculateFireSafetyScore,
+  calculateFacilitySafetyScore,
   getScoreColor,
   getScoreStatus,
   getScoreInfo,
@@ -43,10 +43,10 @@ describe('complianceScoring', () => {
     it('30+ days → 0% penalty', () => expect(getGraduatedPenalty(60, 100)).toBe(0));
   });
 
-  // ─── calculateFireSafetyScore ─────────────────────────
-  describe('calculateFireSafetyScore', () => {
+  // ─── calculateFacilitySafetyScore ─────────────────────────
+  describe('calculateFacilitySafetyScore', () => {
     it('all items current → 100', () => {
-      const result = calculateFireSafetyScore([
+      const result = calculateFacilitySafetyScore([
         { name: 'Hood Cleaning', weight: 0.30, daysUntilDue: 60 },
         { name: 'Fire Suppression', weight: 0.25, daysUntilDue: 90 },
         { name: 'Fire Extinguisher', weight: 0.20, daysUntilDue: 120 },
@@ -57,7 +57,7 @@ describe('complianceScoring', () => {
     });
 
     it('all items overdue → 0', () => {
-      const result = calculateFireSafetyScore([
+      const result = calculateFacilitySafetyScore([
         { name: 'Hood Cleaning', weight: 0.30, daysUntilDue: -10 },
         { name: 'Fire Suppression', weight: 0.25, daysUntilDue: -5 },
         { name: 'Fire Extinguisher', weight: 0.20, daysUntilDue: -30 },
@@ -68,7 +68,7 @@ describe('complianceScoring', () => {
     });
 
     it('condition-based items use conditionScore', () => {
-      const result = calculateFireSafetyScore([
+      const result = calculateFacilitySafetyScore([
         { name: 'Daily Checks', weight: 1.0, daysUntilDue: Infinity, conditionScore: 80 },
       ]);
       expect(result).toBe(80);

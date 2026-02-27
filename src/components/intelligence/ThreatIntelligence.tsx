@@ -14,10 +14,10 @@ export const ThreatIntelligence: React.FC<{ data: any }> = ({ data }) => {
       });
     });
 
-    if (loc.fireSafetyVerdict === 'Fail') {
+    if (loc.facilitySafetyVerdict === 'Fail') {
       threats.push({
         severity: 'high',
-        title: 'Fire Safety Inspection Failure',
+        title: 'Facility Safety Inspection Failure',
         location: loc.locationName,
         action: 'Schedule remediation with AHJ. Re-inspection required per NFPA 96 (2024).',
       });

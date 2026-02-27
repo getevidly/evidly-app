@@ -64,7 +64,7 @@ interface LocationContext {
     id: string;
     overall_score: number;
     food_safety_score: number | null;
-    fire_safety_score: number | null;
+    facility_safety_score: number | null;
     temp_in_range_pct: number | null;
     checklists_completed_pct: number | null;
   } | null;
@@ -286,7 +286,7 @@ Deno.serve(async (req: Request) => {
     // ── 2. Fetch latest compliance snapshots ──
     const { data: snapshots } = await supabase
       .from("compliance_score_snapshots")
-      .select("id, location_id, overall_score, food_safety_score, fire_safety_score, temp_in_range_pct, checklists_completed_pct")
+      .select("id, location_id, overall_score, food_safety_score, facility_safety_score, temp_in_range_pct, checklists_completed_pct")
       .in("location_id", locationIds)
       .order("score_date", { ascending: false });
 
@@ -363,7 +363,7 @@ Deno.serve(async (req: Request) => {
             id: snapshot.id,
             overall_score: snapshot.overall_score,
             food_safety_score: snapshot.food_safety_score,
-            fire_safety_score: snapshot.fire_safety_score,
+            facility_safety_score: snapshot.facility_safety_score,
             temp_in_range_pct: snapshot.temp_in_range_pct,
             checklists_completed_pct: snapshot.checklists_completed_pct,
           } : null,

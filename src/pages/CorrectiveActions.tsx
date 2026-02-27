@@ -53,7 +53,7 @@ const DEMO_ACTIONS: CorrectiveActionItem[] = [
     id: 'ca-2', title: 'Missing hood suppression inspection certificate',
     description: 'Annual hood suppression system inspection certificate expired. Schedule re-inspection with certified vendor.',
     location: 'University Hub', locationId: 'university', severity: 'high', status: 'open',
-    source: 'Fire Safety Audit', assignee: 'Robert Okafor', createdAt: daysAgo(5), dueDate: daysFromNow(2), resolvedAt: null,
+    source: 'Facility Safety Audit', assignee: 'Robert Okafor', createdAt: daysAgo(5), dueDate: daysFromNow(2), resolvedAt: null,
   },
   {
     id: 'ca-3', title: 'Handwashing station soap dispenser empty',

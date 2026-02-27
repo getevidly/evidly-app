@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
 
 // ── Styles ───────────────────────────────────────────────────────
@@ -37,7 +39,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
     { id: 'cl-3', title: 'Viewing checklist completion history', views: 945, helpful: 90, body: 'The Checklists page shows completion rates by day, location, and team member. Click any completed checklist to see the full submission with timestamps and any attached photos.' },
   ]},
   { id: 'compliance', name: 'Compliance & Inspections', icon: '🛡️', articles: [
-    { id: 'co-1', title: 'How your compliance status is determined', views: 2156, helpful: 95, body: 'Your compliance status is based on two pillars: Food Safety (temp logs, checklists, HACCP) and Fire Safety (hood cleaning, suppression systems, extinguishers). Each jurisdiction uses its own verified methodology.' },
+    { id: 'co-1', title: 'How your compliance status is determined', views: 2156, helpful: 95, body: 'Your compliance status is based on two pillars: Food Safety (temp logs, checklists, HACCP) and Facility Safety (hood cleaning, suppression systems, extinguishers). Each jurisdiction uses its own verified methodology.' },
     { id: 'co-2', title: 'Preparing for a health inspection', views: 1789, helpful: 97, body: 'Use the Compliance dashboard to see your readiness score. Review any missing documents, overdue corrective actions, and incomplete checklists. The system flags critical items to address first.' },
     { id: 'co-3', title: 'Understanding corrective actions', views: 1432, helpful: 92, body: 'Corrective actions are created when issues are identified — out-of-range temps, failed checklist items, or inspection findings. Each action has a due date, assignee, and required documentation.' },
     { id: 'co-4', title: 'HACCP plan management', views: 876, helpful: 88, body: 'Navigate to HACCP to view and manage your hazard analysis and critical control points. EvidLY provides industry-specific templates and tracks your monitoring procedures automatically.' },
@@ -80,6 +82,7 @@ const PRIORITIES: { id: string; label: string; color: string; desc: string }[] =
 
 // ── Component ────────────────────────────────────────────────────
 export function HelpSupport() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<'kb' | 'ticket' | 'my-tickets' | 'contact'>('kb');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
@@ -191,6 +194,10 @@ export function HelpSupport() {
           <a href="/ai-advisor" style={{ fontSize: '13px', fontWeight: 700, color: '#fff', backgroundColor: '#6366f1', padding: '8px 20px', borderRadius: '8px', textDecoration: 'none', letterSpacing: '0.3px' }}>Try AI Advisor →</a>
         </div>
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </>
   );
 
@@ -212,7 +219,7 @@ export function HelpSupport() {
             <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f9fafb', borderRadius: '8px', textAlign: 'center' }}>
               <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px', ...F }}>Was this article helpful?</div>
               <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <button onClick={() => toast.success('Thanks for your feedback')} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F, minHeight: '44px' }}>👍 Yes</button>
+                <button onClick={() => guardAction('submit', 'Feedback', () => toast.success('Thanks for your feedback'))} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F, minHeight: '44px' }}>👍 Yes</button>
                 <button onClick={() => { setActiveTab('ticket'); setSelectedArticle(null); }} style={{ padding: '6px 20px', borderRadius: '6px', border: '1px solid #e5e7eb', backgroundColor: 'white', fontSize: '13px', cursor: 'pointer', ...F, minHeight: '44px' }}>👎 No — Contact Support</button>
               </div>
             </div>
@@ -374,14 +381,14 @@ export function HelpSupport() {
         {/* File upload */}
         <div style={{ marginBottom: '24px' }}>
           <label style={labelStyle}>Attachments (optional)</label>
-          <div style={{ border: '2px dashed #e5e7eb', borderRadius: '8px', padding: '20px', textAlign: 'center', cursor: 'pointer' }} onClick={() => toast.info('File upload available in production')}>
+          <div style={{ border: '2px dashed #e5e7eb', borderRadius: '8px', padding: '20px', textAlign: 'center', cursor: 'pointer' }} onClick={() => guardAction('upload', 'Support Tickets', () => toast.info('File upload available in production'))}>
             <div style={{ fontSize: '24px', marginBottom: '4px' }}>📎</div>
             <div style={{ fontSize: '13px', color: '#6b7280', ...F }}>Click to attach screenshots or files</div>
             <div style={{ fontSize: '11px', color: '#9ca3af', ...F }}>PNG, JPG, PDF up to 10MB</div>
           </div>
         </div>
 
-        <button onClick={handleSubmitTicket} style={{ ...btnPrimary, width: '100%', padding: '12px', minHeight: '44px' }}>Submit Ticket</button>
+        <button onClick={() => guardAction('submit', 'Support Tickets', handleSubmitTicket)} style={{ ...btnPrimary, width: '100%', padding: '12px', minHeight: '44px' }}>Submit Ticket</button>
       </div>
     );
   }
@@ -441,7 +448,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>💬</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Live Chat</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Chat with our support team in real-time during business hours.</div>
-            <button onClick={openChat} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Start Chat</button>
+            <button onClick={() => guardAction('chat', 'Live Support', openChat)} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Start Chat</button>
           </div>
 
           {/* Email */}
@@ -466,7 +473,7 @@ export function HelpSupport() {
             <div style={{ fontSize: '28px', marginBottom: '10px' }}>📅</div>
             <div style={{ fontSize: '16px', fontWeight: 700, color: '#1b4965', marginBottom: '4px', ...F }}>Schedule a Call</div>
             <div style={{ fontSize: '13px', color: '#6b7280', marginBottom: '16px', ...F }}>Book a 15-minute call with our support team at your convenience.</div>
-            <button onClick={() => toast.info('Book Time (Demo)')} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
+            <button onClick={() => guardAction('schedule', 'Support', () => toast.info('Book Time (Demo)'))} style={{ ...btnPrimary, width: '100%', minHeight: '44px' }}>Book Time</button>
           </div>
         </div>
 

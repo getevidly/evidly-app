@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       // Calculate weighted average (equal weight per child)
       const totalWeight = childScores.length;
       const avgScore = childScores.reduce((sum: number, s: Record<string, unknown>) => sum + (Number(s.overall_score) || 0), 0) / totalWeight;
-      const avgFireSafety = childScores.reduce((sum: number, s: Record<string, unknown>) => sum + (Number(s.fire_safety_score) || 0), 0) / totalWeight;
+      const avgFacilitySafety = childScores.reduce((sum: number, s: Record<string, unknown>) => sum + (Number(s.facility_safety_score) || 0), 0) / totalWeight;
       const avgFoodSafety = childScores.reduce((sum: number, s: Record<string, unknown>) => sum + (Number(s.food_safety_score) || 0), 0) / totalWeight;
 
       // Upsert the rollup score for this parent node
@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
           tenant_id,
           period_date,
           overall_score: Math.round(avgScore * 100) / 100,
-          fire_safety_score: Math.round(avgFireSafety * 100) / 100,
+          facility_safety_score: Math.round(avgFacilitySafety * 100) / 100,
           food_safety_score: Math.round(avgFoodSafety * 100) / 100,
           child_count: childIds.length,
           updated_at: new Date().toISOString(),

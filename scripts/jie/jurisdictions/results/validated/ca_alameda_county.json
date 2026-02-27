@@ -29,7 +29,7 @@
     "reinspection_trigger": "Conditional pass requires reinspection; imminent health hazards require immediate closure and reinspection for reopening",
     "public_disclosure": "Results posted online at Alameda County Department of Environmental Health Online Inspection Results; placards displayed at facilities"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Alameda County Fire Department - Fire Prevention Bureau",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspection and maintenance by qualified professionals per NFPA 96",

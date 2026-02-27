@@ -14,7 +14,7 @@ import {
 const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; color: string; bg: string }> = {
   food_safety_handler: { label: 'Food Handler', color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'CFPM', color: '#1e4d6b', bg: '#e0f2fe' },
-  fire_safety: { label: 'Fire Safety', color: '#dc2626', bg: '#fee2e2' },
+  facility_safety: { label: 'Facility Safety', color: '#dc2626', bg: '#fee2e2' },
   compliance_ops: { label: 'Compliance', color: '#d4af37', bg: '#fef3c7' },
   custom: { label: 'Custom', color: '#7c3aed', bg: '#ede9fe' },
 };
@@ -244,7 +244,7 @@ export function CertificateViewer() {
             <option value="all">All Types</option>
             <option value="food_handler">Food Handler</option>
             <option value="food_manager_prep">CFPM</option>
-            <option value="fire_safety">Fire Safety</option>
+            <option value="facility_safety">Facility Safety</option>
             <option value="custom">Custom</option>
           </select>
         </div>

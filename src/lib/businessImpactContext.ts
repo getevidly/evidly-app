@@ -21,7 +21,7 @@ export interface ClientLocation {
   type: 'restaurant' | 'cafe' | 'concession' | 'catering' | 'commissary' | 'dining_hall' | 'fine_dining' | 'quick_service';
   avg_daily_covers: number;
   food_safety_score: number;
-  fire_safety_score: number;
+  facility_safety_score: number;
   active_vulnerabilities: string[];
   jurisdiction_authorities: string[];
 }
@@ -77,7 +77,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'restaurant',
       avg_daily_covers: 450,
       food_safety_score: 92,
-      fire_safety_score: 88,
+      facility_safety_score: 88,
       active_vulnerabilities: ['cooler_trending_warm'],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -89,7 +89,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'quick_service',
       avg_daily_covers: 600,
       food_safety_score: 87,
-      fire_safety_score: 82,
+      facility_safety_score: 82,
       active_vulnerabilities: ['cooler_trending_warm', 'hood_cleaning_approaching'],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -101,7 +101,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'restaurant',
       avg_daily_covers: 280,
       food_safety_score: 96,
-      fire_safety_score: 91,
+      facility_safety_score: 91,
       active_vulnerabilities: [],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -113,7 +113,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'restaurant',
       avg_daily_covers: 350,
       food_safety_score: 89,
-      fire_safety_score: 84,
+      facility_safety_score: 84,
       active_vulnerabilities: ['hood_cleaning_approaching'],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -125,7 +125,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'cafe',
       avg_daily_covers: 180,
       food_safety_score: 90,
-      fire_safety_score: 85,
+      facility_safety_score: 85,
       active_vulnerabilities: ['temp_log_documentation_gaps'],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -137,7 +137,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'catering',
       avg_daily_covers: 800,
       food_safety_score: 85,
-      fire_safety_score: 79,
+      facility_safety_score: 79,
       active_vulnerabilities: ['poultry_temp_variance', 'cross_contamination_risk'],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -149,7 +149,7 @@ export const DEMO_CLIENT_PROFILE: ClientProfile = {
       type: 'restaurant',
       avg_daily_covers: 220,
       food_safety_score: 91,
-      fire_safety_score: 86,
+      facility_safety_score: 86,
       active_vulnerabilities: [],
       jurisdiction_authorities: ['Fresno County Environmental Health'],
     },
@@ -206,7 +206,7 @@ export async function buildClientProfile(organizationId: string): Promise<Client
       type: l.metadata?.location_type || 'restaurant',
       avg_daily_covers: l.metadata?.avg_daily_covers || 100,
       food_safety_score: l.metadata?.food_safety_score || 70,
-      fire_safety_score: l.metadata?.fire_safety_score || 70,
+      facility_safety_score: l.metadata?.facility_safety_score || 70,
       active_vulnerabilities: l.metadata?.active_vulnerabilities || [],
       jurisdiction_authorities: l.metadata?.jurisdiction_authorities || [],
     }));

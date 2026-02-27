@@ -71,7 +71,7 @@ function buildFoodSafetyScore(
   };
 }
 
-function buildFireSafetyScore(
+function buildFacilitySafetyScore(
   locationId: string,
   jurisdiction: LocationJurisdiction,
 ): AuthorityScore {
@@ -79,30 +79,30 @@ function buildFireSafetyScore(
   const override = DEMO_LOCATION_GRADE_OVERRIDES[locationId];
   if (override) {
     return {
-      pillar: 'fire_safety',
-      authority: jurisdiction.fireSafety,
-      grade: override.fireSafety.grade,
-      gradeDisplay: override.fireSafety.gradeDisplay,
+      pillar: 'facility_safety',
+      authority: jurisdiction.facilitySafety,
+      grade: override.facilitySafety.grade,
+      gradeDisplay: override.facilitySafety.gradeDisplay,
       numericScore: null, // fire is pass/fail per NFPA 96 (2024) — no numeric score
-      status: override.fireSafety.status,
+      status: override.facilitySafety.status,
       details: {
-        summary: override.fireSafety.summary,
+        summary: override.facilitySafety.summary,
         codeEdition: 'NFPA 96 (2024)',
-        permitStatus: override.fireSafety.permitStatus,
-        hoodStatus: override.fireSafety.hoodStatus,
-        extinguisherStatus: override.fireSafety.extinguisherStatus,
-        ansulStatus: override.fireSafety.ansulStatus,
+        permitStatus: override.facilitySafety.permitStatus,
+        hoodStatus: override.facilitySafety.hoodStatus,
+        extinguisherStatus: override.facilitySafety.extinguisherStatus,
+        ansulStatus: override.facilitySafety.ansulStatus,
       },
     };
   }
 
   // Fallback for non-overridden locations
   const loc = DEMO_LOCATIONS.find(l => l.id === locationId);
-  const operationalPermitValid = loc ? loc.fireSafety.ops >= 70 : true;
+  const operationalPermitValid = loc ? loc.facilitySafety.ops >= 70 : true;
 
   return {
-    pillar: 'fire_safety',
-    authority: jurisdiction.fireSafety,
+    pillar: 'facility_safety',
+    authority: jurisdiction.facilitySafety,
     grade: operationalPermitValid ? 'Pass' : 'Fail',
     gradeDisplay: operationalPermitValid
       ? 'Pass \u2014 Operational Permit Current'
@@ -133,7 +133,7 @@ export function useComplianceScore(
       setScore({
         location_id: locationId,
         foodSafety: buildFoodSafetyScore(locationId, jurisdiction),
-        fireSafety: buildFireSafetyScore(locationId, jurisdiction),
+        facilitySafety: buildFacilitySafetyScore(locationId, jurisdiction),
         federalFoodOverlay: null,
         federalFireOverlay: null,
       });
@@ -144,7 +144,7 @@ export function useComplianceScore(
     setScore({
       location_id: locationId,
       foodSafety: buildFoodSafetyScore(locationId, jurisdiction),
-      fireSafety: buildFireSafetyScore(locationId, jurisdiction),
+      facilitySafety: buildFacilitySafetyScore(locationId, jurisdiction),
       federalFoodOverlay: null,
       federalFireOverlay: null,
     });
@@ -166,7 +166,7 @@ export function useAllComplianceScores(
       result[locId] = {
         location_id: locId,
         foodSafety: buildFoodSafetyScore(locId, jurisdiction),
-        fireSafety: buildFireSafetyScore(locId, jurisdiction),
+        facilitySafety: buildFacilitySafetyScore(locId, jurisdiction),
         federalFoodOverlay: null,
         federalFireOverlay: null,
       };

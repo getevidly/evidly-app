@@ -19,7 +19,7 @@
     "reinspection_trigger": "Not specified on official sources",
     "public_disclosure": "Results viewable at individual facilities and obtainable at Environmental Health Department"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Multiple agencies - Amador Fire Protection District, City of Jackson Fire Department, other local fire protection districts",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Per California fire code - 6-month inspections by licensed fire protection company required",

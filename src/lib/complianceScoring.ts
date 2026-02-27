@@ -1,14 +1,14 @@
 // ============================================================
 // Compliance Model — Jurisdiction-Status Based (Two Pillars)
 // ============================================================
-// Food Safety + Fire Safety only. NO Vendor Compliance pillar.
+// Food Safety + Facility Safety only. NO Vendor Compliance pillar.
 // NO aggregate numeric scores. Status labels only.
 // ============================================================
 
 // --------------- Jurisdiction-Based Status Types ---------------
 
 export type FoodSafetyStatus = 'Compliant' | 'Good' | 'Satisfactory' | 'Action Required' | 'Unsatisfactory';
-export type FireSafetyVerdict = 'Pass' | 'Fail';
+export type FacilitySafetyVerdict = 'Pass' | 'Fail';
 
 export interface LocationCompliance {
   foodSafety: {
@@ -18,10 +18,10 @@ export interface LocationCompliance {
     detail: string;
     note?: string;
   };
-  fireSafety: {
+  facilitySafety: {
     reference: 'NFPA 96 (2024)';
     ahj: string;
-    verdict: FireSafetyVerdict;
+    verdict: FacilitySafetyVerdict;
     bars: { label: 'Permit' | 'Hood' | 'Ext' | 'Ansul'; status: 'pass' | 'fail' }[];
   };
   openItems: number;
@@ -107,16 +107,16 @@ export function getGraduatedPenalty(daysUntilDue: number, fullPenaltyPoints: num
   return 0;                                                  // 30+ days
 }
 
-// --------------- Fire Safety Item Interfaces ---------------
+// --------------- Facility Safety Item Interfaces ---------------
 
-export interface FireSafetyItem {
+export interface FacilitySafetyItem {
   name: string;
   weight: number;          // fraction of pillar (e.g. 0.30)
   daysUntilDue: number;    // for graduated items; Infinity if not date-based
   conditionScore?: number; // 0-100 for condition-based items
 }
 
-export function calculateFireSafetyScore(items: FireSafetyItem[]): number {
+export function calculateFacilitySafetyScore(items: FacilitySafetyItem[]): number {
   let totalScore = 0;
   for (const item of items) {
     const maxPoints = item.weight * 100;
@@ -130,9 +130,9 @@ export function calculateFireSafetyScore(items: FireSafetyItem[]): number {
   return Math.round(Math.max(0, Math.min(100, totalScore)));
 }
 
-// --------------- Fire Safety Item Builders ---------------
+// --------------- Facility Safety Item Builders ---------------
 
-export interface FireSafetyInputs {
+export interface FacilitySafetyInputs {
   hoodCleaningDaysUntilDue: number;
   ansulServiceDaysUntilDue: number;
   extinguisherDaysUntilDue: number;
@@ -141,19 +141,19 @@ export interface FireSafetyInputs {
   greaseTrapDaysUntilDue: number;
 }
 
-export function buildFireSafetyItems(inputs: FireSafetyInputs): FireSafetyItem[] {
+export function buildFacilitySafetyItems(inputs: FacilitySafetyInputs): FacilitySafetyItem[] {
   return [
     { name: 'Hood Cleaning Certification', weight: 0.30, daysUntilDue: inputs.hoodCleaningDaysUntilDue },
     { name: 'Ansul / Suppression Service', weight: 0.25, daysUntilDue: inputs.ansulServiceDaysUntilDue },
     { name: 'Fire Extinguisher Inspection', weight: 0.15, daysUntilDue: inputs.extinguisherDaysUntilDue },
-    { name: 'Daily Fire Safety Checks', weight: 0.15, daysUntilDue: Infinity, conditionScore: inputs.dailyCheckCompletionRate },
+    { name: 'Daily Facility Safety Checks', weight: 0.15, daysUntilDue: Infinity, conditionScore: inputs.dailyCheckCompletionRate },
     { name: 'Weekly/Monthly Fire Checks', weight: 0.10, daysUntilDue: Infinity, conditionScore: inputs.weeklyMonthlyCompletionRate },
     { name: 'Grease Trap Service', weight: 0.05, daysUntilDue: inputs.greaseTrapDaysUntilDue },
   ];
 }
 
-export function buildFireSafetyItemsFromDemoData(locationId: string): FireSafetyItem[] {
-  const DEMO: Record<string, FireSafetyInputs> = {
+export function buildFacilitySafetyItemsFromDemoData(locationId: string): FacilitySafetyItem[] {
+  const DEMO: Record<string, FacilitySafetyInputs> = {
     downtown: {
       hoodCleaningDaysUntilDue: 45,
       ansulServiceDaysUntilDue: 90,
@@ -179,7 +179,7 @@ export function buildFireSafetyItemsFromDemoData(locationId: string): FireSafety
       greaseTrapDaysUntilDue: -3,
     },
   };
-  return buildFireSafetyItems(DEMO[locationId] || DEMO.downtown);
+  return buildFacilitySafetyItems(DEMO[locationId] || DEMO.downtown);
 }
 
 // --------------- Food Safety Data Interface ---------------

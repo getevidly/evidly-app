@@ -1,4 +1,4 @@
-// ── Adaptive Onboarding Checklist Config ──────────────────────────
+// ── Adaptive Onboarding Wizard Config ──────────────────────────
 // Declarative step definitions with visibility conditions.
 // Each step declares its own industry/tier requirements.
 // resolveVisibleSteps() is a pure function — no side effects.
@@ -17,6 +17,7 @@ export interface OnboardingStepDef {
   id: string;
   label: string;
   description: string;
+  hint: string;
   route: string;
   section: 'getting_started' | 'safety_setup' | 'team_locations' | 'industry_specific';
   order: number;
@@ -30,143 +31,81 @@ export interface OnboardingStepDef {
 
 export const ONBOARDING_SECTIONS = [
   { id: 'getting_started', label: 'Getting Started', order: 0 },
-  { id: 'safety_setup', label: 'Safety Setup', order: 1 },
-  { id: 'industry_specific', label: 'Industry Setup', order: 2 },
-  { id: 'team_locations', label: 'Team & Locations', order: 3 },
+  { id: 'safety_setup', label: 'Safety & Compliance', order: 1 },
+  { id: 'team_locations', label: 'Team & Operations', order: 2 },
 ] as const;
 
 export const ONBOARDING_STEPS: OnboardingStepDef[] = [
-  // ── GETTING STARTED (universal) ───────────────────────
+  // ── Step 1: Profile ─────────────────────────────────────
   {
     id: 'profile',
-    label: 'Complete your profile',
-    description: 'Add your name, title, and contact info.',
+    label: 'Complete Your Profile',
+    description: 'Add your name, title, and contact info so your team knows who you are.',
+    hint: 'Takes about 2 minutes',
     route: '/settings',
     section: 'getting_started',
     order: 1,
   },
+  // ── Step 2: First Location ──────────────────────────────
   {
     id: 'first_location',
-    label: 'Add your first location',
-    description: 'Set up your kitchen with address and jurisdiction auto-detection.',
+    label: 'Add Your First Location',
+    description: 'Set up your first kitchen with address and jurisdiction auto-detection.',
+    hint: 'We\'ll auto-detect your local health department requirements',
     route: '/org-hierarchy',
     section: 'getting_started',
     order: 2,
   },
-
-  // ── SAFETY SETUP (universal) ──────────────────────────
+  // ── Step 3: Additional Locations (multi/enterprise only) ─
   {
-    id: 'fire_safety_doc',
-    label: 'Upload a fire safety document',
-    description: 'Hood cleaning certificate, suppression inspection, or similar.',
-    route: '/fire-safety',
-    section: 'safety_setup',
-    order: 1,
-  },
-  {
-    id: 'first_checklist',
-    label: 'Set up your first daily checklist',
-    description: 'Create an Opening or Closing checklist for daily compliance.',
-    route: '/checklists',
-    section: 'safety_setup',
-    order: 2,
-  },
-  {
-    id: 'first_temp',
-    label: 'Log your first temperature reading',
-    description: 'Walk to your cooler, check the thermometer, log it.',
-    route: '/temp-logs',
-    section: 'safety_setup',
-    order: 3,
-  },
-
-  // ── INDUSTRY-SPECIFIC ─────────────────────────────────
-  {
-    id: 'configure_haccp',
-    label: 'Configure your HACCP plan',
-    description: 'Set up hazard analysis and critical control points.',
-    route: '/documents',
-    section: 'industry_specific',
-    order: 1,
-    industries: ['RESTAURANT'],
-  },
-  {
-    id: 'upload_dietary_docs',
-    label: 'Upload dietary service documentation',
-    description: 'Add therapeutic diet and nutrition care documents for CMS compliance.',
-    route: '/documents',
-    section: 'industry_specific',
-    order: 1,
-    industries: ['HEALTHCARE', 'SENIOR_LIVING'],
-  },
-  {
-    id: 'setup_usda_tracking',
-    label: 'Configure USDA meal program requirements',
-    description: 'Set up National School Lunch Program tracking and documentation.',
-    route: '/documents',
-    section: 'industry_specific',
-    order: 1,
-    industries: ['K12_EDUCATION'],
-  },
-  {
-    id: 'setup_multi_outlet',
-    label: 'Set up multi-outlet management',
-    description: 'Configure your campus dining outlets and workflows.',
+    id: 'add_locations',
+    label: 'Add Additional Locations',
+    description: 'Register all your sites for unified compliance tracking across locations.',
+    hint: 'You can always add more locations later',
     route: '/org-hierarchy',
-    section: 'industry_specific',
-    order: 1,
-    industries: ['HIGHER_EDUCATION'],
+    section: 'getting_started',
+    order: 3,
+    minTier: 'multi',
   },
-
-  // ── TEAM & LOCATIONS (universal base) ─────────────────
+  // ── Step 4: Invite Team ─────────────────────────────────
   {
     id: 'invite_team',
-    label: 'Invite a team member',
-    description: 'Add staff so they can log temps and complete checklists.',
+    label: 'Invite Your Team',
+    description: 'Add staff members so they can log temps, complete checklists, and stay compliant.',
+    hint: 'They\'ll get an email invitation to join',
     route: '/team',
     section: 'team_locations',
     order: 1,
   },
-
-  // ── TEAM & LOCATIONS (multi: 2+ locations) ────────────
+  // ── Step 5: Upload Documents ────────────────────────────
   {
-    id: 'add_locations',
-    label: 'Add your additional locations',
-    description: 'Register all your sites for unified compliance tracking.',
-    route: '/org-hierarchy',
+    id: 'upload_documents',
+    label: 'Upload Key Documents',
+    description: 'Add your health permits, facility safety certificates, and insurance documents.',
+    hint: 'Keeps everything in one place for inspections',
+    route: '/documents',
+    section: 'safety_setup',
+    order: 1,
+  },
+  // ── Step 6: Add Vendors ─────────────────────────────────
+  {
+    id: 'add_vendors',
+    label: 'Add Your Vendors',
+    description: 'Register your food suppliers and service vendors for compliance tracking.',
+    hint: 'Track certifications, insurance, and delivery records',
+    route: '/vendors',
     section: 'team_locations',
     order: 2,
-    minTier: 'multi',
   },
+  // ── Step 7: Register Equipment ──────────────────────────
   {
-    id: 'review_multi_dashboard',
-    label: 'Review multi-location dashboard',
-    description: 'See all locations at a glance from the overview.',
-    route: '/dashboard',
-    section: 'team_locations',
-    order: 3,
-    minTier: 'multi',
-  },
-  {
-    id: 'explore_leaderboard',
-    label: 'Explore location leaderboard',
-    description: 'Compare compliance performance across your sites.',
-    route: '/dashboard',
-    section: 'team_locations',
-    order: 4,
-    minTier: 'multi',
-    featureGate: 'leaderboard_access',
-  },
-
-  // ── TEAM & LOCATIONS (enterprise: 11+ locations) ──────
-  {
-    id: 'enterprise_onboarding_call',
-    label: 'Schedule enterprise onboarding call',
-    description: 'Book a guided setup session with our enterprise team.',
-    route: '/settings',
-    section: 'team_locations',
-    order: 5,
-    minTier: 'enterprise',
+    id: 'register_equipment',
+    label: 'Register Equipment',
+    description: 'Add your refrigerators, freezers, and cooking equipment for temperature monitoring.',
+    hint: 'Enables automated temp logging and alerts',
+    route: '/equipment',
+    section: 'safety_setup',
+    order: 2,
   },
 ];
 

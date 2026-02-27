@@ -19,7 +19,7 @@
     "reinspection_trigger": "Follow up inspections conducted when health inspector determines during regular inspection that compliance verification is required",
     "public_disclosure": "Inspection reports are public record, must be maintained onsite and available upon request. Full results posted online via EatSafeSLO interactive map and MyHealthDepartment database"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "CAL FIRE San Luis Obispo County Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "NFPA 96 standards require kitchen fire suppression system inspection by licensed fire protection contractor at least every six months",

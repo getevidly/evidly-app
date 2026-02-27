@@ -1,13 +1,13 @@
 // ============================================================
 // Inspection Readiness Scoring Engine
 // ============================================================
-// Two-Pillar Model: Food Safety + Fire Safety (independent scores)
+// Two-Pillar Model: Food Safety + Facility Safety (independent scores)
 // Vendor credentials fold into the pillar they serve.
 // ============================================================
 
 // --------------- Pillar & Component Weights ---------------
 
-export type InspectionPillar = 'food_safety' | 'fire_safety';
+export type InspectionPillar = 'food_safety' | 'facility_safety';
 
 export const COMPONENT_WEIGHTS = {
   operations: 0.50,
@@ -23,7 +23,7 @@ export interface InspectionReadinessScore {
     ops: number;              // 0-100
     docs: number;             // 0-100
   };
-  fireSafety: {
+  facilitySafety: {
     score: number;            // 0-100
     ops: number;              // 0-100
     docs: number;             // 0-100
@@ -51,8 +51,8 @@ export function getReadinessStatus(score: number): string {
 export function calculateInspectionReadiness(
   foodOps: number,     // 0-100 aggregate food safety operations score
   foodDocs: number,    // 0-100 aggregate food safety documentation score
-  fireOps: number,     // 0-100 aggregate fire safety operations score
-  fireDocs: number,    // 0-100 aggregate fire safety documentation score
+  fireOps: number,     // 0-100 aggregate facility safety operations score
+  fireDocs: number,    // 0-100 aggregate facility safety documentation score
   jurisdiction?: string,
 ): InspectionReadinessScore {
   const foodScore = (foodOps * COMPONENT_WEIGHTS.operations) + (foodDocs * COMPONENT_WEIGHTS.documentation);
@@ -61,7 +61,7 @@ export function calculateInspectionReadiness(
   return {
     overall: null, // DEPRECATED — pillars are independent
     foodSafety: { score: Math.round(foodScore), ops: Math.round(foodOps), docs: Math.round(foodDocs) },
-    fireSafety: { score: Math.round(fireScore), ops: Math.round(fireOps), docs: Math.round(fireDocs) },
+    facilitySafety: { score: Math.round(fireScore), ops: Math.round(fireOps), docs: Math.round(fireDocs) },
     jurisdiction,
     calculatedAt: new Date().toISOString(),
   };
@@ -85,8 +85,8 @@ export function calculateOrgReadiness(
 ): InspectionReadinessScore & { locationScores: LocationReadinessEntry[] } {
   const avgFoodOps = avg(locationScores.map(l => l.score.foodSafety.ops));
   const avgFoodDocs = avg(locationScores.map(l => l.score.foodSafety.docs));
-  const avgFireOps = avg(locationScores.map(l => l.score.fireSafety.ops));
-  const avgFireDocs = avg(locationScores.map(l => l.score.fireSafety.docs));
+  const avgFireOps = avg(locationScores.map(l => l.score.facilitySafety.ops));
+  const avgFireDocs = avg(locationScores.map(l => l.score.facilitySafety.docs));
 
   return {
     ...calculateInspectionReadiness(avgFoodOps, avgFoodDocs, avgFireOps, avgFireDocs),

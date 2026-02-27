@@ -10,7 +10,7 @@ export default function PassportDemo() {
 
   const complianceData = {
     foodSafety: 95,
-    fireSafety: 89
+    facilitySafety: 89
   };
 
   const recentActivity = [
@@ -80,21 +80,21 @@ export default function PassportDemo() {
               </div>
               <div className="text-sm font-medium text-gray-600 mt-2">Food Safety</div>
             </div>
-            {/* Fire Safety Ring */}
+            {/* Facility Safety Ring */}
             <div className="flex flex-col items-center">
               <div className="relative w-40 h-40">
                 <svg className="w-full h-full transform -rotate-90">
                   <circle cx="80" cy="80" r="68" stroke="#e5e7eb" strokeWidth="12" fill="none" />
                   <circle cx="80" cy="80" r="68" stroke="#10b981" strokeWidth="12" fill="none"
                     strokeDasharray={`${2 * Math.PI * 68}`}
-                    strokeDashoffset={`${2 * Math.PI * 68 * (1 - complianceData.fireSafety / 100)}`}
+                    strokeDashoffset={`${2 * Math.PI * 68 * (1 - complianceData.facilitySafety / 100)}`}
                     strokeLinecap="round" />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.fireSafety}</div>
+                  <div className="text-4xl font-bold text-[#1e4d6b]">{complianceData.facilitySafety}</div>
                 </div>
               </div>
-              <div className="text-sm font-medium text-gray-600 mt-2">Fire Safety</div>
+              <div className="text-sm font-medium text-gray-600 mt-2">Facility Safety</div>
             </div>
           </div>
         </div>
@@ -119,13 +119,13 @@ export default function PassportDemo() {
 
             <div>
               <div className="flex justify-between items-center mb-2">
-                <span className="font-semibold text-gray-700">Fire Safety</span>
-                <span className="font-bold text-[#1e4d6b]">{complianceData.fireSafety}</span>
+                <span className="font-semibold text-gray-700">Facility Safety</span>
+                <span className="font-bold text-[#1e4d6b]">{complianceData.facilitySafety}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-green-500 h-3 rounded-full transition-all"
-                  style={{ width: `${complianceData.fireSafety}%` }}
+                  style={{ width: `${complianceData.facilitySafety}%` }}
                 />
               </div>
             </div>

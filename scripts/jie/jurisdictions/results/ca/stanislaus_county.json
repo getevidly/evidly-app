@@ -19,7 +19,7 @@
     "reinspection_trigger": "Facilities with three or more violations or major violations are subject to reinspection",
     "public_disclosure": "All inspections are posted online at secure.stancounty.com/FoodFacilities/ with inspection notices from past three years available. Facilities must keep most recent inspection report on-site for public viewing upon request."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Stanislaus County Fire Prevention Bureau",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen hood fire protection systems require separate plan submittals to Fire Prevention Bureau. NFPA 96 standards require semi-annual inspections every six months by licensed fire protection companies.",

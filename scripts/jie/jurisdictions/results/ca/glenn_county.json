@@ -19,7 +19,7 @@
     "reinspection_trigger": "Critical violations must be corrected at time of inspection and may require follow-up inspection. Re-inspection not usually required for minor violations only.",
     "public_disclosure": "Inspection reports posted online as scanned PDFs, updated every few weeks. Reports available since August 1, 2006."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Multiple fire protection districts serve Glenn County (Artois-Glenn, Orland, Hamilton City, Kanawha-Glenn, Ord, Glenn-Codora Fire Protection Districts)",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": null,

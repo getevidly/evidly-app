@@ -19,7 +19,7 @@
     "reinspection_trigger": "Major violations require reinspection unless immediately corrected during routine inspection",
     "public_disclosure": "Inspection reports available online at fresnohealthinspections.com; facilities required to post notice that reports available for public review and maintain copy on-site"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Fresno County Fire Protection District",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Fire-suppression systems must be inspected and certified by C-16 Fire Protection Contractor or State Fire Marshal 'A' License holder every 6 months with NFPA 17 or 17a certificate of completion",

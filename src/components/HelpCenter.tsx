@@ -11,7 +11,7 @@ interface HelpArticle {
 
 const helpArticles: HelpArticle[] = [
   { id: '1', title: 'Getting Started with EvidLY', category: 'Setup', summary: 'Complete setup guide — add locations, invite team, set up equipment, and start logging.', icon: BookOpen },
-  { id: '2', title: 'Understanding Your Compliance Score', category: 'Dashboard', summary: 'How the 2-pillar scoring works: Food Safety and Fire Safety.', icon: FileText },
+  { id: '2', title: 'Understanding Your Compliance Score', category: 'Dashboard', summary: 'How the 2-pillar scoring works: Food Safety and Facility Safety.', icon: FileText },
   { id: '3', title: 'Temperature Logging Best Practices', category: 'Operations', summary: 'Set schedules, handle out-of-range readings, FDA cooldown tracking, and receiving logs.', icon: FileText },
   { id: '4', title: 'Setting Up Auto Document Requests', category: 'Vendors', summary: 'Configure automatic vendor document requests with secure upload links and reminders.', icon: FileText },
   { id: '5', title: 'Creating & Managing Checklists', category: 'Operations', summary: 'Build opening/closing checklists, customize templates, and track completion rates.', icon: FileText },
@@ -20,7 +20,7 @@ const helpArticles: HelpArticle[] = [
   { id: '8', title: 'Preparing for a Health Inspection', category: 'Compliance', summary: 'Use the Compliance Package builder to generate inspection-ready documentation.', icon: FileText },
   { id: '9', title: 'Team Management & Permissions', category: 'Admin', summary: 'Invite team members, assign roles (Management, Kitchen, Facilities), manage access.', icon: FileText },
   { id: '10', title: 'QR Compliance Passport', category: 'Features', summary: 'Generate QR codes for instant compliance verification. Print, share, or display.', icon: FileText },
-  { id: '11', title: 'AI Compliance Advisor', category: 'Features', summary: 'Ask compliance questions — FDA, HACCP, fire safety, health codes. Available 24/7.', icon: MessageSquare },
+  { id: '11', title: 'AI Compliance Advisor', category: 'Features', summary: 'Ask compliance questions — FDA, HACCP, facility safety, health codes. Available 24/7.', icon: MessageSquare },
   { id: '12', title: 'Reports & Analytics', category: 'Reporting', summary: 'Weekly digests, trend analysis, compliance forecasting, and exportable reports.', icon: FileText },
 ];
 

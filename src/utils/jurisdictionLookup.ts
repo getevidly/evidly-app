@@ -14,7 +14,7 @@ interface JurisdictionMatch {
   gradingConfig: Record<string, any>;
   passThreshold: number | null;
   foodSafetyWeight: number | null;
-  fireSafetyWeight: number | null;
+  facilitySafetyWeight: number | null;
   opsWeight: number | null;
   docsWeight: number | null;
   fireAhjName: string;
@@ -74,7 +74,7 @@ export async function lookupJurisdiction(
     .from('jurisdictions')
     .select('*')
     .eq('county', normalizedCounty)
-    .eq('jurisdiction_type', 'fire_safety')
+    .eq('jurisdiction_type', 'facility_safety')
     .eq('is_active', true)
     .limit(1);
 
@@ -132,7 +132,7 @@ function mapToMatch(row: any, layer: string): JurisdictionMatch {
     gradingConfig: row.grading_config,
     passThreshold: row.pass_threshold,
     foodSafetyWeight: row.food_safety_weight ?? null,
-    fireSafetyWeight: row.fire_safety_weight ?? null,
+    facilitySafetyWeight: row.facility_safety_weight ?? null,
     opsWeight: row.ops_weight ?? null,
     docsWeight: row.docs_weight ?? null,
     fireAhjName: row.fire_ahj_name,
@@ -163,7 +163,7 @@ function checkFederalOverlay(
         gradingConfig: {},
         passThreshold: null,
         foodSafetyWeight: null,
-        fireSafetyWeight: null,
+        facilitySafetyWeight: null,
         opsWeight: null,
         docsWeight: null,
         fireAhjName: 'NPS Fire (Yosemite)',

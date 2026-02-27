@@ -40,7 +40,7 @@ export function CarrierPartnership() {
             {[
               { icon: EvidlyIcon as any, title: 'Authenticated API Access', desc: 'Real-time risk scores via RESTful API with X-API-Key authentication and rate limiting' },
               { icon: TrendingUp, title: '12-Month Trend Analysis', desc: 'Monthly score snapshots showing consistency and improvement trajectory' },
-              { icon: Flame, title: 'Fire Safety Verification', desc: 'NFPA 96/17A/10/72 (2025 Edition) compliance status with service dates and vendor documentation' },
+              { icon: Flame, title: 'Facility Safety Verification', desc: 'NFPA 96/17A/10/72 (2025 Edition) compliance status with service dates and vendor documentation' },
               { icon: BarChart3, title: 'Anonymized Incident Metrics', desc: 'Aggregated incident counts by severity and category — no employee PII or raw reports' },
             ].map(item => (
               <div key={item.title} className="flex items-start gap-3 p-4 rounded-xl bg-gray-50">
@@ -84,7 +84,7 @@ export function CarrierPartnership() {
               { method: 'POST', path: '/api/v1/risk-score/verify', desc: 'Verify current risk score' },
               { method: 'GET', path: '/api/v1/risk-score/{id}/summary', desc: 'Score breakdown' },
               { method: 'GET', path: '/api/v1/risk-score/{id}/history', desc: '12-month trend' },
-              { method: 'GET', path: '/api/v1/risk-score/{id}/fire-safety', desc: 'NFPA (2025) compliance' },
+              { method: 'GET', path: '/api/v1/risk-score/{id}/facility-safety', desc: 'NFPA (2025) compliance' },
               { method: 'GET', path: '/api/v1/risk-score/{id}/incidents', desc: 'Anonymized metrics' },
             ].map(ep => (
               <div key={ep.path} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 font-mono">

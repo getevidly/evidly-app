@@ -12,6 +12,8 @@ import {
   DEMO_ALERTS, MONITORED_SOURCES, CUSTOMER_JURISDICTIONS,
   type RegulatoryAlert, type RegulatorySource, type ImpactLevel, type AlertStatus
 } from '../lib/regulatoryMonitor';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -21,6 +23,7 @@ export function RegulatoryAlerts() {
   // TODO: i18n
 
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [impactFilter, setImpactFilter] = useState<string>('all');
@@ -331,7 +334,7 @@ export function RegulatoryAlerts() {
                             <span className={action.completed ? 'text-gray-500' : 'text-gray-700'}>{action.text}</span>
                             {!action.completed && action.actionType === 'upload' && (
                               <button
-                                onClick={() => toast.info("File Upload (Demo)")}
+                                onClick={() => guardAction('upload', 'Regulatory Alerts', () => toast.info('File Upload'))}
                                 className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8]"
                               >
                                 <Upload className="w-3 h-3" />
@@ -364,7 +367,7 @@ export function RegulatoryAlerts() {
                     )}
                     {/* TODO: Wire to Resend for team share emails */}
                     <button
-                      onClick={() => toast.success("Team notification sent")}
+                      onClick={() => guardAction('notify', 'Regulatory Alerts', () => toast.success('Team notification sent'))}
                       className="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5 min-h-[44px]"
                     >
                       <Share2 className="w-3.5 h-3.5" />
@@ -480,6 +483,14 @@ export function RegulatoryAlerts() {
           </div>
         </div>
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </>
   );
 }

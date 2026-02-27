@@ -21,7 +21,7 @@ interface ScoringResult {
   gradeDisplay: string;
   passFail: string;
   violations: ViolationDetail[];
-  weights: { foodSafety: number; fireSafety: number; ops: number; docs: number };
+  weights: { foodSafety: number; facilitySafety: number; ops: number; docs: number };
   calculatedAt: string;
   majorViolations: number;
   minorViolations: number;
@@ -44,9 +44,9 @@ interface OverallScore {
   locationId: string;
   overallScore: number;
   foodSafety: PillarScore;
-  fireSafety: PillarScore;
+  facilitySafety: PillarScore;
   jurisdictions: ScoringResult[];
-  weightsUsed: { foodSafety: number; fireSafety: number; ops: number; docs: number };
+  weightsUsed: { foodSafety: number; facilitySafety: number; ops: number; docs: number };
 }
 
 interface PillarScore {
@@ -85,7 +85,7 @@ serve(async (req: Request) => {
         jurisdictions (
           id, county, city, agency_name, scoring_type, grading_type,
           grading_config, pass_threshold, warning_threshold, critical_threshold,
-          violation_weight_map, food_safety_weight, fire_safety_weight,
+          violation_weight_map, food_safety_weight, facility_safety_weight,
           ops_weight, docs_weight
         )
       `)
@@ -122,7 +122,7 @@ serve(async (req: Request) => {
     for (const lj of locationJurisdictions) {
       const jurisdiction = (lj as any).jurisdictions;
       const layer = (lj as any).jurisdiction_layer;
-      const pillar = layer.includes('fire') ? 'fire_safety' : 'food_safety';
+      const pillar = layer.includes('fire') ? 'facility_safety' : 'food_safety';
 
       const opsWeight = (jurisdiction.ops_weight || 60) / 100;
       const docsWeight = (jurisdiction.docs_weight || 40) / 100;
@@ -156,7 +156,7 @@ serve(async (req: Request) => {
 
       const weights = {
         foodSafety: jurisdiction.food_safety_weight || 60,
-        fireSafety: jurisdiction.fire_safety_weight || 40,
+        facilitySafety: jurisdiction.facility_safety_weight || 40,
         ops: jurisdiction.ops_weight || 60,
         docs: jurisdiction.docs_weight || 40,
       };
@@ -195,26 +195,26 @@ serve(async (req: Request) => {
     const mrJurisdiction = (mostRestrictive as any).jurisdictions;
 
     const foodWeight = (mrJurisdiction.food_safety_weight || 60) / 100;
-    const fireWeight = (mrJurisdiction.fire_safety_weight || 40) / 100;
+    const fireWeight = (mrJurisdiction.facility_safety_weight || 40) / 100;
 
     const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
-    const fireResults = results.filter(r => r.pillar === 'fire_safety' && r.subComponent === 'combined');
+    const fireResults = results.filter(r => r.pillar === 'facility_safety' && r.subComponent === 'combined');
 
     const foodScore = foodResults.length > 0 ? Math.min(...foodResults.map(r => r.normalizedScore)) : 100;
     const fireScore = fireResults.length > 0 ? Math.min(...fireResults.map(r => r.normalizedScore)) : 100;
 
     const foodOps = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'operations');
     const foodDocs = results.find(r => r.pillar === 'food_safety' && r.subComponent === 'documentation');
-    const fireOps = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'operations');
-    const fireDocs = results.find(r => r.pillar === 'fire_safety' && r.subComponent === 'documentation');
+    const fireOps = results.find(r => r.pillar === 'facility_safety' && r.subComponent === 'operations');
+    const fireDocs = results.find(r => r.pillar === 'facility_safety' && r.subComponent === 'documentation');
 
     const overallScore: OverallScore = {
       locationId: location_id,
       overallScore: Math.round((foodScore * foodWeight) + (fireScore * fireWeight)),
       foodSafety: { score: foodScore, ops: foodOps?.normalizedScore ?? 100, docs: foodDocs?.normalizedScore ?? 100, weight: mrJurisdiction.food_safety_weight || 60 },
-      fireSafety: { score: fireScore, ops: fireOps?.normalizedScore ?? 100, docs: fireDocs?.normalizedScore ?? 100, weight: mrJurisdiction.fire_safety_weight || 40 },
+      facilitySafety: { score: fireScore, ops: fireOps?.normalizedScore ?? 100, docs: fireDocs?.normalizedScore ?? 100, weight: mrJurisdiction.facility_safety_weight || 40 },
       jurisdictions: results.filter(r => r.subComponent === 'combined'),
-      weightsUsed: { foodSafety: mrJurisdiction.food_safety_weight || 60, fireSafety: mrJurisdiction.fire_safety_weight || 40, ops: mrJurisdiction.ops_weight || 60, docs: mrJurisdiction.docs_weight || 40 },
+      weightsUsed: { foodSafety: mrJurisdiction.food_safety_weight || 60, facilitySafety: mrJurisdiction.facility_safety_weight || 40, ops: mrJurisdiction.ops_weight || 60, docs: mrJurisdiction.docs_weight || 40 },
     };
 
     // ── STEP 7: Save to audit trail ──
@@ -274,7 +274,7 @@ serve(async (req: Request) => {
             score_date: today,
             overall_score: overallScore.overallScore,
             food_safety_score: overallScore.foodSafety.score,
-            fire_safety_score: overallScore.fireSafety.score,
+            facility_safety_score: overallScore.facilitySafety.score,
             vendor_score: null,
             temp_readings_count: tempTotal,
             temp_in_range_pct: tempTotal > 0 ? Math.round((tempInRange / tempTotal) * 100) : null,

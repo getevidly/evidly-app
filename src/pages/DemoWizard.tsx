@@ -16,7 +16,7 @@ const INDUSTRIES = [
   { code: 'HIGHER_EDUCATION', label: 'Higher Education', icon: '🎓', subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'] },
 ];
 
-// Pillar weights removed — Food Safety and Fire Safety are independent scores
+// Pillar weights removed — Food Safety and Facility Safety are independent scores
 
 interface DemoLead {
   name: string;
@@ -108,7 +108,7 @@ export function DemoWizard() {
   const [showShifts, setShowShifts] = useState(true);
 
   const selectedIndustry = INDUSTRIES.find(i => i.code === lead.industry);
-  // Pillar weights removed — Food Safety and Fire Safety are independent scores
+  // Pillar weights removed — Food Safety and Facility Safety are independent scores
 
   const formatPhone = (value: string) => {
     const digits = value.replace(/\D/g, '').slice(0, 10);
@@ -279,7 +279,7 @@ export function DemoWizard() {
                     <p className="text-sm font-medium text-[#1e4d6b] mb-2">Your compliance pillars:</p>
                     <div className="flex gap-4 text-sm">
                       <span><strong>Food Safety</strong></span>
-                      <span><strong>Fire Safety</strong></span>
+                      <span><strong>Facility Safety</strong></span>
                     </div>
                   </div>
                 )}
@@ -507,7 +507,7 @@ export function DemoWizard() {
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>Compliance dashboard with {selectedIndustry?.label} Food Safety and Fire Safety scoring</span>
+                    <span>Compliance dashboard with {selectedIndustry?.label} Food Safety and Facility Safety scoring</span>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />

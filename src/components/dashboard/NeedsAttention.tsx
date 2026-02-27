@@ -152,7 +152,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
 export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
   {
     id: 'att-1',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     severity: 'critical',
     title: 'Walk-in cooler reading 43°F (above 41°F)',
     detail: 'IoT sensor alert — check immediately',
@@ -164,7 +164,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
   },
   {
     id: 'att-2',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     severity: 'warning',
     title: 'Fire suppression inspection expires in 12 days',
     detail: 'ABC Fire Protection notified',
@@ -188,7 +188,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
   },
   {
     id: 'att-4',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     severity: 'warning',
     title: 'Hood cleaning cert expires in 18 days',
     detail: 'Cleaning Pros Plus notified',

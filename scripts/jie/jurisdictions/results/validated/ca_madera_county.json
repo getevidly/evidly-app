@@ -19,7 +19,7 @@
     "reinspection_trigger": "Not specified in available sources",
     "public_disclosure": "Not specified in available sources"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Madera County Fire Division / Madera County Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems required per California Fire Code and NFPA standards - semi-annual inspections typically required",

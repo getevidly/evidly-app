@@ -121,7 +121,7 @@ function buildSections(): AuditSection[] {
       ],
     },
     {
-      name: 'Fire Safety & Suppression',
+      name: 'Facility Safety & Suppression',
       citation: 'NFPA 96 (2024) \u00A712.4',
       items: [
         'Hood suppression system inspection current',
@@ -212,7 +212,7 @@ const DEMO_HISTORY: HistoryAudit[] = [
       { section: 'Employee Hygiene & Health', item: 'Proper handwashing observed', severity: 'critical', notes: 'Line cook skipped handwashing between tasks.' },
       { section: 'Food Storage & Labeling', item: 'FIFO rotation followed', severity: 'major', notes: 'Old stock found behind new deliveries.' },
       { section: 'Equipment & Utensils', item: 'Cutting boards in good repair', severity: 'minor', notes: 'One cutting board has deep scoring.' },
-      { section: 'Fire Safety & Suppression', item: 'Ansul system last service within 6 months', severity: 'major', notes: 'Last service was 8 months ago.' },
+      { section: 'Facility Safety & Suppression', item: 'Ansul system last service within 6 months', severity: 'major', notes: 'Last service was 8 months ago.' },
       { section: 'Facility & Pest Control', item: 'No evidence of pest activity', severity: 'minor', notes: 'Minor fly activity near back door.' },
     ],
   },
@@ -229,7 +229,7 @@ const DEMO_HISTORY: HistoryAudit[] = [
       { section: 'Food Temperature Control', item: 'Cooling from 135\u00B0F to 70\u00B0F within 2 hours', severity: 'critical', notes: 'Soup cooling took 2.5 hours.' },
       { section: 'Food Storage & Labeling', item: 'Date marking on opened TCS foods', severity: 'major', notes: 'Three containers missing date labels.' },
       { section: 'Equipment & Utensils', item: 'Sanitizer concentration verified', severity: 'minor', notes: 'Quat sanitizer slightly below range.' },
-      { section: 'Fire Safety & Suppression', item: 'Grease filter cleaning schedule current', severity: 'major', notes: 'Filters overdue by one week.' },
+      { section: 'Facility Safety & Suppression', item: 'Grease filter cleaning schedule current', severity: 'major', notes: 'Filters overdue by one week.' },
       { section: 'Documentation & Records', item: 'Vendor service records current', severity: 'minor', notes: 'Missing one vendor certificate.' },
     ],
   },
@@ -327,7 +327,7 @@ function correctiveAction(item: AuditItem, sectionName: string): string {
 // ---------------------------------------------------------------------------
 
 export function SelfAudit() {
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // View state
   const [activeTab, setActiveTab] = useState<'audit' | 'history'>('audit');
@@ -1111,7 +1111,7 @@ export function SelfAudit() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
-          onOverride={handleOverride}
+         
         />
       )}
     </div>

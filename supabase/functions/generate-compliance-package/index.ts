@@ -68,7 +68,7 @@ Deno.serve(async (req: Request) => {
     if (payload.location_id) {
       const { data } = await supabase
         .from("compliance_score_snapshots")
-        .select("id, overall_score, food_safety_score, fire_safety_score, vendor_score, score_date, model_version")
+        .select("id, overall_score, food_safety_score, facility_safety_score, vendor_score, score_date, model_version")
         .eq("location_id", payload.location_id)
         .eq("organization_id", orgId)
         .order("score_date", { ascending: false })
@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
       compliance_score: scoreSnapshot ? {
         overall_score: scoreSnapshot.overall_score,
         food_safety_score: scoreSnapshot.food_safety_score,
-        fire_safety_score: scoreSnapshot.fire_safety_score,
+        facility_safety_score: scoreSnapshot.facility_safety_score,
         vendor_score: scoreSnapshot.vendor_score,
         score_date: scoreSnapshot.score_date,
         model_version: scoreSnapshot.model_version,
@@ -169,7 +169,7 @@ Deno.serve(async (req: Request) => {
         yPos -= 20;
         cover.drawText(`Food Safety: ${scoreSnapshot.food_safety_score ?? "N/A"}`, { x: 60, y: yPos, size: 12, font });
         yPos -= 18;
-        cover.drawText(`Fire Safety: ${scoreSnapshot.fire_safety_score ?? "N/A"}`, { x: 60, y: yPos, size: 12, font });
+        cover.drawText(`Facility Safety: ${scoreSnapshot.facility_safety_score ?? "N/A"}`, { x: 60, y: yPos, size: 12, font });
         yPos -= 18;
         cover.drawText(`Vendor Compliance: ${scoreSnapshot.vendor_score ?? "N/A"}`, { x: 60, y: yPos, size: 12, font });
         yPos -= 18;

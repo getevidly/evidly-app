@@ -93,7 +93,7 @@ For each change, provide:
 2. A plain-English summary (2-3 sentences, no legal jargon)
 3. Specific impact: what does the operator need to DO differently?
 4. Impact level: 'critical' (must act immediately), 'moderate' (action needed within 30 days), or 'informational' (awareness only)
-5. Which compliance pillars are affected: fire_safety, food_safety, vendor_compliance
+5. Which compliance pillars are affected: facility_safety, food_safety, vendor_compliance
 6. Which equipment types are affected (if any): hood, exhaust_fan, grease_trap, fire_suppression, fire_extinguisher, cooler, freezer
 7. Which states are affected (2-letter codes, or null for federal/industry)
 8. Effective date if mentioned (YYYY-MM-DD format)

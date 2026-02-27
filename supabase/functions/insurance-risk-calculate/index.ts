@@ -104,7 +104,7 @@ async function calculateFireFactors(
     { name: "Automatic fuel/electric shutoff tested", score: greaseScore, weight: 0.10, status: factorStatus(greaseScore), detail: greaseScore >= 80 ? "Shutoff systems tested" : "Shutoff testing overdue", reference: "NFPA 96-2024 §10.1", category: "fire", improvement: "Schedule shutoff system test" },
     { name: "Manual pull station accessible and tested", score: Math.min(100, Math.round(fireScore * 1.02)), weight: 0.08, status: factorStatus(Math.round(fireScore * 1.02)), detail: fireScore >= 80 ? "Pull station accessible and tested" : "Pull station testing needed", reference: "NFPA 17A-2025", category: "fire", improvement: "Test manual pull station" },
     { name: "Fire alarm system current", score: Math.min(100, Math.round((fireScore + extScore) / 2 * 1.05)), weight: 0.08, status: factorStatus(Math.round((fireScore + extScore) / 2 * 1.05)), detail: "Fire alarm monitoring status", reference: "NFPA 72-2025", category: "fire", improvement: "Schedule fire alarm inspection" },
-    { name: "Documentation on file and accessible", score: Math.round(hoodScore * 0.95), weight: 0.06, status: factorStatus(Math.round(hoodScore * 0.95)), detail: hoodScore >= 80 ? "All fire safety records on file" : "Documentation gaps detected", reference: "NFPA 96-2024 §14.2", category: "fire", improvement: "Upload missing fire safety documentation" },
+    { name: "Documentation on file and accessible", score: Math.round(hoodScore * 0.95), weight: 0.06, status: factorStatus(Math.round(hoodScore * 0.95)), detail: hoodScore >= 80 ? "All facility safety records on file" : "Documentation gaps detected", reference: "NFPA 96-2024 §14.2", category: "fire", improvement: "Upload missing facility safety documentation" },
   ];
 
   const score = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0));
@@ -123,7 +123,7 @@ async function calculateCategoryFactors(
   // ── Phase 2: Read from canonical compliance_score_snapshots ──
   const { data: snapshots } = await supabase
     .from("compliance_score_snapshots")
-    .select("food_safety_score, fire_safety_score, overall_score, temp_in_range_pct, checklists_completed_pct, documents_current_pct")
+    .select("food_safety_score, facility_safety_score, overall_score, temp_in_range_pct, checklists_completed_pct, documents_current_pct")
     .eq("location_id", locationId)
     .order("score_date", { ascending: false })
     .limit(1);

@@ -192,7 +192,7 @@ export function IntelligenceSubscriptionSettings({ subscription, sourceStatus, o
           {([
             { key: 'both', label: 'Both', icon: Shield },
             { key: 'food_safety', label: 'Food Safety', icon: UtensilsCrossed },
-            { key: 'fire_safety', label: 'Fire Safety', icon: Flame },
+            { key: 'facility_safety', label: 'Facility Safety', icon: Flame },
           ] as const).map(opt => (
             <button
               key={opt.key}

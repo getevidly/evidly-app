@@ -72,7 +72,7 @@ interface EquipmentItem {
   usefulLifeYears: number;
   replacementCost: number;
   status?: EquipmentStatus;
-  pillar?: 'fire_safety' | 'food_safety';
+  pillar?: 'facility_safety' | 'food_safety';
   notes: string;
   serviceHistory: ServiceRecord[];
   schedule: ScheduleItem[];
@@ -191,10 +191,10 @@ const DEFAULT_LIFESPANS: Record<string, number> = {
   'Commercial Oven': 12, 'Commercial Dishwasher': 8,
 };
 
-const FIRE_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
+const FACILITY_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
 
-function getEquipmentPillar(item: EquipmentItem): 'fire_safety' | 'food_safety' {
-  return item.pillar || (FIRE_SAFETY_TYPES.has(item.type) ? 'fire_safety' : 'food_safety');
+function getEquipmentPillar(item: EquipmentItem): 'facility_safety' | 'food_safety' {
+  return item.pillar || (FACILITY_SAFETY_TYPES.has(item.type) ? 'facility_safety' : 'food_safety');
 }
 
 // ── Demo Data ──────────────────────────────────────────────────────
@@ -602,7 +602,7 @@ export function Equipment() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [locationFilter, setLocationFilter] = useState('all');
-  const [pillarFilter, setPillarFilter] = useState<'all' | 'fire_safety' | 'food_safety'>('all');
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>('all');
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -612,7 +612,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -772,11 +772,11 @@ export function Equipment() {
             </select>
             <select
               value={pillarFilter}
-              onChange={e => setPillarFilter(e.target.value as 'all' | 'fire_safety' | 'food_safety')}
+              onChange={e => setPillarFilter(e.target.value as 'all' | 'facility_safety' | 'food_safety')}
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">{t('pages.equipment.allPillars')}</option>
-              <option value="fire_safety">{t('pages.equipment.fireSafety')}</option>
+              <option value="facility_safety">{t('pages.equipment.facilitySafety')}</option>
               <option value="food_safety">{t('pages.equipment.foodSafety')}</option>
             </select>
             <button
@@ -864,7 +864,7 @@ export function Equipment() {
                     <div className="flex items-center gap-1.5">
                       {(() => {
                         const p = getEquipmentPillar(eq);
-                        const isF = p === 'fire_safety';
+                        const isF = p === 'facility_safety';
                         return (
                           <span style={{ ...badge(isF ? 'Fire' : 'Food', isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
                             {isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}
@@ -946,7 +946,7 @@ export function Equipment() {
                 <p className="text-sm text-gray-600">{selected.make} {selected.model} · S/N: {selected.serial}</p>
                 <div className="flex gap-3 mt-2 flex-wrap">
                   {(() => { const ss = statusStyle(selected.status); return <span style={badge(ss.label, ss.color, ss.bg)}>{ss.label}</span>; })()}
-                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'fire_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.fireSafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.fireSafety') : t('pages.equipment.foodSafety')}</span>; })()}
+                  {(() => { const p = getEquipmentPillar(selected); const isF = p === 'facility_safety'; return <span style={{ ...badge(isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety'), isF ? '#b91c1c' : '#166534', isF ? '#fef2f2' : '#f0fdf4'), display: 'inline-flex', alignItems: 'center', gap: '3px' }}>{isF ? <Flame size={10} /> : <UtensilsCrossed size={10} />}{isF ? t('pages.equipment.facilitySafety') : t('pages.equipment.foodSafety')}</span>; })()}
                   <span style={badge(selected.condition, conditionStyle(selected.condition).color, conditionStyle(selected.condition).bg)}>{selected.condition}</span>
                   <span style={badge(warrantyInfo(selected.warrantyExpiry).label, warrantyInfo(selected.warrantyExpiry).color, warrantyInfo(selected.warrantyExpiry).bg)}>
                     {t('pages.equipment.warranty')}: {warrantyInfo(selected.warrantyExpiry).label}
@@ -1707,7 +1707,7 @@ export function Equipment() {
                             maintenance_interval: formData.get('maintenance_interval') || 'Quarterly',
                             linked_vendor: formData.get('linked_vendor') || '',
                             notes: formData.get('notes') || '',
-                            compliance_pillar: 'fire_safety',
+                            compliance_pillar: 'facility_safety',
                           });
                           if (error) {
                             console.error('Error saving equipment:', error);
@@ -1789,7 +1789,7 @@ export function Equipment() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

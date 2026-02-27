@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // src/types/jurisdiction.ts
 // Dual-authority model: every location has a food safety authority
-// (county health dept / CalCode) AND a fire safety authority (AHJ / CFC).
+// (county health dept / CalCode) AND a facility safety authority (AHJ / CFC).
 // These are completely different agencies with different grading systems.
 // They CANNOT be combined into a single score.
 // ═══════════════════════════════════════════════════════════════════
@@ -22,10 +22,10 @@
 // TODO: Track CalCode 2026 legislative changes: SB 68 (allergen disclosure), AB 660 (date labels)
 // TODO: Verify FDA Food Code 2026 full revision when published (currently 2022 + 2024 Supplement)
 
-// A single authority (either food safety or fire safety)
+// A single authority (either food safety or facility safety)
 export interface AuthorityRecord {
   id: string;
-  pillar: 'food_safety' | 'fire_safety';
+  pillar: 'food_safety' | 'facility_safety';
   agency_name: string;
   agency_phone: string | null;
   agency_website: string | null;
@@ -46,7 +46,7 @@ export interface LocationJurisdiction {
 
   // TWO independent authorities — always present
   foodSafety: AuthorityRecord;
-  fireSafety: AuthorityRecord;
+  facilitySafety: AuthorityRecord;
 
   // Optional federal overlay (Yosemite/NPS only)
   federalFoodOverlay: AuthorityRecord | null;
@@ -55,14 +55,14 @@ export interface LocationJurisdiction {
   // EvidLY internal weights — ONLY populated if the jurisdiction data has them
   // These are NOT authority grades — they are EvidLY's internal tracking weights
   food_safety_weight: number | null;
-  fire_safety_weight: number | null;
+  facility_safety_weight: number | null;
   ops_weight: number | null;
   docs_weight: number | null;
 }
 
 // Score for a single authority
 export interface AuthorityScore {
-  pillar: 'food_safety' | 'fire_safety';
+  pillar: 'food_safety' | 'facility_safety';
   authority: AuthorityRecord;
   grade: string | null;
   gradeDisplay: string | null;
@@ -75,7 +75,7 @@ export interface AuthorityScore {
 export interface LocationScore {
   location_id: string;
   foodSafety: AuthorityScore;
-  fireSafety: AuthorityScore;
+  facilitySafety: AuthorityScore;
   federalFoodOverlay: AuthorityScore | null;
   federalFireOverlay: AuthorityScore | null;
   // NO combined/blended/overall score — these are independent authorities

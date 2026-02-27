@@ -19,7 +19,7 @@
     "reinspection_trigger": "Unknown",
     "public_disclosure": "Inspection results available through online database at mendocino-ca.healthinspections.us"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Unable to verify specific fire department authority from sources",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspections per California fire code requirements",

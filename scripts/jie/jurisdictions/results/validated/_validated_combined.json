@@ -30,7 +30,7 @@
       "reinspection_trigger": "Conditional pass requires reinspection; imminent health hazards require immediate closure and reinspection for reopening",
       "public_disclosure": "Results posted online at Alameda County Department of Environmental Health Online Inspection Results; placards displayed at facilities"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Alameda County Fire Department - Fire Prevention Bureau",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspection and maintenance by qualified professionals per NFPA 96",
@@ -105,7 +105,7 @@
       "reinspection_trigger": "Not specified in official sources",
       "public_disclosure": "Not specified in official sources"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Alpine County Fire Departments",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -155,7 +155,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -181,7 +181,7 @@
       "reinspection_trigger": "Not specified on official sources",
       "public_disclosure": "Results viewable at individual facilities and obtainable at Environmental Health Department"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple agencies - Amador Fire Protection District, City of Jackson Fire Department, other local fire protection districts",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Per California fire code - 6-month inspections by licensed fire protection company required",
@@ -266,7 +266,7 @@
       "reinspection_trigger": "Yellow placard violations require follow-up inspection within timeframe specified. Red placard requires closure until compliance achieved.",
       "public_disclosure": "Color-coded placards must be posted at establishment entrance showing most recent inspection status. Inspection reports posted online for public viewing."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "CAL FIRE/Butte County Fire Department - Fire Marshal Bureau",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems must comply with California Fire Code and NFPA standards. Semi-annual inspections required per NFPA 96.",
@@ -341,7 +341,7 @@
       "reinspection_trigger": "Re-inspection fees are charged for violations requiring follow-up, temporary food facilities subject to re-inspection and/or closure if requirements not met at initial inspection",
       "public_disclosure": "Unable to verify public disclosure requirements from available sources"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "CAL FIRE (California Department of Forestry and Fire Protection) Tuolumne-Calaveras Unit and local fire departments",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems required per NFPA 96, inspected every 6 months by licensed fire protection companies per industry standards",
@@ -416,7 +416,7 @@
       "reinspection_trigger": "Violations requiring correction and follow-up verification",
       "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request per California Health and Safety Code"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple fire districts serve Colusa County including Sacramento River Fire Protection District and City of Colusa Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood suppression systems require semi-annual inspections per NFPA 96 standards",
@@ -505,7 +505,7 @@
       "reinspection_trigger": "Follow-up within the week if violations found during inspection; facilities with two yellow placards in a row require food safety course attendance",
       "public_disclosure": "Color-coded placards must be displayed prominently; inspection results available online through food facility inspection database and mobile app"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Contra Costa County Fire Protection District",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial cooking hood fire suppression systems required every six months per NFPA 96 by licensed fire protection companies",
@@ -583,7 +583,7 @@
       "reinspection_trigger": "Food facility complaints and compliance issues trigger investigations and follow-up inspections",
       "public_disclosure": "Inspection reports available for review at facilities; copies obtainable through Records Request to Environmental Management Division"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "El Dorado County Fire Protection District and multiple local fire agencies including El Dorado Hills Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood fire suppression systems required per NFPA standards - semi-annual inspections required",
@@ -660,7 +660,7 @@
       "reinspection_trigger": "Major violations require reinspection unless immediately corrected during routine inspection",
       "public_disclosure": "Inspection reports available online at fresnohealthinspections.com; facilities required to post notice that reports available for public review and maintain copy on-site"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Fresno County Fire Protection District",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Fire-suppression systems must be inspected and certified by C-16 Fire Protection Contractor or State Fire Marshal 'A' License holder every 6 months with NFPA 17 or 17a certificate of completion",
@@ -736,7 +736,7 @@
       "reinspection_trigger": "Critical violations must be corrected at time of inspection and may require follow-up inspection. Re-inspection not usually required for minor violations only.",
       "public_disclosure": "Inspection reports posted online as scanned PDFs, updated every few weeks. Reports available since August 1, 2006."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple fire protection districts serve Glenn County (Artois-Glenn, Orland, Hamilton City, Kanawha-Glenn, Ord, Glenn-Codora Fire Protection Districts)",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -789,7 +789,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -815,7 +815,7 @@
       "reinspection_trigger": "Non-routine inspections occur as needed, complaint-driven or at owner request",
       "public_disclosure": "Inspection reports available online within one week of inspection date with up to 1 year of history - available through online database and at physical locations"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Local Fire Marshal/Authority Having Jurisdiction (AHJ)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood fire suppression systems required per NFPA 17A standard - semi-annual inspections required",
@@ -893,7 +893,7 @@
       "reinspection_trigger": "C grade facilities must request written re-inspection within 30 days or face closure. B grade facilities can request one re-score inspection per calendar year with fee.",
       "public_disclosure": "Letter Grade Cards must be posted in easily visible location, inspection reports available on-site upon request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Imperial County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems required per California Fire Code and NFPA standards",
@@ -969,7 +969,7 @@
       "reinspection_trigger": "Not specified in available sources",
       "public_disclosure": "Inspection reports must be made available upon request per California Retail Food Code"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Local fire departments - specific AHJ not identified",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Semi-annual inspections required per California Fire Code and NFPA 96 standards",
@@ -1067,7 +1067,7 @@
       "reinspection_trigger": "B and C grades can request rescore inspection; mandatory closure and reinspection for scores below 75",
       "public_disclosure": "Letter grade cards must be posted conspicuously in facility windows during all hours of operation; inspection reports available for public review"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Kern County Fire Department - Fire Prevention Division",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial Fire Suppression Hood Systems require permits and inspections",
@@ -1143,7 +1143,7 @@
       "reinspection_trigger": "Investigations of complaints about food service operations and reported cases of foodborne illness",
       "public_disclosure": "Inspection reports are public records and available online. All retail food businesses are required by law to make a copy of their most recent inspection report available for review by interested parties on request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Kings County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems required by NFPA standards, semi-annual inspections by licensed technicians required",
@@ -1220,7 +1220,7 @@
       "reinspection_trigger": "Major critical violations must be corrected and may require follow-up inspection",
       "public_disclosure": "Inspection reports available by location and name via PDF downloads on county website"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Lake County Fire Protection District and local fire departments",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -1269,7 +1269,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -1295,7 +1295,7 @@
       "reinspection_trigger": "Critical violations must be corrected at time of inspection and may require follow-up inspection; re-inspection not usually required for minor violations only",
       "public_disclosure": "Inspection reports available online at county website; official records maintained by Environmental Health Department"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple fire departments - 33 Fire Departments serve Lassen County",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood fire suppression systems require semi-annual inspections per NFPA 96 standards; Class K fire extinguishers required within 30 feet of grease cooking operations",
@@ -1390,7 +1390,7 @@
       "reinspection_trigger": "Major Critical Risk Factor violations, facilities scoring below 70% twice in 12 months subject to closure",
       "public_disclosure": "Grade/score cards must be posted in area visible to patrons; inspection reports available upon public request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Los Angeles County Fire Department and local fire authorities",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Semi-annual inspection and certification required every 6 months per NFPA 96; UL-300 compliance required for all systems",
@@ -1465,7 +1465,7 @@
       "reinspection_trigger": "Not specified in available sources",
       "public_disclosure": "Not specified in available sources"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Madera County Fire Division / Madera County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems required per California Fire Code and NFPA standards - semi-annual inspections typically required",
@@ -1541,7 +1541,7 @@
       "reinspection_trigger": "Violations found during routine inspection or complaints",
       "public_disclosure": "Food facility inspections are searchable through online portal and open data portal"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Southern Marin Fire Protection District and other local fire departments",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "ANSUL-style suppression systems required for commercial kitchens, with semi-annual inspections every 6 months per NFPA 96. Systems must undergo AHJ acceptance testing by fire marshal before approval.",
@@ -1617,7 +1617,7 @@
       "reinspection_trigger": "Not specified in available documentation",
       "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Mariposa County Fire Department",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standards (industry standard)",
@@ -1670,7 +1670,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -1696,7 +1696,7 @@
       "reinspection_trigger": "Unknown",
       "public_disclosure": "Inspection results available through online database at mendocino-ca.healthinspections.us"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unable to verify specific fire department authority from sources",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems require semi-annual inspections per California fire code requirements",
@@ -1785,7 +1785,7 @@
       "reinspection_trigger": "Unsatisfactory ratings require follow-up inspection",
       "public_disclosure": "Inspection results available online at county website database"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Merced County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial cooking systems shall be operated and maintained in accordance to Title 19 California Code of Regulations Chapter 5",
@@ -1860,7 +1860,7 @@
       "reinspection_trigger": "Complaint basis or routine schedule - specific triggers not documented",
       "public_disclosure": "Written inspection reports can be viewed upon request at the food facility or Environmental Health Department"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unknown - information not found",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -1910,7 +1910,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -1936,7 +1936,7 @@
       "reinspection_trigger": "Violations requiring correction or follow-up verification",
       "public_disclosure": "Inspection reports must be available upon request per California law but posting requirements not specified"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Local fire department/authority having jurisdiction - specific department not identified",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial cooking appliances producing grease vapors require UL 300 compliant fire suppression systems with 6-month inspections per California Fire Code",
@@ -2011,7 +2011,7 @@
       "reinspection_trigger": "Complaint investigations, follow-up inspections for violations, permit inspections may be scheduled in advance",
       "public_disclosure": "Two most recent inspection reports available through MC Food Inspection Findings mobile app. Facilities must maintain most recent routine inspection report on-site for public review upon request per California Retail Food Code requirements. Gold Seal status visible to public through app and posted at facility."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Monterey County Regional Fire Protection District (for unincorporated areas) and local city fire departments (for incorporated cities)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems must be inspected every 6 months per NFPA 96 standards by licensed fire protection companies",
@@ -2088,7 +2088,7 @@
       "reinspection_trigger": "Unknown - specific reinspection criteria not found",
       "public_disclosure": "Unknown - public disclosure requirements not specified on official sources"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unknown - specific fire authority not identified for Nevada County commercial kitchen inspections",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": "Semi-annual (every 6 months) inspection required per NFPA 17A standards for wet chemical fire suppression systems",
@@ -2138,7 +2138,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -2168,7 +2168,7 @@
       "reinspection_trigger": "Major violations observed and corrected require follow-up inspection on date posted on seal",
       "public_disclosure": "Most recent inspection report required to be available at facility for public view upon request; online inspection database available at inspections.myhealthdepartment.com"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Orange County Fire Authority (OCFA) and local fire departments",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen fire suppression systems required per NFPA standards and local fire codes",
@@ -2245,7 +2245,7 @@
       "reinspection_trigger": "Major violations remaining uncorrected after routine inspection, failure to comply with compliance agreement, or imminent health hazards requiring closure",
       "public_disclosure": "Color-coded placards must be posted in clearly visible location to patrons; recent inspection reports available online for public review"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Local Fire Department (varies by jurisdiction within county)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 compliant fire suppression systems required for Type I hoods covering commercial cooking equipment - semi-annual inspections required",
@@ -2322,7 +2322,7 @@
       "reinspection_trigger": "Serious violations trigger re-inspection date setup",
       "public_disclosure": "Food inspection reports available for area food facilities - specific posting requirements not detailed"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple local Fire Protection Districts and Community Service Districts - 14 total agencies",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood fire suppression systems must have inspections every six months by licensed fire protection company per NFPA 96",
@@ -2418,7 +2418,7 @@
       "reinspection_trigger": "Grade B or C requires correction of all violations and re-inspection within a week to achieve Grade A",
       "public_disclosure": "Grade cards must be posted in location clearly visible to public near main entrance; inspection reports available online through myhealthdepartment.com portal"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Riverside County Fire Department, Office of the Fire Marshal",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial cooking fire extinguishing systems must comply with NFPA 17A, NFPA 96, 2022 CFC, and 2022 CMC; systems require semi-annual inspection and maintenance by licensed technicians",
@@ -2495,7 +2495,7 @@
       "reinspection_trigger": "Yellow placard requires follow-up inspection within 24-72 hours; major violations require re-inspection unless corrected during inspection",
       "public_disclosure": "Color-coded placards must be posted within 5 feet of main entrance; inspection reports available online and must be kept on-site for review upon request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Local fire departments (varies by city within Sacramento County)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 compliant systems required; semi-annual inspections every 6 months by licensed fire protection technician",
@@ -2572,7 +2572,7 @@
       "reinspection_trigger": "Unknown",
       "public_disclosure": "Unknown"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unknown - likely San Benito County Fire Department or local fire districts",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -2622,7 +2622,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -2669,7 +2669,7 @@
       "reinspection_trigger": "C grade (70-79) requires mandatory follow-up inspection. Facilities scoring below 70 are temporarily closed. High-risk facilities include those with C grades, multiple B grades, or repeated 4-point violations.",
       "public_disclosure": "Letter grade cards must be posted in front window or approved location. Inspection reports available online since 2006 and on Yelp partnership."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "San Bernardino County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Kitchen hood and duct extinguishing systems must be connected to fire alarm systems. Semi-annual inspections required per NFPA 96 standards.",
@@ -2763,7 +2763,7 @@
       "reinspection_trigger": "Any facility not receiving an 'A' grade on routine inspection is re-inspected. Facilities with scores below 70 or certain major violations result in automatic closure until compliance.",
       "public_disclosure": "Grade cards must be displayed near public entrance during hours of operation. Inspection reports are public information available through SD Food Info website and California Public Records Act requests."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "San Diego County Fire Marshal Program (for unincorporated areas) / City Fire Departments (for incorporated cities)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Kitchen fire suppression systems must be inspected every 6 months per NFPA 96. Quarterly inspections required for high-volume 24-hour operations.",
@@ -2843,7 +2843,7 @@
       "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days; red placard facilities closed until violations corrected",
       "public_disclosure": "Color-coded placards (green/yellow/red) must be posted where public can see them; numerical scores available through online database"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "San Francisco Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "All commercial cooking equipment must be protected by UL 300-compliant fire extinguishing systems; system serviced every 6 months and after activation",
@@ -2920,7 +2920,7 @@
       "reinspection_trigger": "Not specified in available sources",
       "public_disclosure": "Restaurant inspection search portal available at app.sjgov.org/restaurant-inspection/"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Not specified - appears to involve Environmental Health Dept for plan review",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 standards apply - 6-month inspection requirement for commercial kitchen hood fire suppression systems by licensed fire protection companies",
@@ -2995,7 +2995,7 @@
       "reinspection_trigger": "Follow up inspections conducted when health inspector determines during regular inspection that compliance verification is required",
       "public_disclosure": "Inspection reports are public record, must be maintained onsite and available upon request. Full results posted online via EatSafeSLO interactive map and MyHealthDepartment database"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "CAL FIRE San Luis Obispo County Fire Department",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 standards require kitchen fire suppression system inspection by licensed fire protection contractor at least every six months",
@@ -3087,7 +3087,7 @@
       "reinspection_trigger": "Conditional pass (yellow placard) may require reinspection within 3 business days; closure (red placard) requires correction and reinspection",
       "public_disclosure": "Placards must be posted in clear view of customers; inspection reports available online; approximately 50% compliance with posting requirements"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "San Mateo County Fire Department - Fire Marshal's Office",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Semi-annual inspections required every 6 months per NFPA standards",
@@ -3178,7 +3178,7 @@
       "reinspection_trigger": "Yellow placard facilities may receive reinspection within 3 business days to ensure major violations remain corrected",
       "public_disclosure": "All inspection results, placards, and scores publicly available through SCCDineOut web application and posted placards at facilities"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Santa Clara County Fire Marshal's Office (operated by Santa Clara County Fire Department)",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood and duct extinguishing system permits required with specific submittal and inspection requirements including bag/balloon tests and functional testing",
@@ -3265,7 +3265,7 @@
       "reinspection_trigger": "Yellow placards may trigger reinspection within 3 business days to ensure major violations remain permanently corrected",
       "public_disclosure": "All inspection results and scores are publicly available online through the County's inspection database and mobile app"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Santa Cruz County Fire Department and independent Fire Districts",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Hood suppression systems for commercial kitchens require separate fire department permits and inspections per California Fire Code and local amendments",
@@ -3342,7 +3342,7 @@
       "reinspection_trigger": "Violations requiring correction",
       "public_disclosure": "Online inspection results available through county website"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unknown - not specified in available sources",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -3391,7 +3391,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -3417,7 +3417,7 @@
       "reinspection_trigger": "Unknown",
       "public_disclosure": "Unknown"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Unknown - specific fire authority not identified",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchens in California require semi-annual hood fire suppression system inspections per NFPA standards",
@@ -3491,7 +3491,7 @@
       "reinspection_trigger": "Violations noted during routine inspections require follow-up verification",
       "public_disclosure": "The two most recent routine inspections and any subsequent reinspections are posted online. Inspection reports are available for public review upon request as required by California Public Records Act."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Not specified - likely local fire authority or CAL FIRE",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 standards apply - commercial kitchen hood fire suppression systems require semi-annual inspections by licensed fire protection companies",
@@ -3567,7 +3567,7 @@
       "reinspection_trigger": "Complaint investigations or suspected health hazards",
       "public_disclosure": "Inspection reports for food facilities from October 2021 to present available through public records request - results from last two inspections for all facilities tracked"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Not specifically identified - likely local fire departments within Solano County cities",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Semi-annual inspections per NFPA 96 standard - 6 month intervals for commercial kitchen fire suppression systems",
@@ -3646,7 +3646,7 @@
       "reinspection_trigger": "Yellow or red placards require follow-up inspection. Major violations and permit suspensions trigger reinspections.",
       "public_disclosure": "Placards posted visibly at facility entrance. Inspection reports available online within 72 hours. Color-coded search available on county website."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Permit Sonoma Fire Prevention and Hazardous Materials Division",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "NFPA 96 compliance required. Commercial kitchen fire suppression systems must be inspected every 6 months by licensed fire protection company.",
@@ -3722,7 +3722,7 @@
       "reinspection_trigger": "Facilities with three or more violations or major violations are subject to reinspection",
       "public_disclosure": "All inspections are posted online at secure.stancounty.com/FoodFacilities/ with inspection notices from past three years available. Facilities must keep most recent inspection report on-site for public viewing upon request."
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Stanislaus County Fire Prevention Bureau",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Commercial kitchen hood fire protection systems require separate plan submittals to Fire Prevention Bureau. NFPA 96 standards require semi-annual inspections every six months by licensed fire protection companies.",
@@ -3796,7 +3796,7 @@
       "reinspection_trigger": "Yellow Conditional Pass placard may trigger reinspection within 3 business days to ensure major violations remain corrected",
       "public_disclosure": "Inspection reports posted online and placards displayed at establishments. Facilities required to keep latest inspection report on-site and make available to customers upon request"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Sutter County Fire Department",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -3847,7 +3847,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -3873,7 +3873,7 @@
       "reinspection_trigger": "Major violations require follow-up inspection - facilities may be closed for imminent health hazards",
       "public_disclosure": "Inspection reports made available to public on county website"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Tehama County Fire Department",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -3924,7 +3924,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -3950,7 +3950,7 @@
       "reinspection_trigger": "Reinspection fees charged for subsequent reinspections unless acceptable corrective time schedule submitted and approved",
       "public_disclosure": "Trinity County publishes food facility inspections online for public viewing with inspection reports available by facility"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Multiple local volunteer fire departments serve different areas - no central county fire authority identified",
       "hood_system_inspection_required": null,
       "ansul_system_requirements": null,
@@ -4001,7 +4001,7 @@
       "error_count": 0,
       "warning_count": 1,
       "warnings": [
-        "\u26a0\ufe0f  [integrity] fire_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
+        "\u26a0\ufe0f  [integrity] facility_safety_authority.hood_system_inspection_required: Hood system requirement unknown \u2014 critical for commercial kitchen compliance"
       ],
       "import_eligible": true
     }
@@ -4027,7 +4027,7 @@
       "reinspection_trigger": "Not specified in available sources",
       "public_disclosure": "Inspection results available online at tularecountyeh.org/food-facilities-inspection-results"
     },
-    "fire_safety_authority": {
+    "facility_safety_authority": {
       "department_name": "Tulare County Fire Department / Local Fire Authorities",
       "hood_system_inspection_required": true,
       "ansul_system_requirements": "Semi-annual inspections required per NFPA standards",

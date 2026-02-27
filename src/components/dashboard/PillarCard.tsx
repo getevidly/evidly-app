@@ -12,7 +12,7 @@ interface PillarCardProps {
 
 const PILLAR_CONFIG = {
   food_safety: { label: 'Food Safety', Icon: UtensilsCrossed },
-  fire_safety: { label: 'Fire Safety', Icon: Flame },
+  facility_safety: { label: 'Facility Safety', Icon: Flame },
 } as const;
 
 function ProgressBar({ value, color }: { value: number; color: string }) {

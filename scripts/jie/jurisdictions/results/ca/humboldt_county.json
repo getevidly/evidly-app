@@ -19,7 +19,7 @@
     "reinspection_trigger": "Non-routine inspections occur as needed, complaint-driven or at owner request",
     "public_disclosure": "Inspection reports available online within one week of inspection date with up to 1 year of history - available through online database and at physical locations"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Local Fire Marshal/Authority Having Jurisdiction (AHJ)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen hood fire suppression systems required per NFPA 17A standard - semi-annual inspections required",

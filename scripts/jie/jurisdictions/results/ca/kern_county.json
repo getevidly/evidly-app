@@ -40,7 +40,7 @@
     "reinspection_trigger": "B and C grades can request rescore inspection; mandatory closure and reinspection for scores below 75",
     "public_disclosure": "Letter grade cards must be posted conspicuously in facility windows during all hours of operation; inspection reports available for public review"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Kern County Fire Department - Fire Prevention Division",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial Fire Suppression Hood Systems require permits and inspections",

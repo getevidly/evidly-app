@@ -2,6 +2,8 @@
 import { type ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { toast } from 'sonner';
 import {
   ChevronDown, ChevronUp, MapPin, Phone, ExternalLink,
@@ -137,7 +139,7 @@ function getJurisdictionDataForCounty(countyField: string): { food?: Jurisdictio
   const countyName = countyField.replace(/\s*County\s*$/i, '').trim();
   return {
     food: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'food_safety'),
-    fire: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'fire_safety'),
+    fire: JURISDICTION_DATABASE.find(j => j.county === countyName && j.pillar === 'facility_safety'),
   };
 }
 
@@ -222,7 +224,7 @@ function getJurisdictionOptions() {
   }
   return Array.from(countyMap.entries()).map(([county, entries]) => {
     const foodEntry = entries.find(e => e.pillar === 'food_safety');
-    const fireEntry = entries.find(e => e.pillar === 'fire_safety');
+    const fireEntry = entries.find(e => e.pillar === 'facility_safety');
     return {
       county,
       state: entries[0].state,
@@ -245,6 +247,7 @@ function AddLocationDialog({
   onClose: () => void;
   onAdd: (config: LocationJurisdictionConfig) => void;
 }) {
+  const { guardAction, showUpgrade: showDialogUpgrade, setShowUpgrade: setShowDialogUpgrade, upgradeAction: dialogUpgradeAction, upgradeFeature: dialogUpgradeFeature } = useDemoGuard();
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [selectedCounty, setSelectedCounty] = useState('');
@@ -293,8 +296,10 @@ function AddLocationDialog({
 
   const handleAdd = () => {
     if (detected) {
-      onAdd(detected);
-      onClose();
+      guardAction('add', 'Jurisdiction Settings', () => {
+        onAdd(detected);
+        onClose();
+      });
     }
   };
 
@@ -401,7 +406,7 @@ function AddLocationDialog({
                         Don't see your jurisdiction?{' '}
                         <button
                           type="button"
-                          onClick={() => { setShowDropdown(false); toast.info('Request Jurisdiction (Demo) — Contact support@evidly.com for priority onboarding.'); }}
+                          onClick={() => { setShowDropdown(false); guardAction('add', 'Jurisdiction Settings', () => toast.info('Request Jurisdiction (Demo) — Contact support@evidly.com for priority onboarding.')); }}
                           className="text-[#1e4d6b] font-medium hover:underline"
                         >
                           Request it here
@@ -605,6 +610,9 @@ function AddLocationDialog({
           </button>
         </div>
       </div>
+      {showDialogUpgrade && (
+        <DemoUpgradePrompt action={dialogUpgradeAction} featureName={dialogUpgradeFeature} onClose={() => setShowDialogUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -681,6 +689,7 @@ function RegulationToggle({
 export function JurisdictionSettings() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [expandedLocation, setExpandedLocation] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
@@ -714,8 +723,10 @@ export function JurisdictionSettings() {
 
   // Handle adding a new location from the dialog
   const handleAddLocation = (config: LocationJurisdictionConfig) => {
-    setAddedLocations(prev => [...prev, config]);
-    toast.success(`"${config.locationName}" added with ${config.regulations.length} regulations`);
+    guardAction('add', 'Jurisdiction Settings', () => {
+      setAddedLocations(prev => [...prev, config]);
+      toast.success(`"${config.locationName}" added with ${config.regulations.length} regulations`);
+    });
   };
 
   // Toggle a regulation override for a location
@@ -1401,7 +1412,7 @@ export function JurisdictionSettings() {
                             </div>
                           )}
 
-                          {/* E) NFPA Adoption (fire safety) */}
+                          {/* E) NFPA Adoption (facility safety) */}
                           {jData.fire?.nfpaAdoption && (
                             <div className="p-3 rounded-lg bg-orange-50 border border-orange-200">
                               <p className="text-xs text-gray-700">
@@ -1674,7 +1685,7 @@ export function JurisdictionSettings() {
                       Override
                     </button>
                     <button
-                      onClick={() => toast.info('Reset to Defaults (Demo)')}
+                      onClick={() => guardAction('reset', 'Jurisdiction Settings', () => toast.info('Reset to Defaults (Demo)'))}
                       className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 flex items-center gap-1.5"
                     >
                       <RotateCcw className="w-3 h-3" />
@@ -1742,7 +1753,7 @@ export function JurisdictionSettings() {
                         <p className="text-xs text-gray-500">{gap.detail}</p>
                       </div>
                       <button
-                        onClick={() => toast.info(`${gap.action || 'Action'} (Demo)`)}
+                        onClick={() => guardAction('action', 'Jurisdiction Settings', () => toast.info(`${gap.action || 'Action'} (Demo)`))}
                         className="px-3 py-1 text-xs font-medium text-[#1e4d6b] border border-[#b8d4e8] rounded-lg hover:bg-[#eef4f8] whitespace-nowrap"
                       >
                         {getGapActionLabel(gap.category)}
@@ -1801,7 +1812,7 @@ export function JurisdictionSettings() {
                       </p>
                     </div>
                     <button
-                      onClick={() => toast.info(`Compliance Plan for ${law.billNumber} (Demo)`)}
+                      onClick={() => guardAction('plan', 'Jurisdiction Settings', () => toast.info(`Compliance Plan for ${law.billNumber} (Demo)`))}
                       className="px-3 py-1.5 text-xs font-medium text-white rounded-lg whitespace-nowrap"
                       style={{ backgroundColor: '#1e4d6b' }}
                       onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#2a6a8f')}
@@ -1868,6 +1879,10 @@ export function JurisdictionSettings() {
           onClose={() => setShowAddDialog(false)}
           onAdd={handleAddLocation}
         />
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </div>
   );

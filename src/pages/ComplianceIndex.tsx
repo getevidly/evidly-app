@@ -61,7 +61,7 @@ const COUNTY_SCORES = [
 
 const CATEGORY_SCORES = [
   { category: 'Food Safety (Operational)', score: 79, prev: 77, change: +2, weakest: false },
-  { category: 'Fire Safety (Equipment)', score: 76, prev: 74, change: +2, weakest: true },
+  { category: 'Facility Safety (Equipment)', score: 76, prev: 74, change: +2, weakest: true },
 ];
 
 const TRENDING_AREAS = {
@@ -219,7 +219,7 @@ function QuarterlyTrendChart({ data }: { data: typeof SEASONAL_DATA }) {
 export function ComplianceIndex() {
   const navigate = useNavigate();
   const [expandedViolation, setExpandedViolation] = useState<number | null>(null);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   return (
     <>
@@ -344,7 +344,7 @@ export function ComplianceIndex() {
             </div>
             <div className="p-4 rounded-lg bg-gray-50 text-sm text-gray-600">
               <strong>Methodology:</strong> The overall industry readiness index is based on two compliance pillars
-              — Food Safety and Fire Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
+              — Food Safety and Facility Safety — calculated from {REPORT.totalLocations.toLocaleString()} active
               locations on the EvidLY platform. All data is anonymized before aggregation.
             </div>
             {/* Touchpoint 2: Referral nudge — help raise the industry score */}
@@ -801,7 +801,7 @@ export function ComplianceIndex() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-        onOverride={handleOverride}
+       
       />
     </>
   );

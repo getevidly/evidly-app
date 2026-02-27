@@ -171,7 +171,7 @@ export function Team() {
   const [resetMember, setResetMember] = useState<TeamMember | null>(null);
   const [resetLoading, setResetLoading] = useState(false);
 
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const isDemoMode = !profile?.organization_id;
 
@@ -1092,7 +1092,7 @@ export function Team() {
       />
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

@@ -11,7 +11,7 @@ interface JurisdictionInfo {
   gradingType: string;
   passThreshold: number | null;
   foodSafetyWeight: number;
-  fireSafetyWeight: number;
+  facilitySafetyWeight: number;
   opsWeight: number;
   docsWeight: number;
   fireAhjName: string;

@@ -57,7 +57,7 @@ const SAMPLE_DOCUMENTS: Document[] = [
   { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Airport Cafe' },
   { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen' },
   { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'University Dining' },
-  { id: '10', title: 'Fire Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
+  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
 
   // === Certificates ===
   { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Downtown Kitchen' },
@@ -91,7 +91,7 @@ const SAMPLE_DOCUMENTS: Document[] = [
 const SHARED_ITEMS: SharedItem[] = [
   { id: '1', document: 'Health Department Permit', recipient: 'inspector@healthdept.gov', recipientType: 'Health Inspector', date: '2026-02-05', status: 'viewed' },
   { id: '2', document: 'General Liability Insurance', recipient: 'claims@insurance.com', recipientType: 'Insurance Company', date: '2026-02-03', status: 'downloaded' },
-  { id: '3', document: 'Fire Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
+  { id: '3', document: 'Facility Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
 const ALL_DOC_LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining'];
@@ -100,7 +100,7 @@ const ALL_DOC_LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 
 const FACILITIES_DOC_CATEGORIES = new Set(['Other']); // Hood cleaning, HVAC, fire suppression, pest control, grease trap, etc.
 const FACILITIES_DOC_TITLES = new Set([
   'Ansul System Certification',
-  'Fire Safety Inspection Report',
+  'Facility Safety Inspection Report',
 ]);
 const FACILITIES_DOC_INSURANCE_KEYWORDS = ['vendor coi', 'coi -'];
 
@@ -110,7 +110,7 @@ const FACILITIES_DOC_INSURANCE_KEYWORDS = ['vendor coi', 'coi -'];
 
 function mapPillarToCategory(pillar: string): string {
   switch (pillar) {
-    case 'fire_safety': return 'Certificate';
+    case 'facility_safety': return 'Certificate';
     case 'food_safety': return 'Permit';
     case 'vendor': return 'Insurance';
     case 'facility': return 'License';
@@ -171,7 +171,7 @@ export function Documents() {
   const [showPhotoCapture, setShowPhotoCapture] = useState(false);
   const [docPhotos, setDocPhotos] = useState<PhotoRecord[]>([]);
   const { userRole, getAccessibleLocations, showAllLocationsOption } = useRole();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
   const docAccessibleLocs = getAccessibleLocations();
   const DOC_LOCATIONS = showAllLocationsOption()
@@ -853,7 +853,7 @@ export function Documents() {
       </div>
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

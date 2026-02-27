@@ -34,7 +34,7 @@ export const SCENARIOS: Scenario[] = [
     contextFields: [
       { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. University Dining',            type: 'text',     required: true },
       { key: 'violationType',   label: 'Violation Type',              placeholder: '',                                  type: 'select',   required: true,
-        options: ['Food Safety \u2014 Major Violation', 'Food Safety \u2014 Multiple Minor Violations', 'Fire Safety \u2014 NFPA 96 (2024) Non-Compliance', 'Both Food and Fire Safety', 'Permit / Documentation'] },
+        options: ['Food Safety \u2014 Major Violation', 'Food Safety \u2014 Multiple Minor Violations', 'Facility Safety \u2014 NFPA 96 (2024) Non-Compliance', 'Both Food and Facility Safety', 'Permit / Documentation'] },
       { key: 'reinspectionDate',label: 'Reinspection Date',           placeholder: 'Select date',                       type: 'date',     required: true },
       { key: 'dailyRevenue',    label: 'Daily Revenue at This Location', placeholder: 'e.g. 2500',                      type: 'text',     required: true },
     ],
@@ -66,7 +66,7 @@ Permits expiring: {expiringPermits}. Days until earliest expiry: {daysUntilExpir
 
 THREE escalating risk levels:
 
-LEVEL 1 \u2014 INSPECTION CATCH: AHJ finds expired documentation. Specific consequences by document type: expired health permit = closure notice; expired hood cleaning certificate = Fire Safety FAIL + AHJ notice; expired suppression inspection = Fire Safety FAIL. Compounded multi-fail impact.
+LEVEL 1 \u2014 INSPECTION CATCH: AHJ finds expired documentation. Specific consequences by document type: expired health permit = closure notice; expired hood cleaning certificate = Facility Safety FAIL + AHJ notice; expired suppression inspection = Facility Safety FAIL. Compounded multi-fail impact.
 
 LEVEL 2 \u2014 ENFORCEMENT ACTION: If operator does not proactively address. Fines + closure duration + remediation + documentation to reopen + inspection fee cascade.
 
@@ -173,7 +173,7 @@ End with specific breakeven: when does cost of deferral exceed cost of the servi
     label: 'Post-Incident Recovery',
     description: 'A food safety incident, fire, closure notice, or regulatory action has occurred.',
     contextFields: [
-      { key: 'incidentType', label: 'Incident Type', placeholder: '', type: 'select', options: ['Failed Health Inspection', 'Foodborne Illness Complaint', 'Temporary Closure Notice', 'Fire / Fire Safety Violation', 'NFPA Non-Compliance Notice', 'Regulatory Warning Letter', 'Insurance Claim Filed', 'Media / Public Incident'], required: true },
+      { key: 'incidentType', label: 'Incident Type', placeholder: '', type: 'select', options: ['Failed Health Inspection', 'Foodborne Illness Complaint', 'Temporary Closure Notice', 'Fire / Facility Safety Violation', 'NFPA Non-Compliance Notice', 'Regulatory Warning Letter', 'Insurance Claim Filed', 'Media / Public Incident'], required: true },
       { key: 'location', label: 'Affected Location(s)', placeholder: 'Which location(s) were affected?', type: 'text', required: true },
       { key: 'incidentDate', label: 'Incident Date', placeholder: 'Select date', type: 'date', required: true },
       { key: 'currentStatus', label: 'Current Status', placeholder: 'e.g. Reinspection scheduled for March 1, closure lifted, under investigation', type: 'textarea', required: true },

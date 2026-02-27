@@ -15,7 +15,7 @@
  * 1. src/lib/aiAdvisor.ts — Chat mode system prompt
  *    - Identity: EvidLY's AI Compliance Advisor ✅
  *    - Scope: Commercial kitchen compliance ✅
- *    - Categorization rule: Equipment = fire safety, ice = food safety ✅
+ *    - Categorization rule: Equipment = facility safety, ice = food safety ✅
  *    - State-specific: 7 states with correct primary codes ✅
  *    - Ice machine: FDA §4-602.11, §3-202.16, §3-304.12 ✅
  *    - Hallucination guard: Added ✅
@@ -27,7 +27,7 @@
  * 2. src/lib/aiAdvisor.ts — Inspection mode system prompt
  *    - Identity: Health department inspector (mock) ✅
  *    - Disclaimer: "training purposes only" ✅
- *    - Categorization: Equipment = fire safety per NFPA 96 ✅
+ *    - Categorization: Equipment = facility safety per NFPA 96 ✅
  *    - Hallucination guard: Added ✅
  *    - Scope limitation: Added ✅
  *    - System prompt protection: Added ✅
@@ -40,8 +40,8 @@
  *    - No independent system prompt (relies on frontend) ✅
  *
  * 4. supabase/functions/ai-corrective-action-draft/index.ts
- *    - Identity: Food safety & fire safety compliance expert ✅
- *    - Categorization: Equipment = fire safety, ice = food safety ✅
+ *    - Identity: Food safety & facility safety compliance expert ✅
+ *    - Categorization: Equipment = facility safety, ice = food safety ✅
  *    - NFPA 96 (2024) reference ✅
  *    - FDA §4-602.11 reference ✅
  *    - Model: claude-sonnet-4-5-20250929 ✅
@@ -56,7 +56,7 @@
  *
  * 6. supabase/functions/ai-weekly-digest/index.ts
  *    - Identity: Weekly compliance digest generator ✅
- *    - Categorization: Equipment = fire safety, ice = food safety ✅
+ *    - Categorization: Equipment = facility safety, ice = food safety ✅
  *    - NFPA 96 (2024) reference ✅
  *    - FDA §4-602.11 reference ✅
  *    - Model: claude-sonnet-4-5-20250929 ✅
@@ -255,7 +255,7 @@
  * ═══════════════════════════════════════════════════════════════
  *
  * All AI prompts correctly categorize:
- * - FIRE SAFETY: Hood cleaning, fire suppression, grease traps,
+ * - FACILITY SAFETY: Hood cleaning, fire suppression, grease traps,
  *   fire extinguishers, exhaust systems (NFPA 96) ✅
  * - FOOD SAFETY: Ice machines (FDA §4-602.11), temperature control,
  *   handwashing, food handler certs, HACCP ✅

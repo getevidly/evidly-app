@@ -39,7 +39,7 @@ export interface IntelligenceSubscription {
   id: string;
   active_sources: string[];
   alert_severity: ('critical' | 'high' | 'medium' | 'low')[];
-  pillar_focus: 'food_safety' | 'fire_safety' | 'both';
+  pillar_focus: 'food_safety' | 'facility_safety' | 'both';
   competitor_radius_miles: number;
   delivery_email: boolean;
   delivery_email_frequency: 'immediate' | 'daily' | 'weekly';

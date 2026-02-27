@@ -80,7 +80,7 @@ function computePillarVulnerability(insightPillars: string[], profile: ClientPro
 
   let hasVulnerability = false;
   for (const pillar of insightPillars) {
-    if (pillar === 'fire_safety') {
+    if (pillar === 'facility_safety') {
       hasVulnerability = profile.active_vulnerabilities.some(v =>
         v.includes('hood') || v.includes('fire') || v.includes('nfpa') || v.includes('suppression') || v.includes('nps_documentation')
       );

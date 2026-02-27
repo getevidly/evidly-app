@@ -28,7 +28,7 @@ interface QuickItem {
 
 const pages: QuickItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', type: 'page', icon: LayoutDashboard },
-  { id: 'documents', label: 'Fire Safety Docs', href: '/documents', type: 'page', icon: FileText },
+  { id: 'documents', label: 'Facility Safety Docs', href: '/documents', type: 'page', icon: FileText },
   { id: 'temp-logs', label: 'Temperature Logs', href: '/temp-logs', type: 'page', icon: Thermometer },
   { id: 'checklists', label: 'Daily Checklists', href: '/checklists', type: 'page', icon: CheckSquare },
   { id: 'scoring', label: 'Compliance Overview', href: '/scoring-breakdown', type: 'page', icon: ShieldCheck },

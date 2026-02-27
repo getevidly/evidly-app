@@ -18,8 +18,8 @@ interface OrgTreeNode {
   openItems: number;
   foodSafetyStatus?: string;
   foodSafetyJurisdiction?: string;
-  fireSafetyVerdict?: 'Pass' | 'Fail';
-  fireSafetyAhj?: string;
+  facilitySafetyVerdict?: 'Pass' | 'Fail';
+  facilitySafetyAhj?: string;
   children?: OrgTreeNode[];
 }
 
@@ -48,8 +48,8 @@ const orgTree: OrgTreeNode = {
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.gradeDisplay,
           foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.authority,
-          fireSafetyVerdict: LOCATION_JURISDICTION_STATUS.downtown.fireSafety.gradeDisplay as 'Pass' | 'Fail',
-          fireSafetyAhj: 'City of Fresno Fire Department',
+          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.downtown.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
+          facilitySafetyAhj: 'City of Fresno Fire Department',
           openItems: 2,
         },
         {
@@ -59,8 +59,8 @@ const orgTree: OrgTreeNode = {
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.airport.foodSafety.gradeDisplay,
           foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.airport.foodSafety.authority,
-          fireSafetyVerdict: LOCATION_JURISDICTION_STATUS.airport.fireSafety.gradeDisplay as 'Pass' | 'Fail',
-          fireSafetyAhj: 'City of Merced Fire Department',
+          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.airport.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
+          facilitySafetyAhj: 'City of Merced Fire Department',
           openItems: 4,
         },
         {
@@ -70,8 +70,8 @@ const orgTree: OrgTreeNode = {
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.university.foodSafety.gradeDisplay,
           foodSafetyJurisdiction: LOCATION_JURISDICTION_STATUS.university.foodSafety.authority,
-          fireSafetyVerdict: LOCATION_JURISDICTION_STATUS.university.fireSafety.gradeDisplay as 'Pass' | 'Fail',
-          fireSafetyAhj: 'Modesto Fire Department, Fire Prevention Division',
+          facilitySafetyVerdict: LOCATION_JURISDICTION_STATUS.university.facilitySafety.gradeDisplay as 'Pass' | 'Fail',
+          facilitySafetyAhj: 'Modesto Fire Department, Fire Prevention Division',
           openItems: 6,
         },
       ],
@@ -174,7 +174,7 @@ function TreeNodeRow({ node, depth = 0, selectedId, onSelect }: {
           {node.type === 'location' ? (
             <>
               {node.foodSafetyStatus && <StatusBadge status={node.foodSafetyStatus} />}
-              {node.fireSafetyVerdict && <FireVerdictBadge verdict={node.fireSafetyVerdict} />}
+              {node.facilitySafetyVerdict && <FireVerdictBadge verdict={node.facilitySafetyVerdict} />}
               {node.openItems > 0 && (
                 <span className="text-xs text-amber-600">{node.openItems} open</span>
               )}
@@ -257,13 +257,13 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
         )}
       </div>
 
-      {/* Fire Safety */}
+      {/* Facility Safety */}
       <div className="rounded-lg border border-gray-200 bg-white p-4 space-y-3" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-semibold text-gray-900">🔥 Fire Safety</span>
+          <span className="text-sm font-semibold text-gray-900">🔥 Facility Safety</span>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-gray-500 text-xs">{node.fireSafetyAhj}</p>
+          <p className="text-gray-500 text-xs">{node.facilitySafetyAhj}</p>
           <p className="text-gray-400 text-[10px]">NFPA 96 (2024)</p>
         </div>
         <div className="space-y-2">
@@ -272,7 +272,7 @@ function LocationDetail({ node }: { node: OrgTreeNode }) {
           <FireEquipmentBar label="Ext" pass={equip.ext} />
           <FireEquipmentBar label="Ansul" pass={equip.ansul} />
         </div>
-        {node.fireSafetyVerdict && <FireVerdictBadge verdict={node.fireSafetyVerdict} />}
+        {node.facilitySafetyVerdict && <FireVerdictBadge verdict={node.facilitySafetyVerdict} />}
       </div>
 
       {/* Open Items */}
@@ -304,7 +304,7 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
   const foodSafeCount = locations.filter(l =>
     l.foodSafetyStatus === 'Compliant' || l.foodSafetyStatus === 'Good'
   ).length;
-  const fireSafeCount = locations.filter(l => l.fireSafetyVerdict === 'Pass').length;
+  const fireSafeCount = locations.filter(l => l.facilitySafetyVerdict === 'Pass').length;
 
   return (
     <div className="space-y-5">
@@ -326,7 +326,7 @@ function RegionDetail({ node }: { node: OrgTreeNode }) {
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {loc.foodSafetyStatus && <StatusBadge status={loc.foodSafetyStatus} />}
-                {loc.fireSafetyVerdict && <FireVerdictBadge verdict={loc.fireSafetyVerdict} />}
+                {loc.facilitySafetyVerdict && <FireVerdictBadge verdict={loc.facilitySafetyVerdict} />}
                 {loc.openItems > 0 && (
                   <span className="text-xs text-amber-600">{loc.openItems} open</span>
                 )}

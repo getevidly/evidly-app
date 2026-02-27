@@ -33,7 +33,7 @@
     "reinspection_trigger": "Conditional pass (yellow placard) may require reinspection within 3 business days; closure (red placard) requires correction and reinspection",
     "public_disclosure": "Placards must be posted in clear view of customers; inspection reports available online; approximately 50% compliance with posting requirements"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "San Mateo County Fire Department - Fire Marshal's Office",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Semi-annual inspections required every 6 months per NFPA standards",

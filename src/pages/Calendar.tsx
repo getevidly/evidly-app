@@ -9,6 +9,8 @@ import type { LocationHours } from '../contexts/OperatingHoursContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -226,6 +228,7 @@ export function Calendar() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -944,7 +947,7 @@ export function Calendar() {
 
             <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
               <button
-                onClick={() => { showToast(tr('pages.calendar.editEvent')); }}
+                onClick={() => guardAction('edit', 'Calendar', () => { showToast(tr('pages.calendar.editEvent')); })}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '8px',
                   border: '2px solid #e5e7eb', backgroundColor: 'white',
@@ -1327,6 +1330,14 @@ export function Calendar() {
           </div>
         )}
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </>
   );
 }

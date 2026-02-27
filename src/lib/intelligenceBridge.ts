@@ -37,7 +37,7 @@ async function bridgePost(payload: object): Promise<void> {
 
 export interface ComplianceSnapshot {
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
   openItems: number;
   lastInspectionDate?: string | null;
 }
@@ -67,7 +67,7 @@ export async function syncOrgToIntelligence(params: {
 /** Push a compliance score delta when scores change significantly */
 export async function pushComplianceUpdate(
   orgId: string,
-  snapshot: { foodSafety: number; fireSafety: number; openItems: number },
+  snapshot: { foodSafety: number; facilitySafety: number; openItems: number },
 ): Promise<void> {
   await bridgePost({
     event: 'compliance_update',

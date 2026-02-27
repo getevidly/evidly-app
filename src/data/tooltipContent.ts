@@ -2,7 +2,7 @@ import type { UserRole } from '../contexts/RoleContext';
 
 export type TooltipSection =
   | 'overallScore'
-  | 'fireSafety'
+  | 'facilitySafety'
   | 'urgentItems'
   | 'todaysProgress'
   | 'locationCards'
@@ -23,23 +23,23 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
   overallScore: {
     platform_admin:
-      'Your combined food safety and fire safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
+      'Your combined food safety and facility safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
     owner_operator:
-      'Your combined food safety and fire safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
+      'Your combined food safety and facility safety score across all locations, weighted by each jurisdiction\'s verified methodology. This is what regulators and auditors see.',
     executive:
       'Aggregate compliance posture across your portfolio. Drill into individual locations to identify where risk is concentrated.',
     compliance_manager:
-      'Jurisdiction-weighted score combining food safety violations and fire safety pass/fail status. Reflects your current standing under active enforcement methodology.',
+      'Jurisdiction-weighted score combining food safety violations and facility safety pass/fail status. Reflects your current standing under active enforcement methodology.',
     chef:
       'Your location\'s current compliance score. Completing daily checklists and addressing flagged items moves this number in real time.',
     facilities_manager:
-      'Your fire safety systems directly impact this score. All four systems — Permit, Hood, Extinguisher, and Ansul — must pass at every location.',
+      'Your facility safety systems directly impact this score. All four systems — Permit, Hood, Extinguisher, and Ansul — must pass at every location.',
     kitchen_manager:
       'Your location\'s current compliance score. Completing daily checklists and addressing flagged items moves this number in real time.',
     kitchen_staff:
       'This shows how your location is doing on health and safety. Complete your assigned tasks to keep it green.',
   },
-  fireSafety: {
+  facilitySafety: {
     platform_admin:
       'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     owner_operator:
@@ -55,7 +55,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     kitchen_manager:
       'All four systems must show green for your location to pass fire inspection. Contact your Facilities Manager if any bar is red.',
     kitchen_staff:
-      'Green means your kitchen\'s fire safety systems are current. If you see red, tell your manager immediately.',
+      'Green means your kitchen\'s facility safety systems are current. If you see red, tell your manager immediately.',
   },
   urgentItems: {
     platform_admin:
@@ -174,9 +174,9 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     owner_operator:
       'Equipment assets across all locations with maintenance status. Overdue service on fire suppression or hood systems creates compliance risk.',
     executive:
-      'Asset health summary by location. Deferred maintenance on critical equipment is a liability and a fire safety compliance issue.',
+      'Asset health summary by location. Deferred maintenance on critical equipment is a liability and a facility safety compliance issue.',
     compliance_manager:
-      'Equipment service records are reviewed during fire safety and health inspections. Ensure all service dates are current and documented.',
+      'Equipment service records are reviewed during facility safety and health inspections. Ensure all service dates are current and documented.',
     chef:
       'Kitchen equipment assigned to your location. Flag anything that needs repair \u2014 overdue equipment affects inspection scores.',
     facilities_manager:
@@ -194,7 +194,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     executive:
       'Vendor relationships and contract status by location. Lapsed service contracts are a compliance exposure.',
     compliance_manager:
-      'Vendor service certificates and dates are required documentation for fire safety inspections. Verify all are current.',
+      'Vendor service certificates and dates are required documentation for facility safety inspections. Verify all are current.',
     chef:
       'The service vendors scheduled for your location. You\'ll be notified before scheduled visits.',
     facilities_manager:
@@ -234,7 +234,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'This shows which county health department and fire department oversees your kitchen.',
     facilities_manager:
-      'Your fire AHJ details \u2014 the authority that issues your operational permit and conducts fire safety inspections.',
+      'Your fire AHJ details \u2014 the authority that issues your operational permit and conducts facility safety inspections.',
     kitchen_manager:
       'The regulatory agencies that inspect your location and what they look for.',
     kitchen_staff:
@@ -354,7 +354,7 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
     kitchen_staff:
       'Esto muestra cómo le va a su ubicación en salud y seguridad. Complete sus tareas asignadas para mantenerlo en verde.',
   },
-  fireSafety: {
+  facilitySafety: {
     platform_admin:
       'Estado de Aprobado/Reprobado según NFPA 96 (2024) para cada Authority Having Jurisdiction. Una barra roja en cualquier ubicación es una falla de cumplimiento.',
     owner_operator:
@@ -665,7 +665,7 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'temperatures':     { label: 'Temperatures',        description: 'Manual, QR Code, or Internet of Things-based temperature recording for receiving, storage, and cooking.' },
   'log-temp':         { label: 'Log Temp',            description: 'Quick-log a temperature reading for your station.' },
   'iot-monitoring':   { label: 'Internet of Things Monitoring',      description: 'Live sensor data from connected temperature probes and equipment monitors.' },
-  'fire-safety':      { label: 'Fire Safety',         description: 'NFPA 96 compliance status \u2014 permits, hood cleaning, extinguishers, and suppression systems.' },
+  'facility-safety':      { label: 'Facility Safety',         description: 'NFPA 96 compliance status \u2014 permits, hood cleaning, extinguishers, and suppression systems.' },
   'incidents':        { label: 'Incidents',           description: 'Log and track safety or compliance incidents. Each entry creates a timestamped compliance record.' },
 
   // Records & Assets
@@ -677,7 +677,7 @@ export const sidebarTooltipContent: Record<string, SidebarTooltipItem> = {
   'training':         { label: 'Training',            description: 'Staff training courses, certifications, and compliance education tracking.' },
 
   // Compliance & Insights
-  'compliance':       { label: 'Compliance Overview',  description: 'Jurisdiction-verified scoring breakdown for food safety and fire safety across all locations.' },
+  'compliance':       { label: 'Compliance Overview',  description: 'Jurisdiction-verified scoring breakdown for food safety and facility safety across all locations.' },
   'self-inspection':  { label: 'Self-Inspection',     description: 'Run a self-inspection using the same criteria your health department or fire AHJ applies.' },
   'inspector':        { label: 'Inspector View',      description: 'See your location through an inspector\'s eyes \u2014 the same view they use during walkthroughs.' },
   'ai-copilot':       { label: 'Artificial Intelligence Copilot',          description: 'Artificial Intelligence-powered compliance assistant for answering questions and generating action plans.' },
@@ -713,7 +713,7 @@ export const sidebarTooltipContentEs: Record<string, SidebarTooltipItem> = {
   'temperatures':     { label: 'Temperaturas',         description: 'Registro de temperatura manual, por QR Code o Internet of Things para recepción, almacenamiento y cocción.' },
   'log-temp':         { label: 'Registrar Temp',       description: 'Registre rápidamente una lectura de temperatura para su estación.' },
   'iot-monitoring':   { label: 'Monitoreo Internet of Things',        description: 'Datos en vivo de sensores de sondas de temperatura y monitores de equipo conectados.' },
-  'fire-safety':      { label: 'Seguridad Contra Incendios', description: 'Estado de cumplimiento NFPA 96 — permisos, limpieza de campanas, extintores y sistemas de supresión.' },
+  'facility-safety':      { label: 'Seguridad Contra Incendios', description: 'Estado de cumplimiento NFPA 96 — permisos, limpieza de campanas, extintores y sistemas de supresión.' },
   'incidents':        { label: 'Incidentes',           description: 'Registre y dé seguimiento a incidentes de seguridad o cumplimiento. Cada entrada crea un registro de cumplimiento con marca de tiempo.' },
 
   // Registros y Activos

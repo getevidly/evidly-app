@@ -38,7 +38,7 @@ export const helpDocs: Record<string, HelpDoc> = {
     steps: [
       'Your score is calculated automatically from two pillars',
       'Food Safety: temperature logs, checklists, corrective actions',
-      'Fire Safety: hood cleaning, fire suppression, extinguisher records',
+      'Facility Safety: hood cleaning, fire suppression, extinguisher records',
       'View the breakdown on the Compliance Overview page',
       'Click "Improve Score" for specific recommendations',
     ],
@@ -151,7 +151,7 @@ export const helpDocs: Record<string, HelpDoc> = {
 export const featureExplanations: Record<string, string> = {
   '/temp-logs': 'Track every cooler, freezer, and hot-holding unit. FDA requires cold foods at 41°F or below. EvidLY flags out-of-range readings instantly and builds a compliance record for inspections.',
   '/checklists': 'Structured daily tasks ensure nothing gets missed. Opening, midday, and closing checklists replace paper logs and create a digital inspection trail.',
-  '/scoring-breakdown': 'Jurisdiction status and operational readiness for food safety and fire safety across all your locations. Shows real inspection grades from your local health and fire authorities.',
+  '/scoring-breakdown': 'Jurisdiction status and operational readiness for food safety and facility safety across all your locations. Shows real inspection grades from your local health and fire authorities.',
   '/documents': 'Store and track all compliance documents — health permits, hood cleaning certificates, fire inspections. EvidLY alerts you before they expire.',
   '/equipment': 'Register every temperature-monitored piece of equipment. Track warranty, service history, and connect IoT sensors for automatic monitoring.',
   '/incidents': 'When something goes wrong — a temperature excursion, a failed inspection item — log it here with corrective actions. Shows inspectors you take issues seriously.',

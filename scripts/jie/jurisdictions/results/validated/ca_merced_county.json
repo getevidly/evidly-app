@@ -32,7 +32,7 @@
     "reinspection_trigger": "Unsatisfactory ratings require follow-up inspection",
     "public_disclosure": "Inspection results available online at county website database"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Merced County Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial cooking systems shall be operated and maintained in accordance to Title 19 California Code of Regulations Chapter 5",

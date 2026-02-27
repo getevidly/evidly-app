@@ -107,7 +107,7 @@ export function ComplianceIntelligence() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>('command');
   const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-main)', ...F }}>
@@ -172,7 +172,7 @@ export function ComplianceIntelligence() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-        onOverride={handleOverride}
+       
       />
     </div>
   );
@@ -212,7 +212,7 @@ function CommandCenterTab() {
           </div>
           <div className="h-12 w-px bg-gray-200 hidden md:block" />
           {[
-            { label: 'Fire Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
+            { label: 'Facility Safety', score: FIRE_SCORE, trend: FIRE_TREND, icon: Flame, status: FIRE_SCORE >= 90 ? 'green' : FIRE_SCORE >= 80 ? 'yellow' : 'red' },
             { label: 'Food Safety', score: FOOD_SCORE, trend: FOOD_TREND, icon: UtensilsCrossed, status: FOOD_SCORE >= 90 ? 'green' : FOOD_SCORE >= 80 ? 'yellow' : 'red' },
           ].map(cat => (
             <div key={cat.label} className="flex items-center gap-2">
@@ -322,7 +322,7 @@ function CommandCenterTab() {
             <ReferenceLine x="Jul" stroke="#d4af37" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'AB 660', position: 'top', style: { fontSize: 9, fill: '#d4af37', fontWeight: 600 } }} />
             <ReferenceLine x="Nov" stroke="#6b21a8" strokeDasharray="4 2" strokeWidth={1.5} label={{ value: 'FDA Update', position: 'top', style: { fontSize: 9, fill: '#6b21a8', fontWeight: 600 } }} />
             <Line type="monotone" dataKey="overall" name="Overall" stroke="#1e4d6b" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="fire" name="Fire Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
+            <Line type="monotone" dataKey="fire" name="Facility Safety" stroke="#ef4444" strokeWidth={1.5} dot={false} />
             <Line type="monotone" dataKey="food" name="Food Safety" stroke="#22c55e" strokeWidth={1.5} dot={false} />
           </LineChart>
         </ResponsiveContainer>

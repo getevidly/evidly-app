@@ -246,9 +246,9 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
   y += 2;
 
   // ============================================
-  // FIRE SAFETY COMPLIANCE SUMMARY
+  // FACILITY SAFETY COMPLIANCE SUMMARY
   // ============================================
-  sectionTitle('Fire Safety Compliance Summary');
+  sectionTitle('Facility Safety Compliance Summary');
 
   const fireCat = result.categories.find(c => c.key === 'fire');
   if (fireCat) {
@@ -425,6 +425,13 @@ export function InsuranceRisk() {
   const [shareScope, setShareScope] = useState({ overall: true, factors: true, trend: true, percentile: true, incidents: false, equipment: false });
   const [shareToken] = useState(() => crypto.randomUUID().replace(/-/g, '').slice(0, 24));
 
+  // Calculate scores
+  const riskResult: InsuranceRiskResult = locationParam === 'all'
+    ? calculateOrgInsuranceRiskScore()
+    : calculateInsuranceRiskScore(locationParam);
+
+  const tierInfo = getInsuranceRiskTier(riskResult.overall);
+
   // Demo 12-month score trend
   const SCORE_TREND = [
     { month: 'Mar', score: 82 }, { month: 'Apr', score: 83 }, { month: 'May', score: 85 },
@@ -432,13 +439,6 @@ export function InsuranceRisk() {
     { month: 'Sep', score: 86 }, { month: 'Oct', score: 88 }, { month: 'Nov', score: 90 },
     { month: 'Dec', score: 91 }, { month: 'Jan', score: 92 }, { month: 'Feb', score: riskResult.overall },
   ];
-
-  // Calculate scores
-  const riskResult: InsuranceRiskResult = locationParam === 'all'
-    ? calculateOrgInsuranceRiskScore()
-    : calculateInsuranceRiskScore(locationParam);
-
-  const tierInfo = getInsuranceRiskTier(riskResult.overall);
 
   const handleLocationChange = (locId: string) => {
     const url = new URL(window.location.href);
@@ -531,7 +531,7 @@ export function InsuranceRisk() {
                 ? 'A solid foundation with some areas for improvement. Addressing the action items below is designed to strengthen your position for carrier conversations.'
                 : riskResult.overall >= 60
                 ? 'Several risk factors need attention. Prioritizing the critical items below can meaningfully improve your risk profile for insurance purposes.'
-                : 'Multiple high-risk factors identified. Immediate action on fire safety and documentation gaps is essential for maintaining adequate coverage.'}
+                : 'Multiple high-risk factors identified. Immediate action on facility safety and documentation gaps is essential for maintaining adequate coverage.'}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {riskResult.categories.map(cat => {

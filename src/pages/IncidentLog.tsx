@@ -395,7 +395,7 @@ function isOverdue(incident: Incident): boolean {
 export function IncidentLog() {
   const { userRole } = useRole();
   const { t } = useTranslation();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const canVerify = userRole === 'executive' || userRole === 'owner_operator';
 
   // ── Lookup maps for module-level data arrays ──────────────────
@@ -1692,7 +1692,7 @@ export function IncidentLog() {
       )}
 
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

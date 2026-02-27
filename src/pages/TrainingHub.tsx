@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   BookOpen, GraduationCap, Award, Scale, Settings2,
   Search, Filter, Clock, Users, Play, ChevronRight,
@@ -37,7 +39,7 @@ const TABS: { id: Tab; label: string; icon: typeof BookOpen }[] = [
 const CATEGORY_CONFIG: Record<TrainingCategory, { label: string; icon: typeof EvidlyIcon; color: string; bg: string }> = {
   food_safety_handler: { label: 'Food Safety – Handler', icon: EvidlyIcon, color: '#15803d', bg: '#dcfce7' },
   food_safety_manager: { label: 'Food Safety – Manager', icon: BookOpenCheck, color: '#1e4d6b', bg: '#e0f2fe' },
-  fire_safety: { label: 'Fire Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
+  facility_safety: { label: 'Facility Safety', icon: Flame, color: '#dc2626', bg: '#fee2e2' },
   compliance_ops: { label: 'Compliance Ops', icon: Settings2, color: '#d4af37', bg: '#fef3c7' },
   custom: { label: 'Custom', icon: Brain, color: '#7c3aed', bg: '#ede9fe' },
 };
@@ -56,6 +58,7 @@ function cents(c: number) { return (c / 100).toFixed(2); }
 
 function CourseCatalogTab() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [search, setSearch] = useState('');
   const [catFilter, setCatFilter] = useState<string>('all');
   const [langFilter, setLangFilter] = useState<string>('all');
@@ -179,7 +182,7 @@ function CourseCatalogTab() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: 12, color: '#9ca3af' }}>Pass: {course.passingScorePercent}%</span>
                   <button
-                    onClick={e => { e.stopPropagation(); toast.success(`Enrolled in "${course.title}"`);; }}
+                    onClick={e => { e.stopPropagation(); guardAction('enroll', 'Training Hub', () => toast.success(`Enrolled in "${course.title}"`)); }}
                     style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                     <Play size={14} /> Enroll
                   </button>
@@ -195,6 +198,9 @@ function CourseCatalogTab() {
           <p>No courses match your filters</p>
         </div>
       )}
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -202,6 +208,7 @@ function CourseCatalogTab() {
 // ── My Learning Tab ──────────────────────────────────────────────────────────
 
 function MyLearningTab() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
 
@@ -271,7 +278,7 @@ function MyLearningTab() {
               const isUrgent = days !== null && days <= 14;
               return (
                 <div key={e.id} style={{ background: '#fff', borderRadius: 10, padding: 16, border: '1px solid #e5e7eb', cursor: 'pointer' }}
-                  onClick={() => toast.info(`Resume "${e.courseTitle}" (demo)`)}>
+                  onClick={() => guardAction('resume', 'Training Hub', () => toast.info(`Resume "${e.courseTitle}" (demo)`))}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, flexWrap: 'wrap', gap: 4 }}>
                     <div style={{ minWidth: 0, flex: 1 }}>
                       <div style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{e.employeeName}</div>
@@ -292,7 +299,7 @@ function MyLearningTab() {
                       <div style={{ width: `${e.progressPercent}%`, height: '100%', background: isUrgent ? '#dc2626' : '#1e4d6b', borderRadius: 4, transition: 'width 0.3s' }} />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: isUrgent ? '#dc2626' : '#1e4d6b', minWidth: 36 }}>{e.progressPercent}%</span>
-                    <button onClick={ev => { ev.stopPropagation(); toast.info('Resume learning (demo)'); }}
+                    <button onClick={ev => { ev.stopPropagation(); guardAction('resume', 'Training Hub', () => toast.info('Resume learning (demo)')); }}
                       style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Resume
                     </button>
@@ -328,7 +335,7 @@ function MyLearningTab() {
                         Due in {days}d
                       </span>
                     )}
-                    <button onClick={() => toast.info(`Start "${e.courseTitle}" (demo)`)}
+                    <button onClick={() => guardAction('start', 'Training Hub', () => toast.info(`Start "${e.courseTitle}" (demo)`))}
                       style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 14px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
                       <Play size={12} /> Start
                     </button>
@@ -374,6 +381,9 @@ function MyLearningTab() {
           </div>
         </div>
       )}
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -389,6 +399,7 @@ const EMP_ID_MAP: Record<string, string> = {
 
 function CertificationsTab() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [typeFilter, setTypeFilter] = useState<string>('all');
 
   const filtered = trainingCertificates.filter(c => typeFilter === 'all' || c.certificateType === typeFilter);
@@ -436,7 +447,7 @@ function CertificationsTab() {
           <option value="all">All Types</option>
           <option value="food_handler">Food Handler</option>
           <option value="food_manager_prep">Food Manager (CFPM)</option>
-          <option value="fire_safety">Fire Safety</option>
+          <option value="facility_safety">Facility Safety</option>
           <option value="custom">Custom</option>
         </select>
         <span style={{ fontSize: 13, color: '#6b7280' }}>{filtered.length} certificate{filtered.length !== 1 ? 's' : ''}</span>
@@ -486,7 +497,7 @@ function CertificationsTab() {
                           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                           <Eye size={14} color="#6b7280" />
                         </button>
-                        <button onClick={() => toast.info(`Download certificate ${cert.certificateNumber} (demo)`)}
+                        <button onClick={() => guardAction('download', 'Training Certificates', () => toast.info(`Download certificate ${cert.certificateNumber} (demo)`))}
                           style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
                           <Download size={14} color="#6b7280" />
                         </button>
@@ -499,6 +510,9 @@ function CertificationsTab() {
           </table>
         </div>
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -506,6 +520,7 @@ function CertificationsTab() {
 // ── SB 476 Tracker Tab ───────────────────────────────────────────────────────
 
 function SB476TrackerTab() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const totalCost = trainingSB476Log.reduce((s, e) => s + e.trainingCostCents, 0);
   const totalCompensation = trainingSB476Log.reduce((s, e) => s + e.totalCompensationCents, 0);
   const totalHours = trainingSB476Log.reduce((s, e) => s + e.compensableHours, 0);
@@ -613,11 +628,14 @@ function SB476TrackerTab() {
 
       {/* Export Button */}
       <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={() => toast.info('Export SB 476 report as CSV (demo)')}
+        <button onClick={() => guardAction('export', 'Training Reports', () => toast.info('Export SB 476 report as CSV (demo)'))}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Download size={14} /> Export Report
         </button>
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -626,6 +644,7 @@ function SB476TrackerTab() {
 
 function AdminTab() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [showAssignModal, setShowAssignModal] = useState(false);
   const enrollmentsByLocation = useMemo(() => {
     const map: Record<string, { name: string; total: number; inProgress: number; completed: number; notStarted: number }> = {};
@@ -655,7 +674,7 @@ function AdminTab() {
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Send size={16} /> Assign Training
         </button>
-        <button onClick={() => toast.info('Bulk enroll employees (demo)')}
+        <button onClick={() => guardAction('enroll', 'Training Hub', () => toast.info('Bulk enroll employees (demo)'))}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Plus size={16} /> Bulk Enroll
         </button>
@@ -663,7 +682,7 @@ function AdminTab() {
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <BookOpen size={16} /> Create Course
         </button>
-        <button onClick={() => toast.info('Download all training records (demo)')}
+        <button onClick={() => guardAction('download', 'Training Records', () => toast.info('Download all training records (demo)'))}
           style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 44 }}>
           <Download size={16} /> Export Records
         </button>
@@ -771,6 +790,9 @@ function AdminTab() {
           </div>
         </div>
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -784,7 +806,7 @@ const PRICING_TIERS = [
     period: '/mo per location',
     color: '#6b7280',
     features: [
-      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Up to 10 employees' },
+      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Up to 10 employees' },
       { name: 'CFPM prep modules', included: false },
       { name: 'Custom course builder', included: false },
       { name: 'AI study companion', included: false },
@@ -803,7 +825,7 @@ const PRICING_TIERS = [
     color: '#1e4d6b',
     popular: true,
     features: [
-      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Up to 50 employees' },
+      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Up to 50 employees' },
       { name: 'CFPM prep modules', included: true },
       { name: 'Custom course builder', included: true, note: 'Up to 5 courses' },
       { name: 'AI study companion', included: true, note: '50 questions/mo' },
@@ -821,7 +843,7 @@ const PRICING_TIERS = [
     period: 'per location',
     color: '#d4af37',
     features: [
-      { name: 'System courses (food handler, fire safety, compliance ops)', included: true, note: 'Unlimited' },
+      { name: 'System courses (food handler, facility safety, compliance ops)', included: true, note: 'Unlimited' },
       { name: 'CFPM prep modules', included: true },
       { name: 'Custom course builder', included: true, note: 'Unlimited' },
       { name: 'AI study companion', included: true, note: 'Unlimited' },
@@ -942,6 +964,7 @@ function AchievementBadges() {
 // ── Assign Training Modal ────────────────────────────────────────────────────
 
 function AssignTrainingModal({ onClose }: { onClose: () => void }) {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [dueDate, setDueDate] = useState('');
@@ -1005,11 +1028,14 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
             style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', color: '#374151', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             Cancel
           </button>
-          <button onClick={() => { toast.success(`Assigned training to ${selected.size} employees`); onClose(); }}
+          <button onClick={() => guardAction('assign', 'Training Hub', () => { toast.success(`Assigned training to ${selected.size} employees`); onClose(); })}
             style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
             <Send size={14} style={{ marginRight: 6 }} /> Assign
           </button>
         </div>
+        {showUpgrade && (
+          <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+        )}
       </div>
     </div>
   );
@@ -1078,6 +1104,7 @@ const ROLE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 function RequirementsTab() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const requiredCount = certificationRequirements.filter(r => r.required).length;
   const recommendedCount = certificationRequirements.filter(r => !r.required).length;
 
@@ -1087,8 +1114,8 @@ function RequirementsTab() {
     const certTypeMap: Record<string, string> = {
       food_handler: 'food_handler',
       cfpm: 'food_manager_prep',
-      fire_extinguisher_training: 'fire_safety',
-      hood_safety: 'fire_safety',
+      fire_extinguisher_training: 'facility_safety',
+      hood_safety: 'facility_safety',
     };
     const matchType = certTypeMap[req.certType];
     if (!matchType) return { met: 0, total: req.requiredForRoles.length * 3 }; // estimate per location
@@ -1123,7 +1150,7 @@ function RequirementsTab() {
       <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #e5e7eb', overflow: 'hidden' }}>
         <div style={{ padding: '14px 16px', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>Certification Requirements</div>
-          <button onClick={() => toast.info('Custom requirements available in full version')}
+          <button onClick={() => guardAction('customize', 'Training Hub', () => toast.info('Custom requirements available in full version'))}
             style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer', color: '#374151', fontFamily: "'DM Sans', sans-serif" }}>
             <Plus size={14} /> Add Requirement
           </button>
@@ -1184,6 +1211,9 @@ function RequirementsTab() {
           </table>
         </div>
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }
@@ -1380,6 +1410,7 @@ function ComplianceOverviewTab() {
 // ── Main TrainingHub Component ───────────────────────────────────────────────
 
 export function TrainingHub() {
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('catalog');
 
   return (
@@ -1392,7 +1423,7 @@ export function TrainingHub() {
             <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Compliance-focused LMS — micro-learning modules, assessments, and certification tracking</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => toast.info('AI Study Companion (Demo)')}
+            <button onClick={() => guardAction('chat', 'AI Study Companion', () => toast.info('AI Study Companion (Demo)'))}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
               <Brain size={14} /> AI Study Companion
             </button>
@@ -1437,6 +1468,9 @@ export function TrainingHub() {
       {activeTab === 'sb476' && <SB476TrackerTab />}
       {activeTab === 'admin' && <AdminTab />}
       {activeTab === 'pricing' && <PricingTab />}
+      {showUpgrade && (
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
+      )}
     </div>
   );
 }

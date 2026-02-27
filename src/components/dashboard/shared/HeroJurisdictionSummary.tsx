@@ -3,7 +3,7 @@
  *
  * Dual-Authority Jurisdiction Summary used inside DashboardHero by
  * Owner/Operator, Executive, and Compliance Manager dashboards.
- * Shows Food Safety and Fire Safety panels side-by-side with
+ * Shows Food Safety and Facility Safety panels side-by-side with
  * per-location grades, statuses, and FireStatusBars.
  */
 
@@ -84,12 +84,12 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
         </div>
       </div>
 
-      {/* Fire Safety — 4 bars per location */}
+      {/* Facility Safety — 4 bars per location */}
       <div className="rounded-xl p-4" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Flame size={16} style={{ color: '#e2e8f0' }} />
-          <span className="text-sm font-semibold text-white">{t('cards.fireSafety')}</span>
-          <SectionTooltip content={useTooltip('fireSafety', userRole)} />
+          <span className="text-sm font-semibold text-white">{t('cards.facilitySafety')}</span>
+          <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
           <span className="text-[10px] text-slate-200 ml-auto">NFPA 96 (2024)</span>
         </div>
         <div className="space-y-3">
@@ -97,12 +97,12 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
             const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
             const score = jieScores[jieLocId];
             const override = DEMO_LOCATION_GRADE_OVERRIDES[jieLocId];
-            const isPassing = score?.fireSafety?.status === 'passing';
+            const isPassing = score?.facilitySafety?.status === 'passing';
             return (
               <button
                 key={loc.id}
                 type="button"
-                onClick={() => navigate('/fire-safety')}
+                onClick={() => navigate('/facility-safety')}
                 className="w-full text-left rounded-lg p-3 transition-colors hover:bg-white/10"
                 style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}
               >
@@ -114,10 +114,10 @@ export function HeroJurisdictionSummary({ jieScores, jurisdictions, navigate, us
                 </div>
                 {override && (
                   <FireStatusBars
-                    permitStatus={override.fireSafety.permitStatus}
-                    hoodStatus={override.fireSafety.hoodStatus}
-                    extinguisherStatus={override.fireSafety.extinguisherStatus}
-                    ansulStatus={override.fireSafety.ansulStatus}
+                    permitStatus={override.facilitySafety.permitStatus}
+                    hoodStatus={override.facilitySafety.hoodStatus}
+                    extinguisherStatus={override.facilitySafety.extinguisherStatus}
+                    ansulStatus={override.facilitySafety.ansulStatus}
                     compact
                   />
                 )}

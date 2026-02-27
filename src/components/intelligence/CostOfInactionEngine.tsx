@@ -21,7 +21,7 @@ export const CostOfInactionEngine: React.FC<Props> = ({ serviceStates }) => {
       borderRadius: '12px', padding: '20px', marginBottom: '16px',
     }}>
       <p style={{ color: '#4ade80', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
-        All CPP services active — fire safety service coverage complete.
+        All CPP services active — facility safety service coverage complete.
       </p>
     </div>
   );

@@ -29,7 +29,7 @@
     "reinspection_trigger": "Yellow placards may trigger reinspection within 3 business days to ensure major violations remain permanently corrected",
     "public_disclosure": "All inspection results and scores are publicly available online through the County's inspection database and mobile app"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Santa Cruz County Fire Department and independent Fire Districts",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Hood suppression systems for commercial kitchens require separate fire department permits and inspections per California Fire Code and local amendments",

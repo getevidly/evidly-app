@@ -108,14 +108,14 @@ export function HealthDeptReport() {
   const [generating, setGenerating] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isDemoMode } = useDemo();
 
   const [sections, setSections] = useState({
     facilityInfo: true,
     foodSafety: true,
     employeeCerts: true,
-    fireSafety: true,
+    facilitySafety: true,
     vendorDocs: true,
     correctiveActions: true,
     complianceScore: true,
@@ -157,7 +157,7 @@ export function HealthDeptReport() {
           // Fetch latest compliance score snapshot
           const { data: snapshot } = await supabase
             .from('compliance_score_snapshots')
-            .select('id, overall_score, food_safety_score, fire_safety_score, vendor_score, score_date')
+            .select('id, overall_score, food_safety_score, facility_safety_score, vendor_score, score_date')
             .eq('location_id', locationId)
             .order('score_date', { ascending: false })
             .limit(1)
@@ -167,7 +167,7 @@ export function HealthDeptReport() {
             liveScores = {
               overall: snapshot.overall_score,
               foodSafety: snapshot.food_safety_score ?? snapshot.overall_score,
-              fireSafety: snapshot.fire_safety_score ?? snapshot.overall_score,
+              facilitySafety: snapshot.facility_safety_score ?? snapshot.overall_score,
               vendorScore: snapshot.vendor_score ?? undefined,
               snapshotId: snapshot.id,
               snapshotDate: snapshot.score_date,
@@ -398,7 +398,7 @@ export function HealthDeptReport() {
                   <SectionToggle label="Facility Information" enabled={sections.facilityInfo} onChange={() => toggleSection('facilityInfo')} />
                   <SectionToggle label="Food Safety Summary" enabled={sections.foodSafety} onChange={() => toggleSection('foodSafety')} locked={!isPaidTier} />
                   <SectionToggle label="Employee Certifications" enabled={sections.employeeCerts} onChange={() => toggleSection('employeeCerts')} locked={!isPaidTier} />
-                  <SectionToggle label="Fire Safety & Equipment" enabled={sections.fireSafety} onChange={() => toggleSection('fireSafety')} locked={!isPaidTier} />
+                  <SectionToggle label="Facility Safety & Equipment" enabled={sections.facilitySafety} onChange={() => toggleSection('facilitySafety')} locked={!isPaidTier} />
                   <SectionToggle label="Vendor Documentation" enabled={sections.vendorDocs} onChange={() => toggleSection('vendorDocs')} locked={!isPaidTier} />
                   <SectionToggle label="Corrective Actions" enabled={sections.correctiveActions} onChange={() => toggleSection('correctiveActions')} locked={!isPaidTier} />
                   <SectionToggle label="Compliance Score & Trends" enabled={sections.complianceScore} onChange={() => toggleSection('complianceScore')} />
@@ -409,7 +409,7 @@ export function HealthDeptReport() {
                     <Lock className="h-5 w-5 text-[#d4af37]" />
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 600, color: '#92400e' }}>Free Tier — Limited Report</div>
-                      <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Fire Safety, Vendor Docs, and Corrective Actions sections.</div>
+                      <div style={{ fontSize: 13, color: '#92400e' }}>Upgrade to unlock Food Safety, Employee Certs, Facility Safety, Vendor Docs, and Corrective Actions sections.</div>
                     </div>
                     <button
                       onClick={() => setIsPaidTier(true)}
@@ -460,30 +460,33 @@ export function HealthDeptReport() {
 
             {/* Right: Preview Card + Actions */}
             <div className="space-y-6">
-              {/* Score Preview */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 text-center">
-                <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 8 }}>Current Score — {template.name}</div>
-                <div style={{ fontSize: 48, fontWeight: 800, color: template.getGradeColor(scores.overall), lineHeight: 1 }}>
-                  {scores.overall}
-                </div>
-                <div style={{
-                  display: 'inline-block', marginTop: 8, padding: '4px 16px', borderRadius: 20, fontSize: 14, fontWeight: 700,
-                  color: template.getGradeColor(scores.overall),
-                  border: `2px solid ${template.getGradeColor(scores.overall)}`,
-                }}>
-                  {template.getGrade(scores.overall)}
-                </div>
-                <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                  {[
-                    { label: 'Food Safety', score: scores.foodSafety },
-                    { label: 'Fire Safety', score: scores.fireSafety },
-                  ].map(p => (
-                    <div key={p.label} style={{ padding: '8px 4px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
-                      <div style={{ fontSize: 11, color: '#6b7280' }}>{p.label}</div>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: p.score >= 90 ? '#22c55e' : p.score >= 75 ? '#eab308' : p.score >= 60 ? '#f59e0b' : '#ef4444' }}>{p.score}</div>
+              {/* Score Preview — per-pillar with correct frameworks */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-4">
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', textAlign: 'center' }}>Compliance Score</div>
+                {[
+                  { label: 'Food Safety', framework: template.name, score: scores.foodSafety },
+                  { label: 'Facility Safety', framework: 'NFPA 96 / CA Fire Code', score: scores.facilitySafety },
+                ].map(p => {
+                  const statusLabel = p.score >= 90 ? 'Compliant' : p.score >= 70 ? 'Needs Attention' : 'Critical';
+                  const statusColor = p.score >= 90 ? '#22c55e' : p.score >= 70 ? '#eab308' : '#ef4444';
+                  return (
+                    <div key={p.label} style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{p.label}</div>
+                        <div style={{ fontSize: 24, fontWeight: 800, color: statusColor }}>{p.score}</div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ fontSize: 10, color: '#9ca3af' }}>{p.framework}</div>
+                        <div style={{
+                          display: 'inline-block', padding: '2px 10px', borderRadius: 12, fontSize: 11, fontWeight: 700,
+                          color: statusColor, border: `1.5px solid ${statusColor}`,
+                        }}>
+                          {statusLabel}
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
               {/* Generate Button */}
@@ -722,12 +725,12 @@ export function HealthDeptReport() {
                   </CollapsibleSection>
                 )}
 
-                {/* Section 4: Fire Safety */}
-                {generatedReport.config.sections.fireSafety && (
+                {/* Section 4: Facility Safety */}
+                {generatedReport.config.sections.facilitySafety && (
                   <CollapsibleSection
-                    title="Fire Safety & Equipment"
+                    title="Facility Safety & Equipment"
                     icon={<Flame className="h-5 w-5 text-[#1e4d6b]" />}
-                    badge={<CountBadge count={generatedReport.fireSafety.filter(f => f.status === 'overdue').length} color="red" />}
+                    badge={<CountBadge count={generatedReport.facilitySafety.filter(f => f.status === 'overdue').length} color="red" />}
                   >
                     <div className="overflow-x-auto mt-4">
                       <table className="min-w-full divide-y divide-gray-200">
@@ -742,7 +745,7 @@ export function HealthDeptReport() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                          {generatedReport.fireSafety.map((item, i) => (
+                          {generatedReport.facilitySafety.map((item, i) => (
                             <tr key={i} className="hover:bg-gray-50">
                               <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.equipment}</td>
                               <td className="px-4 py-3 text-sm text-gray-600 hidden sm:table-cell">{item.location}</td>
@@ -870,7 +873,7 @@ export function HealthDeptReport() {
                         </div>
                         {[
                           { label: 'Food Safety', value: generatedReport.complianceScore.foodSafety },
-                          { label: 'Fire Safety', value: generatedReport.complianceScore.fireSafety },
+                          { label: 'Facility Safety', value: generatedReport.complianceScore.facilitySafety },
                         ].map(p => (
                           <div key={p.label} style={{ textAlign: 'center', padding: 12, backgroundColor: '#f9fafb', borderRadius: 8 }}>
                             <div style={{ fontSize: 24, fontWeight: 700, color: p.value >= 90 ? '#22c55e' : p.value >= 75 ? '#eab308' : p.value >= 60 ? '#f59e0b' : '#ef4444' }}>
@@ -1159,7 +1162,7 @@ export function HealthDeptReport() {
         )}
       </div>
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

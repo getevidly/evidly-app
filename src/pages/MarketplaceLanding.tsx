@@ -67,7 +67,7 @@ export function MarketplaceLanding() {
           <h2 className="text-xl font-bold text-gray-900 mb-6">Categories We Serve</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { icon: Flame, title: 'Fire Safety', subs: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
+              { icon: Flame, title: 'Facility Safety', subs: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
               { icon: () => <EvidlyIcon size={20} />, title: 'Food Safety', subs: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
               { icon: Wrench, title: 'Equipment', subs: ['HVAC', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Plumbing'] },
               { icon: ClipboardCheck, title: 'Compliance', subs: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development'] },

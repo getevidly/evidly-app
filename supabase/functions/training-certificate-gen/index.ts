@@ -13,7 +13,7 @@ function generateCertNumber(type: string): string {
   const prefix: Record<string, string> = {
     food_handler: 'EVD-FH',
     food_manager_prep: 'EVD-FM',
-    fire_safety: 'EVD-FS',
+    facility_safety: 'EVD-FS',
     compliance_ops: 'EVD-CO',
     custom: 'EVD-CU',
   };
@@ -26,7 +26,7 @@ function getCertType(category: string): string {
   const map: Record<string, string> = {
     food_safety_handler: 'food_handler',
     food_safety_manager: 'food_manager_prep',
-    fire_safety: 'fire_safety',
+    facility_safety: 'facility_safety',
     compliance_ops: 'custom',
     custom: 'custom',
   };
@@ -37,7 +37,7 @@ function getExpiryYears(category: string): number | null {
   const map: Record<string, number> = {
     food_safety_handler: 3,
     food_safety_manager: 5,
-    fire_safety: 1,
+    facility_safety: 1,
   };
   return map[category] || null;
 }

@@ -92,7 +92,7 @@ export function Reports() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { userRole, getAccessibleLocations: getReportLocations, showAllLocationsOption: showAllLocs } = useRole();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const reportAccessibleLocs = getReportLocations();
   const [activeTab, setActiveTab] = useState<TabType>('executive');
   const [dateRange, setDateRange] = useState('this-month');
@@ -119,36 +119,36 @@ export function Reports() {
 
   const scoreDataLocations = {
     'downtown': [
-      { week: 'Wk 1', foodSafety: 86, fireSafety: 82 }, { week: 'Wk 2', foodSafety: 87, fireSafety: 83 },
-      { week: 'Wk 3', foodSafety: 87, fireSafety: 83 }, { week: 'Wk 4', foodSafety: 88, fireSafety: 85 },
-      { week: 'Wk 5', foodSafety: 89, fireSafety: 86 }, { week: 'Wk 6', foodSafety: 90, fireSafety: 87 },
-      { week: 'Wk 7', foodSafety: 89, fireSafety: 86 }, { week: 'Wk 8', foodSafety: 91, fireSafety: 88 },
-      { week: 'Wk 9', foodSafety: 90, fireSafety: 87 }, { week: 'Wk 10', foodSafety: 92, fireSafety: 89 },
-      { week: 'Wk 11', foodSafety: 91, fireSafety: 88 }, { week: 'Wk 12', foodSafety: 92, fireSafety: 89 },
+      { week: 'Wk 1', foodSafety: 86, facilitySafety: 82 }, { week: 'Wk 2', foodSafety: 87, facilitySafety: 83 },
+      { week: 'Wk 3', foodSafety: 87, facilitySafety: 83 }, { week: 'Wk 4', foodSafety: 88, facilitySafety: 85 },
+      { week: 'Wk 5', foodSafety: 89, facilitySafety: 86 }, { week: 'Wk 6', foodSafety: 90, facilitySafety: 87 },
+      { week: 'Wk 7', foodSafety: 89, facilitySafety: 86 }, { week: 'Wk 8', foodSafety: 91, facilitySafety: 88 },
+      { week: 'Wk 9', foodSafety: 90, facilitySafety: 87 }, { week: 'Wk 10', foodSafety: 92, facilitySafety: 89 },
+      { week: 'Wk 11', foodSafety: 91, facilitySafety: 88 }, { week: 'Wk 12', foodSafety: 92, facilitySafety: 89 },
     ],
     'airport': [
-      { week: 'Wk 1', foodSafety: 66, fireSafety: 58 }, { week: 'Wk 2', foodSafety: 67, fireSafety: 59 },
-      { week: 'Wk 3', foodSafety: 67, fireSafety: 60 }, { week: 'Wk 4', foodSafety: 68, fireSafety: 61 },
-      { week: 'Wk 5', foodSafety: 68, fireSafety: 60 }, { week: 'Wk 6', foodSafety: 69, fireSafety: 62 },
-      { week: 'Wk 7', foodSafety: 70, fireSafety: 63 }, { week: 'Wk 8', foodSafety: 69, fireSafety: 62 },
-      { week: 'Wk 9', foodSafety: 70, fireSafety: 64 }, { week: 'Wk 10', foodSafety: 72, fireSafety: 65 },
-      { week: 'Wk 11', foodSafety: 71, fireSafety: 64 }, { week: 'Wk 12', foodSafety: 72, fireSafety: 65 },
+      { week: 'Wk 1', foodSafety: 66, facilitySafety: 58 }, { week: 'Wk 2', foodSafety: 67, facilitySafety: 59 },
+      { week: 'Wk 3', foodSafety: 67, facilitySafety: 60 }, { week: 'Wk 4', foodSafety: 68, facilitySafety: 61 },
+      { week: 'Wk 5', foodSafety: 68, facilitySafety: 60 }, { week: 'Wk 6', foodSafety: 69, facilitySafety: 62 },
+      { week: 'Wk 7', foodSafety: 70, facilitySafety: 63 }, { week: 'Wk 8', foodSafety: 69, facilitySafety: 62 },
+      { week: 'Wk 9', foodSafety: 70, facilitySafety: 64 }, { week: 'Wk 10', foodSafety: 72, facilitySafety: 65 },
+      { week: 'Wk 11', foodSafety: 71, facilitySafety: 64 }, { week: 'Wk 12', foodSafety: 72, facilitySafety: 65 },
     ],
     'university': [
-      { week: 'Wk 1', foodSafety: 44, fireSafety: 38 }, { week: 'Wk 2', foodSafety: 46, fireSafety: 40 },
-      { week: 'Wk 3', foodSafety: 47, fireSafety: 42 }, { week: 'Wk 4', foodSafety: 49, fireSafety: 44 },
-      { week: 'Wk 5', foodSafety: 48, fireSafety: 43 }, { week: 'Wk 6', foodSafety: 50, fireSafety: 45 },
-      { week: 'Wk 7', foodSafety: 52, fireSafety: 47 }, { week: 'Wk 8', foodSafety: 51, fireSafety: 46 },
-      { week: 'Wk 9', foodSafety: 53, fireSafety: 48 }, { week: 'Wk 10', foodSafety: 55, fireSafety: 50 },
-      { week: 'Wk 11', foodSafety: 55, fireSafety: 49 }, { week: 'Wk 12', foodSafety: 58, fireSafety: 52 },
+      { week: 'Wk 1', foodSafety: 44, facilitySafety: 38 }, { week: 'Wk 2', foodSafety: 46, facilitySafety: 40 },
+      { week: 'Wk 3', foodSafety: 47, facilitySafety: 42 }, { week: 'Wk 4', foodSafety: 49, facilitySafety: 44 },
+      { week: 'Wk 5', foodSafety: 48, facilitySafety: 43 }, { week: 'Wk 6', foodSafety: 50, facilitySafety: 45 },
+      { week: 'Wk 7', foodSafety: 52, facilitySafety: 47 }, { week: 'Wk 8', foodSafety: 51, facilitySafety: 46 },
+      { week: 'Wk 9', foodSafety: 53, facilitySafety: 48 }, { week: 'Wk 10', foodSafety: 55, facilitySafety: 50 },
+      { week: 'Wk 11', foodSafety: 55, facilitySafety: 49 }, { week: 'Wk 12', foodSafety: 58, facilitySafety: 52 },
     ],
   };
-  const scoreDataByLocation: Record<string, { week: string; foodSafety: number; fireSafety: number }[]> = {
+  const scoreDataByLocation: Record<string, { week: string; foodSafety: number; facilitySafety: number }[]> = {
     ...scoreDataLocations,
     'all': scoreDataLocations.downtown.map((item, i) => ({
       week: item.week,
       foodSafety: Math.round((item.foodSafety + scoreDataLocations.airport[i].foodSafety + scoreDataLocations.university[i].foodSafety) / 3),
-      fireSafety: Math.round((item.fireSafety + scoreDataLocations.airport[i].fireSafety + scoreDataLocations.university[i].fireSafety) / 3),
+      facilitySafety: Math.round((item.facilitySafety + scoreDataLocations.airport[i].facilitySafety + scoreDataLocations.university[i].facilitySafety) / 3),
     })),
   };
   const scoreData = scoreDataByLocation[selectedLocation] || scoreDataByLocation['all'];
@@ -156,11 +156,11 @@ export function Reports() {
   const locationComparison = demoLocations.map(loc => {
     const scores = locationScores[loc.urlId];
     const food = scores?.foodSafety || 0;
-    const fire = scores?.fireSafety || 0;
+    const fire = scores?.facilitySafety || 0;
     return {
       location: loc.name,
       foodSafety: food,
-      fireSafety: fire,
+      facilitySafety: fire,
       foodStatus: getScoreStatus(food),
       fireStatus: getScoreStatus(fire),
     };
@@ -412,9 +412,9 @@ export function Reports() {
       let filename = '';
 
       if (activeTab === 'executive') {
-        csvContent = 'Location,Food Safety,Fire Safety,Food Status,Fire Status\n';
+        csvContent = 'Location,Food Safety,Facility Safety,Food Status,Fire Status\n';
         locationComparison.forEach(r => {
-          csvContent += `"${r.location}",${r.foodSafety},${r.fireSafety},"${r.foodStatus}","${r.fireStatus}"\n`;
+          csvContent += `"${r.location}",${r.foodSafety},${r.facilitySafety},"${r.foodStatus}","${r.fireStatus}"\n`;
         });
         csvContent += '\nTop Issues\nIssue,Priority,Affected\n';
         topIssues.forEach(r => {
@@ -517,7 +517,7 @@ export function Reports() {
           {[
             { id: 'executive', label: t('pages.reports.executiveSummary') },
             { id: 'operational', label: t('pages.reports.foodSafety') },
-            { id: 'equipment', label: t('pages.reports.fireSafety') },
+            { id: 'equipment', label: t('pages.reports.facilitySafety') },
             { id: 'team', label: t('pages.reports.team') },
           ].map((tab) => (
             <button
@@ -543,14 +543,14 @@ export function Reports() {
                 ? locationScores[selectedLocation].foodSafety
                 : Math.round(allScores.reduce((s, l) => s + l.foodSafety, 0) / allScores.length);
               const fireScore = selectedLocation !== 'all' && locationScores[selectedLocation]
-                ? locationScores[selectedLocation].fireSafety
-                : Math.round(allScores.reduce((s, l) => s + l.fireSafety, 0) / allScores.length);
+                ? locationScores[selectedLocation].facilitySafety
+                : Math.round(allScores.reduce((s, l) => s + l.facilitySafety, 0) / allScores.length);
               const prevFood = selectedLocation !== 'all' && locationScoresThirtyDaysAgo[selectedLocation]
                 ? locationScoresThirtyDaysAgo[selectedLocation].foodSafety
                 : Math.round(allPrev.reduce((s, l) => s + l.foodSafety, 0) / allPrev.length);
               const prevFire = selectedLocation !== 'all' && locationScoresThirtyDaysAgo[selectedLocation]
-                ? locationScoresThirtyDaysAgo[selectedLocation].fireSafety
-                : Math.round(allPrev.reduce((s, l) => s + l.fireSafety, 0) / allPrev.length);
+                ? locationScoresThirtyDaysAgo[selectedLocation].facilitySafety
+                : Math.round(allPrev.reduce((s, l) => s + l.facilitySafety, 0) / allPrev.length);
               const foodDelta = foodScore - prevFood;
               const fireDelta = fireScore - prevFire;
               return (
@@ -574,7 +574,7 @@ export function Reports() {
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <Flame className="h-5 w-5" style={{ color: '#1E2D4D' }} />
-                      <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.fireSafety')} Score</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{t('pages.reports.facilitySafety')} Score</h3>
                     </div>
                     <div className="text-4xl sm:text-5xl font-bold mb-2" style={{ color: '#1E2D4D' }}>
                       {fireScore}
@@ -603,7 +603,7 @@ export function Reports() {
                   <Tooltip />
                   <Legend />
                   <Line type="monotone" dataKey="foodSafety" name="Food Safety" stroke="#A08C5A" strokeWidth={2} dot={{ r: 3 }} />
-                  <Line type="monotone" dataKey="fireSafety" name="Fire Safety" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} />
+                  <Line type="monotone" dataKey="facilitySafety" name="Facility Safety" stroke="#1E2D4D" strokeWidth={2} dot={{ r: 3 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -618,7 +618,7 @@ export function Reports() {
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.location')}</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.foodSafety')}</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.fireSafety')}</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.reports.facilitySafety')}</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">{t('pages.reports.status')}</th>
                     </tr>
                   </thead>
@@ -627,7 +627,7 @@ export function Reports() {
                       <tr key={idx} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{loc.location}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: '#A08C5A' }}>{loc.foodSafety}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: '#1E2D4D' }}>{loc.fireSafety}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-bold" style={{ color: '#1E2D4D' }}>{loc.facilitySafety}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell">
                           <StatusBadge status={loc.foodStatus} />
                           <span className="mx-1" />
@@ -1058,7 +1058,7 @@ export function Reports() {
         )}
       </div>
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

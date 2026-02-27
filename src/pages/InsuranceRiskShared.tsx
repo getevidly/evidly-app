@@ -27,7 +27,7 @@ const DEMO_RISK_DATA = {
   trendDelta: '+11',
   industryPercentile: 92,
   factors: [
-    { name: 'Fire Risk', icon: Flame, color: '#ef4444', score: 95, weight: '40%', grade: 'A', detail: 'All fire safety systems current per NFPA 96 (2024). 0 overdue services.', dataPoints: 847 },
+    { name: 'Fire Risk', icon: Flame, color: '#ef4444', score: 95, weight: '40%', grade: 'A', detail: 'All facility safety systems current per NFPA 96 (2024). 0 overdue services.', dataPoints: 847 },
     { name: 'Food Safety', icon: UtensilsCrossed, color: '#3b82f6', score: 97, weight: '30%', grade: 'A', detail: '99.4% of 2,016 temperature readings in compliance range. Daily checklists 98% complete.', dataPoints: 2016 },
     { name: 'Documentation', icon: FileCheck, color: '#8b5cf6', score: 92, weight: '20%', grade: 'A-', detail: '94% of required documents current. Photo evidence on 87% of logs.', dataPoints: 324 },
     { name: 'Operational', icon: Settings2, color: '#06b6d4', score: 88, weight: '10%', grade: 'B+', detail: 'Average incident resolution: 2.1 hours. 8 of 9 food handler certs current.', dataPoints: 1660 },

@@ -19,7 +19,7 @@
     "reinspection_trigger": "Violations requiring correction or follow-up verification",
     "public_disclosure": "Inspection reports must be available upon request per California law but posting requirements not specified"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Local fire department/authority having jurisdiction - specific department not identified",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial cooking appliances producing grease vapors require UL 300 compliant fire suppression systems with 6-month inspections per California Fire Code",

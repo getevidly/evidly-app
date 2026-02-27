@@ -6,11 +6,11 @@ interface Props {
 }
 
 // Simulated percentiles for category-level comparison
-const CATEGORY_PERCENTILES: Record<string, { foodSafety: number; fireSafety: number; overall: number }> = {
-  downtown: { foodSafety: 93, fireSafety: 85, overall: 89 },
-  airport: { foodSafety: 50, fireSafety: 38, overall: 52 },
-  university: { foodSafety: 25, fireSafety: 15, overall: 18 },
-  all: { foodSafety: 62, fireSafety: 50, overall: 58 },
+const CATEGORY_PERCENTILES: Record<string, { foodSafety: number; facilitySafety: number; overall: number }> = {
+  downtown: { foodSafety: 93, facilitySafety: 85, overall: 89 },
+  airport: { foodSafety: 50, facilitySafety: 38, overall: 52 },
+  university: { foodSafety: 25, facilitySafety: 15, overall: 18 },
+  all: { foodSafety: 62, facilitySafety: 50, overall: 58 },
 };
 
 export function BenchmarkCategoryBreakdown({ locationId }: Props) {
@@ -20,7 +20,7 @@ export function BenchmarkCategoryBreakdown({ locationId }: Props) {
 
   const rows = [
     { category: 'Food Safety', yours: scores.foodSafety, verticalAvg: vertical.avgFoodSafety, industryAvg: 76, percentile: pct.foodSafety },
-    { category: 'Fire Safety', yours: scores.fireSafety, verticalAvg: vertical.avgFireSafety, industryAvg: 70, percentile: pct.fireSafety },
+    { category: 'Facility Safety', yours: scores.facilitySafety, verticalAvg: vertical.avgFacilitySafety, industryAvg: 70, percentile: pct.facilitySafety },
     { category: 'Overall', yours: scores.overall, verticalAvg: vertical.avgScore, industryAvg: 73, percentile: pct.overall },
   ];
 

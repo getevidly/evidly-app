@@ -19,7 +19,7 @@
     "reinspection_trigger": "Investigations of complaints about food service operations and reported cases of foodborne illness",
     "public_disclosure": "Inspection reports are public records and available online. All retail food businesses are required by law to make a copy of their most recent inspection report available for review by interested parties on request"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Kings County Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems required by NFPA standards, semi-annual inspections by licensed technicians required",

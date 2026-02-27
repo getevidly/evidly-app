@@ -85,8 +85,8 @@ const I: Record<string, NavItem> = {
     id: 'corrective-actions', label: 'Corrective Actions', path: '/corrective-actions', icon: '🔧',
     roles: [], description: 'Track and resolve compliance violations with documented corrective action plans and follow-up verification.',
   },
-  fireSafety: {
-    id: 'fire-safety', label: 'Fire Safety', path: '/fire-safety', icon: '🔥',
+  facilitySafety: {
+    id: 'facility-safety', label: 'Facility Safety', path: '/facility-safety', icon: '🔥',
     roles: [], description: 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
   },
 
@@ -184,6 +184,26 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Service providers on file — hood cleaning, Heating Ventilation and Air Conditioning, pest, plumbing, roofing, and fire suppression.',
   },
 
+  // ── Food Recovery (SB 1383) ──
+  foodRecovery: {
+    id: 'food-recovery', label: 'Food Recovery', path: '/food-recovery', icon: '♻️',
+    roles: [], description: 'SB 1383 organic waste diversion tracking, food recovery agreements, and CalRecycle compliance.',
+    badge: 'NEW',
+  },
+
+  // ── USDA K-12 ──
+  usdaProductionRecords: {
+    id: 'usda-production-records', label: 'USDA Production Records', path: '/usda/production-records', icon: '🏫',
+    roles: [], description: 'USDA Child Nutrition Program meal production records, meal pattern compliance, and CN label tracking.',
+    badge: 'NEW',
+  },
+
+  // ── Insurance ──
+  insuranceRisk: {
+    id: 'insurance-risk', label: 'Insurance Risk', path: '/insurance-risk', icon: '🛡️',
+    roles: [], description: 'PSE insurance risk scoring, protective safeguard compliance, carrier-ready documentation, and premium reduction tracking.',
+  },
+
   // ── Food Safety (Chef) ──
   haccp: {
     id: 'haccp', label: 'Hazard Analysis Critical Control Points', path: '/haccp', icon: '🛡️',
@@ -208,6 +228,24 @@ const I: Record<string, NavItem> = {
   rolesPermissions: {
     id: 'roles-permissions', label: 'Role Permissions', path: '/settings/roles-permissions', icon: '🔐',
     roles: [], description: 'Manage role-based permissions and user exceptions across your organization.',
+  },
+
+  // ── Command Center (Admin) ──
+  commandCenter: {
+    id: 'command-center', label: 'Command Center', path: '/admin/intelligence', icon: '🎛️',
+    roles: [], description: 'Signal triage, game plans, platform updates, client notifications, and crawl health monitoring.',
+    badge: 'NEW',
+  },
+
+  // ── System (Admin) ──
+  edgeFunctions: {
+    id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
+    roles: [], description: 'Health monitoring, invocation timeline, error logs, and manual invoke for all 18 Supabase Edge Functions.',
+    badge: 'NEW',
+  },
+  crawlMonitor: {
+    id: 'crawl-monitor', label: 'Crawl Monitor', path: '/admin/intelligence', icon: '🕷️',
+    roles: [], description: 'Intelligence crawl health, source uptime, and execution logs from the Command Center.',
   },
 
   // ── Help ──
@@ -250,8 +288,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.haccp],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Every compliance tool — documents, inspections, corrective actions, regulatory tracking, fire safety, and more.',
-        [I.correctiveActions, I.documents, I.fireSafety, I.foodSafetyOverview, I.inspectorArrival, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
+        'Compliance', 'Every compliance tool — documents, inspections, corrective actions, insurance risk, regulatory tracking, facility safety, and more.',
+        [I.correctiveActions, I.documents, I.facilitySafety, I.foodSafetyOverview, I.inspectorArrival, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence advisor, analytics, audit logs, benchmarks, business intelligence, compliance intelligence, regulatory updates, Internet of Things, and service Return on Investment.',
@@ -266,8 +304,12 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, command center, and role permissions.',
+        [I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.vendors],
+      ),
+      section('system', 'System', '🖥️',
+        'System', 'Edge Function health monitoring, crawl status, and infrastructure diagnostics.',
+        [I.edgeFunctions, I.crawlMonitor],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
@@ -394,8 +436,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.calendar, I.checklists, I.temperaturesViewOnly],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Corrective actions, documentation, fire safety, Hazard Analysis Critical Control Points, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, and services.',
-        [I.correctiveActions, I.documents, I.fireSafety, I.haccp, I.incidentsViewOnly, I.inspectorArrival, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
+        'Compliance', 'Corrective actions, documentation, facility safety, Hazard Analysis Critical Control Points, incidents, inspector view, jurisdiction intelligence, regulatory tracking, reporting, and services.',
+        [I.correctiveActions, I.documents, I.facilitySafety, I.haccp, I.incidentsViewOnly, I.inspectorArrival, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis — audit logs, business intelligence, intelligence, regulatory updates, and Internet of Things monitoring.',
@@ -435,7 +477,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Fire safety compliance, incidents, inspector view, and inspection readiness.',
-        [I.fireSafety, I.incidents, I.inspectorArrival],
+        [I.facilitySafety, I.incidents, I.inspectorArrival],
       ),
       section('service', 'Service', '🤝',
         'Service', 'Reporting, vendor services, and vendor management.',
@@ -474,8 +516,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.calendar, I.checklists, I.temperatures],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Corrective actions, documents, food safety, Hazard Analysis Critical Control Points, incidents, regulatory tracking, reporting, self-inspection, and vendor services.',
-        [I.correctiveActions, I.documents, I.fireSafety, I.foodSafetyOverview, I.haccp, I.incidents, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
+        'Compliance', 'Corrective actions, documents, food safety, Hazard Analysis Critical Control Points, incidents, insurance risk, regulatory tracking, reporting, self-inspection, and vendor services.',
+        [I.correctiveActions, I.documents, I.facilitySafety, I.foodSafetyOverview, I.haccp, I.incidents, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.selfInspection, I.services],
       ),
       section('insights', 'Insights', '💡',
         'Insights', 'Artificial Intelligence-powered analysis, analytics, audit logs, benchmarks, business intelligence, intelligence, regulatory updates, Internet of Things monitoring, and service Return on Investment.',
@@ -514,8 +556,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.intelligence, I.regulatoryUpdates, I.iotDashboard],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Fire safety, incidents, Know Your Inspector, regulatory tracking, compliance reporting, and vendor services.',
-        [I.fireSafety, I.incidentsViewOnly, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
+        'Compliance', 'Fire safety, incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, and vendor services.',
+        [I.facilitySafety, I.incidentsViewOnly, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
       ),
       section('tools', 'Tools', '🔧',
         'Tools', 'Service Return on Investment analysis.',
@@ -533,11 +575,62 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
   },
 };
 
+// ── Org-Type Section Overlays ────────────────────────────
+// Additional sidebar sections injected when the org matches a specific industry type.
+// Appended before the 'administration' section (or at the end if none).
+
+interface OrgTypeSectionOverlay {
+  orgTypes: string[];
+  roles: UserRole[];
+  section: SidebarSection;
+}
+
+const ORG_TYPE_OVERLAYS: OrgTypeSectionOverlay[] = [
+  {
+    orgTypes: ['RESTAURANT', 'HEALTHCARE', 'SENIOR_LIVING', 'K12_EDUCATION', 'HIGHER_EDUCATION'],
+    roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager'],
+    section: section('food-recovery', 'Food Recovery', '♻️',
+      'Food Recovery (SB 1383)',
+      'Organic waste diversion tracking, food recovery agreements, and CalRecycle SB 1383 compliance.',
+      [I.foodRecovery],
+    ),
+  },
+  {
+    orgTypes: ['K12_EDUCATION'],
+    roles: ['platform_admin', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef'],
+    section: section('usda-k12', 'USDA K-12', '🏫',
+      'USDA K-12 Meal Program',
+      'USDA Child Nutrition Program production records, meal pattern compliance, and CN label tracking.',
+      [I.usdaProductionRecords],
+    ),
+  },
+];
+
 // ── Public API ───────────────────────────────────────────
 
-/** Get the full sidebar configuration for a role */
-export function getRoleConfig(role: UserRole): RoleSidebarConfig {
-  return ROLE_CONFIGS[role];
+/** Get the full sidebar configuration for a role, optionally filtered by org type */
+export function getRoleConfig(role: UserRole, orgType?: string | null): RoleSidebarConfig {
+  const base = ROLE_CONFIGS[role];
+  if (!orgType) return base;
+
+  const extraSections = ORG_TYPE_OVERLAYS
+    .filter(o => o.orgTypes.includes(orgType) && o.roles.includes(role))
+    .map(o => o.section);
+
+  if (extraSections.length === 0) return base;
+
+  // Insert before 'administration' and 'help' sections
+  const adminIdx = base.sections.findIndex(s => s.id === 'administration');
+  const insertIdx = adminIdx >= 0 ? adminIdx : base.sections.length;
+
+  return {
+    ...base,
+    sections: [
+      ...base.sections.slice(0, insertIdx),
+      ...extraSections,
+      ...base.sections.slice(insertIdx),
+    ],
+  };
 }
 
 /** Get the home/dashboard NavItem for a role (with role-specific label) */
@@ -554,8 +647,8 @@ export function getHomeItemForRole(role: UserRole): NavItem {
 }
 
 /** Get sections for a role (backward-compatible wrapper) */
-export const getSectionsForRole = (role: string): SidebarSection[] => {
-  const config = ROLE_CONFIGS[role as UserRole];
+export const getSectionsForRole = (role: string, orgType?: string | null): SidebarSection[] => {
+  const config = getRoleConfig(role as UserRole, orgType);
   return config ? config.sections : [];
 };
 
@@ -644,7 +737,7 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
   {
     role: 'facilities_manager',
     label: 'Facilities Manager',
-    description: 'Equipment, vendors, fire safety, and maintenance alerts',
+    description: 'Equipment, vendors, facility safety, and maintenance alerts',
     i18nKey: 'topBar.facilitiesManager',
     i18nDescKey: 'topBar.roleDescFacilitiesManager',
   },

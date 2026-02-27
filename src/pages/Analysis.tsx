@@ -466,7 +466,7 @@ export function Analysis() {
     { week: '6w', score: 79 }, { week: '5w', score: 80 }, { week: '4w', score: 81 },
     { week: '3w', score: 82 }, { week: '2w', score: 83 }, { week: 'Now', score: 84 },
   ];
-  const fireSafetyTrend = [
+  const facilitySafetyTrend = [
     { week: '12w', score: 68 }, { week: '11w', score: 70 }, { week: '10w', score: 71 },
     { week: '9w', score: 70 }, { week: '8w', score: 72 }, { week: '7w', score: 73 },
     { week: '6w', score: 74 }, { week: '5w', score: 75 }, { week: '4w', score: 76 },
@@ -474,29 +474,29 @@ export function Analysis() {
   ];
   const downtownTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 10) })),
-    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
+    facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.min(100, d.score + 12) })),
   };
   const airportTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 4) })),
-    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
+    facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 8) })),
   };
   const universityTrends = {
     foodSafety: foodSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 18) })),
-    fireSafety: fireSafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
+    facilitySafety: facilitySafetyTrend.map((d) => ({ ...d, score: Math.max(0, d.score - 22) })),
   };
   const allTrends = {
     foodSafety: foodSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.foodSafety[i].score + airportTrends.foodSafety[i].score + universityTrends.foodSafety[i].score) / 3) })),
-    fireSafety: fireSafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.fireSafety[i].score + airportTrends.fireSafety[i].score + universityTrends.fireSafety[i].score) / 3) })),
+    facilitySafety: facilitySafetyTrend.map((d, i) => ({ ...d, score: Math.round((downtownTrends.facilitySafety[i].score + airportTrends.facilitySafety[i].score + universityTrends.facilitySafety[i].score) / 3) })),
   };
   const locationTrends = {
     'all': allTrends, 'downtown': downtownTrends, 'airport': airportTrends, 'university': universityTrends,
-  } as Record<string, { foodSafety: typeof foodSafetyTrend; fireSafety: typeof fireSafetyTrend }>;
+  } as Record<string, { foodSafety: typeof foodSafetyTrend; facilitySafety: typeof facilitySafetyTrend }>;
 
   const currentTrends = locationTrends[selectedLocation] || locationTrends['all'];
   const opStart = currentTrends.foodSafety[0].score;
   const opEnd = currentTrends.foodSafety[currentTrends.foodSafety.length - 1].score;
-  const eqStart = currentTrends.fireSafety[0].score;
-  const eqEnd = currentTrends.fireSafety[currentTrends.fireSafety.length - 1].score;
+  const eqStart = currentTrends.facilitySafety[0].score;
+  const eqEnd = currentTrends.facilitySafety[currentTrends.facilitySafety.length - 1].score;
 
   // ── Actions to improve score (existing table) ─────────────────
   const getRecoverablePoints = (impact: string): number => {
@@ -878,7 +878,7 @@ export function Analysis() {
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">{getPriorityBadge(action.priority)}</td>
                         <td className="px-4 sm:px-6 py-4 text-sm text-gray-900">{action.action}</td>
                         <td className="hidden sm:table-cell px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Fire Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1e4d6b' : action.pillar === 'Fire Safety' ? '#166534' : '#92400e' }}>
+                          <span style={{ padding: '2px 10px', fontSize: '12px', fontWeight: 500, borderRadius: '9999px', backgroundColor: action.pillar === 'Food Safety' ? '#dbeafe' : action.pillar === 'Facility Safety' ? '#dcfce7' : '#fef3c7', color: action.pillar === 'Food Safety' ? '#1e4d6b' : action.pillar === 'Facility Safety' ? '#166534' : '#92400e' }}>
                             {action.pillar}
                           </span>
                         </td>
@@ -917,9 +917,9 @@ export function Analysis() {
                   </p>
                 </div>
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Fire Safety</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Facility Safety</h3>
                   <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={currentTrends.fireSafety}>
+                    <LineChart data={currentTrends.facilitySafety}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="week" tick={{ fontSize: 10 }} />
                       <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} />

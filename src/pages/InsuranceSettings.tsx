@@ -57,7 +57,7 @@ export function InsuranceSettings() {
   const { userRole } = useRole();
   const { isDemoMode, presenterMode } = useDemo();
   const aiTier = getAiTier(isDemoMode, presenterMode);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const [sharingEnabled, setSharingEnabled] = useState(false);
   const [showConsentModal, setShowConsentModal] = useState(false);
@@ -286,7 +286,7 @@ export function InsuranceSettings() {
             { method: 'POST', path: '/api/v1/risk-score/verify', desc: 'Verify current risk score for a location' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/summary', desc: 'Overall score with category breakdown' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/history', desc: '12-month score trend with direction' },
-            { method: 'GET', path: '/api/v1/risk-score/{location_id}/fire-safety', desc: 'Fire safety compliance and NFPA (2025) status' },
+            { method: 'GET', path: '/api/v1/risk-score/{location_id}/facility-safety', desc: 'Fire safety compliance and NFPA (2025) status' },
             { method: 'GET', path: '/api/v1/risk-score/{location_id}/incidents', desc: 'Anonymized incident metrics (no PII)' },
           ].map(ep => (
             <div key={ep.path} className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 flex-wrap">
@@ -405,7 +405,7 @@ export function InsuranceSettings() {
         onClose={() => setShowUpgrade(false)}
         action={upgradeAction}
         feature={upgradeFeature}
-        onOverride={handleOverride}
+       
       />
     </div>
   );

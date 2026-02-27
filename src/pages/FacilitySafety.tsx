@@ -11,6 +11,8 @@ import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { useTranslation } from '../contexts/LanguageContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -127,11 +129,12 @@ const DEMO_PREFILLED: Record<string, Record<string, CheckResponse>> = {
 
 // ── Component ─────────────────────────────────────────────────────
 
-export function FireSafety() {
+export function FacilitySafety() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { userRole } = useRole();
   const { t } = useTranslation();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const locationParam = searchParams.get('location') || 'downtown';
   const [activeTab, setActiveTab] = useState<Frequency>('daily');
@@ -144,10 +147,10 @@ export function FireSafety() {
 
   const jieKey = `demo-loc-${locationParam}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
-  const fireGrade = override?.fireSafety?.grade || 'Pending';
-  const fireDisplay = override?.fireSafety?.gradeDisplay || 'Pending Verification';
-  const fireSummary = override?.fireSafety?.summary || '';
-  const fireStatus = override?.fireSafety?.status || 'unknown';
+  const fireGrade = override?.facilitySafety?.grade || 'Pending';
+  const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
+  const fireSummary = override?.facilitySafety?.summary || '';
+  const fireStatus = override?.facilitySafety?.status || 'unknown';
   const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen';
 
   const items = useMemo(() => {
@@ -198,8 +201,8 @@ export function FireSafety() {
     setTimeout(() => {
       setSubmitting(false);
       setSubmitted(true);
-      toast.success(`${t(`pages.fireSafety.${activeTab}`)} ${t('pages.fireSafety.checklist')} ${t('pages.fireSafety.submittedSuccess')}`, {
-        description: `${completedCount}/${items.length} ${t('pages.fireSafety.itemsCompleted')} — ${passCount} ${t('pages.fireSafety.passed')}, ${failCount} ${t('pages.fireSafety.failed')}`,
+      toast.success(`${t(`pages.facilitySafety.${activeTab}`)} ${t('pages.facilitySafety.checklist')} ${t('pages.facilitySafety.submittedSuccess')}`, {
+        description: `${completedCount}/${items.length} ${t('pages.facilitySafety.itemsCompleted')} — ${passCount} ${t('pages.facilitySafety.passed')}, ${failCount} ${t('pages.facilitySafety.failed')}`,
       });
     }, 800);
   }, [activeTab, completedCount, items.length, passCount, failCount, t]);
@@ -218,7 +221,7 @@ export function FireSafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.fireSafety.checklist')}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}</h1>
             <p className="text-sm text-gray-500">NFPA 96 (2024) · ANSI/UL 300</p>
           </div>
         </div>
@@ -228,7 +231,7 @@ export function FireSafety() {
           <MapPin size={14} className="text-gray-400" />
           <select
             value={locationParam}
-            onChange={e => navigate(`/fire-safety?location=${e.target.value}`)}
+            onChange={e => navigate(`/facility-safety?location=${e.target.value}`)}
             className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2"
             style={{ focusRingColor: GOLD } as any}
           >
@@ -239,7 +242,7 @@ export function FireSafety() {
         </div>
       </div>
 
-      {/* Fire Safety Status Card */}
+      {/* Facility Safety Status Card */}
       <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -253,20 +256,20 @@ export function FireSafety() {
             <div className="flex gap-6 text-sm">
               <div className="text-center">
                 <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
-                <div className="text-xs text-gray-500">{t('pages.fireSafety.completed')}</div>
+                <div className="text-xs text-gray-500">{t('pages.facilitySafety.completed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-semibold" style={{ color: '#16a34a' }}>{passCount}</div>
-                <div className="text-xs text-gray-500">{t('pages.fireSafety.passed')}</div>
+                <div className="text-xs text-gray-500">{t('pages.facilitySafety.passed')}</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-semibold" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
-                <div className="text-xs text-gray-500">{t('pages.fireSafety.failed')}</div>
+                <div className="text-xs text-gray-500">{t('pages.facilitySafety.failed')}</div>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-500 mb-1">{t('pages.fireSafety.progress')}</div>
+            <div className="text-xs text-gray-500 mb-1">{t('pages.facilitySafety.progress')}</div>
             <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
               <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
             </div>
@@ -277,10 +280,10 @@ export function FireSafety() {
         {override && (
           <div className="mt-3 pt-3 border-t border-gray-200">
             <FireStatusBars
-              permitStatus={override.fireSafety.permitStatus}
-              hoodStatus={override.fireSafety.hoodStatus}
-              extinguisherStatus={override.fireSafety.extinguisherStatus}
-              ansulStatus={override.fireSafety.ansulStatus}
+              permitStatus={override.facilitySafety.permitStatus}
+              hoodStatus={override.facilitySafety.hoodStatus}
+              extinguisherStatus={override.facilitySafety.extinguisherStatus}
+              ansulStatus={override.facilitySafety.ansulStatus}
             />
           </div>
         )}
@@ -302,7 +305,7 @@ export function FireSafety() {
               }`}
               style={isActive ? { backgroundColor: NAVY, color: 'white' } : { color: '#4b5563' }}
             >
-              {t(`pages.fireSafety.${freq}`)}
+              {t(`pages.facilitySafety.${freq}`)}
               <span className="ml-1.5 text-xs opacity-70">({count})</span>
             </button>
           );
@@ -315,14 +318,14 @@ export function FireSafety() {
           <div className="flex items-center gap-2">
             <CheckCircle2 size={18} className="text-green-600" />
             <span className="text-sm font-medium text-green-800">
-              {t(`pages.fireSafety.${activeTab}`)} {t('pages.fireSafety.submittedSuccess')}
+              {t(`pages.facilitySafety.${activeTab}`)} {t('pages.facilitySafety.submittedSuccess')}
             </span>
           </div>
           <button
             onClick={handleReset}
             className="text-sm text-green-700 hover:text-green-900 font-medium"
           >
-            {t('pages.fireSafety.startNew')}
+            {t('pages.facilitySafety.startNew')}
           </button>
         </div>
       )}
@@ -373,7 +376,7 @@ export function FireSafety() {
                       </span>
                       {needsCorrectiveAction && (
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700">
-                          {t('pages.fireSafety.correctiveActionRequired')}
+                          {t('pages.facilitySafety.correctiveActionRequired')}
                         </span>
                       )}
                     </div>
@@ -420,12 +423,12 @@ export function FireSafety() {
                   <div className="mt-3 ml-10">
                     <label className="text-xs font-semibold text-red-700 block mb-1">
                       <AlertTriangle size={12} className="inline mr-1" />
-                      {t('pages.fireSafety.correctiveAction')} {needsCorrectiveAction && <span className="text-red-500">*</span>}
+                      {t('pages.facilitySafety.correctiveAction')} {needsCorrectiveAction && <span className="text-red-500">*</span>}
                     </label>
                     <textarea
                       value={response.correctiveAction}
                       onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
-                      placeholder={t('pages.fireSafety.describeCorrectiveAction')}
+                      placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                       rows={2}
                       disabled={submitted}
                       className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -446,11 +449,11 @@ export function FireSafety() {
 
                     {/* Notes */}
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">{t('pages.fireSafety.notes')}</label>
+                      <label className="text-xs font-medium text-gray-600 block mb-1">{t('pages.facilitySafety.notes')}</label>
                       <textarea
                         value={response.notes}
                         onChange={e => updateResponse(item.id, { notes: e.target.value })}
-                        placeholder={t('pages.fireSafety.optionalNotes')}
+                        placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
@@ -462,12 +465,12 @@ export function FireSafety() {
                       <div>
                         <label className="text-xs font-semibold text-red-700 block mb-1">
                           <AlertTriangle size={12} className="inline mr-1" />
-                          {t('pages.fireSafety.correctiveAction')} *
+                          {t('pages.facilitySafety.correctiveAction')} *
                         </label>
                         <textarea
                           value={response.correctiveAction}
                           onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
-                          placeholder={t('pages.fireSafety.describeCorrectiveAction')}
+                          placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                           rows={2}
                           disabled={submitted}
                           className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
@@ -481,7 +484,7 @@ export function FireSafety() {
                         photos={response.photos}
                         onChange={photos => updateResponse(item.id, { photos })}
                         highlight={isFailed && item.requiresPhotoOnFail}
-                        highlightText={isFailed && item.requiresPhotoOnFail ? t('pages.fireSafety.photoRequiredOnFail') : undefined}
+                        highlightText={isFailed && item.requiresPhotoOnFail ? t('pages.facilitySafety.photoRequiredOnFail') : undefined}
                       />
                     </div>
                   </div>
@@ -496,8 +499,8 @@ export function FireSafety() {
       {userRole === 'kitchen_staff' && activeTab !== 'daily' && (
         <div className="text-center py-12 text-gray-500">
           <EvidlyIcon size={32} className="mx-auto mb-2" />
-          <p className="text-sm font-medium">{t(`pages.fireSafety.${activeTab}`)} {t('pages.fireSafety.managedByManager')}</p>
-          <p className="text-xs mt-1">{t('pages.fireSafety.accessDailyChecks')}</p>
+          <p className="text-sm font-medium">{t(`pages.facilitySafety.${activeTab}`)} {t('pages.facilitySafety.managedByManager')}</p>
+          <p className="text-xs mt-1">{t('pages.facilitySafety.accessDailyChecks')}</p>
         </div>
       )}
 
@@ -505,10 +508,10 @@ export function FireSafety() {
       {items.length > 0 && (
         <div className="mt-6 flex items-center justify-between">
           <div className="text-sm text-gray-500">
-            {completedCount}/{items.length} {t('pages.fireSafety.itemsCompleted')}
+            {completedCount}/{items.length} {t('pages.facilitySafety.itemsCompleted')}
             {failCount > 0 && (
               <span className="ml-2 text-red-600 font-medium">
-                ({failCount} {t('pages.fireSafety.failedCorrectiveRequired')})
+                ({failCount} {t('pages.facilitySafety.failedCorrectiveRequired')})
               </span>
             )}
           </div>
@@ -518,18 +521,18 @@ export function FireSafety() {
                 onClick={handleReset}
                 className="px-5 py-2.5 rounded-lg text-sm font-semibold border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                {t('pages.fireSafety.startNewChecklist')}
+                {t('pages.facilitySafety.startNewChecklist')}
               </button>
             ) : (
               <button
-                onClick={handleSubmit}
+                onClick={() => guardAction('submit', 'Facility Safety Checklists', handleSubmit)}
                 disabled={!canSubmit || submitting}
                 className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ backgroundColor: canSubmit ? NAVY : '#9ca3af' }}
                 onMouseEnter={e => { if (canSubmit) (e.target as HTMLElement).style.backgroundColor = NAVY_HOVER; }}
                 onMouseLeave={e => { if (canSubmit) (e.target as HTMLElement).style.backgroundColor = NAVY; }}
               >
-                {submitting ? t('pages.fireSafety.submitting') : `${t('pages.fireSafety.submitChecklist')} ${t(`pages.fireSafety.${activeTab}`)} ${t('pages.fireSafety.checklist')}`}
+                {submitting ? t('pages.facilitySafety.submitting') : `${t('pages.facilitySafety.submitChecklist')} ${t(`pages.facilitySafety.${activeTab}`)} ${t('pages.facilitySafety.checklist')}`}
               </button>
             )}
           </div>
@@ -544,8 +547,8 @@ export function FireSafety() {
         >
           <div className="flex items-center gap-2">
             <FileText size={16} className="text-gray-400" />
-            <span className="text-sm font-semibold text-gray-700">{t('pages.fireSafety.vendorServices')}</span>
-            <span className="text-xs text-gray-400">{t('pages.fireSafety.trackedInEquipment')}</span>
+            <span className="text-sm font-semibold text-gray-700">{t('pages.facilitySafety.vendorServices')}</span>
+            <span className="text-xs text-gray-400">{t('pages.facilitySafety.trackedInEquipment')}</span>
           </div>
           {expandedItem === 'vendor-ref' ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />}
         </button>
@@ -571,7 +574,7 @@ export function FireSafety() {
                       onClick={() => navigate('/equipment')}
                       className="text-xs font-medium px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:bg-gray-50"
                     >
-                      {t('pages.fireSafety.viewInEquipment')}
+                      {t('pages.facilitySafety.viewInEquipment')}
                     </button>
                   </div>
                 </div>
@@ -583,6 +586,14 @@ export function FireSafety() {
 
       {/* Bottom padding for Quick Actions bar */}
       <div className="h-24" />
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

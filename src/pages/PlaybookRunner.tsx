@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -212,6 +214,7 @@ function TemperatureInput({ value, onChange }: { value: number; onChange: (v: nu
 export function PlaybookRunner() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Find the active incident
   const incident = activeIncidentPlaybooks.find(i => i.id === id);
@@ -539,13 +542,13 @@ export function PlaybookRunner() {
             {/* Actions */}
             <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
               <button
-                onClick={() => toast.success('PDF download started')}
+                onClick={() => guardAction('download', 'Incident Playbooks', () => toast.success('PDF download started'))}
                 style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: '#1e4d6b', color: 'white', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <Download size={14} /> Download PDF
               </button>
               <button
-                onClick={() => toast.success('Insurance claim report generated')}
+                onClick={() => guardAction('export', 'Incident Playbooks', () => toast.success('Insurance claim report generated'))}
                 style={{ padding: '10px 20px', borderRadius: 8, border: '1px solid #d4af37', background: '#fffbeb', color: '#92400e', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, minHeight: 44, fontFamily: "'DM Sans', sans-serif" }}
               >
                 <DollarSign size={14} /> Insurance Report
@@ -613,7 +616,7 @@ export function PlaybookRunner() {
                 Cancel
               </button>
               <button
-                onClick={handleSkipStep}
+                onClick={() => guardAction('skip', 'Incident Playbooks', handleSkipStep)}
                 disabled={!skipReason.trim()}
                 style={{ padding: '8px 18px', borderRadius: 8, border: 'none', background: skipReason.trim() ? '#dc2626' : '#d1d5db', color: 'white', fontSize: 13, fontWeight: 600, cursor: skipReason.trim() ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif" }}
               >
@@ -646,7 +649,7 @@ export function PlaybookRunner() {
                 Cancel
               </button>
               <button
-                onClick={handleAbandon}
+                onClick={() => guardAction('abandon', 'Incident Playbooks', handleAbandon)}
                 disabled={!abandonReason.trim()}
                 style={{ padding: '8px 18px', borderRadius: 8, border: 'none', background: abandonReason.trim() ? '#991b1b' : '#d1d5db', color: 'white', fontSize: 13, fontWeight: 600, cursor: abandonReason.trim() ? 'pointer' : 'not-allowed', fontFamily: "'DM Sans', sans-serif" }}
               >
@@ -1047,7 +1050,7 @@ export function PlaybookRunner() {
                   <SkipForward size={14} /> Skip
                 </button>
                 <button
-                  onClick={handleCompleteStep}
+                  onClick={() => guardAction('complete', 'Incident Playbooks', handleCompleteStep)}
                   disabled={!canComplete}
                   style={{
                     flex: 1,
@@ -1197,6 +1200,13 @@ export function PlaybookRunner() {
           </div>
         )}
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

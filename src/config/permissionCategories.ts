@@ -106,16 +106,16 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
     ],
   },
   {
-    id: 'fire-safety',
-    label: 'Fire Safety',
+    id: 'facility-safety',
+    label: 'Facility Safety',
     icon: '🔥',
     description: 'Fire safety documents, inspections, and equipment',
     permissions: [
-      { key: 'sidebar.fire-safety', label: 'View Fire Safety', description: 'Access fire safety section' },
+      { key: 'sidebar.facility-safety', label: 'View Facility Safety', description: 'Access facility safety section' },
       { key: 'sidebar.hood-exhaust', label: 'Hood & Exhaust', description: 'Access hood/exhaust records' },
       { key: 'sidebar.hvac', label: 'HVAC', description: 'Access HVAC maintenance' },
       { key: 'sidebar.suppression-systems', label: 'Suppression Systems', description: 'Access suppression systems' },
-      { key: 'bottom.fire-safety', label: 'Mobile: Fire Safety', description: 'Fire Safety in mobile bottom bar' },
+      { key: 'bottom.facility-safety', label: 'Mobile: Facility Safety', description: 'Facility Safety in mobile bottom bar' },
     ],
   },
   {
@@ -209,6 +209,30 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
       { key: 'bottom.self-inspect', label: 'Mobile: Self-Inspect', description: 'Self-inspect in mobile bottom bar' },
       { key: 'bottom.violations', label: 'Mobile: Violations', description: 'Violations in mobile bottom bar' },
       { key: 'bottom.alerts', label: 'Mobile: Alerts', description: 'Alerts in mobile bottom bar' },
+    ],
+  },
+  {
+    id: 'food-recovery',
+    label: 'Food Recovery (SB 1383)',
+    icon: '♻️',
+    description: 'Organic waste diversion, food recovery agreements, and SB 1383 compliance',
+    permissions: [
+      { key: 'sidebar.food-recovery', label: 'Food Recovery', description: 'Access SB 1383 food recovery tracking' },
+      { key: 'sidebar.waste-diversion', label: 'Waste Diversion Log', description: 'Log organic waste diversion activities' },
+      { key: 'sidebar.recovery-agreements', label: 'Recovery Agreements', description: 'Manage food recovery organization agreements' },
+      { key: 'bottom.food-recovery', label: 'Mobile: Food Recovery', description: 'Food Recovery in mobile bottom bar' },
+    ],
+  },
+  {
+    id: 'usda-k12',
+    label: 'USDA K-12',
+    icon: '🏫',
+    description: 'USDA Child Nutrition Program production records and meal compliance',
+    permissions: [
+      { key: 'sidebar.usda-production-records', label: 'Production Records', description: 'Access USDA meal production records' },
+      { key: 'sidebar.usda-meal-patterns', label: 'Meal Patterns', description: 'Track USDA meal pattern compliance' },
+      { key: 'sidebar.usda-cn-labels', label: 'CN Labels', description: 'Manage Child Nutrition label tracking' },
+      { key: 'bottom.usda-k12', label: 'Mobile: USDA K-12', description: 'USDA K-12 in mobile bottom bar' },
     ],
   },
   {

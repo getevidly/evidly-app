@@ -19,7 +19,7 @@
     "reinspection_trigger": "Yellow placard requires follow-up inspection within 24-72 hours; major violations require re-inspection unless corrected during inspection",
     "public_disclosure": "Color-coded placards must be posted within 5 feet of main entrance; inspection reports available online and must be kept on-site for review upon request"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Local fire departments (varies by city within Sacramento County)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "NFPA 96 compliant systems required; semi-annual inspections every 6 months by licensed fire protection technician",

@@ -29,7 +29,7 @@
     "reinspection_trigger": "Yellow placard violations require follow-up inspection within timeframe specified. Red placard requires closure until compliance achieved.",
     "public_disclosure": "Color-coded placards must be posted at establishment entrance showing most recent inspection status. Inspection reports posted online for public viewing."
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "CAL FIRE/Butte County Fire Department - Fire Marshal Bureau",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen fire suppression systems must comply with California Fire Code and NFPA standards. Semi-annual inspections required per NFPA 96.",

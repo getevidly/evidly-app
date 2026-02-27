@@ -5,7 +5,7 @@
 export interface OnboardingDocument {
   id: string;
   name: string;
-  pillar: 'fire_safety' | 'food_safety' | 'vendor' | 'facility';
+  pillar: 'facility_safety' | 'food_safety' | 'vendor' | 'facility';
   required: boolean;
   description: string;
   whoProvides: string;
@@ -21,7 +21,7 @@ export const PILLAR_META: Record<
   OnboardingDocument['pillar'],
   { label: string; icon: string }
 > = {
-  fire_safety: { label: 'Fire Safety', icon: '🔥' },
+  facility_safety: { label: 'Facility Safety', icon: '🔥' },
   food_safety: { label: 'Food Safety', icon: '🍽️' },
   vendor: { label: 'Vendor Documents', icon: '👥' },
   facility: { label: 'Facility Documents', icon: '🏢' },
@@ -32,11 +32,11 @@ export const PILLAR_META: Record<
 // ---------------------------------------------------------------------------
 
 export const BASE_DOCUMENTS: OnboardingDocument[] = [
-  // ── Fire Safety (6) ─────────────────────────────────────────────────────
+  // ── Facility Safety (6) ─────────────────────────────────────────────────────
   {
     id: 'hood_cleaning_cert',
     name: 'Hood Cleaning Certificate',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: true,
     description:
       'Proof that kitchen exhaust hoods, ducts, and fans have been professionally cleaned and degreased to NFPA 96 standards.',
@@ -48,7 +48,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'fire_suppression_report',
     name: 'Fire Suppression Inspection Report',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: true,
     description:
       'Documented inspection of the kitchen fire suppression system confirming all nozzles, links, and agent levels meet code.',
@@ -60,7 +60,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'fire_extinguisher_tags',
     name: 'Fire Extinguisher Inspection Tags',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: true,
     description:
       'Current inspection tags on all portable fire extinguishers showing they have been serviced and are in working order.',
@@ -72,7 +72,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'ansul_cert',
     name: 'Ansul System Certification',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: true,
     description:
       'Certification that the Ansul (or equivalent) wet-chemical fire suppression system has been inspected and recharged as needed.',
@@ -84,7 +84,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'building_fire_inspection',
     name: 'Building Fire Inspection Report',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: false,
     description:
       'Report from the local fire department after a scheduled or surprise inspection of the building and kitchen areas.',
@@ -96,7 +96,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
   {
     id: 'exhaust_fan_service',
     name: 'Exhaust Fan Service Record',
-    pillar: 'fire_safety',
+    pillar: 'facility_safety',
     required: false,
     description:
       'Service records for rooftop and inline exhaust fans, including belt replacement, bearing lubrication, and hinge-kit cleaning.',
@@ -237,7 +237,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
     pillar: 'facility',
     required: false,
     description:
-      'Document issued by the building department certifying that the premises meets zoning, building code, and fire safety requirements for its intended use.',
+      'Document issued by the building department certifying that the premises meets zoning, building code, and facility safety requirements for its intended use.',
     whoProvides: 'Building department',
     renewalFrequency: 'One-time',
     helpText:
@@ -379,7 +379,7 @@ export const DEMO_CHECKLIST_STATUS: Record<
     expiresAt?: string;
   }
 > = {
-  // ── Fire Safety ─────────────────────────────────────────────────────────
+  // ── Facility Safety ─────────────────────────────────────────────────────────
   hood_cleaning_cert: {
     status: 'uploaded',
     uploadedAt: '2025-11-14',

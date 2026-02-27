@@ -48,7 +48,7 @@ const UsageAnalytics = lazy(() => import('./pages/UsageAnalytics').then(m => ({ 
 const WeeklyDigest = lazy(() => import('./pages/WeeklyDigest').then(m => ({ default: m.WeeklyDigest })));
 const IncidentLog = lazy(() => import('./pages/IncidentLog').then(m => ({ default: m.IncidentLog })));
 const AuditReport = lazy(() => import('./pages/AuditReport').then(m => ({ default: m.AuditReport })));
-const FireSafety = lazy(() => import('./pages/FireSafety').then(m => ({ default: m.FireSafety })));
+const FacilitySafety = lazy(() => import('./pages/FacilitySafety').then(m => ({ default: m.FacilitySafety })));
 const Equipment = lazy(() => import('./pages/Equipment').then(m => ({ default: m.Equipment })));
 const EquipmentDetail = lazy(() => import('./pages/EquipmentDetail').then(m => ({ default: m.EquipmentDetail })));
 const ServiceRecordEntry = lazy(() => import('./pages/ServiceRecordEntry').then(m => ({ default: m.ServiceRecordEntry })));
@@ -108,8 +108,9 @@ const DocumentChecklist = lazy(() => import('./pages/DocumentChecklist').then(m 
 const CopilotInsights = lazy(() => import('./pages/CopilotInsights').then(m => ({ default: m.CopilotInsights })));
 const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges').then(m => ({ default: m.AdminRegulatoryChanges })));
 const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue'));
-const IntelligenceAdmin = lazy(() => import('./pages/admin/IntelligenceAdmin'));
+const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
 const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
+const EdgeFunctions = lazy(() => import('./pages/admin/system/EdgeFunctions'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
 const ReferralRedirect = lazy(() => import('./pages/ReferralRedirect'));
@@ -392,7 +393,7 @@ function AppRoutes() {
           <Route path="/help" element={<Help />} />
           <Route path="/weekly-digest" element={<WeeklyDigest />} />
           <Route path="/audit-report" element={<AuditReport />} />
-          <Route path="/fire-safety" element={<FireSafety />} />
+          <Route path="/facility-safety" element={<FacilitySafety />} />
           <Route path="/equipment" element={<Equipment />} />
           <Route path="/equipment/:equipmentId" element={<EquipmentDetail />} />
           <Route path="/equipment/:equipmentId/service/new" element={<ServiceRecordEntry />} />
@@ -439,8 +440,9 @@ function AppRoutes() {
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
-          <Route path="/admin/intelligence" element={<IntelligenceAdmin />} />
+          <Route path="/admin/intelligence" element={<CommandCenter />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
+          <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
           {/* Blueprint route aliases — FIX-03 */}

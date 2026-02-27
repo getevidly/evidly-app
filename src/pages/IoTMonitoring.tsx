@@ -9,6 +9,8 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   iotSensors, iotSensorReadings, iotSensorAlerts, iotSensorProviders,
   iotSensorConfigs, iotIngestionLog, iotSparklines, iotComplianceImpact,
@@ -62,6 +64,7 @@ export default function IoTMonitoring() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [locationFilter, setLocationFilter] = useState('all');
   const [expandedSensor, setExpandedSensor] = useState<string | null>(null);
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<Set<string>>(
     new Set(iotSensorAlerts.filter(a => a.acknowledged).map(a => a.id))
   );
@@ -114,7 +117,7 @@ export default function IoTMonitoring() {
             {locations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
           </select>
           <button
-            onClick={() => toast.info('Refreshing sensor data (Demo)')}
+            onClick={() => guardAction('refresh', 'IoT Monitoring', () => toast.info('Refreshing sensor data'))}
             className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -594,7 +597,7 @@ export default function IoTMonitoring() {
               })}
             </div>
             <button
-              onClick={() => toast.success('Threshold configuration saved (Demo)')}
+              onClick={() => guardAction('save', 'IoT Monitoring', () => toast.success('Threshold configuration saved'))}
               className="mt-4 px-6 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors text-sm font-medium"
             >
               Save Thresholds
@@ -642,6 +645,14 @@ export default function IoTMonitoring() {
             </div>
           </div>
         </div>
+      )}
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
       )}
     </div>
   );

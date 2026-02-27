@@ -10,7 +10,7 @@ export interface DigestLocationScore {
   overall: number;
   trend: number; // +/- vs last week
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
   status: 'Inspection Ready' | 'Needs Attention' | 'Critical';
 }
 
@@ -54,7 +54,7 @@ export interface DigestData {
   weekStart: string;
   weekEnd: string;
   foodSafetyScore: number;
-  fireSafetyScore: number;
+  facilitySafetyScore: number;
   scoreTrend: number;
   locations: DigestLocationScore[];
   highlights: string[];
@@ -95,7 +95,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
         </td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">${trendArrow(loc.trend)}</td>
         <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.foodSafety}</td>
-        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.fireSafety}</td>
+        <td style="padding:10px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:13px;">${loc.facilitySafety}</td>
         <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">
           <span style="display:inline-block;background:${statusColor(loc.status)}22;color:${statusColor(loc.status)};border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600;">${loc.status}</span>
         </td>
@@ -188,10 +188,10 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
       <div style="font-size:11px;color:#6b7280;margin-top:4px;">Food Safety</div>
     </td>
     <td style="padding:20px 24px;text-align:center;width:120px;">
-      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.fireSafetyScore >= 90 ? '#22c55e' : data.fireSafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
-        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.fireSafetyScore}</span>
+      <div style="width:80px;height:80px;border-radius:50%;border:5px solid ${data.facilitySafetyScore >= 90 ? '#22c55e' : data.facilitySafetyScore >= 70 ? '#eab308' : '#ef4444'};display:inline-block;line-height:70px;text-align:center;">
+        <span style="font-size:28px;font-weight:800;color:#1e4d6b;">${data.facilitySafetyScore}</span>
       </div>
-      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Fire Safety</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:4px;">Facility Safety</div>
     </td>
     <td style="padding:20px 24px;">
       <div style="font-size:16px;font-weight:600;color:#1e4d6b;">Compliance Scores</div>

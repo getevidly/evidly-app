@@ -19,7 +19,7 @@
     "reinspection_trigger": "Unknown",
     "public_disclosure": "Unknown"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Unknown - specific fire authority not identified",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchens in California require semi-annual hood fire suppression system inspections per NFPA standards",

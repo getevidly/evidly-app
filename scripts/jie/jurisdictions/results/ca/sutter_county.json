@@ -19,7 +19,7 @@
     "reinspection_trigger": "Yellow Conditional Pass placard may trigger reinspection within 3 business days to ensure major violations remain corrected",
     "public_disclosure": "Inspection reports posted online and placards displayed at establishments. Facilities required to keep latest inspection report on-site and make available to customers upon request"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Sutter County Fire Department",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": null,

@@ -57,7 +57,7 @@ export type RfpRelevanceTier = 'high' | 'medium' | 'low' | 'irrelevant';
 export type RfpRecommendedAction = 'pursue' | 'monitor' | 'skip';
 
 export type RfpModule =
-  | 'food_safety' | 'sb1383' | 'fire_safety' | 'k12_production'
+  | 'food_safety' | 'sb1383' | 'facility_safety' | 'k12_production'
   | 'compliance_intelligence' | 'insurance_risk' | 'vendor_management'
   | 'temp_monitoring' | 'haccp' | 'training' | 'document_management';
 
@@ -161,7 +161,7 @@ export const EVIDLY_NAICS_CODES: Record<string, string> = {
 
 export const MODULE_LABELS: Record<string, string> = {
   food_safety: 'Food Safety',
-  fire_safety: 'Fire Safety',
+  facility_safety: 'Facility Safety',
   sb1383: 'SB 1383',
   k12_production: 'K-12 Production',
   compliance_intelligence: 'Compliance Intelligence',

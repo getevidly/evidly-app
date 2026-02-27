@@ -12,7 +12,7 @@ export interface VerticalBenchmark {
   vertical: BenchmarkVertical;
   avgScore: number;
   avgFoodSafety: number;
-  avgFireSafety: number;
+  avgFacilitySafety: number;
   peerCount: number;
 }
 
@@ -33,7 +33,7 @@ export interface SizeBenchmark {
 export interface SubcategoryBenchmark {
   key: string;
   label: string;
-  pillar: 'Food Safety' | 'Fire Safety';
+  pillar: 'Food Safety' | 'Facility Safety';
   industryAvg: number;
   verticalAvg: number;
 }
@@ -96,12 +96,12 @@ interface BenchmarkFilters {
 // ─── Vertical Benchmarks ──────────────────────────────────────────────────
 
 export const VERTICAL_BENCHMARKS: VerticalBenchmark[] = [
-  { vertical: 'Restaurant', avgScore: 74, avgFoodSafety: 76, avgFireSafety: 70, peerCount: 4200 },
-  { vertical: 'Healthcare', avgScore: 78, avgFoodSafety: 80, avgFireSafety: 76, peerCount: 2100 },
-  { vertical: 'Senior Living', avgScore: 76, avgFoodSafety: 78, avgFireSafety: 73, peerCount: 890 },
-  { vertical: 'K-12', avgScore: 72, avgFoodSafety: 74, avgFireSafety: 68, peerCount: 1560 },
-  { vertical: 'Hotel', avgScore: 75, avgFoodSafety: 77, avgFireSafety: 72, peerCount: 1340 },
-  { vertical: 'QSR', avgScore: 71, avgFoodSafety: 73, avgFireSafety: 67, peerCount: 3800 },
+  { vertical: 'Restaurant', avgScore: 74, avgFoodSafety: 76, avgFacilitySafety: 70, peerCount: 4200 },
+  { vertical: 'Healthcare', avgScore: 78, avgFoodSafety: 80, avgFacilitySafety: 76, peerCount: 2100 },
+  { vertical: 'Senior Living', avgScore: 76, avgFoodSafety: 78, avgFacilitySafety: 73, peerCount: 890 },
+  { vertical: 'K-12', avgScore: 72, avgFoodSafety: 74, avgFacilitySafety: 68, peerCount: 1560 },
+  { vertical: 'Hotel', avgScore: 75, avgFoodSafety: 77, avgFacilitySafety: 72, peerCount: 1340 },
+  { vertical: 'QSR', avgScore: 71, avgFoodSafety: 73, avgFacilitySafety: 67, peerCount: 3800 },
 ];
 
 export const SUB_VERTICAL_BENCHMARKS: Record<BenchmarkSubVertical, { avgScore: number; peerCount: number }> = {
@@ -136,8 +136,8 @@ export const SUBCATEGORY_BENCHMARKS: SubcategoryBenchmark[] = [
   { key: 'temp_compliance', label: 'Temperature Compliance', pillar: 'Food Safety', industryAvg: 82, verticalAvg: 79 },
   { key: 'checklist_completion', label: 'Checklist Completion Rate', pillar: 'Food Safety', industryAvg: 76, verticalAvg: 74 },
   { key: 'cooling_log', label: 'Cooling Log Compliance', pillar: 'Food Safety', industryAvg: 74, verticalAvg: 71 },
-  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Fire Safety', industryAvg: 71, verticalAvg: 68 },
-  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Fire Safety', industryAvg: 84, verticalAvg: 82 },
+  { key: 'hood_cleaning', label: 'Hood Cleaning Timeliness', pillar: 'Facility Safety', industryAvg: 71, verticalAvg: 68 },
+  { key: 'fire_suppression', label: 'Fire Suppression Currency', pillar: 'Facility Safety', industryAvg: 84, verticalAvg: 82 },
   { key: 'food_handler_cert', label: 'Food Handler Cert Currency', pillar: 'Food Safety', industryAvg: 85, verticalAvg: 83 },
   { key: 'vendor_coi', label: 'Vendor COI Completeness', pillar: 'Food Safety', industryAvg: 78, verticalAvg: 75 },
   { key: 'corrective_action', label: 'Corrective Action Response Time', pillar: 'Food Safety', industryAvg: 72, verticalAvg: 70 },
@@ -246,7 +246,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     percentile: 89,
     categoryRankings: [
       { category: 'Food Safety', percentile: 91 },
-      { category: 'Fire Safety', percentile: 85 },
+      { category: 'Facility Safety', percentile: 85 },
     ],
   },
   'airport-cafe': {
@@ -259,7 +259,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     percentile: 52,
     categoryRankings: [
       { category: 'Food Safety', percentile: 55 },
-      { category: 'Fire Safety', percentile: 44 },
+      { category: 'Facility Safety', percentile: 44 },
     ],
   },
   'university-dining': {
@@ -272,7 +272,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
     percentile: 18,
     categoryRankings: [
       { category: 'Food Safety', percentile: 22 },
-      { category: 'Fire Safety', percentile: 15 },
+      { category: 'Facility Safety', percentile: 15 },
     ],
   },
 };

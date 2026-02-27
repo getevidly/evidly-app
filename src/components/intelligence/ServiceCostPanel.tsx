@@ -54,7 +54,7 @@ export const ServiceCostPanel: React.FC<Props> = ({ onStateChange }) => {
           <span style={{ fontSize: '18px' }}>&#x1F525;</span>
           <div style={{ textAlign: 'left' }}>
             <p style={{ color: '#0B1628', fontSize: '14px', fontWeight: 700, margin: 0, fontFamily: 'system-ui' }}>
-              Fire Safety Service Status — Cleaning Pros Plus
+              Facility Safety Service Status — Cleaning Pros Plus
             </p>
             <p style={{ color: '#3D5068', fontSize: '11px', margin: '2px 0 0', fontFamily: 'system-ui' }}>
               {4 - inactiveCount} of 4 services active

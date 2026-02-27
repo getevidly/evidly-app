@@ -19,7 +19,7 @@
     "reinspection_trigger": "Violations requiring correction and follow-up verification",
     "public_disclosure": "Inspection reports must be maintained on-site and made available for public review upon request per California Health and Safety Code"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Multiple fire districts serve Colusa County including Sacramento River Fire Protection District and City of Colusa Fire Department",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "Commercial kitchen hood suppression systems require semi-annual inspections per NFPA 96 standards",

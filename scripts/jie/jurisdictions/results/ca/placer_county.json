@@ -19,7 +19,7 @@
     "reinspection_trigger": "Major violations remaining uncorrected after routine inspection, failure to comply with compliance agreement, or imminent health hazards requiring closure",
     "public_disclosure": "Color-coded placards must be posted in clearly visible location to patrons; recent inspection reports available online for public review"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Local Fire Department (varies by jurisdiction within county)",
     "hood_system_inspection_required": true,
     "ansul_system_requirements": "NFPA 96 compliant fire suppression systems required for Type I hoods covering commercial cooking equipment - semi-annual inspections required",

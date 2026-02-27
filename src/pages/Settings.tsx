@@ -54,7 +54,7 @@ export function Settings() {
   });
   const [saving, setSaving] = useState(false);
   const [benchmarkOptIn, setBenchmarkOptIn] = useState(true);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isOnline, syncStatus, pendingCount, lastSyncTime, deviceId, triggerSync, clearOfflineData } = useOffline();
   const [storageEstimate, setStorageEstimate] = useState<{ usage: number; quota: number } | null>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
@@ -1690,7 +1690,7 @@ export function Settings() {
         </div>
       )}
       {showUpgrade && (
-        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+        <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
       )}
     </>
   );

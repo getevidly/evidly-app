@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
 interface Alert {
   id: string;
@@ -31,6 +33,7 @@ export function Alerts() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { getAccessibleLocations } = useRole();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
   const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
   const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
@@ -343,22 +346,24 @@ export function Alerts() {
       return;
     }
 
-    if (selectedAlert) {
-      setAlerts(alerts.map(a =>
-        a.id === selectedAlert.id
-          ? {
-              ...a,
-              status: 'resolved' as const,
-              resolution_type: resolutionType,
-              resolution_notes: resolutionNotes,
-              resolved_by: 'Current User',
-              resolved_at: new Date().toISOString(),
-            }
-          : a
-      ));
-      setShowResolveModal(false);
-      setSelectedAlert(null);
-    }
+    guardAction('resolve', 'Alert Management', () => {
+      if (selectedAlert) {
+        setAlerts(alerts.map(a =>
+          a.id === selectedAlert.id
+            ? {
+                ...a,
+                status: 'resolved' as const,
+                resolution_type: resolutionType,
+                resolution_notes: resolutionNotes,
+                resolved_by: 'Current User',
+                resolved_at: new Date().toISOString(),
+              }
+            : a
+        ));
+        setShowResolveModal(false);
+        setSelectedAlert(null);
+      }
+    });
   };
 
   const handleSnooze = (alertId: string, days: number) => {
@@ -387,11 +392,13 @@ export function Alerts() {
   };
 
   const handleReassign = (alertId: string, memberName: string) => {
-    setAlerts(alerts.map(a =>
-      a.id === alertId ? { ...a, assigned_to: memberName } : a
-    ));
-    setOpenReassignDropdown(null);
-    toast.success(`Reassigned to ${memberName}`);
+    guardAction('reassign', 'Alert Management', () => {
+      setAlerts(alerts.map(a =>
+        a.id === alertId ? { ...a, assigned_to: memberName } : a
+      ));
+      setOpenReassignDropdown(null);
+      toast.success(`Reassigned to ${memberName}`);
+    });
   };
 
   const handleDismiss = (alertId: string) => {
@@ -724,6 +731,14 @@ export function Alerts() {
           )}
         </div>
       </div>
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
 
       {/* Resolve Modal */}
       {showResolveModal && selectedAlert && (

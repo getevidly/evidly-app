@@ -34,7 +34,7 @@ Return ONLY a valid JSON array. Each bill must include:
   "summary": string (2-3 sentences explaining what the bill does),
   "body_name": "California State Legislature",
   "status": "introduced" | "in_committee" | "passed_committee" | "passed_chamber" | "passed_both" | "enrolled" | "signed" | "vetoed" | "chaptered" | "dead",
-  "impact_areas": string[] (e.g. ["food_safety", "labeling", "allergens", "fire_safety", "worker_safety"]),
+  "impact_areas": string[] (e.g. ["food_safety", "labeling", "allergens", "facility_safety", "worker_safety"]),
   "effective_date": string (ISO date or ""),
   "last_action": string (most recent legislative action),
   "last_action_date": string (ISO date),
@@ -199,8 +199,8 @@ Return ONLY valid JSON:
           relevance_score: Math.round(analysis.passage_probability * 100),
           confidence: 0.70,
           impact_level: analysis.compliance_impact === "high" ? "high" : "medium",
-          affected_pillars: bill.impact_areas?.includes("fire_safety")
-            ? ["food_safety", "fire_safety"]
+          affected_pillars: bill.impact_areas?.includes("facility_safety")
+            ? ["food_safety", "facility_safety"]
             : ["food_safety"],
           jurisdictions: [],
           recommended_actions: analysis.preparation_actions || [

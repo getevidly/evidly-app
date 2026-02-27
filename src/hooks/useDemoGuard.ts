@@ -1,57 +1,45 @@
 import { useState, useCallback } from 'react';
 import { useDemo } from '../contexts/DemoContext';
+import { useAuth } from '../contexts/AuthContext';
 
-const OVERRIDE_SESSION_KEY = 'evidly_demo_override';
-
-function isOverridden(): boolean {
-  try {
-    return sessionStorage.getItem(OVERRIDE_SESSION_KEY) === 'true';
-  } catch {
-    return false;
-  }
-}
-
-function setOverridden(): void {
-  try {
-    sessionStorage.setItem(OVERRIDE_SESSION_KEY, 'true');
-  } catch {}
-}
-
+/**
+ * useDemoGuard: Protects demo-restricted actions.
+ *
+ * guardAction() only blocks when the user is genuinely in demo mode
+ * (entered via /demo, no auth session). Authenticated users always
+ * pass through — they should never see the DemoUpgradePrompt.
+ */
 export function useDemoGuard() {
   const { isDemoMode, presenterMode } = useDemo();
+  const { session } = useAuth();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [upgradeAction, setUpgradeAction] = useState('edit');
   const [upgradeFeature, setUpgradeFeature] = useState('');
-  const [, setForceUpdate] = useState(0);
 
   const guardAction = useCallback(
     (action: string, featureName: string, callback: () => void) => {
+      // Authenticated users: always pass through, no demo restrictions
+      if (session?.user) {
+        callback();
+        return;
+      }
       // Presenter mode: bypass all demo gating
       if (isDemoMode && presenterMode) {
         callback();
         return;
       }
-      // If override code has been entered for this session, allow
-      if (isDemoMode && isOverridden()) {
-        callback();
-        return;
-      }
+      // Demo mode (no auth): block the action, show upgrade prompt
       if (isDemoMode) {
         setUpgradeAction(action);
         setUpgradeFeature(featureName);
         setShowUpgrade(true);
         return;
       }
+      // Not in demo: execute normally
       callback();
     },
-    [isDemoMode, presenterMode]
+    [isDemoMode, presenterMode, session]
   );
 
-  const handleOverride = useCallback(() => {
-    setOverridden();
-    setShowUpgrade(false);
-    setForceUpdate(n => n + 1);
-  }, []);
-
-  return { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode, handleOverride };
+  return { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode };
 }

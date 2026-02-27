@@ -26,7 +26,7 @@ const STEPS: { id: Step; label: string; number: number }[] = [
 const CATEGORIES: { value: TrainingCategory; label: string; icon: typeof EvidlyIcon }[] = [
   { value: 'food_safety_handler', label: 'Food Safety – Handler', icon: EvidlyIcon },
   { value: 'food_safety_manager', label: 'Food Safety – Manager', icon: BookOpenCheck },
-  { value: 'fire_safety', label: 'Fire Safety', icon: Flame },
+  { value: 'facility_safety', label: 'Facility Safety', icon: Flame },
   { value: 'compliance_ops', label: 'Compliance Ops', icon: Settings2 },
   { value: 'custom', label: 'Custom', icon: Brain },
 ];
@@ -41,7 +41,7 @@ interface ModuleDraft {
 
 export function CourseBuilder() {
   const navigate = useNavigate();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
 
   // Step 1: Basics
@@ -504,7 +504,7 @@ export function CourseBuilder() {
         onClose={() => setShowUpgrade(false)}
         feature={upgradeFeature}
         action={upgradeAction}
-        onOverride={handleOverride}
+       
       />
     </div>
   );

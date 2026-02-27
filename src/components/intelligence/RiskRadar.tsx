@@ -4,7 +4,7 @@ interface Props { data: any }
 
 const dimensions = [
   { key: 'foodSafety', label: 'Food Safety' },
-  { key: 'fireSafety', label: 'Fire Safety' },
+  { key: 'facilitySafety', label: 'Facility Safety' },
   { key: 'documentation', label: 'Documentation' },
   { key: 'operational', label: 'Operational' },
   { key: 'staffing', label: 'Staffing' },
@@ -17,8 +17,8 @@ function getRiskScore(loc: any, dim: string): { score: number; color: string } {
       return loc.foodSafetyStatus === 'Compliant' ? { score: 1, color: '#4ade80' }
         : loc.foodSafetyStatus === 'Satisfactory' ? { score: 2, color: '#fbbf24' }
         : { score: 3, color: '#ef4444' };
-    case 'fireSafety':
-      return loc.fireSafetyVerdict === 'Pass' ? { score: 1, color: '#4ade80' } : { score: 3, color: '#ef4444' };
+    case 'facilitySafety':
+      return loc.facilitySafetyVerdict === 'Pass' ? { score: 1, color: '#4ade80' } : { score: 3, color: '#ef4444' };
     case 'documentation':
       return loc.permitExpirations.length === 0 ? { score: 1, color: '#4ade80' }
         : loc.permitExpirations.some((p: any) => p.daysUntilExpiry <= 7) ? { score: 3, color: '#ef4444' }

@@ -61,7 +61,7 @@ Disallow: /calendar
 Disallow: /help
 Disallow: /weekly-digest
 Disallow: /audit-report
-Disallow: /fire-safety
+Disallow: /facility-safety
 Disallow: /equipment
 Disallow: /regulatory-alerts
 Disallow: /jurisdiction

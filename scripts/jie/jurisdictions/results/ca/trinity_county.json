@@ -19,7 +19,7 @@
     "reinspection_trigger": "Reinspection fees charged for subsequent reinspections unless acceptable corrective time schedule submitted and approved",
     "public_disclosure": "Trinity County publishes food facility inspections online for public viewing with inspection reports available by facility"
   },
-  "fire_safety_authority": {
+  "facility_safety_authority": {
     "department_name": "Multiple local volunteer fire departments serve different areas - no central county fire authority identified",
     "hood_system_inspection_required": null,
     "ansul_system_requirements": null,

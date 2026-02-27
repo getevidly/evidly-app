@@ -10,7 +10,7 @@ export interface CalCodeViolation {
   severity: 'critical' | 'major' | 'minor' | 'grp';
   points: number;
   module: string;
-  pillar: 'food_safety' | 'fire_safety';
+  pillar: 'food_safety' | 'facility_safety';
   cdcRiskFactor: boolean;
   cdcCategory: string | null;
   category: string;

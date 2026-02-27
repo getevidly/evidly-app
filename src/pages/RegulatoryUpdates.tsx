@@ -6,7 +6,7 @@
  *   - Scope filter tabs (All / Federal / State / Local)
  *   - Agency source badges
  *   - Government-themed color accents
- *   - Pillar tags (Food Safety / Fire Safety)
+ *   - Pillar tags (Food Safety / Facility Safety)
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -65,7 +65,7 @@ const IMPACT_COLORS: Record<ImpactLevel, { bg: string; text: string; border: str
 
 const PILLAR_COLORS: Record<string, { bg: string; text: string }> = {
   food_safety: { bg: '#ecfdf5', text: '#065f46' },
-  fire_safety: { bg: '#fef2f2', text: '#991b1b' },
+  facility_safety: { bg: '#fef2f2', text: '#991b1b' },
 };
 
 function timeAgo(dateStr: string | undefined): string {
@@ -80,7 +80,7 @@ function timeAgo(dateStr: string | undefined): string {
 }
 
 function getPillars(insight: IntelligenceInsight): string[] {
-  return insight.affected_pillars?.filter(p => p === 'food_safety' || p === 'fire_safety') || [];
+  return insight.affected_pillars?.filter(p => p === 'food_safety' || p === 'facility_safety') || [];
 }
 
 // ── Main Component ──────────────────────────────────────────
@@ -348,7 +348,7 @@ export function RegulatoryUpdates() {
                       className="px-2 py-1 rounded-md text-xs font-medium"
                       style={{ backgroundColor: PILLAR_COLORS[p]?.bg || PANEL_BG, color: PILLAR_COLORS[p]?.text || MUTED }}
                     >
-                      {p === 'food_safety' ? 'Food Safety' : 'Fire Safety'}
+                      {p === 'food_safety' ? 'Food Safety' : 'Facility Safety'}
                     </span>
                   ))}
                   <span className="px-2 py-1 rounded-md text-xs font-medium" style={{ backgroundColor: PANEL_BG, color: MUTED }}>

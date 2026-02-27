@@ -22,7 +22,7 @@ export interface StateCode {
 
 export interface StateRequirement {
   id: string;
-  category: 'food_safety' | 'fire_safety' | 'vendor_compliance';
+  category: 'food_safety' | 'facility_safety' | 'vendor_compliance';
   title: string;
   description: string;
   citation: string;
@@ -117,7 +117,7 @@ const california: StateCode = {
     },
     {
       id: 'CA-REQ-008',
-      category: 'fire_safety',
+      category: 'facility_safety',
       title: 'Grease Trap Cleaning Per Local Jurisdiction',
       description: 'Grease traps must be cleaned and maintained per the schedule set by the local fire and health jurisdiction.',
       citation: 'Local fire code (varies by jurisdiction)',

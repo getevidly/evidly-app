@@ -610,7 +610,7 @@ function TestWebhookModal({ isOpen, onClose, webhookName }: { isOpen: boolean; o
 function ApiManagementTab() {
   const navigate = useNavigate();
   const [showKey, setShowKey] = useState(false);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, handleOverride } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const demoApiKey = 'evd_live_sk_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
   const demoSandboxKey = 'evd_sandbox_sk_x9y8w7v6u5t4s3r2q1p0o9n8m7l6k5j4';
 
@@ -902,7 +902,7 @@ function ApiManagementTab() {
     <CreateWebhookModal isOpen={showCreateWebhook} onClose={() => setShowCreateWebhook(false)} onCreated={handleWebhookCreated} />
     <TestWebhookModal isOpen={!!testWebhook} onClose={() => setTestWebhook(null)} webhookName={testWebhook || ''} />
     {showUpgrade && (
-      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} onOverride={handleOverride} />
+      <DemoUpgradePrompt action={upgradeAction} featureName={upgradeFeature} onClose={() => setShowUpgrade(false)} />
     )}
     </>
   );

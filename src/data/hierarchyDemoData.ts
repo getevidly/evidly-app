@@ -24,7 +24,7 @@ export interface HierarchyNode {
   code: string;
   complianceScore: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
   locationCount: number;
   children?: HierarchyNode[];
 }
@@ -47,15 +47,15 @@ export const demoHierarchyConfig: HierarchyConfig = {
 export function computeRollup(
   children: HierarchyNode[],
   method: 'weighted' | 'equal'
-): { overall: number; foodSafety: number; fireSafety: number } {
-  if (children.length === 0) return { overall: 0, foodSafety: 0, fireSafety: 0 };
+): { overall: number; foodSafety: number; facilitySafety: number } {
+  if (children.length === 0) return { overall: 0, foodSafety: 0, facilitySafety: 0 };
 
   if (method === 'equal') {
     const n = children.length;
     return {
       overall: Math.round(children.reduce((s, c) => s + c.complianceScore, 0) / n),
       foodSafety: Math.round(children.reduce((s, c) => s + c.foodSafety, 0) / n),
-      fireSafety: Math.round(children.reduce((s, c) => s + c.fireSafety, 0) / n),
+      facilitySafety: Math.round(children.reduce((s, c) => s + c.facilitySafety, 0) / n),
     };
   }
 
@@ -65,29 +65,29 @@ export function computeRollup(
   return {
     overall: Math.round(children.reduce((s, c) => s + c.complianceScore * c.locationCount, 0) / totalLocs),
     foodSafety: Math.round(children.reduce((s, c) => s + c.foodSafety * c.locationCount, 0) / totalLocs),
-    fireSafety: Math.round(children.reduce((s, c) => s + c.fireSafety * c.locationCount, 0) / totalLocs),
+    facilitySafety: Math.round(children.reduce((s, c) => s + c.facilitySafety * c.locationCount, 0) / totalLocs),
   };
 }
 
 // ── Build Demo Tree ────────────────────────────────────────────
 
-function buildTree(scores: Record<string, { overall: number; foodSafety: number; fireSafety: number }>): HierarchyNode {
+function buildTree(scores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>): HierarchyNode {
   const downtown: HierarchyNode = {
     id: 'pcd-downtown', level: 'location', name: 'Downtown Kitchen', code: 'PCD-DWN',
     complianceScore: scores.downtown.overall, foodSafety: scores.downtown.foodSafety,
-    fireSafety: scores.downtown.fireSafety,
+    facilitySafety: scores.downtown.facilitySafety,
     locationCount: 1,
   };
   const airport: HierarchyNode = {
     id: 'pcd-airport', level: 'location', name: 'Airport Cafe', code: 'PCD-AIR',
     complianceScore: scores.airport.overall, foodSafety: scores.airport.foodSafety,
-    fireSafety: scores.airport.fireSafety,
+    facilitySafety: scores.airport.facilitySafety,
     locationCount: 1,
   };
   const university: HierarchyNode = {
     id: 'pcd-university', level: 'location', name: 'University Dining', code: 'PCD-UNI',
     complianceScore: scores.university.overall, foodSafety: scores.university.foodSafety,
-    fireSafety: scores.university.fireSafety,
+    facilitySafety: scores.university.facilitySafety,
     locationCount: 1,
   };
 
@@ -95,7 +95,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const fresnoMetro: HierarchyNode = {
     id: 'pcd-fresno', level: 'district', name: 'Fresno Metro', code: 'PCD-FRS',
     complianceScore: fresnoRollup.overall, foodSafety: fresnoRollup.foodSafety,
-    fireSafety: fresnoRollup.fireSafety,
+    facilitySafety: fresnoRollup.facilitySafety,
     locationCount: 2,
     children: [downtown, airport],
   };
@@ -104,7 +104,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const mercedCounty: HierarchyNode = {
     id: 'pcd-merced', level: 'district', name: 'Merced County', code: 'PCD-MRC',
     complianceScore: mercedRollup.overall, foodSafety: mercedRollup.foodSafety,
-    fireSafety: mercedRollup.fireSafety,
+    facilitySafety: mercedRollup.facilitySafety,
     locationCount: 1,
     children: [university],
   };
@@ -113,7 +113,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   const centralValley: HierarchyNode = {
     id: 'pcd-cv', level: 'region', name: 'Central Valley', code: 'PCD-CV',
     complianceScore: cvRollup.overall, foodSafety: cvRollup.foodSafety,
-    fireSafety: cvRollup.fireSafety,
+    facilitySafety: cvRollup.facilitySafety,
     locationCount: 3,
     children: [fresnoMetro, mercedCounty],
   };
@@ -122,7 +122,7 @@ function buildTree(scores: Record<string, { overall: number; foodSafety: number;
   return {
     id: 'pcd-corp', level: 'corporate', name: 'Pacific Coast Dining', code: 'PCD',
     complianceScore: corpRollup.overall, foodSafety: corpRollup.foodSafety,
-    fireSafety: corpRollup.fireSafety,
+    facilitySafety: corpRollup.facilitySafety,
     locationCount: 3,
     children: [centralValley],
   };
@@ -176,21 +176,21 @@ export interface WeeklyHistoryPoint {
   week: string;
   overall: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
 }
 
 function buildNodeHistory(
-  current: { overall: number; foodSafety: number; fireSafety: number },
-  prev: { overall: number; foodSafety: number; fireSafety: number }
+  current: { overall: number; foodSafety: number; facilitySafety: number },
+  prev: { overall: number; foodSafety: number; facilitySafety: number }
 ): WeeklyHistoryPoint[] {
   const overallHist = generateWeeklyHistory(current.overall, prev.overall);
   const fsHist = generateWeeklyHistory(current.foodSafety, prev.foodSafety);
-  const fireHist = generateWeeklyHistory(current.fireSafety, prev.fireSafety);
+  const fireHist = generateWeeklyHistory(current.facilitySafety, prev.facilitySafety);
   return WEEKS.map((week, i) => ({
     week,
     overall: overallHist[i].score,
     foodSafety: fsHist[i].score,
-    fireSafety: fireHist[i].score,
+    facilitySafety: fireHist[i].score,
   }));
 }
 
@@ -203,8 +203,8 @@ function collectAllNodeIds(tree: HierarchyNode): string[] {
 function buildAllHistory(current: HierarchyNode, prev: HierarchyNode): Record<string, WeeklyHistoryPoint[]> {
   const result: Record<string, WeeklyHistoryPoint[]> = {};
   result[current.id] = buildNodeHistory(
-    { overall: current.complianceScore, foodSafety: current.foodSafety, fireSafety: current.fireSafety },
-    { overall: prev.complianceScore, foodSafety: prev.foodSafety, fireSafety: prev.fireSafety }
+    { overall: current.complianceScore, foodSafety: current.foodSafety, facilitySafety: current.facilitySafety },
+    { overall: prev.complianceScore, foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety }
   );
   if (current.children && prev.children) {
     current.children.forEach((child, i) => {

@@ -12,6 +12,8 @@ import { Navigate } from 'react-router-dom';
 import { Shield, ChevronDown, Info } from 'lucide-react';
 import { useRole, type UserRole } from '../contexts/RoleContext';
 import { useRolePermissions } from '../hooks/useRolePermissions';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
   getPermissionCategories,
   formatRoleName,
@@ -73,6 +75,8 @@ function RolesPermissionsInner() {
     getUserCountForRole,
   } = useRolePermissions();
 
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+
   const categories = useMemo(() => getPermissionCategories(), []);
   const userCount = getUserCountForRole(selectedRole);
 
@@ -84,26 +88,28 @@ function RolesPermissionsInner() {
         return; // blocked at toggle level already
       }
 
-      const count = getUserCountForRole(selectedRole);
+      guardAction('edit', 'Roles & Permissions', () => {
+        const count = getUserCountForRole(selectedRole);
 
-      if (count > 1) {
-        // Find the label
-        const label =
-          categories.flatMap(c => c.permissions).find(p => p.key === permissionKey)?.label ??
-          permissionKey;
+        if (count > 1) {
+          // Find the label
+          const label =
+            categories.flatMap(c => c.permissions).find(p => p.key === permissionKey)?.label ??
+            permissionKey;
 
-        setPendingChange({
-          role: selectedRole,
-          permissionKey,
-          permissionLabel: label,
-          newValue,
-          affectedUserCount: count,
-        });
-      } else {
-        toggleRolePermission(selectedRole, permissionKey, newValue);
-      }
+          setPendingChange({
+            role: selectedRole,
+            permissionKey,
+            permissionLabel: label,
+            newValue,
+            affectedUserCount: count,
+          });
+        } else {
+          toggleRolePermission(selectedRole, permissionKey, newValue);
+        }
+      });
     },
-    [selectedRole, categories, getUserCountForRole, toggleRolePermission],
+    [selectedRole, categories, getUserCountForRole, toggleRolePermission, guardAction],
   );
 
   const confirmPendingChange = useCallback(() => {
@@ -114,13 +120,17 @@ function RolesPermissionsInner() {
 
   // ── User exception handlers ──────────────────────────────────
   const handleAddException = () => {
-    setEditUserId(null);
-    setShowExceptionModal(true);
+    guardAction('create', 'Roles & Permissions', () => {
+      setEditUserId(null);
+      setShowExceptionModal(true);
+    });
   };
 
   const handleEditUser = (userId: string) => {
-    setEditUserId(userId);
-    setShowExceptionModal(true);
+    guardAction('edit', 'Roles & Permissions', () => {
+      setEditUserId(userId);
+      setShowExceptionModal(true);
+    });
   };
 
   /** Resolve effective grant for current selected role */
@@ -359,6 +369,14 @@ function RolesPermissionsInner() {
         onRemoveException={removeUserException}
         onResetUser={resetUserToDefaults}
       />
+
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

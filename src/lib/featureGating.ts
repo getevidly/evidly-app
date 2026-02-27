@@ -10,6 +10,8 @@ export interface FeatureDefinition {
   upgradeTier: PlanTier;       // The tier they need to upgrade TO
   upgradePrice: string;         // e.g., "$149/mo"
   upgradeLabel: string;         // e.g., "Professional"
+  /** If set, feature is only available to these org industry types. Omit for all. */
+  requiredOrgTypes?: string[];
 }
 
 const TIER_LEVEL: Record<PlanTier, number> = {
@@ -19,9 +21,24 @@ const TIER_LEVEL: Record<PlanTier, number> = {
   enterprise: 3,
 };
 
-export function hasAccess(userTier: PlanTier, requiredTier: PlanTier, featureId?: string): boolean {
+export function hasAccess(
+  userTier: PlanTier,
+  requiredTier: PlanTier,
+  featureId?: string,
+  orgType?: string | null,
+): boolean {
   if (featureId && !isFeatureEnabled(featureId)) return false;
+  if (featureId && orgType !== undefined && !hasOrgTypeAccess(featureId, orgType)) return false;
   return TIER_LEVEL[userTier] >= TIER_LEVEL[requiredTier];
+}
+
+/** Check if a feature is available for a given org industry type. */
+export function hasOrgTypeAccess(featureId: string, orgType: string | null): boolean {
+  const feature = FEATURES[featureId];
+  if (!feature) return false;
+  if (!feature.requiredOrgTypes) return true;
+  if (!orgType) return false;
+  return feature.requiredOrgTypes.includes(orgType);
 }
 
 export function getTierLevel(tier: PlanTier): number {
@@ -155,6 +172,31 @@ export const FEATURES: Record<string, FeatureDefinition> = {
     upgradeTier: 'professional',
     upgradePrice: '$149/mo',
     upgradeLabel: 'Professional',
+  },
+  // ── Module-gated features (org-type restricted) ────────────
+  'sb-1383-tracking': {
+    id: 'sb-1383-tracking',
+    name: 'SB 1383 Food Recovery Tracking',
+    description: 'Track organic waste diversion, food recovery agreements, and CalRecycle compliance for California SB 1383.',
+    requiredTier: 'founder',
+    enabled: true,
+    previewType: 'locked',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Founder',
+    requiredOrgTypes: ['RESTAURANT', 'HEALTHCARE', 'SENIOR_LIVING', 'K12_EDUCATION', 'HIGHER_EDUCATION'],
+  },
+  'usda-k12-module': {
+    id: 'usda-k12-module',
+    name: 'USDA K-12 Production Records',
+    description: 'USDA Child Nutrition Program production records, meal pattern compliance, and CN label tracking for K-12 food service.',
+    requiredTier: 'founder',
+    enabled: true,
+    previewType: 'locked',
+    upgradeTier: 'founder',
+    upgradePrice: '$99/mo',
+    upgradeLabel: 'Founder',
+    requiredOrgTypes: ['K12_EDUCATION'],
   },
 };
 

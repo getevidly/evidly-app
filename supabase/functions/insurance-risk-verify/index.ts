@@ -168,7 +168,7 @@ Deno.serve(async (req: Request) => {
       _links: {
         summary: `/risk-score?location_id=${locationId}`,
         history: `/risk-score/history?location_id=${locationId}`,
-        fire_safety: `/risk-score/fire-safety?location_id=${locationId}`,
+        facility_safety: `/risk-score/facility-safety?location_id=${locationId}`,
         incidents: `/risk-score/incidents?location_id=${locationId}`,
       },
     });

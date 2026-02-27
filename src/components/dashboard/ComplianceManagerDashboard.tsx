@@ -552,8 +552,8 @@ export default function ComplianceManagerDashboard() {
               const foodSummary = (score?.foodSafety?.details as Record<string, any>)?.summary ?? undefined;
               const foodGradingType = jur?.foodSafety?.grading_type ?? null;
 
-              const fireStatus = score?.fireSafety?.status ?? 'unknown';
-              const fireAHJName = jur?.fireSafety?.agency_name ?? 'Fire AHJ';
+              const fireStatus = score?.facilitySafety?.status ?? 'unknown';
+              const fireAHJName = jur?.facilitySafety?.agency_name ?? 'Fire AHJ';
               const county = jur?.county ?? '';
 
               return (
@@ -583,10 +583,10 @@ export default function ComplianceManagerDashboard() {
                     />
                   </button>
 
-                  {/* Fire Safety row */}
+                  {/* Facility Safety row */}
                   <button
                     type="button"
-                    onClick={() => navigate('/fire-safety')}
+                    onClick={() => navigate('/facility-safety')}
                     className="w-full mt-3 p-3 rounded-lg text-left transition-colors hover:opacity-90"
                     style={{ backgroundColor: '#f8f8f8' }}
                   >
@@ -610,10 +610,10 @@ export default function ComplianceManagerDashboard() {
                     {override && (
                       <div className="mt-2">
                         <FireStatusBars
-                          permitStatus={override.fireSafety.permitStatus}
-                          hoodStatus={override.fireSafety.hoodStatus}
-                          extinguisherStatus={override.fireSafety.extinguisherStatus}
-                          ansulStatus={override.fireSafety.ansulStatus}
+                          permitStatus={override.facilitySafety.permitStatus}
+                          hoodStatus={override.facilitySafety.hoodStatus}
+                          extinguisherStatus={override.facilitySafety.extinguisherStatus}
+                          ansulStatus={override.facilitySafety.ansulStatus}
                           compact
                         />
                       </div>
@@ -662,22 +662,22 @@ export default function ComplianceManagerDashboard() {
                         )}
                       </div>
 
-                      {/* Fire Safety AHJ */}
+                      {/* Facility Safety AHJ */}
                       <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">{t('cards.fireSafetyAHJ')}</p>
-                        <p className="text-[12px] font-medium" style={{ color: BODY_TEXT }}>{jur.fireSafety.agency_name}</p>
-                        {jur.fireSafety.agency_phone && (
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">{t('cards.facilitySafetyAHJ')}</p>
+                        <p className="text-[12px] font-medium" style={{ color: BODY_TEXT }}>{jur.facilitySafety.agency_name}</p>
+                        {jur.facilitySafety.agency_phone && (
                           <a
-                            href={`tel:${jur.fireSafety.agency_phone}`}
+                            href={`tel:${jur.facilitySafety.agency_phone}`}
                             className="flex items-center gap-1 text-[11px] mt-0.5 hover:underline"
                             style={{ color: NAVY }}
                           >
-                            <Phone size={10} /> {jur.fireSafety.agency_phone}
+                            <Phone size={10} /> {jur.facilitySafety.agency_phone}
                           </a>
                         )}
-                        {jur.fireSafety.agency_website && (
+                        {jur.facilitySafety.agency_website && (
                           <a
-                            href={jur.fireSafety.agency_website}
+                            href={jur.facilitySafety.agency_website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1 text-[11px] mt-0.5 hover:underline"

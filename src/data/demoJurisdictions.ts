@@ -265,7 +265,7 @@ export const DEMO_LOCATIONS = [
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-fresno')!,
     score: 92,
     foodSafety: { ops: 97, docs: 94 },
-    fireSafety: { ops: 88, docs: 95 },
+    facilitySafety: { ops: 88, docs: 95 },
     gradeDisplay: 'Pass',
     tagline: 'EvidLY IS your grading system',
   },
@@ -275,7 +275,7 @@ export const DEMO_LOCATIONS = [
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-merced')!,
     score: 85,
     foodSafety: { ops: 88, docs: 80 },
-    fireSafety: { ops: 75, docs: 82 },
+    facilitySafety: { ops: 75, docs: 82 },
     gradeDisplay: 'Unsatisfactory',
     tagline: 'Three-tier point accumulation',
   },
@@ -285,7 +285,7 @@ export const DEMO_LOCATIONS = [
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-stanislaus')!,
     score: 88,
     foodSafety: { ops: 91, docs: 86 },
-    fireSafety: { ops: 84, docs: 88 },
+    facilitySafety: { ops: 84, docs: 88 },
     gradeDisplay: 'Pass',
     tagline: 'CalCode pass/reinspect standard',
   },
@@ -306,7 +306,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
     status: 'passing' | 'failing' | 'at_risk';
     details: Record<string, any>;
   };
-  fireSafety: {
+  facilitySafety: {
     grade: string;
     gradeDisplay: string;
     summary: string;
@@ -325,7 +325,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       status: 'passing',
       details: { majorViolations: 0, minorViolations: 2, uncorrectedMajors: 0 },
     },
-    fireSafety: {
+    facilitySafety: {
       grade: 'Pass',
       gradeDisplay: 'Pass — Operational Permit Current',
       summary: 'City of Fresno Fire Department',
@@ -344,7 +344,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       status: 'passing',
       details: { totalPoints: 9, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0 },
     },
-    fireSafety: {
+    facilitySafety: {
       grade: 'Pass',
       gradeDisplay: 'Pass — Operational Permit Current',
       summary: 'Merced County Fire Dept (CAL FIRE MMU)',
@@ -363,7 +363,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       status: 'failing',
       details: { majorViolations: 3, minorViolations: 1, uncorrectedMajors: 3 },
     },
-    fireSafety: {
+    facilitySafety: {
       grade: 'Pass',
       gradeDisplay: 'Pass — Operational Permit Current',
       summary: 'Modesto Fire Department',
@@ -629,7 +629,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
 // DUAL-AUTHORITY JURISDICTION DATA PER DEMO LOCATION
 // Each location has TWO independent authorities:
 //   1. Food Safety (county health dept / CalCode)
-//   2. Fire Safety (city fire dept / NFPA 96)
+//   2. Facility Safety (city fire dept / NFPA 96)
 // These CANNOT be combined into a single score.
 // ═══════════════════════════════════════════════════════════
 
@@ -652,9 +652,9 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       is_verified: true,
       local_amendments: null, // TODO: research Fresno-specific additions to CalCode
     },
-    fireSafety: {
+    facilitySafety: {
       id: 'fresno-fire',
-      pillar: 'fire_safety',
+      pillar: 'facility_safety',
       agency_name: 'City of Fresno Fire Department',
       agency_phone: '(559) 621-4120',
       agency_website: 'https://www.fresno.gov/fire/',
@@ -689,9 +689,9 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       is_verified: true,
       local_amendments: null, // TODO: research Merced-specific additions to CalCode
     },
-    fireSafety: {
+    facilitySafety: {
       id: 'merced-fire',
-      pillar: 'fire_safety',
+      pillar: 'facility_safety',
       agency_name: 'City of Merced Fire Department',
       agency_phone: '(209) 385-6891',
       agency_website: 'https://www.cityofmerced.org/departments/fire',
@@ -726,9 +726,9 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
       is_verified: true,
       local_amendments: null, // TODO: research Stanislaus-specific additions to CalCode
     },
-    fireSafety: {
+    facilitySafety: {
       id: 'modesto-fire',
-      pillar: 'fire_safety',
+      pillar: 'facility_safety',
       agency_name: 'Modesto Fire Department, Fire Prevention Division',
       agency_phone: '(209) 577-5232',
       agency_website: 'https://www.modestogov.com/170/Fire-Prevention',

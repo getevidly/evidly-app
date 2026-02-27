@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   Siren, ArrowLeft, ChevronRight, ChevronLeft, Plus, Trash2,
@@ -56,6 +58,7 @@ interface StepDraft {
 
 export function PlaybookBuilder() {
   const navigate = useNavigate();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
 
   // Step 1: Basics
@@ -488,11 +491,11 @@ export function PlaybookBuilder() {
 
             {/* Publish buttons */}
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button onClick={() => toast.success(`Playbook published to ${assignLocations.length} location(s)`)}
+              <button onClick={() => guardAction('publish', 'Playbook Builder', () => toast.success(`Playbook published to ${assignLocations.length} location(s)`))}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: 'none', background: '#15803d', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <CheckCircle2 size={16} /> Publish Playbook
               </button>
-              <button onClick={() => toast.success("Playbook saved as draft")}
+              <button onClick={() => guardAction('save', 'Playbook Builder', () => toast.success("Playbook saved as draft"))}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '12px 24px', borderRadius: 8, border: '1px solid #1e4d6b', background: '#fff', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif", minHeight: 48 }}>
                 <FileText size={16} /> Save as Draft
               </button>
@@ -522,6 +525,13 @@ export function PlaybookBuilder() {
           </button>
         )}
       </div>
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          featureName={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
     </div>
   );
 }

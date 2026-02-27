@@ -66,7 +66,7 @@ const ROLE_NAV_ITEMS: Record<Exclude<UserRole, 'kitchen_staff'>, BottomNavItem[]
     { path: '/dashboard', icon: Home, label: 'Dashboard' },
     { path: '/equipment', icon: Wrench, label: 'Equipment' },
     { path: '/calendar', icon: Calendar, label: 'Service Cal' },
-    { path: '/fire-safety', icon: Flame, label: 'Fire Safety' },
+    { path: '/facility-safety', icon: Flame, label: 'Facility Safety' },
   ],
   chef: [
     { path: '/dashboard', icon: Home, label: 'Dashboard' },

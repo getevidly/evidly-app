@@ -21,7 +21,7 @@ export type CountyTemplate = 'la' | 'san-diego' | 'kern' | 'orange' | 'sacrament
 export interface LiveScoreData {
   overall: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
   vendorScore?: number;
   snapshotId?: string;   // FK for audit chain
   snapshotDate?: string;
@@ -46,7 +46,7 @@ export interface ReportConfig {
     facilityInfo: boolean;
     foodSafety: boolean;
     employeeCerts: boolean;
-    fireSafety: boolean;
+    facilitySafety: boolean;
     vendorDocs: boolean;
     correctiveActions: boolean;
     complianceScore: boolean;
@@ -86,7 +86,7 @@ export interface EmployeeCert {
   daysUntilExpiry: number;
 }
 
-export interface FireSafetyItem {
+export interface FacilitySafetyItem {
   equipment: string;
   location: string;
   lastInspection: string;
@@ -119,7 +119,7 @@ export interface CorrectiveAction {
 export interface ComplianceScoreSection {
   overall: number;
   foodSafety: number;
-  fireSafety: number;
+  facilitySafety: number;
   countyGrade?: string;
   countyScoreLabel?: string;
   jurisdictionScore?: number;
@@ -180,7 +180,7 @@ export interface HealthDeptReport {
   facilityInfo: FacilityInfo;
   foodSafety: FoodSafetyItem[];
   employeeCerts: EmployeeCert[];
-  fireSafety: FireSafetyItem[];
+  facilitySafety: FacilitySafetyItem[];
   vendorDocs: VendorDoc[];
   correctiveActions: CorrectiveAction[];
   complianceScore: ComplianceScoreSection;
@@ -270,9 +270,9 @@ export const COUNTY_TEMPLATES: Record<CountyTemplate, CountyTemplateConfig> = {
   },
   'generic': {
     id: 'generic',
-    name: 'California (CalCode Standard)',
+    name: 'California (CalCode — Food Safety)',
     gradingSystem: 'Score-Based (CalCode)',
-    gradingDescription: 'California Retail Food Code standard scoring',
+    gradingDescription: 'California Retail Food Code — food safety scoring only',
     getGrade: (score: number) => score >= 90 ? 'Inspection Ready' : score >= 70 ? 'Needs Attention' : 'Critical',
     getGradeColor: (score: number) => score >= 90 ? '#22c55e' : score >= 70 ? '#eab308' : '#ef4444',
     specialRequirements: [
@@ -420,8 +420,8 @@ function generateEmployeeCerts(locationUrlId: string): EmployeeCert[] {
   return certs[locationUrlId] || certs['downtown'];
 }
 
-function generateFireSafety(locationUrlId: string): FireSafetyItem[] {
-  const items: Record<string, FireSafetyItem[]> = {
+function generateFacilitySafety(locationUrlId: string): FacilitySafetyItem[] {
+  const items: Record<string, FacilitySafetyItem[]> = {
     'downtown': [
       { equipment: 'Kitchen Hood Suppression System', location: 'Main kitchen', lastInspection: '2026-01-15', nextDue: '2026-07-15', status: 'current', inspector: 'ABC Fire Protection', certNumber: 'FS-2026-0115' },
       { equipment: 'Fire Extinguishers (4)', location: 'Kitchen, dining, storage, office', lastInspection: '2025-12-10', nextDue: '2026-12-10', status: 'current', inspector: 'Valley Fire Systems', certNumber: 'FE-2025-1210' },
@@ -491,7 +491,7 @@ function generateMissingDocs(locationUrlId: string): MissingDocAlert[] {
       { document: 'Health Permit', category: 'Business Permits', severity: 'critical', message: 'Expired Jan 6, 2026 — facility operating without valid permit', requiredBy: 'CalCode §114381' },
       { document: 'Food Handler Card — Emily Chen', category: 'Employee Certifications', severity: 'critical', message: 'Expired Dec 1, 2025', requiredBy: 'CalCode §113948' },
       { document: 'Food Handler Card — Ana Gonzalez', category: 'Employee Certifications', severity: 'critical', message: 'Expired Aug 15, 2025', requiredBy: 'CalCode §113948' },
-      { document: 'Fire Suppression Inspection Certificate', category: 'Fire Safety', severity: 'critical', message: 'Last inspection Apr 10, 2025 — 4 months overdue', requiredBy: 'CFC §904.12.5' },
+      { document: 'Fire Suppression Inspection Certificate', category: 'Facility Safety', severity: 'critical', message: 'Last inspection Apr 10, 2025 — 4 months overdue', requiredBy: 'CFC §904.12.5' },
       { document: 'Grease Trap Service Record', category: 'Service Records', severity: 'critical', message: 'Last service Jul 20, 2025 — severely overdue', requiredBy: 'CalCode §114149' },
       { document: '3 Vendor COI Documents', category: 'Insurance', severity: 'warning', message: 'Multiple vendor certificates of insurance expired', requiredBy: 'Business policy' },
     ],
@@ -567,7 +567,7 @@ export function generateHealthDeptReport(
   const loc = locations.find(l => l.urlId === config.locationId) || locations[0];
   // Phase 4: Use live scores from compliance_score_snapshots when available, fall back to demo
   const scores = liveScores
-    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, fireSafety: liveScores.fireSafety }
+    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
     : (locationScores[config.locationId] || locationScores['downtown']);
   // Phase 4: Use DB jurisdiction template when available, fall back to hardcoded COUNTY_TEMPLATES
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[config.countyTemplate];
@@ -579,7 +579,7 @@ export function generateHealthDeptReport(
     facilityInfo: FACILITY_INFO[config.locationId] || FACILITY_INFO['downtown'],
     foodSafety: generateFoodSafety(config.locationId),
     employeeCerts: generateEmployeeCerts(config.locationId),
-    fireSafety: generateFireSafety(config.locationId),
+    facilitySafety: generateFacilitySafety(config.locationId),
     vendorDocs: generateVendorDocs(config.locationId),
     correctiveActions: generateCorrectiveActions(config.locationId),
     complianceScore: (() => {
@@ -590,7 +590,7 @@ export function generateHealthDeptReport(
       return {
         overall: scores.overall,
         foodSafety: scores.foodSafety,
-        fireSafety: scores.fireSafety,
+        facilitySafety: scores.facilitySafety,
         countyGrade: template.getGrade(scores.overall),
         countyScoreLabel: template.gradingSystem,
         jurisdictionScore: jResult.numericScore,
@@ -634,7 +634,7 @@ export function startInspectorVisit(
 ): InspectorVisit {
   const loc = locations.find(l => l.urlId === locationUrlId) || locations[0];
   const scores = liveScores
-    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, fireSafety: liveScores.fireSafety }
+    ? { overall: liveScores.overall, foodSafety: liveScores.foodSafety, facilitySafety: liveScores.facilitySafety }
     : (locationScores[locationUrlId] || locationScores['downtown']);
   const template = jurisdictionTemplate || COUNTY_TEMPLATES[countyTemplate];
 
@@ -646,7 +646,7 @@ export function startInspectorVisit(
       facilityInfo: true,
       foodSafety: true,
       employeeCerts: true,
-      fireSafety: true,
+      facilitySafety: true,
       vendorDocs: true,
       correctiveActions: true,
       complianceScore: true,
@@ -681,7 +681,7 @@ export function getDemoReportHistory(): ReportHistory[] {
       generatedAt: '2026-02-01T09:00:00Z',
       generatedBy: 'System (Monthly Auto-Report)',
       status: 'completed',
-      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Fire Safety', 'Vendor Docs', 'Corrective Actions', 'Compliance Score'],
+      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Facility Safety', 'Vendor Docs', 'Corrective Actions', 'Compliance Score'],
       dateRange: 'Last 30 Days',
     },
     {
@@ -693,7 +693,7 @@ export function getDemoReportHistory(): ReportHistory[] {
       generatedAt: '2026-02-01T09:00:00Z',
       generatedBy: 'System (Monthly Auto-Report)',
       status: 'completed',
-      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Fire Safety', 'Compliance Score'],
+      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Facility Safety', 'Compliance Score'],
       dateRange: 'Last 30 Days',
     },
     {
@@ -705,7 +705,7 @@ export function getDemoReportHistory(): ReportHistory[] {
       generatedAt: '2026-01-15T14:30:00Z',
       generatedBy: 'Tom Wilson (Inspector On-Site)',
       status: 'completed',
-      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Fire Safety', 'Vendor Docs', 'Corrective Actions', 'Compliance Score'],
+      sections: ['Facility Info', 'Food Safety', 'Employee Certs', 'Facility Safety', 'Vendor Docs', 'Corrective Actions', 'Compliance Score'],
       dateRange: 'Last 30 Days',
       shareLink: 'https://evidly-app.vercel.app/shared/RPT-HIST-003',
       shareLinkExpiry: '2026-01-22T14:30:00Z',
