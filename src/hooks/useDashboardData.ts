@@ -337,16 +337,23 @@ export function useDashboardData(): {
   const { isDemoMode } = useDemo();
 
   const orgId = profile?.organization_id;
-  const isDemo = isDemoMode || !orgId;
 
-  const [data, setData] = useState<DashboardPayload>(() => isDemo ? buildDemoPayload() : buildEmptyPayload());
-  const [loading, setLoading] = useState(!isDemo);
+  const [data, setData] = useState<DashboardPayload>(() => isDemoMode ? buildDemoPayload() : buildEmptyPayload());
+  const [loading, setLoading] = useState(!isDemoMode);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
   const fetchData = useCallback(async () => {
-    if (isDemo) {
+    // Only serve demo data when genuinely in demo mode (/demo route)
+    if (isDemoMode) {
       setData(buildDemoPayload());
+      setLoading(false);
+      return;
+    }
+
+    // Authenticated user without an org yet — show empty, never demo data
+    if (!orgId) {
+      setData(buildEmptyPayload());
       setLoading(false);
       return;
     }
@@ -404,7 +411,7 @@ export function useDashboardData(): {
     } finally {
       if (mountedRef.current) setLoading(false);
     }
-  }, [isDemo, orgId]);
+  }, [isDemoMode, orgId]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -416,7 +423,7 @@ export function useDashboardData(): {
   const lastPushedScoresRef = useRef<{ foodSafety: number; facilitySafety: number } | null>(null);
 
   useEffect(() => {
-    if (isDemo || !orgId || loading) return;
+    if (isDemoMode || !orgId || loading) return;
 
     const current = {
       foodSafety: data.orgScores.foodSafety,
@@ -434,7 +441,7 @@ export function useDashboardData(): {
       facilitySafety: current.facilitySafety,
       openItems: data.impact.length,
     }).catch(() => {}); // fire and forget
-  }, [isDemo, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
+  }, [isDemoMode, orgId, loading, data.orgScores.foodSafety, data.orgScores.facilitySafety, data.impact.length]);
 
   return { data, loading, error, refresh: fetchData };
 }
