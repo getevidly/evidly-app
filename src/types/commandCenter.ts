@@ -26,7 +26,7 @@ export type PlatformUpdateType = 'jurisdiction_record' | 'checklist_item' | 'sco
 export type PlatformUpdateStatus = 'pending' | 'applied' | 'rolled_back' | 'failed';
 
 export type NotificationType = 'alert' | 'advisory' | 'update' | 'digest';
-export type NotificationStatus = 'draft' | 'approved' | 'sent' | 'failed' | 'cancelled';
+export type NotificationStatus = 'draft' | 'approved' | 'sent' | 'failed' | 'cancelled' | 'held_for_digest';
 export type TargetAudience = 'all' | 'by_jurisdiction' | 'by_pillar' | 'specific_orgs';
 
 export type CrawlStatus = 'running' | 'success' | 'partial' | 'failed' | 'timeout';
@@ -35,6 +35,14 @@ export type SourceHealthStatus = 'healthy' | 'degraded' | 'down' | 'error' | 'ti
 export type CommandCenterTab = 'signals' | 'game-plans' | 'platform-updates' | 'notifications' | 'crawl-health';
 
 // ── Tab 1: Signal Queue ──────────────────────────────────────
+
+export interface AiTriageAssessment {
+  recommended_action: SignalReviewAction;
+  confidence_breakdown: Record<string, number>; // e.g. { relevance: 0.95, severity: 0.85, urgency: 0.90 }
+  reasoning: string;
+  affected_client_count: number;
+  suggested_game_plan: string | null;
+}
 
 export interface Signal {
   id: string;
@@ -58,9 +66,23 @@ export interface Signal {
   review_notes: string | null;
   created_at: string;
   updated_at: string;
+  // Enriched client-side fields
+  ai_triage?: AiTriageAssessment;
+  activity_log?: ActivityLogEntry[];
 }
 
-export type SignalReviewAction = 'approve' | 'dismiss' | 'defer' | 'escalate';
+export type SignalReviewAction = 'approve' | 'dismiss' | 'defer' | 'escalate' | 're_triage';
+
+// ── Activity Log (signal history) ────────────────────────────
+
+export interface ActivityLogEntry {
+  id: string;
+  signal_id: string;
+  action: string;              // e.g. 'created', 'approved', 'dismissed', 'escalated', 'deferred', 're_triaged', 'platform_update_created'
+  performed_by: string;
+  notes: string | null;
+  created_at: string;
+}
 
 // ── Tab 2: Game Plans ────────────────────────────────────────
 

@@ -64,7 +64,7 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
     required: true,
     description:
       'Current inspection tags on all portable fire extinguishers showing they have been serviced and are in working order.',
-    whoProvides: 'Fire safety vendor',
+    whoProvides: 'Facility safety vendor',
     renewalFrequency: 'Annual',
     helpText:
       'Take a clear photo of each extinguisher tag after the annual service visit. Monthly visual checks should also be logged internally.',
@@ -104,6 +104,70 @@ export const BASE_DOCUMENTS: OnboardingDocument[] = [
     renewalFrequency: 'Quarterly',
     helpText:
       'Exhaust fan maintenance is often included in hood cleaning contracts. Ask your vendor to document fan condition each visit.',
+  },
+
+  // ── Facility Safety — Elevator (3) ─────────────────────────────────────
+  {
+    id: 'elevator_inspection_cert',
+    name: 'Elevator Inspection Certificate',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Current inspection certificate from a licensed elevator inspector confirming the elevator meets ASME A17.1 safety standards.',
+    whoProvides: 'Elevator inspection vendor',
+    renewalFrequency: 'Annual (varies by state)',
+    helpText:
+      'Required for multi-story buildings with elevators. Your inspector should provide a certificate after each annual inspection.',
+  },
+  {
+    id: 'elevator_maintenance_record',
+    name: 'Elevator Maintenance Record',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Maintenance logs documenting routine elevator service, repairs, and safety checks performed by a licensed elevator technician.',
+    whoProvides: 'Elevator maintenance vendor',
+    renewalFrequency: 'Monthly',
+    helpText:
+      'Keep monthly maintenance logs on file. Most state codes require a maintenance log book in the machine room.',
+  },
+  {
+    id: 'elevator_permit',
+    name: 'Elevator Operating Permit',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Operating permit issued by the state or local jurisdiction allowing the elevator to carry passengers.',
+    whoProvides: 'State elevator safety division',
+    renewalFrequency: 'Annual',
+    helpText:
+      'Must be posted in the elevator cab. Renew before expiration — an expired permit can result in a shutdown order.',
+  },
+
+  // ── Facility Safety — Pest Control (2 additional) ────────────────────
+  {
+    id: 'pest_control_contract',
+    name: 'Pest Control Service Contract',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Active service contract with a licensed pest control operator covering regular inspections, treatments, and emergency callbacks.',
+    whoProvides: 'Pest control vendor',
+    renewalFrequency: 'Annual',
+    helpText:
+      'Having a contract on file demonstrates proactive pest management. Ensure it specifies monthly service visits at minimum.',
+  },
+  {
+    id: 'pest_activity_log',
+    name: 'Pest Activity Log',
+    pillar: 'facility_safety',
+    required: false,
+    description:
+      'Internal log tracking pest sightings, trap counts, and corrective actions taken between scheduled pest control visits.',
+    whoProvides: 'Internal',
+    renewalFrequency: 'Ongoing',
+    helpText:
+      'Log any pest activity between vendor visits. This helps your pest control operator target problem areas and satisfies inspector questions.',
   },
 
   // ── Food Safety (6) ─────────────────────────────────────────────────────
@@ -405,6 +469,23 @@ export const DEMO_CHECKLIST_STATUS: Record<
     status: 'uploaded',
     uploadedAt: '2025-11-14',
     expiresAt: '2026-02-14',
+  },
+  elevator_inspection_cert: {
+    status: 'not_applicable',
+  },
+  elevator_maintenance_record: {
+    status: 'not_applicable',
+  },
+  elevator_permit: {
+    status: 'not_applicable',
+  },
+  pest_control_contract: {
+    status: 'uploaded',
+    uploadedAt: '2026-01-05',
+    expiresAt: '2027-01-05',
+  },
+  pest_activity_log: {
+    status: 'pending',
   },
 
   // ── Food Safety ─────────────────────────────────────────────────────────

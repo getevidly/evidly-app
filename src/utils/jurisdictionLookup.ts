@@ -69,7 +69,7 @@ export async function lookupJurisdiction(
     }
   }
 
-  // Step 3: Fire safety jurisdiction (may differ from food safety)
+  // Step 3: Facility safety jurisdiction (may differ from food safety)
   const { data: fireMatch } = await supabase
     .from('jurisdictions')
     .select('*')

@@ -87,7 +87,7 @@ const I: Record<string, NavItem> = {
   },
   facilitySafety: {
     id: 'facility-safety', label: 'Facility Safety', path: '/facility-safety', icon: '🔥',
-    roles: [], description: 'Fire safety compliance checklists, suppression system status, and fire inspection readiness.',
+    roles: [], description: 'Facility safety compliance checklists, suppression system status, and fire inspection readiness.',
   },
 
   // ── Insights ──
@@ -476,7 +476,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.checklists],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Fire safety compliance, incidents, inspector view, and inspection readiness.',
+        'Compliance', 'Facility safety compliance, incidents, inspector view, and inspection readiness.',
         [I.facilitySafety, I.incidents, I.inspectorArrival],
       ),
       section('service', 'Service', '🤝',
@@ -556,7 +556,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.aiInsights, I.analytics, I.auditLog, I.benchmarks, I.businessIntelligence, I.intelligence, I.regulatoryUpdates, I.iotDashboard],
       ),
       section('compliance', 'Compliance', '📋',
-        'Compliance', 'Fire safety, incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, and vendor services.',
+        'Compliance', 'Facility safety, incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, and vendor services.',
         [I.facilitySafety, I.incidentsViewOnly, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services],
       ),
       section('tools', 'Tools', '🔧',

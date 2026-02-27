@@ -39,7 +39,7 @@ export function BusinessIntelligence() {
   // These components can be rewired in a future pass.
   const legacyData = demoIntelligence;
 
-  // Fire safety documents expiring within 60 days
+  // Facility safety documents expiring within 60 days
   const facilitySafetyDocs = (bi.expiringDocuments || []).filter(d =>
     d.category === 'facility_safety' ||
     d.title.toLowerCase().includes('fire') ||

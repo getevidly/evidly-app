@@ -42,7 +42,7 @@ function conditionBg(c: string) { const m: Record<string, string> = { Excellent:
 function statusInfo(s?: EquipmentStatus) { const m: Record<string, { label: string; color: string; bg: string }> = { needs_repair: { label: 'Needs Repair', color: '#d97706', bg: '#fffbeb' }, out_of_service: { label: 'Out of Service', color: '#dc2626', bg: '#fef2f2' }, decommissioned: { label: 'Decommissioned', color: '#6b7280', bg: '#f3f4f6' } }; return m[s || ''] || { label: 'Operational', color: '#16a34a', bg: '#f0fdf4' }; }
 function warrantyInfo(exp: string) { const d = daysBetween(NOW, exp); if (d < 0) return { label: 'Expired', color: '#dc2626', bg: '#fef2f2' }; if (d <= 90) return { label: 'Expiring Soon', color: '#d97706', bg: '#fffbeb' }; return { label: 'Active', color: '#16a34a', bg: '#f0fdf4' }; }
 function maintenanceInfo(nextDue: string) { const d = daysBetween(NOW, nextDue); if (d < 0) return { label: `${Math.abs(d)}d overdue`, color: '#dc2626', bg: '#fef2f2', overdue: true }; if (d <= 7) return { label: `Due in ${d}d`, color: '#d97706', bg: '#fffbeb', overdue: false }; if (d <= 30) return { label: `Due in ${d}d`, color: '#2563eb', bg: '#eff6ff', overdue: false }; return { label: format(new Date(nextDue), 'MMM d, yyyy'), color: '#6b7280', bg: '#f9fafb', overdue: false }; }
-const FIRE_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
+const FIRE_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan', 'Elevator']);
 function getPillar(eq: EquipmentItem): 'facility_safety' | 'food_safety' { return eq.pillar || (FIRE_TYPES.has(eq.type) ? 'facility_safety' : 'food_safety'); }
 
 const badge = (text: string, color: string, bg: string): React.CSSProperties => ({

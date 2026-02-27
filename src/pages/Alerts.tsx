@@ -223,7 +223,7 @@ export function Alerts() {
       id: '15',
       alert_type: 'staff_certification',
       severity: 'medium',
-      title: 'Fire safety training overdue for 3 staff',
+      title: 'Facility safety training overdue for 3 staff',
       description: 'Annual fire extinguisher training (OSHA 29 CFR 1910.157 / NFPA 10) is overdue for David Park, Alex Thompson, and Lisa Wang. All kitchen and facilities staff require annual training.',
       recommended_action: 'Schedule fire extinguisher training session for untrained staff.',
       status: 'active',

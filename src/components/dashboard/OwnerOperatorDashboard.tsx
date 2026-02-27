@@ -47,7 +47,7 @@ function getLocationStatusInfo(
       issues.push(summary || 'Food safety violations');
     }
     if (fireStatus === 'failing') {
-      issues.push('Fire safety non-compliant');
+      issues.push('Facility safety non-compliant');
     }
     return { locId: loc.id, name: loc.name, status: 'action_required', statusText: issues.join(' \u00b7 ') };
   }

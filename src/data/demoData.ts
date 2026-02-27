@@ -467,6 +467,19 @@ export const vendors: Vendor[] = [
     status: 'overdue',
     locationId: '3',
   },
+  {
+    id: '16',
+    companyName: 'Pacific Elevator Services',
+    contactName: 'Mark Chen',
+    email: 'mark@pacificelevator.com',
+    phone: '(555) 678-9012',
+    serviceType: 'Elevator Inspection',
+    lastService: '2025-08-12',
+    nextDue: '2026-08-12',
+    documentsCount: 3,
+    status: 'current',
+    locationId: '2',
+  },
 ];
 
 export interface Notification {
@@ -651,8 +664,8 @@ export interface MarketplaceReview {
 }
 
 export const marketplaceCategories: MarketplaceCategory[] = [
-  { id: 'facility-safety', name: 'Facility Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems'] },
-  { id: 'food-safety', name: 'Food Safety', icon: 'ShieldCheck', subcategories: ['Pest Control', 'Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
+  { id: 'facility-safety', name: 'Facility Safety', icon: 'Flame', subcategories: ['Hood Cleaning', 'Fire Suppression', 'Fire Extinguisher', 'Kitchen Fire Systems', 'Elevator Inspection', 'Pest Control'] },
+  { id: 'food-safety', name: 'Food Safety', icon: 'ShieldCheck', subcategories: ['Food Safety Consulting', 'ServSafe Training', 'Health Inspection Prep'] },
   { id: 'equipment', name: 'Equipment', icon: 'Cog', subcategories: ['HVAC Service', 'Refrigeration', 'Grease Trap', 'Kitchen Equipment Repair', 'Ice Machine', 'Plumbing'] },
   { id: 'compliance', name: 'Compliance', icon: 'ClipboardCheck', subcategories: ['Permit Consulting', 'Food Safety Inspections', 'HACCP Plan Development', 'Insurance Brokers'] },
 ];

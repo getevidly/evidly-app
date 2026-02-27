@@ -298,6 +298,11 @@ export const DOCUMENT_TYPE_OPTIONS = [
   { value: 'ansul_cert', label: 'Ansul Certification', pillar: 'facility_safety' },
   { value: 'exhaust_fan_service', label: 'Exhaust Fan Service', pillar: 'facility_safety' },
   { value: 'building_fire_inspection', label: 'Fire Department Inspection', pillar: 'facility_safety' },
+  { value: 'elevator_inspection_cert', label: 'Elevator Inspection Certificate', pillar: 'facility_safety' },
+  { value: 'elevator_maintenance_record', label: 'Elevator Maintenance Record', pillar: 'facility_safety' },
+  { value: 'elevator_permit', label: 'Elevator Operating Permit', pillar: 'facility_safety' },
+  { value: 'pest_control_contract', label: 'Pest Control Contract', pillar: 'facility_safety' },
+  { value: 'pest_activity_log', label: 'Pest Activity Log', pillar: 'facility_safety' },
   // Food Safety
   { value: 'health_permit', label: 'Health Department Permit', pillar: 'food_safety' },
   { value: 'food_handler_cert', label: 'Food Handler Certification', pillar: 'food_safety' },

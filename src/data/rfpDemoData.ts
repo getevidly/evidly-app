@@ -1254,7 +1254,7 @@ export const DEMO_ACTIONS: RfpAction[] = [
     id: 'act-007',
     rfp_id: 'rfp-005',
     action: 'pursuing',
-    notes: 'Texas facility safety tracker — urgent, 5-day deadline. Fire safety module demo prepared. Submitting abbreviated proposal under small business set-aside. TDSHS contact confirmed they are looking for modern, mobile-first solutions to replace paper processes.',
+    notes: 'Texas facility safety tracker — urgent, 5-day deadline. Facility safety module demo prepared. Submitting abbreviated proposal under small business set-aside. TDSHS contact confirmed they are looking for modern, mobile-first solutions to replace paper processes.',
     assigned_to: 'Sarah Kim',
     deadline: '2026-03-15T17:00:00Z',
     created_by: 'arthur.chen@evidly.com',

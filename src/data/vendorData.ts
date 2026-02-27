@@ -72,6 +72,16 @@ export const DEMO_VENDORS: Vendor[] = [
     evidlyPartner: false,
     preferredContact: 'both',
   },
+  {
+    id: 'elevator_demo',
+    name: 'Pacific Elevator Services',
+    category: 'elevator_inspection',
+    phone: '5595550105',
+    email: 'service@pacificelevator.com',
+    contactName: 'Inspection Scheduling',
+    evidlyPartner: false,
+    preferredContact: 'email',
+  },
 ];
 
 export const CATEGORY_VENDOR_MAP: Record<string, string[]> = {
@@ -84,6 +94,7 @@ export const CATEGORY_VENDOR_MAP: Record<string, string[]> = {
   hvac:           ['hvac'],
   pest:           ['pest'],
   plumbing:       ['plumbing'],
+  elevator:       ['elevator_inspection'],
 };
 
 export const getVendorsForCategory = (categoryId: string, allVendors: Vendor[]): Vendor[] => {

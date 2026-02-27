@@ -83,9 +83,9 @@ Deno.serve(async (req) => {
         alerts.push({ severity: "warning", node_name: nodeName, message: `Overall compliance score is below target at ${overallScore}`, score: overallScore });
       }
 
-      // Fire safety score below 70
+      // Facility safety score below 70
       if (facilitySafetyScore < 70) {
-        alerts.push({ severity: "critical", node_name: nodeName, message: `Fire safety score below threshold - score ${facilitySafetyScore}`, score: facilitySafetyScore });
+        alerts.push({ severity: "critical", node_name: nodeName, message: `Facility safety score below threshold - score ${facilitySafetyScore}`, score: facilitySafetyScore });
       }
 
       // Food safety score below 70

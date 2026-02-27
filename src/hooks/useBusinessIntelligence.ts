@@ -292,7 +292,7 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
     },
     {
       id: 'corr-2',
-      title: 'Fire safety document cascade risk at Airport Cafe',
+      title: 'Facility safety document cascade risk at Airport Cafe',
       headline: 'Hood cleaning certificate expiry compounds active facility safety failure',
       summary: 'Airport Cafe has an active facility safety failure and hood cleaning certificate expiring in 18 days. If unresolved, AHJ has grounds for immediate enforcement under NFPA 96 (2024).',
       impactLevel: 'high',

@@ -109,7 +109,7 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
     id: 'facility-safety',
     label: 'Facility Safety',
     icon: '🔥',
-    description: 'Fire safety documents, inspections, and equipment',
+    description: 'Facility safety documents, inspections, and equipment',
     permissions: [
       { key: 'sidebar.facility-safety', label: 'View Facility Safety', description: 'Access facility safety section' },
       { key: 'sidebar.hood-exhaust', label: 'Hood & Exhaust', description: 'Access hood/exhaust records' },

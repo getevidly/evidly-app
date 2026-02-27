@@ -87,6 +87,14 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
       { id: 'oil_removal_svc', name: 'Used Cooking Oil Removal', required: false },
     ],
   },
+  {
+    id: 'elevator_inspection',
+    name: 'Elevator Inspection',
+    services: [
+      { id: 'elevator_inspection_svc', name: 'Elevator Inspection & Certification', required: false },
+      { id: 'elevator_maintenance_svc', name: 'Elevator Maintenance', required: false },
+    ],
+  },
 ];
 
 // ── Mapping: existing demo vendor serviceType → category ID ────────
@@ -107,6 +115,7 @@ export const SERVICE_TYPE_TO_CATEGORY: Record<string, string> = {
   'Alarm System': 'alarm_system',
   'Cooking Equipment Repair': 'equipment_repair',
   'Used Cooking Oil Removal': 'oil_removal',
+  'Elevator Inspection': 'elevator_inspection',
 };
 
 // ── Helpers ────────────────────────────────────────────────────────

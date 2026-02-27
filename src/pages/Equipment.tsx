@@ -90,7 +90,7 @@ const LOCATIONS = [
 const EQUIPMENT_TYPES = [
   'Walk-in Cooler', 'Walk-in Freezer', 'Hood System', 'Exhaust Fan', 'Fire Suppression System',
   'Commercial Fryer', 'Commercial Oven', 'Commercial Dishwasher', 'Ice Machine',
-  'Grease Trap', 'Prep Cooler', 'Other',
+  'Grease Trap', 'Prep Cooler', 'Elevator', 'Other',
 ];
 
 const MAINTENANCE_INTERVALS = ['Monthly', 'Quarterly', 'Semi-Annual', 'Annual', 'Custom'];

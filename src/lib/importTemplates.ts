@@ -35,7 +35,7 @@ const schemas: Record<ImportDataType, ImportSchema> = {
     icon: 'Wrench',
     columns: [
       { header: 'Name', field: 'name', required: true, type: 'string', description: 'Equipment name or label' },
-      { header: 'Type', field: 'type', required: true, type: 'enum', enumValues: ['walk_in_cooler', 'walk_in_freezer', 'hood', 'fire_suppression', 'grease_trap', 'extinguisher', 'prep_cooler', 'hot_holding', 'ice_machine', 'dishwasher', 'fryer', 'oven', 'other'], description: 'Equipment type' },
+      { header: 'Type', field: 'type', required: true, type: 'enum', enumValues: ['walk_in_cooler', 'walk_in_freezer', 'hood', 'fire_suppression', 'grease_trap', 'extinguisher', 'prep_cooler', 'hot_holding', 'ice_machine', 'dishwasher', 'fryer', 'oven', 'elevator', 'other'], description: 'Equipment type' },
       { header: 'Location Area', field: 'location_area', required: false, type: 'string', description: 'Where the equipment is located' },
       { header: 'Manufacturer', field: 'manufacturer', required: false, type: 'string' },
       { header: 'Model', field: 'model', required: false, type: 'string' },

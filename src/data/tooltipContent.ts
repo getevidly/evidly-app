@@ -45,7 +45,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     owner_operator:
       'Pass/Fail status per NFPA 96 (2024) for each Authority Having Jurisdiction. One red bar at any location is a compliance failure.',
     executive:
-      'Fire safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
+      'Facility safety is binary — Pass or Fail. A single failed system exposes the entire location to permit suspension or closure.',
     compliance_manager:
       'Verified against NFPA 96 (2024) Table 12.4. Each AHJ is mapped to your specific location — no generic defaults.',
     chef:
@@ -126,7 +126,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Your kitchen\'s current compliance score. Completing daily checklists and addressing flagged items improves this in real time.',
     facilities_manager:
-      'Fire safety systems contribute directly to this score. All four \u2014 Permit, Hood, Ext, Ansul \u2014 must pass.',
+      'Facility safety systems contribute directly to this score. All four \u2014 Permit, Hood, Ext, Ansul \u2014 must pass.',
     kitchen_manager:
       'Your location\'s compliance score. Tap to see what\'s driving it and what tasks will move it.',
     kitchen_staff:
@@ -216,7 +216,7 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
     chef:
       'Reports for your location are available here. Your manager controls what you can view and export.',
     facilities_manager:
-      'Fire safety service reports, equipment maintenance logs, and AHJ correspondence \u2014 all exportable for inspection prep.',
+      'Facility safety service reports, equipment maintenance logs, and AHJ correspondence \u2014 all exportable for inspection prep.',
     kitchen_manager:
       'Location-level compliance reports. Export inspection history or checklist completion records as needed.',
     kitchen_staff:

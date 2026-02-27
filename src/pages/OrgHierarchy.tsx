@@ -79,7 +79,7 @@ const orgTree: OrgTreeNode = {
   ],
 };
 
-// Fire safety equipment data per location
+// Facility safety equipment data per location
 const FIRE_EQUIPMENT: Record<string, { permit: boolean; hood: boolean; ext: boolean; ansul: boolean }> = {
   'downtown-kitchen': { permit: true, hood: true, ext: true, ansul: true },
   'airport-cafe':     { permit: true, hood: false, ext: true, ansul: false },

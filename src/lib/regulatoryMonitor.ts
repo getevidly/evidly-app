@@ -268,7 +268,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
     affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
     autoActions: [
       { text: 'CFC requirements added to jurisdiction compliance engine', completed: true },
-      { text: 'Fire safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },
+      { text: 'Facility safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },
       { text: 'Fire equipment service schedules added to equipment lifecycle tracking', completed: true },
       { text: 'NFPA 96 compliance items weighted as CRITICAL in scoring engine', completed: true },
       { text: 'Review fire prevention permit status for each location', completed: false, actionType: 'link', linkTo: '/documents' },
