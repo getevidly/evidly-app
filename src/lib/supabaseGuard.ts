@@ -32,7 +32,7 @@ export function isDemoWriteGuardActive(): boolean {
 }
 
 // ── Allow-listed tables that may be written even in demo mode ──────
-const ALLOWED_DEMO_TABLES = new Set(['demo_leads']);
+const ALLOWED_DEMO_TABLES = new Set(['demo_leads', 'assessment_leads', 'assessment_responses', 'assessment_results']);
 
 // ── Write methods on PostgrestQueryBuilder we need to block ────────
 const WRITE_METHODS = new Set(['insert', 'update', 'upsert', 'delete']);

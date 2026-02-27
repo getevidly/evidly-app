@@ -237,6 +237,13 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  // ── Assessment (Admin) ──
+  assessmentLeads: {
+    id: 'assessment-leads', label: 'Assessment Leads', path: '/admin/assessments', icon: '📊',
+    roles: [], description: 'View and analyze compliance assessment leads, risk scores, and business impact estimates.',
+    badge: 'NEW',
+  },
+
   // ── System (Admin) ──
   edgeFunctions: {
     id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
@@ -304,8 +311,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.inspectorArrival, I.selfDiagnosis],
       ),
       section('administration', 'Administration', '⚙️',
-        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, command center, and role permissions.',
-        [I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.vendors],
+        'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, assessment leads, command center, and role permissions.',
+        [I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.vendors],
       ),
       section('system', 'System', '🖥️',
         'System', 'Edge Function health monitoring, crawl status, and infrastructure diagnostics.',
