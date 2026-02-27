@@ -284,21 +284,17 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   const shouldShow = !isDismissed && !isAllComplete && !loading && ALLOWED_ROLES.has(userRole);
 
   // ── Dependency-based unlocking ─────────────────────────
+  // Steps WITHOUT dependsOn are always unlocked (clickable from the start).
+  // Steps WITH dependsOn are locked until ALL listed prerequisites are COMPLETED.
   const isStepUnlocked = useCallback((index: number): boolean => {
-    if (index === 0) return true;
     const step = steps[index];
     if (!step) return false;
 
-    // All prior steps must be completed or skipped (sequential ordering)
-    const priorOk = steps.slice(0, index).every(s => s.completed || s.skipped);
-    if (!priorOk) return false;
+    // No dependencies → always unlocked
+    if (!step.dependsOn || step.dependsOn.length === 0) return true;
 
     // Explicit dependencies must be COMPLETED (not just skipped)
-    if (step.dependsOn && step.dependsOn.length > 0) {
-      return step.dependsOn.every(depId => completedIds.has(depId));
-    }
-
-    return true;
+    return step.dependsOn.every(depId => completedIds.has(depId));
   }, [steps, completedIds]);
 
   // ── Get missing dependency labels for a locked step ────
