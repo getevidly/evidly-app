@@ -103,6 +103,8 @@ export interface UseOnboardingChecklistReturn {
   goToStep: (index: number) => void;
   /** Legacy toggle (still used by checklist mode) */
   toggleStep: (stepId: string) => void;
+  /** Revert a completed step back to incomplete */
+  uncompleteStep: (stepId: string) => void;
   dismiss: () => void;
 }
 
@@ -312,6 +314,33 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     });
   }, [completedKey]);
 
+  /** Revert a completed step back to incomplete */
+  const uncompleteStep = useCallback((stepId: string) => {
+    setCompletedIds(prev => {
+      const next = new Set(prev);
+      next.delete(stepId);
+      saveSet(completedKey, next);
+      return next;
+    });
+    // Also clear skipped status so the step appears fresh
+    setSkippedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(stepId)) {
+        next.delete(stepId);
+        saveSet(skippedKey, next);
+      }
+      return next;
+    });
+    // If wizard was dismissed, un-dismiss so it reappears
+    if (isDismissed) {
+      setIsDismissed(false);
+      const key = isDemo ? DEMO_DISMISSED_KEY : authDismissedKey(orgId);
+      try { localStorage.removeItem(key); } catch { /* ignore */ }
+    }
+    // Reset manual step index so autoStepIndex picks up the uncompleted step
+    setManualStepIndex(null);
+  }, [completedKey, skippedKey, isDismissed, isDemo, orgId]);
+
   const completeStep = useCallback((stepId: string) => {
     setCompletedIds(prev => {
       const next = new Set(prev);
@@ -351,6 +380,6 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     isDismissed, shouldShow, loading,
     currentStepIndex, isStepUnlocked,
     completeStep, skipStep, goToStep,
-    toggleStep, dismiss,
+    toggleStep, uncompleteStep, dismiss,
   };
 }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Check, ChevronRight, X, Sparkles, Lock,
+  Check, ChevronRight, ChevronDown, X, Sparkles, Lock,
   User, MapPin, Building2, Users,
-  FileText, Truck, Thermometer,
+  FileText, Truck, Thermometer, RotateCcw,
 } from 'lucide-react';
 import { BODY_TEXT, FONT } from './constants';
 import { useOnboardingChecklist } from '../../../hooks/useOnboardingChecklist';
@@ -35,11 +35,12 @@ export function OnboardingChecklistCard() {
     isAllComplete, isDismissed, loading,
     currentStepIndex, isStepUnlocked,
     completeStep, skipStep, goToStep,
-    dismiss,
+    uncompleteStep, dismiss,
   } = useOnboardingChecklist();
   const { triggerConfetti } = useConfetti();
 
   const [confettiFired, setConfettiFired] = useState(false);
+  const [badgeExpanded, setBadgeExpanded] = useState(false);
 
   // Fire confetti once when all steps complete
   if (isAllComplete && !confettiFired) {
@@ -49,27 +50,68 @@ export function OnboardingChecklistCard() {
 
   if (isDismissed || loading || totalCount === 0) return null;
 
-  // ── All-complete badge ────────────────────────────────
+  // ── All-complete badge (expandable to allow reverting steps) ──
   if (isAllComplete) {
     return (
       <div
-        className="bg-white rounded-lg flex items-center justify-between px-4 py-3"
+        className="bg-white rounded-lg overflow-hidden"
         style={{ border: '1px solid #e5e7eb', ...FONT }}
       >
-        <div className="flex items-center gap-2">
-          <Check size={16} style={{ color: GREEN }} />
-          <span className="text-sm font-semibold" style={{ color: MIDNIGHT_NAVY }}>
-            Setup Complete — You're all set!
-          </span>
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            type="button"
+            onClick={() => setBadgeExpanded(prev => !prev)}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <Check size={16} style={{ color: GREEN }} />
+            <span className="text-sm font-semibold" style={{ color: MIDNIGHT_NAVY }}>
+              Setup Complete — You're all set!
+            </span>
+            {badgeExpanded ? (
+              <ChevronDown size={14} style={{ color: '#9CA3AF' }} />
+            ) : (
+              <ChevronRight size={14} style={{ color: '#9CA3AF' }} />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={dismiss}
+            className="p-1 rounded hover:bg-black/5 transition-colors"
+            aria-label="Dismiss"
+          >
+            <X size={14} style={{ color: '#9CA3AF' }} />
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={dismiss}
-          className="p-1 rounded hover:bg-black/5 transition-colors"
-          aria-label="Dismiss"
-        >
-          <X size={14} style={{ color: '#9CA3AF' }} />
-        </button>
+        {badgeExpanded && (
+          <div className="px-3 pb-3 pt-1" style={{ borderTop: '1px solid #F0F0F0' }}>
+            <p className="text-[11px] mb-2 px-1" style={{ color: '#6B7F96' }}>
+              Click a checkmark to revert a step to incomplete.
+            </p>
+            {steps.map((step) => {
+              const Icon = STEP_ICONS[step.id] || Sparkles;
+              return (
+                <button
+                  key={step.id}
+                  type="button"
+                  onClick={() => uncompleteStep(step.id)}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left hover:bg-red-50 group"
+                >
+                  <div
+                    className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-colors group-hover:bg-red-400"
+                    style={{ backgroundColor: GREEN }}
+                  >
+                    <Check size={10} color="#FFFFFF" strokeWidth={3} className="group-hover:hidden" />
+                    <RotateCcw size={10} color="#FFFFFF" strokeWidth={2.5} className="hidden group-hover:block" />
+                  </div>
+                  <Icon size={14} style={{ color: '#9CA3AF' }} className="shrink-0" />
+                  <span className="text-xs font-medium line-through" style={{ color: '#9CA3AF' }}>
+                    {step.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -132,10 +174,16 @@ export function OnboardingChecklistCard() {
             <button
               key={step.id}
               type="button"
-              onClick={() => unlocked && goToStep(i)}
+              onClick={() => {
+                if (isCompleted) {
+                  uncompleteStep(step.id);
+                } else if (unlocked) {
+                  goToStep(i);
+                }
+              }}
               className={`flex items-center gap-1 transition-all ${isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              title={isLocked ? `Complete previous steps first` : step.label}
-              aria-label={isLocked ? `Step ${i + 1}: ${step.label} (locked)` : `Go to step ${i + 1}: ${step.label}`}
+              title={isCompleted ? `Click to revert "${step.label}" to incomplete` : isLocked ? `Complete previous steps first` : step.label}
+              aria-label={isCompleted ? `Revert step ${i + 1}: ${step.label}` : isLocked ? `Step ${i + 1}: ${step.label} (locked)` : `Go to step ${i + 1}: ${step.label}`}
               disabled={isLocked}
             >
               {/* Dot / check / lock */}
@@ -260,18 +308,27 @@ export function OnboardingChecklistCard() {
             <button
               key={step.id}
               type="button"
-              onClick={() => unlocked && goToStep(i)}
+              onClick={() => {
+                if (step.completed) {
+                  uncompleteStep(step.id);
+                } else if (unlocked) {
+                  goToStep(i);
+                }
+              }}
               disabled={isLocked}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-left group ${
                 isLocked
                   ? 'cursor-not-allowed'
-                  : 'hover:bg-gray-50 cursor-pointer'
+                  : step.completed
+                    ? 'hover:bg-red-50 cursor-pointer'
+                    : 'hover:bg-gray-50 cursor-pointer'
               }`}
               style={isLocked ? { backgroundColor: LOCKED_BG } : undefined}
+              title={step.completed ? `Click to revert "${step.label}" to incomplete` : undefined}
             >
               {/* Status indicator */}
               <div
-                className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center"
+                className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-colors ${step.completed ? 'group-hover:bg-red-400' : ''}`}
                 style={{
                   backgroundColor: step.completed
                     ? GREEN
@@ -285,7 +342,10 @@ export function OnboardingChecklistCard() {
                 }}
               >
                 {step.completed ? (
-                  <Check size={10} color="#FFFFFF" strokeWidth={3} />
+                  <>
+                    <Check size={10} color="#FFFFFF" strokeWidth={3} className="group-hover:hidden" />
+                    <RotateCcw size={10} color="#FFFFFF" strokeWidth={2.5} className="hidden group-hover:block" />
+                  </>
                 ) : isSkipped ? (
                   <ChevronRight size={8} color="#FFFFFF" strokeWidth={3} />
                 ) : isLocked ? (
