@@ -1,6 +1,6 @@
 // ── Adaptive Onboarding Wizard Config ──────────────────────────
-// Declarative step definitions with visibility conditions.
-// Each step declares its own industry/tier requirements.
+// 12-step guided wizard with dependency-based unlocking.
+// Each step declares its own industry/tier requirements + dependencies.
 // resolveVisibleSteps() is a pure function — no side effects.
 
 // Industry codes match Signup.tsx INDUSTRY_TYPES keys
@@ -13,6 +13,9 @@ export type IndustryCode =
 
 export type LocationTier = 'single' | 'multi' | 'enterprise';
 
+/** How the step is activated when clicking its action button */
+export type StepType = 'navigate' | 'modal' | 'external' | 'celebration';
+
 export interface OnboardingStepDef {
   id: string;
   label: string;
@@ -21,8 +24,14 @@ export interface OnboardingStepDef {
   route: string;
   /** Contextual label for the action button */
   actionLabel: string;
-  section: 'getting_started' | 'safety_setup' | 'team_locations' | 'industry_specific';
+  section: 'getting_started' | 'safety_setup' | 'team_locations' | 'growth';
   order: number;
+  /** Step activation type (default: 'navigate') */
+  stepType?: StepType;
+  /** Step IDs that must be COMPLETED (not skipped) before this step unlocks */
+  dependsOn?: string[];
+  /** External URL for 'external' step type */
+  externalUrl?: string;
   /** If set, step only shows for these industries. Omit = universal. */
   industries?: IndustryCode[];
   /** Minimum location tier required. Omit = all tiers. */
@@ -41,8 +50,9 @@ export interface OnboardingStepDef {
 
 export const ONBOARDING_SECTIONS = [
   { id: 'getting_started', label: 'Getting Started', order: 0 },
-  { id: 'safety_setup', label: 'Safety & Compliance', order: 1 },
-  { id: 'team_locations', label: 'Team & Operations', order: 2 },
+  { id: 'team_locations', label: 'Team & Vendors', order: 1 },
+  { id: 'safety_setup', label: 'Safety & Compliance', order: 2 },
+  { id: 'growth', label: 'Grow & Connect', order: 3 },
 ] as const;
 
 export const ONBOARDING_STEPS: OnboardingStepDef[] = [
@@ -58,84 +68,142 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     order: 1,
     completionProfileField: 'full_name',
   },
-  // ── Step 2: First Location ──────────────────────────────
+  // ── Step 2: Add Team Members ──────────────────────────────
   {
-    id: 'first_location',
-    label: 'Add Your First Location',
-    description: 'Set up your first kitchen with address and jurisdiction auto-detection.',
-    hint: 'We\'ll auto-detect your local health department requirements',
-    route: '/org-hierarchy',
-    actionLabel: 'Add Location',
-    section: 'getting_started',
-    order: 2,
-    completionTable: 'locations',
-    completionMinCount: 1,
-  },
-  // ── Step 3: Additional Locations (multi/enterprise only) ─
-  {
-    id: 'add_locations',
-    label: 'Add Additional Locations',
-    description: 'Register all your sites for unified compliance tracking across locations.',
-    hint: 'You can always add more locations later',
-    route: '/org-hierarchy',
-    actionLabel: 'Add More Locations',
-    section: 'getting_started',
-    order: 3,
-    minTier: 'multi',
-    completionTable: 'locations',
-    completionMinCount: 2,
-  },
-  // ── Step 4: Invite Team ─────────────────────────────────
-  {
-    id: 'invite_team',
-    label: 'Invite Your Team',
-    description: 'Add staff members so they can log temps, complete checklists, and stay compliant.',
-    hint: 'They\'ll get an email invitation to join',
+    id: 'add_team',
+    label: 'Add Team Members',
+    description: 'Create profiles for your staff — managers, chefs, kitchen staff — so they can be assigned roles.',
+    hint: 'You can add as many team members as needed',
     route: '/team',
-    actionLabel: 'Invite Team',
+    actionLabel: 'Add Team',
     section: 'team_locations',
     order: 1,
     completionTable: 'profiles',
     completionMinCount: 2,
   },
-  // ── Step 5: Upload Documents ────────────────────────────
+  // ── Step 3: Invite Team ─────────────────────────────────
+  {
+    id: 'invite_team',
+    label: 'Invite Your Team',
+    description: 'Send email invitations so team members can log in, complete checklists, and log temps.',
+    hint: 'They\'ll get an email with a secure login link',
+    route: '/team',
+    actionLabel: 'Send Invites',
+    section: 'team_locations',
+    order: 2,
+    dependsOn: ['add_team'],
+  },
+  // ── Step 4: Add Vendors ─────────────────────────────────
+  {
+    id: 'add_vendors',
+    label: 'Add Your Vendors',
+    description: 'Register hood cleaning, fire suppression, pest control, and other service vendors.',
+    hint: 'Track certifications, insurance, and service schedules',
+    route: '/vendors',
+    actionLabel: 'Add Vendors',
+    section: 'team_locations',
+    order: 3,
+    completionTable: 'vendors',
+    completionMinCount: 1,
+  },
+  // ── Step 5: Invite Vendors ──────────────────────────────
+  {
+    id: 'invite_vendors',
+    label: 'Invite Vendors to Portal',
+    description: 'Send vendor portal invitations so vendors can upload certificates and service records directly.',
+    hint: 'Vendors self-serve their own compliance documents',
+    route: '/vendors',
+    actionLabel: 'Invite Vendors',
+    section: 'team_locations',
+    order: 4,
+    dependsOn: ['add_vendors'],
+  },
+  // ── Step 6: Add Vendor Services ─────────────────────────
+  {
+    id: 'add_vendor_services',
+    label: 'Add Vendor Services',
+    description: 'Link each vendor to the services they provide — hood cleaning, fire suppression, pest control, etc.',
+    hint: 'Enables automated compliance tracking per service',
+    route: '/vendors',
+    actionLabel: 'Add Services',
+    section: 'team_locations',
+    order: 5,
+    dependsOn: ['add_vendors'],
+  },
+  // ── Step 7: Add Equipment ───────────────────────────────
+  {
+    id: 'register_equipment',
+    label: 'Register Equipment',
+    description: 'Add refrigerators, freezers, ovens, and hood systems for monitoring and maintenance tracking.',
+    hint: 'Enables automated temp logging and service alerts',
+    route: '/equipment',
+    actionLabel: 'Add Equipment',
+    section: 'safety_setup',
+    order: 1,
+    completionTable: 'equipment',
+    completionMinCount: 1,
+  },
+  // ── Step 8: Upload Documents ────────────────────────────
   {
     id: 'upload_documents',
     label: 'Upload Key Documents',
-    description: 'Add your health permits, facility safety certificates, and insurance documents.',
+    description: 'Add health permits, facility safety certificates, insurance docs, and vendor contracts.',
     hint: 'Keeps everything in one place for inspections',
     route: '/documents',
     actionLabel: 'Upload Documents',
     section: 'safety_setup',
-    order: 1,
+    order: 2,
     completionTable: 'documents',
     completionMinCount: 1,
   },
-  // ── Step 6: Add Vendors ─────────────────────────────────
+  // ── Step 9: Request Missing Documents ───────────────────
   {
-    id: 'add_vendors',
-    label: 'Add Your Vendors',
-    description: 'Register your food suppliers and service vendors for compliance tracking.',
-    hint: 'Track certifications, insurance, and delivery records',
-    route: '/vendors',
-    actionLabel: 'Add Vendors',
-    section: 'team_locations',
-    order: 2,
-    completionTable: 'vendors',
-    completionMinCount: 1,
-  },
-  // ── Step 7: Register Equipment ──────────────────────────
-  {
-    id: 'register_equipment',
-    label: 'Register Equipment',
-    description: 'Add your refrigerators, freezers, and cooking equipment for temperature monitoring.',
-    hint: 'Enables automated temp logging and alerts',
-    route: '/equipment',
-    actionLabel: 'Add Equipment',
+    id: 'request_documents',
+    label: 'Request Missing Documents',
+    description: 'Send automated requests to vendors for certificates, insurance, or compliance documents you\'re still missing.',
+    hint: 'Vendors receive a secure link to upload directly',
+    route: '/documents',
+    actionLabel: 'Request Documents',
     section: 'safety_setup',
+    order: 3,
+    dependsOn: ['add_vendors', 'upload_documents'],
+  },
+  // ── Step 10: Kitchen to Community Referral ──────────────
+  {
+    id: 'k2c_referral',
+    label: 'Share Kitchen to Community',
+    description: 'Refer a fellow restaurant operator to EvidLY and earn rewards through our Kitchen to Community program.',
+    hint: 'Both you and your referral get a free month',
+    route: '',
+    actionLabel: 'Share & Earn',
+    section: 'growth',
+    order: 1,
+    stepType: 'modal',
+  },
+  // ── Step 11: Schedule Consultation ──────────────────────
+  {
+    id: 'schedule_consultation',
+    label: 'Schedule Your Consultation',
+    description: 'Book a free 15-minute onboarding call with our compliance team to review your setup.',
+    hint: 'Get personalized guidance for your locations',
+    route: '',
+    actionLabel: 'Schedule Now',
+    section: 'growth',
     order: 2,
-    completionTable: 'equipment',
-    completionMinCount: 1,
+    stepType: 'external',
+    externalUrl: 'https://calendly.com/evidly/onboarding',
+  },
+  // ── Step 12: Setup Complete ─────────────────────────────
+  {
+    id: 'setup_complete',
+    label: 'Setup Complete!',
+    description: 'You\'ve finished setting up EvidLY. Your compliance dashboard is ready to use.',
+    hint: 'Welcome to streamlined compliance management',
+    route: '/dashboard',
+    actionLabel: 'Go to Dashboard',
+    section: 'growth',
+    order: 3,
+    stepType: 'celebration',
   },
 ];
 

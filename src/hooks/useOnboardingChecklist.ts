@@ -7,6 +7,7 @@ import {
   resolveVisibleSteps,
   ONBOARDING_SECTIONS,
   type OnboardingStepDef,
+  type StepType,
 } from '../config/onboardingChecklistConfig';
 
 // ── Storage keys ────────────────────────────────────────
@@ -35,7 +36,7 @@ const DEMO_DEFAULTS = {
 };
 
 // ── Pre-seed step IDs for demo mode ─────────────────────
-const DEMO_PRESEED = ['profile', 'first_location'];
+const DEMO_PRESEED = ['profile'];
 
 // ── Read demo lead from sessionStorage ──────────────────
 function getDemoOrgInfo(): { industry: string | null; locationCount: number } {
@@ -95,6 +96,8 @@ export interface UseOnboardingChecklistReturn {
   currentStepIndex: number;
   /** Whether a step at given index is unlocked */
   isStepUnlocked: (index: number) => boolean;
+  /** Get missing dependency labels for a locked step */
+  getMissingDeps: (index: number) => string[];
   /** Mark a step complete and advance to next */
   completeStep: (stepId: string) => void;
   /** Skip current step without completing — advance to next */
@@ -273,21 +276,47 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   }, [steps]);
 
   const totalCount = visibleSteps.length;
-  const completedCount = visibleSteps.filter(s => completedIds.has(s.id)).length;
-  const isAllComplete = totalCount > 0 && completedCount === totalCount;
+  // Don't count celebration step toward total for progress display
+  const actionableSteps = visibleSteps.filter(s => s.stepType !== 'celebration');
+  const actionableCompleted = actionableSteps.filter(s => completedIds.has(s.id)).length;
+  const completedCount = actionableCompleted;
+  const isAllComplete = actionableSteps.length > 0 && actionableCompleted === actionableSteps.length;
   const shouldShow = !isDismissed && !isAllComplete && !loading && ALLOWED_ROLES.has(userRole);
 
-  // ── Sequential locking ────────────────────────────────
+  // ── Dependency-based unlocking ─────────────────────────
   const isStepUnlocked = useCallback((index: number): boolean => {
     if (index === 0) return true;
-    // All prior steps must be completed or skipped
-    return steps.slice(0, index).every(s => s.completed || s.skipped);
-  }, [steps]);
+    const step = steps[index];
+    if (!step) return false;
+
+    // All prior steps must be completed or skipped (sequential ordering)
+    const priorOk = steps.slice(0, index).every(s => s.completed || s.skipped);
+    if (!priorOk) return false;
+
+    // Explicit dependencies must be COMPLETED (not just skipped)
+    if (step.dependsOn && step.dependsOn.length > 0) {
+      return step.dependsOn.every(depId => completedIds.has(depId));
+    }
+
+    return true;
+  }, [steps, completedIds]);
+
+  // ── Get missing dependency labels for a locked step ────
+  const getMissingDeps = useCallback((index: number): string[] => {
+    const step = steps[index];
+    if (!step?.dependsOn) return [];
+    return step.dependsOn
+      .filter(depId => !completedIds.has(depId))
+      .map(depId => {
+        const depStep = steps.find(s => s.id === depId);
+        return depStep?.label || depId;
+      });
+  }, [steps, completedIds]);
 
   // ── Auto-detect current step: first unlocked incomplete step ──
   const autoStepIndex = useMemo(() => {
     for (let i = 0; i < steps.length; i++) {
-      if (!steps[i].completed && isStepUnlocked(i)) return i;
+      if (!steps[i].completed && !steps[i].skipped && isStepUnlocked(i)) return i;
     }
     // All complete or all locked — show last step
     return steps.length - 1;
@@ -347,9 +376,9 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   }, [isDemo, orgId]);
 
   return {
-    steps, sections, completedCount, totalCount, isAllComplete,
-    isDismissed, shouldShow, loading,
-    currentStepIndex, isStepUnlocked,
+    steps, sections, completedCount, totalCount,
+    isAllComplete, isDismissed, shouldShow, loading,
+    currentStepIndex, isStepUnlocked, getMissingDeps,
     completeStep, skipStep, unskipStep, goToStep,
     dismiss,
   };

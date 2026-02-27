@@ -157,23 +157,22 @@ export function TempLogQuick() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm"
-          >
-            Save Temperature Reading
-          </button>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/temp-logs')}
+              className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 px-4 py-3 bg-[#1e4d6b] text-white font-semibold rounded-lg hover:bg-[#163a52] transition-colors text-sm"
+            >
+              Save Temperature Reading
+            </button>
+          </div>
         </form>
-
-        <div className="px-6 pb-4">
-          <button
-            onClick={() => navigate('/temp-logs')}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <ArrowLeft className="h-3 w-3" />
-            Back to Temperature Logs
-          </button>
-        </div>
       </div>
     </div>
   );
