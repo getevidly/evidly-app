@@ -48,7 +48,7 @@ const schemas: Record<ImportDataType, ImportSchema> = {
       { header: 'Notes', field: 'notes', required: false, type: 'string' },
     ],
     exampleRows: [
-      ['Walk-in Cooler #1', 'walk_in_cooler', 'Kitchen', 'True Manufacturing', 'TWT-48SD', 'SN-44821', '2022-06-15', '2024-11-01', 'quarterly', '33', '40', 'Primary produce storage'],
+      ['Walk-in Cooler #1', 'walk_in_cooler', 'Kitchen', 'True Manufacturing', 'TWT-48SD', 'SN-44821', '2022-06-15', '2024-11-01', 'quarterly', '33', '40', 'Primary produce storage'], // demo
       ['Main Hood System', 'hood', 'Cooking Line', 'Captive-Aire', 'A5424', 'SN-88102', '2021-03-10', '2024-09-15', 'semi_annual', '', '', 'Covers fryer and grill stations'],
     ],
   },
@@ -111,8 +111,8 @@ const schemas: Record<ImportDataType, ImportSchema> = {
       { header: 'Notes', field: 'notes', required: false, type: 'string' },
     ],
     exampleRows: [
-      ['Walk-in Cooler #1', '36.5', '2024-12-01', '08:00 AM', 'Maria Santos', 'Morning check'],
-      ['Walk-in Cooler #1', '37.2', '2024-12-01', '04:00 PM', 'James Park', 'Afternoon check'],
+      ['Walk-in Cooler #1', '36.5', '2024-12-01', '08:00 AM', 'Maria Santos', 'Morning check'], // demo
+      ['Walk-in Cooler #1', '37.2', '2024-12-01', '04:00 PM', 'James Park', 'Afternoon check'], // demo
     ],
   },
 

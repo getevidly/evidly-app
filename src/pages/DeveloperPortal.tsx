@@ -114,11 +114,12 @@ function GettingStartedSection() {
 
       <div>
         <h3 className="text-sm font-semibold text-gray-900 mb-2">Example Response</h3>
+        {/* demo: example data — Downtown Kitchen, Walk-in Cooler */}
         <CodeBlock language="json" code={`{
   "data": [
     {
       "id": "loc_abc123",
-      "name": "Downtown Kitchen",
+      "name": "Downtown Kitchen", // demo
       "address": "123 Main St, Portland, OR",
       "compliance_score": 92,
       "status": "active",
@@ -309,13 +310,14 @@ function verifyWebhook(payload, signature, secret) {
 
       <div>
         <h3 className="text-sm font-semibold text-gray-900 mb-2">Example Payload</h3>
+        {/* demo: example payload — Downtown Kitchen, Walk-in Cooler */}
         <CodeBlock language="json" code={`{
   "id": "evt_abc123def456",
   "type": "temperature.violation",
   "created_at": "2026-02-10T14:32:00Z",
   "data": {
     "location_id": "loc_abc123",
-    "location_name": "Downtown Kitchen",
+    "location_name": "Downtown Kitchen", // demo
     "sensor_id": "iot-s07",
     "sensor_name": "Walk-in Cooler A",
     "reading": 44.2,

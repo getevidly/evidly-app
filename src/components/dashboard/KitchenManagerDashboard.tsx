@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+﻿import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2,
@@ -52,14 +52,14 @@ const DEMO_CHECKLISTS: DemoChecklist[] = [
 ];
 
 const DEMO_TEMPERATURES: DemoTemperature[] = [
-  { id: 'cooler-1', name: 'Walk-in Cooler #1', temp: 37.8, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '2 min ago' },
+  { id: 'cooler-1', name: 'Walk-in Cooler #1', temp: 37.8, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '2 min ago' }, // demo
   { id: 'cooler-2', name: 'Walk-in Cooler #2', temp: 39.5, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '4 min ago' },
   { id: 'freezer', name: 'Walk-in Freezer', temp: -2, unit: '\u00B0F', status: 'normal', source: 'iot', lastReading: '6 min ago' },
   { id: 'prep', name: 'Prep Cooler', temp: null, unit: '\u00B0F', status: 'needs_log', source: 'manual', lastReading: '4 hours ago' },
 ];
 
 const DEMO_TEAM = [
-  { name: 'Maria', done: 5, total: 6, activities: ['Opening checklist \u2705', '3 temp logs'] },
+  { name: 'Maria', done: 5, total: 6, activities: ['Opening checklist \u2705', '3 temp logs'] }, // demo
   { name: 'Carlos', done: 2, total: 5, activities: ['Midday checklist \uD83D\uDD28', '2 temp logs'] },
   { name: 'Sofia', done: 1, total: 3, activities: ['1 temp log'] },
 ];
@@ -166,11 +166,11 @@ export default function KitchenManagerDashboard() {
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
   const KM_LOC_NAMES: Record<string, string> = {
-    downtown: 'Downtown Kitchen',
-    airport: 'Airport Cafe',
-    university: 'University Dining',
+    downtown: 'Downtown Kitchen', // demo
+    airport: 'Airport Cafe', // demo
+    university: 'University Dining', // demo
   };
-  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
+  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen'; // demo
 
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);

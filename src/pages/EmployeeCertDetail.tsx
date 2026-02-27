@@ -3,6 +3,7 @@ import { ArrowLeft, Award, AlertTriangle, CheckCircle2, XCircle, Clock, Upload, 
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemo } from '../contexts/DemoContext';
 import {
   trainingCertificates, trainingEnrollments, trainingRecords,
   certificationRequirements, trainingQuizAttempts,
@@ -13,37 +14,37 @@ const F: React.CSSProperties = { fontFamily: "'DM Sans', 'Inter', sans-serif" };
 
 // Demo employee lookup (mirrors Team.tsx DEMO_MEMBERS)
 const DEMO_EMPLOYEES = [
-  { id: '1', name: 'Marcus Johnson', role: 'Admin', appRole: 'owner_operator', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2024-01-15', certs: [
+  { id: '1', name: 'Marcus Johnson', role: 'Admin', appRole: 'owner_operator', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2024-01-15', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-4481', issued: '2025-06-15', expires: '2028-06-15', status: 'active' },
     { type: 'cfpm', name: 'ServSafe Manager Certification', number: 'SM-2025-7721', issued: '2025-03-10', expires: '2030-03-10', status: 'active' },
     { type: 'haccp_training', name: 'HACCP Principles Training', number: 'HACCP-2025-102', issued: '2025-05-20', expires: null, status: 'active' },
     { type: 'fire_extinguisher_training', name: 'Fire Extinguisher Training', number: null, issued: '2025-11-15', expires: '2026-11-15', status: 'active' },
   ]},
-  { id: '2', name: 'Sarah Chen', role: 'Manager', appRole: 'kitchen_manager', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2024-03-01', certs: [
+  { id: '2', name: 'Sarah Chen', role: 'Manager', appRole: 'kitchen_manager', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2024-03-01', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-5502', issued: '2025-08-20', expires: '2028-08-20', status: 'active' },
     { type: 'cfpm', name: 'ServSafe Manager Certification', number: 'SM-2025-8832', issued: '2025-04-05', expires: '2026-03-15', status: 'expiring_soon' },
   ]},
-  { id: '3', name: 'Maria Garcia', role: 'Manager', appRole: 'kitchen_manager', locationId: '2', locationName: 'Airport Cafe', hireDate: '2024-06-10', certs: [
+  { id: '3', name: 'Maria Garcia', role: 'Manager', appRole: 'kitchen_manager', locationId: '2', locationName: 'Airport Cafe', hireDate: '2024-06-10', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-3390', issued: '2025-09-01', expires: '2028-09-01', status: 'active' },
     { type: 'cfpm', name: 'ServSafe Manager Certification', number: 'SM-2025-6643', issued: '2025-07-20', expires: '2030-07-20', status: 'active' },
   ]},
-  { id: '4', name: 'David Park', role: 'Staff', appRole: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', hireDate: '2024-04-02', certs: [
+  { id: '4', name: 'David Park', role: 'Staff', appRole: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', hireDate: '2024-04-02', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2024-2201', issued: '2024-04-02', expires: '2027-04-02', status: 'active' },
   ]},
-  { id: '5', name: 'Michael Torres', role: 'Staff', appRole: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', hireDate: '2023-02-26', certs: [
+  { id: '5', name: 'Michael Torres', role: 'Staff', appRole: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', hireDate: '2023-02-26', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2023-1188', issued: '2023-02-26', expires: '2026-02-26', status: 'expiring_soon' },
   ]},
-  { id: '6', name: 'Emma Rodriguez', role: 'Staff', appRole: 'kitchen_staff', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2025-07-10', certs: [
+  { id: '6', name: 'Emma Rodriguez', role: 'Staff', appRole: 'kitchen_staff', locationId: '1', locationName: 'Downtown Kitchen', hireDate: '2025-07-10', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-9912', issued: '2025-07-10', expires: '2028-07-10', status: 'active' },
     { type: 'allergen_awareness', name: 'Allergen Awareness Training', number: 'AA-2025-445', issued: '2025-07-12', expires: '2027-07-12', status: 'active' },
   ]},
-  { id: '7', name: 'Alex Thompson', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2024-12-10', certs: [
+  { id: '7', name: 'Alex Thompson', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2024-12-10', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2024-8834', issued: '2024-12-10', expires: '2027-12-10', status: 'active' },
   ]},
-  { id: '8', name: 'Lisa Wang', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-01-25', certs: [
+  { id: '8', name: 'Lisa Wang', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-01-25', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-1105', issued: '2025-01-25', expires: '2028-01-25', status: 'active' },
   ]},
-  { id: '9', name: 'James Wilson', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-02-05', certs: [
+  { id: '9', name: 'James Wilson', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-02-05', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-2206', issued: '2025-02-05', expires: '2028-02-05', status: 'active' },
   ]},
 ];
@@ -57,8 +58,10 @@ function getCertIcon(type: string) {
 export function EmployeeCertDetail() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
 
-  const employee = DEMO_EMPLOYEES.find(e => e.id === userId);
+  const employees = isDemoMode ? DEMO_EMPLOYEES : [];
+  const employee = employees.find(e => e.id === userId);
 
   if (!employee) {
     return (

@@ -17,9 +17,9 @@ interface LocationLeaderboard {
 
 function getComplianceStatus(locationName: string): string {
   switch (locationName) {
-    case 'Downtown Kitchen': return 'Compliant';
-    case 'Airport Cafe': return 'Action Required';
-    case 'University Dining': return 'Unsatisfactory';
+    case 'Downtown Kitchen': return 'Compliant'; // demo
+    case 'Airport Cafe': return 'Action Required'; // demo
+    case 'University Dining': return 'Unsatisfactory'; // demo
     default: return 'Pending';
   }
 }
@@ -35,9 +35,9 @@ function getStatusColor(status: string): string {
 }
 
 const DEMO_LEADERBOARD: LocationLeaderboard[] = [
-  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_status: 'Compliant', total_points: 4520 },
-  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_status: 'Action Required', total_points: 3640 },
-  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_status: 'Unsatisfactory', total_points: 2285 },
+  { location_id: '1', location_name: 'Downtown Kitchen', total_temp_logs: 186, total_checklists: 92, total_documents: 24, compliance_status: 'Compliant', total_points: 4520 }, // demo
+  { location_id: '2', location_name: 'Airport Cafe', total_temp_logs: 142, total_checklists: 78, total_documents: 18, compliance_status: 'Action Required', total_points: 3640 }, // demo
+  { location_id: '3', location_name: 'University Dining', total_temp_logs: 98, total_checklists: 45, total_documents: 12, compliance_status: 'Unsatisfactory', total_points: 2285 }, // demo
 ];
 
 function HorizontalBar({ label, value, max, color, suffix }: { label: string; value: number; max: number; color: string; suffix?: string }) {

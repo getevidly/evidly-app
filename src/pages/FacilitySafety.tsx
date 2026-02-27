@@ -11,6 +11,7 @@ import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { useTranslation } from '../contexts/LanguageContext';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -102,9 +103,9 @@ const TAB_LABELS: Record<Frequency, string> = {
 };
 
 const LOCATIONS = [
-  { urlId: 'downtown', name: 'Downtown Kitchen' },
-  { urlId: 'airport', name: 'Airport Cafe' },
-  { urlId: 'university', name: 'University Dining' },
+  { urlId: 'downtown', name: 'Downtown Kitchen' }, // demo
+  { urlId: 'airport', name: 'Airport Cafe' }, // demo
+  { urlId: 'university', name: 'University Dining' }, // demo
 ];
 
 // Demo pre-filled check history (some items pre-completed for demo realism)
@@ -134,12 +135,13 @@ export function FacilitySafety() {
   const [searchParams] = useSearchParams();
   const { userRole } = useRole();
   const { t } = useTranslation();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   const locationParam = searchParams.get('location') || 'downtown';
   const [activeTab, setActiveTab] = useState<Frequency>('daily');
   const [responses, setResponses] = useState<Record<string, CheckResponse>>(() => {
-    return DEMO_PREFILLED[locationParam] || {};
+    return isDemoMode ? (DEMO_PREFILLED[locationParam] || {}) : {};
   });
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -151,7 +153,7 @@ export function FacilitySafety() {
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
   const fireSummary = override?.facilitySafety?.summary || '';
   const fireStatus = override?.facilitySafety?.status || 'unknown';
-  const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen';
+  const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen'; // demo
 
   const items = useMemo(() => {
     if (userRole === 'kitchen_staff' && activeTab !== 'daily') return [];

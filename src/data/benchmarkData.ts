@@ -235,10 +235,10 @@ export const BADGE_QUALIFICATIONS: Record<string, BadgeQualification> = {
 
 // ─── Verification Data ────────────────────────────────────────────────────
 
-export const VERIFICATION_DATA: Record<string, LocationVerification> = {
+export const VERIFICATION_DATA: Record<string, LocationVerification> = { // demo
   'downtown-kitchen': {
     locationCode: 'downtown-kitchen',
-    businessName: 'Downtown Kitchen',
+    businessName: 'Downtown Kitchen', // demo
     city: 'Fresno',
     state: 'CA',
     badgeTier: 'gold',
@@ -251,7 +251,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
   },
   'airport-cafe': {
     locationCode: 'airport-cafe',
-    businessName: 'Airport Cafe',
+    businessName: 'Airport Cafe', // demo
     city: 'Merced',
     state: 'CA',
     badgeTier: null,
@@ -264,7 +264,7 @@ export const VERIFICATION_DATA: Record<string, LocationVerification> = {
   },
   'university-dining': {
     locationCode: 'university-dining',
-    businessName: 'University Dining',
+    businessName: 'University Dining', // demo
     city: 'Modesto',
     state: 'CA',
     badgeTier: null,

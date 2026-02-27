@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Compliance Score Alert Banner
  *
  * Dismissible banner for Owner/Operator and Facilities roles.
@@ -30,14 +30,14 @@ interface ComplianceAlert {
 const DEMO_COMPLIANCE_ALERTS: ComplianceAlert[] = [
   {
     id: 'cb-airport-fire',
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     pillar: 'Facility Safety',
     score: 69,
     severity: 'critical',
   },
   {
     id: 'cb-university-fire',
-    locationName: 'University Dining',
+    locationName: 'University Dining', // demo
     pillar: 'Facility Safety',
     score: 56,
     severity: 'critical',

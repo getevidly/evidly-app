@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame,
@@ -96,7 +96,7 @@ const DEMO_EQUIPMENT_ALERTS: EquipmentAlert[] = [
   { name: 'Walk-in Freezer #1', alert: 'Compressor runtime up 23% this month', severity: 'warning' },
   { name: 'Hood System', alert: null, status: 'All normal' },
   { name: 'Fire Suppression System', alert: null, status: 'All normal' },
-  { name: 'Walk-in Cooler #1', alert: null, status: 'All normal' },
+  { name: 'Walk-in Cooler #1', alert: null, status: 'All normal' }, // demo
   { name: 'Walk-in Cooler #2', alert: null, status: 'All normal' },
 ];
 
@@ -160,9 +160,9 @@ const SEVERITY_BORDER: Record<string, string> = {
 // ===============================================
 
 const FAC_LOC_NAMES: Record<string, string> = {
-  downtown: 'Downtown Kitchen',
-  airport: 'Airport Cafe',
-  university: 'University Dining',
+  downtown: 'Downtown Kitchen', // demo
+  airport: 'Airport Cafe', // demo
+  university: 'University Dining', // demo
 };
 
 export default function FacilitiesDashboardNew() {
@@ -176,7 +176,7 @@ export default function FacilitiesDashboardNew() {
 
   const jieKey = JIE_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
-  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen';
+  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen'; // demo
 
   const fireGrade = override?.facilitySafety?.grade || 'Pending';
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';

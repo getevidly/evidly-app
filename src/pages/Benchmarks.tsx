@@ -95,10 +95,10 @@ const BADGE_TIERS = [
   { tier: 'platinum', label: 'EvidLY Platinum', icon: Diamond, color: '#818cf8', bg: '#eef2ff', desc: 'Top 5% overall for 6 consecutive months', qualified: false },
 ];
 
-const LOCATION_RANKS = [
-  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, facilitySafety: 88, badge: 'excellence' },
-  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, facilitySafety: 62, badge: null },
-  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, facilitySafety: 55, badge: null },
+const LOCATION_RANKS = [ // demo
+  { name: 'Downtown Kitchen', score: 92, industryPct: 89, foodSafety: 94, facilitySafety: 88, badge: 'excellence' }, // demo
+  { name: 'Airport Cafe', score: 70, industryPct: 43, foodSafety: 72, facilitySafety: 62, badge: null }, // demo
+  { name: 'University Dining', score: 55, industryPct: 22, foodSafety: 62, facilitySafety: 55, badge: null }, // demo
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────
@@ -616,11 +616,11 @@ export function Benchmarks() {
               <div className="space-y-2 text-xs text-gray-700">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-600 mt-0.5 flex-shrink-0" />
-                  <span><strong>Downtown Kitchen</strong> leads in all 3 categories — consistent management practices are the key differentiator.</span>
+                  <span><strong>Downtown Kitchen</strong> leads in all 3 categories — consistent management practices are the key differentiator.</span>{/* demo */}
                 </div>
                 <div className="flex items-start gap-2">
                   <Info className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                  <span><strong>University Dining</strong> has declined 8 points in Facility Safety over 3 months — correlates with manager vacancy Aug-Oct.</span>
+                  <span><strong>University Dining</strong> has declined 8 points in Facility Safety over 3 months — correlates with manager vacancy Aug-Oct.</span>{/* demo */}
                 </div>
               </div>
             </div>

@@ -181,10 +181,10 @@ export function getDemoQuarterlyReport(locationUrlId: string = 'downtown'): Quar
   const trends = MONTHLY_TRENDS[locationUrlId] || MONTHLY_TRENDS['downtown'];
   const leadLag = LEAD_LAG_DATA[locationUrlId] || LEAD_LAG_DATA['downtown'];
 
-  const locationNames: Record<string, string> = {
-    downtown: 'Downtown Kitchen',
-    airport: 'Airport Cafe',
-    university: 'University Dining',
+  const locationNames: Record<string, string> = { // demo
+    downtown: 'Downtown Kitchen', // demo
+    airport: 'Airport Cafe', // demo
+    university: 'University Dining', // demo
   };
 
   const counties: Record<string, string> = {
@@ -197,7 +197,7 @@ export function getDemoQuarterlyReport(locationUrlId: string = 'downtown'): Quar
     quarter: 1,
     year: 2026,
     reportId: `BNK-2026-Q1-${locationUrlId.toUpperCase().slice(0, 3)}`,
-    locationName: locationNames[locationUrlId] || 'Downtown Kitchen',
+    locationName: locationNames[locationUrlId] || 'Downtown Kitchen', // demo
     organizationName: 'Pacific Coast Dining',
     industrySegment: 'Restaurant — Casual Dining',
     jurisdiction: counties[locationUrlId] || 'Fresno County, CA',
@@ -221,7 +221,7 @@ export const INDUSTRY_SEGMENTS = [
   { value: 'fine_dining', label: 'Fine Dining' },
   { value: 'hotel', label: 'Hotel / Resort Dining' },
   { value: 'education_k12', label: 'K-12 School Cafeteria' },
-  { value: 'education_university', label: 'University Dining' },
+  { value: 'education_university', label: 'University Dining' }, // demo
   { value: 'healthcare', label: 'Healthcare Facility' },
   { value: 'corporate_dining', label: 'Corporate Dining / Cafeteria' },
   { value: 'catering', label: 'Catering Operation' },

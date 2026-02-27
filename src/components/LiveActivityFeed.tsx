@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Thermometer, CheckSquare, FileText, Upload, AlertCircle, User } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
 
 interface ActivityItem {
   id: string;
@@ -21,25 +22,28 @@ const iconMap = {
 };
 
 const demoActivities: ActivityItem[] = [
-  { id: '1', icon: 'temp', user: 'Marcus R.', action: 'Completed walk-in cooler temp check', location: 'Downtown Kitchen', time: '2 min ago', url: '/temp-logs' },
-  { id: '2', icon: 'checklist', user: 'Sarah T.', action: 'Finished opening checklist (14/14)', location: 'Downtown Kitchen', time: '18 min ago', url: '/checklists' },
-  { id: '3', icon: 'upload', user: 'ABC Fire Protection', action: 'Uploaded hood cleaning certificate', location: 'Airport Cafe', time: '1 hour ago', url: '/vendors' },
-  { id: '4', icon: 'alert', user: 'System', action: 'Fire suppression report expired', location: 'Airport Cafe', time: '2 hours ago', url: '/alerts' },
-  { id: '5', icon: 'temp', user: 'James L.', action: 'Logged hot hold cabinet temps', location: 'University Dining', time: '3 hours ago', url: '/temp-logs' },
-  { id: '6', icon: 'document', user: 'Admin', action: 'Health permit renewal uploaded', location: 'Downtown Kitchen', time: '5 hours ago', url: '/documents' },
-  { id: '7', icon: 'checklist', user: 'Maria G.', action: 'Completed closing checklist (10/10)', location: 'Airport Cafe', time: 'Yesterday', url: '/checklists' },
+  { id: '1', icon: 'temp', user: 'Marcus R.', action: 'Completed walk-in cooler temp check', location: 'Downtown Kitchen', time: '2 min ago', url: '/temp-logs' }, // demo
+  { id: '2', icon: 'checklist', user: 'Sarah T.', action: 'Finished opening checklist (14/14)', location: 'Downtown Kitchen', time: '18 min ago', url: '/checklists' }, // demo
+  { id: '3', icon: 'upload', user: 'ABC Fire Protection', action: 'Uploaded hood cleaning certificate', location: 'Airport Cafe', time: '1 hour ago', url: '/vendors' }, // demo
+  { id: '4', icon: 'alert', user: 'System', action: 'Fire suppression report expired', location: 'Airport Cafe', time: '2 hours ago', url: '/alerts' }, // demo
+  { id: '5', icon: 'temp', user: 'James L.', action: 'Logged hot hold cabinet temps', location: 'University Dining', time: '3 hours ago', url: '/temp-logs' }, // demo
+  { id: '6', icon: 'document', user: 'Admin', action: 'Health permit renewal uploaded', location: 'Downtown Kitchen', time: '5 hours ago', url: '/documents' }, // demo
+  { id: '7', icon: 'checklist', user: 'Maria G.', action: 'Completed closing checklist (10/10)', location: 'Airport Cafe', time: 'Yesterday', url: '/checklists' }, // demo
 ];
 
 export function LiveActivityFeed() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [visibleItems, setVisibleItems] = useState<number>(0);
   const [showLiveDot, setShowLiveDot] = useState(true);
+
+  const activities = isDemoMode ? demoActivities : [];
 
   useEffect(() => {
     // Stagger in items one by one
     const timer = setInterval(() => {
       setVisibleItems((prev) => {
-        if (prev >= demoActivities.length) {
+        if (prev >= activities.length) {
           clearInterval(timer);
           return prev;
         }
@@ -48,7 +52,7 @@ export function LiveActivityFeed() {
     }, 200);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [activities.length]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
@@ -68,7 +72,9 @@ export function LiveActivityFeed() {
         </button>
       </div>
       <div className="divide-y divide-gray-50 max-h-[420px] overflow-y-auto">
-        {demoActivities.map((activity, index) => {
+        {activities.length === 0 ? (
+          <div className="py-10 text-center text-sm text-gray-400">No recent activity</div>
+        ) : activities.map((activity, index) => {
           const { icon: Icon, color, bg } = iconMap[activity.icon];
           const isVisible = index < visibleItems;
 
@@ -107,6 +113,7 @@ export function LiveActivityFeed() {
           );
         })}
       </div>
+
     </div>
   );
 }

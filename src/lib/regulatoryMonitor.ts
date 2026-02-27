@@ -107,7 +107,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Post cooling reference chart in kitchen showing both FDA and California requirements',
     ],
     affectedAreas: ['Food Safety', 'Training', 'Temperature Monitoring'],
-    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'], // demo
     autoActions: [
       { text: 'Cooldown tracker updated — displays both FDA and California cooling standards side by side', completed: true },
       { text: 'Cooling Log checklist template updated with CA-specific notes', completed: true },
@@ -134,7 +134,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Keep paper logs as backup if desired, but digital must be the primary record',
     ],
     affectedAreas: ['Facility Safety'],
-    affectedLocations: ['Downtown Kitchen'],
+    affectedLocations: ['Downtown Kitchen'], // demo
     autoActions: [
       { text: 'Your EvidLY digital temperature logs already meet this requirement', completed: true },
       { text: 'Inspector export feature enabled — one-click PDF export available', completed: true },
@@ -160,7 +160,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Document your daily meal counts to justify your cleaning frequency during inspections',
     ],
     affectedAreas: ['Facility Safety'],
-    affectedLocations: ['Downtown Kitchen', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'University Dining'], // demo
     autoActions: [
       { text: 'Vendor service calendar flagged for review', completed: true },
       { text: 'New document required — upload updated hood cleaning contract', completed: false, actionType: 'upload' },
@@ -188,7 +188,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'No immediate action needed — monitor for California adoption timeline',
     ],
     affectedAreas: ['Food Safety'],
-    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'], // demo
     autoActions: [
       { text: 'Monitoring California adoption timeline — will alert when CalCode updates', completed: true },
     ],
@@ -211,7 +211,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'If passed, you will need to update renewal schedules for all staff',
     ],
     affectedAreas: ['Training'],
-    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'], // demo
     autoActions: [
       { text: 'Monitoring bill status — will alert if it passes committee', completed: true },
     ],
@@ -236,7 +236,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Inform your fire protection vendor that digital records are now standard-approved',
     ],
     affectedAreas: ['Facility Safety'],
-    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'], // demo
     autoActions: [
       { text: 'Equipment tracking module already supports digital fire extinguisher records', completed: true },
     ],
@@ -265,7 +265,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
       'Verify manual pull station is accessible within 10-20 ft travel distance of egress path',
     ],
     affectedAreas: ['Facility Safety'],
-    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+    affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'], // demo
     autoActions: [
       { text: 'CFC requirements added to jurisdiction compliance engine', completed: true },
       { text: 'Facility safety documents added to required document checklist (Fire Prevention Permit, UL 300 cert, SDS binder)', completed: true },

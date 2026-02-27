@@ -59,7 +59,7 @@ const QUICK_ACTION_LABELS: Record<string, string> = {
   remind_vendor: 'Reminder sent',
   schedule_inspection: 'Inspection scheduled',
   upload_document: 'Ready to upload',
-  complete_checklist: 'Opening checklist',
+  complete_checklist: 'Opening checklist', // demo
   renew_permit: 'Renewal initiated',
 };
 

@@ -10,6 +10,7 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -27,9 +28,9 @@ interface ReportSection {
 
 // ── Demo data generators ───────────────────────────────────────────
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
 const EQUIPMENT = [
-  { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 },
+  { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 }, // demo
   { name: 'Walk-in Freezer', type: 'Freezer', min: -Infinity, max: 0 },
   { name: 'Prep Cooler', type: 'Cooler', min: 34, max: 41 },
   { name: 'Hot Hold Unit #1', type: 'Hot Hold', min: 135, max: 165 },
@@ -41,7 +42,7 @@ const EQUIPMENT = [
 
 const USERS = ['Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres'];
 
-const CHECKLIST_NAMES = ['Opening Checklist', 'Closing Checklist', 'Mid-Day Food Safety Check', 'Receiving Inspection', 'Restroom Sanitation'];
+const CHECKLIST_NAMES = ['Opening Checklist', 'Closing Checklist', 'Mid-Day Food Safety Check', 'Receiving Inspection', 'Restroom Sanitation']; // demo
 
 const VENDOR_SERVICES = [
   { vendor: 'CleanVent Services', service: 'Hood Cleaning', cert: 'Hood Cleaning Certificate' },
@@ -291,6 +292,7 @@ const statusBg = (s: string) => {
 
 export function AuditReport() {
   const reportRef = useRef<HTMLDivElement>(null);
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Config state
@@ -347,9 +349,18 @@ export function AuditReport() {
   const days = dateRange === 'custom' ? 30 : parseInt(dateRange);
   const loc = locationFilter === 'all' ? null : locationFilter;
 
-  // Generate demo data
+  // Generate demo data (only in demo mode; live mode would fetch from database)
   const reportData = useMemo(() => {
     if (!generated) return null;
+    if (!isDemoMode) return {
+      tempLogs: [] as any[],
+      checklists: [] as any[],
+      incidents: [] as any[],
+      vendors: [] as any[],
+      documents: [] as any[],
+      equipment: [] as any[],
+      auditLog: [] as any[],
+    };
     return {
       tempLogs: generateTempLogs(days, loc),
       checklists: generateChecklists(days, loc),
@@ -360,7 +371,7 @@ export function AuditReport() {
       auditLog: generateAuditLog(days),
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [generated, days, loc]);
+  }, [generated, days, loc, isDemoMode]);
 
   // Summary stats
   const summary = useMemo(() => {

@@ -347,7 +347,7 @@ export function Settings() {
                   <option value="fine_dining">Fine Dining</option>
                   <option value="hotel">Hotel / Resort Dining</option>
                   <option value="education_k12">K-12 School Cafeteria</option>
-                  <option value="education_university">University Dining</option>
+                  <option value="education_university">University Dining</option> {/* demo */}
                   <option value="healthcare">Healthcare Facility</option>
                   <option value="corporate_dining">Corporate Dining / Cafeteria</option>
                   <option value="catering">Catering Operation</option>
@@ -385,9 +385,9 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
                   {[
-                    { name: 'Downtown Kitchen', address: '1245 Fulton Street, Fresno, CA 93721' },
-                    { name: 'Airport Cafe', address: '1636 Macready Drive, Merced, CA 95340' },
-                    { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' },
+                    { name: 'Downtown Kitchen', address: '1245 Fulton Street, Fresno, CA 93721' }, // demo
+                    { name: 'Airport Cafe', address: '1636 Macready Drive, Merced, CA 95340' }, // demo
+                    { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' }, // demo
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -768,9 +768,9 @@ export function Settings() {
           {activeTab === 'jurisdiction' && (() => {
             const availableCounties = getAvailableCounties();
             const locationJurisdictions = [
-              { name: 'Downtown Kitchen', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' },
-              { name: 'Airport Cafe', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' },
-              { name: 'University Dining', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' },
+              { name: 'Downtown Kitchen', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' }, // demo
+              { name: 'Airport Cafe', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' }, // demo
+              { name: 'University Dining', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' }, // demo
             ];
             return (
             <div className="space-y-6">

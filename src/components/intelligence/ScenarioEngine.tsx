@@ -32,7 +32,7 @@ export const SCENARIOS: Scenario[] = [
     label: 'Failed Inspection \u2014 Cost of Inaction',
     description: 'What happens if violations from a failed inspection are not resolved before reinspection.',
     contextFields: [
-      { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. University Dining',            type: 'text',     required: true },
+      { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. University Dining',            type: 'text',     required: true }, // demo
       { key: 'violationType',   label: 'Violation Type',              placeholder: '',                                  type: 'select',   required: true,
         options: ['Food Safety \u2014 Major Violation', 'Food Safety \u2014 Multiple Minor Violations', 'Facility Safety \u2014 NFPA 96 (2024) Non-Compliance', 'Both Food and Facility Safety', 'Permit / Documentation'] },
       { key: 'reinspectionDate',label: 'Reinspection Date',           placeholder: 'Select date',                       type: 'date',     required: true },
@@ -58,7 +58,7 @@ For each pathway: dollar range, probability, timeline, and single action that pr
     contextFields: [
       { key: 'expiringPermits',   label: 'Which Permits Are Expiring?',             placeholder: 'e.g. Health Permit, Hood Cleaning Certificate, Fire Suppression Inspection', type: 'textarea', required: true },
       { key: 'daysUntilExpiry',   label: 'Days Until Earliest Expiration',          placeholder: 'e.g. 14',          type: 'text',   required: true },
-      { key: 'affectedLocations', label: 'Affected Location(s)',                    placeholder: 'e.g. Airport Cafe', type: 'text',   required: true },
+      { key: 'affectedLocations', label: 'Affected Location(s)',                    placeholder: 'e.g. Airport Cafe', type: 'text',   required: true }, // demo
       { key: 'dailyRevenue',      label: 'Combined Daily Revenue \u2014 Affected Locations', placeholder: 'e.g. 5000',    type: 'text',   required: false },
     ],
     aiPromptModifier: `RISK SCENARIO: PERMIT EXPIRATION CASCADE.
@@ -242,7 +242,7 @@ End with specific breakeven: when does cost of deferral exceed cost of the servi
       { key: 'audienceType', label: 'Audience', placeholder: '', type: 'select', options: ['Board of Directors', 'Private Equity Investors', 'Lenders / Bank', 'Franchisor', 'Corporate Parent', 'Government Procurement'], required: true },
       { key: 'presentationDate', label: 'Presentation Date', placeholder: 'Select date', type: 'date', required: true },
       { key: 'primaryMessage', label: 'Primary Message You Want to Convey', placeholder: 'e.g. We have strong compliance infrastructure, we are acquisition-ready, we deserve a higher credit rating', type: 'textarea', required: false },
-      { key: 'concerns', label: 'Known Concerns the Audience Has', placeholder: 'e.g. Board is worried about the University Dining location, investors want to see consistency across all sites', type: 'textarea', required: false },
+      { key: 'concerns', label: 'Known Concerns the Audience Has', placeholder: 'e.g. Board is worried about the University Dining location, investors want to see consistency across all sites', type: 'textarea', required: false }, // demo
     ],
     aiPromptModifier: `The user is preparing a BOARD OR INVESTOR PRESENTATION on compliance posture. Your analysis must:
     - Frame compliance data as a business asset and competitive advantage, not a cost or burden

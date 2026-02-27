@@ -82,9 +82,9 @@ interface EquipmentItem {
 
 const NOW = new Date('2026-02-09');
 const LOCATIONS = [
-  { id: '1', name: 'Downtown Kitchen' },
-  { id: '2', name: 'Airport Cafe' },
-  { id: '3', name: 'University Dining' },
+  { id: '1', name: 'Downtown Kitchen' }, // demo
+  { id: '2', name: 'Airport Cafe' }, // demo
+  { id: '3', name: 'University Dining' }, // demo
 ];
 
 const EQUIPMENT_TYPES = [
@@ -201,11 +201,11 @@ function getEquipmentPillar(item: EquipmentItem): 'facility_safety' | 'food_safe
 // ── Demo Data ──────────────────────────────────────────────────────
 
 const DEMO_EQUIPMENT: EquipmentItem[] = [
-  // ─── Downtown Kitchen ───
+  // ─── Downtown Kitchen ─── // demo
   {
-    id: 'EQ-001', name: 'Walk-in Cooler #1', type: 'Walk-in Cooler',
+    id: 'EQ-001', name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', // demo
     make: 'True Manufacturing', model: 'TG2R-2S', serial: 'TM-2019-04821',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2019-01-15', purchasePrice: 9500,
     warrantyExpiry: '2024-01-15', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-800-878-3633 / warranty@truemfg.com',
@@ -231,7 +231,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-002', name: 'Walk-in Freezer', type: 'Walk-in Freezer',
     make: 'Kolpak', model: 'QS7-1010-FT', serial: 'KP-2021-11247',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2021-03-10', purchasePrice: 12500,
     warrantyExpiry: '2027-03-10', warrantyProvider: 'Kolpak', warrantyTerms: '6-year compressor, 3-year parts',
     warrantyContact: '1-800-965-5727 / support@kolpak.com',
@@ -254,7 +254,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-003', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-48', serial: 'CA-2018-30982',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2018-08-20', purchasePrice: 18000,
     warrantyExpiry: '2023-08-20', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     warrantyContact: '1-800-334-9256',
@@ -280,7 +280,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-004', name: 'Fire Suppression System', type: 'Fire Suppression System',
     make: 'Ansul', model: 'R-102', serial: 'AN-2020-78543',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2020-11-05', purchasePrice: 6500,
     warrantyExpiry: '2026-11-05', warrantyProvider: 'Ansul / Tyco', warrantyTerms: '6-year system warranty',
     condition: 'Good', nextMaintenanceDue: '2026-05-05', maintenanceInterval: 'Semi-Annual',
@@ -298,7 +298,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-005', name: 'Commercial Fryer #1', type: 'Commercial Fryer',
     make: 'Frymaster', model: 'PH155', serial: 'FM-2020-45210',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2020-06-12', purchasePrice: 4200,
     warrantyExpiry: '2025-06-12', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Good', nextMaintenanceDue: '2026-06-12', maintenanceInterval: 'Annual',
@@ -315,7 +315,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-006', name: 'Commercial Fryer #2', type: 'Commercial Fryer',
     make: 'Frymaster', model: 'PH155', serial: 'FM-2022-62187',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2022-01-18', purchasePrice: 4500,
     warrantyExpiry: '2027-01-18', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-07-18', maintenanceInterval: 'Annual',
@@ -331,7 +331,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-007', name: 'Commercial Dishwasher', type: 'Commercial Dishwasher',
     make: 'Hobart', model: 'AM15', serial: 'HB-2017-19843',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2017-09-01', purchasePrice: 12000,
     warrantyExpiry: '2022-09-01', warrantyProvider: 'Hobart', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-888-446-2278 / hobart.service@itw.com',
@@ -355,11 +355,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Full mechanical inspection', interval: 'Annual', lastDone: '2025-06-15', nextDue: '2026-06-15' },
     ],
   },
-  // ─── Airport Cafe ───
+  // ─── Airport Cafe ─── // demo
   {
     id: 'EQ-008', name: 'Walk-in Cooler', type: 'Walk-in Cooler',
     make: 'True Manufacturing', model: 'T-49', serial: 'TM-2022-58293',
-    locationId: '2', location: 'Airport Cafe',
+    locationId: '2', location: 'Airport Cafe', // demo
     installDate: '2022-02-14', purchasePrice: 8500,
     warrantyExpiry: '2027-02-14', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-02-14', maintenanceInterval: 'Quarterly',
@@ -377,7 +377,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-009', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-36', serial: 'CA-2020-41567',
-    locationId: '2', location: 'Airport Cafe',
+    locationId: '2', location: 'Airport Cafe', // demo
     installDate: '2020-05-22', purchasePrice: 14000,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
@@ -399,7 +399,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-010', name: 'Ice Machine', type: 'Ice Machine',
     make: 'Manitowoc', model: 'IYT-0620A', serial: 'MW-2021-33901',
-    locationId: '2', location: 'Airport Cafe',
+    locationId: '2', location: 'Airport Cafe', // demo
     installDate: '2021-07-08', purchasePrice: 5200,
     warrantyExpiry: '2024-07-08', warrantyProvider: 'Manitowoc Ice', warrantyTerms: '3-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-01-08', maintenanceInterval: 'Quarterly',
@@ -419,11 +419,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Deep clean — full disassembly per manufacturer specs', interval: 'Semi-Annual', lastDone: '2025-07-08', nextDue: '2026-01-08' },
     ],
   },
-  // ─── University Dining ───
+  // ─── University Dining ─── // demo
   {
     id: 'EQ-011', name: 'Walk-in Cooler', type: 'Walk-in Cooler',
     make: 'True Manufacturing', model: 'TG2R-2S', serial: 'TM-2018-28410',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2018-04-10', purchasePrice: 9500,
     warrantyExpiry: '2023-04-10', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-04-10', maintenanceInterval: 'Quarterly',
@@ -441,7 +441,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-012', name: 'Walk-in Freezer', type: 'Walk-in Freezer',
     make: 'Kolpak', model: 'QS7-810-FT', serial: 'KP-2019-22014',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2019-10-01', purchasePrice: 11000,
     warrantyExpiry: '2024-10-01', warrantyProvider: 'Kolpak', warrantyTerms: '5-year compressor, 3-year parts',
     condition: 'Good', nextMaintenanceDue: '2026-04-01', maintenanceInterval: 'Quarterly',
@@ -459,7 +459,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-013', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-48', serial: 'CA-2017-18765',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2017-02-15', purchasePrice: 18000,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
@@ -477,7 +477,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-014', name: 'Commercial Oven #1', type: 'Commercial Oven',
     make: 'Vulcan', model: 'VC5ED', serial: 'VL-2020-50321',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2020-03-20', purchasePrice: 7800,
     warrantyExpiry: '2025-03-20', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     condition: 'Good', nextMaintenanceDue: '2026-03-20', maintenanceInterval: 'Annual',
@@ -493,7 +493,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-015', name: 'Commercial Oven #2', type: 'Commercial Oven',
     make: 'Vulcan', model: 'VC5GD', serial: 'VL-2021-61482',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2021-08-10', purchasePrice: 8200,
     warrantyExpiry: '2026-08-10', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     warrantyContact: '1-800-814-2028 / vulcan.service@itw.com',
@@ -509,11 +509,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Thermostat calibration & burner cleaning', interval: 'Annual', lastDone: '2025-08-10', nextDue: '2026-08-10' },
     ],
   },
-  // ─── Downtown Kitchen — Ice Machine ───
+  // ─── Downtown Kitchen — Ice Machine ─── // demo
   {
     id: 'EQ-016', name: 'Ice Machine', type: 'Ice Machine',
     make: 'Hoshizaki', model: 'KM-660MAJ', serial: 'HZ-2022-55123',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2022-03-15', purchasePrice: 7800,
     warrantyExpiry: '2025-03-15', warrantyProvider: 'Hoshizaki', warrantyTerms: '3-year parts and labor',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Monthly',
@@ -537,7 +537,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-017', name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan',
     make: 'Captive Aire', model: 'DU33HFA', serial: 'CA-2021-44812',
-    locationId: '1', location: 'Downtown Kitchen',
+    locationId: '1', location: 'Downtown Kitchen', // demo
     installDate: '2021-03-15', purchasePrice: 3200,
     warrantyExpiry: '2026-03-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-03-10', maintenanceInterval: 'Quarterly',
@@ -558,7 +558,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-018', name: 'Upblast Exhaust Fan', type: 'Exhaust Fan',
     make: 'Greenheck', model: 'CUBE-141', serial: 'GH-2020-31290',
-    locationId: '2', location: 'Airport Cafe',
+    locationId: '2', location: 'Airport Cafe', // demo
     installDate: '2020-05-22', purchasePrice: 2800,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Greenheck', warrantyTerms: '5-year parts',
     condition: 'Fair', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
@@ -578,7 +578,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-019', name: 'Upblast Exhaust Fan — Main Line', type: 'Exhaust Fan',
     make: 'Captive Aire', model: 'DU40HFA', serial: 'CA-2017-18901',
-    locationId: '3', location: 'University Dining',
+    locationId: '3', location: 'University Dining', // demo
     installDate: '2017-02-15', purchasePrice: 3500,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
@@ -695,7 +695,7 @@ export function Equipment() {
   }, [isDemoMode, profile?.organization_id]);
 
   // Use live data or demo data
-  const allEquipment = isDemoMode ? DEMO_EQUIPMENT : liveEquipment.length > 0 ? liveEquipment : DEMO_EQUIPMENT;
+  const allEquipment = isDemoMode ? DEMO_EQUIPMENT : liveEquipment;
 
   // Filtered equipment
   const filtered = useMemo(() => {

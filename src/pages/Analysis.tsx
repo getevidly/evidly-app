@@ -44,11 +44,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-1',
     alert_type: 'hood_cleaning_overdue',
     severity: 'high',
-    title: 'Hood Cleaning Overdue — Airport Cafe',
+    title: 'Hood Cleaning Overdue — Airport Cafe', // demo
     description: '95 days since last hood cleaning service. 90-day cleaning cycle exceeded by 5 days. Continued operation increases fire risk and may result in health code violation.',
     recommended_action: 'Contact CleanVent Services immediately to schedule emergency hood cleaning. Document the delay and corrective action taken.',
     data_points: ['Last cleaning: 95 days ago', '90-day cycle exceeded', 'Fire code violation risk'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'Schedule Cleaning',
@@ -58,11 +58,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-2',
     alert_type: 'temp_trending',
     severity: 'high',
-    title: 'Walk-in Cooler Temp Trending Up — University Dining',
-    description: '3 temperature readings above 38°F recorded this week. Walk-in Cooler #1 showing consistent upward trend over the past 7 days.',
+    title: 'Walk-in Cooler Temp Trending Up — University Dining', // demo
+    description: '3 temperature readings above 38°F recorded this week. Walk-in Cooler #1 showing consistent upward trend over the past 7 days.', // demo
     recommended_action: 'Inspect door seals, condenser coils, and thermostat. Schedule maintenance if readings continue to climb. Consider moving perishables to backup unit.',
     data_points: ['3 readings above 38°F this week', 'Avg temp up 3°F over 7 days', 'Door seal inspection recommended'],
-    location: 'University Dining',
+    location: 'University Dining', // demo
     status: 'active',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Temp Logs',
@@ -72,11 +72,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-3',
     alert_type: 'document_expiring',
     severity: 'high',
-    title: 'Health Permit Expires in 14 Days — Downtown Kitchen',
+    title: 'Health Permit Expires in 14 Days — Downtown Kitchen', // demo
     description: 'Health department operating permit expires on Feb 23. Renewal application has not been started. Operating without a valid permit may result in closure.',
     recommended_action: 'Submit renewal application and payment to Fresno County Health Department immediately. Allow 5-7 business days for processing.',
     data_points: ['Expires: Feb 23, 2026', 'Renewal not started', 'Processing time: 5-7 business days'],
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'active',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Documents',
@@ -86,11 +86,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-4',
     alert_type: 'inspection_due',
     severity: 'high',
-    title: 'Fire Suppression Inspection Overdue — University Dining',
+    title: 'Fire Suppression Inspection Overdue — University Dining', // demo
     description: 'Fire suppression system inspection is 4 months overdue. This is a critical safety and insurance compliance requirement.',
     recommended_action: 'Schedule fire suppression inspection with a certified vendor immediately. Update vendor service records once completed.',
     data_points: ['4 months overdue', 'Insurance compliance at risk', 'Required: semi-annual inspection'],
-    location: 'University Dining',
+    location: 'University Dining', // demo
     status: 'active',
     created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'Schedule Inspection',
@@ -100,11 +100,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-5',
     alert_type: 'inspection_due',
     severity: 'medium',
-    title: 'Fire Extinguisher Inspection Due in 21 Days — Airport Cafe',
+    title: 'Fire Extinguisher Inspection Due in 21 Days — Airport Cafe', // demo
     description: 'Annual fire extinguisher inspection is due in 21 days. All units across the location need to be inspected and tagged.',
     recommended_action: 'Schedule fire extinguisher inspection with certified vendor. Ensure all units are accessible and not blocked by equipment.',
     data_points: ['Due date: Mar 2, 2026', '6 extinguishers to inspect', 'Annual requirement'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'Schedule Inspection',
@@ -115,10 +115,10 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     alert_type: 'cert_expiring',
     severity: 'medium',
     title: 'Food Handler Cert Expiring — Emma Davis (30 Days)',
-    description: 'Emma Davis food handler certification expires on March 11. She works the morning shift at Airport Cafe.',
+    description: 'Emma Davis food handler certification expires on March 11. She works the morning shift at Airport Cafe.', // demo
     recommended_action: 'Notify Emma Davis to complete food handler renewal course. Register for the next available testing date.',
     data_points: ['Expires: Mar 11, 2026', 'Role: Line Cook, Morning Shift', 'Renewal course: 8 hours'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Team Certs',
@@ -128,11 +128,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-7',
     alert_type: 'checklist_drop',
     severity: 'medium',
-    title: 'Checklist Completion Dropped 12% — University Dining',
+    title: 'Checklist Completion Dropped 12% — University Dining', // demo
     description: 'Weekly checklist completion rate dropped from 89% (4-week average) to 78% this week. Opening and closing checklists are the most affected.',
     recommended_action: 'Review staffing coverage for opening and closing shifts. Consider one-on-one check-ins with responsible staff to identify barriers.',
-    data_points: ['This week: 78% completion', '4-week average: 89%', 'Biggest gap: Opening checklist (65%)'],
-    location: 'University Dining',
+    data_points: ['This week: 78% completion', '4-week average: 89%', 'Biggest gap: Opening checklist (65%)'], // demo
+    location: 'University Dining', // demo
     status: 'active',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Checklists',
@@ -142,11 +142,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-8',
     alert_type: 'service_overdue',
     severity: 'medium',
-    title: 'Grease Trap Service 5 Days Overdue — Downtown Kitchen',
+    title: 'Grease Trap Service 5 Days Overdue — Downtown Kitchen', // demo
     description: 'Quarterly grease trap pumping and cleaning is 5 days past due. Continued delay may cause drainage issues and health code violations.',
     recommended_action: 'Contact GreaseMaster Services to schedule emergency grease trap pumping. Document the overdue period.',
     data_points: ['Last service: 95 days ago', 'Quarterly cycle (90 days)', '5 days overdue'],
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'active',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'Contact Vendor',
@@ -159,8 +159,8 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     title: 'Vendor Certificate Expired — Valley Fire Protection',
     description: 'Valley Fire Protection liability insurance certificate expired 3 days ago. They are currently non-compliant as a service provider.',
     recommended_action: 'Contact Valley Fire Protection to request updated certificate of insurance. Consider suspending services until documentation is current.',
-    data_points: ['Insurance expired: Feb 6, 2026', 'No response to 2 renewal requests', 'Affects: Airport Cafe fire suppression'],
-    location: 'Airport Cafe',
+    data_points: ['Insurance expired: Feb 6, 2026', 'No response to 2 renewal requests', 'Affects: Airport Cafe fire suppression'], // demo
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Vendor',
@@ -170,11 +170,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-10',
     alert_type: 'service_overdue',
     severity: 'low',
-    title: 'HVAC Filter Replacement Due in 45 Days — Airport Cafe',
+    title: 'HVAC Filter Replacement Due in 45 Days — Airport Cafe', // demo
     description: 'HVAC filter replacement is scheduled in 45 days. Plan ahead to avoid disruption during peak hours.',
     recommended_action: 'Order replacement filters and schedule installation during off-peak hours. Coordinate with facilities team.',
     data_points: ['Due: Mar 26, 2026', 'Quarterly replacement', 'Last replaced: Dec 26, 2025'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Schedule',
@@ -184,11 +184,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-11',
     alert_type: 'document_expiring',
     severity: 'low',
-    title: 'Business License Renewal Due in 60 Days — Downtown Kitchen',
+    title: 'Business License Renewal Due in 60 Days — Downtown Kitchen', // demo
     description: 'Annual business license renewal is due in 60 days. Early renewal avoids late fees and processing delays.',
     recommended_action: 'Begin renewal application through city business portal. Gather required documentation (financials, insurance, permits).',
     data_points: ['Due: Apr 10, 2026', 'Early renewal discount available', 'Last year processing: 12 days'],
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'active',
     created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Documents',
@@ -198,11 +198,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-12',
     alert_type: 'temp_trending',
     severity: 'low',
-    title: 'Freezer Temp Variance Increasing — Downtown Kitchen',
+    title: 'Freezer Temp Variance Increasing — Downtown Kitchen', // demo
     description: 'Walk-in freezer temperature variance has increased from ±1°F to ±2.5°F over the past 2 weeks. Not yet out of range but trending in wrong direction.',
     recommended_action: 'Monitor daily and inspect door gaskets, defrost timer, and evaporator fan. Schedule preventive maintenance if variance continues.',
     data_points: ['Current variance: ±2.5°F', 'Baseline: ±1°F', 'Trend: increasing over 2 weeks'],
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'active',
     created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Temp Logs',
@@ -212,11 +212,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-13',
     alert_type: 'checklist_drop',
     severity: 'low',
-    title: 'Opening Checklist Slowdown — Airport Cafe',
+    title: 'Opening Checklist Slowdown — Airport Cafe', // demo
     description: 'Average opening checklist completion time has increased from 18 minutes (baseline) to 25 minutes over the past 2 weeks.',
     recommended_action: 'Review checklist items for unnecessary steps. Talk with morning staff about bottlenecks. Consider splitting tasks across team members.',
     data_points: ['Current avg: 25 min', 'Baseline avg: 18 min', 'Increase: 39% slower'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'active',
     created_at: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(),
     action_label: 'View Checklists',
@@ -226,11 +226,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-14',
     alert_type: 'temp_trending',
     severity: 'high',
-    title: 'Walk-in Door Seal Replaced — Downtown Kitchen',
+    title: 'Walk-in Door Seal Replaced — Downtown Kitchen', // demo
     description: 'Walk-in cooler door seal was worn and replaced. Temperature readings have returned to normal range.',
     recommended_action: 'Continue monitoring for 48 hours to confirm stable temperatures.',
     data_points: ['Issue identified: Feb 5', 'Seal replaced: Feb 7', 'Temps normalized within 4 hours'],
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'resolved',
     resolved_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     created_at: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
@@ -241,11 +241,11 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     id: 'pa-15',
     alert_type: 'service_overdue',
     severity: 'medium',
-    title: 'Thermometer #3 Replaced — Airport Cafe',
+    title: 'Thermometer #3 Replaced — Airport Cafe', // demo
     description: 'Faulty digital thermometer was identified and replaced. All temp readings from this unit in the past week have been re-verified.',
     recommended_action: 'No further action needed. Replacement thermometer has been calibrated.',
     data_points: ['Faulty unit identified: Feb 2', 'Replaced: Feb 4', 'Readings re-verified: 42 logs'],
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'resolved',
     resolved_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     created_at: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
@@ -286,7 +286,7 @@ export function Analysis() {
   const [liveAlerts, setLiveAlerts] = useState<PredictiveAlert[]>([]);
 
   // Alert state
-  const [alerts, setAlerts] = useState<PredictiveAlert[]>(DEMO_ALERTS);
+  const [alerts, setAlerts] = useState<PredictiveAlert[]>(isDemoMode ? DEMO_ALERTS : []);
   const [alertSeverityFilter, setAlertSeverityFilter] = useState<'all' | AlertSeverity>('all');
   const [alertTypeFilter, setAlertTypeFilter] = useState<'all' | string>('all');
   const [alertStatusFilter, setAlertStatusFilter] = useState<'all' | AlertStatus>('active');
@@ -354,7 +354,7 @@ export function Analysis() {
 
   // Sync live data into alerts state
   useEffect(() => {
-    if (!isDemoMode && liveAlerts.length > 0) {
+    if (!isDemoMode) {
       setAlerts(liveAlerts);
     }
   }, [isDemoMode, liveAlerts]);

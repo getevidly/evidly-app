@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+﻿import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UtensilsCrossed, Flame,
@@ -41,8 +41,8 @@ interface AlertItem {
 }
 
 const EXEC_ALERTS: AlertItem[] = [
-  { id: 'ea1', severity: 'critical', message: 'University Dining Facility Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Facility Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' },
-  { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' },
+  { id: 'ea1', severity: 'critical', message: 'University Dining Facility Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Facility Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' }, // demo
+  { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' }, // demo
 ];
 
 // ================================================================

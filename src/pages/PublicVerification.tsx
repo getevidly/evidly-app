@@ -18,7 +18,7 @@ interface VerificationData {
 
 const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
   'DWN-2024-EXCL': {
-    businessName: 'Downtown Kitchen',
+    businessName: 'Downtown Kitchen', // demo
     city: 'Fresno',
     state: 'CA',
     badgeTier: 'excellence',
@@ -29,7 +29,7 @@ const DEMO_VERIFICATIONS: Record<string, VerificationData> = {
     verifiedSince: 'September 2025',
   },
   'DWN-2024-VRFD': {
-    businessName: 'Downtown Kitchen',
+    businessName: 'Downtown Kitchen', // demo
     city: 'Fresno',
     state: 'CA',
     badgeTier: 'verified',

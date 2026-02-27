@@ -12,37 +12,37 @@ const DEMO_DIGEST: DigestData = {
   facilitySafetyScore: 70,
   scoreTrend: 2,
   locations: [
-    { name: 'Downtown Kitchen', overall: 92, trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' },
-    { name: 'Airport Cafe', overall: 74, trend: -2, operational: 78, equipment: 70, documentation: 72, status: 'Needs Attention' },
-    { name: 'University Dining', overall: 57, trend: 4, operational: 62, equipment: 55, documentation: 52, status: 'Critical' },
+    { name: 'Downtown Kitchen', overall: 92, trend: 3, operational: 95, equipment: 91, documentation: 89, status: 'Inspection Ready' }, // demo
+    { name: 'Airport Cafe', overall: 74, trend: -2, operational: 78, equipment: 70, documentation: 72, status: 'Needs Attention' }, // demo
+    { name: 'University Dining', overall: 57, trend: 4, operational: 62, equipment: 55, documentation: 52, status: 'Critical' }, // demo
   ],
   highlights: [
-    'Downtown Kitchen maintained Inspection Ready status for 8 consecutive weeks',
-    'University Dining improved overall score by +4 points this week',
-    'Zero out-of-range temperature readings at Downtown Kitchen',
+    'Downtown Kitchen maintained Inspection Ready status for 8 consecutive weeks', // demo
+    'University Dining improved overall score by +4 points this week', // demo
+    'Zero out-of-range temperature readings at Downtown Kitchen', // demo
     'All closing checklists completed on time across all locations',
   ],
   concerns: [
-    'Airport Cafe missed 3 temperature checks this week',
-    'University Dining has 2 overdue vendor services (Fire Suppression, Grease Trap)',
-    'University Dining health permit expired — requires immediate renewal',
-    'Airport Cafe fire suppression inspection overdue',
+    'Airport Cafe missed 3 temperature checks this week', // demo
+    'University Dining has 2 overdue vendor services (Fire Suppression, Grease Trap)', // demo
+    'University Dining health permit expired — requires immediate renewal', // demo
+    'Airport Cafe fire suppression inspection overdue', // demo
   ],
   tempStats: { total: 487, onTimePercent: 98.2, outOfRange: 3, weekOverWeek: 2 },
   checklistStats: { completed: 126, required: 132, percent: 95.5, weekOverWeek: 1 },
   missedItems: [
-    { item: 'Morning Temp Check', location: 'Airport Cafe', detail: 'Missed Feb 4, 5, 7' },
-    { item: 'Opening Checklist', location: 'Airport Cafe', detail: 'Late Feb 4, 5' },
-    { item: 'Morning Temp Check', location: 'University Dining', detail: 'Missed Feb 3, 4, 5, 6, 7' },
-    { item: 'Opening Checklist', location: 'University Dining', detail: 'Missed Feb 3, 4, 5' },
-    { item: 'HACCP Monitoring', location: 'University Dining', detail: 'No logs this month' },
+    { item: 'Morning Temp Check', location: 'Airport Cafe', detail: 'Missed Feb 4, 5, 7' }, // demo
+    { item: 'Opening Checklist', location: 'Airport Cafe', detail: 'Late Feb 4, 5' }, // demo
+    { item: 'Morning Temp Check', location: 'University Dining', detail: 'Missed Feb 3, 4, 5, 6, 7' }, // demo
+    { item: 'Opening Checklist', location: 'University Dining', detail: 'Missed Feb 3, 4, 5' }, // demo
+    { item: 'HACCP Monitoring', location: 'University Dining', detail: 'No logs this month' }, // demo
   ],
   actionItems: [
-    { priority: 'high', title: 'Renew University Dining health permit', assignee: 'James Wilson', dueDate: 'Overdue' },
-    { priority: 'high', title: 'Schedule fire suppression inspection — Airport Cafe', assignee: 'Maria Lopez', dueDate: 'Feb 10' },
-    { priority: 'high', title: 'Schedule fire suppression — University Dining', assignee: 'James Wilson', dueDate: 'Overdue' },
+    { priority: 'high', title: 'Renew University Dining health permit', assignee: 'James Wilson', dueDate: 'Overdue' }, // demo
+    { priority: 'high', title: 'Schedule fire suppression inspection — Airport Cafe', assignee: 'Maria Lopez', dueDate: 'Feb 10' }, // demo
+    { priority: 'high', title: 'Schedule fire suppression — University Dining', assignee: 'James Wilson', dueDate: 'Overdue' }, // demo
     { priority: 'medium', title: 'Request updated COI from Valley Fire Systems', assignee: 'Maria Lopez', dueDate: 'Feb 14' },
-    { priority: 'low', title: 'Review closing checklist completion at Airport Cafe', assignee: 'Sarah Chen', dueDate: 'Feb 16' },
+    { priority: 'low', title: 'Review closing checklist completion at Airport Cafe', assignee: 'Sarah Chen', dueDate: 'Feb 16' }, // demo
   ],
   vendorUpdates: [
     { serviceType: 'Hood Cleaning', vendorName: 'ABC Fire Protection', lastService: 'Jan 15', nextDue: 'Apr 15', status: 'current' },

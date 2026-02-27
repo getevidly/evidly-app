@@ -13,7 +13,7 @@ interface QuickEquipment {
 }
 
 const DEMO_EQUIPMENT: QuickEquipment[] = [
-  { id: 'eq-1', name: 'Walk-in Cooler #1', type: 'cooler', minTemp: 33, maxTemp: 41 },
+  { id: 'eq-1', name: 'Walk-in Cooler #1', type: 'cooler', minTemp: 33, maxTemp: 41 }, // demo
   { id: 'eq-2', name: 'Walk-in Freezer #1', type: 'freezer', minTemp: -Infinity, maxTemp: 0 },
   { id: 'eq-3', name: 'Prep Cooler', type: 'cooler', minTemp: 33, maxTemp: 41 },
   { id: 'eq-4', name: 'Walk-in Cooler #2', type: 'cooler', minTemp: 33, maxTemp: 41 },

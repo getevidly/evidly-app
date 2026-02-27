@@ -254,12 +254,12 @@ export function TempLogs() {
       // ── Storage equipment (Current Readings only) ──
       {
         id: '1',
-        name: 'Walk-in Cooler #1',
+        name: 'Walk-in Cooler #1', // demo
         equipment_type: 'storage_cold',
         min_temp: 35,
         max_temp: 38,
         unit: 'F',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         last_check: {
           temperature_value: 36,
           created_at: todayAt(6, 0).toISOString(),
@@ -274,7 +274,7 @@ export function TempLogs() {
         min_temp: 35,
         max_temp: 38,
         unit: 'F',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         last_check: {
           temperature_value: 37,
           created_at: todayAt(6, 15).toISOString(),
@@ -289,7 +289,7 @@ export function TempLogs() {
         min_temp: -Infinity,
         max_temp: 0,
         unit: 'F',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         last_check: {
           temperature_value: -3,
           created_at: todayAt(6, 30).toISOString(),
@@ -304,7 +304,7 @@ export function TempLogs() {
         min_temp: 33,
         max_temp: 38,
         unit: 'F',
-        location: 'University Dining',
+        location: 'University Dining', // demo
         last_check: {
           temperature_value: 35,
           created_at: new Date(now.getTime() - 14 * 60 * 60 * 1000).toISOString(),
@@ -320,7 +320,7 @@ export function TempLogs() {
         min_temp: 33,
         max_temp: 41,
         unit: 'F',
-        location: 'Airport Cafe',
+        location: 'Airport Cafe', // demo
         last_check: {
           temperature_value: 37,
           created_at: todayAt(6, 45).toISOString(),
@@ -335,7 +335,7 @@ export function TempLogs() {
         min_temp: 135,
         max_temp: 165,
         unit: 'F',
-        location: 'University Dining',
+        location: 'University Dining', // demo
         last_check: {
           temperature_value: 148,
           created_at: new Date(now.getTime() - 18 * 60 * 60 * 1000).toISOString(),
@@ -350,7 +350,7 @@ export function TempLogs() {
         min_temp: 33,
         max_temp: 41,
         unit: 'F',
-        location: 'Airport Cafe',
+        location: 'Airport Cafe', // demo
         last_check: {
           temperature_value: 38,
           created_at: new Date(now.getTime() - 16 * 60 * 60 * 1000).toISOString(),
@@ -365,7 +365,7 @@ export function TempLogs() {
         min_temp: 135,
         max_temp: 190,
         unit: 'F',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         last_check: {
           temperature_value: 152,
           created_at: new Date(now.getTime() - 5 * 60 * 60 * 1000).toISOString(),
@@ -380,7 +380,7 @@ export function TempLogs() {
         min_temp: 33,
         max_temp: 41,
         unit: 'F',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         last_check: {
           temperature_value: 39,
           created_at: new Date(now.getTime() - 5.5 * 60 * 60 * 1000).toISOString(),
@@ -406,7 +406,7 @@ export function TempLogs() {
         itemName: 'Rice Pilaf',
         startTemp: 155,
         startTime: new Date(now.getTime() - 45 * 60 * 1000),
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         startedBy: 'Sarah Chen',
         checks: [
           { temperature: 155, time: new Date(now.getTime() - 45 * 60 * 1000) },
@@ -419,7 +419,7 @@ export function TempLogs() {
         itemName: 'Chicken Noodle Soup',
         startTemp: 165,
         startTime: new Date(now.getTime() - 3 * 60 * 60 * 1000),
-        location: 'University Dining',
+        location: 'University Dining', // demo
         startedBy: 'Mike Johnson',
         checks: [
           { temperature: 165, time: new Date(now.getTime() - 3 * 60 * 60 * 1000) },
@@ -436,7 +436,7 @@ export function TempLogs() {
         itemName: 'Pasta Sauce',
         startTemp: 180,
         startTime: new Date(now.getTime() - 8 * 60 * 60 * 1000),
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         startedBy: 'Emma Davis',
         checks: [
           { temperature: 180, time: new Date(now.getTime() - 8 * 60 * 60 * 1000) },
@@ -451,7 +451,7 @@ export function TempLogs() {
         itemName: 'Mashed Potatoes',
         startTemp: 170,
         startTime: new Date(now.getTime() - 12 * 60 * 60 * 1000),
-        location: 'Airport Cafe',
+        location: 'Airport Cafe', // demo
         startedBy: 'John Smith',
         checks: [
           { temperature: 170, time: new Date(now.getTime() - 12 * 60 * 60 * 1000) },
@@ -466,7 +466,7 @@ export function TempLogs() {
         itemName: 'Beef Stew',
         startTemp: 150,
         startTime: new Date(now.getTime() - 24 * 60 * 60 * 1000),
-        location: 'University Dining',
+        location: 'University Dining', // demo
         startedBy: 'Sarah Chen',
         checks: [
           { temperature: 150, time: new Date(now.getTime() - 24 * 60 * 60 * 1000) },
@@ -481,7 +481,7 @@ export function TempLogs() {
         itemName: 'Turkey Gravy',
         startTemp: 160,
         startTime: new Date(now.getTime() - 30 * 60 * 60 * 1000),
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
         startedBy: 'Mike Johnson',
         checks: [
           { temperature: 160, time: new Date(now.getTime() - 30 * 60 * 60 * 1000) },
@@ -1370,7 +1370,7 @@ export function TempLogs() {
   const tempValue = parseFloat(temperature);
   const isWithinRange = selectedEquipment && tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
-  const locations = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+  const locations = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
   const vendors = ['Sysco', 'US Foods', 'Performance Food Group', 'Restaurant Depot', 'Other'];
 
   return (

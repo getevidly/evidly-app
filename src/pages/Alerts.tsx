@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -29,17 +30,7 @@ interface Alert {
   navigate_to?: string;
 }
 
-export function Alerts() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { getAccessibleLocations } = useRole();
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-  const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
-  const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
-  const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
-  const [locationFilter, setLocationFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
-  const [alerts, setAlerts] = useState<Alert[]>([
+const DEMO_ALERTS: Alert[] = [
     {
       id: '1',
       alert_type: 'document_expiring',
@@ -51,7 +42,7 @@ export function Alerts() {
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'Maria Garcia',
       days_until_due: 7,
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/documents',
     },
     {
@@ -65,7 +56,7 @@ export function Alerts() {
       created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'John Smith',
       days_until_due: 14,
-      location: 'Downtown Kitchen',
+      location: 'Downtown Kitchen', // demo
       navigate_to: '/documents',
     },
     {
@@ -78,7 +69,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'Sarah Lee',
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/temp-logs',
     },
     {
@@ -91,7 +82,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
       assigned_to: 'Maria Garcia',
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/haccp',
     },
     {
@@ -103,7 +94,7 @@ export function Alerts() {
       recommended_action: 'Schedule inspection with SafeGuard Fire Systems immediately.',
       status: 'active',
       created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Downtown Kitchen',
+      location: 'Downtown Kitchen', // demo
       navigate_to: '/vendors',
     },
     {
@@ -116,7 +107,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 21,
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/training',
     },
     {
@@ -129,7 +120,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 10,
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/vendors',
     },
     {
@@ -141,7 +132,7 @@ export function Alerts() {
       recommended_action: 'Complete opening checklist or assign to opening manager.',
       status: 'active',
       created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-      location: 'University Dining',
+      location: 'University Dining', // demo
       navigate_to: '/checklists',
     },
     {
@@ -153,7 +144,7 @@ export function Alerts() {
       recommended_action: 'Assign weekend temp log duties and set up shift reminders.',
       status: 'active',
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'University Dining',
+      location: 'University Dining', // demo
       navigate_to: '/temp-logs',
     },
     {
@@ -166,7 +157,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 36,
-      location: 'Downtown Kitchen',
+      location: 'Downtown Kitchen', // demo
       navigate_to: '/training',
     },
     {
@@ -191,19 +182,19 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 30,
-      location: 'Downtown Kitchen',
+      location: 'Downtown Kitchen', // demo
       navigate_to: '/vendors',
     },
     {
       id: '13',
       alert_type: 'staff_certification',
       severity: 'high',
-      title: 'No CFPM on staff at Airport Cafe',
-      description: 'Airport Cafe currently has no Certified Food Protection Manager on staff. California Health & Safety Code §113947.1 requires at least one CFPM per food establishment during all operating hours.',
+      title: 'No CFPM on staff at Airport Cafe', // demo
+      description: 'Airport Cafe currently has no Certified Food Protection Manager on staff. California Health & Safety Code §113947.1 requires at least one CFPM per food establishment during all operating hours.', // demo
       recommended_action: 'Enroll Maria Garcia or another manager in ServSafe Manager certification immediately.',
       status: 'active',
       created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/training',
     },
     {
@@ -216,7 +207,7 @@ export function Alerts() {
       status: 'active',
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       days_until_due: 12,
-      location: 'Downtown Kitchen',
+      location: 'Downtown Kitchen', // demo
       navigate_to: '/training',
     },
     {
@@ -235,12 +226,12 @@ export function Alerts() {
       id: '16',
       alert_type: 'temperature',
       severity: 'critical',
-      title: 'Walk-in cooler at Airport Cafe reading 47°F — IoT sensor alert',
+      title: 'Walk-in cooler at Airport Cafe reading 47°F — IoT sensor alert', // demo
       description: 'IoT sensor "SensorPush AP-01" detected walk-in cooler temperature at 47°F, exceeding the 41°F CalCode §113996 limit. Temperature has been out of range for 22 minutes. Immediate corrective action required.',
       recommended_action: 'Check thermostat settings and door seal. Transfer perishable items to backup cooler if temperature does not drop within 30 minutes.',
       status: 'active',
       created_at: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-      location: 'Airport Cafe',
+      location: 'Airport Cafe', // demo
       navigate_to: '/iot-sensors',
     },
     {
@@ -255,7 +246,20 @@ export function Alerts() {
       location: 'University Hub',
       navigate_to: '/equipment',
     },
-  ]);
+  ];
+
+export function Alerts() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { getAccessibleLocations } = useRole();
+  const { isDemoMode } = useDemo();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const alertAccessibleLocNames = getAccessibleLocations().map(l => l.locationName);
+  const [filter, setFilter] = useState<'all' | 'urgent' | 'upcoming' | 'resolved' | 'snoozed'>('all');
+  const [severityFilter, setSeverityFilter] = useState<'all' | 'high' | 'medium' | 'low'>('all');
+  const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [alerts, setAlerts] = useState<Alert[]>(isDemoMode ? DEMO_ALERTS : []);
 
   const [showResolveModal, setShowResolveModal] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);

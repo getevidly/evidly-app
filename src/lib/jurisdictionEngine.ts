@@ -498,7 +498,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
     const totalRequired = totalDocs + totalPostings + totalCerts;
 
     // Demo: different compliance levels per location
-    if (location.locationName === 'Downtown Kitchen') {
+    if (location.locationName === 'Downtown Kitchen') { // demo
       // Nearly compliant — missing 1 document (IHIPP), 1 cert expiring
       const gaps: ComplianceGap[] = [
         { category: 'document', item: 'Indoor Heat Illness Prevention Plan (IHIPP)', status: 'missing', detail: 'No written IHIPP on file — required by Cal/OSHA §3396 for all indoor workplaces', action: 'Create IHIPP template from Cal/OSHA guidelines' },
@@ -507,7 +507,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
       return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 2, gaps };
     }
 
-    if (location.locationName === 'Airport Cafe') {
+    if (location.locationName === 'Airport Cafe') { // demo
       // Missing 5 documents and 1 cert — includes CFC facility safety gaps
       const gaps: ComplianceGap[] = [
         { category: 'document', item: 'Fire Inspection Certificate', status: 'expiring', detail: 'Fire inspection certificate expires in 14 days', action: 'Schedule fire inspection' },
@@ -520,7 +520,7 @@ export function getDemoComplianceGaps(): LocationComplianceGap[] {
       return { locationName: location.locationName, totalRequired, totalCompliant: totalRequired - 6, gaps };
     }
 
-    // University Dining — missing several items, overdue on hood cleaning, CFC gaps
+    // University Dining — missing several items, overdue on hood cleaning, CFC gaps // demo
     const gaps: ComplianceGap[] = [
       { category: 'document', item: 'City of Modesto Business License', status: 'missing', detail: 'City business license not on file (required in addition to county health permit)', action: 'Apply at City of Modesto Business License office' },
       { category: 'document', item: 'Hood Cleaning Certificate', status: 'overdue', detail: 'Hood cleaning is 2 weeks overdue — last cleaned 7 months ago (semi-annual required). CFC Ch. 6.07 requires bare metal standard.', action: 'Schedule emergency hood cleaning' },

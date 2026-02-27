@@ -46,23 +46,23 @@ const d = (daysFromNow: number) => new Date(Date.now() + daysFromNow * 24 * 60 *
 
 const SAMPLE_DOCUMENTS: Document[] = [
   // === Licenses ===
-  { id: '1', title: 'Food Service License', category: 'License', expiration_date: d(120), created_at: d(-300), status: 'active', location: 'Downtown Kitchen' },
-  { id: '2', title: 'Food Service License', category: 'License', expiration_date: d(85), created_at: d(-280), status: 'active', location: 'Airport Cafe' },
-  { id: '3', title: 'Business License', category: 'License', expiration_date: d(200), created_at: d(-160), status: 'active', location: 'Downtown Kitchen' },
-  { id: '4', title: 'Business License', category: 'License', expiration_date: d(22), created_at: d(-150), status: 'active', location: 'Airport Cafe' },
-  { id: '5', title: 'Business License', category: 'License', expiration_date: d(180), created_at: d(-140), status: 'active', location: 'University Dining' },
+  { id: '1', title: 'Food Service License', category: 'License', expiration_date: d(120), created_at: d(-300), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '2', title: 'Food Service License', category: 'License', expiration_date: d(85), created_at: d(-280), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '3', title: 'Business License', category: 'License', expiration_date: d(200), created_at: d(-160), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '4', title: 'Business License', category: 'License', expiration_date: d(22), created_at: d(-150), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '5', title: 'Business License', category: 'License', expiration_date: d(180), created_at: d(-140), status: 'active', location: 'University Dining' }, // demo
 
   // === Permits ===
-  { id: '6', title: 'Health Department Permit', category: 'Permit', expiration_date: d(45), created_at: d(-280), status: 'active', location: 'Downtown Kitchen' },
-  { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Airport Cafe' },
-  { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen' },
-  { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'University Dining' },
-  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
+  { id: '6', title: 'Health Department Permit', category: 'Permit', expiration_date: d(45), created_at: d(-280), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '7', title: 'Health Department Permit', category: 'Permit', expiration_date: d(15), created_at: d(-260), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '8', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '9', title: 'Health Department Inspection Report', category: 'Permit', expiration_date: d(310), created_at: d(-55), status: 'active', location: 'University Dining' }, // demo
+  { id: '10', title: 'Facility Safety Inspection Report', category: 'Permit', expiration_date: d(280), created_at: d(-30), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' }, // demo
 
   // === Certificates ===
-  { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Downtown Kitchen' },
-  { id: '12', title: 'ServSafe Manager Certificate - Sarah Chen', category: 'Certificate', expiration_date: d(380), created_at: d(-180), status: 'active', location: 'Airport Cafe' },
-  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' },
+  { id: '11', title: 'ServSafe Manager Certificate - Mike Johnson', category: 'Certificate', expiration_date: d(540), created_at: d(-200), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '12', title: 'ServSafe Manager Certificate - Sarah Chen', category: 'Certificate', expiration_date: d(380), created_at: d(-180), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '13', title: 'Ansul System Certification', category: 'Certificate', expiration_date: d(-15), created_at: d(-380), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' }, // demo
 
   // === Insurance ===
   { id: '14', title: 'General Liability Insurance', category: 'Insurance', expiration_date: d(250), created_at: d(-100), status: 'active', location: 'All Locations' },
@@ -71,21 +71,21 @@ const SAMPLE_DOCUMENTS: Document[] = [
   { id: '17', title: "Worker's Compensation Insurance", category: 'Insurance', expiration_date: d(300), created_at: d(-90), status: 'active', location: 'All Locations' },
 
   // === Training ===
-  { id: '18', title: 'Food Handler Certificate - Emma Davis', category: 'Training', expiration_date: d(410), created_at: d(-150), status: 'active', location: 'Downtown Kitchen' },
-  { id: '19', title: 'Food Handler Certificate - James Wilson', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Cafe' },
-  { id: '20', title: 'Food Handler Certificate - Maria Garcia', category: 'Training', expiration_date: d(-10), created_at: d(-380), status: 'active', location: 'University Dining' },
-  { id: '21', title: 'Food Handler Certificate - Tom Nguyen', category: 'Training', expiration_date: d(260), created_at: d(-100), status: 'active', location: 'Downtown Kitchen' },
+  { id: '18', title: 'Food Handler Certificate - Emma Davis', category: 'Training', expiration_date: d(410), created_at: d(-150), status: 'active', location: 'Downtown Kitchen' }, // demo
+  { id: '19', title: 'Food Handler Certificate - James Wilson', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '20', title: 'Food Handler Certificate - Maria Garcia', category: 'Training', expiration_date: d(-10), created_at: d(-380), status: 'active', location: 'University Dining' }, // demo
+  { id: '21', title: 'Food Handler Certificate - Tom Nguyen', category: 'Training', expiration_date: d(260), created_at: d(-100), status: 'active', location: 'Downtown Kitchen' }, // demo
   { id: '22', title: 'Allergen Awareness Training - All Staff', category: 'Training', expiration_date: d(180), created_at: d(-60), status: 'active', location: 'All Locations' },
 
   // === Other (service reports) ===
-  { id: '23', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-45), status: 'active', location: 'Downtown Kitchen', provided_by: 'SparkClean Hoods' },
-  { id: '24', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-40), status: 'active', location: 'Airport Cafe', provided_by: 'SparkClean Hoods' },
-  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' },
-  { id: '26', title: 'Grease Trap Service Record', category: 'Other', expiration_date: null, created_at: d(-20), status: 'active', location: 'Downtown Kitchen', provided_by: 'Pacific Grease Services' },
-  { id: '27', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-7), status: 'active', location: 'Downtown Kitchen', provided_by: 'GreenShield Pest Control' },
-  { id: '28', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-5), status: 'active', location: 'Airport Cafe', provided_by: 'GreenShield Pest Control' },
-  { id: '29', title: 'HVAC Maintenance Record', category: 'Other', expiration_date: null, created_at: d(-25), status: 'active', location: 'Airport Cafe' },
-  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' },
+  { id: '23', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-45), status: 'active', location: 'Downtown Kitchen', provided_by: 'SparkClean Hoods' }, // demo
+  { id: '24', title: 'Hood Cleaning Report - Q4 2025', category: 'Other', expiration_date: null, created_at: d(-40), status: 'active', location: 'Airport Cafe', provided_by: 'SparkClean Hoods' }, // demo
+  { id: '25', title: 'Fire Extinguisher Inspection Tags', category: 'Other', expiration_date: d(330), created_at: d(-35), status: 'active', location: 'Downtown Kitchen', provided_by: 'Valley Fire Systems' }, // demo
+  { id: '26', title: 'Grease Trap Service Record', category: 'Other', expiration_date: null, created_at: d(-20), status: 'active', location: 'Downtown Kitchen', provided_by: 'Pacific Grease Services' }, // demo
+  { id: '27', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-7), status: 'active', location: 'Downtown Kitchen', provided_by: 'GreenShield Pest Control' }, // demo
+  { id: '28', title: 'Pest Control Report - Jan 2026', category: 'Other', expiration_date: null, created_at: d(-5), status: 'active', location: 'Airport Cafe', provided_by: 'GreenShield Pest Control' }, // demo
+  { id: '29', title: 'HVAC Maintenance Record', category: 'Other', expiration_date: null, created_at: d(-25), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '30', title: 'Fire Suppression System Inspection', category: 'Other', expiration_date: d(-45), created_at: d(-410), status: 'active', location: 'Airport Cafe', provided_by: 'Valley Fire Systems' }, // demo
 ];
 
 const SHARED_ITEMS: SharedItem[] = [
@@ -94,7 +94,7 @@ const SHARED_ITEMS: SharedItem[] = [
   { id: '3', document: 'Facility Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
-const ALL_DOC_LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const ALL_DOC_LOCATIONS = ['All Locations', 'Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
 
 // Equipment/vendor documents — visible to Facilities + Management/Executive
 const FACILITIES_DOC_CATEGORIES = new Set(['Other']); // Hood cleaning, HVAC, fire suppression, pest control, grease trap, etc.
@@ -829,7 +829,7 @@ export function Documents() {
                 expiration_date: cf.overrides.expiryDate || null,
                 created_at: new Date().toISOString(),
                 status: 'active',
-                location: selectedLocation === 'All Locations' ? 'Downtown Kitchen' : selectedLocation,
+                location: selectedLocation === 'All Locations' ? 'Downtown Kitchen' : selectedLocation, // demo
                 provided_by: cf.overrides.vendorName || undefined,
                 categorization_source: wasEdited ? 'manual' as const : 'ai' as const,
                 manual_category_override: wasEdited,

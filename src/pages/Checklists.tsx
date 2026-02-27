@@ -341,7 +341,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'complete' as const,
     assignee: 'Marcus J.',
     completedAt: '6:15 AM',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
   },
   {
     id: 't2',
@@ -351,7 +351,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'in_progress' as const,
     assignee: 'Sarah T.',
     completedAt: '',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
   },
   {
     id: 't3',
@@ -361,7 +361,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'not_started' as const,
     assignee: 'Evening Shift',
     completedAt: '',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
   },
 ];
 
@@ -477,7 +477,7 @@ interface HACCPSummaryCCP {
 const DEMO_HACCP_SUMMARY: HACCPSummaryCCP[] = [
   { name: 'Cooking Temperature', limit: '165°F+', status: 'in_limit' },
   { name: 'Cold Holding', limit: '41°F−', status: 'in_limit' },
-  { name: 'Hot Holding', limit: '135°F+', status: 'deviation', deviationTime: '11:30 AM', caCreated: true, locationName: 'Airport Cafe' },
+  { name: 'Hot Holding', limit: '135°F+', status: 'deviation', deviationTime: '11:30 AM', caCreated: true, locationName: 'Airport Cafe' }, // demo
   { name: 'Cooling', limit: '2hr rule', status: 'in_limit' },
   { name: 'Sanitizer Concentration', limit: '200ppm+', status: 'in_limit' },
 ];
@@ -582,7 +582,7 @@ export function Checklists() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeView, setActiveView] = useState<'templates' | 'today' | 'history'>('today');
   const [demoItemsMap, setDemoItemsMap] = useState<Record<string, ChecklistTemplateItem[]>>({});
-  const [todayChecklists, setTodayChecklists] = useState(DEMO_TODAY_CHECKLISTS);
+  const [todayChecklists, setTodayChecklists] = useState(isDemoMode ? DEMO_TODAY_CHECKLISTS : []);
   const [ccpMappingResults, setCcpMappingResults] = useState<{ ccp: string; value: string; pass: boolean; limit: string }[]>([]);
   const { notifications, setNotifications } = useNotifications();
   const [historyRange, setHistoryRange] = useState('7days');
@@ -755,7 +755,7 @@ export function Checklists() {
         status: 'not_started' as const,
         assignee: userName,
         completedAt: 'Just now',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
       }, ...prev]);
       setLoading(false);
       setActiveView('today');
@@ -875,7 +875,7 @@ export function Checklists() {
         status: 'not_started' as const,
         assignee: userName,
         completedAt: 'Just now',
-        location: 'Downtown Kitchen',
+        location: 'Downtown Kitchen', // demo
       }, ...prev]);
       setLoading(false);
       setShowTemplateModal(false);
@@ -1701,9 +1701,9 @@ export function Checklists() {
         {/* History View */}
         {activeView === 'history' && (() => {
           const now = new Date();
-          const demoEntries = profile?.organization_id
-            ? completions.map(c => ({ id: c.id, date: c.completed_at, name: c.template_name, completedBy: c.completed_by_name, score: c.score_percentage, status: 'complete' as const, detail: undefined as string | undefined }))
-            : DEMO_HISTORY;
+          const demoEntries = isDemoMode
+            ? DEMO_HISTORY
+            : completions.map(c => ({ id: c.id, date: c.completed_at, name: c.template_name, completedBy: c.completed_by_name, score: c.score_percentage, status: 'complete' as const, detail: undefined as string | undefined }));
           // Filter by date range
           const filteredEntries = demoEntries.filter(entry => {
             const entryDate = new Date(entry.date);

@@ -323,9 +323,9 @@ export function templateFromJurisdiction(j: JurisdictionTemplateData): CountyTem
 
 // ── Demo Data Generators ───────────────────────────────────
 
-export const FACILITY_INFO: Record<string, FacilityInfo> = {
+export const FACILITY_INFO: Record<string, FacilityInfo> = { // demo
   'downtown': {
-    name: 'Downtown Kitchen',
+    name: 'Downtown Kitchen', // demo
     address: '1245 Fulton Street, Fresno, CA 93721',
     permitNumber: 'FHD-2024-001245',
     ownerOperator: 'Central Valley Restaurant Group, LLC',
@@ -336,7 +336,7 @@ export const FACILITY_INFO: Record<string, FacilityInfo> = {
     county: 'Fresno',
   },
   'airport': {
-    name: 'Airport Cafe',
+    name: 'Airport Cafe', // demo
     address: '1636 Macready Drive, Merced, CA 95340',
     permitNumber: 'MHD-2024-001636',
     ownerOperator: 'Central Valley Restaurant Group, LLC',
@@ -347,7 +347,7 @@ export const FACILITY_INFO: Record<string, FacilityInfo> = {
     county: 'Merced',
   },
   'university': {
-    name: 'University Dining',
+    name: 'University Dining', // demo
     address: '1 University Circle, Modesto, CA 95348',
     permitNumber: 'SHD-2024-000001',
     ownerOperator: 'Central Valley Restaurant Group, LLC',
@@ -675,7 +675,7 @@ export function getDemoReportHistory(): ReportHistory[] {
     {
       id: 'RPT-HIST-001',
       locationId: 'downtown',
-      locationName: 'Downtown Kitchen',
+      locationName: 'Downtown Kitchen', // demo
       reportType: 'Health Department Inspection Report',
       countyTemplate: 'generic',
       generatedAt: '2026-02-01T09:00:00Z',
@@ -687,7 +687,7 @@ export function getDemoReportHistory(): ReportHistory[] {
     {
       id: 'RPT-HIST-002',
       locationId: 'airport',
-      locationName: 'Airport Cafe',
+      locationName: 'Airport Cafe', // demo
       reportType: 'Health Department Inspection Report',
       countyTemplate: 'generic',
       generatedAt: '2026-02-01T09:00:00Z',
@@ -699,7 +699,7 @@ export function getDemoReportHistory(): ReportHistory[] {
     {
       id: 'RPT-HIST-003',
       locationId: 'university',
-      locationName: 'University Dining',
+      locationName: 'University Dining', // demo
       reportType: 'Inspector Visit Report',
       countyTemplate: 'generic',
       generatedAt: '2026-01-15T14:30:00Z',
@@ -713,7 +713,7 @@ export function getDemoReportHistory(): ReportHistory[] {
     {
       id: 'RPT-HIST-004',
       locationId: 'downtown',
-      locationName: 'Downtown Kitchen',
+      locationName: 'Downtown Kitchen', // demo
       reportType: 'Quarterly Compliance Summary',
       countyTemplate: 'generic',
       generatedAt: '2026-01-01T00:00:00Z',

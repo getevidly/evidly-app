@@ -129,9 +129,9 @@ const REGULATION_SUMMARIES: Record<string, string> = {
 // ── Location name → urlId mapping (for scoring-breakdown link) ──
 
 const LOCATION_URL_ID: Record<string, string> = {
-  'Downtown Kitchen': 'downtown',
-  'Airport Cafe': 'airport',
-  'University Dining': 'university',
+  'Downtown Kitchen': 'downtown', // demo
+  'Airport Cafe': 'airport', // demo
+  'University Dining': 'university', // demo
 };
 
 // Look up jurisdictionData entries for a given county name (e.g. "Fresno County" → "Fresno")
@@ -320,7 +320,7 @@ function AddLocationDialog({
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g., Downtown Kitchen"
+              placeholder="e.g., Downtown Kitchen" // demo
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
             />
           </div>

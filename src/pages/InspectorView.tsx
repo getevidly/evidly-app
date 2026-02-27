@@ -50,7 +50,7 @@ interface Section {
 // ---------------------------------------------------------------------------
 
 const location = {
-  name: 'Downtown Kitchen',
+  name: 'Downtown Kitchen', // demo
   stateCode: 'CA',
   county: 'Fresno County',
 };
@@ -71,7 +71,7 @@ const tempSection: Section = {
       title: 'Cold Holding \u2264 41\u00B0F',
       status: 'pass',
       evidence: [
-        'Walk-in Cooler #1: 36\u00B0F @ 6:00 AM today',
+        'Walk-in Cooler #1: 36\u00B0F @ 6:00 AM today', // demo
         'Walk-in Cooler #2: 37\u00B0F @ 6:05 AM today',
         'Prep Table Cooler: 38\u00B0F @ 6:10 AM today',
       ],

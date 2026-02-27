@@ -26,9 +26,9 @@ type RecordType =
   | 'General';
 
 type LocationName =
-  | 'Downtown Kitchen'
-  | 'Airport Cafe'
-  | 'University Dining';
+  | 'Downtown Kitchen' // demo
+  | 'Airport Cafe' // demo
+  | 'University Dining'; // demo
 
 type DateRange = '7' | '30' | '90' | 'all';
 type ViewMode = 'list' | 'grid';
@@ -52,7 +52,7 @@ interface GalleryPhoto {
 // Constants
 // ---------------------------------------------------------------------------
 
-const LOCATIONS: LocationName[] = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const LOCATIONS: LocationName[] = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
 
 const RECORD_TYPES: RecordType[] = [
   'Temperature Log', 'Checklist', 'Incident', 'Vendor Delivery',
@@ -88,9 +88,9 @@ const RECORD_TYPE_ICONS: Record<RecordType, typeof Thermometer> = {
 };
 
 const LOCATION_BADGE: Record<LocationName, { bg: string; text: string }> = {
-  'Downtown Kitchen':  { bg: '#eef4f8', text: '#1e4d6b' },
-  'Airport Cafe':  { bg: '#fef3c7', text: '#92400e' },
-  'University Dining': { bg: '#dcfce7', text: '#166534' },
+  'Downtown Kitchen':  { bg: '#eef4f8', text: '#1e4d6b' }, // demo
+  'Airport Cafe':  { bg: '#fef3c7', text: '#92400e' }, // demo
+  'University Dining': { bg: '#dcfce7', text: '#166534' }, // demo
 };
 
 // ---------------------------------------------------------------------------
@@ -189,51 +189,51 @@ function createDemoPhotos(): GalleryPhoto[] {
     description: string; verified: boolean;
   }[] = [
     { title: 'Walk-in Cooler', subtitle: '38°F Reading',
-      recordType: 'Temperature Log', location: 'Downtown Kitchen',
+      recordType: 'Temperature Log', location: 'Downtown Kitchen', // demo
       daysBack: 0, hour: 8, minute: 30,
       description: 'Walk-in cooler temperature reading at 38°F — within safe range', verified: true },
     { title: 'Prep Table', subtitle: '41°F Surface Temp',
-      recordType: 'Temperature Log', location: 'Airport Cafe',
+      recordType: 'Temperature Log', location: 'Airport Cafe', // demo
       daysBack: 1, hour: 9, minute: 15,
       description: 'Prep table surface temperature check during morning shift', verified: true },
     { title: 'Hot Hold Station', subtitle: '157°F Verified',
-      recordType: 'Temperature Log', location: 'University Dining',
+      recordType: 'Temperature Log', location: 'University Dining', // demo
       daysBack: 3, hour: 11, minute: 45,
       description: 'Hot holding station temperature verification — chicken entree', verified: true },
     { title: 'Cleaning Completed', subtitle: 'End of Shift',
-      recordType: 'Checklist', location: 'Downtown Kitchen',
+      recordType: 'Checklist', location: 'Downtown Kitchen', // demo
       daysBack: 0, hour: 16, minute: 0,
       description: 'End-of-shift deep cleaning — all surfaces sanitized and documented', verified: true },
     { title: 'Hand Wash Station', subtitle: 'Soap & Towels Stocked',
-      recordType: 'Checklist', location: 'Airport Cafe',
+      recordType: 'Checklist', location: 'Airport Cafe', // demo
       daysBack: 1, hour: 7, minute: 45,
       description: 'Hand wash station fully stocked — soap, paper towels, signage visible', verified: false },
     { title: 'Floor Drain', subtitle: 'Cleaned & Inspected',
-      recordType: 'Checklist', location: 'University Dining',
+      recordType: 'Checklist', location: 'University Dining', // demo
       daysBack: 5, hour: 14, minute: 30,
       description: 'Floor drain cleaning and inspection — no blockages found', verified: true },
     { title: 'Grease Spill', subtitle: 'Kitchen Line Area',
-      recordType: 'Incident', location: 'Downtown Kitchen',
+      recordType: 'Incident', location: 'Downtown Kitchen', // demo
       daysBack: 2, hour: 12, minute: 10,
       description: 'Grease spill near fryer station — cleaned and area cordoned off within 5 mins', verified: true },
     { title: 'Broken Tile', subtitle: 'Walk-in Entrance',
-      recordType: 'Incident', location: 'Airport Cafe',
+      recordType: 'Incident', location: 'Airport Cafe', // demo
       daysBack: 8, hour: 10, minute: 0,
       description: 'Cracked floor tile at walk-in cooler entrance — maintenance ticket filed', verified: false },
     { title: 'Receiving Inspection', subtitle: 'Produce Delivery',
-      recordType: 'Vendor Delivery', location: 'Downtown Kitchen',
+      recordType: 'Vendor Delivery', location: 'Downtown Kitchen', // demo
       daysBack: 1, hour: 6, minute: 30,
       description: 'Fresh produce delivery from Bay Area Farms — temp verified at 39°F', verified: true },
     { title: 'Receiving Inspection', subtitle: 'Meat & Poultry',
-      recordType: 'Vendor Delivery', location: 'University Dining',
+      recordType: 'Vendor Delivery', location: 'University Dining', // demo
       daysBack: 6, hour: 7, minute: 0,
       description: 'Meat delivery from Pacific Provisions — internal temp 34°F, packaging intact', verified: true },
     { title: 'Walk-in Cooler', subtitle: 'Door Seal Check',
-      recordType: 'Equipment', location: 'Downtown Kitchen',
+      recordType: 'Equipment', location: 'Downtown Kitchen', // demo
       daysBack: 4, hour: 15, minute: 20,
       description: 'Walk-in cooler door gasket inspection — seal intact, no condensation', verified: true },
     { title: 'Fire Extinguisher', subtitle: 'Monthly Check',
-      recordType: 'Equipment', location: 'Airport Cafe',
+      recordType: 'Equipment', location: 'Airport Cafe', // demo
       daysBack: 10, hour: 9, minute: 0,
       description: 'Fire extinguisher monthly inspection — pressure gauge green, tag current', verified: true },
   ];

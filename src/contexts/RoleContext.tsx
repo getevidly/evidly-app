@@ -24,10 +24,10 @@ export interface TempCoverageAssignment {
   createdAt: string;
 }
 
-const ALL_LOCATIONS: LocationAssignment[] = [
-  { locationId: '1', locationUrlId: 'downtown', locationName: 'Downtown Kitchen' },
-  { locationId: '2', locationUrlId: 'airport', locationName: 'Airport Cafe' },
-  { locationId: '3', locationUrlId: 'university', locationName: 'University Dining' },
+const ALL_LOCATIONS: LocationAssignment[] = [ // demo
+  { locationId: '1', locationUrlId: 'downtown', locationName: 'Downtown Kitchen' }, // demo
+  { locationId: '2', locationUrlId: 'airport', locationName: 'Airport Cafe' }, // demo
+  { locationId: '3', locationUrlId: 'university', locationName: 'University Dining' }, // demo
 ];
 
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
@@ -47,7 +47,7 @@ const INITIAL_TEMP_COVERAGE: TempCoverageAssignment[] = [
     userId: 'd5',
     userName: 'Michael Torres',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     grantedBy: 'Sarah Chen',
     grantedByRole: 'executive',
     startDate: '2026-02-10',

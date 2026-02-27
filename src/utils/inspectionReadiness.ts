@@ -97,9 +97,9 @@ export function calculateOrgReadiness(
 // --------------- Demo Mode Scores ---------------
 
 export const DEMO_LOCATION_SCORES: Record<string, { name: string; foodOps: number; foodDocs: number; fireOps: number; fireDocs: number }> = {
-  'downtown':    { name: 'Downtown Kitchen',   foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 },
-  'airport':     { name: 'Airport Cafe',       foodOps: 88, foodDocs: 80, fireOps: 75, fireDocs: 82 },
-  'university':  { name: 'University Dining',  foodOps: 74, foodDocs: 69, fireOps: 60, fireDocs: 67 },
+  'downtown':    { name: 'Downtown Kitchen',   foodOps: 97, foodDocs: 94, fireOps: 88, fireDocs: 95 }, // demo
+  'airport':     { name: 'Airport Cafe',       foodOps: 88, foodDocs: 80, fireOps: 75, fireDocs: 82 }, // demo
+  'university':  { name: 'University Dining',  foodOps: 74, foodDocs: 69, fireOps: 60, fireDocs: 67 }, // demo
 };
 
 export function getDemoScores(): LocationReadinessEntry[] {

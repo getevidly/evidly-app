@@ -74,7 +74,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd2', full_name: 'Sarah Chen', email: 'sarah@pacificcoast.com', phone: '(415) 555-0102',
     role: 'manager', avatar_url: null, created_at: '2024-08-20T08:00:00Z', last_active: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    location: 'Downtown Kitchen', training_completed: 10, training_total: 10, temp_logs_completed: 142, checklists_completed: 68, compliance_score: 95,
+    location: 'Downtown Kitchen', training_completed: 10, training_total: 10, temp_logs_completed: 142, checklists_completed: 68, compliance_score: 95, // demo
     certifications: [
       { id: 'c4', certification_name: 'ServSafe Manager Certification', issue_date: '2024-03-15', expiration_date: '2026-03-15', status: 'active' },
       { id: 'c5', certification_name: 'Food Handler Certificate', issue_date: '2025-06-01', expiration_date: '2027-06-01', status: 'active' },
@@ -83,7 +83,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd3', full_name: 'Maria Garcia', email: 'maria@pacificcoast.com', phone: '(415) 555-0103',
     role: 'manager', avatar_url: null, created_at: '2024-09-10T08:00:00Z', last_active: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-    location: 'Airport Cafe', training_completed: 9, training_total: 10, temp_logs_completed: 128, checklists_completed: 72, compliance_score: 88,
+    location: 'Airport Cafe', training_completed: 9, training_total: 10, temp_logs_completed: 128, checklists_completed: 72, compliance_score: 88, // demo
     certifications: [
       { id: 'c6', certification_name: 'ServSafe Manager Certification', issue_date: '2025-01-10', expiration_date: '2027-01-10', status: 'active' },
       { id: 'c7', certification_name: 'Food Handler Certificate', issue_date: '2024-11-20', expiration_date: '2026-11-20', status: 'active' },
@@ -92,7 +92,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd4', full_name: 'David Park', email: 'david@pacificcoast.com', phone: '(415) 555-0104',
     role: 'staff', avatar_url: null, created_at: '2024-11-01T08:00:00Z', last_active: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    location: 'University Dining', training_completed: 6, training_total: 8, temp_logs_completed: 64, checklists_completed: 38, compliance_score: 72,
+    location: 'University Dining', training_completed: 6, training_total: 8, temp_logs_completed: 64, checklists_completed: 38, compliance_score: 72, // demo
     certifications: [
       { id: 'c8', certification_name: 'Food Handler Certificate', issue_date: '2024-04-15', expiration_date: '2026-04-02', status: 'active' },
     ],
@@ -100,7 +100,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd5', full_name: 'Michael Torres', email: 'michael@pacificcoast.com', phone: '(415) 555-0105',
     role: 'staff', avatar_url: null, created_at: '2024-10-15T08:00:00Z', last_active: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    location: 'Airport Cafe', training_completed: 7, training_total: 8, temp_logs_completed: 96, checklists_completed: 45, compliance_score: 82,
+    location: 'Airport Cafe', training_completed: 7, training_total: 8, temp_logs_completed: 96, checklists_completed: 45, compliance_score: 82, // demo
     certifications: [
       { id: 'c9', certification_name: 'Food Handler Certificate', issue_date: '2024-02-26', expiration_date: '2026-02-26', status: 'active' },
     ],
@@ -108,7 +108,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd6', full_name: 'Emma Rodriguez', email: 'emma@pacificcoast.com', phone: '(415) 555-0106',
     role: 'staff', avatar_url: null, created_at: '2025-01-05T08:00:00Z', last_active: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    location: 'Downtown Kitchen', training_completed: 8, training_total: 8, temp_logs_completed: 72, checklists_completed: 52, compliance_score: 94,
+    location: 'Downtown Kitchen', training_completed: 8, training_total: 8, temp_logs_completed: 72, checklists_completed: 52, compliance_score: 94, // demo
     certifications: [
       { id: 'c10', certification_name: 'Food Handler Certificate', issue_date: '2025-01-10', expiration_date: '2027-01-10', status: 'active' },
       { id: 'c11', certification_name: 'Allergen Awareness', issue_date: '2025-01-15', expiration_date: '2027-01-15', status: 'active' },
@@ -117,7 +117,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd7', full_name: 'Alex Thompson', email: 'alex@pacificcoast.com', phone: '(415) 555-0107',
     role: 'staff', avatar_url: null, created_at: '2024-12-01T08:00:00Z', last_active: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-    location: 'Downtown Kitchen', training_completed: 7, training_total: 8, temp_logs_completed: 88, checklists_completed: 41, compliance_score: 90,
+    location: 'Downtown Kitchen', training_completed: 7, training_total: 8, temp_logs_completed: 88, checklists_completed: 41, compliance_score: 90, // demo
     certifications: [
       { id: 'c12', certification_name: 'Food Handler Certificate', issue_date: '2024-12-10', expiration_date: '2026-12-10', status: 'active' },
     ],
@@ -125,7 +125,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd8', full_name: 'Lisa Wang', email: 'lisa@pacificcoast.com', phone: '(415) 555-0108',
     role: 'staff', avatar_url: null, created_at: '2025-01-20T08:00:00Z', last_active: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-    location: 'Airport Cafe', training_completed: 5, training_total: 8, temp_logs_completed: 34, checklists_completed: 22, compliance_score: 76,
+    location: 'Airport Cafe', training_completed: 5, training_total: 8, temp_logs_completed: 34, checklists_completed: 22, compliance_score: 76, // demo
     certifications: [
       { id: 'c13', certification_name: 'Food Handler Certificate', issue_date: '2025-01-25', expiration_date: '2027-01-25', status: 'active' },
     ],
@@ -133,7 +133,7 @@ const DEMO_MEMBERS: TeamMember[] = [
   {
     id: 'd9', full_name: 'James Wilson', email: 'james@pacificcoast.com', phone: null,
     role: 'staff', avatar_url: null, created_at: '2025-02-01T08:00:00Z', last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    location: 'University Dining', training_completed: 3, training_total: 8, temp_logs_completed: 18, checklists_completed: 12, compliance_score: 65,
+    location: 'University Dining', training_completed: 3, training_total: 8, temp_logs_completed: 18, checklists_completed: 12, compliance_score: 65, // demo
     certifications: [
       { id: 'c14', certification_name: 'Food Handler Certificate', issue_date: '2025-02-05', expiration_date: '2027-02-05', status: 'active' },
     ],

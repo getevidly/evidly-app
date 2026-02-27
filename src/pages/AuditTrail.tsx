@@ -12,6 +12,7 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { format, subDays } from 'date-fns';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { getScoreColor } from '../lib/complianceScoring';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 
@@ -50,12 +51,12 @@ interface CustodyEntry {
 
 // ── Constants ──────────────────────────────────────────────────────
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
 const USERS = ['Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres'];
 const HISTORY_KEY = 'evidly_audit_trail_history';
 
 const EQUIPMENT = [
-  { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 },
+  { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 }, // demo
   { name: 'Walk-in Freezer', type: 'Freezer', min: -Infinity, max: 0 },
   { name: 'Prep Cooler', type: 'Cooler', min: 34, max: 41 },
   { name: 'Hot Hold Unit #1', type: 'Hot Hold', min: 135, max: 165 },
@@ -355,6 +356,7 @@ const statusBg = (s: string) => {
 
 export function AuditTrail() {
   const reportRef = useRef<HTMLDivElement>(null);
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Config state
@@ -399,9 +401,19 @@ export function AuditTrail() {
   const loc = locationFilter === 'all' ? null : locationFilter;
   const enabledModules = modules.filter(m => m.enabled).map(m => m.id);
 
-  // Generate report data
+  // Generate report data (only in demo mode; live mode would fetch from database)
   const reportData = useMemo(() => {
     if (!generated) return null;
+    if (!isDemoMode) return {
+      tempLogs: [] as any[],
+      checklists: [] as any[],
+      incidents: [] as any[],
+      equipment: [] as any[],
+      vendors: [] as any[],
+      documents: [] as any[],
+      complianceScores: [] as any[],
+      auditActivity: [] as any[],
+    };
     return {
       tempLogs: enabledModules.includes('temp_logs') ? generateTempLogs(days, loc) : [],
       checklists: enabledModules.includes('checklists') ? generateChecklists(days, loc) : [],
@@ -413,7 +425,7 @@ export function AuditTrail() {
       auditActivity: enabledModules.includes('audit_activity') ? generateAuditActivity(days) : [],
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [generated]);
+  }, [generated, isDemoMode]);
 
   // Compute hash when report generates
   useEffect(() => {

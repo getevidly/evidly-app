@@ -33,7 +33,7 @@ const INDUSTRY_TYPES = {
   HIGHER_EDUCATION: {
     code: 'HIGHER_EDUCATION',
     label: 'Higher Education',
-    subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'],
+    subtypes: ['University Dining Hall', 'College Cafeteria', 'Campus Food Court'], // demo
     weights: { foodSafety: 60, facilitySafety: 40 }
   }
 };

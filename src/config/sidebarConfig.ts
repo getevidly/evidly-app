@@ -57,7 +57,7 @@ const I: Record<string, NavItem> = {
   },
   incidentsViewOnly: {
     id: 'incidents', label: 'Incidents 👁', path: '/incidents', icon: '⚠️',
-    roles: [], description: '(View) Review incident reports and compliance issues across locations.',
+    roles: [], description: '(View) Review incident reports and compliance issues across locations.', // demo
   },
   temperaturesViewOnly: {
     id: 'temperatures', label: 'Temperature Logs 👁', path: '/temp-logs', icon: '🌡️',

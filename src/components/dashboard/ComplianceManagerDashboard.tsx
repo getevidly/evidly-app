@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Flame, CalendarDays, ClipboardCheck,
@@ -55,8 +55,8 @@ const COMPLIANCE_ALERTS: AlertBannerItem[] = [
   {
     id: 'ca1',
     severity: 'critical',
-    message: 'University Dining \u2014 3 open major violations require reinspection within 30 days',
-    location: 'University Dining',
+    message: 'University Dining \u2014 3 open major violations require reinspection within 30 days', // demo
+    location: 'University Dining', // demo
     pillar: 'Food Safety',
     actionLabel: 'View Details',
     route: '/dashboard?location=university',
@@ -64,8 +64,8 @@ const COMPLIANCE_ALERTS: AlertBannerItem[] = [
   {
     id: 'ca2',
     severity: 'warning',
-    message: 'Airport Cafe approaching satisfactory threshold \u2014 9 violation points (limit: 13)',
-    location: 'Airport Cafe',
+    message: 'Airport Cafe approaching satisfactory threshold \u2014 9 violation points (limit: 13)', // demo
+    location: 'Airport Cafe', // demo
     pillar: 'Food Safety',
     actionLabel: 'Review',
     route: '/dashboard?location=airport',
@@ -116,15 +116,15 @@ const COMPLIANCE_PRIORITIES: PriorityItem[] = [
 // ================================================================
 
 const DEMO_INSPECTIONS = [
-  { location: 'Downtown Kitchen', type: 'Food Safety \u2014 Annual', agency: 'Fresno County DPH', date: 'Mar 15, 2026', status: 'scheduled' as const },
-  { location: 'Airport Cafe', type: 'Fire Suppression Inspection', agency: 'Merced County Fire', date: 'Feb 28, 2026', status: 'scheduled' as const },
-  { location: 'University Dining', type: 'Food Safety \u2014 Reinspection', agency: 'Stanislaus County DEH', date: 'Feb 22, 2026', status: 'urgent' as const },
+  { location: 'Downtown Kitchen', type: 'Food Safety \u2014 Annual', agency: 'Fresno County DPH', date: 'Mar 15, 2026', status: 'scheduled' as const }, // demo
+  { location: 'Airport Cafe', type: 'Fire Suppression Inspection', agency: 'Merced County Fire', date: 'Feb 28, 2026', status: 'scheduled' as const }, // demo
+  { location: 'University Dining', type: 'Food Safety \u2014 Reinspection', agency: 'Stanislaus County DEH', date: 'Feb 22, 2026', status: 'urgent' as const }, // demo
 ];
 
 const DEMO_SELF_INSPECTIONS = [
-  { location: 'Downtown Kitchen', lastCompleted: 'Feb 10, 2026', score: '94%', nextDue: 'Mar 10, 2026', status: 'current' as const },
-  { location: 'Airport Cafe', lastCompleted: 'Jan 28, 2026', score: '87%', nextDue: 'Feb 28, 2026', status: 'due_soon' as const },
-  { location: 'University Dining', lastCompleted: 'Dec 15, 2025', score: '72%', nextDue: 'Jan 15, 2026', status: 'overdue' as const },
+  { location: 'Downtown Kitchen', lastCompleted: 'Feb 10, 2026', score: '94%', nextDue: 'Mar 10, 2026', status: 'current' as const }, // demo
+  { location: 'Airport Cafe', lastCompleted: 'Jan 28, 2026', score: '87%', nextDue: 'Feb 28, 2026', status: 'due_soon' as const }, // demo
+  { location: 'University Dining', lastCompleted: 'Dec 15, 2025', score: '72%', nextDue: 'Jan 15, 2026', status: 'overdue' as const }, // demo
 ];
 
 const DEMO_REGULATORY = [
@@ -244,10 +244,10 @@ export default function ComplianceManagerDashboard() {
           </div>
           <div className="space-y-2">
             {[
-              { name: 'HACCP Plan — Downtown Kitchen', status: 'current', expires: 'Sep 2026' },
+              { name: 'HACCP Plan — Downtown Kitchen', status: 'current', expires: 'Sep 2026' }, // demo
               { name: 'Food Handler Permits (12 staff)', status: 'current', expires: 'Various' },
               { name: 'Fire Suppression Cert — Airport', status: 'expiring', expires: 'Mar 15, 2026' },
-              { name: 'Health Permit — University Dining', status: 'current', expires: 'Dec 2026' },
+              { name: 'Health Permit — University Dining', status: 'current', expires: 'Dec 2026' }, // demo
             ].map((doc, idx) => (
               <button
                 key={idx}
@@ -521,7 +521,7 @@ export default function ComplianceManagerDashboard() {
         >
           <AlertCircle size={20} className="text-red-500 shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-red-900">University Dining — 3 open major violations</p>
+            <p className="text-sm font-semibold text-red-900">University Dining — 3 open major violations</p> {/* demo */}
             <p className="text-xs text-red-700 mt-0.5">Reinspection due Feb 22 · Stanislaus County DEH</p>
           </div>
           <span className="text-xs font-semibold px-3 py-1.5 rounded-md text-white shrink-0" style={{ backgroundColor: '#dc2626' }}>

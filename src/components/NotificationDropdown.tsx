@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, FileText, CheckCircle, Clock, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
@@ -79,7 +79,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
       {
         id: 'demo-2',
         icon: 'alert',
-        message: '3 temperature checks missed — Airport Cafe',
+        message: '3 temperature checks missed — Airport Cafe', // demo
         time: new Date(Date.now() - 4 * 60 * 60 * 1000),
         read: false,
         link: '/temp-logs',

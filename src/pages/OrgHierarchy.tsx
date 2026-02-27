@@ -43,7 +43,7 @@ const orgTree: OrgTreeNode = {
       children: [
         {
           id: 'downtown-kitchen',
-          name: 'Downtown Kitchen',
+          name: 'Downtown Kitchen', // demo
           code: 'DK',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.gradeDisplay,
@@ -54,7 +54,7 @@ const orgTree: OrgTreeNode = {
         },
         {
           id: 'airport-cafe',
-          name: 'Airport Cafe',
+          name: 'Airport Cafe', // demo
           code: 'AC',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.airport.foodSafety.gradeDisplay,
@@ -65,7 +65,7 @@ const orgTree: OrgTreeNode = {
         },
         {
           id: 'university-dining',
-          name: 'University Dining',
+          name: 'University Dining', // demo
           code: 'UD',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.university.foodSafety.gradeDisplay,
@@ -96,7 +96,7 @@ const OPEN_ITEMS_LIST: Record<string, string[]> = {
     'Hood cleaning certificate expired Feb 1',
     'Fire extinguisher monthly check overdue',
     'Walk-in Cooler #2 temp above 41°F (3 days)',
-    'Opening checklist incomplete Feb 4',
+    'Opening checklist incomplete Feb 4', // demo
   ],
   'university-dining': [
     'Health permit renewal overdue',

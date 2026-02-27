@@ -890,8 +890,8 @@ export function HACCP() {
   }, [isDemoMode, profile?.organization_id]);
 
   // Use live data or demo data
-  const allPlans = isDemoMode ? HACCP_PLANS : livePlans.length > 0 ? livePlans : HACCP_PLANS;
-  const allCorrectiveActions = isDemoMode ? CORRECTIVE_ACTIONS : liveCorrectiveActions.length > 0 ? liveCorrectiveActions : CORRECTIVE_ACTIONS;
+  const allPlans = isDemoMode ? HACCP_PLANS : livePlans;
+  const allCorrectiveActions = isDemoMode ? CORRECTIVE_ACTIONS : liveCorrectiveActions;
 
   // Aggregate stats — filtered by selected location
   const locId = selectedLocation !== 'all' ? LOCATION_ID_MAP[selectedLocation] : null;

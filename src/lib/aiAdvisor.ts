@@ -35,37 +35,37 @@ export interface ComplianceContext {
   intelligenceFeed?: string;
 }
 
-const DEMO_CONTEXT: ComplianceContext = {
+const DEMO_CONTEXT: ComplianceContext = { // demo
   orgName: 'Pacific Coast Dining',
   locations: [
-    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, facilitySafety: 88, stateCode: 'CA', county: 'Fresno County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Fresno County'] },
-    { name: 'Airport Cafe', score: 69, foodSafety: 72, facilitySafety: 62, stateCode: 'CA', county: 'Merced County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Merced County'] },
-    { name: 'University Dining', score: 56, foodSafety: 62, facilitySafety: 55, stateCode: 'CA', county: 'Stanislaus County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Stanislaus County', 'City of Modesto'] },
+    { name: 'Downtown Kitchen', score: 91, foodSafety: 94, facilitySafety: 88, stateCode: 'CA', county: 'Fresno County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Fresno County'] }, // demo
+    { name: 'Airport Cafe', score: 69, foodSafety: 72, facilitySafety: 62, stateCode: 'CA', county: 'Merced County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Merced County'] }, // demo
+    { name: 'University Dining', score: 56, foodSafety: 62, facilitySafety: 55, stateCode: 'CA', county: 'Stanislaus County', jurisdictionChain: ['Federal (FDA)', 'California (CalCode)', 'Stanislaus County', 'City of Modesto'] }, // demo
   ],
   recentAlerts: [
-    'Airport Cafe Walk-in Cooler #2 above 41°F',
-    'University Dining health permit expired',
-    '3 missed temperature checks at Airport Cafe',
+    'Airport Cafe Walk-in Cooler #2 above 41°F', // demo
+    'University Dining health permit expired', // demo
+    '3 missed temperature checks at Airport Cafe', // demo
   ],
   overdueItems: [
-    'Fire suppression inspection — University Dining (4 months overdue)',
-    'Grease trap service — University Dining (2 months overdue)',
-    'Fire suppression inspection — Airport Cafe',
-    'Valley Fire COI expired — Airport Cafe',
+    'Fire suppression inspection — University Dining (4 months overdue)', // demo
+    'Grease trap service — University Dining (2 months overdue)', // demo
+    'Fire suppression inspection — Airport Cafe', // demo
+    'Valley Fire COI expired — Airport Cafe', // demo
   ],
   upcomingDeadlines: [
-    'Hood cleaning — University Dining (Feb 15)',
-    'Pest Control — Airport Cafe (Feb 28)',
+    'Hood cleaning — University Dining (Feb 15)', // demo
+    'Pest Control — Airport Cafe (Feb 28)', // demo
     'Michael Torres Food Handler cert expires Feb 26',
   ],
   copilotInsights: [
-    '[CRITICAL] Airport Cafe: Walk-in Cooler #2 had 3 out-of-range readings this week (39.2°F, 39.8°F, 40.1°F) — likely compressor issue',
-    '[CRITICAL] University Dining: Health permit expired 12 days ago — renewal overdue',
-    '[WARNING] Airport Cafe: Prep Line Fridge temperature trending up — projected to exceed threshold in 12 days',
-    '[WARNING] Airport Cafe: Hood cleaning overdue by 5 days (NFPA 96)',
-    '[WARNING] University Dining: Checklist completion gaps — 5 missed days in 30 days, mostly Saturdays',
-    '[INFO] Downtown Kitchen: Fire suppression warranty expires in 45 days — schedule pre-warranty inspection',
-    '[INFO] Downtown Kitchen: Weekly summary — 91% score (+3%), all temps in range, 7/7 checklists done',
+    '[CRITICAL] Airport Cafe: Walk-in Cooler #2 had 3 out-of-range readings this week (39.2°F, 39.8°F, 40.1°F) — likely compressor issue', // demo
+    '[CRITICAL] University Dining: Health permit expired 12 days ago — renewal overdue', // demo
+    '[WARNING] Airport Cafe: Prep Line Fridge temperature trending up — projected to exceed threshold in 12 days', // demo
+    '[WARNING] Airport Cafe: Hood cleaning overdue by 5 days (NFPA 96)', // demo
+    '[WARNING] University Dining: Checklist completion gaps — 5 missed days in 30 days, mostly Saturdays', // demo
+    '[INFO] Downtown Kitchen: Fire suppression warranty expires in 45 days — schedule pre-warranty inspection', // demo
+    '[INFO] Downtown Kitchen: Weekly summary — 91% score (+3%), all temps in range, 7/7 checklists done', // demo
   ],
   intelligenceFeed: formatDemoIntelForContext(DEMO_INTELLIGENCE_INSIGHTS.slice(0, 5)),
 };

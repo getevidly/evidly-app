@@ -184,7 +184,7 @@ const VENDOR_DOCUMENTS: Record<string, VendorDocument[]> = {
 // ── Valley Fire Systems post-service document automation timeline ───
 
 const VALLEY_FIRE_TIMELINE: TimelineStep[] = [
-  { day: 0, label: 'Service Performed', description: 'Fire suppression inspection completed at Airport Cafe', date: '2026-01-20', status: 'completed' },
+  { day: 0, label: 'Service Performed', description: 'Fire suppression inspection completed at Airport Cafe', date: '2026-01-20', status: 'completed' }, // demo
   { day: 2, label: 'Auto-Send Upload Link', description: 'Secure upload link sent to mike@valleyfire.com requesting inspection report & Ansul tags', date: '2026-01-22', status: 'sent' },
   { day: 3, label: 'First Reminder', description: 'Reminder email sent — documents not yet uploaded', date: '2026-01-23', status: 'sent' },
   { day: 5, label: 'Second Reminder', description: 'Follow-up reminder sent — still awaiting documents', date: '2026-01-27', status: 'sent' },
@@ -561,25 +561,25 @@ export function Vendors() {
               {(() => {
                 const VENDOR_EQUIPMENT_MAP: Record<string, { name: string; type: string; location: string; serviceType: string }[]> = {
                   'abc-fire-protection': [
-                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Hood Cleaning' },
-                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Hood Cleaning' },
-                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'University Dining', serviceType: 'Hood Cleaning' },
-                    { name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan', location: 'Downtown Kitchen', serviceType: 'Cleaning (with hood)' },
-                    { name: 'Upblast Exhaust Fan', type: 'Exhaust Fan', location: 'Airport Cafe', serviceType: 'Cleaning (with hood)' },
-                    { name: 'Upblast Exhaust Fan — Main Line', type: 'Exhaust Fan', location: 'University Dining', serviceType: 'Cleaning (with hood)' },
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Hood Cleaning' }, // demo
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Hood Cleaning' }, // demo
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'University Dining', serviceType: 'Hood Cleaning' }, // demo
+                    { name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan', location: 'Downtown Kitchen', serviceType: 'Cleaning (with hood)' }, // demo
+                    { name: 'Upblast Exhaust Fan', type: 'Exhaust Fan', location: 'Airport Cafe', serviceType: 'Cleaning (with hood)' }, // demo
+                    { name: 'Upblast Exhaust Fan — Main Line', type: 'Exhaust Fan', location: 'University Dining', serviceType: 'Cleaning (with hood)' }, // demo
                   ],
                   'cleanair-hvac': [
-                    { name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' },
-                    { name: 'Walk-in Freezer', type: 'Walk-in Freezer', location: 'Downtown Kitchen', serviceType: 'Maintenance' },
-                    { name: 'Commercial Dishwasher', type: 'Commercial Dishwasher', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' },
-                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Downtown Kitchen', serviceType: 'Cleaning & Service' },
-                    { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Airport Cafe', serviceType: 'Maintenance' },
-                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Airport Cafe', serviceType: 'Cleaning & Service' },
+                    { name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' }, // demo
+                    { name: 'Walk-in Freezer', type: 'Walk-in Freezer', location: 'Downtown Kitchen', serviceType: 'Maintenance' }, // demo
+                    { name: 'Commercial Dishwasher', type: 'Commercial Dishwasher', location: 'Downtown Kitchen', serviceType: 'Repair & Maintenance' }, // demo
+                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Downtown Kitchen', serviceType: 'Cleaning & Service' }, // demo
+                    { name: 'Walk-in Cooler', type: 'Walk-in Cooler', location: 'Airport Cafe', serviceType: 'Maintenance' }, // demo
+                    { name: 'Ice Machine', type: 'Ice Machine', location: 'Airport Cafe', serviceType: 'Cleaning & Service' }, // demo
                   ],
                   'valley-fire-systems': [
-                    { name: 'Fire Suppression System', type: 'Fire Suppression System', location: 'Downtown Kitchen', serviceType: 'Semi-Annual Inspection' },
-                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Fire Suppression Inspection' },
-                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Fire Suppression Inspection' },
+                    { name: 'Fire Suppression System', type: 'Fire Suppression System', location: 'Downtown Kitchen', serviceType: 'Semi-Annual Inspection' }, // demo
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Downtown Kitchen', serviceType: 'Fire Suppression Inspection' }, // demo
+                    { name: 'Hood Ventilation System', type: 'Hood System', location: 'Airport Cafe', serviceType: 'Fire Suppression Inspection' }, // demo
                   ],
                 };
                 const vendorSlug = selectedVendor.companyName.toLowerCase().replace(/\s+/g, '-');
@@ -821,7 +821,7 @@ export function Vendors() {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                     <div>
-                      <h2 className="text-lg font-semibold">Post-Service Document Request — Airport Cafe</h2>
+                      <h2 className="text-lg font-semibold">Post-Service Document Request — Airport Cafe</h2> {/* demo */}
                       <p className="text-sm text-gray-600 mt-1">Fire suppression inspection on Jan 20, 2026 — awaiting documentation upload</p>
                     </div>
                     <span className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">In Progress</span>

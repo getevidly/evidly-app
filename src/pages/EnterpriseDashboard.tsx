@@ -199,9 +199,9 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
   }, [isDemoMode, profile?.organization_id]);
 
   // Use live or demo data
-  const tenants = !isDemoMode && liveTenants.length > 0 ? liveTenants : enterpriseTenants;
-  const alerts = !isDemoMode && liveAlerts.length > 0 ? liveAlerts : enterpriseAlerts;
-  const auditLog = !isDemoMode && liveAuditLog.length > 0 ? liveAuditLog : enterpriseAuditLog;
+  const tenants = isDemoMode ? enterpriseTenants : liveTenants;
+  const alerts = isDemoMode ? enterpriseAlerts : liveAlerts;
+  const auditLog = isDemoMode ? enterpriseAuditLog : liveAuditLog;
   const trendData = enterpriseTrendData; // always demo for trend charts
 
   const totalLocations = enterpriseTenants.reduce((s, t) => s + t.stats.totalLocations, 0);
@@ -620,7 +620,7 @@ const COMMON_ISSUES: Record<string, { icon: typeof Thermometer; label: string; p
   region: [
     { icon: Wrench, label: 'Hood cleaning overdue', pct: 14 },
     { icon: Thermometer, label: 'Cold holding violations', pct: 7 },
-    { icon: ClipboardCheck, label: 'Opening checklist skipped', pct: 6 },
+    { icon: ClipboardCheck, label: 'Opening checklist skipped', pct: 6 }, // demo
   ],
   district: [
     { icon: Thermometer, label: 'Walk-in cooler temp drift', pct: 11 },
@@ -629,7 +629,7 @@ const COMMON_ISSUES: Record<string, { icon: typeof Thermometer; label: string; p
   ],
   location: [
     { icon: Thermometer, label: 'Missed temp check windows', pct: 15 },
-    { icon: ClipboardCheck, label: 'Closing checklist incomplete', pct: 10 },
+    { icon: ClipboardCheck, label: 'Closing checklist incomplete', pct: 10 }, // demo
   ],
 };
 

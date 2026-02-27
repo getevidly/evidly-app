@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Radio, Thermometer, Battery, BatteryWarning, Wifi, WifiOff,
@@ -8,6 +8,7 @@ import {
   iotSensors, iotSensorAlerts, iotSparklines,
   type IoTSensor, type IoTSparklinePoint,
 } from '../data/demoData';
+import { useDemo } from '../contexts/DemoContext';
 
 const PRIMARY = '#1e4d6b';
 
@@ -52,18 +53,20 @@ function MiniSparkline({ data, width = 80, height = 20 }: { data: IoTSparklinePo
 
 export function SensorMonitorWidget({ locationFilter }: { locationFilter?: string }) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
 
   const sensors = useMemo(() => {
+    if (!isDemoMode) return [];
     if (!locationFilter || locationFilter === 'all') return iotSensors;
-    const locMap: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Campus' };
+    const locMap: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Campus' }; // demo
     const locName = locMap[locationFilter] || locationFilter;
     return iotSensors.filter(s => s.locationName === locName);
-  }, [locationFilter]);
+  }, [locationFilter, isDemoMode]);
 
   const online = sensors.filter(s => s.status === 'online').length;
   const violations = sensors.filter(s => s.status !== 'offline' && complianceColor(s.currentTempF, s.zone) === '#ef4444').length;
   const warnings = sensors.filter(s => s.status !== 'offline' && complianceColor(s.currentTempF, s.zone) === '#f59e0b').length;
-  const activeAlerts = iotSensorAlerts.filter(a => !a.acknowledged).length;
+  const activeAlerts = isDemoMode ? iotSensorAlerts.filter(a => !a.acknowledged).length : 0;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>

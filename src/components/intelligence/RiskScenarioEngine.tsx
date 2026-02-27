@@ -32,7 +32,7 @@ const SCENARIOS: Scenario[] = [
     label: 'Failed Inspection — Cost of Inaction',
     description: 'What happens if violations from a failed inspection are not resolved before reinspection.',
     contextFields: [
-      { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. University Dining',            type: 'text',     required: true },
+      { key: 'location',        label: 'Location That Failed',        placeholder: 'e.g. University Dining',            type: 'text',     required: true }, // demo
       { key: 'violationType',   label: 'Violation Type',              placeholder: '',                                  type: 'select',   required: true,
         options: ['Food Safety — Major Violation', 'Food Safety — Multiple Minor Violations', 'Facility Safety — NFPA 96 (2024) Non-Compliance', 'Both Food and Facility Safety', 'Permit / Documentation'] },
       { key: 'reinspectionDate',label: 'Reinspection Date',           placeholder: 'Select date',                       type: 'date',     required: true },
@@ -59,7 +59,7 @@ For each pathway: dollar range, probability, timeline, and single action that pr
     contextFields: [
       { key: 'expiringPermits',   label: 'Which Permits Are Expiring?',             placeholder: 'e.g. Health Permit, Hood Cleaning Certificate, Fire Suppression Inspection', type: 'textarea', required: true },
       { key: 'daysUntilExpiry',   label: 'Days Until Earliest Expiration',          placeholder: 'e.g. 14',          type: 'text',   required: true },
-      { key: 'affectedLocations', label: 'Affected Location(s)',                    placeholder: 'e.g. Airport Cafe', type: 'text',   required: true },
+      { key: 'affectedLocations', label: 'Affected Location(s)',                    placeholder: 'e.g. Airport Cafe', type: 'text',   required: true }, // demo
       { key: 'dailyRevenue',      label: 'Combined Daily Revenue — Affected Locations', placeholder: 'e.g. 5000',    type: 'text',   required: false },
     ],
     aiPromptModifier: `RISK SCENARIO: PERMIT EXPIRATION CASCADE.

@@ -103,21 +103,21 @@ export interface DashboardPayload {
 
 // ── Demo Data ──────────────────────────────────────────
 
-const DEMO_TASKS: TaskItem[] = [
-  { id: 't1', label: 'Opening checklist — Downtown Kitchen', status: 'done', time: '6:15 AM', route: '/checklists', reading: '12/12 items' },
-  { id: 't2', label: 'Cooler #1 temperature log', status: 'done', time: '7:02 AM', route: '/temp-logs', reading: '37.8°F' },
-  { id: 't3', label: 'Midday checklist — Downtown Kitchen', status: 'in_progress', time: '4/8 items', route: '/checklists' },
+const DEMO_TASKS: TaskItem[] = [ // demo
+  { id: 't1', label: 'Opening checklist — Downtown Kitchen', status: 'done', time: '6:15 AM', route: '/checklists', reading: '12/12 items' }, // demo
+  { id: 't2', label: 'Cooler #1 temperature log', status: 'done', time: '7:02 AM', route: '/temp-logs', reading: '37.8°F' }, // demo
+  { id: 't3', label: 'Midday checklist — Downtown Kitchen', status: 'in_progress', time: '4/8 items', route: '/checklists' }, // demo
   { id: 't4', label: 'Prep cooler manual temp log', status: 'overdue', time: 'Due by 10 AM', route: '/temp-logs' },
-  { id: 't5', label: 'Review incident report #247', status: 'pending', time: 'Due today', route: '/incidents' },
-  { id: 't6', label: 'Closing checklist — Downtown Kitchen', status: 'pending', time: 'Due by 10 PM', route: '/checklists' },
+  { id: 't5', label: 'Review incident report #247', status: 'pending', time: 'Due today', route: '/incidents' }, // demo
+  { id: 't6', label: 'Closing checklist — Downtown Kitchen', status: 'pending', time: 'Due by 10 PM', route: '/checklists' }, // demo
 ];
 
-const DEMO_DEADLINES: DeadlineItem[] = [
-  { id: 'd1', label: 'Fire suppression certificate', location: 'University Dining', dueDate: 'Feb 26', daysLeft: 10, severity: 'critical', route: '/documents' },
-  { id: 'd2', label: 'Hood cleaning service', location: 'Airport Cafe', dueDate: 'Feb 19', daysLeft: 3, severity: 'critical', route: '/vendors' },
-  { id: 'd3', label: 'Food handler cert renewal', location: 'Airport Cafe', dueDate: 'Feb 28', daysLeft: 12, severity: 'warning', route: '/team' },
-  { id: 'd4', label: 'Pest control report upload', location: 'Airport Cafe', dueDate: 'Mar 1', daysLeft: 13, severity: 'warning', route: '/documents' },
-  { id: 'd5', label: 'Health permit renewal', location: 'Downtown Kitchen', dueDate: 'Apr 10', daysLeft: 53, severity: 'normal', route: '/documents' },
+const DEMO_DEADLINES: DeadlineItem[] = [ // demo
+  { id: 'd1', label: 'Fire suppression certificate', location: 'University Dining', dueDate: 'Feb 26', daysLeft: 10, severity: 'critical', route: '/documents' }, // demo
+  { id: 'd2', label: 'Hood cleaning service', location: 'Airport Cafe', dueDate: 'Feb 19', daysLeft: 3, severity: 'critical', route: '/vendors' }, // demo
+  { id: 'd3', label: 'Food handler cert renewal', location: 'Airport Cafe', dueDate: 'Feb 28', daysLeft: 12, severity: 'warning', route: '/team' }, // demo
+  { id: 'd4', label: 'Pest control report upload', location: 'Airport Cafe', dueDate: 'Mar 1', daysLeft: 13, severity: 'warning', route: '/documents' }, // demo
+  { id: 'd5', label: 'Health permit renewal', location: 'Downtown Kitchen', dueDate: 'Apr 10', daysLeft: 53, severity: 'normal', route: '/documents' }, // demo
 ];
 
 /**
@@ -152,14 +152,14 @@ function computeMissedTempLogs(): { total: number; byLocation: Record<string, nu
   const operatingStartToday = todayAt(OPERATING_START, 0);
 
   // Demo equipment (mirrors TempLogs demo data, Ice Machine excluded)
-  const demoEquipment = [
-    { name: 'Walk-in Cooler #1', location: 'Downtown Kitchen', lastCheck: todayAt(6, 0) },
-    { name: 'Walk-in Cooler #2', location: 'Downtown Kitchen', lastCheck: todayAt(6, 15) },
-    { name: 'Walk-in Freezer',   location: 'Downtown Kitchen', lastCheck: todayAt(6, 30) },
-    { name: 'Prep Table Cooler', location: 'Airport Cafe',     lastCheck: todayAt(6, 45) },
-    { name: 'Hot Holding Unit',  location: 'University Dining', lastCheck: new Date(now.getTime() - 18 * 60 * 60 * 1000) },
-    { name: 'Salad Bar',         location: 'Airport Cafe',      lastCheck: new Date(now.getTime() - 16 * 60 * 60 * 1000) },
-    { name: 'Blast Chiller',     location: 'University Dining', lastCheck: new Date(now.getTime() - 14 * 60 * 60 * 1000) },
+  const demoEquipment = [ // demo
+    { name: 'Walk-in Cooler #1', location: 'Downtown Kitchen', lastCheck: todayAt(6, 0) }, // demo
+    { name: 'Walk-in Cooler #2', location: 'Downtown Kitchen', lastCheck: todayAt(6, 15) }, // demo
+    { name: 'Walk-in Freezer',   location: 'Downtown Kitchen', lastCheck: todayAt(6, 30) }, // demo
+    { name: 'Prep Table Cooler', location: 'Airport Cafe',     lastCheck: todayAt(6, 45) }, // demo
+    { name: 'Hot Holding Unit',  location: 'University Dining', lastCheck: new Date(now.getTime() - 18 * 60 * 60 * 1000) }, // demo
+    { name: 'Salad Bar',         location: 'Airport Cafe',      lastCheck: new Date(now.getTime() - 16 * 60 * 60 * 1000) }, // demo
+    { name: 'Blast Chiller',     location: 'University Dining', lastCheck: new Date(now.getTime() - 14 * 60 * 60 * 1000) }, // demo
   ];
 
   const byLocation: Record<string, number> = {};
@@ -178,10 +178,10 @@ function computeMissedTempLogs(): { total: number; byLocation: Record<string, nu
   return { total, byLocation };
 }
 
-const LOC_ROUTE: Record<string, string> = {
-  'University Dining': '/temp-logs?location=university',
-  'Airport Cafe':      '/temp-logs?location=airport',
-  'Downtown Kitchen':  '/temp-logs?location=downtown',
+const LOC_ROUTE: Record<string, string> = { // demo
+  'University Dining': '/temp-logs?location=university', // demo
+  'Airport Cafe':      '/temp-logs?location=airport', // demo
+  'Downtown Kitchen':  '/temp-logs?location=downtown', // demo
 };
 
 function buildDemoImpact(): ImpactItem[] {
@@ -205,19 +205,19 @@ function buildDemoImpact(): ImpactItem[] {
 
   // Other (non-temp) impact items — always included
   items.push(
-    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Facility Safety', severity: 'critical', route: '/vendors' },
-    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Facility Safety', severity: 'critical', route: '/documents' },
-    { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' },
-    { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' },
+    { id: 'i2', action: 'Schedule overdue hood cleaning', points: 5, location: 'Airport Cafe', pillar: 'Facility Safety', severity: 'critical', route: '/vendors' }, // demo
+    { id: 'i3', action: 'Upload fire suppression certificate', points: 4, location: 'University Dining', pillar: 'Facility Safety', severity: 'critical', route: '/documents' }, // demo
+    { id: 'i4', action: 'Complete opening checklists (3 missed)', points: 3, location: 'University Dining', pillar: 'Food Safety', severity: 'warning', route: '/checklists?location=university' }, // demo
+    { id: 'i5', action: 'Log prep cooler temperature', points: 2, location: 'Downtown Kitchen', pillar: 'Food Safety', severity: 'warning', route: '/temp-logs' }, // demo
   );
 
   return items;
 }
 
-const DEMO_ALERTS: AlertItem[] = [
-  { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' },
-  { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' },
-  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Facility Safety', actionLabel: 'Schedule', route: '/equipment' },
+const DEMO_ALERTS: AlertItem[] = [ // demo
+  { id: 'a1', severity: 'critical', message: 'University Dining score dropped below 70 — would fail inspection', location: 'University Dining', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' }, // demo
+  { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' }, // demo
+  { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Airport Cafe', pillar: 'Facility Safety', actionLabel: 'Schedule', route: '/equipment' }, // demo
   // Intelligence-sourced alerts (critical/high insights)
   ...DEMO_INTELLIGENCE_INSIGHTS
     .filter(i => i.impact_level === 'critical' || i.impact_level === 'high')

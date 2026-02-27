@@ -100,9 +100,9 @@ const LEGISLATIVE_COLUMNS: { status: LegislativeItem['status']; label: string }[
 
 // ── CLIENT LOCATION COUNTIES (for "affects your locations" matching) ──
 const CLIENT_COUNTIES: Record<string, string> = {
-  fresno: 'Downtown Kitchen',
-  merced: 'Airport Cafe',
-  stanislaus: 'University Dining',
+  fresno: 'Downtown Kitchen', // demo
+  merced: 'Airport Cafe', // demo
+  stanislaus: 'University Dining', // demo
   mariposa: 'Yosemite Concession',
 };
 

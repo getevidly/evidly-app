@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wrench, AlertTriangle, DollarSign, Calendar, ArrowRight } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
@@ -34,7 +34,7 @@ const ALL_DATA: EquipmentSummary = {
   alerts: [
     { text: 'Commercial Dishwasher \u2014 past 8-yr useful life, replacement recommended', severity: 'red' },
     { text: 'Hood Ventilation \u2014 warranty expired, fire suppression inspection overdue at Airport', severity: 'amber' },
-    { text: 'Exhaust Fan \u2014 bearing noise reported at Airport Cafe', severity: 'amber' },
+    { text: 'Exhaust Fan \u2014 bearing noise reported at Airport Cafe', severity: 'amber' }, // demo
   ],
 };
 

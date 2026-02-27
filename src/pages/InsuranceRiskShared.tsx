@@ -13,7 +13,7 @@ const DEMO_RISK_DATA = {
   riskTier: 'Preferred Risk' as const,
   tierColor: '#22c55e',
   tierBg: '#f0fdf4',
-  locationName: 'Downtown Kitchen',
+  locationName: 'Downtown Kitchen', // demo
   address: '1245 Fulton Street, Fresno, CA 93721',
   industrySegment: 'Casual Dining Restaurant',
   jurisdiction: 'Fresno County, CA',
@@ -139,7 +139,7 @@ export default function InsuranceRiskShared() {
       pdf.setFontSize(8.5);
       pdf.setTextColor(80, 80, 80);
       const aboutLines = pdf.splitTextToSize(
-        `This score is based on ${d.dataPoints.toLocaleString()} verified data points collected over 12 months of continuous compliance monitoring via EvidLY. Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management. Score generated: ${d.generatedAt}. Valid through: ${d.validUntil}.`,
+        `This score is based on ${d.dataPoints.toLocaleString()} verified data points collected over 12 months of continuous compliance monitoring via EvidLY. Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management. Score generated: ${d.generatedAt}. Valid through: ${d.validUntil}.`, // demo
         cW
       );
       pdf.text(aboutLines, M, y);
@@ -296,7 +296,7 @@ export default function InsuranceRiskShared() {
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">About This Score</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
             This score is based on <strong>{d.dataPoints.toLocaleString()}</strong> verified data points collected over 12 months of continuous compliance monitoring via EvidLY.
-            Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management.
+            Data includes temperature readings, daily checklists, incident reports, equipment service records, and document management. {/* demo */}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center text-xs">
             <div className="p-2 rounded-lg bg-gray-50">

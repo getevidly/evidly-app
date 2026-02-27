@@ -36,7 +36,7 @@ const SEVERITIES = [
 const COLOR_OPTIONS = ['#dc2626', '#1e4d6b', '#15803d', '#7c3aed', '#d4af37', '#0369a1'];
 
 const LOCATIONS = [
-  { id: 'loc-downtown', name: 'Downtown Kitchen' },
+  { id: 'loc-downtown', name: 'Downtown Kitchen' }, // demo
   { id: 'loc-airport', name: 'Airport Terminal' },
   { id: 'loc-university', name: 'University Campus' },
 ];

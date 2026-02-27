@@ -17,7 +17,7 @@ export const SAMPLE_DATA = {
   locations: [
     {
       id: '1',
-      name: 'Downtown Kitchen',
+      name: 'Downtown Kitchen', // demo
       address: '1245 Fulton Street',
       city: 'Fresno',
       state: 'CA',
@@ -28,7 +28,7 @@ export const SAMPLE_DATA = {
     },
     {
       id: '2',
-      name: 'Airport Cafe',
+      name: 'Airport Cafe', // demo
       address: '1636 Macready Drive',
       city: 'Merced',
       state: 'CA',
@@ -39,7 +39,7 @@ export const SAMPLE_DATA = {
     },
     {
       id: '3',
-      name: 'University Dining',
+      name: 'University Dining', // demo
       address: '1 University Circle',
       city: 'Modesto',
       state: 'CA',
@@ -62,7 +62,7 @@ export const SAMPLE_DATA = {
     {
       id: '2',
       title: 'Temperature Logs Behind Schedule',
-      description: 'Airport Cafe missing 3 temperature checks today',
+      description: 'Airport Cafe missing 3 temperature checks today', // demo
       dueDate: new Date().toISOString(),
       assignedTo: 'Kitchen Staff',
       priority: 'urgent' as const,
@@ -80,7 +80,7 @@ export const SAMPLE_DATA = {
     {
       id: '4',
       title: 'Weekly Deep Clean Checklist',
-      description: 'University Dining weekly checklist incomplete',
+      description: 'University Dining weekly checklist incomplete', // demo
       dueDate: new Date().toISOString(),
       assignedTo: 'Cleaning Crew',
       priority: 'info' as const,
@@ -107,7 +107,7 @@ export const SAMPLE_DATA = {
     {
       id: '2',
       user: 'Sarah Chen',
-      action: 'completed Opening Checklist for Downtown Kitchen',
+      action: 'completed Opening Checklist for Downtown Kitchen', // demo
       time: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
       success: true,
     },

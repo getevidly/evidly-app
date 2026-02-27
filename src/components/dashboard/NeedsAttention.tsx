@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UtensilsCrossed, Flame, CheckCircle } from 'lucide-react';
 import type { InspectionPillar } from '../../utils/inspectionReadiness';
@@ -147,7 +147,7 @@ export default function NeedsAttention({ items, maxVisible = 5, showLocationPref
   );
 }
 
-// --------------- Demo Data ---------------
+// --------------- Demo Data (demo defaults — only use when isDemoMode is true) ---------------
 
 export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
   {
@@ -159,7 +159,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View',
     actionRoute: '/temp-logs',
     locationId: 'airport',
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     daysUntilDue: 0,
   },
   {
@@ -171,7 +171,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'Schedule',
     actionRoute: '/vendors',
     locationId: 'airport',
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     daysUntilDue: 12,
   },
   {
@@ -183,7 +183,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View',
     actionRoute: '/checklists',
     locationId: 'downtown',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Downtown Kitchen', // demo
     daysUntilDue: 0,
   },
   {
@@ -195,7 +195,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View Docs',
     actionRoute: '/documents',
     locationId: 'airport',
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     daysUntilDue: 18,
   },
   {
@@ -207,7 +207,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'Log Temp',
     actionRoute: '/temp-logs',
     locationId: 'downtown',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Downtown Kitchen', // demo
     daysUntilDue: 0,
   },
 ];

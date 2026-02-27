@@ -664,7 +664,7 @@ const ARIZONA: JurisdictionProfile = {
   ],
 };
 
-// ── Fresno County (Downtown Kitchen) ────────────────────────
+// ── Fresno County (Downtown Kitchen) ──────────────────────── // demo
 
 const FRESNO_COUNTY: JurisdictionProfile = {
   id: 'county-fresno',
@@ -699,7 +699,7 @@ const FRESNO_COUNTY: JurisdictionProfile = {
   ],
 };
 
-// ── Merced County (Airport Cafe) ────────────────────────────
+// ── Merced County (Airport Cafe) ──────────────────────────── // demo
 
 const MERCED_COUNTY: JurisdictionProfile = {
   id: 'county-merced',
@@ -733,7 +733,7 @@ const MERCED_COUNTY: JurisdictionProfile = {
   ],
 };
 
-// ── Stanislaus County (University Dining) ───────────────────
+// ── Stanislaus County (University Dining) ─────────────────── // demo
 
 const STANISLAUS_COUNTY: JurisdictionProfile = {
   id: 'county-stanislaus',
@@ -1055,7 +1055,7 @@ const SAN_FRANCISCO: JurisdictionProfile = {
   ],
 };
 
-// ── City of Modesto (overlay for University Dining) ─────────
+// ── City of Modesto (overlay for University Dining) ───────── // demo
 
 const MODESTO_CITY: JurisdictionProfile = {
   id: 'city-modesto',
@@ -1158,9 +1158,9 @@ export interface LocationJurisdiction {
   jurisdictionChain: string[]; // jurisdiction IDs from most general to most specific
 }
 
-export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [
+export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [ // demo
   {
-    locationName: 'Downtown Kitchen',
+    locationName: 'Downtown Kitchen', // demo
     address: '1245 Fulton Street',
     city: 'Fresno',
     county: 'Fresno County',
@@ -1171,7 +1171,7 @@ export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [
     jurisdictionChain: ['federal-fda', 'state-ca', 'county-fresno'],
   },
   {
-    locationName: 'Airport Cafe',
+    locationName: 'Airport Cafe', // demo
     address: '1636 Macready Drive',
     city: 'Merced',
     county: 'Merced County',
@@ -1182,7 +1182,7 @@ export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [
     jurisdictionChain: ['federal-fda', 'state-ca', 'county-merced'],
   },
   {
-    locationName: 'University Dining',
+    locationName: 'University Dining', // demo
     address: '1 University Circle',
     city: 'Modesto',
     county: 'Stanislaus County',

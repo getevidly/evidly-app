@@ -122,7 +122,7 @@ const ROOT_CAUSES: { value: RootCause; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },
 ];
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining'];
+const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
 
 const TEAM_MEMBERS = [
   'Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres',
@@ -141,7 +141,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Walk-in Cooler temperature at 47°F',
     description: 'Walk-in cooler #1 recorded at 47°F during routine check, exceeding the 41°F maximum. All perishable items at risk.',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'in_progress',
     assignedTo: 'Maria Garcia',
     reportedBy: 'John Smith',
@@ -170,7 +170,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Closing checklist — floor drains not cleaned',
     description: 'Closing checklist item "Check floor drains" marked as No. Drains visibly clogged with debris.',
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'resolved',
     assignedTo: 'Emily Rogers',
     reportedBy: 'David Kim',
@@ -202,7 +202,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Health inspector citation — improper food storage',
     description: 'Inspector noted raw chicken stored above ready-to-eat items in prep cooler. Citation #HD-2026-0041 issued.',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'verified',
     assignedTo: 'Maria Garcia',
     reportedBy: 'Sarah Chen',
@@ -235,7 +235,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Hot holding unit not reaching 135°F',
     description: 'Hot holding unit #2 stuck at 128°F. Cannot maintain safe hot holding temperature for buffet line.',
-    location: 'University Dining',
+    location: 'University Dining', // demo
     status: 'assigned',
     assignedTo: 'Michael Torres',
     reportedBy: 'Emily Rogers',
@@ -255,7 +255,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Rodent droppings found in dry storage',
     description: 'Staff found rodent droppings near flour storage in dry goods area. Immediate pest control needed.',
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'in_progress',
     assignedTo: 'David Kim',
     reportedBy: 'Maria Garcia',
@@ -280,7 +280,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'minor',
     title: 'Customer reported lukewarm soup',
     description: 'Customer at table 12 complained soup was not hot enough. Server confirmed soup ladle left out, not returned to warmer.',
-    location: 'Downtown Kitchen',
+    location: 'Downtown Kitchen', // demo
     status: 'resolved',
     assignedTo: 'John Smith',
     reportedBy: 'Emily Rogers',
@@ -307,7 +307,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'minor',
     title: 'Wet floor near dishwash station — no sign posted',
     description: 'Wet floor observed near dishwash area without caution signage. Near-miss slip reported by prep cook.',
-    location: 'University Dining',
+    location: 'University Dining', // demo
     status: 'verified',
     assignedTo: 'Michael Torres',
     reportedBy: 'David Kim',
@@ -337,7 +337,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Prep cooler temp at 44°F during morning check',
     description: 'Prep cooler read 44°F during opening check. Door seal appears worn. Items still safe but at threshold.',
-    location: 'Airport Cafe',
+    location: 'Airport Cafe', // demo
     status: 'reported',
     assignedTo: 'Emily Rogers',
     reportedBy: 'John Smith',
@@ -455,7 +455,7 @@ export function IncidentLog() {
   }, []);
 
   // State
-  const [incidents, setIncidents] = useState<Incident[]>(DEMO_INCIDENTS);
+  const [incidents, setIncidents] = useState<Incident[]>(isDemoMode ? DEMO_INCIDENTS : []);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showActionForm, setShowActionForm] = useState(false);
@@ -1224,7 +1224,7 @@ export function IncidentLog() {
 
               {/* Export */}
               <button
-                onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))}
+                onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export generated for incident ' + inc.id))} // demo
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Download className="h-4 w-4" />
@@ -1522,7 +1522,7 @@ export function IncidentLog() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export of all incidents generated.'))}
+              onClick={() => guardAction('export', 'incident reports', () => showToast('PDF export of all incidents generated.'))} // demo
               className="flex items-center gap-2 px-4 py-2 min-h-[44px] border-2 border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               <Download className="h-4 w-4" />
