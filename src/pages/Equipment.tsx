@@ -761,7 +761,7 @@ export function Equipment() {
             <h1 className="text-2xl font-bold text-gray-900">{t('pages.equipment.lifecycleTitle')}</h1>
             <p className="text-sm text-gray-600 mt-1">{t('pages.equipment.lifecycleSubtitle')}</p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div data-demo-allow className="flex flex-wrap gap-3">
             <select
               value={locationFilter}
               onChange={e => setLocationFilter(e.target.value)}
@@ -819,7 +819,7 @@ export function Equipment() {
         </div>
 
         {/* Search + View Toggle */}
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+        <div data-demo-allow className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input

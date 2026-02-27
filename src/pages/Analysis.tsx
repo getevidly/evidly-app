@@ -596,7 +596,7 @@ export function Analysis() {
             <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#111827', margin: 0, ...F }}>Predictive Compliance Analysis</h1>
             <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px', ...F }}>AI-driven early warnings before compliance issues become violations</p>
           </div>
-          <select value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} style={selectStyle}>
+          <select data-demo-allow value={selectedLocation} onChange={(e) => setSelectedLocation(e.target.value)} style={selectStyle}>
             {showAllLocationsOption() && <option value="all">All Locations (Org Average)</option>}
             {analysisAccessibleLocs.map(loc => (
               <option key={loc.locationUrlId} value={loc.locationUrlId}>{loc.locationName}</option>
@@ -605,7 +605,7 @@ export function Analysis() {
         </div>
 
         {/* Filter Bar */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+        <div data-demo-allow style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
           <select value={alertSeverityFilter} onChange={e => setAlertSeverityFilter(e.target.value as any)} style={selectStyle}>
             <option value="all">All Severities</option>
             <option value="high">High</option>
@@ -838,7 +838,7 @@ export function Analysis() {
                     <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', ...F }}>Actions to Improve Score</h2>
                     <p style={{ fontSize: '13px', color: '#6b7280', ...F }}>Complete these actions to increase your compliance score — sorted by priority then point impact</p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div data-demo-allow className="flex items-center gap-3">
                     <select value={actionLocationFilter} onChange={(e) => setActionLocationFilter(e.target.value)} style={selectStyle}>
                       {showAllLocationsOption() && <option value="all">All Locations</option>}
                       {analysisAccessibleLocs.map(loc => (

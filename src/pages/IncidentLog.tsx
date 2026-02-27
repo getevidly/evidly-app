@@ -1571,7 +1571,7 @@ export function IncidentLog() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
           <div className="flex flex-wrap gap-3 items-center">
             <Filter className="h-4 w-4 text-gray-400" />
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">

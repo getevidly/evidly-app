@@ -126,7 +126,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         />
       )}
 
-      <div className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1a2d4a] shadow-sm">
+      <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1a2d4a] shadow-sm">
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="text-sm md:text-base font-semibold text-white truncate max-w-[200px] lg:max-w-none">

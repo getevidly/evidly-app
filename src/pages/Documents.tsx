@@ -506,7 +506,7 @@ export function Documents() {
         {activeTab === 'documents' && (
           <>
             {/* Search bar + Location filter */}
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div data-demo-allow style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ position: 'relative', flex: '1', minWidth: '0' }}>
                 <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '16px', height: '16px', color: '#9ca3af' }} />
                 <input

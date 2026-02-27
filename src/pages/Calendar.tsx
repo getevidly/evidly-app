@@ -1008,7 +1008,7 @@ export function Calendar() {
         {/* Toolbar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '20px', flexWrap: 'wrap' }}>
           {/* Left: Nav arrows + title */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div data-demo-allow style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <button
               onClick={() => navCalendar(-1)}
               style={{
@@ -1041,7 +1041,7 @@ export function Calendar() {
           </div>
 
           {/* Right: Today + View toggle + Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <div data-demo-allow style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             {/* Today button */}
             <button
               onClick={goToday}

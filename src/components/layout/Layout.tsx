@@ -17,6 +17,7 @@ import { BiweeklyReferralBanner } from '../BiweeklyReferralBanner';
 import { DemoCTABar } from '../DemoCTABar';
 import { DemoWatermark } from '../DemoWatermark';
 import { DemoRestrictions } from '../DemoRestrictions';
+import { DemoButtonGuard } from '../DemoButtonGuard';
 import { QuickActionsBar } from './QuickActionsBar';
 import { useDemo } from '../../contexts/DemoContext';
 import { useNotifications } from '../../contexts/NotificationContext';
@@ -134,6 +135,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       <DemoCTABar />
       <DemoWatermark />
       <DemoRestrictions />
+      <DemoButtonGuard />
     </div>
   );
 }

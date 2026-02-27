@@ -1482,7 +1482,7 @@ export function TempLogs() {
         {activeTab === 'equipment' && (
           <div className="space-y-6">
             {/* Filters Section */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               <div className="flex flex-wrap gap-4 items-end">
                 <div className="flex-1 min-w-0 sm:min-w-[200px]">
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.location')}</label>

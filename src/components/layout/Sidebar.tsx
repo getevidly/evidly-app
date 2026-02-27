@@ -492,7 +492,7 @@ export function Sidebar() {
   }, [location.pathname, sections]);
 
   return (
-    <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
+    <div data-sidebar className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-60 lg:flex-col z-[9999]">
       <div className="flex flex-col h-full" style={{ backgroundColor: branding.colors.sidebarBg }}>
         {/* Logo */}
         <div className="flex-shrink-0 px-6 py-5">

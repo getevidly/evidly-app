@@ -1731,7 +1731,7 @@ export function Checklists() {
           <div className="space-y-4">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <h2 className="text-xl font-bold text-gray-900">{t('checklists.checklistHistory')} — {rangeLabel}</h2>
-              <div className="flex flex-wrap items-end gap-3">
+              <div data-demo-allow className="flex flex-wrap items-end gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
                   <select

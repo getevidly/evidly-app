@@ -741,7 +741,7 @@ export function AuditTrail() {
 
         {/* Configuration Panel */}
         {!generated && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
+          <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 space-y-6 no-print">
             <h2 className="text-lg font-bold text-gray-900">Report Configuration</h2>
 
             {/* Date + Location row */}

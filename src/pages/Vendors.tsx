@@ -1080,7 +1080,7 @@ export function Vendors() {
         {activeTab === 'list' && (
           <>
             {/* Filter Bar */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               <div className="flex items-center space-x-2 mb-3">
                 <Filter className="h-4 w-4 text-gray-500" />
                 <span className="text-sm font-medium text-gray-700">Filters</span>

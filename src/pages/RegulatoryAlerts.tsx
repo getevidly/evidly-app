@@ -160,7 +160,7 @@ export function RegulatoryAlerts() {
           <p className="text-sm text-gray-600 mt-1">Stay ahead of compliance changes — we monitor so you don't have to</p>
 
           {/* Filter dropdowns */}
-          <div className="flex flex-wrap gap-3 mt-4">
+          <div data-demo-allow className="flex flex-wrap gap-3 mt-4">
             <select
               value={sourceFilter}
               onChange={e => setSourceFilter(e.target.value)}
