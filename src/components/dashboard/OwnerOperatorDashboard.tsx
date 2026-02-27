@@ -109,6 +109,11 @@ function TodaysTasks({ navigate, tasks }: { navigate: (path: string) => void; ta
 
       {/* Task rows */}
       <div>
+        {tasks.length === 0 && (
+          <div className="px-4 py-6 text-center">
+            <p className="text-sm text-gray-500">No tasks scheduled.</p>
+          </div>
+        )}
         {visible.map(task => {
           const isOverdue = task.status === 'overdue';
           const isDone = task.status === 'done';
