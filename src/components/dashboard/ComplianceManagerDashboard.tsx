@@ -405,6 +405,28 @@ export default function ComplianceManagerDashboard() {
     },
   ], [navigate, t]);
 
+  // Live mode empty state
+  if (!isDemoMode) {
+    return (
+      <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
+        <div style={{ padding: '20px 24px 0' }}>
+          <DashboardHero
+            firstName={DEMO_ROLE_NAMES.compliance_manager.firstName}
+            orgName={companyName || DEMO_ORG.name}
+          />
+        </div>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-6">
+          <div className="bg-white rounded-xl p-8 text-center" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+            <p className="text-sm font-medium text-gray-500">No compliance data yet. Add a location to begin compliance tracking.</p>
+            <button type="button" onClick={() => navigate('/locations')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              Add Location
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ ...FONT, backgroundColor: PAGE_BG, minHeight: '100vh', paddingBottom: 80 }}>
       <style>{KEYFRAMES}</style>

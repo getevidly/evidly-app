@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Brain, X, Send, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getDemoContext, generateSuggestions, extractActionItems, parseMarkdown } from '../lib/aiAdvisor';
+import { useDemo } from '../contexts/DemoContext';
 
 interface Message {
   id: string;
@@ -54,6 +55,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -80,7 +82,9 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
 
     await new Promise(r => setTimeout(r, 800 + Math.random() * 800));
 
-    const { text: responseText, suggestions } = getDemoResponse(text);
+    const { text: responseText, suggestions } = isDemoMode
+      ? getDemoResponse(text)
+      : { text: 'Connect your account to get AI-powered compliance insights tailored to your organization.', suggestions: [] };
     const aiMsg: Message = { id: uid(), role: 'assistant', content: responseText, suggestions };
     setMessages(prev => [...prev, aiMsg]);
     setIsTyping(false);

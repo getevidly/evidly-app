@@ -12,6 +12,7 @@ import {
   Globe,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
+import { useDemo } from '../../contexts/DemoContext';
 import { useTooltip } from '../../hooks/useTooltip';
 import { SectionTooltip } from '../ui/SectionTooltip';
 import { useTranslation } from '../../contexts/LanguageContext';
@@ -123,11 +124,12 @@ export default function KitchenStaffTaskList() {
   const navigate = useNavigate();
   const { locale, setLocale } = useTranslation();
   const { userRole } = useRole();
+  const { isDemoMode } = useDemo();
 
   const lang = (locale === 'es' ? 'es' : 'en') as 'en' | 'es';
   const s = STRINGS[lang];
 
-  const [tasks, setTasks] = useState<StaffTask[]>(INITIAL_TASKS);
+  const [tasks, setTasks] = useState<StaffTask[]>(isDemoMode ? INITIAL_TASKS : []);
   const [doneExpanded, setDoneExpanded] = useState(false);
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
 
@@ -182,8 +184,8 @@ export default function KitchenStaffTaskList() {
           {/* Hero Banner */}
           <DashboardHero
             firstName={staffName}
-            orgName="Pacific Coast Dining"
-            locationName={DEMO_STAFF_LOCATION}
+            orgName={isDemoMode ? 'Pacific Coast Dining' : ''}
+            locationName={isDemoMode ? DEMO_STAFF_LOCATION : ''}
           />
 
           {/* ============================================================ */}
@@ -400,7 +402,7 @@ export default function KitchenStaffTaskList() {
 
           {/* Calendar */}
           <CalendarCard
-            events={STAFF_CALENDAR_EVENTS}
+            events={isDemoMode ? STAFF_CALENDAR_EVENTS : []}
             typeColors={STAFF_CALENDAR_COLORS}
             typeLabels={STAFF_CALENDAR_LABELS}
             navigate={navigate}

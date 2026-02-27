@@ -15,6 +15,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, X } from 'lucide-react';
+import { useDemo } from '../../../contexts/DemoContext';
 
 interface ComplianceAlert {
   id: string;
@@ -57,11 +58,12 @@ function setDismissedBanners(ids: Set<string>) {
 
 export function ComplianceBanner({ isSingleLocation }: { isSingleLocation?: boolean }) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [dismissed, setDismissed] = useState<Set<string>>(getDismissedBanners);
 
   const visibleAlerts = useMemo(
-    () => DEMO_COMPLIANCE_ALERTS.filter(a => !dismissed.has(a.id)),
-    [dismissed],
+    () => isDemoMode ? DEMO_COMPLIANCE_ALERTS.filter(a => !dismissed.has(a.id)) : [],
+    [dismissed, isDemoMode],
   );
 
   const handleDismiss = (id: string) => {

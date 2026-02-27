@@ -168,7 +168,7 @@ const FAC_LOC_NAMES: Record<string, string> = {
 export default function FacilitiesDashboardNew() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
-  const { companyName } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
   const { t } = useTranslation();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -197,6 +197,27 @@ export default function FacilitiesDashboardNew() {
   const equipmentWarning = DEMO_EQUIPMENT_ALERTS.filter(e => e.severity === 'warning').length;
   const equipmentCurrent = DEMO_EQUIPMENT_ALERTS.filter(e => !e.alert).length;
   const allCurrent = equipmentOverdue === 0 && equipmentWarning === 0;
+
+  // Live mode empty state
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-6" style={FONT}>
+        <DashboardHero
+          greeting={`${(() => { const h = new Date().getHours(); if (h < 12) return t('hero.goodMorning'); if (h < 17) return t('hero.goodAfternoon'); return t('hero.goodEvening'); })()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
+          orgName={companyName || DEMO_ORG.name}
+          locationName={locationName}
+        />
+        <Card>
+          <div className="text-center py-8">
+            <p className="text-sm font-medium text-gray-500">No facilities data yet. Add equipment and vendors to track maintenance.</p>
+            <button type="button" onClick={() => navigate('/equipment')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              Add Equipment
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6" style={FONT}>

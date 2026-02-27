@@ -286,7 +286,7 @@ export function Vendors() {
   }, [isDemoMode, profile?.organization_id]);
 
   const consolidatedVendors = useMemo(() => {
-    const base = isDemoMode ? demoVendorList : liveVendors.length > 0 ? liveVendors : demoVendorList;
+    const base = isDemoMode ? demoVendorList : liveVendors;
     return [...base, ...manualVendors];
   }, [isDemoMode, demoVendorList, liveVendors, manualVendors]);
 

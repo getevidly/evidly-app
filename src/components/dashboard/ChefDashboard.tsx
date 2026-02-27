@@ -171,7 +171,7 @@ function HACCPTile({ tile, navigate }: { tile: typeof HACCP_TILES[0]; navigate: 
 export default function ChefDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
-  const { companyName } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
   const { t } = useTranslation();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -185,18 +185,45 @@ export default function ChefDashboard() {
   };
   const locationName = LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen';
 
+  // Data gating: demo data only in demo mode, empty in live mode
+  const checklists = isDemoMode ? DEMO_CHECKLISTS : [];
+  const temperatures = isDemoMode ? DEMO_TEMPERATURES : [];
+  const team = isDemoMode ? DEMO_TEAM : [];
+  const progress = isDemoMode ? DEMO_PROGRESS : 0;
+  const foodSafetyLocations = isDemoMode ? CHEF_FOOD_SAFETY_LOCATIONS : [];
+  const haccpTiles = isDemoMode ? HACCP_TILES : [];
+  const priorityItems: PriorityItem[] = isDemoMode ? [
+    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
+    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
+  ] : [];
+
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);
   useEffect(() => {
-    const timer = setTimeout(() => setAnimatedProgress(DEMO_PROGRESS), 100);
+    const timer = setTimeout(() => setAnimatedProgress(progress), 100);
     return () => clearTimeout(timer);
-  }, []);
+  }, [progress]);
 
-  // Priority items for "Where Do I Start" section
-  const priorityItems: PriorityItem[] = [
-    { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
-    { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
-  ];
+  // Live mode empty state
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <DashboardHero
+          firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
+          orgName={companyName || DEMO_ORG.name}
+          locationName={locationName}
+        />
+        <Card>
+          <div className="text-center py-8">
+            <p className="text-sm font-medium text-gray-500">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
+            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              Set Up Checklists
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
@@ -215,14 +242,14 @@ export default function ChefDashboard() {
       <div>
         <SectionHeader>HACCP Status<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
-          {HACCP_TILES.map(tile => (
+          {haccpTiles.map(tile => (
             <HACCPTile key={tile.id} tile={tile} navigate={navigate} />
           ))}
         </div>
       </div>
 
       {/* CCP alert if any out of range */}
-      {HACCP_TILES.some(t => t.status !== 'green') && (
+      {haccpTiles.some(t => t.status !== 'green') && (
         <Card>
           <button
             type="button"
@@ -245,7 +272,7 @@ export default function ChefDashboard() {
       <Card>
         <SectionHeader>Team on Shift</SectionHeader>
         <div className="space-y-2">
-          {DEMO_TEAM.map(member => (
+          {team.map(member => (
             <div key={member.name} className="flex items-center gap-3">
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-semibold shrink-0"
@@ -304,7 +331,7 @@ export default function ChefDashboard() {
             />
           </div>
           <p className="text-sm font-medium" style={{ color: getProgressColor(DEMO_PROGRESS) }}>
-            {DEMO_PROGRESS}% {t('status.complete').toLowerCase()}
+            {progress}% {t('status.complete').toLowerCase()}
           </p>
         </div>
       </Card>

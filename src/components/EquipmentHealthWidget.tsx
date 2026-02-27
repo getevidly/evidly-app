@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wrench, AlertTriangle, DollarSign, Calendar, ArrowRight } from 'lucide-react';
 import { EvidlyIcon } from './ui/EvidlyIcon';
+import { useDemo } from '../contexts/DemoContext';
 
 interface Props {
   locationId: string;
@@ -84,13 +85,35 @@ const LOCATION_DATA: Record<string, EquipmentSummary> = {
   },
 };
 
+const EMPTY_DATA: EquipmentSummary = {
+  total: 0, operational: 0, needsRepair: 0, outOfService: 0,
+  warrantyActive: 0, warrantyExpiringSoon: 0, warrantyExpired: 0,
+  ytdSpend: 0, nextServiceDue: '—', alerts: [],
+};
+
 export function EquipmentHealthWidget({ locationId }: Props) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
 
   const data = useMemo<EquipmentSummary>(() => {
+    if (!isDemoMode) return EMPTY_DATA;
     if (locationId === 'all') return ALL_DATA;
     return LOCATION_DATA[locationId] ?? ALL_DATA;
-  }, [locationId]);
+  }, [locationId, isDemoMode]);
+
+  if (data.total === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+            <Wrench className="h-5 w-5" style={{ color: '#1e4d6b' }} />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">Equipment Health</h3>
+        </div>
+        <p className="text-sm text-gray-500 text-center py-4">No equipment registered. Add equipment to track maintenance.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">

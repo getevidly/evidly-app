@@ -158,7 +158,7 @@ function HealthTile({ label, status, detail, navigate, route }: {
 export default function KitchenManagerDashboard() {
   const navigate = useNavigate();
   const { getAccessibleLocations, userRole } = useRole();
-  const { companyName } = useDemo();
+  const { companyName, isDemoMode } = useDemo();
   const { t } = useTranslation();
 
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
@@ -184,6 +184,27 @@ export default function KitchenManagerDashboard() {
     { id: 'km-1', severity: 'warning', title: 'Complete midday checklist (4 items remaining)', detail: 'Carlos is working on it', actionLabel: 'View', route: '/checklists' },
     { id: 'km-2', severity: 'warning', title: 'Log Prep Cooler temp', detail: 'Last logged 4 hours ago', actionLabel: 'Log Temp', route: '/temp-logs' },
   ];
+
+  // Live mode empty state
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <DashboardHero
+          firstName={DEMO_ROLE_NAMES[userRole]?.firstName || 'Chef'}
+          orgName={companyName || DEMO_ORG.name}
+          locationName={locationName}
+        />
+        <Card>
+          <div className="text-center py-8">
+            <p className="text-sm font-medium text-gray-500">No data yet. Set up your locations and team to see your kitchen dashboard.</p>
+            <button type="button" onClick={() => navigate('/checklists')} className="mt-3 text-sm font-semibold px-4 py-2 rounded-lg text-white" style={{ backgroundColor: '#1e4d6b' }}>
+              Set Up Checklists
+            </button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6" style={{ fontFamily: 'Inter, sans-serif' }}>
