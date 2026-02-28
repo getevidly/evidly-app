@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
+import { useDemo } from '../contexts/DemoContext';
 import {
   vendorDashboardStats, vendorLeads, vendorScheduledServices, vendorCredentials,
   vendorAnalyticsData, vendorSubscriptionPlans, vendorCurrentSubscription,
@@ -113,6 +114,7 @@ function timeAgo(d: string) {
 // ── Main Component ───────────────────────────────────────────
 export function VendorDashboard() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState<VendorTab>('overview');
   const [leadFilter, setLeadFilter] = useState<LeadFilter>('all');
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -132,6 +134,17 @@ export function VendorDashboard() {
     leadFilter === 'all' ? vendorLeads : vendorLeads.filter(l => l.status === leadFilter),
     [leadFilter]
   );
+
+  if (!isDemoMode) {
+    return (
+      <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
+        <div className="p-8 text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Dashboard</h2>
+          <p className="text-gray-500">No vendor data available.</p>
+        </div>
+      </div>
+    );
+  }
 
   const expiringCredentials = vendorCredentials.filter(c => c.status === 'expiring' || c.status === 'expired');
   const unreadMessages = vendorMessages.filter(m => !m.read && m.senderType !== 'vendor').length;

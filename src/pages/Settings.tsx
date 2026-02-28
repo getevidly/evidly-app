@@ -32,7 +32,7 @@ const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: 
 };
 
 export function Settings() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const { userRole } = useRole();
   const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
@@ -254,8 +254,8 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.fullName')}</label>
                 <input
                   type="text"
-                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].name : profile?.full_name}
-                  key={`name-${userRole}`}
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].name : (profile?.full_name || '')}
+                  key={`name-${isDemoMode ? userRole : profile?.id || 'loading'}`}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>
@@ -263,8 +263,8 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.email')}</label>
                 <input
                   type="email"
-                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : profile?.email || ''}
-                  key={`email-${userRole}`}
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].email : (user?.email || '')}
+                  key={`email-${isDemoMode ? userRole : user?.id || 'loading'}`}
                   disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
@@ -273,8 +273,8 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.role')}</label>
                 <input
                   type="text"
-                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : profile?.role}
-                  key={`role-${userRole}`}
+                  defaultValue={isDemoMode ? ROLE_DEMO_PROFILES[userRole].role : (profile?.role || '')}
+                  key={`role-${isDemoMode ? userRole : profile?.id || 'loading'}`}
                   disabled
                   className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                 />
@@ -296,9 +296,14 @@ export function Settings() {
                 </select>
               </div>
 
-              <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
-                {t('settings.saveChanges')}
-              </button>
+              <div className="flex gap-3">
+                <button onClick={() => guardAction('settings', 'profile settings', () => toast.success('Profile saved'))} className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors duration-150">
+                  {t('settings.saveChanges')}
+                </button>
+                <button onClick={() => setActiveTab('profile')} className="px-6 py-2 min-h-[44px] border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-150">
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
 

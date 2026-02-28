@@ -44,10 +44,27 @@ function loadLead(): DemoLead | null {
   }
 }
 
+/**
+ * Synchronous check: does localStorage contain a Supabase auth token?
+ * This runs BEFORE any async getSession() call, eliminating race conditions.
+ * If a token exists, the user is authenticated → isDemoMode = false, always.
+ */
+function hasStoredAuthToken(): boolean {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) return true;
+    }
+  } catch {}
+  return false;
+}
+
 export function DemoProvider({ children }: { children: ReactNode }) {
   const { session, loading: authLoading } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
+    // If a Supabase token exists in localStorage, never start in demo mode
+    if (hasStoredAuthToken()) return false;
     try {
       return sessionStorage.getItem(DEMO_KEY) === 'true';
     } catch {
@@ -56,12 +73,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   });
 
   // ── Core invariant: authenticated sessions are NEVER in demo mode ──
-  // If a Supabase auth session exists, isDemoMode is always false
-  // regardless of what sessionStorage says.
-  // ALSO: while auth is still loading, isDemoMode is false to prevent
-  // a race condition where session is null but user is actually logged in.
+  // Three layers of protection:
+  //   1. rawDemoMode initializes to false if localStorage has auth token (synchronous)
+  //   2. isAuthenticated check blocks demo mode when session is loaded (async)
+  //   3. authLoading guard blocks demo mode while auth is resolving
   const isAuthenticated = !!session?.user;
-  const isDemoMode = rawDemoMode && !isAuthenticated && !authLoading;
+  const isDemoMode = rawDemoMode && !isAuthenticated && !authLoading && !hasStoredAuthToken();
 
   // When user authenticates, clean up any stale demo state from sessionStorage
   useEffect(() => {

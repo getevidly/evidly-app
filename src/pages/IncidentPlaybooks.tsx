@@ -35,6 +35,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useDemo } from '../contexts/DemoContext';
 
 // ── Icon map ────────────────────────────────────────────────
 const ICON_MAP: Record<string, typeof Zap> = {
@@ -252,10 +253,30 @@ function CompletedIncidentCard({ incident, onViewReport, guardAction }: { incide
 // ── Main Component ──────────────────────────────────────────
 export function IncidentPlaybooks() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('library');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'all'>('all');
+
+  // Non-demo mode: show empty state (no hardcoded data for authenticated users)
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif", maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
+          <Siren size={24} color="#1e4d6b" />
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>Incident Playbooks</h1>
+        </div>
+        <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
+          <Siren size={48} color="#d1d5db" style={{ margin: '0 auto 16px' }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>No Playbooks Yet</h2>
+          <p style={{ fontSize: 14, color: '#6b7280', maxWidth: 400, margin: '0 auto' }}>
+            Create incident response playbooks to guide your team through emergencies.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const activeIncidents = activeIncidentPlaybooks.filter(i => i.status === 'active');
   const completedIncidents = activeIncidentPlaybooks.filter(i => i.status === 'completed');

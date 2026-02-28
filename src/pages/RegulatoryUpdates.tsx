@@ -114,12 +114,16 @@ export function RegulatoryUpdates() {
 
         if (!cancelled) {
           if (error || !data || data.length === 0) {
-            const demoRegulatory = DEMO_INTELLIGENCE_INSIGHTS.filter(
-              i => i.category === 'regulatory_updates' || i.category === 'regulatory_change' ||
-                   i.category === 'legislative_update' || i.category === 'regulatory_advisory' ||
-                   i.category === 'nfpa_update',
-            );
-            setInsights(demoRegulatory);
+            if (isDemoMode) {
+              const demoRegulatory = DEMO_INTELLIGENCE_INSIGHTS.filter(
+                i => i.category === 'regulatory_updates' || i.category === 'regulatory_change' ||
+                     i.category === 'legislative_update' || i.category === 'regulatory_advisory' ||
+                     i.category === 'nfpa_update',
+              );
+              setInsights(demoRegulatory);
+            } else {
+              setInsights([]);
+            }
           } else {
             setInsights(data.map((row: any) => ({
               ...row,
@@ -129,12 +133,16 @@ export function RegulatoryUpdates() {
         }
       } catch {
         if (!cancelled) {
-          const demoRegulatory = DEMO_INTELLIGENCE_INSIGHTS.filter(
-            i => i.category === 'regulatory_updates' || i.category === 'regulatory_change' ||
-                 i.category === 'legislative_update' || i.category === 'regulatory_advisory' ||
-                 i.category === 'nfpa_update',
-          );
-          setInsights(demoRegulatory);
+          if (isDemoMode) {
+            const demoRegulatory = DEMO_INTELLIGENCE_INSIGHTS.filter(
+              i => i.category === 'regulatory_updates' || i.category === 'regulatory_change' ||
+                   i.category === 'legislative_update' || i.category === 'regulatory_advisory' ||
+                   i.category === 'nfpa_update',
+            );
+            setInsights(demoRegulatory);
+          } else {
+            setInsights([]);
+          }
         }
       } finally {
         if (!cancelled) setIsLoading(false);

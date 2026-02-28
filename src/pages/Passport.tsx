@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
-import { CheckCircle2, AlertCircle, Download, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Download, Loader2, ShieldCheck } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDemo } from '../contexts/DemoContext';
 import { locations, locationScores, LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 import { FACILITY_INFO } from '../lib/reportGenerator';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -38,9 +39,32 @@ const JURISDICTION_META: Record<string, {
 export default function Passport() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const passportRef = useRef<HTMLDivElement>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
+
+  // ── Live-mode empty state: no hardcoded demo data ──
+  if (!isDemoMode) {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="bg-[#1e4d6b] text-white py-6 px-6">
+          <div className="max-w-4xl mx-auto flex items-center gap-3">
+            <EvidlyIcon size={40} />
+            <div>
+              <h1 className="font-['Outfit'] text-2xl font-bold">Compliance Passport</h1>
+              <p className="text-sm text-gray-300">Live Compliance Status</p>
+            </div>
+          </div>
+        </header>
+        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
+          <ShieldCheck className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <p className="text-gray-500 font-medium">Your compliance passport is not yet available.</p>
+          <p className="text-gray-400 text-sm mt-1">Complete your location setup to generate a compliance passport.</p>
+        </div>
+      </div>
+    );
+  }
 
   const today = new Date().toLocaleDateString('en-US', {
     month: 'long',

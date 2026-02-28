@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertTriangle, Clock, ChevronRight, FileText, Flame, Wind, Droplets, Trash2, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
 import { ReferralBanner } from '../components/referral/ReferralBanner';
 import { K2CWidget } from '../components/referral/K2CWidget';
 import { demoReferral } from '../data/demoData';
@@ -35,6 +36,12 @@ interface Document {
 export function FacilitiesDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
+
+  // This dashboard is only for demo mode — real facilities managers use the main Dashboard page
+  if (!isDemoMode) {
+    return null;
+  }
 
   const [equipmentSystems] = useState<EquipmentStatus[]>([
     {

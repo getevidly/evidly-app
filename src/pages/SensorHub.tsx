@@ -12,6 +12,7 @@ import {
   iotSensorAlerts, iotIngestionLog,
   type IoTSensor,
 } from '../data/demoData';
+import { useDemo } from '../contexts/DemoContext';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -127,14 +128,16 @@ const METHODS = [
 
 export function SensorHub() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [search, setSearch] = useState('');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const locations = useMemo(() => [...new Set(iotSensors.map(s => s.locationName))], []);
-  const activeAlerts = useMemo(() => iotSensorAlerts.filter(a => !a.acknowledged), []);
+  const locations = useMemo(() => isDemoMode ? [...new Set(iotSensors.map(s => s.locationName))] : [], [isDemoMode]);
+  const activeAlerts = useMemo(() => isDemoMode ? iotSensorAlerts.filter(a => !a.acknowledged) : [], [isDemoMode]);
 
   const filtered = useMemo(() => {
+    if (!isDemoMode) return [];
     return iotSensors.filter(s => {
       if (locationFilter !== 'all' && s.locationName !== locationFilter) return false;
       if (statusFilter !== 'all' && s.status !== statusFilter) return false;
@@ -144,14 +147,29 @@ export function SensorHub() {
       }
       return true;
     });
-  }, [search, locationFilter, statusFilter]);
+  }, [isDemoMode, search, locationFilter, statusFilter]);
 
   const stats = useMemo(() => {
+    if (!isDemoMode) return { total: 0, online: 0, onlinePct: 0, violations: 0, alerts: 0 };
     const total = iotSensors.length;
     const online = iotSensors.filter(s => s.status === 'online').length;
     const violations = iotSensorReadings.filter(r => r.complianceStatus === 'violation').length;
     return { total, online, onlinePct: Math.round((online / total) * 100), violations, alerts: activeAlerts.length };
-  }, [activeAlerts]);
+  }, [isDemoMode, activeAlerts]);
+
+  if (!isDemoMode) {
+    return (
+      <div className="px-3 sm:px-6 py-6 max-w-[1400px] mx-auto" style={F}>
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Hub</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Set up and manage your IoT sensors.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-3 sm:px-6 py-6 max-w-[1400px] mx-auto" style={F}>

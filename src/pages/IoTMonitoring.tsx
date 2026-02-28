@@ -11,6 +11,7 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useDemo } from '../contexts/DemoContext';
 import {
   iotSensors, iotSensorReadings, iotSensorAlerts, iotSensorProviders,
   iotSensorConfigs, iotIngestionLog, iotSparklines, iotComplianceImpact,
@@ -61,6 +62,7 @@ function MiniSparkline({ sensorId }: { sensorId: string }) {
 }
 
 export default function IoTMonitoring() {
+  const { isDemoMode } = useDemo();
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [locationFilter, setLocationFilter] = useState('all');
   const [expandedSensor, setExpandedSensor] = useState<string | null>(null);
@@ -68,6 +70,21 @@ export default function IoTMonitoring() {
   const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<Set<string>>(
     new Set(iotSensorAlerts.filter(a => a.acknowledged).map(a => a.id))
   );
+
+  if (!isDemoMode) {
+    return (
+      <div className="space-y-6">
+        <Breadcrumb items={[{ label: 'IoT Monitoring' }]} />
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">IoT Monitoring</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Connect sensors to monitor temperature and conditions in real time.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const locations = [...new Set(iotSensors.map(s => s.locationName))];
   const filteredSensors = locationFilter === 'all'

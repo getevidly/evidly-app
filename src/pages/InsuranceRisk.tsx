@@ -533,7 +533,7 @@ export function InsuranceRisk() {
                 : riskResult.overall >= 75
                 ? 'Solid Risk Profile'
                 : riskResult.overall >= 60
-                ? 'Risk Profile Needs Improvement'
+                ? 'Where You Stand'
                 : 'Significant Risk Factors Identified'}
             </h2>
             <p className="text-sm text-gray-600 mb-4">

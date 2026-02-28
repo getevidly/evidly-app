@@ -7,6 +7,7 @@ import {
   Download, Flame, Settings2, BookOpenCheck,
   Users, BarChart3, Globe, FileText,
 } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import {
   trainingCourses, trainingModules, trainingEnrollments,
@@ -438,6 +439,24 @@ const RESPONSIVE_STYLES = `
 export function TrainingCourse() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
+
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <button onClick={() => navigate('/training')}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          <ArrowLeft size={16} /> Back to Training
+        </button>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Training Course</h1>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
+          <BookOpen size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>Course Not Available</h2>
+          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>This course is not yet available.</p>
+        </div>
+      </div>
+    );
+  }
 
   const course = trainingCourses.find(c => c.id === id);
   const modules = trainingModules.filter(m => m.courseId === id);

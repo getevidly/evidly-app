@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemo } from '../contexts/DemoContext';
 import { locations } from '../data/demoData';
 import {
   calculateInsuranceRiskScore,
@@ -89,12 +90,40 @@ function ScoreMiniBar({ score }: { score: number }) {
 
 export function ImproveScore() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'all';
 
   const [completedActions, setCompletedActions] = useState<Set<number>>(new Set());
   const [filter, setFilter] = useState<'all' | 'critical' | 'high' | 'medium' | 'low'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+
+  // ── Live-mode empty state: no hardcoded demo data ──
+  if (!isDemoMode) {
+    return (
+      <div className="max-w-5xl mx-auto" style={F}>
+        <Breadcrumb items={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Insurance Risk', href: '/insurance-risk' },
+          { label: 'Improve My Score' },
+        ]} />
+        <div className="flex items-center gap-3 mb-6">
+          <button onClick={() => navigate('/insurance-risk')} className="p-2 rounded-lg hover:bg-gray-100">
+            <ArrowLeft className="h-5 w-5 text-gray-500" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Improve Your Score</h1>
+            <p className="text-sm text-gray-500">Complete assessments to see improvement recommendations.</p>
+          </div>
+        </div>
+        <div className="text-center py-16">
+          <TrendingUp className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <p className="text-gray-500 font-medium">No recommendations available yet</p>
+          <p className="text-gray-400 text-sm mt-1">Complete assessments to see improvement recommendations.</p>
+        </div>
+      </div>
+    );
+  }
 
   const riskResult: InsuranceRiskResult = locationParam === 'all'
     ? calculateOrgInsuranceRiskScore()

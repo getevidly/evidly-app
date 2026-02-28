@@ -10,6 +10,7 @@ import { iotSensorProviders } from '../data/demoData';
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useDemo } from '../contexts/DemoContext';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -91,6 +92,7 @@ const STEP_LABELS = ['Select Brand', 'Authenticate', 'Thresholds', 'Alerts', 'Fr
 
 export function SensorSetupWizard() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>(1);
   const [authenticating, setAuthenticating] = useState(false);
@@ -110,6 +112,23 @@ export function SensorSetupWizard() {
     pollingInterval: 5,
   });
   const [complete, setComplete] = useState(false);
+
+  if (!isDemoMode) {
+    return (
+      <div className="p-6 max-w-3xl mx-auto" style={F}>
+        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+          <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+        </button>
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Radio className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Setup</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Sensor configuration is not yet available.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const selectedProvider = iotSensorProviders.find(p => p.slug === state.provider);
 

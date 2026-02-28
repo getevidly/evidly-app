@@ -69,7 +69,7 @@ export function VendorProfile() {
     [vendorSlug],
   );
 
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode } = useDemoGuard();
 
   const [activeTab, setActiveTab] = useState<'about' | 'credentials' | 'reviews' | 'services'>('about');
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -80,6 +80,25 @@ export function VendorProfile() {
     description: '',
     urgency: 'Normal',
   });
+
+  // Star-breakdown for Reviews tab (must be before early return to satisfy rules of hooks)
+  const starBreakdown = useMemo(() => {
+    const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    vendorReviews.forEach(r => {
+      const rounded = Math.round(r.rating);
+      if (counts[rounded] !== undefined) counts[rounded]++;
+    });
+    return counts;
+  }, [vendorReviews]);
+
+  if (!isDemoMode) {
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Profile</h2>
+        <p className="text-gray-500">Vendor profile not available.</p>
+      </div>
+    );
+  }
 
   // ── Not found ───────────────────────────────────────────────
   if (!vendor) {
@@ -120,16 +139,6 @@ export function VendorProfile() {
   function isExpired(dateStr: string) {
     return new Date(dateStr) < new Date();
   }
-
-  // Star‐breakdown for Reviews tab
-  const starBreakdown = useMemo(() => {
-    const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    vendorReviews.forEach(r => {
-      const rounded = Math.round(r.rating);
-      if (counts[rounded] !== undefined) counts[rounded]++;
-    });
-    return counts;
-  }, [vendorReviews]);
 
   // ── Modal submit ────────────────────────────────────────────
   function handleSubmitRequest() {

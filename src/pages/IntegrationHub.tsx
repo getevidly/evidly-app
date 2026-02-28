@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
@@ -1130,8 +1131,33 @@ function getTimeSince(dateStr: string): string {
 
 export function IntegrationHub() {
   const location = useLocation();
+  const { isDemoMode } = useDemo();
   const initialTab: Tab = location.pathname.includes('/api-keys') || location.pathname.includes('/webhooks') ? 'api' : 'marketplace';
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
+
+  // ── Live-mode empty state: no hardcoded demo data ──
+  if (!isDemoMode) {
+    return (
+      <div className="max-w-7xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="p-2 bg-[#1e4d6b] rounded-lg">
+              <Globe className="h-5 w-5 text-[#d4af37]" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Integrations</h1>
+              <p className="text-sm text-gray-500">Connect your tools and services to streamline operations.</p>
+            </div>
+          </div>
+        </div>
+        <div className="text-center py-16">
+          <Globe className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <p className="text-gray-500 font-medium">No integrations configured yet</p>
+          <p className="text-gray-400 text-sm mt-1">Connect your tools and services to streamline operations.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto" style={{ fontFamily: "'DM Sans', sans-serif" }}>

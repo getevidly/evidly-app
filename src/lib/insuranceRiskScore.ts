@@ -20,7 +20,7 @@ import {
 
 // --------------- Types ---------------
 
-export type InsuranceRiskTier = 'Preferred Risk' | 'Standard Risk' | 'Elevated Risk' | 'High Risk';
+export type InsuranceRiskTier = 'Preferred Risk' | 'Standard Risk' | 'Needs Attention' | 'High Risk';
 
 export interface InsuranceRiskFactor {
   name: string;
@@ -68,7 +68,7 @@ export interface InsuranceRiskResult {
 export function getInsuranceRiskTier(score: number): { tier: InsuranceRiskTier; color: string; bg: string } {
   if (score >= 90) return { tier: 'Preferred Risk', color: '#22c55e', bg: '#f0fdf4' };
   if (score >= 75) return { tier: 'Standard Risk', color: '#eab308', bg: '#fefce8' };
-  if (score >= 60) return { tier: 'Elevated Risk', color: '#f59e0b', bg: '#fffbeb' };
+  if (score >= 60) return { tier: 'Needs Attention', color: '#f59e0b', bg: '#fffbeb' };
   return { tier: 'High Risk', color: '#ef4444', bg: '#fef2f2' };
 }
 

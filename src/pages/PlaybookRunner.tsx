@@ -42,6 +42,7 @@ import {
   Pen,
   Ban,
 } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
 import {
   playbookTemplates,
   activeIncidentPlaybooks,
@@ -214,6 +215,7 @@ function TemperatureInput({ value, onChange }: { value: number; onChange: (v: nu
 export function PlaybookRunner() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
   // Find the active incident
@@ -316,6 +318,25 @@ export function PlaybookRunner() {
     stepStartRef.current = Date.now();
     setStepSeconds(0);
   }, [currentStep]);
+
+  // Non-demo mode: show empty state (no hardcoded data for authenticated users)
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif", textAlign: 'center', padding: 48 }}>
+        <Siren size={48} color="#d1d5db" style={{ margin: '0 auto 16px' }} />
+        <h2 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>Playbook Runner</h2>
+        <p style={{ fontSize: 14, color: '#6b7280', maxWidth: 400, margin: '0 auto 20px' }}>
+          No active playbook found.
+        </p>
+        <button
+          onClick={() => navigate('/playbooks')}
+          style={{ padding: '8px 20px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+        >
+          Back to Playbooks
+        </button>
+      </div>
+    );
+  }
 
   // Food disposition total
   const foodTotalLoss = foodItems

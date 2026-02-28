@@ -285,6 +285,19 @@ export function Benchmarks() {
           </div>
         </div>
 
+        {/* ── Empty state for non-demo users ── */}
+        {!isDemoMode && (
+          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Benchmarks Coming Soon</h2>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              As more kitchens join EvidLY, your compliance benchmarks will become available.
+              Continue logging your operations to be ready when benchmarks launch.
+            </p>
+          </div>
+        )}
+
+        {isDemoMode && (<>
         {/* Filters */}
         {showFilters && (
           <div className="bg-white rounded-xl border border-gray-200 p-4">
@@ -781,15 +794,17 @@ export function Benchmarks() {
             Invite a Peer Kitchen
           </button>
         </div>
+        </>)}
       </div>
 
-      <DemoUpgradePrompt
-        isOpen={showUpgrade}
-        onClose={() => setShowUpgrade(false)}
-        action={upgradeAction}
-        feature={upgradeFeature}
-       
-      />
+      {isDemoMode && (
+        <DemoUpgradePrompt
+          isOpen={showUpgrade}
+          onClose={() => setShowUpgrade(false)}
+          action={upgradeAction}
+          feature={upgradeFeature}
+        />
+      )}
     </>
   );
 }

@@ -14,6 +14,7 @@ import {
 } from '../data/demoData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useDemo } from '../contexts/DemoContext';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 const PRIMARY = '#1e4d6b';
@@ -235,15 +236,33 @@ function TempChart({ readings, zone, range }: { readings: IoTSensorReading[]; zo
 export function SensorDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { isDemoMode } = useDemo();
   const [chartRange, setChartRange] = useState<'24h' | '7d' | '30d'>('24h');
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
-  const sensor = useMemo(() => iotSensors.find(s => s.id === id), [id]);
+  const sensor = useMemo(() => isDemoMode ? iotSensors.find(s => s.id === id) : undefined, [id, isDemoMode]);
   const provider = useMemo(() => sensor ? iotSensorProviders.find(p => p.slug === sensor.providerSlug) : null, [sensor]);
   const readings = useMemo(() => sensor ? iotSensorReadings.filter(r => r.sensorId === sensor.id).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()) : [], [sensor]);
   const alerts = useMemo(() => sensor ? iotSensorAlerts.filter(a => a.sensorId === sensor.id) : [], [sensor]);
   const maintenance = useMemo(() => sensor ? iotMaintenanceLog.filter(m => m.sensorId === sensor.id).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) : [], [sensor]);
   const config = useMemo(() => sensor ? iotSensorConfigs.find(c => c.providerSlug === sensor.providerSlug) : null, [sensor]);
+
+  if (!isDemoMode) {
+    return (
+      <div className="p-6" style={F}>
+        <button onClick={() => navigate('/sensors')} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
+          <ArrowLeft className="h-4 w-4" /> Back to Sensor Hub
+        </button>
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <Thermometer className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Sensor Not Found</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            This sensor is not configured yet.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!sensor) {
     return (

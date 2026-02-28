@@ -71,7 +71,16 @@ export default function VendorDetail() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode } = useDemoGuard();
+
+  if (!isDemoMode) {
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Details</h2>
+        <p className="text-gray-500">Select a vendor to view their details and documents.</p>
+      </div>
+    );
+  }
 
   const vendor = vendors.find(v => v.id === vendorId);
   const documents = DEMO_DOCUMENTS[vendorId || ''] || [];

@@ -46,6 +46,17 @@ export function useIdleTimeout(options: UseIdleTimeoutOptions) {
   useEffect(() => {
     if (!options.enabled) return;
 
+    // Reset activity timestamp when timer becomes enabled (fresh session start).
+    // This prevents stale timestamps from a previous session from triggering
+    // immediate lock/logout on login.
+    lastActivityRef.current = Date.now();
+    lockedRef.current = false;
+    warningFiredRef.current = false;
+    try {
+      localStorage.setItem('evidly_last_activity', String(Date.now()));
+      localStorage.removeItem('evidly_locked');
+    } catch {}
+
     let lastMouseMoveTime = 0;
     const handleMouseMove = () => {
       if (Date.now() - lastMouseMoveTime > MOUSEMOVE_THROTTLE) {

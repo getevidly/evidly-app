@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { useRole } from '../contexts/RoleContext';
+import { useDemo } from '../contexts/DemoContext';
 import {
   VENDOR_CATEGORIES,
   SERVICE_TYPE_TO_CATEGORY,
@@ -81,10 +82,29 @@ export default function ServicesPage() {
   const [localRecords, setLocalRecords] = useState<DemoServiceRecord[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const { isDemoMode } = useDemo();
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
+
+  // Non-demo mode: show empty state (no hardcoded data for authenticated users)
+  if (!isDemoMode) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Vendor Services</h1>
+        <p className="text-sm text-gray-500 mb-6">Track and manage vendor service schedules across your locations.</p>
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">No Service Records Yet</h2>
+          <p className="text-sm text-gray-500 max-w-md mx-auto">
+            Add vendors and log service visits to track your maintenance schedules.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // All service records (demo + local)
   const allRecords = useMemo(() => [...DEMO_SERVICE_RECORDS, ...localRecords], [localRecords]);

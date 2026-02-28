@@ -7,6 +7,7 @@ import {
   User, MapPin, Phone, Download, Printer, Share2,
   DollarSign, Truck, AlertTriangle, Siren,
 } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
 import {
   activeIncidentPlaybooks, playbookTemplates, demoFoodDisposition,
   demoVendorContacts, demoInsuranceClaim, type PlaybookSeverity,
@@ -86,6 +87,31 @@ function stepCircleColor(status: string, stepIndex: number): string {
 export function PlaybookTimeline() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
+
+  // Non-demo mode: show empty state (no hardcoded data for authenticated users)
+  if (!isDemoMode) {
+    return (
+      <div style={{ ...font, padding: 40, textAlign: 'center' }}>
+        <Clock size={48} color="#d1d5db" style={{ marginBottom: 16 }} />
+        <h2 style={{ color: '#1e4d6b', fontSize: 20, fontWeight: 700, margin: '0 0 8px' }}>
+          Playbook Timeline
+        </h2>
+        <p style={{ color: 'var(--text-secondary, #3D5068)', fontSize: 14, marginBottom: 24 }}>
+          No playbook history available.
+        </p>
+        <button
+          onClick={() => navigate('/playbooks')}
+          style={{
+            ...font, background: '#1e4d6b', color: '#fff', border: 'none',
+            borderRadius: 8, padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
+          Back to Playbooks
+        </button>
+      </div>
+    );
+  }
 
   const incident = activeIncidentPlaybooks.find(i => i.id === id);
   const template = incident ? playbookTemplates.find(t => t.id === incident.templateId) : null;

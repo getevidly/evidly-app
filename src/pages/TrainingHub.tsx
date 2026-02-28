@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import {
@@ -1410,8 +1411,22 @@ function ComplianceOverviewTab() {
 // ── Main TrainingHub Component ───────────────────────────────────────────────
 
 export function TrainingHub() {
+  const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [activeTab, setActiveTab] = useState<Tab>('catalog');
+
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Training & Certification</h1>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
+          <GraduationCap size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>Training Hub</h2>
+          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Set up training courses and track employee certifications.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif" }}>

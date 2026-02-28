@@ -6,6 +6,7 @@ import {
   CheckCircle2, AlertTriangle, XCircle, Clock, Printer,
   BookOpenCheck, Flame, Settings2, Brain, Globe,
 } from 'lucide-react';
+import { useDemo } from '../contexts/DemoContext';
 import {
   trainingCertificates, trainingCourses,
   type TrainingCertificate, type TrainingCategory,
@@ -168,10 +169,28 @@ function CertificateDetailModal({ cert, onClose }: { cert: TrainingCertificate; 
 
 export function CertificateViewer() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [viewCert, setViewCert] = useState<TrainingCertificate | null>(null);
+
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <button onClick={() => navigate('/training')}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          <ArrowLeft size={16} /> Back to Training
+        </button>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Certificate Manager</h1>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
+          <Award size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>No Certificates</h2>
+          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Complete training courses to earn certificates.</p>
+        </div>
+      </div>
+    );
+  }
 
   const filtered = trainingCertificates.filter(c => {
     if (typeFilter !== 'all' && c.certificateType !== typeFilter) return false;

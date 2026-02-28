@@ -56,7 +56,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     id: 'backflow',
     name: 'Backflow Prevention',
     services: [
-      { id: 'backflow_svc', name: 'Backflow Prevention Testing', required: false },
+      { id: 'backflow_svc', name: 'Backflow Prevention Testing', required: true },
     ],
   },
   {
@@ -91,7 +91,7 @@ export const VENDOR_CATEGORIES: VendorCategory[] = [
     id: 'elevator_inspection',
     name: 'Elevator Inspection',
     services: [
-      { id: 'elevator_inspection_svc', name: 'Elevator Inspection & Certification', required: false },
+      { id: 'elevator_inspection_svc', name: 'Elevator Inspection & Certification', required: true },
       { id: 'elevator_maintenance_svc', name: 'Elevator Maintenance', required: false },
     ],
   },

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useDemo } from '../contexts/DemoContext';
 import {
   marketplaceVendors,
   marketplaceCategories,
@@ -120,6 +121,7 @@ const tierBorderColor: Record<MarketplaceTier, string> = {
 /* ------------------------------------------------------------------ */
 export function VendorMarketplace() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
 
   /* ---- state ---- */
   const [searchQuery, setSearchQuery] = useState('');
@@ -207,6 +209,17 @@ export function VendorMarketplace() {
     ratingFilter,
     sortBy,
   ]);
+
+  if (!isDemoMode) {
+    return (
+      <div className="min-h-screen bg-[#f7f9fb] flex items-center justify-center">
+        <div className="p-8 text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Marketplace</h2>
+          <p className="text-gray-500">Browse verified vendors for your service needs.</p>
+        </div>
+      </div>
+    );
+  }
 
   /* ---- whether any filter is active ---- */
   const hasActiveFilters =

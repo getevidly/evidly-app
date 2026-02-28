@@ -24,6 +24,7 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { useDemo } from '../contexts/DemoContext';
 import {
   playbookTemplates,
   demoCustomPlaybooks,
@@ -66,7 +67,44 @@ function complianceBadgeColor(rate: number): string {
    ================================================================ */
 export function PlaybookAnalytics() {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('6m');
+
+  // Non-demo mode: show empty state (no hardcoded data for authenticated users)
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: FONT, background: LIGHT_BG, minHeight: '100vh', padding: '24px 12px' }} className="sm:!p-8">
+        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6, background: 'none',
+              border: 'none', color: PRIMARY, fontSize: 14, fontFamily: FONT, cursor: 'pointer',
+              padding: 0, marginBottom: 12,
+            }}
+          >
+            <ArrowLeft size={16} /> Back to Playbooks
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 28 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 10, background: PRIMARY, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Siren size={22} color="#fff" />
+            </div>
+            <div>
+              <h1 style={{ margin: 0, fontWeight: 700, color: '#111', fontSize: 22 }}>Playbook Analytics</h1>
+              <p style={{ margin: 0, fontSize: 14, color: '#6b7280', marginTop: 2 }}>Incident trends, response performance, and cross-location comparison</p>
+            </div>
+          </div>
+          <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.06)', padding: 48, textAlign: 'center' }}>
+            <BarChart3 size={48} color="#d1d5db" style={{ margin: '0 auto 16px' }} />
+            <h2 style={{ fontSize: 18, fontWeight: 600, color: '#374151', margin: '0 0 8px' }}>No Analytics Data Yet</h2>
+            <p style={{ fontSize: 14, color: '#6b7280', maxWidth: 400, margin: '0 auto' }}>
+              Run incident playbooks to see performance analytics.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const { monthlyIncidents, responseTimeTrend, stepCompletionRates, locationComparison } =
     demoPlaybookAnalytics;
