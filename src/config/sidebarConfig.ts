@@ -227,6 +227,10 @@ const I: Record<string, NavItem> = {
     id: 'training-records', label: 'Training Records', path: '/dashboard/training', icon: '🎓',
     roles: [], description: 'Employee certifications, training completion, and compliance tracking per team member.',
   },
+  trainingCatalog: {
+    id: 'training-catalog', label: 'Training Catalog', path: '/dashboard/training-catalog', icon: '📚',
+    roles: [], description: 'Library of all required and recommended training courses with certification requirements and renewal schedules.',
+  },
 
   // ── Permissions ──
   rolesPermissions: {
@@ -316,7 +320,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, assessment leads, command center, and role permissions.',
-        [I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.vendors],
+        [I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
       ),
       section('system', 'System', '🖥️',
         'System', 'Edge Function health monitoring, crawl status, and infrastructure diagnostics.',
@@ -540,7 +544,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.vendors],
+        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
       ),
       section('help', 'Help', '❓',
         'Help', 'Documentation, support, and contact options.',
