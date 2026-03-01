@@ -16,6 +16,36 @@ export interface CheckupQuestion {
   freeText?: boolean; // show free-text input for "Other" option
 }
 
+export interface CheckupFinding {
+  id: string;
+  category: 'facility' | 'food' | 'documentation';
+  severity: 'critical' | 'high' | 'medium' | 'low' | 'positive';
+  title: string;
+  description: string;
+  isPositive: boolean;
+}
+
+export interface RiskDriver {
+  dimension: 'revenue' | 'liability' | 'cost' | 'operational';
+  title: string;
+  description: string;
+  points: number;
+}
+
+export interface DollarEstimates {
+  revenueRiskLow: number;
+  revenueRiskHigh: number;
+  liabilityRiskLow: number;
+  liabilityRiskHigh: number;
+  avoidableCosts: number;
+  avoidableCostsHigh: number;
+  operationalDays: number;
+  operationalCostLow: number;
+  operationalCostHigh: number;
+  totalLow: number;
+  totalHigh: number;
+}
+
 export interface CheckupScores {
   facilitySafety: number;
   foodSafety: number;
@@ -26,6 +56,9 @@ export interface CheckupScores {
   operationalRisk: number;
   overallGrade: 'A' | 'B' | 'C' | 'D' | 'F';
   gradeLabel: string;
+  findings: CheckupFinding[];
+  riskDrivers: Record<string, RiskDriver[]>;
+  estimates: DollarEstimates;
 }
 
 // ── Questions ────────────────────────────────────────────────────────────────
@@ -562,6 +595,10 @@ export function computeCheckupScores(answers: Record<string, string>): CheckupSc
     gradeLabel = 'Needs work';
   }
 
+  const findings = generateFindings(answers);
+  const riskDrivers = generateRiskDrivers(answers);
+  const estimates = computeDollarEstimates(answers, { revenueRisk, liabilityRisk, costRisk, operationalRisk });
+
   return {
     facilitySafety,
     foodSafety,
@@ -572,7 +609,406 @@ export function computeCheckupScores(answers: Record<string, string>): CheckupSc
     operationalRisk,
     overallGrade,
     gradeLabel,
+    findings,
+    riskDrivers,
+    estimates,
   };
+}
+
+// ── Findings Generation ──────────────────────────────────────────────────────
+
+const COOKING_FREQUENCY: Record<string, string> = {
+  solid_fuel: 'monthly',
+  high_volume: 'quarterly',
+  moderate: 'every six months',
+  low_volume: 'annually',
+  not_sure: 'quarterly to semi-annually',
+};
+
+const LAST_CLEAN_LABELS: Record<string, string> = {
+  within_month: 'within the last month',
+  '1-3_months': '1–3 months ago',
+  '3-6_months': '3–6 months ago',
+  '6-12_months': '6–12 months ago',
+  over_year: 'over a year ago',
+  never: 'never (or unknown)',
+};
+
+function generateFindings(answers: Record<string, string>): CheckupFinding[] {
+  const f: CheckupFinding[] = [];
+  let id = 0;
+  const add = (
+    cat: CheckupFinding['category'],
+    sev: CheckupFinding['severity'],
+    title: string,
+    desc: string,
+  ) => {
+    f.push({ id: `f-${++id}`, category: cat, severity: sev, title, description: desc, isPositive: sev === 'positive' });
+  };
+
+  // ── Hood cleaning ──
+  if (answers.B2 && answers.B3 && isHoodPastDue(answers)) {
+    const freq = COOKING_FREQUENCY[answers.B3] || 'quarterly';
+    const last = LAST_CLEAN_LABELS[answers.B2] || answers.B2;
+    add('facility', 'high', 'Hood cleaning past schedule',
+      `Your last hood cleaning was ${last}. For your cooking type, it's usually done ${freq} per NFPA 96.`);
+  } else if (answers.B2 && !isHoodPastDue(answers) && answers.B1 !== 'no') {
+    add('facility', 'positive', 'Hood cleaning on schedule',
+      'Your hood cleaning looks current for your cooking type.');
+  }
+
+  // ── Solid-fuel shared exhaust ──
+  if (answers.B7 === 'yes_shared') {
+    add('facility', 'high', 'Solid-fuel shared exhaust',
+      'Your solid-fuel equipment shares an exhaust with your standard hoods. These typically need their own dedicated system.');
+  }
+
+  // ── Hood cleaning cert ──
+  if (answers.B4 === 'no' || answers.B4 === 'dont_know') {
+    add('documentation', 'medium', 'No hood cleaning certificate on file',
+      'No current hood cleaning certificate on file. Worth getting one from your cleaning provider.');
+  } else if (answers.B4 === 'yes_current') {
+    add('documentation', 'positive', 'Hood cleaning certificate current',
+      'Your hood cleaning certificate is current — good to have on hand.');
+  }
+
+  // ── Fire suppression ──
+  if (answers.B5 === 'yes_not_inspected' || answers.B5 === 'yes_unknown') {
+    add('facility', 'high', 'Fire suppression not recently inspected',
+      "Your fire suppression system doesn't have a recent inspection on file. Most insurance policies expect this to be current.");
+  } else if (answers.B5 === 'no' || answers.B5 === 'not_sure') {
+    add('facility', 'medium', 'No fire suppression system',
+      'No fire suppression system on record. Most commercial kitchens with cooking hoods need one.');
+  } else if (answers.B5 === 'yes_inspected') {
+    add('facility', 'positive', 'Fire suppression inspected',
+      "Your fire suppression was inspected within 6 months — that's current.");
+  }
+
+  // ── Fire extinguishers ──
+  if (answers.B6 === 'no') {
+    add('facility', 'medium', 'Fire extinguisher inspections missing',
+      'Fire extinguishers need annual inspection. Worth checking if yours are current.');
+  }
+
+  // ── Pest control ──
+  if (answers.B9 === 'none') {
+    add('facility', 'medium', 'No pest control service',
+      'No pest control on record. Regular service helps prevent issues before they start.');
+  } else if (answers.B9 === 'yes_quarterly') {
+    add('facility', 'positive', 'Pest control on schedule',
+      'Your pest control is on a quarterly schedule — that covers most kitchen types.');
+  } else if (answers.B9 === 'yes_monthly') {
+    add('facility', 'positive', 'Monthly pest control',
+      'Monthly pest control — thorough coverage.');
+  }
+
+  // ── Elevator ──
+  if (answers.B8 === 'yes_not_inspected') {
+    add('facility', 'medium', 'Elevator not recently inspected',
+      'Your elevator hasn\'t had a recent inspection. Most jurisdictions require annual certification.');
+  }
+
+  // ── Grease trap ──
+  if (answers.B10 === 'over_6_months' || answers.B10 === 'dont_have') {
+    add('facility', 'high', 'Grease trap service past due',
+      "Your grease trap hasn't been pumped recently. Most districts expect regular service on a set schedule.");
+  }
+  if (answers.B11 === 'no') {
+    add('documentation', 'medium', 'No grease trap pumping receipts',
+      'No pumping receipts/manifests on file. Worth keeping these — they show your service history.');
+  }
+  if (answers.B12 === 'no_idea') {
+    add('documentation', 'low', 'No grease volume tracking',
+      "You're not tracking how much grease is collected per pumping. This can help right-size your service schedule.");
+  }
+  if (answers.B13 === 'hauler_handles' || answers.B13 === 'no_idea') {
+    add('documentation', 'medium', 'No disposal tracking',
+      "No disposal receipts on file for your grease trap. Worth having these — they show where your grease went.");
+  }
+
+  // ── Backflow ──
+  if (answers.B14 === 'over_12' || answers.B14 === 'never') {
+    add('facility', 'high', 'Backflow preventer test past due',
+      "Your backflow preventer hasn't been tested recently. Most water districts ask for this annually.");
+  } else if (answers.B14 === 'what_is_that') {
+    add('facility', 'high', 'Backflow preventer unknown',
+      "A backflow preventer stops contaminated water from flowing back into the public supply. Most water districts require annual testing.");
+  } else if (answers.B14 === 'within_12') {
+    add('facility', 'positive', 'Backflow test current',
+      'Your backflow preventer test is current.');
+  }
+
+  // ── Food safety tracking ──
+  if (answers.C1 === 'paper') {
+    add('food', 'low', 'Paper-based food safety tracking',
+      "You're tracking food safety on paper. Kitchens that go digital tend to do better on inspections.");
+  } else if (answers.C1 === 'none') {
+    add('food', 'high', 'No food safety tracking',
+      "No formal food safety tracking in place. This is one of the first things an inspector looks for.");
+  }
+
+  // ── Temp logs ──
+  if (answers.C2 === 'none') {
+    add('food', 'high', 'No temperature logging',
+      'No consistent temperature logging. This is a key inspection item and an easy one to address.');
+  } else if (answers.C2 === 'manual') {
+    add('food', 'low', 'Manual temp logs',
+      "Manual paper temp logs work, but digital logging saves time and creates a cleaner audit trail.");
+  }
+
+  // ── HACCP ──
+  if (answers.C3 === 'no' || answers.C3 === 'not_sure') {
+    add('food', 'high', 'No HACCP plan',
+      "No HACCP plan on record. It's the foundation of food safety management and most inspectors expect one.");
+  }
+
+  // ── Inspection score ──
+  if (answers.C5 === 'c' || answers.C5 === 'below_70') {
+    add('food', 'high', 'Low inspection score',
+      'Your last inspection score was below expectations. Addressing the items above should help improve it.');
+  }
+
+  // ── Food handler cards ──
+  if (answers.C6 === 'some' || answers.C6 === 'no') {
+    add('food', 'medium', 'Food handler certifications need renewal',
+      'Some food handler cards may be expired. Most jurisdictions require all handlers to be current.');
+  } else if (answers.C6 === 'yes_all') {
+    add('food', 'positive', 'Food handler certifications current',
+      'Your food handler certifications are current — nice.');
+  }
+
+  // ── Vendor documents ──
+  if (answers.C7 === 'none') {
+    add('documentation', 'high', 'No vendor document tracking',
+      "You're not tracking vendor documents. When you need proof of insurance or a certificate, it helps to have it on hand.");
+  } else if (answers.C7 === 'scattered') {
+    add('documentation', 'medium', 'Vendor documents disorganized',
+      'Vendor documents are scattered. A central system saves time when you need to find something.');
+  }
+
+  // ── SB 1383 ──
+  if (answers.C8 === 'not_sure') {
+    add('documentation', 'medium', 'SB 1383 status unclear',
+      "You're not sure about your SB 1383 tier. California food generators need to know their classification for organic waste compliance.");
+  }
+
+  return f;
+}
+
+// ── Risk Drivers Generation ──────────────────────────────────────────────────
+
+interface DriverConfig {
+  dimension: RiskDriver['dimension'];
+  questionId: string;
+  match: (v: string, a: Record<string, string>) => boolean;
+  title: string;
+  description: string;
+  points: number;
+}
+
+const DRIVER_CONFIGS: DriverConfig[] = [
+  // Revenue / Business Continuity
+  { dimension: 'revenue', questionId: 'B14', match: (v) => v === 'over_12' || v === 'never' || v === 'what_is_that',
+    title: 'Backflow test past due', description: 'Water district may follow up — could affect service', points: 25 },
+  { dimension: 'revenue', questionId: 'B2', match: (_v, a) => isHoodPastDue(a),
+    title: 'Hood cleaning past schedule', description: 'Past-due cleaning can lead to forced kitchen closure', points: 20 },
+  { dimension: 'revenue', questionId: 'B7', match: (v) => v === 'yes_shared',
+    title: 'Shared solid-fuel exhaust', description: 'Code violation risk — may require retrofit', points: 25 },
+  { dimension: 'revenue', questionId: 'B5', match: (v) => v !== 'yes_inspected',
+    title: 'Fire suppression overdue', description: 'Insurance or fire marshal could require closure until inspected', points: 20 },
+  { dimension: 'revenue', questionId: 'B10', match: (v) => v === 'over_6_months' || v === 'dont_have',
+    title: 'Grease trap past due', description: 'Backup or overflow can shut down the kitchen', points: 20 },
+  { dimension: 'revenue', questionId: 'B9', match: (v) => v === 'none',
+    title: 'No pest control', description: 'Infestation can trigger immediate closure', points: 15 },
+  { dimension: 'revenue', questionId: 'C5', match: (v) => v === 'c' || v === 'below_70',
+    title: 'Low inspection score', description: 'Follow-up inspections and potential closure risk', points: 15 },
+  { dimension: 'revenue', questionId: 'C3', match: (v) => v === 'no' || v === 'not_sure',
+    title: 'No HACCP plan', description: 'Missing foundational food safety documentation', points: 15 },
+  { dimension: 'revenue', questionId: 'C6', match: (v) => v === 'some' || v === 'no',
+    title: 'Expired food handler cards', description: 'Staff may not be allowed to work until renewed', points: 10 },
+  { dimension: 'revenue', questionId: 'A2', match: (v, a) => v !== '1' && (a.C1 === 'paper' || a.C1 === 'none'),
+    title: 'Multi-location without central system', description: 'Harder to maintain consistency across sites', points: 10 },
+
+  // Liability / Exposure
+  { dimension: 'liability', questionId: 'B5', match: (v) => v !== 'yes_inspected',
+    title: 'Fire suppression not current', description: 'Insurance coverage may be affected', points: 25 },
+  { dimension: 'liability', questionId: 'B3', match: (v, a) => v === 'solid_fuel' && isHoodPastDue(a),
+    title: 'Solid-fuel past due', description: 'Higher fire risk with solid-fuel cooking and overdue cleaning', points: 25 },
+  { dimension: 'liability', questionId: 'B2', match: (_v, a) => isHoodPastDue(a),
+    title: 'Hood cleaning overdue', description: 'Grease buildup increases fire risk and liability', points: 20 },
+  { dimension: 'liability', questionId: 'B13', match: (v) => v === 'hauler_handles' || v === 'no_idea',
+    title: 'No grease disposal receipts', description: 'No proof of proper disposal — potential environmental liability', points: 20 },
+  { dimension: 'liability', questionId: 'C7', match: (v) => v === 'none',
+    title: 'No documentation system', description: "Can't demonstrate compliance if challenged", points: 20 },
+  { dimension: 'liability', questionId: 'B10', match: (v) => v === 'over_6_months' || v === 'dont_have',
+    title: 'Grease trap past due', description: 'FOG discharge violations carry significant fines', points: 15 },
+  { dimension: 'liability', questionId: 'B14', match: (v) => v === 'over_12' || v === 'never' || v === 'what_is_that',
+    title: 'Backflow test concerns', description: 'Public water contamination is a serious liability', points: 15 },
+  { dimension: 'liability', questionId: 'C3', match: (v) => v === 'no' || v === 'not_sure',
+    title: 'No HACCP plan', description: 'Weaker defense in any food safety incident', points: 15 },
+  { dimension: 'liability', questionId: 'B8', match: (v) => v === 'yes_not_inspected',
+    title: 'Elevator not inspected', description: 'Liability exposure if an incident occurs', points: 15 },
+  { dimension: 'liability', questionId: 'C5', match: (v) => v === 'c' || v === 'below_70',
+    title: 'Poor inspection score', description: 'Documented compliance issues on public record', points: 10 },
+
+  // Cost / Avoidable Costs
+  { dimension: 'cost', questionId: 'B10', match: (v) => v === 'over_6_months' || v === 'dont_have',
+    title: 'Emergency grease trap pumping', description: 'Emergency service costs 2-3x regular pumping', points: 20 },
+  { dimension: 'cost', questionId: 'B13', match: (v) => v === 'hauler_handles' || v === 'no_idea',
+    title: 'Grease district fines', description: 'Improper disposal documentation can lead to fines', points: 20 },
+  { dimension: 'cost', questionId: 'B2', match: (_v, a) => isHoodPastDue(a),
+    title: 'Hood cleaning emergency premium', description: 'Rush cleaning costs significantly more than scheduled service', points: 15 },
+  { dimension: 'cost', questionId: 'B5', match: (v) => v !== 'yes_inspected',
+    title: 'Fire suppression emergency fee', description: 'Emergency inspection costs more than scheduled service', points: 15 },
+  { dimension: 'cost', questionId: 'B14', match: (v) => v === 'over_12' || v === 'never' || v === 'what_is_that',
+    title: 'Backflow emergency test', description: 'Rush testing costs more than scheduled annual testing', points: 15 },
+  { dimension: 'cost', questionId: 'C5', match: (v) => v === 'c' || v === 'below_70',
+    title: 'Re-inspection fees', description: 'Failed inspections trigger re-inspection charges', points: 10 },
+  { dimension: 'cost', questionId: 'B8', match: (v) => v === 'yes_not_inspected',
+    title: 'Elevator emergency inspection', description: 'Emergency inspection premium', points: 10 },
+  { dimension: 'cost', questionId: 'C3', match: (v) => v === 'no' || v === 'not_sure',
+    title: 'HACCP consultant fee', description: 'May need professional help to create a compliant plan', points: 10 },
+  { dimension: 'cost', questionId: 'C6', match: (v) => v === 'some' || v === 'no',
+    title: 'Food handler renewals', description: 'Rush renewal costs more than keeping cards current', points: 5 },
+  { dimension: 'cost', questionId: 'A2', match: (v, a) => v !== '1' && (a.C1 === 'paper' || a.C1 === 'none'),
+    title: 'Manual tracking staff time', description: 'Paper systems cost more labor across multiple locations', points: 10 },
+
+  // Operational / Day-to-Day Impact
+  { dimension: 'operational', questionId: 'B14', match: (v) => v === 'over_12' || v === 'never' || v === 'what_is_that',
+    title: 'Backflow — water shutoff risk', description: 'Failed or missing test can result in water service interruption', points: 25 },
+  { dimension: 'operational', questionId: 'B7', match: (v) => v === 'yes_shared',
+    title: 'Solid-fuel exhaust retrofit', description: 'May need construction to separate exhaust systems', points: 20 },
+  { dimension: 'operational', questionId: 'B5', match: (v) => v !== 'yes_inspected',
+    title: 'Fire suppression — kitchen offline', description: 'Failed system could take kitchen offline for repairs', points: 20 },
+  { dimension: 'operational', questionId: 'B10', match: (v) => v === 'over_6_months' || v === 'dont_have',
+    title: 'Grease trap backup', description: 'Overflow or backup can shut down drains and cooking', points: 20 },
+  { dimension: 'operational', questionId: 'B2', match: (_v, a) => isHoodPastDue(a),
+    title: 'Hood cleaning — kitchen offline', description: 'Emergency cleaning takes kitchen offline during service', points: 15 },
+  { dimension: 'operational', questionId: 'B9', match: (v) => v === 'none',
+    title: 'Pest control emergency', description: 'Infestation response is disruptive and time-consuming', points: 15 },
+  { dimension: 'operational', questionId: 'A2', match: (v, a) => v !== '1' && (a.C1 === 'paper' || a.C1 === 'none'),
+    title: 'Multi-location without system', description: 'No centralized view means slower response to issues', points: 15 },
+  { dimension: 'operational', questionId: 'C1', match: (v) => v === 'paper' || v === 'none',
+    title: 'Paper or no tracking', description: 'More time spent on manual processes', points: 10 },
+  { dimension: 'operational', questionId: 'C2', match: (v) => v === 'none',
+    title: 'No temp logs', description: 'Risk of serving food at unsafe temperatures', points: 10 },
+  { dimension: 'operational', questionId: 'C6', match: (v) => v === 'some' || v === 'no',
+    title: 'Expired food handler cards', description: 'Staff scheduling disruption for renewals', points: 10 },
+  { dimension: 'operational', questionId: 'C3', match: (v) => v === 'no' || v === 'not_sure',
+    title: 'No HACCP plan', description: 'No structured approach to identifying and managing hazards', points: 10 },
+];
+
+function generateRiskDrivers(answers: Record<string, string>): Record<string, RiskDriver[]> {
+  const grouped: Record<string, RiskDriver[]> = {
+    revenue: [], liability: [], cost: [], operational: [],
+  };
+
+  for (const cfg of DRIVER_CONFIGS) {
+    const value = answers[cfg.questionId];
+    if (value === undefined) continue;
+    if (!cfg.match(value, answers)) continue;
+    grouped[cfg.dimension].push({
+      dimension: cfg.dimension,
+      title: cfg.title,
+      description: cfg.description,
+      points: cfg.points,
+    });
+  }
+
+  // Sort each dimension by points descending, keep top 3
+  for (const dim of Object.keys(grouped)) {
+    grouped[dim] = grouped[dim].sort((a, b) => b.points - a.points).slice(0, 3);
+  }
+
+  return grouped;
+}
+
+// ── Dollar Estimates ─────────────────────────────────────────────────────────
+
+function getEstimatedRevenue(answers: Record<string, string>): number {
+  const rev = answers.A4;
+  switch (rev) {
+    case 'under_500k': return 350000;
+    case '500k-1m': return 750000;
+    case '1m-5m': return 3000000;
+    case '5m-10m': return 7500000;
+    case '10m+': return 15000000;
+    default: return 1000000; // prefer_not or missing
+  }
+}
+
+function getRevenueMultiplier(answers: Record<string, string>): number {
+  const rev = answers.A4;
+  switch (rev) {
+    case 'under_500k': return 0.08;
+    case '500k-1m': return 0.06;
+    case '1m-5m': return 0.05;
+    case '5m-10m': return 0.04;
+    case '10m+': return 0.03;
+    default: return 0.05;
+  }
+}
+
+function computeDollarEstimates(
+  answers: Record<string, string>,
+  scores: { revenueRisk: number; liabilityRisk: number; costRisk: number; operationalRisk: number },
+): DollarEstimates {
+  const revenue = getEstimatedRevenue(answers);
+  const mult = getRevenueMultiplier(answers);
+
+  // Revenue risk
+  const revenueRiskLow = Math.round(revenue * (scores.revenueRisk / 100) * mult * 0.8);
+  const revenueRiskHigh = Math.round(revenue * (scores.revenueRisk / 100) * mult * 1.2);
+
+  // Liability risk
+  const liabilityRiskLow = Math.round(revenue * (scores.liabilityRisk / 100) * 0.10);
+  const liabilityRiskHigh = Math.round(revenue * (scores.liabilityRisk / 100) * 0.15);
+
+  // Avoidable costs — sum specific line items based on answers
+  let avoidLow = 0;
+  let avoidHigh = 0;
+  if (isHoodPastDue(answers)) { avoidLow += 500; avoidHigh += 1500; }
+  if (answers.B5 && answers.B5 !== 'yes_inspected') { avoidLow += 500; avoidHigh += 1500; }
+  if (answers.B10 === 'over_6_months' || answers.B10 === 'dont_have') { avoidLow += 800; avoidHigh += 2000; }
+  if (answers.B13 === 'hauler_handles' || answers.B13 === 'no_idea') { avoidLow += 500; avoidHigh += 2000; }
+  if (answers.B14 === 'over_12' || answers.B14 === 'never' || answers.B14 === 'what_is_that') { avoidLow += 300; avoidHigh += 800; }
+  if (answers.C5 === 'c' || answers.C5 === 'below_70') { avoidLow += 200; avoidHigh += 500; }
+  if (answers.B8 === 'yes_not_inspected') { avoidLow += 200; avoidHigh += 500; }
+  if (answers.C3 === 'no' || answers.C3 === 'not_sure') { avoidLow += 300; avoidHigh += 1000; }
+  if (answers.C6 === 'some' || answers.C6 === 'no') { avoidLow += 100; avoidHigh += 300; }
+  if (answers.C1 === 'paper' || answers.C1 === 'none') { avoidLow += 200; avoidHigh += 800; }
+  // Insurance premium increase estimate
+  if (scores.liabilityRisk > 40) {
+    const premiumBase = revenue * 0.005; // ~0.5% of revenue as premium proxy
+    avoidLow += Math.round(premiumBase * 0.05);
+    avoidHigh += Math.round(premiumBase * 0.15);
+  }
+
+  // Operational impact — days
+  const operationalDays = Math.round((scores.operationalRisk / 10) * 2) / 2; // round to 0.5
+  const dailyRevenue = revenue / 365;
+  const operationalCostLow = Math.round(operationalDays * dailyRevenue * 0.5);
+  const operationalCostHigh = Math.round(operationalDays * dailyRevenue);
+
+  const totalLow = revenueRiskLow + liabilityRiskLow + avoidLow + operationalCostLow;
+  const totalHigh = revenueRiskHigh + liabilityRiskHigh + avoidHigh + operationalCostHigh;
+
+  return {
+    revenueRiskLow, revenueRiskHigh,
+    liabilityRiskLow, liabilityRiskHigh,
+    avoidableCosts: avoidLow, avoidableCostsHigh: avoidHigh,
+    operationalDays,
+    operationalCostLow, operationalCostHigh,
+    totalLow, totalHigh,
+  };
+}
+
+// ── Format Helpers ───────────────────────────────────────────────────────────
+
+export function formatDollars(n: number): string {
+  if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `$${Math.round(n / 1000)}K`;
+  return `$${n.toLocaleString()}`;
 }
 
 // ── Grade / Score color helpers ───────────────────────────────────────────────

@@ -13,8 +13,10 @@ import {
   computeCheckupScores,
   gradeColor,
   scoreBarColor,
+  formatDollars,
 } from '../../lib/checkupScoring';
-import type { CheckupScores } from '../../lib/checkupScoring';
+import type { CheckupScores, CheckupFinding } from '../../lib/checkupScoring';
+import { generateCheckupPdf } from '../../lib/checkupPdf';
 import { supabase } from '../../lib/supabase';
 import {
   ChevronLeft,
@@ -29,6 +31,10 @@ import {
   MapPin,
   Hash,
   Megaphone,
+  Download,
+  ArrowRight,
+  Wrench,
+  BarChart3,
 } from 'lucide-react';
 
 const NAVY = '#1E2D4D';
@@ -267,18 +273,55 @@ export function KitchenCheckup() {
           liability_risk: computed.liabilityRisk,
           cost_risk: computed.costRisk,
           operational_risk: computed.operationalRisk,
-          findings_json: [],
-          risk_drivers_json: {},
+          findings_json: computed.findings,
+          risk_drivers_json: computed.riskDrivers,
+          estimated_revenue_risk_dollars: computed.estimates.revenueRiskHigh,
+          estimated_liability_risk_dollars: computed.estimates.liabilityRiskHigh,
+          estimated_cost_risk_dollars: computed.estimates.avoidableCostsHigh,
+          estimated_operational_risk_days: computed.estimates.operationalDays,
+          total_estimated_exposure_low: computed.estimates.totalLow,
+          total_estimated_exposure_high: computed.estimates.totalHigh,
           recommendations_json: [],
         });
       } catch (err) {
         console.error('Results insert error:', err);
       }
+
+      // Fire-and-forget email notification
+      supabase.functions.invoke('checkup-notify', {
+        body: {
+          leadId,
+          lead: {
+            businessName: lead.business_name,
+            contactName: lead.contact_name,
+            email: lead.email,
+            phone: lead.phone,
+            city: lead.city,
+            zipCode: lead.zip_code,
+            referralSource: lead.referral_source,
+            utmRef,
+          },
+          scores: {
+            overallGrade: computed.overallGrade,
+            gradeLabel: computed.gradeLabel,
+            facilitySafety: computed.facilitySafety,
+            foodSafety: computed.foodSafety,
+            documentation: computed.documentation,
+            revenueRisk: computed.revenueRisk,
+            liabilityRisk: computed.liabilityRisk,
+            costRisk: computed.costRisk,
+            operationalRisk: computed.operationalRisk,
+            totalLow: computed.estimates.totalLow,
+            totalHigh: computed.estimates.totalHigh,
+            topFindings: computed.findings.filter(f => !f.isPositive).slice(0, 3).map(f => f.description),
+          },
+        },
+      }).catch(() => {}); // silent fail
     }
 
     // Show analyzing state for 2.5s
     setTimeout(() => setStep('results'), 2500);
-  }, [answers, leadId, freeTextValues]);
+  }, [answers, leadId, freeTextValues, lead, utmRef]);
 
   // ── Cancel ─────────────────────────────────────────────────────────────────
 
@@ -374,7 +417,7 @@ export function KitchenCheckup() {
 
           {/* ── Results ─────────────────────────────────────────────────────── */}
           {step === 'results' && scores && (
-            <ResultsView scores={scores} onRestart={handleCancel} />
+            <ResultsView scores={scores} lead={lead} onRestart={handleCancel} />
           )}
         </div>
 
@@ -781,28 +824,55 @@ function AnalyzingView() {
   );
 }
 
-// ── Results View (Temporary — replaced by Prompt 6B) ─────────────────────────
+// ── Results View — Full Two-Page Tabbed Display ──────────────────────────────
+
+type ResultsTab = 'stand' | 'impact' | 'recs';
 
 function ResultsView({
   scores,
+  lead,
   onRestart,
 }: {
   scores: CheckupScores;
+  lead: LeadData;
   onRestart: () => void;
 }) {
+  const [tab, setTab] = useState<ResultsTab>('stand');
   const gColor = gradeColor(scores.overallGrade);
+
+  const gapFindings = scores.findings.filter((f) => !f.isPositive);
+  const positiveFindings = scores.findings.filter((f) => f.isPositive);
+  const hasFacilityGaps = scores.facilitySafety > 20;
+  const hasOpsGaps = scores.foodSafety > 20 || scores.documentation > 20;
+
+  const handleDownloadPdf = () => {
+    const doc = generateCheckupPdf(
+      {
+        businessName: lead.business_name,
+        contactName: lead.contact_name,
+        email: lead.email,
+        city: lead.city,
+        zipCode: lead.zip_code,
+        jurisdiction: `Your kitchen is in ${lead.city || 'California'}. California kitchens follow the California Retail Food Code (CalCode), enforced by your county's Environmental Health Department.`,
+      },
+      scores,
+    );
+    doc.save(`${lead.business_name.replace(/[^a-zA-Z0-9]/g, '-')}-Kitchen-Checkup.pdf`);
+  };
+
+  const tabs: { key: ResultsTab; label: string }[] = [
+    { key: 'stand', label: 'Where You Stand' },
+    { key: 'impact', label: 'Business Impact' },
+    { key: 'recs', label: 'Recommendations' },
+  ];
 
   return (
     <div className="animate-fade-in">
       {/* Grade Hero */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-6">
         <div
-          className="inline-flex items-center justify-center w-24 h-24 rounded-full text-4xl font-black mb-3"
-          style={{
-            backgroundColor: `${gColor}15`,
-            color: gColor,
-            border: `3px solid ${gColor}`,
-          }}
+          className="inline-flex items-center justify-center w-20 h-20 rounded-full text-3xl font-black mb-2"
+          style={{ backgroundColor: `${gColor}15`, color: gColor, border: `3px solid ${gColor}` }}
         >
           {scores.overallGrade}
         </div>
@@ -810,65 +880,360 @@ function ResultsView({
           {scores.gradeLabel}
         </h2>
         <p className="text-sm text-gray-500">
-          Here&apos;s a snapshot of where your kitchen stands.
+          Here&apos;s where your kitchen stands.
         </p>
       </div>
 
-      {/* Category Scores */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
-        <h3 className="text-sm font-semibold mb-4 uppercase tracking-wide" style={{ color: GOLD }}>
-          Category Scores
-        </h3>
-        <p className="text-xs text-gray-400 mb-3">Higher = more items to look at</p>
-        <ScoreBar label="Facility Safety" score={scores.facilitySafety} />
-        <ScoreBar label="Food Safety" score={scores.foodSafety} />
-        <ScoreBar label="Documentation" score={scores.documentation} />
+      {/* Tab bar */}
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setTab(t.key)}
+            className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+              tab === t.key
+                ? 'border-current'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+            style={tab === t.key ? { color: GOLD, borderColor: GOLD } : {}}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {/* Impact Area Scores */}
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
-        <h3 className="text-sm font-semibold mb-4 uppercase tracking-wide" style={{ color: GOLD }}>
-          Impact Areas
-        </h3>
-        <p className="text-xs text-gray-400 mb-3">How these issues could affect your business</p>
-        <ScoreBar label="Business Continuity" score={scores.revenueRisk} />
-        <ScoreBar label="Exposure" score={scores.liabilityRisk} />
-        <ScoreBar label="Avoidable Costs" score={scores.costRisk} />
-        <ScoreBar label="Day-to-Day Impact" score={scores.operationalRisk} />
-      </div>
+      {/* ── TAB 1: Where You Stand ──────────────────────────────────────────── */}
+      {tab === 'stand' && (
+        <div className="animate-fade-in">
+          {/* Category Scores */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+            <h3 className="text-sm font-semibold mb-4 uppercase tracking-wide" style={{ color: GOLD }}>
+              Category Summary
+            </h3>
+            <p className="text-xs text-gray-400 mb-3">Higher = more items to look at</p>
+            <ScoreBar label="Your Kitchen & Equipment" score={scores.facilitySafety} />
+            <ScoreBar label="Day-to-Day Operations" score={scores.foodSafety} />
+            <ScoreBar label="Paperwork & Records" score={scores.documentation} />
+          </div>
 
-      {/* Coming Soon */}
-      <div
-        className="rounded-xl p-5 mb-6 text-center"
-        style={{ backgroundColor: `${NAVY}08`, border: `1px solid ${NAVY}15` }}
-      >
-        <p className="text-sm font-medium" style={{ color: NAVY }}>
-          Full results with business impact analysis coming soon
-        </p>
-        <button
-          disabled
-          className="mt-3 px-5 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed"
-        >
-          Download PDF — Coming in next update
-        </button>
-      </div>
+          {/* Findings */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+            <h3 className="text-sm font-semibold mb-4 uppercase tracking-wide" style={{ color: GOLD }}>
+              Here&apos;s What We Found
+            </h3>
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <button
-          onClick={onRestart}
-          className="flex-1 px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          Start Over
-        </button>
-        <Link
-          to="/demo"
-          className="flex-1 px-5 py-2.5 text-sm font-semibold text-white rounded-lg text-center shadow-sm transition-all hover:shadow"
-          style={{ backgroundColor: BRAND }}
-        >
-          Try EvidLY Free
-        </Link>
+            {gapFindings.length > 0 && (
+              <div className="space-y-3 mb-4">
+                {gapFindings.map((f) => (
+                  <FindingRow key={f.id} finding={f} />
+                ))}
+              </div>
+            )}
+
+            {positiveFindings.length > 0 && (
+              <>
+                <div className="border-t border-gray-100 my-3" />
+                <div className="space-y-3">
+                  {positiveFindings.map((f) => (
+                    <FindingRow key={f.id} finding={f} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Jurisdiction Context */}
+          <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 mb-5">
+            <p className="text-sm" style={{ color: NAVY }}>
+              <strong>Your kitchen is in {lead.city || 'California'}.</strong>{' '}
+              California kitchens follow the California Retail Food Code (CalCode),
+              enforced by your county&apos;s Environmental Health Department.
+            </p>
+          </div>
+
+          {/* Next button */}
+          <button
+            onClick={() => setTab('impact')}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white rounded-xl shadow-sm transition-all hover:shadow"
+            style={{ backgroundColor: BRAND }}
+          >
+            See What This Means for Your Business <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ── TAB 2: Business Impact ──────────────────────────────────────────── */}
+      {tab === 'impact' && (
+        <div className="animate-fade-in">
+          <p className="text-sm text-gray-500 mb-5">
+            How these things connect to your bottom line. These are the same four areas
+            your EvidLY dashboard covers — so you always know where you stand.
+          </p>
+
+          {/* 4 Impact Areas */}
+          {[
+            {
+              label: 'Business Continuity',
+              score: scores.revenueRisk,
+              estimate: `${formatDollars(scores.estimates.revenueRiskLow)} – ${formatDollars(scores.estimates.revenueRiskHigh)}/yr`,
+              drivers: scores.riskDrivers.revenue || [],
+            },
+            {
+              label: 'Exposure',
+              score: scores.liabilityRisk,
+              estimate: `${formatDollars(scores.estimates.liabilityRiskLow)} – ${formatDollars(scores.estimates.liabilityRiskHigh)} potential`,
+              drivers: scores.riskDrivers.liability || [],
+            },
+            {
+              label: 'Avoidable Costs',
+              score: scores.costRisk,
+              estimate: `${formatDollars(scores.estimates.avoidableCosts)} – ${formatDollars(scores.estimates.avoidableCostsHigh)}/yr`,
+              drivers: scores.riskDrivers.cost || [],
+            },
+            {
+              label: 'Day-to-Day Impact',
+              score: scores.operationalRisk,
+              estimate: `~${scores.estimates.operationalDays} days disruption/yr`,
+              drivers: scores.riskDrivers.operational || [],
+            },
+          ].map((area) => (
+            <ImpactAreaCard key={area.label} {...area} />
+          ))}
+
+          {/* Total Estimated Impact */}
+          <div
+            className="rounded-xl p-5 mb-5 border"
+            style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+          >
+            <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: NAVY }}>
+              Total Estimated Annual Impact
+            </p>
+            <p className="text-xl font-bold" style={{ color: '#92400e' }}>
+              {formatDollars(scores.estimates.totalLow)} – {formatDollars(scores.estimates.totalHigh)}
+            </p>
+            <p className="text-xs mt-1" style={{ color: GRAY }}>
+              Estimated — these are directional, not exact
+            </p>
+          </div>
+
+          {/* Dashboard callout */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4 mb-5">
+            <p className="text-sm" style={{ color: NAVY }}>
+              These are the same four areas your EvidLY dashboard covers. Your checkup
+              is your starting point — the dashboard shows where things stand as you address them.
+            </p>
+          </div>
+
+          <button
+            onClick={() => setTab('recs')}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold text-white rounded-xl shadow-sm transition-all hover:shadow"
+            style={{ backgroundColor: BRAND }}
+          >
+            See Recommendations <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* ── TAB 3: Recommendations ──────────────────────────────────────────── */}
+      {tab === 'recs' && (
+        <div className="animate-fade-in">
+          {hasFacilityGaps && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Wrench className="w-4 h-4" style={{ color: GOLD }} />
+                <h3 className="text-sm font-semibold" style={{ color: NAVY }}>
+                  Cleaning Pros Plus can help with
+                </h3>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Hood cleaning service (scheduled per your cooking type)
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Fire suppression inspection
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Fire extinguisher inspection/recharging
+                </li>
+              </ul>
+              <a
+                href="mailto:arthur@cleaningprosplus.com?subject=Hood%20Inspection%20Request%20from%20Kitchen%20Checkup"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-all hover:shadow"
+                style={{ backgroundColor: BRAND }}
+              >
+                Schedule a Free Hood Inspection
+              </a>
+              <a
+                href="tel:+12096366116"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-600 ml-2"
+              >
+                (209) 636-6116
+              </a>
+            </div>
+          )}
+
+          {hasOpsGaps && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 className="w-4 h-4" style={{ color: GOLD }} />
+                <h3 className="text-sm font-semibold" style={{ color: NAVY }}>
+                  EvidLY can help with
+                </h3>
+              </div>
+              <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  A dashboard that shows where everything stands, updated as things happen
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Reminders before things come due
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  All your vendor documents in one place
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Grease trap records with disposal receipts
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Knows what your local agency expects
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Documentation your insurance carrier looks for
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: GOLD }} />
+                  Digital temperature logging and HACCP management
+                </li>
+              </ul>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-all hover:shadow"
+                  style={{ backgroundColor: BRAND }}
+                >
+                  Start Your Free Trial — $99/month
+                </Link>
+                <Link
+                  to="/demo"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  See the Platform in Action
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {!hasFacilityGaps && !hasOpsGaps && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5 text-center">
+              <p className="text-sm" style={{ color: NAVY }}>
+                Your kitchen is looking good across the board. Keep doing what you&apos;re doing.
+              </p>
+            </div>
+          )}
+
+          {/* PDF Download */}
+          <div className="bg-white rounded-xl border border-gray-200 p-5 mb-5">
+            <button
+              onClick={handleDownloadPdf}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold rounded-xl border-2 transition-all hover:shadow"
+              style={{ borderColor: GOLD, color: NAVY }}
+            >
+              <Download className="w-4 h-4" style={{ color: GOLD }} />
+              Download Your Kitchen Checkup Report (PDF)
+            </button>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={onRestart}
+              className="flex-1 px-5 py-2.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              Start Over
+            </button>
+            <Link
+              to="/demo"
+              className="flex-1 px-5 py-2.5 text-sm font-semibold text-white rounded-lg text-center shadow-sm transition-all hover:shadow"
+              style={{ backgroundColor: BRAND }}
+            >
+              Try EvidLY Free
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Finding Row ──────────────────────────────────────────────────────────────
+
+function FindingRow({ finding }: { finding: CheckupFinding }) {
+  const severityColors: Record<string, string> = {
+    critical: '#ef4444', high: '#f97316', medium: '#eab308', low: '#94a3b8', positive: '#22c55e',
+  };
+  const color = severityColors[finding.severity] || '#94a3b8';
+
+  return (
+    <div className="flex items-start gap-2.5">
+      <span
+        className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+        style={{ backgroundColor: color }}
+      />
+      <p className="text-sm" style={{ color: finding.isPositive ? '#22c55e' : NAVY }}>
+        {finding.description}
+      </p>
+    </div>
+  );
+}
+
+// ── Impact Area Card ─────────────────────────────────────────────────────────
+
+const GRAY = '#6B7F96';
+
+function ImpactAreaCard({
+  label,
+  score,
+  estimate,
+  drivers,
+}: {
+  label: string;
+  score: number;
+  estimate: string;
+  drivers: { title: string; description: string }[];
+}) {
+  const color = scoreBarColor(score);
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="text-sm font-semibold" style={{ color: NAVY }}>{label}</h4>
+        <span className="text-sm font-bold" style={{ color }}>{score}/100</span>
       </div>
+      <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden mb-2">
+        <div
+          className="h-full rounded-full transition-all duration-1000"
+          style={{ width: `${Math.max(2, score)}%`, backgroundColor: color }}
+        />
+      </div>
+      <p className="text-xs font-medium mb-2" style={{ color: GOLD }}>{estimate}</p>
+      {drivers.length > 0 && (
+        <ul className="space-y-1">
+          {drivers.map((d, i) => (
+            <li key={i} className="text-xs flex items-start gap-1.5" style={{ color: GRAY }}>
+              <span className="mt-0.5">-</span>
+              <span><strong>{d.title}</strong> — {d.description}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
