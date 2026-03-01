@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, ShieldX } from 'lucide-react';
+import { ShieldX } from 'lucide-react';
 import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -35,25 +35,6 @@ export function ReportCenter() {
     );
   }
 
-  // Live mode — empty state
-  if (!isDemoMode) {
-    return (
-      <div className="space-y-6 p-1" style={F}>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: BODY_TEXT }}>Reports</h1>
-          <p className="text-sm mt-1" style={{ color: MUTED }}>See where things stand across your kitchen operations</p>
-        </div>
-        <div className="flex flex-col items-center justify-center py-16">
-          <FileText className="h-16 w-16 text-gray-300 mb-4" />
-          <h2 className="text-lg font-semibold text-gray-700 mb-2">No reports available yet</h2>
-          <p className="text-gray-500 text-center max-w-md">
-            Add locations and complete checklists to generate reports.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6 p-1" style={F}>
       {/* Header */}
@@ -78,6 +59,7 @@ export function ReportCenter() {
                 <ReportCard
                   key={r.slug}
                   config={r}
+                  hasData={isDemoMode}
                   onClick={() => navigate(`/reports/${r.slug}`)}
                 />
               ))}

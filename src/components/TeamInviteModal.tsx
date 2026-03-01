@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Mail, UserPlus, Smartphone, Users } from 'lucide-react';
+import { X, Mail, UserPlus, Phone, Users, MapPin } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { toast } from 'sonner';
 
@@ -17,18 +17,28 @@ interface TeamInviteModalProps {
   locations?: LocationOption[];
 }
 
+const ROLE_OPTIONS: { value: string; label: string; description: string }[] = [
+  { value: 'kitchen_staff', label: 'Kitchen Staff', description: 'Daily operations — checklists, temp logs' },
+  { value: 'chef', label: 'Chef', description: 'Kitchen leadership — recipes, training' },
+  { value: 'kitchen_manager', label: 'Kitchen Manager', description: 'Full kitchen oversight — compliance, team' },
+  { value: 'facilities_manager', label: 'Facilities Manager', description: 'Equipment, vendors, facility safety' },
+  { value: 'compliance_manager', label: 'Compliance Officer', description: 'Regulatory compliance, audits, reports' },
+  { value: 'executive', label: 'Executive', description: 'Organization-wide access, analytics' },
+  { value: 'owner_operator', label: 'Owner / Operator', description: 'Full access including billing & settings' },
+];
+
 export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent, mode = 'single', locations = [] }: TeamInviteModalProps) {
   // Single mode state
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [inviteMethod, setInviteMethod] = useState<'email' | 'sms' | 'both'>('sms');
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
   // Bulk mode state
   const [bulkEmails, setBulkEmails] = useState('');
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
   // Shared state
-  const [role, setRole] = useState('Staff');
+  const [role, setRole] = useState('kitchen_staff');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -49,11 +59,11 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
   };
 
   const resetForm = () => {
+    setFullName('');
     setEmail('');
     setPhone('');
     setBulkEmails('');
-    setRole('Staff');
-    setInviteMethod('sms');
+    setRole('kitchen_staff');
     setSelectedLocations([]);
     setError('');
   };
@@ -86,6 +96,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
       setLoading(false);
       toast.success(`${emails.length} invitation${emails.length > 1 ? 's' : ''} sent (demo)`);
       resetForm();
+      onInviteSent();
       onClose();
       return;
     }
@@ -110,6 +121,8 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               invitation_method: 'email' as const,
               email_status: 'pending',
               sms_status: null,
+              full_name: null,
+              location_ids: selectedLocations.length > 0 ? selectedLocations : null,
             })
             .select()
             .single();
@@ -160,24 +173,19 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
     e.preventDefault();
     setError('');
 
-    const hasEmail = email.trim() !== '';
-    const hasPhone = phone.trim() !== '';
-
-    if (!hasEmail && !hasPhone) {
-      setError('Please provide at least an email or phone number');
+    // Validate required fields
+    if (!fullName.trim()) {
+      setError('Full name is required');
       return;
     }
 
-    if (inviteMethod === 'email' && !hasEmail) {
-      setError('Email is required for email invitations');
+    if (!email.trim()) {
+      setError('Email address is required');
       return;
     }
-    if (inviteMethod === 'sms' && !hasPhone) {
-      setError('Phone number is required for SMS invitations');
-      return;
-    }
-    if (inviteMethod === 'both' && (!hasEmail || !hasPhone)) {
-      setError('Both email and phone number are required for dual invitations');
+
+    if (!isValidEmail(email.trim())) {
+      setError('Please enter a valid email address');
       return;
     }
 
@@ -186,8 +194,10 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
     // Demo mode
     if (!organizationId) {
       setLoading(false);
-      toast.success(`Invitation sent to ${email || phone} as ${role}`);
+      const roleLabel = ROLE_OPTIONS.find(r => r.value === role)?.label || role;
+      toast.success(`Invitation sent to ${fullName.trim()} (${email.trim()}) as ${roleLabel}`);
       resetForm();
+      onInviteSent();
       onClose();
       return;
     }
@@ -196,25 +206,34 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { data: orgData } = await supabase
-        .from('organizations')
-        .select('name')
-        .eq('id', organizationId)
+      // Duplicate detection: check for existing pending invitation with same email
+      const { data: existing } = await supabase
+        .from('user_invitations')
+        .select('id')
+        .eq('organization_id', organizationId)
+        .eq('email', email.toLowerCase().trim())
+        .eq('status', 'pending')
         .maybeSingle();
 
-      const organizationName = orgData?.name || 'EvidLY';
+      if (existing) {
+        setError('An invitation is already pending for this email address. You can resend it from the team page.');
+        setLoading(false);
+        return;
+      }
 
       const { data: invitation, error: inviteError } = await supabase
         .from('user_invitations')
         .insert({
           organization_id: organizationId,
-          email: hasEmail ? email.toLowerCase().trim() : null,
-          phone: hasPhone ? phone.trim() : null,
+          email: email.toLowerCase().trim(),
+          phone: phone.trim() || null,
           role,
           invited_by: user.id,
-          invitation_method: inviteMethod,
-          email_status: (inviteMethod === 'email' || inviteMethod === 'both') ? 'pending' : null,
-          sms_status: (inviteMethod === 'sms' || inviteMethod === 'both') ? 'pending' : null,
+          invitation_method: 'email' as const,
+          email_status: 'pending',
+          sms_status: null,
+          full_name: fullName.trim(),
+          location_ids: selectedLocations.length > 0 ? selectedLocations : null,
         })
         .select()
         .single();
@@ -227,46 +246,23 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
       const inviteUrl = `${window.location.origin}/invite/${invitation.token}`;
 
-      if (inviteMethod === 'email' || inviteMethod === 'both') {
-        const { error: emailError } = await supabase.functions.invoke('send-team-invite', {
-          body: {
-            email: email.toLowerCase().trim(),
-            inviteUrl,
-            role,
-            inviterName: user.user_metadata?.full_name || user.email,
-          }
-        });
-
-        const emailStatus = emailError ? 'failed' : 'sent';
-        await supabase
-          .from('user_invitations')
-          .update({ email_status: emailStatus })
-          .eq('id', invitation.id);
-
-        if (emailError) {
-          console.error('Error sending invite email:', emailError);
+      const { error: emailError } = await supabase.functions.invoke('send-team-invite', {
+        body: {
+          email: email.toLowerCase().trim(),
+          inviteUrl,
+          role,
+          inviterName: user.user_metadata?.full_name || user.email,
         }
-      }
+      });
 
-      if (inviteMethod === 'sms' || inviteMethod === 'both') {
-        const { error: smsError } = await supabase.functions.invoke('send-sms-invite', {
-          body: {
-            phone: phone.trim(),
-            inviteUrl,
-            organizationName,
-            role,
-          }
-        });
+      const emailStatus = emailError ? 'failed' : 'sent';
+      await supabase
+        .from('user_invitations')
+        .update({ email_status: emailStatus })
+        .eq('id', invitation.id);
 
-        const smsStatus = smsError ? 'failed' : 'sent';
-        await supabase
-          .from('user_invitations')
-          .update({ sms_status: smsStatus })
-          .eq('id', invitation.id);
-
-        if (smsError) {
-          console.error('Error sending SMS invite:', smsError);
-        }
+      if (emailError) {
+        console.error('Error sending invite email:', emailError);
       }
 
       resetForm();
@@ -286,8 +282,8 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-white rounded-xl shadow-sm border border-gray-200 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'}`}>
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className={`bg-white rounded-xl shadow-sm border border-gray-200 w-full ${isBulk ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto`}>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl z-10">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#d4af37]/10 rounded-lg">
               {isBulk ? <Users className="w-6 h-6 text-[#d4af37]" /> : <UserPlus className="w-6 h-6 text-[#d4af37]" />}
@@ -353,87 +349,84 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             </>
           ) : (
             <>
+              {/* Full Name */}
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g., Maria Garcia"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                />
+              </div>
+
+              {/* Email & Phone */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email (optional)
+                    Email <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="email@example.com"
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone (optional)
+                    Phone <span className="text-gray-400 text-xs font-normal">(optional)</span>
                   </label>
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
                       id="phone"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+1 (555) 000-0000"
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
+                      placeholder="(555) 000-0000"
+                      className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
                     />
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Send invite via
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setInviteMethod('sms')}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      inviteMethod === 'sms'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4 inline mr-1" />
-                    SMS
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInviteMethod('email')}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      inviteMethod === 'email'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Mail className="w-4 h-4 inline mr-1" />
-                    Email
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setInviteMethod('both')}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      inviteMethod === 'both'
-                        ? 'bg-[#1e4d6b] text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    Both
-                  </button>
+              {/* Locations */}
+              {locations.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <MapPin className="w-3.5 h-3.5 inline mr-1 text-gray-400" />
+                    Assign to Locations
+                  </label>
+                  <div className="space-y-2 bg-gray-50 rounded-lg p-3">
+                    {locations.map(loc => (
+                      <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedLocations.includes(loc.locationId)}
+                          onChange={() => toggleLocation(loc.locationId)}
+                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
+                        />
+                        <span className="text-sm text-gray-700">{loc.locationName}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
 
+          {/* Role — shared between single and bulk */}
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
               Role
@@ -444,9 +437,11 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
               onChange={(e) => setRole(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
             >
-              <option value="Admin">Admin - Full access including settings</option>
-              <option value="Manager">Manager - Manage operations and team</option>
-              <option value="Staff">Staff - Daily operations access</option>
+              {ROLE_OPTIONS.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label} — {opt.description}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -454,9 +449,7 @@ export function TeamInviteModal({ isOpen, onClose, organizationId, onInviteSent,
             <p className="text-sm text-blue-800">
               {isBulk
                 ? `Email invitations will be sent to ${bulkEmailCount || 0} recipient${bulkEmailCount !== 1 ? 's' : ''} with a link to join your organization.`
-                : inviteMethod === 'email' ? 'An invitation email will be sent with a link to join your organization.'
-                : inviteMethod === 'sms' ? 'An SMS text message will be sent with a link to join your organization. Recommended for kitchen staff.'
-                : 'Both email and SMS invitations will be sent for maximum delivery success.'
+                : 'An invitation email will be sent with a link to join your organization.'
               }
             </p>
           </div>

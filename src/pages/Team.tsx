@@ -35,6 +35,7 @@ interface Invitation {
   id: string;
   email: string | null;
   phone: string | null;
+  full_name: string | null;
   role: string;
   status: string;
   invitation_method: 'email' | 'sms' | 'both';
@@ -44,6 +45,19 @@ interface Invitation {
   expires_at: string;
   token: string;
 }
+
+const ROLE_LABELS: Record<string, string> = {
+  owner_operator: 'Owner / Operator',
+  executive: 'Executive',
+  compliance_manager: 'Compliance Officer',
+  facilities_manager: 'Facilities Manager',
+  chef: 'Chef',
+  kitchen_manager: 'Kitchen Manager',
+  kitchen_staff: 'Kitchen Staff',
+  Admin: 'Admin',
+  Manager: 'Manager',
+  Staff: 'Staff',
+};
 
 interface DemoCert {
   id: string;
@@ -202,7 +216,7 @@ export function Team() {
       .from('user_invitations')
       .select('*')
       .eq('organization_id', profile?.organization_id)
-      .eq('status', 'pending')
+      .in('status', ['pending', 'expired'])
       .order('created_at', { ascending: false });
 
     if (data) setInvitations(data);
@@ -473,10 +487,15 @@ export function Team() {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 sm:p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-blue-600" />
-              Pending Invitations
+              Invitations
             </h3>
             <div className="space-y-3">
-              {invitations.map((invitation) => (
+              {invitations.map((invitation) => {
+                const isExpired = invitation.status === 'expired' || new Date(invitation.expires_at) < new Date();
+                const statusBadge = isExpired
+                  ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">Expired</span>
+                  : <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>;
+                return (
                 <div key={invitation.id} className="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-xl">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex gap-1">
@@ -504,17 +523,18 @@ export function Team() {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">
-                        {invitation.email || invitation.phone}
-                        {invitation.email && invitation.phone && (
-                          <span className="text-sm text-gray-500 ml-2">({invitation.phone})</span>
-                        )}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium text-gray-900">
+                          {invitation.full_name || invitation.email || invitation.phone}
+                        </p>
+                        {statusBadge}
+                      </div>
                       <p className="text-sm text-gray-500">
-                        {invitation.role}
-                        {new Date(invitation.expires_at) < new Date() ? (
-                          <span className="ml-2 inline-flex items-center bg-red-100 text-red-700 px-2 py-0.5 rounded-full text-xs font-medium">Expired</span>
-                        ) : (
+                        {invitation.full_name && (invitation.email || invitation.phone) && (
+                          <span>{invitation.email}{invitation.phone ? ` • ${invitation.phone}` : ''} • </span>
+                        )}
+                        {ROLE_LABELS[invitation.role] || invitation.role}
+                        {!isExpired && (
                           <span> • Expires {new Date(invitation.expires_at).toLocaleDateString()}</span>
                         )}
                         {invitation.email_status === 'failed' && ' • Email failed'}
@@ -523,28 +543,6 @@ export function Team() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {(invitation.email_status === 'failed' || invitation.sms_status === 'failed') && (
-                      <div className="flex gap-1">
-                        {invitation.email_status === 'failed' && invitation.email && (
-                          <button
-                            onClick={() => resendInvitation(invitation, 'email')}
-                            className="p-2 text-[#1e4d6b] hover:bg-gray-100 rounded transition-colors"
-                            title="Resend email"
-                          >
-                            <Mail className="w-4 h-4" />
-                          </button>
-                        )}
-                        {invitation.sms_status === 'failed' && invitation.phone && (
-                          <button
-                            onClick={() => resendInvitation(invitation, 'sms')}
-                            className="p-2 text-[#1e4d6b] hover:bg-gray-100 rounded transition-colors"
-                            title="Resend SMS"
-                          >
-                            <Smartphone className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    )}
                     <button
                       onClick={() => resendInvitation(invitation)}
                       className="p-2 text-gray-600 hover:bg-gray-50 rounded transition-colors"
@@ -561,7 +559,8 @@ export function Team() {
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -1083,6 +1082,7 @@ export function Team() {
         onClose={() => setShowInviteModal(false)}
         organizationId={profile?.organization_id || ''}
         onInviteSent={handleInviteSent}
+        locations={accessibleLocations.map(l => ({ locationId: l.locationId, locationName: l.locationName }))}
       />
 
       <TeamInviteModal

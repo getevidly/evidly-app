@@ -42,7 +42,11 @@ export function ReportCard({ config, onClick, hasData = true }: ReportCardProps)
           <p className="text-xs mt-1 leading-relaxed" style={{ color: MUTED }}>
             {config.subtitle}
           </p>
-          {!hasData && (
+          {hasData ? (
+            <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold" style={{ color: NAVY }}>
+              View Report <span aria-hidden="true">&rarr;</span>
+            </span>
+          ) : (
             <span
               className="inline-block mt-2 text-[11px] font-medium px-2 py-0.5 rounded"
               style={{ backgroundColor: '#f3f4f6', color: '#9ca3af' }}
