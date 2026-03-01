@@ -102,12 +102,14 @@ const CHANGE_REASONS = [
 ];
 
 const RECURRENCE_OPTIONS = [
-  { value: 'one-time', label: 'One-time' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly' },
-  { value: 'semi-annual', label: 'Semi-Annual' },
-  { value: 'annual', label: 'Annual' },
+  { value: 'one-time',    label: 'One-Time',    eventsPerYear: 1  },
+  { value: 'weekly',      label: 'Weekly',       eventsPerYear: 52 },
+  { value: 'bi-weekly',   label: 'Bi-Weekly',    eventsPerYear: 26 },
+  { value: 'monthly',     label: 'Monthly',      eventsPerYear: 12 },
+  { value: 'bi-monthly',  label: 'Bi-Monthly',   eventsPerYear: 6  },
+  { value: 'quarterly',   label: 'Quarterly',    eventsPerYear: 4  },
+  { value: 'semi-annual', label: 'Semi-Annual',  eventsPerYear: 2  },
+  { value: 'annual',      label: 'Annual',       eventsPerYear: 1  },
 ];
 
 // ── Frequency Safety Check ────────────────────────────────────
@@ -115,10 +117,11 @@ const FREQUENCY_HIERARCHY: Record<string, number> = {
   'weekly': 1,
   'bi-weekly': 2,
   'monthly': 3,
-  'quarterly': 4,
-  'semi-annual': 5,
-  'annual': 6,
-  'one-time': 7,
+  'bi-monthly': 4,
+  'quarterly': 5,
+  'semi-annual': 6,
+  'annual': 7,
+  'one-time': 8,
 };
 
 const CATEGORY_MIN_FREQUENCY: Record<string, { freq: string; regulation: string }> = {
@@ -148,7 +151,9 @@ function generateRecurringDates(startDate: string, recurrence: string, maxOccurr
   for (let i = 1; i < maxOccurrences; i++) {
     switch (recurrence) {
       case 'weekly': d.setDate(d.getDate() + 7); break;
+      case 'bi-weekly': d.setDate(d.getDate() + 14); break;
       case 'monthly': d.setMonth(d.getMonth() + 1); break;
+      case 'bi-monthly': d.setMonth(d.getMonth() + 2); break;
       case 'quarterly': d.setMonth(d.getMonth() + 3); break;
       case 'semi-annual': d.setMonth(d.getMonth() + 6); break;
       case 'annual': d.setFullYear(d.getFullYear() + 1); break;
@@ -175,6 +180,7 @@ interface CalendarEvent {
   vendorName?: string;
   category?: string;
   recurrence?: string;
+  recurrenceGroupId?: string;
 }
 
 function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[] {
@@ -527,6 +533,8 @@ export function Calendar() {
     const vendorName = eventForm.vendorName || undefined;
     const category = eventForm.category;
     const recurrence = eventForm.recurrence;
+    const recOpt = RECURRENCE_OPTIONS.find(o => o.value === recurrence);
+    const maxEvents = recOpt?.eventsPerYear ?? 1;
 
     if (isDemoMode) {
       if (editingEvent) {
@@ -550,7 +558,8 @@ export function Calendar() {
         showToast('Event updated successfully');
       } else {
         // Generate recurring events if recurrence is set
-        const dates = generateRecurringDates(eventForm.date, recurrence, 6);
+        const dates = generateRecurringDates(eventForm.date, recurrence, maxEvents);
+        const groupId = `grp-${Date.now()}`;
         const newEvents: CalendarEvent[] = dates.map((d, i) => ({
           id: `custom-${Date.now()}-${i}`,
           title: eventForm.title,
@@ -564,6 +573,7 @@ export function Calendar() {
           vendorName,
           category,
           recurrence,
+          recurrenceGroupId: dates.length > 1 ? groupId : undefined,
         }));
         setCustomEvents(prev => [...prev, ...newEvents]);
         showToast(dates.length > 1 ? `${dates.length} events created successfully` : 'Event created successfully');
@@ -592,7 +602,7 @@ export function Calendar() {
           if (error) throw error;
           showToast('Event updated successfully');
         } else {
-          const dates = generateRecurringDates(eventForm.date, recurrence, 6);
+          const dates = generateRecurringDates(eventForm.date, recurrence, maxEvents);
           const rows = dates.map(d => ({
             organization_id: orgId,
             title: eventForm.title,
@@ -617,10 +627,66 @@ export function Calendar() {
       }
     }
 
+    // ── Audit: frequency reduction ──────────────────────────────
+    if (frequencyWarning?.show) {
+      if (isDemoMode) {
+        console.log('[Audit] Frequency reduction:', {
+          category: eventForm.category,
+          from: frequencyWarning.previousFreq,
+          to: frequencyWarning.newFreq,
+          reductionPercent: frequencyWarning.reductionPercent,
+          belowMinimum: frequencyWarning.belowMinimum,
+          reason: freqReductionReason,
+          details: freqReductionDetails,
+        });
+      } else {
+        const orgId = profile?.organization_id;
+        if (orgId) {
+          supabase.from('frequency_change_log').insert({
+            organization_id: orgId,
+            category: eventForm.category,
+            previous_frequency: frequencyWarning.previousFreq,
+            new_frequency: frequencyWarning.newFreq,
+            percentage_reduction: frequencyWarning.reductionPercent,
+            jurisdiction_minimum: frequencyWarning.jurisdictionMinimum || null,
+            below_jurisdiction_minimum: frequencyWarning.belowMinimum,
+            risk_acknowledged: freqReductionAck,
+            reduction_reason: freqReductionReason,
+            reduction_details: freqReductionDetails,
+          }).then(({ error }) => { if (error) console.error('Failed to log frequency change:', error); });
+        }
+      }
+    }
+
+    // ── Audit: vendor change ─────────────────────────────────────
+    if (confirmedVendorChange) {
+      if (isDemoMode) {
+        console.log('[Audit] Vendor change:', {
+          category: eventForm.category,
+          previousVendor: confirmedVendorChange.previousName,
+          newVendor: eventForm.vendorName,
+          reason: confirmedVendorChange.reason,
+          scope: vendorChangeForm.scope,
+        });
+      } else {
+        const orgId = profile?.organization_id;
+        if (orgId) {
+          supabase.from('vendor_changes').insert({
+            organization_id: orgId,
+            category: eventForm.category,
+            previous_vendor_name: confirmedVendorChange.previousName,
+            new_vendor_name: eventForm.vendorName,
+            change_reason: confirmedVendorChange.reason,
+            scope: vendorChangeForm.scope,
+          }).then(({ error }) => { if (error) console.error('Failed to log vendor change:', error); });
+        }
+      }
+    }
+
     setShowEventForm(false);
     setEditingEvent(null);
     resetForm();
-  }, [eventForm, editingEvent, isDemoMode, profile?.organization_id, showToast, resetForm]);
+  }, [eventForm, editingEvent, isDemoMode, profile?.organization_id, showToast, resetForm, frequencyWarning, freqReductionAck, freqReductionReason, freqReductionDetails, confirmedVendorChange, vendorChangeForm.scope]);
 
   const handleDeleteEvent = useCallback(async () => {
     if (!selectedEvent) return;
@@ -1924,7 +1990,7 @@ export function Calendar() {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {/* Title */}
-                  <div>
+                  <div style={{ order: 1 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Title *
                     </label>
@@ -1945,13 +2011,18 @@ export function Calendar() {
                   </div>
 
                   {/* Category */}
-                  <div>
+                  <div style={{ order: 2 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Category
                     </label>
                     <select
                       value={eventForm.category}
-                      onChange={(e) => setEventForm(prev => ({ ...prev, category: e.target.value }))}
+                      onChange={(e) => {
+                        const newCat = e.target.value;
+                        setEventForm(prev => ({ ...prev, category: newCat, vendorId: '', vendorName: '' }));
+                        setConfirmedVendorChange(null);
+                        setShowVendorChange(false);
+                      }}
                       style={{
                         width: '100%', padding: '10px 12px', borderRadius: '8px',
                         border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
@@ -1970,7 +2041,7 @@ export function Calendar() {
                   </div>
 
                   {/* Date */}
-                  <div>
+                  <div style={{ order: 4 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Date *
                     </label>
@@ -1990,7 +2061,7 @@ export function Calendar() {
                   </div>
 
                   {/* Start Time + End Time */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div style={{ order: 5, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         Start Time
@@ -2040,13 +2111,17 @@ export function Calendar() {
                   </div>
 
                   {/* Location */}
-                  <div>
+                  <div style={{ order: 6 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Location
                     </label>
                     <select
                       value={eventForm.location}
-                      onChange={(e) => setEventForm(prev => ({ ...prev, location: e.target.value }))}
+                      onChange={(e) => {
+                        setEventForm(prev => ({ ...prev, location: e.target.value, vendorId: '', vendorName: '' }));
+                        setConfirmedVendorChange(null);
+                        setShowVendorChange(false);
+                      }}
                       style={{
                         width: '100%', padding: '10px 12px', borderRadius: '8px',
                         border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
@@ -2070,7 +2145,7 @@ export function Calendar() {
                     const currentVendorId = eventForm.vendorId || getVendorForCategory(eventForm.category, eventForm.location)?.id;
                     const serviceType = CATEGORY_TO_SERVICE_TYPE[eventForm.category];
                     return serviceType ? (
-                      <div>
+                      <div style={{ order: 3 }}>
                         <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                           Current Vendor
                         </label>
@@ -2143,9 +2218,11 @@ export function Calendar() {
                                 }}
                               >
                                 <option value="">Select a vendor...</option>
-                                {getVendorsForCategory(eventForm.category, eventForm.location, currentVendorId).map(v => (
-                                  <option key={v.id} value={v.id}>{v.companyName}</option>
-                                ))}
+                                {getVendorsForCategory(eventForm.category, eventForm.location, currentVendorId).map(v => {
+                                  const perf = ENHANCED_VENDOR_PERFORMANCE.find(p => p.vendorId === v.id);
+                                  const rating = perf ? ` — ${perf.reliabilityScore}/100` : '';
+                                  return <option key={v.id} value={v.id}>{v.companyName}{rating}</option>;
+                                })}
                                 <option value="__add_new__">+ Add New Vendor</option>
                               </select>
                             </div>
@@ -2210,6 +2287,8 @@ export function Calendar() {
                                 type="button"
                                 disabled={!vendorChangeForm.newVendorId || !vendorChangeForm.reason}
                                 onClick={() => {
+                                  const prevName = currentVendor || '';
+                                  setConfirmedVendorChange({ previousName: prevName, reason: vendorChangeForm.reason });
                                   setEventForm(prev => ({
                                     ...prev,
                                     vendorId: vendorChangeForm.newVendorId,
@@ -2243,12 +2322,18 @@ export function Calendar() {
                             </div>
                           </div>
                         )}
+                        {/* Changed from note */}
+                        {confirmedVendorChange && !showVendorChange && (
+                          <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#92400e' }}>
+                            Changed from {confirmedVendorChange.previousName} — {confirmedVendorChange.reason}
+                          </p>
+                        )}
                       </div>
                     ) : null;
                   })()}
 
                   {/* Description */}
-                  <div>
+                  <div style={{ order: 7 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Description
                     </label>
@@ -2269,13 +2354,17 @@ export function Calendar() {
                   </div>
 
                   {/* Recurrence */}
-                  <div>
+                  <div style={{ order: 8 }}>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                       Recurrence
                     </label>
                     <select
                       value={eventForm.recurrence}
-                      onChange={(e) => setEventForm(prev => ({ ...prev, recurrence: e.target.value }))}
+                      onChange={(e) => {
+                        const newFreq = e.target.value;
+                        setEventForm(prev => ({ ...prev, recurrence: newFreq }));
+                        checkFrequencyChange(newFreq, eventForm.category);
+                      }}
                       style={{
                         width: '100%', padding: '10px 12px', borderRadius: '8px',
                         border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
@@ -2291,16 +2380,117 @@ export function Calendar() {
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
                       ))}
                     </select>
-                    {eventForm.recurrence !== 'one-time' && (
-                      <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6b7280' }}>
-                        {eventForm.recurrence === 'weekly' ? '6 weekly events' :
-                         eventForm.recurrence === 'monthly' ? '6 monthly events' :
-                         eventForm.recurrence === 'quarterly' ? '6 quarterly events' :
-                         eventForm.recurrence === 'semi-annual' ? '6 semi-annual events' :
-                         '6 annual events'} will be created from the start date.
-                      </p>
-                    )}
+                    {(() => {
+                      const opt = RECURRENCE_OPTIONS.find(o => o.value === eventForm.recurrence);
+                      if (!opt || opt.value === 'one-time') {
+                        return <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6b7280' }}>This event will occur once on the selected date.</p>;
+                      }
+                      return (
+                        <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6b7280' }}>
+                          {opt.eventsPerYear} {opt.label.toLowerCase()} event{opt.eventsPerYear !== 1 ? 's' : ''} will be created from the start date.
+                        </p>
+                      );
+                    })()}
                   </div>
+
+                  {/* Frequency Reduction Warning */}
+                  {frequencyWarning?.show && (
+                    <div style={{ order: 9 }}>
+                      <div style={{
+                        padding: '16px', borderRadius: '10px',
+                        border: '2px solid #f59e0b', backgroundColor: '#fffbeb',
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                          <AlertTriangle size={20} color="#d97706" />
+                          <span style={{ fontSize: '14px', fontWeight: 700, color: '#92400e' }}>
+                            FREQUENCY REDUCTION WARNING
+                          </span>
+                        </div>
+
+                        <p style={{ fontSize: '13px', color: '#78350f', margin: '0 0 8px 0' }}>
+                          You are changing <strong>{eventForm.category}</strong> from{' '}
+                          <strong>{frequencyWarning.previousFreq.replace(/^./, c => c.toUpperCase())}</strong> to{' '}
+                          <strong>{frequencyWarning.newFreq.replace(/^./, c => c.toUpperCase())}</strong>.
+                          This reduces service frequency by <strong>{frequencyWarning.reductionPercent}%</strong>.
+                        </p>
+
+                        <ul style={{ fontSize: '12px', color: '#92400e', margin: '0 0 12px 0', padding: '0 0 0 16px', lineHeight: '1.8' }}>
+                          <li>Your compliance score may decrease</li>
+                          <li>Insurance documentation may require updated service schedules</li>
+                          <li>Inspection readiness could be impacted</li>
+                        </ul>
+
+                        {frequencyWarning.belowMinimum && (
+                          <div style={{
+                            padding: '10px 12px', borderRadius: '8px',
+                            backgroundColor: '#fef2f2', border: '1px solid #fecaca',
+                            fontSize: '12px', color: '#991b1b', marginBottom: '12px',
+                          }}>
+                            This frequency is <strong>BELOW</strong> the minimum required by <strong>{frequencyWarning.jurisdictionLabel}</strong>.
+                            Minimum: <strong>{frequencyWarning.jurisdictionMinimum}</strong>. Setting this may result in automatic non-compliance status.
+                          </div>
+                        )}
+
+                        <label style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', cursor: 'pointer', marginBottom: '12px' }}>
+                          <input
+                            type="checkbox"
+                            checked={freqReductionAck}
+                            onChange={(e) => setFreqReductionAck(e.target.checked)}
+                            style={{ marginTop: '2px' }}
+                          />
+                          <span style={{ fontSize: '13px', color: '#374151' }}>
+                            I understand the risks and want to proceed with reduced frequency
+                          </span>
+                        </label>
+
+                        <select
+                          value={freqReductionReason}
+                          onChange={(e) => setFreqReductionReason(e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 10px', borderRadius: '6px',
+                            border: `1px solid ${!freqReductionReason && freqReductionAck ? '#fca5a5' : '#e5e7eb'}`,
+                            fontSize: '13px', color: '#111827', marginBottom: '8px',
+                            fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                            backgroundColor: 'white', boxSizing: 'border-box',
+                          }}
+                        >
+                          <option value="">Select reason for reduction...</option>
+                          {FREQ_REDUCTION_REASONS.map(r => (
+                            <option key={r} value={r}>{r}</option>
+                          ))}
+                        </select>
+
+                        <textarea
+                          value={freqReductionDetails}
+                          onChange={(e) => setFreqReductionDetails(e.target.value)}
+                          placeholder="Explain why this reduction is acceptable..."
+                          rows={2}
+                          style={{
+                            width: '100%', padding: '8px 10px', borderRadius: '6px',
+                            border: `1px solid ${!freqReductionDetails.trim() && freqReductionAck ? '#fca5a5' : '#e5e7eb'}`,
+                            fontSize: '13px', color: '#111827',
+                            fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                            resize: 'vertical', boxSizing: 'border-box',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Positive confirmation for frequency INCREASE */}
+                  {!frequencyWarning?.show && eventForm.recurrence !== 'one-time' && (() => {
+                    const oldFreq = editingEvent?.recurrence || getExistingFrequency(eventForm.category);
+                    if (oldFreq && oldFreq !== 'one-time' && (FREQUENCY_HIERARCHY[eventForm.recurrence] ?? 8) < (FREQUENCY_HIERARCHY[oldFreq] ?? 8)) {
+                      return (
+                        <div style={{ order: 9 }}>
+                          <p style={{ margin: '0', fontSize: '12px', color: '#16a34a' }}>
+                            Increasing {eventForm.category} frequency from {oldFreq} to {eventForm.recurrence}. This strengthens your compliance posture.
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
 
                 {/* Form buttons */}
@@ -2318,13 +2508,13 @@ export function Calendar() {
                   </button>
                   <button
                     onClick={handleSaveEvent}
-                    disabled={!eventForm.title.trim() || !eventForm.date}
+                    disabled={!eventForm.title.trim() || !eventForm.date || !!(frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))}
                     style={{
                       flex: 1, padding: '10px', borderRadius: '8px',
                       border: 'none',
-                      backgroundColor: (!eventForm.title.trim() || !eventForm.date) ? '#9ca3af' : '#1e4d6b',
+                      backgroundColor: (!eventForm.title.trim() || !eventForm.date || (frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))) ? '#9ca3af' : '#1e4d6b',
                       fontWeight: 600, fontSize: '13px', color: 'white',
-                      cursor: (!eventForm.title.trim() || !eventForm.date) ? 'not-allowed' : 'pointer',
+                      cursor: (!eventForm.title.trim() || !eventForm.date || (frequencyWarning?.show && (!freqReductionAck || !freqReductionReason || !freqReductionDetails.trim()))) ? 'not-allowed' : 'pointer',
                       fontFamily: "'DM Sans', sans-serif",
                       transition: 'background-color 0.15s',
                     }}
