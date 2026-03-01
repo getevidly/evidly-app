@@ -283,7 +283,7 @@ export function EnterpriseExecutive() {
             <div className="flex items-center gap-2">
               <ScoreCircle score={overallScore} size={52} />
               <div>
-                <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'Pacific Coast Dining'}</p>
+                <p className="text-xs font-semibold text-gray-900">{drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'}</p>
                 <p className="text-[10px] text-gray-500">Organization Score</p>
               </div>
             </div>
@@ -346,7 +346,7 @@ export function EnterpriseExecutive() {
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
             <h3 className="text-sm font-semibold text-gray-900">
-              {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — Pacific Coast Dining'}
+              {drillDownNodeId ? `${activeNode.name} — Scorecard` : 'Organization Scorecard — EvidLY Demo Org'}
             </h3>
             {drillDownNodeId && (
               <button onClick={() => setDrillDownNodeId(null)} className="text-[11px] text-gray-500 hover:text-gray-700 cursor-pointer">
@@ -426,7 +426,7 @@ export function EnterpriseExecutive() {
             </div>
           </div>
           <p className="text-[10px] text-gray-400 mb-4">
-            {drillDownNodeId ? activeNode.name : 'Pacific Coast Dining'} — Toggle business units to compare
+            {drillDownNodeId ? activeNode.name : 'EvidLY Demo Org'} — Toggle business units to compare
             {regulatoryOverlays.length > 0 && ' · Dashed lines = regulatory changes'}
           </p>
 
@@ -534,7 +534,7 @@ export function EnterpriseExecutive() {
             <span style={{ color: '#d4af37', fontWeight: 600 }}>EvidLY</span>
           </p>
           <p className="text-[10px] text-gray-300 mt-0.5">
-            compliance.pacificcoastdining.com — Pacific Coast Dining
+            compliance.cleaningprosplus.com — EvidLY Demo Org
           </p>
         </footer>
       )}

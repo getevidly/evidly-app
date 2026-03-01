@@ -773,11 +773,11 @@ export const reportSections = [
 ];
 
 export const distributionList: DistributionRecipient[] = [
-  { name: 'Jennifer Martinez', role: 'VP Operations', email: 'j.martinez@pacificcoastdining.com', deliveryMethod: 'email' },
-  { name: 'Michael Chen', role: 'CFO', email: 'm.chen@pacificcoastdining.com', deliveryMethod: 'email' },
-  { name: 'Sarah Williams', role: 'VP Risk Management', email: 's.williams@pacificcoastdining.com', deliveryMethod: 'teams' },
-  { name: 'David Thompson', role: 'CHRO', email: 'd.thompson@pacificcoastdining.com', deliveryMethod: 'sharepoint' },
-  { name: 'Lisa Rodriguez', role: 'Regional Director — West', email: 'l.rodriguez@pacificcoastdining.com', deliveryMethod: 'email' },
+  { name: 'Jennifer Martinez', role: 'VP Operations', email: 'j.martinez@cleaningprosplus.com', deliveryMethod: 'email' },
+  { name: 'Michael Chen', role: 'CFO', email: 'm.chen@cleaningprosplus.com', deliveryMethod: 'email' },
+  { name: 'Sarah Williams', role: 'VP Risk Management', email: 's.williams@cleaningprosplus.com', deliveryMethod: 'teams' },
+  { name: 'David Thompson', role: 'CHRO', email: 'd.thompson@cleaningprosplus.com', deliveryMethod: 'sharepoint' },
+  { name: 'Lisa Rodriguez', role: 'Regional Director — West', email: 'l.rodriguez@cleaningprosplus.com', deliveryMethod: 'email' },
 ];
 
 // ══════════════════════════════════════════════════════════════════

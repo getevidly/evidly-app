@@ -122,7 +122,7 @@ const PARENT_ROUTES: Record<string, { label: string; href: string }[]> = {
   '/training/certificates': [{ label: 'Training', href: '/training' }],
   '/training/courses/builder': [{ label: 'Training', href: '/training' }],
   '/dashboard/training': [{ label: 'Dashboard', href: '/dashboard' }],
-  '/dashboard/training-catalog': [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Training Records', href: '/dashboard/training' }],
+  '/dashboard/training-catalog': [{ label: 'Training Records', href: '/dashboard/training' }],
   '/playbooks/builder': [{ label: 'Incident Playbooks', href: '/playbooks' }],
   '/playbooks/analytics': [{ label: 'Incident Playbooks', href: '/playbooks' }],
   '/sensors/add': [{ label: 'Sensor Hub', href: '/sensors' }],

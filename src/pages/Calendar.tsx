@@ -2205,7 +2205,6 @@ export function Calendar() {
                                 onChange={(e) => {
                                   const v = e.target.value;
                                   if (v === '__add_new__') {
-                                    alert('Navigate to Vendors page to add a new vendor.');
                                     return;
                                   }
                                   const found = demoVendors.find(dv => dv.id === v);

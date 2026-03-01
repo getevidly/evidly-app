@@ -894,7 +894,7 @@ export function Vendors() {
                     {/* Send Update Link CTA */}
                     <div className="mt-4 pt-4 border-t border-gray-100">
                       <button
-                        onClick={() => alert('Demo: Service update link would be sent to ' + selectedVendor!.email)}
+                        onClick={() => { /* Production: send secure service update link to vendor */ }}
                         className="inline-flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] transition-colors"
                       >
                         <Send className="h-4 w-4" />

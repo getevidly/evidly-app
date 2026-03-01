@@ -28,6 +28,79 @@ import { UserExceptionModal } from '../components/permissions/UserExceptionModal
 import { ConfirmRoleChangeModal } from '../components/permissions/ConfirmRoleChangeModal';
 
 /* ------------------------------------------------------------------ */
+/*  Permission display names                                           */
+/* ------------------------------------------------------------------ */
+
+const PERMISSION_DISPLAY_NAMES: Record<string, string> = {
+  'sidebar.dashboard': 'Dashboard',
+  'sidebar.checklists': 'Checklists',
+  'sidebar.temperatures': 'Temperature Logs',
+  'sidebar.haccp': 'HACCP Management',
+  'sidebar.cooling-logs': 'Cooling Logs',
+  'sidebar.receiving-log': 'Receiving Log',
+  'sidebar.allergen-tracking': 'Allergen Tracking',
+  'sidebar.facility-safety': 'Facility Safety',
+  'sidebar.hood-exhaust': 'Hood & Exhaust',
+  'sidebar.hvac': 'HVAC',
+  'sidebar.suppression-systems': 'Suppression Systems',
+  'sidebar.vendors': 'Vendor Management',
+  'sidebar.vendor-certifications': 'Vendor Certifications',
+  'sidebar.services': 'Services',
+  'sidebar.team': 'Team Management',
+  'sidebar.score-table': 'Location Leaderboard',
+  'sidebar.reporting': 'Reports',
+  'sidebar.export-center': 'Export Center',
+  'sidebar.service-reporting': 'Service Reporting',
+  'sidebar.ai-insights': 'AI Insights',
+  'sidebar.analytics': 'Analytics',
+  'sidebar.intelligence': 'Intelligence Hub',
+  'sidebar.jurisdiction-intelligence': 'Jurisdiction Intelligence',
+  'sidebar.regulatory': 'Regulatory Updates',
+  'sidebar.benchmarks': 'Benchmarks',
+  'sidebar.business-intelligence': 'Business Intelligence',
+  'sidebar.violation-trends': 'Violation Trends',
+  'sidebar.iot-dashboard': 'IoT Dashboard',
+  'sidebar.refrigeration': 'Refrigeration',
+  'sidebar.ice-machines': 'Ice Machines',
+  'sidebar.incidents': 'Incident Reports',
+  'sidebar.corrective-actions': 'Corrective Actions',
+  'sidebar.self-inspection': 'Self-Inspection',
+  'sidebar.audit-log': 'Audit Log',
+  'sidebar.documents': 'Documents',
+  'sidebar.food-recovery': 'Food Recovery',
+  'sidebar.waste-diversion': 'Waste Diversion Log',
+  'sidebar.recovery-agreements': 'Recovery Agreements',
+  'sidebar.usda-production-records': 'USDA Production Records',
+  'sidebar.usda-meal-patterns': 'USDA Meal Patterns',
+  'sidebar.usda-cn-labels': 'CN Labels',
+  'sidebar.self-diagnosis': 'Self-Diagnosis',
+  'sidebar.report-issue': 'Report Issue',
+  'sidebar.settings': 'Settings',
+  'sidebar.roles-permissions': 'Role Permissions',
+  'sidebar.billing': 'Billing',
+  'sidebar.help': 'Help & Support',
+  'dashboard.hero': 'Compliance Scores',
+  'dashboard.alerts': 'Dashboard Alerts',
+  'dashboard.location-health': 'Location Health',
+  'dashboard.trend': 'Trend Charts',
+  'dashboard.kpis': 'KPIs',
+  'dashboard.tasks': 'Dashboard Tasks',
+  'dashboard.start': 'Quick Start Panel',
+  'dashboard.jurisdiction-matrix': 'Jurisdiction Matrix',
+  'permission.manage_roles': 'Manage Role Permissions',
+  'billing.manage': 'Manage Billing',
+  'org.delete': 'Delete Organization',
+  'org.transfer_ownership': 'Transfer Ownership',
+  'team.manage_roles': 'Manage Roles',
+  'settings_access': 'Settings Access',
+  'help_access': 'Help Access',
+};
+
+function getPermissionDisplayName(key: string): string {
+  return PERMISSION_DISPLAY_NAMES[key] || key.replace(/^(sidebar|dashboard|bottom|page)\./, '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
 
@@ -293,7 +366,7 @@ function RolesPermissionsInner() {
                       <>
                         {entry.newValue ? 'granted' : 'revoked'}{' '}
                         <code className="text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)' }}>
-                          {entry.permissionKey}
+                          {getPermissionDisplayName(entry.permissionKey)}
                         </code>{' '}
                         for role <strong>{entry.targetRole && formatRoleName(entry.targetRole as UserRole)}</strong>
                       </>
@@ -302,7 +375,7 @@ function RolesPermissionsInner() {
                       <>
                         added exception{' '}
                         <code className="text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)' }}>
-                          {entry.permissionKey}
+                          {getPermissionDisplayName(entry.permissionKey)}
                         </code>{' '}
                         for <strong>{entry.targetUserName}</strong>
                       </>
@@ -311,7 +384,7 @@ function RolesPermissionsInner() {
                       <>
                         removed exception{' '}
                         <code className="text-xs px-1 py-0.5 rounded" style={{ backgroundColor: 'var(--bg-panel, #EEF1F7)' }}>
-                          {entry.permissionKey}
+                          {getPermissionDisplayName(entry.permissionKey)}
                         </code>{' '}
                         for <strong>{entry.targetUserName}</strong>
                       </>

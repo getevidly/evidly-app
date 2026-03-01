@@ -123,7 +123,7 @@ export function calcPillar(
 }
 
 export const DEMO_ORG = {
-  name: 'Pacific Coast Dining',
+  name: 'EvidLY Demo Org',
   locationCount: 3,
   industry_type: 'RESTAURANT',
   planned_location_count: 3,
@@ -1021,12 +1021,12 @@ export const marketplaceVendors: MarketplaceVendor[] = [
 
 export const marketplaceReviews: MarketplaceReview[] = [
   // SafeGuard Hood Services (preferred, 4.9)
-  { id: 'mr-1', vendorSlug: 'safeguard-hood-services', reviewerName: 'Maria R.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'SafeGuard is the gold standard for hood cleaning. Their documentation is uploaded before we even get back to the office. Photos, compliance certificates, everything. Made our health inspection a breeze.', serviceType: 'Hood Cleaning', date: '2026-01-15', vendorResponse: 'Thank you Maria! We take pride in fast documentation turnaround. Looking forward to your next service.' },
+  { id: 'mr-1', vendorSlug: 'safeguard-hood-services', reviewerName: 'Maria R.', reviewerOrg: 'EvidLY Demo Org', rating: 5, text: 'SafeGuard is the gold standard for hood cleaning. Their documentation is uploaded before we even get back to the office. Photos, compliance certificates, everything. Made our health inspection a breeze.', serviceType: 'Hood Cleaning', date: '2026-01-15', vendorResponse: 'Thank you Maria! We take pride in fast documentation turnaround. Looking forward to your next service.' },
   { id: 'mr-2', vendorSlug: 'safeguard-hood-services', reviewerName: 'Linda M.', reviewerOrg: 'Fresno Eats Group', rating: 5, text: 'Switched from our old vendor and the difference is night and day. Bare metal cleaning every time, and they send before/after photos that actually show the work. Worth every penny.', serviceType: 'Hood Cleaning', date: '2025-11-20' },
   { id: 'mr-3', vendorSlug: 'safeguard-hood-services', reviewerName: 'Tom R.', reviewerOrg: 'Valley Restaurant Co', rating: 5, text: 'Best hood cleaning company in the Valley. Always on time, professional crew, and their IKECA certification gives us confidence in the quality.', serviceType: 'Hood Cleaning', date: '2025-09-08' },
   { id: 'mr-4', vendorSlug: 'safeguard-hood-services', reviewerName: 'Kevin P.', reviewerOrg: 'Campus Dining Services', rating: 4, text: 'Great service but scheduling can be tight during their busy season. Quality of work is excellent though.', serviceType: 'Hood Cleaning', date: '2025-07-22' },
   // Pacific Pest Control (preferred, 4.8)
-  { id: 'mr-5', vendorSlug: 'pacific-pest-control', reviewerName: 'Sofia C.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'Maria and her team are amazing. We had a fly problem that two other companies couldn\'t solve. Pacific Pest identified the breeding source in our floor drain and resolved it in one visit.', serviceType: 'Pest Control', date: '2026-01-28', vendorResponse: 'Thanks Sofia! Those drain fly issues can be tricky but our IPM approach helps us find the root cause. Glad we could help!' },
+  { id: 'mr-5', vendorSlug: 'pacific-pest-control', reviewerName: 'Sofia C.', reviewerOrg: 'EvidLY Demo Org', rating: 5, text: 'Maria and her team are amazing. We had a fly problem that two other companies couldn\'t solve. Pacific Pest identified the breeding source in our floor drain and resolved it in one visit.', serviceType: 'Pest Control', date: '2026-01-28', vendorResponse: 'Thanks Sofia! Those drain fly issues can be tricky but our IPM approach helps us find the root cause. Glad we could help!' },
   { id: 'mr-6', vendorSlug: 'pacific-pest-control', reviewerName: 'Mike T.', reviewerOrg: 'Airport Food Services', rating: 5, text: 'Bilingual service team is a huge plus for our kitchen staff. Reports are thorough and always uploaded same day. Never had a pest issue since we switched to Pacific.', serviceType: 'Pest Control', date: '2025-12-05' },
   { id: 'mr-7', vendorSlug: 'pacific-pest-control', reviewerName: 'Karen L.', reviewerOrg: 'University Dining', rating: 4, text: 'Reliable monthly service. They always come on schedule and the digital reports are very detailed. Only wish they had Saturday availability.', serviceType: 'Pest Control', date: '2025-10-18' },
   // ABC Fire Protection (certified, 4.6)
@@ -1095,7 +1095,7 @@ marketplaceVendors.push(cleaningProsPlus);
 
 // Cleaning Pros Plus reviews
 marketplaceReviews.push(
-  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Pacific Coast Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our coastal hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 (2024) compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with Pacific Coast Dining across your coastal properties. Safety is always job one.' },
+  { id: 'mr-26', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Richard T.', reviewerOrg: 'Pacific Coast Food Services', rating: 5, text: 'Cleaning Pros Plus handles all our coastal hospitality locations. Marco\'s crew does bare-metal cleaning every time with photographic proof. Their IKECA Master Certification gives us full confidence in NFPA 96 (2024) compliance.', serviceType: 'Hood Cleaning', date: '2026-01-20', vendorResponse: 'Thank you Richard! We\'re proud to partner with EvidLY Demo Org across your coastal properties. Safety is always job one.' },
   { id: 'mr-27', vendorSlug: 'cleaning-pros-plus', reviewerName: 'Patricia V.', reviewerOrg: 'Central Valley School District', rating: 5, text: 'They clean all 14 of our school cafeteria kitchens. Always on schedule, documentation uploaded same day, and they work around our school calendar. The best in the Valley.', serviceType: 'Hood Cleaning', date: '2025-12-08' },
   { id: 'mr-28', vendorSlug: 'cleaning-pros-plus', reviewerName: 'David L.', reviewerOrg: 'Visalia Hotel Group', rating: 5, text: 'Switched to Cleaning Pros after our previous vendor failed an inspection. Night and day difference — their bare metal photos are impressive and the compliance certificate arrives before we even ask.', serviceType: 'Hood Cleaning', date: '2025-10-15', vendorResponse: 'Glad we could help David. Consistent quality and fast documentation is what sets us apart. See you next quarter!' },
 );
@@ -1187,7 +1187,7 @@ export const vendorDashboardStats = {
 };
 
 export const vendorLeads: VendorLead[] = [
-  { id: 'vl-1', operatorName: 'Maria Rodriguez', operatorOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 (2024) compliance cert for upcoming inspection.' },
+  { id: 'vl-1', operatorName: 'Maria Rodriguez', operatorOrg: 'EvidLY Demo Org', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 (2024) compliance cert for upcoming inspection.' },
   { id: 'vl-2', operatorName: 'Ana Torres', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
   { id: 'vl-3', operatorName: 'Robert Chang', operatorOrg: 'Valley Restaurant Group', serviceType: 'Hood Cleaning', locationDetails: '890 E Shaw Ave, Fresno', urgency: 'normal', status: 'quoted', receivedAt: '2026-02-07T10:00:00', respondedAt: '2026-02-07T13:45:00', quoteAmount: 650, description: 'Quarterly hood cleaning for single-station restaurant. Standard 8ft hood.' },
   { id: 'vl-4', operatorName: 'Susan Park', operatorOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', locationDetails: '445 Pollasky Ave, Clovis', urgency: 'high', status: 'quoted', receivedAt: '2026-02-05T09:20:00', respondedAt: '2026-02-05T11:00:00', quoteAmount: 875, description: 'Full exhaust system including rooftop unit. Health inspection in 3 weeks.' },
@@ -1202,7 +1202,7 @@ export const vendorScheduledServices: VendorScheduledService[] = [
   { id: 'vs-2', clientOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', location: 'Regional Airport', scheduledDate: '2026-02-18', scheduledTime: '6:00 AM', status: 'confirmed', notes: 'Before terminal opens. Check in at security desk. 8 K-class units.' },
   { id: 'vs-3', clientOrg: 'Valley BBQ', serviceType: 'Hood Cleaning', location: '3200 N Blackstone, Fresno', scheduledDate: '2026-02-21', scheduledTime: '11:00 PM', status: 'pending', notes: 'Heavy grease buildup expected. Bring extra degreaser.' },
   { id: 'vs-4', clientOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', location: '445 Pollasky Ave, Clovis', scheduledDate: '2026-02-25', scheduledTime: '10:00 PM', status: 'pending' },
-  { id: 'vs-5', clientOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', location: '1247 Fulton St, Fresno', scheduledDate: '2026-03-01', scheduledTime: '11:00 PM', status: 'pending', notes: '3-station system. Full duct access from roof.' },
+  { id: 'vs-5', clientOrg: 'EvidLY Demo Org', serviceType: 'Hood Cleaning', location: '1247 Fulton St, Fresno', scheduledDate: '2026-03-01', scheduledTime: '11:00 PM', status: 'pending', notes: '3-station system. Full duct access from roof.' },
 ];
 
 export const vendorCredentials: VendorCredentialItem[] = [
@@ -1371,7 +1371,7 @@ export const enterpriseTenants: EnterpriseTenant[] = [
   {
     id: 'ent-pcdining',
     slug: 'pcdining',
-    displayName: 'Pacific Coast Dining Hub',
+    displayName: 'EvidLY Demo Org Hub',
     logoPlaceholder: 'PC',
     poweredByText: 'Powered by EvidLY',
     showPoweredBy: true,
@@ -1382,15 +1382,15 @@ export const enterpriseTenants: EnterpriseTenant[] = [
       accentColor: '#F0AB00',
       sidebarBg: '#002855',
       sidebarText: '#FFFFFF',
-      logoText: 'Pacific Coast Dining Hub',
+      logoText: 'EvidLY Demo Org Hub',
     },
-    domain: 'compliance.pacificcoastdining.com',
+    domain: 'compliance.cleaningprosplus.com',
     ssoConfig: {
       providerType: 'saml',
       providerName: 'Okta',
       metadataUrl: 'https://pcdining.okta.com/app/exk1234567890/sso/saml/metadata',
-      entityId: 'compliance.pacificcoastdining.com',
-      acsUrl: 'https://compliance.pacificcoastdining.com/auth/saml/callback',
+      entityId: 'compliance.cleaningprosplus.com',
+      acsUrl: 'https://compliance.cleaningprosplus.com/auth/saml/callback',
       attributeMapping: { email: 'user.email', firstName: 'user.firstName', lastName: 'user.lastName', groups: 'user.groups', employeeId: 'user.employeeNumber' },
       enabled: true,
       lastTestAt: '2026-02-08T14:30:00Z',
@@ -1494,7 +1494,7 @@ export const enterpriseTenants: EnterpriseTenant[] = [
 ];
 
 export const enterpriseHierarchy: EnterpriseHierarchyNode = {
-  id: 'h-corp', tenantId: 'ent-pcdining', parentId: null, level: 'corporate', name: 'Pacific Coast Dining Corporation', code: 'PCD',
+  id: 'h-corp', tenantId: 'ent-pcdining', parentId: null, level: 'corporate', name: 'EvidLY Demo Org Corporation', code: 'PCD',
   complianceScore: 90, locationCount: 1847, foodSafety: 92, facilitySafety: 88,
   children: [
     {
@@ -1608,12 +1608,12 @@ export const enterpriseHierarchy: EnterpriseHierarchyNode = {
 };
 
 export const enterpriseUsers: EnterpriseUser[] = [
-  { id: 'eu-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Jennifer Martinez', email: 'j.martinez@pacificcoastdining.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
-  { id: 'eu-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Robert Chen', email: 'r.chen@pacificcoastdining.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
-  { id: 'eu-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Ana Torres', email: 'a.torres@pacificcoastdining.com', role: 'District Supervisor', location: 'Coastal District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
-  { id: 'eu-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'David Kim', email: 'd.kim@pacificcoastdining.com', role: 'Site Manager', location: 'Oceanview Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
-  { id: 'eu-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Sarah Thompson', email: 's.thompson@pacificcoastdining.com', role: 'Site Manager', location: 'The Bayshore', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
-  { id: 'eu-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Kevin Patel', email: 'k.patel@pacificcoastdining.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
+  { id: 'eu-1', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Jennifer Martinez', email: 'j.martinez@cleaningprosplus.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
+  { id: 'eu-2', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Robert Chen', email: 'r.chen@cleaningprosplus.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
+  { id: 'eu-3', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Ana Torres', email: 'a.torres@cleaningprosplus.com', role: 'District Supervisor', location: 'Coastal District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
+  { id: 'eu-4', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'David Kim', email: 'd.kim@cleaningprosplus.com', role: 'Site Manager', location: 'Oceanview Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
+  { id: 'eu-5', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Sarah Thompson', email: 's.thompson@cleaningprosplus.com', role: 'Site Manager', location: 'The Bayshore', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
+  { id: 'eu-6', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Kevin Patel', email: 'k.patel@cleaningprosplus.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
   { id: 'eu-7', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Emma Williams', email: 'e.williams@compass-group.com', role: 'Corporate Admin', location: 'Global HQ', ssoStatus: 'active', lastLogin: '2026-02-10T09:00:00Z', scimManaged: true, externalId: 'CG-10001', groups: ['Platform_Admins', 'Global_Leadership'] },
   { id: 'eu-8', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'James O\'Brien', email: 'j.obrien@compass-group.com', role: 'Regional Manager', location: 'North America', ssoStatus: 'active', lastLogin: '2026-02-09T18:20:00Z', scimManaged: true, externalId: 'CG-20034', groups: ['Regional_Managers'] },
   { id: 'eu-9', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Lisa Nakamura', email: 'l.nakamura@compass-group.com', role: 'Area Manager', location: 'West Coast Area', ssoStatus: 'active', lastLogin: '2026-02-10T07:45:00Z', scimManaged: true, externalId: 'CG-30112', groups: ['Area_Managers', 'Chartwells'] },
@@ -1626,24 +1626,24 @@ export const enterpriseUsers: EnterpriseUser[] = [
 ];
 
 export const enterpriseReportTemplates: EnterpriseReportTemplate[] = [
-  { id: 'ert-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
-  { id: 'ert-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
+  { id: 'ert-1', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Executive Summary — Monthly', templateType: 'executive_summary', sections: ['Compliance Overview', 'Score Trends', 'Top Issues', 'Action Items', 'Vendor Status'], brandWatermark: true, exportFormats: ['PDF', 'Excel'], isDefault: true },
+  { id: 'ert-2', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Regional Compliance Rollup', templateType: 'regional_rollup', sections: ['Region Summary', 'District Comparison', 'Score Heatmap', 'Drill-Down Tables', 'Trend Analysis'], brandWatermark: true, exportFormats: ['PDF', 'CSV', 'Excel'], isDefault: false },
   { id: 'ert-3', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Quarterly Inspection Package', templateType: 'audit_package', sections: ['Inspection Summary', 'Inspection Results', 'Corrective Actions', 'Documentation Status', 'Certification Tracking', 'Sign-Off Sheet'], brandWatermark: true, exportFormats: ['PDF'], isDefault: true },
   { id: 'ert-4', tenantId: 'ent-sodexo', tenantName: 'Sodexo', name: 'Location Detail Report', templateType: 'location_detail', sections: ['Site Overview', 'Temperature Logs', 'Checklist Completion', 'Equipment Status', 'Vendor Documents'], brandWatermark: false, exportFormats: ['PDF', 'CSV'], isDefault: true },
-  { id: 'ert-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
+  { id: 'ert-5', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', name: 'Board Compliance Report', templateType: 'executive_summary', sections: ['Executive Summary', 'Risk Categories', 'Regulatory Compliance', 'Year-over-Year Trends', 'Strategic Recommendations', 'Financial Impact Analysis'], brandWatermark: true, exportFormats: ['PDF', 'PowerPoint'], isDefault: false },
   { id: 'ert-6', tenantId: 'ent-compass', tenantName: 'Compass Group', name: 'Vendor Performance Review', templateType: 'regional_rollup', sections: ['Vendor Scorecard', 'Service Completion Rates', 'Response Time Analysis', 'Certification Status', 'Cost Analysis', 'Recommendations'], brandWatermark: true, exportFormats: ['PDF', 'Excel', 'CSV'], isDefault: false },
 ];
 
 export const enterpriseAuditLog: EnterpriseAuditEntry[] = [
-  { id: 'eal-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
-  { id: 'eal-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
+  { id: 'eal-1', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', userName: 'Jennifer Martinez', action: 'sso_config_updated', resourceType: 'SSO Configuration', resourceName: 'SAML 2.0 Provider', details: 'Updated attribute mapping for employee ID field', timestamp: '2026-02-10T08:20:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-2', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', userName: 'System (SCIM)', action: 'user_provisioned', resourceType: 'User', resourceName: 'Kevin Patel', details: 'Auto-provisioned via SCIM from Okta directory sync', timestamp: '2026-02-10T06:01:00Z', ipAddress: '52.14.87.203' },
   { id: 'eal-3', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'report_generated', resourceType: 'Report', resourceName: 'Q1 2026 Quarterly Inspection Package', details: 'Generated for North America region — 1,234 locations', timestamp: '2026-02-09T17:30:00Z', ipAddress: '10.56.2.88' },
-  { id: 'eal-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
+  { id: 'eal-4', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', userName: 'Robert Chen', action: 'hierarchy_modified', resourceType: 'Hierarchy', resourceName: 'Western Region', details: 'Added Bay Area District with 42 locations', timestamp: '2026-02-09T14:15:00Z', ipAddress: '10.42.3.201' },
   { id: 'eal-5', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'System (SCIM)', action: 'user_deactivated', resourceType: 'User', resourceName: 'Rachel Singh', details: 'Deactivated via SCIM — employee offboarded in Azure AD', timestamp: '2026-02-08T09:00:00Z', ipAddress: '52.14.87.203' },
   { id: 'eal-6', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'Arthur Haggerty', action: 'tenant_created', resourceType: 'Tenant', resourceName: 'Sodexo Safe Kitchen', details: 'Pilot tenant provisioned — 623 locations, 1-year contract', timestamp: '2026-02-07T11:00:00Z', ipAddress: '67.183.45.12' },
-  { id: 'eal-7', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'Jennifer Martinez', action: 'branding_updated', resourceType: 'Branding', resourceName: 'Pacific Coast Dining Hub', details: 'Updated sidebar background color from #1D1D1B to #002855', timestamp: '2026-02-06T16:45:00Z', ipAddress: '10.42.1.15' },
+  { id: 'eal-7', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', userName: 'Jennifer Martinez', action: 'branding_updated', resourceType: 'Branding', resourceName: 'EvidLY Demo Org Hub', details: 'Updated sidebar background color from #1D1D1B to #002855', timestamp: '2026-02-06T16:45:00Z', ipAddress: '10.42.1.15' },
   { id: 'eal-8', tenantId: 'ent-compass', tenantName: 'Compass Group', userName: 'Emma Williams', action: 'sso_test_passed', resourceType: 'SSO Configuration', resourceName: 'OIDC Provider', details: 'Azure AD OIDC test connection passed — 12ms response', timestamp: '2026-02-07T10:15:00Z', ipAddress: '10.56.2.88' },
-  { id: 'eal-9', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
+  { id: 'eal-9', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', userName: 'System', action: 'compliance_rollup', resourceType: 'Analytics', resourceName: 'Daily Compliance Rollup', details: 'Processed 1,847 locations — avg score 88.4% (+0.2% from yesterday)', timestamp: '2026-02-10T06:00:00Z', ipAddress: '10.0.0.1' },
   { id: 'eal-10', tenantId: 'ent-sodexo', tenantName: 'Sodexo', userName: 'David Nguyen', action: 'template_created', resourceType: 'Report Template', resourceName: 'Location Detail Report', details: 'Created default location detail template for Sodexo pilot', timestamp: '2026-02-08T13:20:00Z', ipAddress: '67.183.45.12' },
 ];
 
@@ -1691,11 +1691,11 @@ export interface EnterpriseIntegration {
 }
 
 export const enterpriseIntegrations: EnterpriseIntegration[] = [
-  { id: 'ei-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'temperature_monitoring', providerName: 'ComplianceMate', providerLogo: 'CM', status: 'active', lastSync: '2026-02-10T09:45:00Z', syncFrequency: 'Every 15 min', dataPoints: 284620, description: 'Real-time temperature monitoring across 1,200+ sensors' },
-  { id: 'ei-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'erp', providerName: 'SAP S/4HANA', providerLogo: 'SAP', status: 'active', lastSync: '2026-02-10T06:00:00Z', syncFrequency: 'Daily', dataPoints: 45200, description: 'Location master data, vendor POs, cost center mapping' },
-  { id: 'ei-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'bi_tool', providerName: 'Power BI', providerLogo: 'PBI', status: 'active', lastSync: '2026-02-10T07:00:00Z', syncFrequency: 'Hourly', dataPoints: 128400, description: 'Executive dashboards and compliance trend analytics' },
-  { id: 'ei-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'active', lastSync: '2026-02-10T09:50:00Z', syncFrequency: 'Real-time', dataPoints: 3240, description: 'Alert notifications, inspection results, action item assignments' },
-  { id: 'ei-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'existing_platform', providerName: 'PCD Legacy System', providerLogo: 'PL', status: 'active', lastSync: '2026-02-09T22:00:00Z', syncFrequency: 'Every 6 hours', dataPoints: 89100, description: 'Historical compliance data migration and ongoing sync' },
+  { id: 'ei-1', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'temperature_monitoring', providerName: 'ComplianceMate', providerLogo: 'CM', status: 'active', lastSync: '2026-02-10T09:45:00Z', syncFrequency: 'Every 15 min', dataPoints: 284620, description: 'Real-time temperature monitoring across 1,200+ sensors' },
+  { id: 'ei-2', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'erp', providerName: 'SAP S/4HANA', providerLogo: 'SAP', status: 'active', lastSync: '2026-02-10T06:00:00Z', syncFrequency: 'Daily', dataPoints: 45200, description: 'Location master data, vendor POs, cost center mapping' },
+  { id: 'ei-3', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'bi_tool', providerName: 'Power BI', providerLogo: 'PBI', status: 'active', lastSync: '2026-02-10T07:00:00Z', syncFrequency: 'Hourly', dataPoints: 128400, description: 'Executive dashboards and compliance trend analytics' },
+  { id: 'ei-4', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'communication', providerName: 'Microsoft Teams', providerLogo: 'MT', status: 'active', lastSync: '2026-02-10T09:50:00Z', syncFrequency: 'Real-time', dataPoints: 3240, description: 'Alert notifications, inspection results, action item assignments' },
+  { id: 'ei-5', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'existing_platform', providerName: 'PCD Legacy System', providerLogo: 'PL', status: 'active', lastSync: '2026-02-09T22:00:00Z', syncFrequency: 'Every 6 hours', dataPoints: 89100, description: 'Historical compliance data migration and ongoing sync' },
   { id: 'ei-6', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'temperature_monitoring', providerName: 'Testo Saveris', providerLogo: 'TS', status: 'active', lastSync: '2026-02-10T09:30:00Z', syncFrequency: 'Every 15 min', dataPoints: 198400, description: 'Wireless temperature and humidity monitoring for 800+ units' },
   { id: 'ei-7', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'erp', providerName: 'Oracle Cloud', providerLogo: 'OC', status: 'active', lastSync: '2026-02-10T05:30:00Z', syncFrequency: 'Daily', dataPoints: 32100, description: 'Vendor management, procurement, and financial integration' },
   { id: 'ei-8', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'bi_tool', providerName: 'Tableau', providerLogo: 'TB', status: 'pending', lastSync: '', syncFrequency: 'Hourly', dataPoints: 0, description: 'Tableau Cloud connector — in configuration' },
@@ -1805,12 +1805,12 @@ export interface EnterpriseBulkOp {
 }
 
 export const enterpriseBulkOps: EnterpriseBulkOp[] = [
-  { id: 'ebo-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'location_import', status: 'completed', totalItems: 267, processedItems: 267, failedItems: 0, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-08T10:00:00Z', description: 'Central Region location bulk import from SAP' },
-  { id: 'ebo-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'template_deploy', status: 'completed', totalItems: 1847, processedItems: 1847, failedItems: 3, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-07T14:00:00Z', description: 'Deploy updated daily checklist template to all locations' },
-  { id: 'ebo-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
+  { id: 'ebo-1', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'location_import', status: 'completed', totalItems: 267, processedItems: 267, failedItems: 0, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-08T10:00:00Z', description: 'Central Region location bulk import from SAP' },
+  { id: 'ebo-2', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'template_deploy', status: 'completed', totalItems: 1847, processedItems: 1847, failedItems: 3, initiatedBy: 'Jennifer Martinez', startedAt: '2026-02-07T14:00:00Z', description: 'Deploy updated daily checklist template to all locations' },
+  { id: 'ebo-3', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
   { id: 'ebo-4', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'user_provision', status: 'completed', totalItems: 89, processedItems: 89, failedItems: 0, initiatedBy: 'Emma Williams', startedAt: '2026-02-09T11:00:00Z', description: 'SCIM bulk provision — new Chartwells employees' },
   { id: 'ebo-5', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'location_import', status: 'running', totalItems: 623, processedItems: 511, failedItems: 4, initiatedBy: 'Pierre Dubois', startedAt: '2026-02-10T07:00:00Z', description: 'Pilot location data import — all Sodexo sites' },
-  { id: 'ebo-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Ana Torres', startedAt: '', description: 'Schedule fire suppression inspections — Coastal District' },
+  { id: 'ebo-6', tenantId: 'ent-pcdining', tenantName: 'EvidLY Demo Org', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Ana Torres', startedAt: '', description: 'Schedule fire suppression inspections — Coastal District' },
 ];
 
 export interface EnterprisePricingTier {
@@ -2376,7 +2376,7 @@ export interface ApiWebhookSubscription {
 
 export const apiWebhookSubscriptions: ApiWebhookSubscription[] = [
   { id: 'wh-01', appName: 'Restaurant365 Connector', url: 'https://hooks.restaurant365.com/evidly/compliance', events: ['compliance.score_changed', 'document.uploaded', 'vendor.service_completed'], status: 'active', lastDeliveryAt: '2026-02-10T14:32:00Z', failureCount: 0, createdAt: '2025-11-15T10:00:00Z' },
-  { id: 'wh-02', appName: 'Pacific Coast Dining Hub', url: 'https://api.pacificcoastdining.com/webhooks/evidly', events: ['compliance.score_changed', 'compliance.threshold_breach', 'temperature.violation', 'incident.created'], status: 'active', lastDeliveryAt: '2026-02-10T14:57:00Z', failureCount: 0, createdAt: '2026-01-05T09:00:00Z' },
+  { id: 'wh-02', appName: 'EvidLY Demo Org Hub', url: 'https://api.cleaningprosplus.com/webhooks/evidly', events: ['compliance.score_changed', 'compliance.threshold_breach', 'temperature.violation', 'incident.created'], status: 'active', lastDeliveryAt: '2026-02-10T14:57:00Z', failureCount: 0, createdAt: '2026-01-05T09:00:00Z' },
   { id: 'wh-03', appName: 'Insurance Risk Monitor', url: 'https://insurance-partner.com/webhooks/evidly', events: ['compliance.score_changed', 'inspection.score_predicted'], status: 'active', lastDeliveryAt: '2026-02-10T12:00:00Z', failureCount: 1, createdAt: '2026-02-01T14:00:00Z' },
   { id: 'wh-04', appName: 'Custom Dashboard', url: 'https://internal.customer.com/api/evidly-hook', events: ['checklist.completed', 'checklist.missed', 'temperature.sustained_violation'], status: 'paused', lastDeliveryAt: '2026-02-08T16:00:00Z', failureCount: 5, createdAt: '2025-12-20T11:00:00Z' },
 ];
@@ -4011,7 +4011,7 @@ export const dailyTemperatureChecks: DailyTemperatureCheckItem[] = [
 // ── Business Intelligence Demo Data ──────────────────────────────
 
 export const demoIntelligence = {
-  orgName: 'Pacific Coast Dining',
+  orgName: 'EvidLY Demo Org',
   reportDate: 'February 20, 2026',
   period: '90 days',
   analysisPeriod: '90 days',

@@ -86,7 +86,7 @@ export function WeeklyDigest() {
   const { isDemoMode, companyName, userName } = useDemo();
   const { profile } = useAuth();
 
-  const defaultEmail = isDemoMode ? 'james.wilson@pacificcoastdining.com' : (profile?.full_name ? '' : '');
+  const defaultEmail = isDemoMode ? 'james.wilson@cleaningprosplus.com' : (profile?.full_name ? '' : '');
   const orgName = isDemoMode ? companyName : (profile?.organization_id || 'Your Organization');
 
   const [schedule, setSchedule] = useState('mon-08');

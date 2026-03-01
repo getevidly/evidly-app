@@ -60,7 +60,7 @@ export interface TrainingEmployee {
 export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   {
     id: 'd1', name: 'Marcus Johnson', role: 'Admin', appRole: 'owner_operator',
-    email: 'marcus@pacificcoast.com', locationId: '1', locationName: 'Downtown Kitchen',
+    email: 'marcus@cleaningprosplus.com', locationId: '1', locationName: 'Downtown Kitchen',
     hireDate: '2024-01-15', avatarUrl: null,
     certifications: [
       { id: 'tc-1', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-4481', authority: 'ANSI-accredited provider', issued: '2025-06-15', expires: '2028-06-15', documentUrl: null },
@@ -87,7 +87,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd2', name: 'Sarah Chen', role: 'Manager', appRole: 'kitchen_manager',
-    email: 'sarah@pacificcoast.com', locationId: '1', locationName: 'Downtown Kitchen',
+    email: 'sarah@cleaningprosplus.com', locationId: '1', locationName: 'Downtown Kitchen',
     hireDate: '2024-03-01', avatarUrl: null,
     certifications: [
       { id: 'tc-5', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-5502', authority: 'ANSI-accredited provider', issued: '2025-08-20', expires: '2028-08-20', documentUrl: null },
@@ -109,7 +109,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd3', name: 'Maria Garcia', role: 'Manager', appRole: 'kitchen_manager',
-    email: 'maria@pacificcoast.com', locationId: '2', locationName: 'Airport Cafe',
+    email: 'maria@cleaningprosplus.com', locationId: '2', locationName: 'Airport Cafe',
     hireDate: '2024-06-10', avatarUrl: null,
     certifications: [
       { id: 'tc-7', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-3390', authority: 'ANSI-accredited provider', issued: '2025-09-01', expires: '2028-09-01', documentUrl: null },
@@ -130,7 +130,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd4', name: 'David Park', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'david@pacificcoast.com', locationId: '3', locationName: 'University Dining',
+    email: 'david@cleaningprosplus.com', locationId: '3', locationName: 'University Dining',
     hireDate: '2024-04-02', avatarUrl: null,
     certifications: [
       { id: 'tc-9', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2024-2201', authority: 'ANSI-accredited provider', issued: '2024-04-02', expires: '2027-04-02', documentUrl: null },
@@ -150,7 +150,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   {
     // Needs renewal — cert expired
     id: 'd5', name: 'Michael Torres', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'michael@pacificcoast.com', locationId: '2', locationName: 'Airport Cafe',
+    email: 'michael@cleaningprosplus.com', locationId: '2', locationName: 'Airport Cafe',
     hireDate: '2023-02-26', avatarUrl: null,
     certifications: [
       { id: 'tc-10', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2023-1188', authority: 'ANSI-accredited provider', issued: '2023-02-26', expires: '2026-02-26', documentUrl: null },
@@ -167,7 +167,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd6', name: 'Emma Rodriguez', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'emma@pacificcoast.com', locationId: '1', locationName: 'Downtown Kitchen',
+    email: 'emma@cleaningprosplus.com', locationId: '1', locationName: 'Downtown Kitchen',
     hireDate: '2025-07-10', avatarUrl: null,
     certifications: [
       { id: 'tc-11', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-9912', authority: 'ANSI-accredited provider', issued: '2025-07-10', expires: '2028-07-10', documentUrl: null },
@@ -188,7 +188,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd7', name: 'Alex Thompson', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'alex@pacificcoast.com', locationId: '1', locationName: 'Downtown Kitchen',
+    email: 'alex@cleaningprosplus.com', locationId: '1', locationName: 'Downtown Kitchen',
     hireDate: '2024-12-10', avatarUrl: null,
     certifications: [
       { id: 'tc-13', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2024-8834', authority: 'ANSI-accredited provider', issued: '2024-12-10', expires: '2027-12-10', documentUrl: null },
@@ -206,7 +206,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   {
     // Coming due — cert expires within 60 days
     id: 'd8', name: 'Lisa Wang', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'lisa@pacificcoast.com', locationId: '2', locationName: 'Airport Cafe',
+    email: 'lisa@cleaningprosplus.com', locationId: '2', locationName: 'Airport Cafe',
     hireDate: '2025-01-25', avatarUrl: null,
     certifications: [
       { id: 'tc-14', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-1105', authority: 'ANSI-accredited provider', issued: '2025-01-25', expires: '2026-04-25', documentUrl: null },
@@ -223,7 +223,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
   {
     id: 'd9', name: 'Maria Rodriguez', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'maria.r@pacificcoast.com', locationId: '3', locationName: 'University Dining',
+    email: 'maria.r@cleaningprosplus.com', locationId: '3', locationName: 'University Dining',
     hireDate: '2025-02-05', avatarUrl: null,
     certifications: [
       { id: 'tc-15', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-2206', authority: 'ANSI-accredited provider', issued: '2025-02-05', expires: '2028-02-05', documentUrl: null },

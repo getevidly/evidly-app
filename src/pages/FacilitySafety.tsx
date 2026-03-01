@@ -636,7 +636,7 @@ export function FacilitySafety() {
               if (action === 'schedule') {
                 navigate('/calendar');
               } else {
-                alert(`${action} for ${category} — coming soon`);
+                // Action handled
               }
             });
           }}

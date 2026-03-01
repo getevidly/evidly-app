@@ -113,7 +113,7 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
         <div className="flex items-center gap-2 mb-3">
           <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>Board Ready</span>
           <button
-            onClick={() => { navigator.clipboard.writeText(snapshot.executive_summary); alert('Copied to clipboard'); }}
+            onClick={() => { navigator.clipboard.writeText(snapshot.executive_summary); }}
             className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded"
             style={{ backgroundColor: PANEL_BG, color: MUTED }}
           >
@@ -425,16 +425,16 @@ export function ExecutiveSnapshotPanel({ snapshot }: Props) {
 
       {/* Action buttons */}
       <div className="flex items-center gap-2 flex-wrap">
-        <button onClick={() => alert('PDF export generated (demo)')} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white" style={{ backgroundColor: '#1e4d6b' }}>
+        <button onClick={() => { /* PDF export — production: generate and download */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white" style={{ backgroundColor: '#1e4d6b' }}>
           <Download className="h-3.5 w-3.5" /> Export PDF
         </button>
-        <button onClick={() => alert('Shareable link created (demo)')} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
+        <button onClick={() => { /* Share — production: create shareable link */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
           <Share2 className="h-3.5 w-3.5" /> Share with Board
         </button>
-        <button onClick={() => alert('Presentation download started (demo)')} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
+        <button onClick={() => { /* Download — production: generate presentation */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
           <Printer className="h-3.5 w-3.5" /> Download for Presentation
         </button>
-        <button onClick={() => alert('Sent to team (demo)')} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
+        <button onClick={() => { /* Send — production: email to team */ }} className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold" style={{ backgroundColor: PANEL_BG, color: MUTED, border: `1px solid ${CARD_BORDER}` }}>
           <Send className="h-3.5 w-3.5" /> Send to Team
         </button>
       </div>

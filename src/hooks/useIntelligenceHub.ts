@@ -71,7 +71,7 @@ const DEFAULT_SUBSCRIPTION: IntelligenceSubscription = {
   delivery_sms: false,
   delivery_sms_threshold: 'critical',
   executive_snapshot_frequency: 'weekly',
-  executive_snapshot_recipients: ['james.wilson@pacificcoastdining.com'],
+  executive_snapshot_recipients: ['james.wilson@cleaningprosplus.com'],
 };
 
 const STORAGE_KEY = 'evidly_intelligence_subscription';

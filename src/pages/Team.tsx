@@ -77,7 +77,7 @@ interface Certification {
 
 const DEMO_MEMBERS: TeamMember[] = [
   {
-    id: 'd1', full_name: 'Marcus Johnson', email: 'marcus@pacificcoast.com', phone: '(415) 555-0101',
+    id: 'd1', full_name: 'Marcus Johnson', email: 'marcus@cleaningprosplus.com', phone: '(415) 555-0101',
     role: 'admin', avatar_url: null, created_at: '2024-06-15T08:00:00Z', last_active: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
     location: 'All Locations', training_completed: 12, training_total: 12, temp_logs_completed: 186, checklists_completed: 92, compliance_score: 98,
     certifications: [
@@ -87,7 +87,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd2', full_name: 'Sarah Chen', email: 'sarah@pacificcoast.com', phone: '(415) 555-0102',
+    id: 'd2', full_name: 'Sarah Chen', email: 'sarah@cleaningprosplus.com', phone: '(415) 555-0102',
     role: 'manager', avatar_url: null, created_at: '2024-08-20T08:00:00Z', last_active: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     location: 'Downtown Kitchen', training_completed: 10, training_total: 10, temp_logs_completed: 142, checklists_completed: 68, compliance_score: 95, // demo
     certifications: [
@@ -96,7 +96,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd3', full_name: 'Maria Garcia', email: 'maria@pacificcoast.com', phone: '(415) 555-0103',
+    id: 'd3', full_name: 'Maria Garcia', email: 'maria@cleaningprosplus.com', phone: '(415) 555-0103',
     role: 'manager', avatar_url: null, created_at: '2024-09-10T08:00:00Z', last_active: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
     location: 'Airport Cafe', training_completed: 9, training_total: 10, temp_logs_completed: 128, checklists_completed: 72, compliance_score: 88, // demo
     certifications: [
@@ -105,7 +105,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd4', full_name: 'David Park', email: 'david@pacificcoast.com', phone: '(415) 555-0104',
+    id: 'd4', full_name: 'David Park', email: 'david@cleaningprosplus.com', phone: '(415) 555-0104',
     role: 'staff', avatar_url: null, created_at: '2024-11-01T08:00:00Z', last_active: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     location: 'University Dining', training_completed: 6, training_total: 8, temp_logs_completed: 64, checklists_completed: 38, compliance_score: 72, // demo
     certifications: [
@@ -113,7 +113,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd5', full_name: 'Michael Torres', email: 'michael@pacificcoast.com', phone: '(415) 555-0105',
+    id: 'd5', full_name: 'Michael Torres', email: 'michael@cleaningprosplus.com', phone: '(415) 555-0105',
     role: 'staff', avatar_url: null, created_at: '2024-10-15T08:00:00Z', last_active: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     location: 'Airport Cafe', training_completed: 7, training_total: 8, temp_logs_completed: 96, checklists_completed: 45, compliance_score: 82, // demo
     certifications: [
@@ -121,7 +121,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd6', full_name: 'Emma Rodriguez', email: 'emma@pacificcoast.com', phone: '(415) 555-0106',
+    id: 'd6', full_name: 'Emma Rodriguez', email: 'emma@cleaningprosplus.com', phone: '(415) 555-0106',
     role: 'staff', avatar_url: null, created_at: '2025-01-05T08:00:00Z', last_active: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     location: 'Downtown Kitchen', training_completed: 8, training_total: 8, temp_logs_completed: 72, checklists_completed: 52, compliance_score: 94, // demo
     certifications: [
@@ -130,7 +130,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd7', full_name: 'Alex Thompson', email: 'alex@pacificcoast.com', phone: '(415) 555-0107',
+    id: 'd7', full_name: 'Alex Thompson', email: 'alex@cleaningprosplus.com', phone: '(415) 555-0107',
     role: 'staff', avatar_url: null, created_at: '2024-12-01T08:00:00Z', last_active: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
     location: 'Downtown Kitchen', training_completed: 7, training_total: 8, temp_logs_completed: 88, checklists_completed: 41, compliance_score: 90, // demo
     certifications: [
@@ -138,7 +138,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd8', full_name: 'Lisa Wang', email: 'lisa@pacificcoast.com', phone: '(415) 555-0108',
+    id: 'd8', full_name: 'Lisa Wang', email: 'lisa@cleaningprosplus.com', phone: '(415) 555-0108',
     role: 'staff', avatar_url: null, created_at: '2025-01-20T08:00:00Z', last_active: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
     location: 'Airport Cafe', training_completed: 5, training_total: 8, temp_logs_completed: 34, checklists_completed: 22, compliance_score: 76, // demo
     certifications: [
@@ -146,7 +146,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd9', full_name: 'Maria Rodriguez', email: 'maria.r@pacificcoast.com', phone: null,
+    id: 'd9', full_name: 'Maria Rodriguez', email: 'maria.r@cleaningprosplus.com', phone: null,
     role: 'staff', avatar_url: null, created_at: '2025-02-01T08:00:00Z', last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     location: 'University Dining', training_completed: 3, training_total: 8, temp_logs_completed: 18, checklists_completed: 12, compliance_score: 65, // demo
     certifications: [
