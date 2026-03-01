@@ -128,7 +128,7 @@ const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m =>
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
-const KitchenCheckup = lazy(() => import('./pages/public/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
+const KitchenCheckup = lazy(() => import('./pages/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 
 import Navigation from './components/Navigation';
@@ -350,7 +350,6 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
-        <Route path="/checkup" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckup /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
@@ -455,6 +454,7 @@ function AppRoutes() {
           <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/regulatory-updates" element={<RegulatoryUpdates />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
+          <Route path="/checkup" element={<KitchenCheckup />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/intelligence" element={<CommandCenter />} />

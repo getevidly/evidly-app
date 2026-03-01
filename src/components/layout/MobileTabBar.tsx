@@ -61,6 +61,7 @@ const PATH_ICON: Record<string, any> = {
   '/regulatory-updates': Scale,
   '/scoring-breakdown': Target,
   '/violation-trends': TrendingUp,
+  '/checkup': ClipboardCheck,
   '/self-diagnosis': Wrench,
   '/export-center': FileText,
   '/calendar': Calendar,
