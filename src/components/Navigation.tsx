@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDemo } from '../contexts/DemoContext';
 import { Menu, X } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { EvidlyIcon } from './ui/EvidlyIcon';
@@ -8,13 +7,11 @@ import { EvidlyLogo } from './ui/EvidlyLogo';
 
 export default function Navigation() {
   const navigate = useNavigate();
-  const { enterDemo } = useDemo();
   const [authModal, setAuthModal] = useState<'login' | 'signup' | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleTryDemo = () => {
-    enterDemo();
-    navigate('/dashboard');
+    navigate('/demo');
     setMobileMenuOpen(false);
   };
 

@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDemo } from '../contexts/DemoContext';
 import { trackEvent } from '../utils/analytics';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
-  const { enterDemo } = useDemo();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +48,7 @@ export default function Hero() {
             </form>
             <div className="mb-4">
               <button
-                onClick={() => { trackEvent('cta_click', { cta: 'hero_try_demo', page: 'landing' }); enterDemo(); navigate('/dashboard'); }}
+                onClick={() => { trackEvent('cta_click', { cta: 'hero_try_demo', page: 'landing' }); navigate('/demo'); }}
                 className="text-[0.9rem] font-medium text-[var(--color-blue)] hover:text-[var(--color-gold-dark)] transition-colors underline underline-offset-4 min-h-[44px] bg-transparent border-none cursor-pointer p-0"
               >
                 Try the interactive demo →
