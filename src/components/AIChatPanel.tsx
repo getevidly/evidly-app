@@ -101,7 +101,7 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
           onClick={() => setIsOpen(true)}
           className="fixed z-[1050] flex items-center justify-center rounded-full shadow-sm transition-transform hover:scale-110"
           style={{
-            bottom: '24px',
+            bottom: '80px',
             right: '24px',
             width: '56px',
             height: '56px',
