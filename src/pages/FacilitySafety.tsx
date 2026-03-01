@@ -8,7 +8,9 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
 import { useRole } from '../contexts/RoleContext';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
-import { FireStatusBars } from '../components/shared/FireStatusBars';
+import { FireStatusBars, type AnyStatus, type StatusItem } from '../components/shared/FireStatusBars';
+import { FacilityDetailModal } from '../components/facility-safety/FacilityDetailModal';
+import { getFacilityDetail } from '../data/facilityDetailDemoData';
 import { PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -146,6 +148,7 @@ export function FacilitySafety() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [detailModal, setDetailModal] = useState<{ category: string; status: AnyStatus } | null>(null);
 
   const jieKey = `demo-loc-${locationParam}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
@@ -245,62 +248,81 @@ export function FacilitySafety() {
       </div>
 
       {/* Facility Safety Status Card */}
-      <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <div className={`text-xl font-bold px-3 py-1 rounded-full ${
-                fireStatus === 'passing' ? 'bg-green-100 text-green-700' :
-                fireStatus === 'at_risk' ? 'bg-gray-100 text-gray-500' :
-                'bg-red-100 text-red-700'
-              }`}>{fireGrade}</div>
-              <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
-            </div>
-            <div className="h-10 w-px bg-gray-300" />
-            <div className="flex gap-6 text-sm">
-              <div className="text-center">
-                <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
-                <div className="text-xs text-gray-500">{t('pages.facilitySafety.completed')}</div>
+      {(() => {
+        const noData = completedCount === 0 && passCount === 0 && failCount === 0;
+        const badgeText = noData ? 'No Status' : fireGrade;
+        const badgeClass = noData
+          ? 'bg-gray-100 text-gray-500'
+          : fireStatus === 'passing' ? 'bg-green-100 text-green-700'
+          : fireStatus === 'at_risk' ? 'bg-gray-100 text-gray-500'
+          : 'bg-red-100 text-red-700';
+
+        const facilityItems: StatusItem[] = override ? [
+          { key: 'permit', label: 'Permit', status: override.facilitySafety.permitStatus as AnyStatus },
+          { key: 'hood', label: 'Hood', status: override.facilitySafety.hoodStatus as AnyStatus },
+          { key: 'extinguisher', label: 'Extinguisher', status: override.facilitySafety.extinguisherStatus as AnyStatus },
+          { key: 'ansul', label: 'Ansul', status: override.facilitySafety.ansulStatus as AnyStatus },
+          { key: 'pest', label: 'Pest', status: override.facilitySafety.pestStatus as AnyStatus },
+          { key: 'grease', label: 'Grease', status: override.facilitySafety.greaseStatus as AnyStatus },
+          { key: 'elevator', label: 'Elevator', status: override.facilitySafety.elevatorStatus as AnyStatus },
+          { key: 'backflow', label: 'Backflow', status: override.facilitySafety.backflowStatus as AnyStatus },
+        ] : [];
+
+        return (
+          <div className="rounded-xl border p-4 mb-6" style={{ backgroundColor: LIGHT_BLUE_BG, borderColor: BORDER }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <div className={`text-xl font-bold px-3 py-1 rounded-full ${badgeClass}`}>{badgeText}</div>
+                  <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
+                </div>
+                <div className="h-10 w-px bg-gray-300" />
+                <div className="flex gap-6 text-sm">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-gray-900">{completedCount}/{items.length}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.completed')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold" style={{ color: '#16a34a' }}>{passCount}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.passed')}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
+                    <div className="text-xs text-gray-500">{t('pages.facilitySafety.failed')}</div>
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-semibold" style={{ color: '#16a34a' }}>{passCount}</div>
-                <div className="text-xs text-gray-500">{t('pages.facilitySafety.passed')}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-semibold" style={{ color: failCount > 0 ? '#dc2626' : '#6b7280' }}>{failCount}</div>
-                <div className="text-xs text-gray-500">{t('pages.facilitySafety.failed')}</div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500 mb-1">{t('pages.facilitySafety.progress')}</div>
+                <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
+                  <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
+                </div>
+                <div className="text-xs text-gray-500 mt-0.5">{progressPercent}%</div>
               </div>
             </div>
+            {facilityItems.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <FireStatusBars
+                  items={facilityItems}
+                  onCardClick={(key) => {
+                    const routes: Record<string, string> = {
+                      permit: '/equipment?category=permit',
+                      extinguisher: '/equipment?category=fire_extinguisher',
+                      hood: '/calendar?category=hood_cleaning',
+                      ansul: '/calendar?category=fire_suppression',
+                      pest: '/calendar?category=pest_control',
+                      grease: '/calendar?category=grease_trap',
+                      elevator: '/equipment?category=elevator',
+                      backflow: '/calendar?category=backflow',
+                    };
+                    navigate(routes[key] || '/equipment');
+                  }}
+                />
+              </div>
+            )}
           </div>
-          <div className="text-right">
-            <div className="text-xs text-gray-500 mb-1">{t('pages.facilitySafety.progress')}</div>
-            <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
-              <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
-            </div>
-            <div className="text-xs text-gray-500 mt-0.5">{progressPercent}%</div>
-          </div>
-        </div>
-        {/* Fire status bars below */}
-        {override && (
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <FireStatusBars
-              permitStatus={override.facilitySafety.permitStatus}
-              hoodStatus={override.facilitySafety.hoodStatus}
-              extinguisherStatus={override.facilitySafety.extinguisherStatus}
-              ansulStatus={override.facilitySafety.ansulStatus}
-              onCardClick={(card) => {
-                const routes: Record<string, string> = {
-                  Permit: '/equipment',
-                  Hood: '/calendar',
-                  Ext: '/equipment',
-                  Ansul: '/calendar',
-                };
-                navigate(routes[card] || '/equipment');
-              }}
-            />
-          </div>
-        )}
-      </div>
+        );
+      })()}
 
       {/* Tab Bar */}
       <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1">
@@ -605,6 +627,24 @@ export function FacilitySafety() {
           action={upgradeAction}
           featureName={upgradeFeature}
           onClose={() => setShowUpgrade(false)}
+        />
+      )}
+
+      {detailModal && (
+        <FacilityDetailModal
+          open={!!detailModal}
+          onClose={() => setDetailModal(null)}
+          data={getFacilityDetail(`demo-loc-${locationParam}`, detailModal.category, detailModal.status)}
+          onAction={(action, category) => {
+            guardAction(action, `Facility Safety — ${category}`, () => {
+              setDetailModal(null);
+              if (action === 'schedule') {
+                navigate('/calendar');
+              } else {
+                alert(`${action} for ${category} — coming soon`);
+              }
+            });
+          }}
         />
       )}
     </div>

@@ -280,6 +280,15 @@ export function ScoringBreakdown() {
                 hoodStatus={gradeData.facilitySafety.hoodStatus}
                 extinguisherStatus={gradeData.facilitySafety.extinguisherStatus}
                 ansulStatus={gradeData.facilitySafety.ansulStatus}
+                onCardClick={(key) => {
+                  const routes: Record<string, string> = {
+                    permit: '/equipment?category=permit',
+                    extinguisher: '/equipment?category=fire_extinguisher',
+                    hood: '/calendar?category=hood_cleaning',
+                    ansul: '/calendar?category=fire_suppression',
+                  };
+                  navigate(routes[key] || '/equipment');
+                }}
               />
             </div>
           </div>

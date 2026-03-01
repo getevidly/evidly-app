@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle, Plus, Trash2, Edit3 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTranslation } from '../contexts/LanguageContext';
@@ -12,6 +13,7 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { vendors as demoVendors } from '../data/demoData';
+import { ENHANCED_VENDOR_PERFORMANCE } from '../data/vendorServiceWorkflowDemo';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -47,6 +49,16 @@ const FACILITY_SAFETY_CATEGORIES = [
   'General Facility Safety',
   'Other',
 ];
+
+const CATEGORY_PARAM_MAP: Record<string, string> = {
+  hood_cleaning: 'Hood Cleaning Inspection',
+  fire_suppression: 'Fire Suppression Inspection',
+  fire_extinguisher: 'Fire Extinguisher Inspection',
+  pest_control: 'Pest Control Service',
+  grease_trap: 'Grease Trap Service',
+  elevator: 'Elevator Inspection',
+  backflow: 'Backflow Prevention Test',
+};
 
 const TIME_OPTIONS = [
   '5:00 AM', '5:30 AM', '6:00 AM', '6:30 AM', '7:00 AM', '7:30 AM',
@@ -96,6 +108,36 @@ const RECURRENCE_OPTIONS = [
   { value: 'quarterly', label: 'Quarterly' },
   { value: 'semi-annual', label: 'Semi-Annual' },
   { value: 'annual', label: 'Annual' },
+];
+
+// ── Frequency Safety Check ────────────────────────────────────
+const FREQUENCY_HIERARCHY: Record<string, number> = {
+  'weekly': 1,
+  'bi-weekly': 2,
+  'monthly': 3,
+  'quarterly': 4,
+  'semi-annual': 5,
+  'annual': 6,
+  'one-time': 7,
+};
+
+const CATEGORY_MIN_FREQUENCY: Record<string, { freq: string; regulation: string }> = {
+  'Hood Cleaning Inspection': { freq: 'quarterly', regulation: 'NFPA 96 Table 12.4 (high volume)' },
+  'Fire Suppression Inspection': { freq: 'semi-annual', regulation: 'NFPA 17A / local fire code' },
+  'Fire Extinguisher Inspection': { freq: 'annual', regulation: 'NFPA 10' },
+  'Pest Control Service': { freq: 'monthly', regulation: 'State health department' },
+  'Grease Trap Service': { freq: 'quarterly', regulation: 'Local sewer authority' },
+  'Elevator Inspection': { freq: 'annual', regulation: 'State elevator code' },
+  'Backflow Prevention Test': { freq: 'annual', regulation: 'Local water authority' },
+};
+
+const FREQ_REDUCTION_REASONS = [
+  'Budget constraints',
+  'Vendor recommendation based on assessment',
+  'Reduced cooking volume / equipment change',
+  'Seasonal operation (reduced hours)',
+  'Transitioning to new vendor',
+  'Other',
 ];
 
 // ── Recurrence Helper ────────────────────────────────────────
@@ -307,12 +349,18 @@ const ROLE_EVENT_TYPES: Record<UserRole, string[] | 'all'> = {
 // ── Component ────────────────────────────────────────────────
 export function Calendar() {
   const { t: tr } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
   const [view, setView] = useState<ViewMode>('week');
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState(() =>
+    CATEGORY_PARAM_MAP[categoryParam || ''] || 'all'
+  );
   const { locationHours: opHours, getHoursForLocation, getShiftsForLocation } = useOperatingHours();
 
   const { profile } = useAuth();
@@ -346,6 +394,21 @@ export function Calendar() {
     reasonDetails: '',
     scope: 'single_event' as 'single_event' | 'all_future',
   });
+  const [confirmedVendorChange, setConfirmedVendorChange] = useState<{ previousName: string; reason: string } | null>(null);
+
+  // Frequency reduction warning state
+  const [frequencyWarning, setFrequencyWarning] = useState<{
+    show: boolean;
+    previousFreq: string;
+    newFreq: string;
+    reductionPercent: number;
+    belowMinimum: boolean;
+    jurisdictionMinimum: string;
+    jurisdictionLabel: string;
+  } | null>(null);
+  const [freqReductionAck, setFreqReductionAck] = useState(false);
+  const [freqReductionReason, setFreqReductionReason] = useState('');
+  const [freqReductionDetails, setFreqReductionDetails] = useState('');
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -374,10 +437,51 @@ export function Calendar() {
       }, [] as typeof demoVendors);
   }, []);
 
+  // ── Frequency Lookup ──────────────────────────────────────────
+  const getExistingFrequency = useCallback((category: string): string | null => {
+    const allEvents = [...customEvents, ...liveEvents];
+    const existing = allEvents.find(e => e.category === category && e.recurrence && e.recurrence !== 'one-time');
+    return existing?.recurrence || null;
+  }, [customEvents, liveEvents]);
+
+  const checkFrequencyChange = useCallback((newFreq: string, category: string) => {
+    const oldFreq = editingEvent?.recurrence || getExistingFrequency(category);
+    if (oldFreq && oldFreq !== 'one-time' && newFreq !== 'one-time') {
+      const oldRank = FREQUENCY_HIERARCHY[oldFreq] ?? 7;
+      const newRank = FREQUENCY_HIERARCHY[newFreq] ?? 7;
+      if (newRank > oldRank) {
+        const catMin = CATEGORY_MIN_FREQUENCY[category];
+        const belowMin = catMin ? (FREQUENCY_HIERARCHY[newFreq] ?? 7) > (FREQUENCY_HIERARCHY[catMin.freq] ?? 7) : false;
+        const reductionPercent = Math.round((1 - oldRank / newRank) * 100);
+        setFrequencyWarning({
+          show: true,
+          previousFreq: oldFreq,
+          newFreq,
+          reductionPercent,
+          belowMinimum: belowMin,
+          jurisdictionMinimum: catMin?.freq || '',
+          jurisdictionLabel: catMin?.regulation || '',
+        });
+        setFreqReductionAck(false);
+        setFreqReductionReason('');
+        setFreqReductionDetails('');
+      } else {
+        setFrequencyWarning(null);
+      }
+    } else {
+      setFrequencyWarning(null);
+    }
+  }, [editingEvent, getExistingFrequency]);
+
   // ── CRUD Handlers ──────────────────────────────────────────────
   const resetForm = useCallback(() => {
     setShowVendorChange(false);
     setVendorChangeForm({ newVendorId: '', newVendorName: '', reason: '', reasonDetails: '', scope: 'single_event' });
+    setConfirmedVendorChange(null);
+    setFrequencyWarning(null);
+    setFreqReductionAck(false);
+    setFreqReductionReason('');
+    setFreqReductionDetails('');
     setEventForm({
       title: '',
       category: FACILITY_SAFETY_CATEGORIES[0],
@@ -732,9 +836,10 @@ export function Calendar() {
     return events.filter(e =>
       (roleTypes === 'all' || roleTypes.includes(e.type)) &&
       (typeFilter === 'all' || e.type === typeFilter) &&
-      (locationFilter === 'all' || e.location === locationFilter)
+      (locationFilter === 'all' || e.location === locationFilter) &&
+      (categoryFilter === 'all' || e.category === categoryFilter)
     );
-  }, [events, typeFilter, locationFilter, userRole]);
+  }, [events, typeFilter, locationFilter, categoryFilter, userRole]);
 
   const eventsByDate = useMemo(() => {
     const map: Record<string, CalendarEvent[]> = {};
@@ -1358,6 +1463,19 @@ export function Calendar() {
     <>
       <Breadcrumb items={[{ label: tr('nav.dashboard'), href: '/dashboard' }, { label: tr('pages.calendar.title') }]} />
 
+      {categoryParam && (
+        <div className="px-3 sm:px-6" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <button
+            onClick={() => navigate('/facility-safety')}
+            className="flex items-center gap-1 text-sm font-medium mb-3 hover:underline"
+            style={{ color: '#1e4d6b' }}
+          >
+            <ChevronLeft size={14} />
+            Back to Facility Safety
+          </button>
+        </div>
+      )}
+
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
@@ -1478,6 +1596,19 @@ export function Calendar() {
               <option value="all">{tr('pages.calendar.allLocations')}</option>
               {isDemoMode && LOCATIONS.map(loc => (
                 <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+
+            {/* Category filter select */}
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              style={selectStyle}
+              className="w-full sm:w-auto sm:min-w-[150px]"
+            >
+              <option value="all">All Categories</option>
+              {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>

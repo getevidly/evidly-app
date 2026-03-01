@@ -315,6 +315,10 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
     hoodStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
     extinguisherStatus: 'current' | 'due_soon' | 'expired' | 'no_status';
     ansulStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+    pestStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+    greaseStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+    elevatorStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+    backflowStatus: 'current' | 'expiring' | 'expired' | 'no_status';
   };
 }> = {
   'demo-loc-downtown': {
@@ -326,7 +330,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { majorViolations: 0, minorViolations: 2, uncorrectedMajors: 0 },
     },
     facilitySafety: {
-      grade: 'Pending',
+      grade: 'No Status',
       gradeDisplay: 'Pending Verification',
       summary: 'City of Fresno Fire Department',
       status: 'at_risk',
@@ -334,6 +338,10 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       hoodStatus: 'no_status',
       extinguisherStatus: 'no_status',
       ansulStatus: 'no_status',
+      pestStatus: 'no_status',
+      greaseStatus: 'no_status',
+      elevatorStatus: 'no_status',
+      backflowStatus: 'no_status',
     },
   },
   'demo-loc-airport': {
@@ -345,14 +353,18 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { totalPoints: 9, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0 },
     },
     facilitySafety: {
-      grade: 'Pending',
-      gradeDisplay: 'Pending Verification',
+      grade: 'Partial',
+      gradeDisplay: 'Partial Compliance',
       summary: 'Merced County Fire Dept (CAL FIRE MMU)',
       status: 'at_risk',
-      permitStatus: 'no_status',
-      hoodStatus: 'no_status',
-      extinguisherStatus: 'no_status',
-      ansulStatus: 'no_status',
+      permitStatus: 'current',
+      hoodStatus: 'current',
+      extinguisherStatus: 'due_soon',
+      ansulStatus: 'current',
+      pestStatus: 'current',
+      greaseStatus: 'due_soon',
+      elevatorStatus: 'no_status',
+      backflowStatus: 'current',
     },
   },
   'demo-loc-university': {
@@ -364,14 +376,18 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { majorViolations: 3, minorViolations: 1, uncorrectedMajors: 3 },
     },
     facilitySafety: {
-      grade: 'Pending',
-      gradeDisplay: 'Pending Verification',
+      grade: 'Action Required',
+      gradeDisplay: 'Action Required',
       summary: 'Modesto Fire Department',
-      status: 'at_risk',
-      permitStatus: 'no_status',
-      hoodStatus: 'no_status',
-      extinguisherStatus: 'no_status',
-      ansulStatus: 'no_status',
+      status: 'failing',
+      permitStatus: 'expiring',
+      hoodStatus: 'overdue',
+      extinguisherStatus: 'current',
+      ansulStatus: 'due_soon',
+      pestStatus: 'overdue',
+      greaseStatus: 'current',
+      elevatorStatus: 'no_status',
+      backflowStatus: 'expired',
     },
   },
 };

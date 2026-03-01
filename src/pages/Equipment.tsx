@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Search, LayoutGrid, List, Plus, ChevronDown, ChevronRight,
   DollarSign, Wrench, AlertTriangle, Clock,
@@ -89,7 +89,7 @@ const LOCATIONS = [
 
 const EQUIPMENT_TYPES = [
   'Walk-in Cooler', 'Walk-in Freezer', 'Hood System', 'Exhaust Fan', 'Fire Suppression System',
-  'Commercial Fryer', 'Commercial Oven', 'Commercial Dishwasher', 'Ice Machine',
+  'Fire Extinguisher', 'Commercial Fryer', 'Commercial Oven', 'Commercial Dishwasher', 'Ice Machine',
   'Grease Trap', 'Grease Interceptor', 'Backflow Preventer', 'Prep Cooler', 'Elevator',
   'Wood-Fired Oven', 'Charcoal Grill', 'Wood Smoker', 'Pellet Smoker', 'Other',
 ];
@@ -192,7 +192,7 @@ const DEFAULT_LIFESPANS: Record<string, number> = {
   'Commercial Oven': 12, 'Commercial Dishwasher': 8,
 };
 
-const FACILITY_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Exhaust Fan']);
+const FACILITY_SAFETY_TYPES = new Set(['Hood System', 'Fire Suppression System', 'Fire Extinguisher', 'Exhaust Fan']);
 
 function getEquipmentPillar(item: EquipmentItem): 'facility_safety' | 'food_safety' {
   return item.pillar || (FACILITY_SAFETY_TYPES.has(item.type) ? 'facility_safety' : 'food_safety');
@@ -595,16 +595,65 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Professional service — airflow verification & full inspection', interval: 'Semi-Annual', lastDone: '2025-05-15', nextDue: '2026-11-15' },
     ],
   },
+
+  // ─── Fire Extinguisher — Downtown Kitchen ───
+  {
+    id: 'EQ-020', name: 'K-Class Fire Extinguisher (Kitchen)', type: 'Fire Extinguisher',
+    make: 'Amerex', model: 'B262', serial: 'AX-KC-2024-0341',
+    location: 'Downtown Kitchen', installDate: '2024-03-15',
+    warrantyExpiry: '2029-03-15', condition: 'Excellent',
+    nextMaintenanceDue: '2026-09-15', lastServiceDate: '2026-03-10',
+    pillar: 'facility_safety' as const,
+    linkedVendor: 'Valley Fire Systems', usefulLifeYears: 12, replacementCost: 450,
+    notes: 'K-Class — near fryers. Annual professional inspection by Valley Fire Systems. Monthly visual by staff.',
+    serviceHistory: [
+      { date: '2026-03-10', vendor: 'Valley Fire Systems', type: 'Annual Inspection', cost: 65, notes: 'Gauge green, pin intact, tamper seal present, hose clear. Passed NFPA 10 §7.3.' },
+      { date: '2025-03-12', vendor: 'Valley Fire Systems', type: 'Annual Inspection + 6-Year Maintenance', cost: 125, notes: '6-year internal exam. New O-ring installed. Agent weight verified.' },
+    ],
+    schedule: [
+      { task: 'Visual inspection — gauge, pin, tamper seal, accessibility', interval: 'Monthly', lastDone: '2026-02-10', nextDue: '2026-03-10' },
+      { task: 'Professional annual inspection (NFPA 10 §7.3)', interval: 'Annual', lastDone: '2026-03-10', nextDue: '2027-03-10' },
+    ],
+  },
+
+  // ─── Fire Extinguisher — Airport Cafe ───
+  {
+    id: 'EQ-021', name: 'ABC Fire Extinguisher (Hallway)', type: 'Fire Extinguisher',
+    make: 'Kidde', model: 'Pro 10 MP', serial: 'KD-ABC-2023-8812',
+    location: 'Airport Cafe', installDate: '2023-06-01',
+    warrantyExpiry: '2029-06-01', condition: 'Good',
+    nextMaintenanceDue: '2026-06-01', lastServiceDate: '2025-06-05',
+    pillar: 'facility_safety' as const,
+    linkedVendor: 'Valley Fire Systems', usefulLifeYears: 12, replacementCost: 320,
+    notes: 'ABC dry chemical — hallway near exit. Covers common areas.',
+    serviceHistory: [
+      { date: '2025-06-05', vendor: 'Valley Fire Systems', type: 'Annual Inspection', cost: 55, notes: 'Gauge green. Pin and tamper seal OK. Label legible.' },
+    ],
+    schedule: [
+      { task: 'Visual inspection — gauge, pin, tamper seal, accessibility', interval: 'Monthly', lastDone: '2026-02-01', nextDue: '2026-03-01' },
+      { task: 'Professional annual inspection (NFPA 10 §7.3)', interval: 'Annual', lastDone: '2025-06-05', nextDue: '2026-06-01' },
+    ],
+  },
 ];
 
 // ── Component ──────────────────────────────────────────────────────
 
+const CATEGORY_SEARCH_MAP: Record<string, string> = {
+  permit: 'permit',
+  fire_extinguisher: 'Fire Extinguisher',
+  elevator: 'Elevator',
+};
+
 export function Equipment() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
   const { t } = useTranslation();
   const [locationFilter, setLocationFilter] = useState('all');
-  const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>('all');
-  const [search, setSearch] = useState('');
+  const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>(() =>
+    categoryParam ? 'facility_safety' : 'all'
+  );
+  const [search, setSearch] = useState(() => CATEGORY_SEARCH_MAP[categoryParam || ''] || '');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -754,6 +803,17 @@ export function Equipment() {
   return (
     <>
       <Breadcrumb items={[{ label: t('nav.dashboard'), href: '/dashboard' }, { label: t('nav.equipment') }]} />
+
+      {categoryParam && (
+        <button
+          onClick={() => navigate('/facility-safety')}
+          className="flex items-center gap-1 text-sm font-medium mb-3 hover:underline"
+          style={{ color: '#1e4d6b' }}
+        >
+          <ChevronDown size={14} className="rotate-90" />
+          Back to Facility Safety
+        </button>
+      )}
 
       <div className="space-y-6">
         {/* Header */}
