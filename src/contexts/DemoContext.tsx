@@ -60,7 +60,7 @@ function hasStoredAuthToken(): boolean {
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const { session } = useAuth();
+  const { session, signOut } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
     // If a Supabase token exists in localStorage, never start in demo mode
@@ -182,6 +182,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         }
       }
     } catch {}
+    // Also sign out from Supabase to clear the in-memory session.
+    // Fire-and-forget — the sessionStorage flag + ProtectedLayout fallback
+    // ensure demo access while this async operation completes.
+    if (session?.user) {
+      signOut().catch(() => {});
+    }
     setRawDemoMode(true);
     trackEvent('demo_start');
     try { sessionStorage.setItem(DEMO_KEY, 'true'); } catch {}

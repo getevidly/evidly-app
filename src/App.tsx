@@ -211,7 +211,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { userRole } = useRole();
   const location = useLocation();
 
-  if (isDemoMode) {
+  // Synchronous fallback: sessionStorage is set synchronously in enterDemo(),
+  // so check it directly to prevent race-condition redirects during demo entry.
+  const effectiveDemoMode = isDemoMode || (() => {
+    try { return sessionStorage.getItem('evidly_demo_mode') === 'true'; } catch { return false; }
+  })();
+
+  if (effectiveDemoMode) {
     if (!isRouteAllowedForRole(location.pathname, userRole)) {
       return <Navigate to="/dashboard" replace />;
     }
@@ -271,7 +277,14 @@ function ProtectedLayout() {
   const { userRole } = useRole();
   const location = useLocation();
 
-  if (!isDemoMode) {
+  // Synchronous fallback: if DemoContext state hasn't propagated yet but
+  // sessionStorage already has the demo flag, treat as demo mode to prevent
+  // a race-condition redirect to /login during demo entry.
+  const effectiveDemoMode = isDemoMode || (() => {
+    try { return sessionStorage.getItem('evidly_demo_mode') === 'true'; } catch { return false; }
+  })();
+
+  if (!effectiveDemoMode) {
     if (loading) {
       return (
         <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center">
@@ -289,7 +302,7 @@ function ProtectedLayout() {
 
   // Role-based route guard — redirect to dashboard if role not allowed
   // Authenticated users: EvidlyAdmin bypasses guards; others use DB profile role
-  if (isDemoMode) {
+  if (effectiveDemoMode) {
     if (!isRouteAllowedForRole(location.pathname, userRole)) {
       return <Navigate to="/dashboard" replace />;
     }
