@@ -129,6 +129,7 @@ const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaComplia
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
 const KitchenCheckup = lazy(() => import('./pages/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
+const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 
 import Navigation from './components/Navigation';
@@ -365,6 +366,7 @@ function AppRoutes() {
         <Route path="/vendor/login" element={<Suspense fallback={<PageSkeleton />}><VendorLogin /></Suspense>} />
         <Route path="/vendor/register" element={<Suspense fallback={<PageSkeleton />}><VendorRegister /></Suspense>} />
         <Route path="/vendor/upload/:token" element={<Suspense fallback={<PageSkeleton />}><VendorSecureUpload /></Suspense>} />
+        <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
 
         {/* Protected routes without shared layout */}
         <Route path="/vendor/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />

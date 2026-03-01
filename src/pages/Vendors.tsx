@@ -26,6 +26,12 @@ import {
   getRequiredCategories,
   getCategoryById,
 } from '../config/vendorCategories';
+import {
+  VENDOR_WORKFLOW_MAP,
+  ENHANCED_VENDOR_PERFORMANCE,
+  DEMO_VERIFICATIONS,
+  type ServiceWorkflowStep,
+} from '../data/vendorServiceWorkflowDemo';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -63,22 +69,7 @@ interface VendorDocument {
   autoRequestEnabled?: boolean;
 }
 
-interface TimelineStep {
-  day: number;
-  label: string;
-  description: string;
-  date: string;
-  status: 'completed' | 'sent' | 'pending' | 'failed';
-  escalation?: string;
-}
-
-interface VendorPerformance {
-  vendorId: string;
-  reliabilityScore: number;
-  onTimeRate: number;
-  docComplianceRate: number;
-  trend: 'improving' | 'declining' | 'stable';
-}
+// VendorPerformance and timeline types now imported from vendorServiceWorkflowDemo.ts
 
 // ── Consolidate demo vendors ───────────────────────────────────────
 
@@ -181,27 +172,8 @@ const VENDOR_DOCUMENTS: Record<string, VendorDocument[]> = {
   ],
 };
 
-// ── Valley Fire Systems post-service document automation timeline ───
-
-const VALLEY_FIRE_TIMELINE: TimelineStep[] = [
-  { day: 0, label: 'Service Performed', description: 'Fire suppression inspection completed at Airport Cafe', date: '2026-01-20', status: 'completed' }, // demo
-  { day: 2, label: 'Auto-Send Upload Link', description: 'Secure upload link sent to mike@valleyfire.com requesting inspection report & Ansul tags', date: '2026-01-22', status: 'sent' },
-  { day: 3, label: 'First Reminder', description: 'Reminder email sent — documents not yet uploaded', date: '2026-01-23', status: 'sent' },
-  { day: 5, label: 'Second Reminder', description: 'Follow-up reminder sent — still awaiting documents', date: '2026-01-27', status: 'sent' },
-  { day: 7, label: 'Third Reminder (Escalated)', description: 'Escalation email sent — CC\'d Kitchen Manager on reminder', date: '2026-01-29', status: 'sent', escalation: 'CC: Kitchen Manager' },
-  { day: 10, label: 'Fourth Reminder (Urgent)', description: 'Urgent reminder — final notice before non-compliance flag', date: '2026-02-03', status: 'pending', escalation: 'Marked Urgent' },
-  { day: 14, label: 'Final Notice (Non-Compliant)', description: 'Vendor flagged as non-compliant. Manual review required.', date: '2026-02-10', status: 'pending', escalation: 'Flag as Non-Compliant' },
-];
-
-// ── Performance scorecard data ─────────────────────────────────────
-
-const VENDOR_PERFORMANCE: VendorPerformance[] = [
-  { vendorId: '1', reliabilityScore: 98, onTimeRate: 100, docComplianceRate: 86, trend: 'stable' },
-  { vendorId: '2', reliabilityScore: 92, onTimeRate: 95, docComplianceRate: 100, trend: 'stable' },
-  { vendorId: '3', reliabilityScore: 72, onTimeRate: 80, docComplianceRate: 50, trend: 'declining' },
-  { vendorId: '4', reliabilityScore: 95, onTimeRate: 97, docComplianceRate: 100, trend: 'improving' },
-  { vendorId: '5', reliabilityScore: 88, onTimeRate: 85, docComplianceRate: 80, trend: 'stable' },
-];
+// ── Performance scorecard data (uses enhanced data from vendorServiceWorkflowDemo) ─
+// ENHANCED_VENDOR_PERFORMANCE imported from vendorServiceWorkflowDemo.ts
 
 // ── Component ──────────────────────────────────────────────────────
 
@@ -350,7 +322,9 @@ export function Vendors() {
 
   const selectedVendor = selectedVendorId ? consolidatedVendors.find((v) => v.id === selectedVendorId) : null;
   const selectedDocs = selectedVendor && isDemoMode ? (VENDOR_DOCUMENTS[selectedVendor.id] || []) : [];
-  const selectedPerf = selectedVendor && isDemoMode ? VENDOR_PERFORMANCE.find((p) => p.vendorId === selectedVendor.id) : null;
+  const selectedPerf = selectedVendor && isDemoMode ? ENHANCED_VENDOR_PERFORMANCE.find((p) => p.vendorId === selectedVendor.id) : null;
+  const selectedWorkflow = selectedVendor && isDemoMode ? VENDOR_WORKFLOW_MAP[selectedVendor.id] : null;
+  const selectedVerification = selectedVendor && isDemoMode ? DEMO_VERIFICATIONS.find((v) => v.vendorId === selectedVendor.id) : null;
 
   const handleSelectVendor = (v: ConsolidatedVendor) => {
     setSearchParams({ id: v.id });
@@ -406,7 +380,7 @@ export function Vendors() {
   if (selectedVendor) {
     const onFileDocs = selectedDocs.filter((d) => d.status === 'on-file').length;
     const progressPercent = selectedDocs.length > 0 ? Math.round((onFileDocs / selectedDocs.length) * 100) : 0;
-    const isValleyFire = selectedVendor.companyName === 'Valley Fire Systems';
+    const hasWorkflow = !!selectedWorkflow;
     const isAutoEnabled = autoRequestStates[selectedVendor.id] || false;
     const expiringDocs = selectedDocs.filter((d) => d.status === 'expiring' || d.status === 'expired');
 
@@ -616,27 +590,43 @@ export function Vendors() {
               {selectedPerf && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:col-span-2">
                   <h2 className="text-lg font-semibold mb-4">Performance</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.reliabilityScore)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <EvidlyIcon size={16} />
-                        <span className="text-sm text-gray-500 font-medium">Reliability Score</span>
+                        <span className="text-sm text-gray-500 font-medium">Reliability</span>
                       </div>
                       <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.reliabilityScore)}`}>{selectedPerf.reliabilityScore}</p>
                     </div>
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.onTimeRate)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <Clock className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.onTimeRate) }} />
-                        <span className="text-sm text-gray-500 font-medium">On-Time Rate</span>
+                        <span className="text-sm text-gray-500 font-medium">On-Time</span>
                       </div>
                       <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.onTimeRate)}`}>{selectedPerf.onTimeRate}%</p>
                     </div>
                     <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${getScoreBorder(selectedPerf.docComplianceRate)}` }}>
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <FileText className="h-4 w-4" style={{ color: getScoreBorder(selectedPerf.docComplianceRate) }} />
-                        <span className="text-sm text-gray-500 font-medium">Doc Compliance</span>
+                        <span className="text-sm text-gray-500 font-medium">Docs</span>
                       </div>
                       <p className={`text-xl sm:text-3xl font-bold text-center ${getScoreColor(selectedPerf.docComplianceRate)}`}>{selectedPerf.docComplianceRate}%</p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #6B7F96' }}>
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Send className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm text-gray-500 font-medium">Response</span>
+                      </div>
+                      <p className={`text-xl sm:text-3xl font-bold text-center ${selectedPerf.responseTimeAvgHours <= 6 ? 'text-green-600' : selectedPerf.responseTimeAvgHours <= 12 ? 'text-yellow-600' : 'text-red-600'}`}>
+                        {selectedPerf.responseTimeAvgHours < 1 ? '<1h' : `${Math.round(selectedPerf.responseTimeAvgHours)}h`}
+                      </p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #A08C5A' }}>
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Wrench className="h-4 w-4" style={{ color: '#A08C5A' }} />
+                        <span className="text-sm text-gray-500 font-medium">Quarter</span>
+                      </div>
+                      <p className="text-xl sm:text-3xl font-bold text-center text-gray-900">{selectedPerf.servicesThisQuarter}</p>
                     </div>
                   </div>
                 </div>
@@ -815,67 +805,138 @@ export function Vendors() {
                 )}
               </div>
 
-              {/* Timeline (show for Valley Fire in demo only) */}
-              {isDemoMode && isValleyFire && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
-                  <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
-                    <div>
-                      <h2 className="text-lg font-semibold">Post-Service Document Request — Airport Cafe</h2> {/* demo */}
-                      <p className="text-sm text-gray-600 mt-1">Fire suppression inspection on Jan 20, 2026 — awaiting documentation upload</p>
+              {/* Service Day Workflow Timeline */}
+              {isDemoMode && hasWorkflow && (() => {
+                const wf = selectedWorkflow!;
+                const steps = wf.workflow;
+                const lastVendorAction = steps.find(s => s.vendorAction);
+                const hasOverdue = steps.some(s => s.status === 'failed' || s.status === 'escalated');
+                const statusBadge = lastVendorAction
+                  ? lastVendorAction.vendorAction === 'completed' ? { label: 'Completed', cls: 'bg-green-100 text-green-800' }
+                    : lastVendorAction.vendorAction === 'rescheduled' ? { label: 'Rescheduled', cls: 'bg-blue-100 text-blue-800' }
+                    : { label: 'Canceled', cls: 'bg-gray-100 text-gray-800' }
+                  : hasOverdue ? { label: 'Overdue', cls: 'bg-red-100 text-red-800' }
+                  : { label: 'In Progress', cls: 'bg-amber-100 text-amber-800' };
+
+                return (
+                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+                      <div>
+                        <h2 className="text-lg font-semibold">Service Day Workflow — {wf.locationLabel}</h2>
+                        <p className="text-sm text-gray-600 mt-1">{wf.serviceLabel} — notification & update timeline</p>
+                      </div>
+                      <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusBadge.cls}`}>{statusBadge.label}</span>
                     </div>
-                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-800">In Progress</span>
-                  </div>
 
-                  <div className="relative">
-                    {VALLEY_FIRE_TIMELINE.map((step, idx) => {
-                      const isLast = idx === VALLEY_FIRE_TIMELINE.length - 1;
-                      return (
-                        <div key={idx} className="flex items-start mb-0">
-                          <div className="flex flex-col items-center mr-4" style={{ minWidth: '32px' }}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                              step.status === 'completed' ? 'bg-green-500' :
-                              step.status === 'sent' ? 'bg-blue-500' :
-                              'bg-gray-300'
-                            }`}>
-                              {step.status === 'completed' && <CheckCircle className="h-4 w-4 text-white" />}
-                              {step.status === 'sent' && <Send className="h-4 w-4 text-white" />}
-                              {step.status === 'pending' && <Clock className="h-4 w-4 text-gray-500" />}
+                    <div className="relative">
+                      {steps.map((step, idx) => {
+                        const isLast = idx === steps.length - 1;
+                        const dotColor =
+                          step.status === 'completed' ? 'bg-green-500' :
+                          step.status === 'sent' ? 'bg-blue-500' :
+                          step.status === 'vendor_responded' ? 'bg-[#1e4d6b]' :
+                          step.status === 'escalated' ? 'bg-red-500' :
+                          step.status === 'failed' ? 'bg-red-400' :
+                          'bg-gray-300';
+                        const lineColor = step.status !== 'pending' ? 'bg-blue-300' : 'bg-gray-200';
+                        const badgeCls =
+                          step.status === 'completed' ? 'bg-green-100 text-green-700' :
+                          step.status === 'sent' ? 'bg-blue-100 text-blue-700' :
+                          step.status === 'vendor_responded' ? 'bg-[#eef4f8] text-[#1e4d6b]' :
+                          step.status === 'escalated' ? 'bg-red-100 text-red-700' :
+                          step.status === 'failed' ? 'bg-red-100 text-red-600' :
+                          'bg-gray-100 text-gray-600';
+                        const badgeLabel =
+                          step.status === 'completed' ? 'Confirmed' :
+                          step.status === 'sent' ? 'Sent' :
+                          step.status === 'vendor_responded' ? 'Vendor Responded' :
+                          step.status === 'escalated' ? 'Escalated' :
+                          step.status === 'failed' ? 'No Response' :
+                          'Pending';
+                        return (
+                          <div key={idx} className="flex items-start mb-0">
+                            <div className="flex flex-col items-center mr-4" style={{ minWidth: '32px' }}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${dotColor}`}>
+                                {step.status === 'completed' && <CheckCircle className="h-4 w-4 text-white" />}
+                                {step.status === 'sent' && <Send className="h-4 w-4 text-white" />}
+                                {step.status === 'vendor_responded' && <CheckCircle className="h-4 w-4 text-white" />}
+                                {step.status === 'escalated' && <AlertTriangle className="h-4 w-4 text-white" />}
+                                {step.status === 'failed' && <XCircle className="h-4 w-4 text-white" />}
+                                {step.status === 'pending' && <Clock className="h-4 w-4 text-gray-500" />}
+                              </div>
+                              {!isLast && <div className={`w-0.5 h-16 ${lineColor}`} />}
                             </div>
-                            {!isLast && (
-                              <div className={`w-0.5 h-16 ${
-                                step.status !== 'pending' ? 'bg-blue-300' : 'bg-gray-200'
-                              }`} />
-                            )}
-                          </div>
-                          <div className="pb-6 flex-1">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm font-semibold text-gray-900">Day {step.day}: {step.label}</span>
-                              <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                                step.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                step.status === 'sent' ? 'bg-blue-100 text-blue-700' :
-                                'bg-gray-100 text-gray-600'
-                              }`}>
-                                {step.status === 'completed' ? 'Completed' : step.status === 'sent' ? 'Sent' : 'Pending'}
-                              </span>
-                              {step.escalation && (
-                                <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-amber-100 text-amber-700">{step.escalation}</span>
-                              )}
+                            <div className="pb-6 flex-1">
+                              <div className="flex items-center space-x-2 flex-wrap gap-1">
+                                <span className="text-sm font-semibold text-gray-900">{step.label}</span>
+                                <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${badgeCls}`}>{badgeLabel}</span>
+                                {step.escalation && (
+                                  <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-amber-100 text-amber-700">{step.escalation}</span>
+                                )}
+                                {step.vendorAction && (
+                                  <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                                    step.vendorAction === 'completed' ? 'bg-green-100 text-green-700' :
+                                    step.vendorAction === 'rescheduled' ? 'bg-blue-100 text-blue-700' :
+                                    'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {step.vendorAction === 'completed' ? 'Marked Complete' : step.vendorAction === 'rescheduled' ? 'Rescheduled' : 'Canceled'}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-600 mt-0.5">{step.description}</p>
+                              <p className="text-xs text-gray-400 mt-0.5">{format(new Date(step.date), 'MMM d, yyyy')}</p>
                             </div>
-                            <p className="text-sm text-gray-600 mt-0.5">{step.description}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">{format(new Date(step.date), 'MMM d, yyyy')}</p>
                           </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Send Update Link CTA */}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <button
+                        onClick={() => alert('Demo: Service update link would be sent to ' + selectedVendor!.email)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] transition-colors"
+                      >
+                        <Send className="h-4 w-4" />
+                        Send Service Update Link
+                      </button>
+                      <p className="text-xs text-gray-400 mt-2">Sends a secure link to the vendor to update their service status</p>
+                    </div>
+
+                    {/* Verification status */}
+                    {selectedVerification && (
+                      <div className={`mt-4 p-3 rounded-lg border ${
+                        selectedVerification.verificationStatus === 'confirmed' ? 'bg-green-50 border-green-200' :
+                        selectedVerification.verificationStatus === 'disputed' ? 'bg-red-50 border-red-200' :
+                        'bg-gray-50 border-gray-200'
+                      }`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          {selectedVerification.verificationStatus === 'confirmed' && <CheckCircle className="h-4 w-4 text-green-600" />}
+                          {selectedVerification.verificationStatus === 'disputed' && <AlertTriangle className="h-4 w-4 text-red-600" />}
+                          {selectedVerification.verificationStatus === 'pending' && <Clock className="h-4 w-4 text-gray-500" />}
+                          <span className="text-sm font-medium">
+                            {selectedVerification.verificationStatus === 'confirmed' ? 'Service Verified' :
+                             selectedVerification.verificationStatus === 'disputed' ? 'Service Disputed' :
+                             'Awaiting Verification'}
+                          </span>
                         </div>
-                      );
-                    })}
+                        {selectedVerification.verifiedBy && (
+                          <p className="text-xs text-gray-600">By {selectedVerification.verifiedBy}{selectedVerification.verifiedAt ? ` on ${format(new Date(selectedVerification.verifiedAt), 'MMM d, yyyy')}` : ''}</p>
+                        )}
+                        {selectedVerification.disputeReason && (
+                          <p className="text-xs text-red-700 mt-1">{selectedVerification.disputeReason}</p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
-              {!isValleyFire && (
+              {!hasWorkflow && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 text-center text-gray-500">
                   <Calendar className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                  <p className="font-medium">No active automation workflows</p>
-                  <p className="text-sm mt-1">Workflows will appear here when documents are requested or services are completed.</p>
+                  <p className="font-medium">No active service workflows</p>
+                  <p className="text-sm mt-1">Workflows will appear here when services are scheduled and reminders are sent.</p>
                 </div>
               )}
             </div>
@@ -1343,12 +1404,19 @@ export function Vendors() {
               <h3 className="text-xl sm:text-2xl font-bold mb-2">Vendor Performance Overview</h3>
               <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
               {isDemoMode && (
-              <div className="flex items-center space-x-4 flex-wrap gap-2">
+              <div className="flex items-center space-x-6 flex-wrap gap-3">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-6 w-6 text-green-400" />
                   <div>
-                    <div className="text-2xl font-bold text-center">{VENDOR_PERFORMANCE.filter((v) => v.reliabilityScore >= 90).length}/{VENDOR_PERFORMANCE.length}</div>
+                    <div className="text-2xl font-bold text-center">{ENHANCED_VENDOR_PERFORMANCE.filter((v) => v.reliabilityScore >= 90).length}/{ENHANCED_VENDOR_PERFORMANCE.length}</div>
                     <div className="text-sm text-gray-300">Fully Compliant</div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Clock className="h-6 w-6 text-blue-300" />
+                  <div>
+                    <div className="text-2xl font-bold text-center">{Math.round(ENHANCED_VENDOR_PERFORMANCE.reduce((s, v) => s + v.responseTimeAvgHours, 0) / ENHANCED_VENDOR_PERFORMANCE.length)}h</div>
+                    <div className="text-sm text-gray-300">Avg Response</div>
                   </div>
                 </div>
               </div>
@@ -1365,7 +1433,7 @@ export function Vendors() {
 
             {isDemoMode && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {consolidatedVendors.map((vendor) => {
-                const perf = VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
+                const perf = ENHANCED_VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
                 if (!perf) return null;
                 return (
                   <div key={vendor.id} onClick={() => handleSelectVendor(vendor)} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer">
@@ -1409,7 +1477,26 @@ export function Vendors() {
                       </div>
                     </div>
 
-                    <div className="border-t pt-3 text-sm">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: '4px solid #6B7F96' }}>
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                          <Send className="h-3.5 w-3.5 text-gray-500" />
+                          <span className="text-xs text-gray-500 font-medium">Avg Response</span>
+                        </div>
+                        <p className={`text-xl font-bold text-center ${perf.responseTimeAvgHours <= 6 ? 'text-green-600' : perf.responseTimeAvgHours <= 12 ? 'text-yellow-600' : 'text-red-600'}`}>
+                          {perf.responseTimeAvgHours < 1 ? '<1h' : `${Math.round(perf.responseTimeAvgHours)}h`}
+                        </p>
+                      </div>
+                      <div className="bg-white rounded-xl shadow-sm p-3" style={{ borderLeft: '4px solid #A08C5A' }}>
+                        <div className="flex items-center justify-center gap-1.5 mb-1">
+                          <Wrench className="h-3.5 w-3.5" style={{ color: '#A08C5A' }} />
+                          <span className="text-xs text-gray-500 font-medium">This Quarter</span>
+                        </div>
+                        <p className="text-xl font-bold text-center text-gray-900">{perf.servicesThisQuarter}</p>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-3 flex items-center justify-between">
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         perf.trend === 'improving' ? 'bg-green-100 text-green-800' :
                         perf.trend === 'declining' ? 'bg-red-100 text-red-800' :
@@ -1417,6 +1504,9 @@ export function Vendors() {
                       }`}>
                         {perf.trend === 'improving' ? 'Improving' : perf.trend === 'declining' ? 'Declining' : 'Stable'}
                       </span>
+                      {perf.nextServiceDate && (
+                        <span className="text-xs text-gray-500">Next: {format(new Date(perf.nextServiceDate), 'MMM d')}</span>
+                      )}
                     </div>
                   </div>
                 );
