@@ -1,7 +1,9 @@
-// ── Adaptive Onboarding Wizard Config ──────────────────────────
-// 12-step guided wizard with dependency-based unlocking.
-// Each step declares its own industry/tier requirements + dependencies.
+// ── Role-Based Onboarding Wizard Config (v4) ────────────────────
+// 15-step guided wizard with per-role visibility + dependency-based unlocking.
+// Each step declares its own role/industry/tier requirements + dependencies.
 // resolveVisibleSteps() is a pure function — no side effects.
+
+import type { UserRole } from '../contexts/RoleContext';
 
 // Industry codes match Signup.tsx INDUSTRY_TYPES keys
 export type IndustryCode =
@@ -14,7 +16,7 @@ export type IndustryCode =
 export type LocationTier = 'single' | 'multi' | 'enterprise';
 
 /** How the step is activated when clicking its action button */
-export type StepType = 'navigate' | 'modal' | 'external' | 'celebration';
+export type StepType = 'navigate' | 'modal' | 'external' | 'celebration' | 'tour';
 
 export interface OnboardingStepDef {
   id: string;
@@ -24,7 +26,7 @@ export interface OnboardingStepDef {
   route: string;
   /** Contextual label for the action button */
   actionLabel: string;
-  section: 'getting_started' | 'safety_setup' | 'team_locations' | 'growth';
+  section: 'getting_started' | 'team_vendors' | 'safety_setup' | 'platform_tour' | 'growth';
   order: number;
   /** Step activation type (default: 'navigate') */
   stepType?: StepType;
@@ -32,6 +34,8 @@ export interface OnboardingStepDef {
   dependsOn?: string[];
   /** External URL for 'external' step type */
   externalUrl?: string;
+  /** If set, step only shows for these roles. Omit = all roles (universal). */
+  roles?: UserRole[];
   /** If set, step only shows for these industries. Omit = universal. */
   industries?: IndustryCode[];
   /** Minimum location tier required. Omit = all tiers. */
@@ -50,13 +54,14 @@ export interface OnboardingStepDef {
 
 export const ONBOARDING_SECTIONS = [
   { id: 'getting_started', label: 'Getting Started', order: 0 },
-  { id: 'team_locations', label: 'Team & Vendors', order: 1 },
+  { id: 'team_vendors', label: 'Team & Vendors', order: 1 },
   { id: 'safety_setup', label: 'Safety & Compliance', order: 2 },
-  { id: 'growth', label: 'Grow & Connect', order: 3 },
+  { id: 'platform_tour', label: 'Platform Tour', order: 3 },
+  { id: 'growth', label: 'Grow & Connect', order: 4 },
 ] as const;
 
 export const ONBOARDING_STEPS: OnboardingStepDef[] = [
-  // ── Step 1: Profile ─────────────────────────────────────
+  // ── Getting Started ───────────────────────────────────────
   {
     id: 'profile',
     label: 'Complete Your Profile',
@@ -67,8 +72,21 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     section: 'getting_started',
     order: 1,
     completionProfileField: 'full_name',
+    // roles: omitted = ALL roles
   },
-  // ── Step 2: Add Team Members ──────────────────────────────
+  {
+    id: 'setup_locations',
+    label: 'Set Up Locations',
+    description: 'Configure your locations — addresses, operating hours, and jurisdiction info.',
+    hint: 'Multi-location orgs can add all sites here',
+    route: '/settings',
+    actionLabel: 'Set Up Locations',
+    section: 'getting_started',
+    order: 2,
+    roles: ['owner_operator', 'executive', 'platform_admin'],
+  },
+
+  // ── Team & Vendors ────────────────────────────────────────
   {
     id: 'add_team',
     label: 'Add Team Members',
@@ -76,12 +94,12 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'You can add as many team members as needed',
     route: '/team',
     actionLabel: 'Add Team',
-    section: 'team_locations',
+    section: 'team_vendors',
     order: 1,
+    roles: ['owner_operator', 'executive', 'kitchen_manager', 'platform_admin'],
     completionTable: 'profiles',
     completionMinCount: 2,
   },
-  // ── Step 3: Invite Team ─────────────────────────────────
   {
     id: 'invite_team',
     label: 'Invite Your Team',
@@ -89,11 +107,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'They\'ll get an email with a secure login link',
     route: '/team',
     actionLabel: 'Send Invites',
-    section: 'team_locations',
+    section: 'team_vendors',
     order: 2,
     dependsOn: ['add_team'],
+    roles: ['owner_operator', 'executive', 'platform_admin'],
   },
-  // ── Step 4: Add Vendors ─────────────────────────────────
   {
     id: 'add_vendors',
     label: 'Add Your Vendors',
@@ -101,12 +119,12 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'Track certifications, insurance, and service schedules',
     route: '/vendors',
     actionLabel: 'Add Vendors',
-    section: 'team_locations',
+    section: 'team_vendors',
     order: 3,
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'platform_admin'],
     completionTable: 'vendors',
     completionMinCount: 1,
   },
-  // ── Step 5: Invite Vendors ──────────────────────────────
   {
     id: 'invite_vendors',
     label: 'Invite Vendors to Portal',
@@ -114,11 +132,11 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'Vendors self-serve their own compliance documents',
     route: '/vendors',
     actionLabel: 'Invite Vendors',
-    section: 'team_locations',
+    section: 'team_vendors',
     order: 4,
     dependsOn: ['add_vendors'],
+    roles: ['owner_operator', 'executive', 'platform_admin'],
   },
-  // ── Step 6: Add Vendor Services ─────────────────────────
   {
     id: 'add_vendor_services',
     label: 'Add Vendor Services',
@@ -126,11 +144,13 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     hint: 'Enables automated compliance tracking per service',
     route: '/vendors',
     actionLabel: 'Add Services',
-    section: 'team_locations',
+    section: 'team_vendors',
     order: 5,
     dependsOn: ['add_vendors'],
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager', 'platform_admin'],
   },
-  // ── Step 7: Add Equipment ───────────────────────────────
+
+  // ── Safety & Compliance ───────────────────────────────────
   {
     id: 'register_equipment',
     label: 'Register Equipment',
@@ -140,10 +160,10 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     actionLabel: 'Add Equipment',
     section: 'safety_setup',
     order: 1,
+    roles: ['owner_operator', 'executive', 'facilities_manager', 'kitchen_manager', 'platform_admin'],
     completionTable: 'equipment',
     completionMinCount: 1,
   },
-  // ── Step 8: Upload Documents ────────────────────────────
   {
     id: 'upload_documents',
     label: 'Upload Key Documents',
@@ -155,8 +175,19 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     order: 2,
     completionTable: 'documents',
     completionMinCount: 1,
+    // roles: omitted = ALL roles
   },
-  // ── Step 9: Request Missing Documents ───────────────────
+  {
+    id: 'ai_document_routing',
+    label: 'AI Document Routing',
+    description: 'Try EvidLY\'s AI-powered document router — upload any document and it\'ll be auto-classified and filed.',
+    hint: 'Works with permits, certificates, insurance docs, and more',
+    route: '/documents',
+    actionLabel: 'Try AI Routing',
+    section: 'safety_setup',
+    order: 3,
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
+  },
   {
     id: 'request_documents',
     label: 'Request Missing Documents',
@@ -165,10 +196,26 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     route: '/documents',
     actionLabel: 'Request Documents',
     section: 'safety_setup',
-    order: 3,
+    order: 4,
     dependsOn: ['add_vendors', 'upload_documents'],
+    roles: ['owner_operator', 'executive', 'compliance_manager', 'platform_admin'],
   },
-  // ── Step 10: Kitchen to Community Referral ──────────────
+
+  // ── Platform Tour ─────────────────────────────────────────
+  {
+    id: 'take_tour',
+    label: 'Take a Platform Tour',
+    description: 'Take a guided walkthrough of EvidLY\'s key features — sidebar navigation, dashboards, and tools.',
+    hint: 'Takes about 2 minutes',
+    route: '/dashboard',
+    actionLabel: 'Start Tour',
+    section: 'platform_tour',
+    order: 1,
+    stepType: 'tour',
+    // roles: omitted = ALL roles
+  },
+
+  // ── Grow & Connect ────────────────────────────────────────
   {
     id: 'k2c_referral',
     label: 'Share Kitchen to Community',
@@ -179,8 +226,8 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     section: 'growth',
     order: 1,
     stepType: 'modal',
+    roles: ['owner_operator', 'executive', 'platform_admin'],
   },
-  // ── Step 11: Schedule Consultation ──────────────────────
   {
     id: 'schedule_consultation',
     label: 'Schedule Your Consultation',
@@ -192,8 +239,8 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     order: 2,
     stepType: 'external',
     externalUrl: 'https://calendly.com/evidly/onboarding',
+    roles: ['owner_operator', 'executive', 'platform_admin'],
   },
-  // ── Step 12: Setup Complete ─────────────────────────────
   {
     id: 'setup_complete',
     label: 'Setup Complete!',
@@ -204,6 +251,7 @@ export const ONBOARDING_STEPS: OnboardingStepDef[] = [
     section: 'growth',
     order: 3,
     stepType: 'celebration',
+    // roles: omitted = ALL roles
   },
 ];
 
@@ -216,18 +264,23 @@ const SECTION_ORDER = ONBOARDING_SECTIONS.reduce(
 );
 
 /**
- * Pure function: resolve which steps are visible for a given org profile.
+ * Pure function: resolve which steps are visible for a given org profile + role.
  * No side effects, no Supabase calls — just filtering + sorting.
  */
 export function resolveVisibleSteps(
   industryType: string | null,
   plannedLocationCount: number,
+  userRole?: UserRole,
 ): OnboardingStepDef[] {
   const tier: LocationTier =
     plannedLocationCount >= 11 ? 'enterprise' :
     plannedLocationCount >= 2 ? 'multi' : 'single';
 
   return ONBOARDING_STEPS.filter(step => {
+    // Role filter
+    if (step.roles && step.roles.length > 0 && userRole) {
+      if (!step.roles.includes(userRole)) return false;
+    }
     // Industry filter
     if (step.industries && step.industries.length > 0) {
       if (!industryType || !step.industries.includes(industryType as IndustryCode)) {

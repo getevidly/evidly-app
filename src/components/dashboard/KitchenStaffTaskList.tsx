@@ -21,6 +21,7 @@ import { AlertBanner, type AlertBannerItem } from '../shared/AlertBanner';
 import { DashboardHero } from './shared/DashboardHero';
 import { DEMO_ROLE_NAMES } from './shared/constants';
 import { CalendarCard, type CalendarEvent } from './shared/CalendarCard';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 // --------------- Demo Data ---------------
 
@@ -187,6 +188,9 @@ export default function KitchenStaffTaskList() {
             orgName={isDemoMode ? 'Pacific Coast Dining' : ''}
             locationName={isDemoMode ? DEMO_STAFF_LOCATION : ''}
           />
+
+          {/* Onboarding checklist */}
+          <OnboardingChecklistCard />
 
           {/* ============================================================ */}
           {/* ABOVE THE FOLD — Task count + progress bar                   */}

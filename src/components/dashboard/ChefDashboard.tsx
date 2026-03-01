@@ -22,6 +22,7 @@ import { KITCHEN_MANAGER_EVENTS, KITCHEN_MANAGER_CALENDAR } from '../../data/cal
 import { ErrorBoundary } from '../ErrorBoundary';
 import { SelfDiagCard } from './shared/SelfDiagCard';
 import { NFPAReminder } from '../ui/NFPAReminder';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 // --------------- Demo Data ---------------
 
@@ -240,6 +241,9 @@ export default function ChefDashboard() {
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
+
+      {/* Onboarding checklist */}
+      <OnboardingChecklistCard />
 
       {/* ============================================================ */}
       {/* ABOVE THE FOLD — HACCP Status                                 */}

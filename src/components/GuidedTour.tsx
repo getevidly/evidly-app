@@ -183,10 +183,17 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
     onComplete?.();
   };
 
-  const startTour = () => {
+  const startTour = useCallback(() => {
     setCurrentStep(0);
     setIsActive(true);
-  };
+  }, []);
+
+  // Listen for programmatic tour trigger from onboarding checklist
+  useEffect(() => {
+    const handler = () => startTour();
+    window.addEventListener('evidly:start-guided-tour', handler);
+    return () => window.removeEventListener('evidly:start-guided-tour', handler);
+  }, [startTour]);
 
   if (!isActive) {
     return (

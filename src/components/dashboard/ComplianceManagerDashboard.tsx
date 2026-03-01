@@ -31,6 +31,7 @@ import { TabbedDetailSection, type TabDef } from './shared/TabbedDetailSection';
 import { CalendarCard } from './shared/CalendarCard';
 import { COMPLIANCE_EVENTS, COMPLIANCE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 // ================================================================
 // HELPERS (component-specific)
@@ -449,6 +450,13 @@ export default function ComplianceManagerDashboard() {
         >
           <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
         </DashboardHero>
+      </div>
+
+      {/* Onboarding checklist */}
+      <div style={{ padding: '0 24px' }}>
+        <div className="mt-4">
+          <OnboardingChecklistCard />
+        </div>
       </div>
 
       {/* ============================================================ */}

@@ -25,6 +25,7 @@ import { HeroJurisdictionSummary } from './shared/HeroJurisdictionSummary';
 import { CalendarCard } from './shared/CalendarCard';
 import { EXECUTIVE_EVENTS, EXECUTIVE_CALENDAR } from '../../data/calendarDemoEvents';
 import { ErrorBoundary } from '../ErrorBoundary';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 // ================================================================
 // ALERT BANNERS
@@ -331,6 +332,11 @@ export default function ExecutiveDashboard() {
       >
         <HeroJurisdictionSummary jieScores={jieScores} jurisdictions={jurisdictions} navigate={navigate} userRole={userRole} />
       </DashboardHero>
+
+      {/* ── 1a. ONBOARDING CHECKLIST ─────────────────────────── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-4">
+        <OnboardingChecklistCard />
+      </div>
 
       {/* ── 1b. INTELLIGENCE BRIEF CARD ────────────────────── */}
       <IntelligenceBriefCard navigate={navigate} />

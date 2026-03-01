@@ -26,9 +26,6 @@ function authDismissedKey(orgId: string) {
   return `evidly_onboarding_dismissed_${orgId}`;
 }
 
-// ── Roles allowed to see the checklist ──────────────────
-const ALLOWED_ROLES = new Set(['owner_operator', 'executive']);
-
 // ── Demo defaults (Pacific Coast Dining = RESTAURANT, 3 locations) ──
 const DEMO_DEFAULTS = {
   industry_type: 'RESTAURANT' as string | null,
@@ -172,8 +169,8 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
 
   // ── Compute visible steps ─────────────────────────────
   const visibleSteps = useMemo(
-    () => resolveVisibleSteps(orgIndustry, orgLocationCount),
-    [orgIndustry, orgLocationCount],
+    () => resolveVisibleSteps(orgIndustry, orgLocationCount, userRole),
+    [orgIndustry, orgLocationCount, userRole],
   );
 
   // ── Auto-detection: query Supabase tables (auth mode only) ──
@@ -280,7 +277,7 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   const actionableCompleted = actionableSteps.filter(s => completedIds.has(s.id)).length;
   const completedCount = actionableCompleted;
   const isAllComplete = actionableSteps.length > 0 && actionableCompleted === actionableSteps.length;
-  const shouldShow = !isDismissed && !isAllComplete && !loading && ALLOWED_ROLES.has(userRole);
+  const shouldShow = !isDismissed && !isAllComplete && !loading && visibleSteps.length > 0;
 
   // ── Dependency-based unlocking ─────────────────────────
   // Steps WITHOUT dependsOn are always unlocked (clickable from the start).

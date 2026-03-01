@@ -4,7 +4,7 @@ import {
   Check, ChevronRight, X, Sparkles, Lock, Pencil,
   User, Users, Truck, Thermometer, FileText, Send,
   Wrench, FileSearch, Heart, Calendar, PartyPopper,
-  Copy, ExternalLink,
+  Copy, ExternalLink, MapPin, Bot, Map,
 } from 'lucide-react';
 import { BODY_TEXT, FONT } from './constants';
 import { useOnboardingChecklist } from '../../../hooks/useOnboardingChecklist';
@@ -25,6 +25,7 @@ const DEP_WARNING_TEXT = '#856404';
 // Step icons keyed by step id
 const STEP_ICONS: Record<string, typeof User> = {
   profile: User,
+  setup_locations: MapPin,
   add_team: Users,
   invite_team: Send,
   add_vendors: Truck,
@@ -32,7 +33,9 @@ const STEP_ICONS: Record<string, typeof User> = {
   add_vendor_services: Wrench,
   register_equipment: Thermometer,
   upload_documents: FileText,
+  ai_document_routing: Bot,
   request_documents: FileSearch,
+  take_tour: Map,
   k2c_referral: Heart,
   schedule_consultation: Calendar,
   setup_complete: PartyPopper,
@@ -265,6 +268,10 @@ export function OnboardingChecklistCard() {
         break;
       case 'external':
         if (step.externalUrl) window.open(step.externalUrl, '_blank', 'noopener');
+        break;
+      case 'tour':
+        window.dispatchEvent(new CustomEvent('evidly:start-guided-tour'));
+        completeStep(step.id);
         break;
       case 'celebration':
         completeStep(step.id);

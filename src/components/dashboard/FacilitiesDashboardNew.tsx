@@ -25,6 +25,7 @@ import { SelfDiagCard } from './shared/SelfDiagCard';
 import { ServiceCostSection } from './shared/ServiceCostSection';
 import { ComplianceBanner } from './shared/ComplianceBanner';
 import { NFPAReminder } from '../ui/NFPAReminder';
+import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
 
 // --------------- Demo Data ---------------
 
@@ -231,6 +232,9 @@ export default function FacilitiesDashboardNew() {
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
+
+      {/* Onboarding checklist */}
+      <OnboardingChecklistCard />
 
       {/* Compliance Score Banner — threshold-based alerts */}
       <ComplianceBanner />
