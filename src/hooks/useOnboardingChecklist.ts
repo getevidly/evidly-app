@@ -133,15 +133,8 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
   // ── Load org profile + persisted state ────────────────
   useEffect(() => {
     if (isDemo) {
-      const demoOrg = getDemoOrgInfo();
-      setOrgIndustry(demoOrg.industry);
-      setOrgLocationCount(demoOrg.locationCount);
-      const stored = loadSet(DEMO_STORAGE_KEY);
-      // Pre-seed demo completions
-      const merged = new Set([...DEMO_PRESEED, ...stored]);
-      setCompletedIds(merged);
-      setSkippedIds(loadSet(DEMO_SKIPPED_KEY));
-      if (localStorage.getItem(DEMO_DISMISSED_KEY) === 'true') setIsDismissed(true);
+      // Demo = fully configured account — never show onboarding checklist
+      setIsDismissed(true);
       setLoading(false);
       return;
     }
