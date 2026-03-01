@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useRole } from '../../contexts/RoleContext';
 import type { UserRole } from '../../contexts/RoleContext';
 import { checkPermission } from '../../hooks/usePermission';
+import { useDemo } from '../../contexts/DemoContext';
 
 interface QuickAction {
   emoji: string;
@@ -68,6 +69,8 @@ export function QuickActionsBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { userRole } = useRole();
+  const { isDemoMode, presenterMode } = useDemo();
+  const showDemoCTA = isDemoMode && !presenterMode;
 
   const actions = useMemo(() => {
     const roleActions = ROLE_ACTIONS[userRole] || [];
@@ -83,7 +86,7 @@ export function QuickActionsBar() {
     <>
       {/* Desktop — fixed bottom bar (lg+ only, matches sidebar breakpoint) */}
       <div
-        className="hidden lg:flex fixed bottom-0 left-0 lg:left-60 right-0 z-[100] bg-white border-t justify-center items-center gap-6"
+        className="hidden lg:flex fixed bottom-0 left-0 lg:left-60 right-0 z-40 bg-white border-t justify-center items-center gap-6"
         style={{
           padding: '8px 32px',
           borderColor: '#e2e8f0',
@@ -114,9 +117,9 @@ export function QuickActionsBar() {
         })}
       </div>
 
-      {/* Mobile — above MobileTabBar (which is h-14 at bottom-0) */}
+      {/* Mobile — above MobileTabBar (h-14 at bottom-0) + DemoCTABar when in demo */}
       <div
-        className="lg:hidden fixed bottom-14 left-0 right-0 z-[100] bg-white border-t"
+        className={`lg:hidden fixed left-0 right-0 z-40 bg-white border-t ${showDemoCTA ? 'bottom-[7rem]' : 'bottom-14'}`}
         style={{
           height: 56,
           borderColor: '#e2e8f0',

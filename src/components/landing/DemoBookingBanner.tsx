@@ -12,7 +12,7 @@ export default function DemoBookingBanner() {
   if (!showBooking || !canBookMeeting(userRole)) return null;
 
   return (
-    <div className="fixed bottom-[12rem] right-4 lg:bottom-[6.5rem] lg:right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] animate-slide-up">
+    <div className="fixed bottom-[12rem] right-4 lg:bottom-28 lg:right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] animate-slide-up">
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
         <button
           onClick={dismiss}

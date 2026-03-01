@@ -97,7 +97,7 @@ export function BiweeklyReferralBanner() {
         borderLeft: '3px solid #A08C5A',
         borderRadius: '14px',
         padding: '18px 20px',
-        zIndex: 9989,
+        zIndex: 50,
         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
         animation: 'slideInUp 0.3s ease-out',
       }}

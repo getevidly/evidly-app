@@ -165,7 +165,7 @@ function StrategicActionsBar({ navigate }: { navigate: (path: string) => void })
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-[100]"
+      className="fixed bottom-0 left-0 right-0 z-40"
       style={{
         backgroundColor: 'white',
         borderTop: '1px solid #e2e8f0',
