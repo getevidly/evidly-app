@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle, Check,
@@ -17,7 +17,8 @@ import { useAllLocationJurisdictions } from '../../hooks/useJurisdiction';
 import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP } from './shared/constants';
-import { ReferralBanner } from '../referral/ReferralBanner';
+import { K2CWidget } from '../referral/K2CWidget';
+import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
 import { ComplianceBanner } from './shared/ComplianceBanner';
 import { OnboardingChecklistCard } from './shared/OnboardingChecklistCard';
@@ -221,6 +222,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const { user, profile } = useAuth();
   const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
@@ -375,16 +377,16 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* ─── ELEMENT 5: K2C Referral Banner (always visible) ─────────────── */}
+      {/* ─── ELEMENT 5: K2C Widget (always visible) ─────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <ReferralBanner
-          referralCode={demoReferral.referralCode}
-          referralUrl={demoReferral.referralUrl}
-          mealsGenerated={demoReferral.mealsGenerated}
-          isDemoMode={isDemoMode}
-        />
+        <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
       </div>
 
+      <K2CInviteModal
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+        referralCode={demoReferral.referralCode}
+      />
     </div>
   );
 }

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertTriangle, Clock, ChevronRight, FileText, Flame, Wind, Droplets, Trash2, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
-import { ReferralBanner } from '../components/referral/ReferralBanner';
 import { K2CWidget } from '../components/referral/K2CWidget';
+import { K2CInviteModal } from '../components/referral/K2CInviteModal';
 import { demoReferral } from '../data/demoData';
 
 interface EquipmentStatus {
@@ -37,6 +37,7 @@ export function FacilitiesDashboard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const [equipmentSystems] = useState<EquipmentStatus[]>([
     {
@@ -198,12 +199,8 @@ export function FacilitiesDashboard() {
           <p className="text-blue-100">Today is {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
 
-        {/* K2C Referral Banner */}
-        <ReferralBanner
-          referralCode={demoReferral.referralCode}
-          referralUrl={demoReferral.referralUrl}
-          mealsGenerated={demoReferral.mealsGenerated}
-        />
+        {/* K2C Widget */}
+        <K2CWidget onInviteClick={() => setShowInviteModal(true)} />
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Equipment Status</h2>
@@ -255,15 +252,11 @@ export function FacilitiesDashboard() {
           </div>
         </div>
 
-        {/* K2C Widget */}
-        <div style={{ maxWidth: 320 }}>
-          <K2CWidget
-            mealsGenerated={demoReferral.mealsGenerated}
-            referralsCount={demoReferral.referralsCount}
-            donationMultiplierMonths={demoReferral.donationMultiplierMonths}
-            onShareClick={() => navigator.clipboard.writeText(demoReferral.referralUrl)}
-          />
-        </div>
+        <K2CInviteModal
+          isOpen={showInviteModal}
+          onClose={() => setShowInviteModal(false)}
+          referralCode={demoReferral.referralCode}
+        />
 
         {vendorActions.length > 0 && (
           <div className={`rounded-lg p-4 sm:p-6 ${overdueCount > 0 ? 'bg-red-50 border-l-4 border-red-600' : 'bg-yellow-50 border-l-4 border-yellow-500'}`}>

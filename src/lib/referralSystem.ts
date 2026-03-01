@@ -171,6 +171,15 @@ export function markTouchpointShown(): void {
 }
 
 /**
+ * Generate a K2C-specific referral code (4-char org slug + 4 alphanumeric)
+ */
+export function generateK2CReferralCode(orgName: string): string {
+  const slug = orgName.replace(/[^A-Za-z]/g, '').substring(0, 4).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `${slug}-${random}`;
+}
+
+/**
  * Get K2C charity options
  */
 export const K2C_CHARITIES = [

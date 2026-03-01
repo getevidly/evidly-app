@@ -292,6 +292,88 @@ export const demoHeroStories: InspectionHeroStory[] = [
   },
 ];
 
+// ── K2C Referral Invites ──────────────────────────────
+export interface K2CReferralInvite {
+  id: string;
+  contactName: string;
+  businessName: string;
+  email: string;
+  phone?: string;
+  role: string;
+  status: 'invited' | 'signed_up' | 'active' | 'expired';
+  mealsGenerated: number;
+  invitedAt: string;
+  signedUpAt?: string;
+  chainDepth: number;
+  referredOrgCode?: string;
+}
+
+export const demoK2CInvites: K2CReferralInvite[] = [
+  {
+    id: 'k2c-inv-1',
+    contactName: 'Maria Gonzalez',
+    businessName: 'Central Cafe & Grill',
+    email: 'maria@centralcafe.com',
+    phone: '(415) 555-0142',
+    role: 'Owner/Operator',
+    status: 'active',
+    mealsGenerated: 12,
+    invitedAt: '2026-01-15T10:00:00Z',
+    signedUpAt: '2026-01-28T14:30:00Z',
+    chainDepth: 1,
+    referredOrgCode: 'CENT-9PQ4',
+  },
+  {
+    id: 'k2c-inv-2',
+    contactName: 'Tom Harrison',
+    businessName: 'Seaside Grill',
+    email: 'tom@seasidegrill.com',
+    role: 'Kitchen Manager',
+    status: 'signed_up',
+    mealsGenerated: 12,
+    invitedAt: '2026-02-01T09:00:00Z',
+    signedUpAt: '2026-02-12T11:00:00Z',
+    chainDepth: 1,
+    referredOrgCode: 'SEAS-4WK7',
+  },
+  {
+    id: 'k2c-inv-3',
+    contactName: 'Jenny Park',
+    businessName: 'Park Pizza Co.',
+    email: 'jenny@parkpizza.com',
+    phone: '(510) 555-0198',
+    role: 'Owner/Operator',
+    status: 'invited',
+    mealsGenerated: 0,
+    invitedAt: '2026-02-18T14:00:00Z',
+    chainDepth: 1,
+  },
+  {
+    id: 'k2c-inv-4',
+    contactName: 'David Chen',
+    businessName: 'Golden Dragon Kitchen',
+    email: 'david@goldendragon.com',
+    role: 'Chef',
+    status: 'invited',
+    mealsGenerated: 0,
+    invitedAt: '2026-02-22T09:30:00Z',
+    chainDepth: 1,
+  },
+  {
+    id: 'k2c-inv-5',
+    contactName: 'Sarah Mitchell',
+    businessName: 'Harbor House Kitchen',
+    email: 'sarah@harborhouse.com',
+    role: 'Owner/Operator',
+    status: 'active',
+    mealsGenerated: 12,
+    invitedAt: '2026-02-05T11:00:00Z',
+    signedUpAt: '2026-02-15T10:00:00Z',
+    chainDepth: 2,
+    referredOrgCode: 'HARB-6MN3',
+  },
+];
+
 // ── Summary stats ──────────────────────────────────────
 export const demoReferralStats = {
   totalReferrals: 6,
