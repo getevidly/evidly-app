@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { X, User, Mail, Phone, Lock, Image as ImageIcon } from 'lucide-react';
+import { X, User, Mail, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
 import { supabase } from '../lib/supabase';
 
 interface ProfileModalProps {
@@ -8,16 +10,42 @@ interface ProfileModalProps {
   onClose: () => void;
 }
 
+const DEMO_ROLE_PROFILES: Record<string, { name: string; email: string }> = {
+  platform_admin: { name: 'Arthur Samuels', email: 'arthur@getevidly.com' },
+  owner_operator: { name: 'Maria Rodriguez', email: 'maria@cleaningprosplus.com' },
+  executive: { name: 'James Park', email: 'jpark@cleaningprosplus.com' },
+  compliance_manager: { name: 'Sofia Chen', email: 'schen@cleaningprosplus.com' },
+  chef: { name: 'Ana Torres', email: 'atorres@cleaningprosplus.com' },
+  facilities_manager: { name: 'Michael Torres', email: 'mtorres@cleaningprosplus.com' },
+  kitchen_manager: { name: 'David Kim', email: 'dkim@cleaningprosplus.com' },
+  kitchen_staff: { name: 'Lisa Nguyen', email: 'lnguyen@cleaningprosplus.com' },
+};
+
 export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const { profile } = useAuth();
-  const [fullName, setFullName] = useState(profile?.full_name || '');
-  const [phone, setPhone] = useState(profile?.phone || '');
+  const { isDemoMode } = useDemo();
+  const { userRole } = useRole();
+
+  const demoProfile = DEMO_ROLE_PROFILES[userRole] || DEMO_ROLE_PROFILES.owner_operator;
+  const profileName = profile?.full_name || (isDemoMode ? demoProfile.name : '');
+  const profileEmail = profile?.email || (isDemoMode ? demoProfile.email : '');
+  // Guard: if phone looks like an email, treat as empty
+  const rawPhone = profile?.phone || '';
+  const profilePhone = rawPhone.includes('@') ? '' : rawPhone;
+
+  const [fullName, setFullName] = useState(profileName);
+  const [phone, setPhone] = useState(profilePhone);
   const [pin, setPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
+  const [showPin, setShowPin] = useState(false);
+  const [showConfirmPin, setShowConfirmPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
   if (!isOpen) return null;
+
+  const pinMismatch = pin.length > 0 && confirmPin.length > 0 && pin !== confirmPin;
+  const saveDisabled = loading || pinMismatch;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +123,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </label>
             <input
               type="email"
-              value={profile?.email || ''}
+              value={profileEmail}
               disabled
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
             />
@@ -110,38 +138,70 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             <input
               type="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => setPhone(e.target.value.replace(/[^0-9()\-\s+]/g, ''))}
+              inputMode="tel"
               placeholder="(555) 123-4567"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             />
           </div>
 
           <div className="border-t border-gray-200 pt-4">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2">
               <Lock className="h-4 w-4" />
               Kiosk PIN (Optional)
             </h3>
             <p className="text-xs text-gray-600 mb-3">Set a 4-digit PIN for quick access on kiosk devices</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-3">
               <div>
-                <input
-                  type="password"
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  placeholder="PIN"
-                  maxLength={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest"
-                />
+                <label className="block text-xs text-gray-500 mb-1">PIN</label>
+                <div className="relative">
+                  <input
+                    type={showPin ? 'text' : 'password'}
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="● ● ● ●"
+                    maxLength={4}
+                    className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPin(!showPin)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
               <div>
-                <input
-                  type="password"
-                  value={confirmPin}
-                  onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  placeholder="Confirm"
-                  maxLength={4}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest"
-                />
+                <label className="block text-xs text-gray-500 mb-1">Confirm PIN</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPin ? 'text' : 'password'}
+                    value={confirmPin}
+                    onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="● ● ● ●"
+                    maxLength={4}
+                    className={`w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] text-center text-lg tracking-widest ${
+                      pinMismatch ? 'border-red-400' : 'border-gray-300'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPin(!showConfirmPin)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showConfirmPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                {pinMismatch && (
+                  <p className="text-xs text-red-600 mt-1">PINs do not match</p>
+                )}
               </div>
             </div>
           </div>
@@ -164,7 +224,7 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={saveDisabled}
               className="flex-1 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#2a6a8f] disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}

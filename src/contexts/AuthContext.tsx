@@ -6,6 +6,8 @@ import { syncOrgToIntelligence } from '../lib/intelligenceBridge';
 interface UserProfile {
   id: string;
   full_name: string;
+  email?: string;
+  phone?: string;
   organization_id: string;
   avatar_url: string | null;
   role: string;
