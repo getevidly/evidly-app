@@ -10,7 +10,7 @@ import { DemoTour } from '../DemoTour';
 import { AIChatPanel } from '../AIChatPanel';
 import { OfflineBanner } from '../OfflineBanner';
 import { DemoBanner } from '../DemoBanner';
-import MobileStickyBar from '../MobileStickyBar';
+
 import { QuickSwitcher } from '../QuickSwitcher';
 import { ReferralTouchpoint } from '../ReferralTouchpoint';
 import { BiweeklyReferralBanner } from '../BiweeklyReferralBanner';
@@ -120,13 +120,13 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <OfflineBanner />
-        <main className={`flex-1 relative md:pb-[72px] ${isDemoMode ? 'pb-44' : 'pb-36'}`}>
+        <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>
           <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
         </main>
       </div>
       <QuickActionsBar />
       <MobileTabBar />
-      {isDemoMode && !presenterMode && <MobileStickyBar demoMode />}
+      {/* MobileStickyBar removed — DemoCTABar handles the demo CTA */}
       {tourActive ? <DemoTour /> : <GuidedTour onActiveChange={handleGuidedTourActiveChange} />}
       <AIChatPanel hidden={anyTourActive} />
       <ReferralTouchpoint />

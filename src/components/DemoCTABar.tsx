@@ -12,7 +12,7 @@ export function DemoCTABar() {
   const showBooking = canBookMeeting(userRole);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t shadow-lg lg:pl-60">
+    <div className="fixed bottom-[7rem] lg:bottom-12 left-0 right-0 z-30 bg-white border-t shadow-lg lg:pl-60">
       <div className="px-4 py-2.5 flex items-center justify-between max-w-[1200px] mx-auto">
         <span className="text-sm text-gray-600 hidden sm:block">
           You're viewing sample data to preview the interface. Sign in to access your actual data.

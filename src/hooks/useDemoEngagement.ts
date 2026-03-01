@@ -23,7 +23,7 @@ export function useDemoEngagement() {
   }, []);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem('calendly-dismissed');
+    const dismissed = sessionStorage.getItem('walkthrough_dismissed');
     if (dismissed) return;
 
     if (timeSpent >= 120 || pagesVisited.size >= 3) {
@@ -33,7 +33,7 @@ export function useDemoEngagement() {
 
   function dismiss() {
     setShowBooking(false);
-    sessionStorage.setItem('calendly-dismissed', 'true');
+    sessionStorage.setItem('walkthrough_dismissed', 'true');
   }
 
   return { showBooking, dismiss, timeSpent, pagesVisited: pagesVisited.size };
