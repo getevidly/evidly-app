@@ -88,16 +88,18 @@ export function BiweeklyReferralBanner() {
     <div
       style={{
         position: 'fixed',
-        bottom: '176px',
-        right: '16px',
+        bottom: '148px',
+        right: '20px',
         width: '360px',
         maxWidth: 'calc(100vw - 48px)',
+        maxHeight: '70vh',
+        overflowY: 'auto' as const,
         background: 'linear-gradient(135deg, #0f2040, #162a48)',
         border: '1px solid rgba(160,140,90,0.4)',
         borderLeft: '3px solid #A08C5A',
         borderRadius: '14px',
         padding: '18px 20px',
-        zIndex: 50,
+        zIndex: 1030,
         boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
         animation: 'slideInUp 0.3s ease-out',
       }}

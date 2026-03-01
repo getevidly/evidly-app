@@ -62,7 +62,7 @@ export function ReferralTouchpoint() {
   const Icon = v.icon;
 
   return (
-    <div className="fixed bottom-44 right-4 lg:bottom-28 z-50 animate-in slide-in-from-bottom-4 max-w-sm">
+    <div className="fixed z-[1030] animate-in slide-in-from-bottom-4 max-w-sm" style={{ bottom: '148px', right: '20px' }}>
       <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-4 relative">
         <button
           onClick={() => setVisible(false)}
