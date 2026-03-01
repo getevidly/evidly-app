@@ -250,7 +250,9 @@ export function FacilitySafety() {
           <div className="flex items-center gap-4">
             <div className="text-center">
               <div className={`text-xl font-bold px-3 py-1 rounded-full ${
-                fireStatus === 'passing' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                fireStatus === 'passing' ? 'bg-green-100 text-green-700' :
+                fireStatus === 'at_risk' ? 'bg-gray-100 text-gray-500' :
+                'bg-red-100 text-red-700'
               }`}>{fireGrade}</div>
               <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
             </div>
@@ -286,6 +288,15 @@ export function FacilitySafety() {
               hoodStatus={override.facilitySafety.hoodStatus}
               extinguisherStatus={override.facilitySafety.extinguisherStatus}
               ansulStatus={override.facilitySafety.ansulStatus}
+              onCardClick={(card) => {
+                const routes: Record<string, string> = {
+                  Permit: '/equipment',
+                  Hood: '/calendar',
+                  Ext: '/equipment',
+                  Ansul: '/calendar',
+                };
+                navigate(routes[card] || '/equipment');
+              }}
             />
           </div>
         )}

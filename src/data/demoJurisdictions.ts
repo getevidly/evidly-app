@@ -311,10 +311,10 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
     gradeDisplay: string;
     summary: string;
     status: 'passing' | 'failing' | 'at_risk';
-    permitStatus: 'current' | 'expiring' | 'expired';
-    hoodStatus: 'current' | 'due_soon' | 'overdue';
-    extinguisherStatus: 'current' | 'due_soon' | 'expired';
-    ansulStatus: 'current' | 'due_soon' | 'overdue';
+    permitStatus: 'current' | 'expiring' | 'expired' | 'no_status';
+    hoodStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+    extinguisherStatus: 'current' | 'due_soon' | 'expired' | 'no_status';
+    ansulStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
   };
 }> = {
   'demo-loc-downtown': {
@@ -326,14 +326,14 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { majorViolations: 0, minorViolations: 2, uncorrectedMajors: 0 },
     },
     facilitySafety: {
-      grade: 'Pass',
-      gradeDisplay: 'Pass — Operational Permit Current',
+      grade: 'Pending',
+      gradeDisplay: 'Pending Verification',
       summary: 'City of Fresno Fire Department',
-      status: 'passing',
-      permitStatus: 'current',
-      hoodStatus: 'current',
-      extinguisherStatus: 'current',
-      ansulStatus: 'current',
+      status: 'at_risk',
+      permitStatus: 'no_status',
+      hoodStatus: 'no_status',
+      extinguisherStatus: 'no_status',
+      ansulStatus: 'no_status',
     },
   },
   'demo-loc-airport': {
@@ -345,14 +345,14 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { totalPoints: 9, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0 },
     },
     facilitySafety: {
-      grade: 'Pass',
-      gradeDisplay: 'Pass — Operational Permit Current',
+      grade: 'Pending',
+      gradeDisplay: 'Pending Verification',
       summary: 'Merced County Fire Dept (CAL FIRE MMU)',
-      status: 'passing',
-      permitStatus: 'current',
-      hoodStatus: 'due_soon',
-      extinguisherStatus: 'current',
-      ansulStatus: 'due_soon',
+      status: 'at_risk',
+      permitStatus: 'no_status',
+      hoodStatus: 'no_status',
+      extinguisherStatus: 'no_status',
+      ansulStatus: 'no_status',
     },
   },
   'demo-loc-university': {
@@ -364,14 +364,14 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       details: { majorViolations: 3, minorViolations: 1, uncorrectedMajors: 3 },
     },
     facilitySafety: {
-      grade: 'Pass',
-      gradeDisplay: 'Pass — Operational Permit Current',
+      grade: 'Pending',
+      gradeDisplay: 'Pending Verification',
       summary: 'Modesto Fire Department',
-      status: 'passing',
-      permitStatus: 'current',
-      hoodStatus: 'overdue',
-      extinguisherStatus: 'current',
-      ansulStatus: 'current',
+      status: 'at_risk',
+      permitStatus: 'no_status',
+      hoodStatus: 'no_status',
+      extinguisherStatus: 'no_status',
+      ansulStatus: 'no_status',
     },
   },
 };

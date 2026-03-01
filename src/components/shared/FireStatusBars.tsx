@@ -1,20 +1,23 @@
 export interface FireStatusBarsProps {
-  permitStatus: 'current' | 'expiring' | 'expired';
-  hoodStatus: 'current' | 'due_soon' | 'overdue';
-  extinguisherStatus: 'current' | 'due_soon' | 'expired';
-  ansulStatus: 'current' | 'due_soon' | 'overdue';
+  permitStatus: 'current' | 'expiring' | 'expired' | 'no_status';
+  hoodStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
+  extinguisherStatus: 'current' | 'due_soon' | 'expired' | 'no_status';
+  ansulStatus: 'current' | 'due_soon' | 'overdue' | 'no_status';
   compact?: boolean;
+  onCardClick?: (card: string) => void;
 }
 
-type AnyStatus = 'current' | 'expiring' | 'expired' | 'due_soon' | 'overdue';
+type AnyStatus = 'current' | 'expiring' | 'expired' | 'due_soon' | 'overdue' | 'no_status';
 
 function statusColor(status: AnyStatus): string {
+  if (status === 'no_status') return '#9ca3af';
   if (status === 'current') return '#16a34a';
   if (status === 'due_soon' || status === 'expiring') return '#d97706';
   return '#dc2626'; // overdue, expired
 }
 
 function statusLabel(status: AnyStatus): string {
+  if (status === 'no_status') return 'No Status';
   if (status === 'current') return 'Current';
   if (status === 'due_soon' || status === 'expiring') return 'Due Soon';
   return 'Overdue';
@@ -26,6 +29,7 @@ export function FireStatusBars({
   extinguisherStatus,
   ansulStatus,
   compact = false,
+  onCardClick,
 }: FireStatusBarsProps) {
   const items = [
     { label: 'Permit', status: permitStatus as AnyStatus },
@@ -38,7 +42,11 @@ export function FireStatusBars({
     return (
       <div className="flex items-center gap-2">
         {items.map(item => (
-          <div key={item.label} className="flex items-center gap-1.5">
+          <div
+            key={item.label}
+            className={`flex items-center gap-1.5${onCardClick ? ' cursor-pointer' : ''}`}
+            onClick={() => onCardClick?.(item.label)}
+          >
             <div
               className="h-1.5 rounded-full"
               style={{ width: 28, backgroundColor: statusColor(item.status) }}
@@ -56,7 +64,11 @@ export function FireStatusBars({
         const barColor = statusColor(item.status);
         const label = statusLabel(item.status);
         return (
-          <div key={item.label} className="text-center p-2 rounded-lg bg-gray-50">
+          <div
+            key={item.label}
+            className={`text-center p-2 rounded-lg bg-gray-50 transition-colors${onCardClick ? ' cursor-pointer hover:bg-gray-100' : ''}`}
+            onClick={() => onCardClick?.(item.label)}
+          >
             <div
               className="h-2 rounded-full mb-1.5 mx-auto"
               style={{ backgroundColor: barColor, width: '80%' }}
