@@ -17,7 +17,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/referrals': 'Referrals',
   '/analysis': 'Predictive Analytics',
   '/team': 'Team',
-  '/reports': 'Reporting',
+  '/reports': 'Reports',
   '/settings': 'Settings',
   '/import': 'Import Data',
   '/calendar': 'Calendar',
@@ -100,6 +100,7 @@ const DYNAMIC_PATTERNS: { pattern: RegExp; parent: { label: string; href: string
   { pattern: /^\/playbooks\/history\/[^/]+$/, parent: { label: 'Incident Playbooks', href: '/playbooks' }, label: 'Playbook History' },
   { pattern: /^\/sensors\/[^/]+$/, parent: { label: 'Sensor Hub', href: '/sensors' }, label: 'Sensor Detail' },
   { pattern: /^\/dashboard\/training\/[^/]+$/, parent: { label: 'Training Records', href: '/dashboard/training' }, label: 'Employee Profile' },
+  { pattern: /^\/reports\/[^/]+$/, parent: { label: 'Reports', href: '/reports' }, label: 'Report' },
 ];
 
 export function AutoBreadcrumb() {
