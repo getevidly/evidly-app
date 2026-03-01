@@ -39,7 +39,8 @@ const Leaderboard = lazy(() => import('./pages/Leaderboard').then(m => ({ defaul
 const Analysis = lazy(() => import('./pages/Analysis').then(m => ({ default: m.Analysis })));
 const Team = lazy(() => import('./pages/Team').then(m => ({ default: m.Team })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
-const Reports = lazy(() => import('./pages/Reports').then(m => ({ default: m.Reports })));
+const ReportCenter = lazy(() => import('./pages/ReportCenter').then(m => ({ default: m.ReportCenter })));
+const ReportDetail = lazy(() => import('./pages/ReportDetail').then(m => ({ default: m.ReportDetail })));
 const InviteAccept = lazy(() => import('./pages/InviteAccept').then(m => ({ default: m.InviteAccept })));
 const AdminClientOnboarding = lazy(() => import('./pages/AdminClientOnboarding').then(m => ({ default: m.AdminClientOnboarding })));
 const Help = lazy(() => import('./pages/HelpSupport').then(m => ({ default: m.HelpSupport })));
@@ -126,6 +127,7 @@ const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m =>
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
+const KitchenCheckup = lazy(() => import('./pages/public/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 
 import Navigation from './components/Navigation';
@@ -347,6 +349,7 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
+        <Route path="/checkup" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckup /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
@@ -392,7 +395,8 @@ function AppRoutes() {
           <Route path="/referrals" element={<ReferralDashboard />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/reports" element={<ReportCenter />} />
+          <Route path="/reports/:reportType" element={<ReportDetail />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/branding" element={<BrandingSettings />} />
           <Route path="/settings/sensors" element={<IoTSensorHub />} />
