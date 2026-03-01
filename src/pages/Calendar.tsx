@@ -11,6 +11,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { vendors as demoVendors } from '../data/demoData';
 
 // ── Event Types ──────────────────────────────────────────────
 interface EventType {
@@ -57,6 +58,65 @@ const TIME_OPTIONS = [
   '11:00 PM', '11:30 PM',
 ];
 
+// ── Vendor-Category Mapping ──────────────────────────────────
+const CATEGORY_TO_SERVICE_TYPE: Record<string, string> = {
+  'Hood Cleaning Inspection': 'Hood Cleaning',
+  'Fire Suppression Inspection': 'Fire Suppression',
+  'Fire Extinguisher Inspection': 'Fire Extinguisher',
+  'Pest Control Service': 'Pest Control',
+  'Grease Trap Service': 'Grease Trap',
+  'Elevator Inspection': 'Elevator Inspection',
+  'Backflow Prevention Test': 'Backflow Prevention',
+};
+
+const LOCATION_ID_MAP: Record<string, string> = {
+  'Downtown Kitchen': '1',
+  'Airport Cafe': '2',
+  'University Dining': '3',
+};
+
+const CHANGE_REASONS = [
+  'Consistent late arrivals / missed services',
+  'Poor quality of service',
+  'Incomplete documentation / missing reports',
+  'Pricing / contract dispute',
+  'Vendor no longer available',
+  'Vendor lost certification / licensing',
+  'Safety concern during service',
+  'Unresponsive to communications',
+  'Client requested change',
+  'Better option available',
+  'Other',
+];
+
+const RECURRENCE_OPTIONS = [
+  { value: 'one-time', label: 'One-time' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'semi-annual', label: 'Semi-Annual' },
+  { value: 'annual', label: 'Annual' },
+];
+
+// ── Recurrence Helper ────────────────────────────────────────
+function generateRecurringDates(startDate: string, recurrence: string, maxOccurrences: number): string[] {
+  if (!recurrence || recurrence === 'one-time') return [startDate];
+  const dates: string[] = [startDate];
+  const d = new Date(startDate + 'T12:00:00');
+  for (let i = 1; i < maxOccurrences; i++) {
+    switch (recurrence) {
+      case 'weekly': d.setDate(d.getDate() + 7); break;
+      case 'monthly': d.setMonth(d.getMonth() + 1); break;
+      case 'quarterly': d.setMonth(d.getMonth() + 3); break;
+      case 'semi-annual': d.setMonth(d.getMonth() + 6); break;
+      case 'annual': d.setFullYear(d.getFullYear() + 1); break;
+      default: return dates;
+    }
+    dates.push(d.toISOString().split('T')[0]);
+  }
+  return dates;
+}
+
 // ── Demo Events ──────────────────────────────────────────────
 interface CalendarEvent {
   id: string;
@@ -69,6 +129,10 @@ interface CalendarEvent {
   description?: string;
   allDay?: boolean;
   overdue?: boolean;
+  vendorId?: string;
+  vendorName?: string;
+  category?: string;
+  recurrence?: string;
 }
 
 function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[] {
@@ -136,21 +200,21 @@ function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[]
     // Yesterday
     { title: 'Health Department Inspection', type: 'inspection', date: d(todayDate - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Annual routine health inspection' }, // demo
     // Tomorrow
-    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Downtown Kitchen', description: 'Quarterly hood and duct cleaning by ProClean Services' }, // demo
+    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Downtown Kitchen', description: 'Quarterly hood and duct cleaning', vendorId: '1', vendorName: 'ABC Fire Protection', category: 'Hood Cleaning Inspection', recurrence: 'quarterly' }, // demo
     // +2 days
     { title: 'Team Compliance Meeting', type: 'meeting', date: d(todayDate + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Downtown Kitchen', description: 'Weekly compliance review and corrective action follow-up' }, // demo
-    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Airport Cafe', description: 'Monthly grease trap pumping by GreenWaste' }, // demo
+    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Airport Cafe', description: 'Monthly grease trap pumping', vendorId: '8', vendorName: 'Valley Grease Solutions', category: 'Grease Trap Service', recurrence: 'monthly' }, // demo
     // +3 days
-    { title: 'Fire Suppression Inspection', type: 'inspection', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Downtown Kitchen', description: 'Semi-annual fire suppression system inspection' }, // demo
+    { title: 'Fire Suppression Inspection', type: 'vendor', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Downtown Kitchen', description: 'Semi-annual fire suppression system inspection', vendorId: '3', vendorName: 'Valley Fire Systems', category: 'Fire Suppression Inspection', recurrence: 'semi-annual' }, // demo
     { title: 'HACCP Plan Review', type: 'checklist', date: d(todayDate + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'University Dining' }, // demo
     // +5 days
     { title: 'ServSafe Certification Renewal', type: 'certification', date: d(todayDate + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Downtown Kitchen', description: 'Manager certification renewal exam' }, // demo
-    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe' }, // demo
+    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe', vendorId: '6', vendorName: 'Pacific Pest Control', category: 'Pest Control Service', recurrence: 'monthly' }, // demo
     // +7 days
     { title: 'Refrigeration Maintenance', type: 'vendor', date: d(todayDate + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'University Dining', description: 'Quarterly refrigeration system maintenance' }, // demo
     { title: 'Manager Safety Meeting', type: 'meeting', date: d(todayDate + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Downtown Kitchen' }, // demo
     // -3 days
-    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Downtown Kitchen', description: 'Annual fire extinguisher inspection and tagging' }, // demo
+    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Downtown Kitchen', description: 'Annual fire extinguisher inspection and tagging', vendorId: '17', vendorName: 'ABC Fire Protection', category: 'Fire Extinguisher Inspection', recurrence: 'annual' }, // demo
     // -5 days — overdue corrective action
     { title: 'Fix Walk-in Door Seal', type: 'corrective', date: d(todayDate - 5), time: '9:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Walk-in cooler door gasket is torn — replace seal to maintain temperature integrity', overdue: true }, // demo
     { title: 'HVAC Filter Replacement', type: 'vendor', date: d(todayDate - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe', description: 'Quarterly HVAC filter replacement' }, // demo
@@ -165,6 +229,10 @@ function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[]
     { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'University Dining', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true }, // demo
     // -10 days
     { title: 'Walk-in Cooler Repair', type: 'vendor', date: d(todayDate - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Airport Cafe' }, // demo
+    // +20 days — Facility Safety seed events
+    { title: 'Backflow Prevention Test', type: 'vendor', date: d(todayDate + 20), time: '7:00 AM', endTime: '9:00 AM', location: 'Downtown Kitchen', description: 'Annual backflow preventer certification test', vendorId: '5', vendorName: 'Central Cal Backflow', category: 'Backflow Prevention Test', recurrence: 'annual' }, // demo
+    // +25 days
+    { title: 'Elevator Inspection', type: 'vendor', date: d(todayDate + 25), time: '8:00 AM', endTime: '10:00 AM', location: 'University Dining', description: 'Annual elevator safety inspection and certification', vendorId: '16', vendorName: 'Valley Elevator Co.', category: 'Elevator Inspection', recurrence: 'annual' }, // demo
   ];
 
   for (const e of oneOffs) {
@@ -266,6 +334,17 @@ export function Calendar() {
     endTime: '10:00 AM',
     location: 'Downtown Kitchen',
     description: '',
+    vendorId: '',
+    vendorName: '',
+    recurrence: 'one-time',
+  });
+  const [showVendorChange, setShowVendorChange] = useState(false);
+  const [vendorChangeForm, setVendorChangeForm] = useState({
+    newVendorId: '',
+    newVendorName: '',
+    reason: '',
+    reasonDetails: '',
+    scope: 'single_event' as 'single_event' | 'all_future',
   });
 
   const showToast = useCallback((msg: string) => {
@@ -273,8 +352,32 @@ export function Calendar() {
     setTimeout(() => setToastMessage(null), 3000);
   }, []);
 
+  // ── Vendor Lookup ──────────────────────────────────────────────
+  const getVendorForCategory = useCallback((category: string, location: string) => {
+    const serviceType = CATEGORY_TO_SERVICE_TYPE[category];
+    if (!serviceType) return null;
+    const locId = LOCATION_ID_MAP[location];
+    if (!locId) return null;
+    const vendor = demoVendors.find(v => v.serviceType === serviceType && v.locationId === locId);
+    return vendor ? { id: vendor.id, name: vendor.companyName } : null;
+  }, []);
+
+  const getVendorsForCategory = useCallback((category: string, location: string, excludeId?: string) => {
+    const serviceType = CATEGORY_TO_SERVICE_TYPE[category];
+    if (!serviceType) return [];
+    // In demo mode, show all vendors with this service type (any location)
+    return demoVendors
+      .filter(v => v.serviceType === serviceType && v.id !== excludeId)
+      .reduce((acc, v) => {
+        if (!acc.find(a => a.companyName === v.companyName)) acc.push(v);
+        return acc;
+      }, [] as typeof demoVendors);
+  }, []);
+
   // ── CRUD Handlers ──────────────────────────────────────────────
   const resetForm = useCallback(() => {
+    setShowVendorChange(false);
+    setVendorChangeForm({ newVendorId: '', newVendorName: '', reason: '', reasonDetails: '', scope: 'single_event' });
     setEventForm({
       title: '',
       category: FACILITY_SAFETY_CATEGORIES[0],
@@ -283,6 +386,9 @@ export function Calendar() {
       endTime: '10:00 AM',
       location: 'Downtown Kitchen',
       description: '',
+      vendorId: '',
+      vendorName: '',
+      recurrence: 'one-time',
     });
   }, []);
 
@@ -294,14 +400,18 @@ export function Calendar() {
 
   const openEditForm = useCallback((event: CalendarEvent) => {
     setEditingEvent(event);
+    setShowVendorChange(false);
     setEventForm({
       title: event.title,
-      category: FACILITY_SAFETY_CATEGORIES.includes(event.description?.split(' - ')[0] || '') ? event.description?.split(' - ')[0] || FACILITY_SAFETY_CATEGORIES[0] : FACILITY_SAFETY_CATEGORIES[0],
+      category: event.category || (FACILITY_SAFETY_CATEGORIES.includes(event.description?.split(' - ')[0] || '') ? event.description?.split(' - ')[0] || FACILITY_SAFETY_CATEGORIES[0] : FACILITY_SAFETY_CATEGORIES[0]),
       date: event.date,
       startTime: event.time,
       endTime: event.endTime || '10:00 AM',
       location: event.location,
       description: event.description || '',
+      vendorId: event.vendorId || '',
+      vendorName: event.vendorName || '',
+      recurrence: event.recurrence || 'one-time',
     });
     setShowEventForm(true);
   }, []);
@@ -309,9 +419,13 @@ export function Calendar() {
   const handleSaveEvent = useCallback(async () => {
     if (!eventForm.title.trim() || !eventForm.date) return;
 
+    const vendorId = eventForm.vendorId || undefined;
+    const vendorName = eventForm.vendorName || undefined;
+    const category = eventForm.category;
+    const recurrence = eventForm.recurrence;
+
     if (isDemoMode) {
       if (editingEvent) {
-        // Update existing event in local state
         setCustomEvents(prev => prev.map(e =>
           e.id === editingEvent.id
             ? {
@@ -322,27 +436,35 @@ export function Calendar() {
                 endTime: eventForm.endTime,
                 location: eventForm.location,
                 description: eventForm.description || undefined,
+                vendorId,
+                vendorName,
+                category,
+                recurrence,
               }
             : e
         ));
         showToast('Event updated successfully');
       } else {
-        // Create new event in local state
-        const newEvent: CalendarEvent = {
-          id: `custom-${Date.now()}`,
+        // Generate recurring events if recurrence is set
+        const dates = generateRecurringDates(eventForm.date, recurrence, 6);
+        const newEvents: CalendarEvent[] = dates.map((d, i) => ({
+          id: `custom-${Date.now()}-${i}`,
           title: eventForm.title,
           type: 'vendor',
-          date: eventForm.date,
+          date: d,
           time: eventForm.startTime,
           endTime: eventForm.endTime,
           location: eventForm.location,
           description: eventForm.description || undefined,
-        };
-        setCustomEvents(prev => [...prev, newEvent]);
-        showToast('Event created successfully');
+          vendorId,
+          vendorName,
+          category,
+          recurrence,
+        }));
+        setCustomEvents(prev => [...prev, ...newEvents]);
+        showToast(dates.length > 1 ? `${dates.length} events created successfully` : 'Event created successfully');
       }
     } else {
-      // Production mode: persist to Supabase
       const orgId = profile?.organization_id;
       if (!orgId) return;
 
@@ -352,11 +474,13 @@ export function Calendar() {
             .from('calendar_events')
             .update({
               title: eventForm.title,
-              category: eventForm.category,
+              category,
               date: eventForm.date,
               start_time: eventForm.startTime,
               end_time: eventForm.endTime,
               description: eventForm.description || null,
+              vendor_name: vendorName || null,
+              recurrence: recurrence || 'one-time',
               updated_at: new Date().toISOString(),
             })
             .eq('id', editingEvent.id);
@@ -364,24 +488,24 @@ export function Calendar() {
           if (error) throw error;
           showToast('Event updated successfully');
         } else {
-          const { error } = await supabase
-            .from('calendar_events')
-            .insert({
-              organization_id: orgId,
-              title: eventForm.title,
-              type: 'vendor',
-              category: eventForm.category,
-              date: eventForm.date,
-              start_time: eventForm.startTime,
-              end_time: eventForm.endTime,
-              description: eventForm.description || null,
-            });
-
+          const dates = generateRecurringDates(eventForm.date, recurrence, 6);
+          const rows = dates.map(d => ({
+            organization_id: orgId,
+            title: eventForm.title,
+            type: 'vendor',
+            category,
+            date: d,
+            start_time: eventForm.startTime,
+            end_time: eventForm.endTime,
+            description: eventForm.description || null,
+            vendor_name: vendorName || null,
+            recurrence: recurrence || 'one-time',
+          }));
+          const { error } = await supabase.from('calendar_events').insert(rows);
           if (error) throw error;
-          showToast('Event created successfully');
+          showToast(dates.length > 1 ? `${dates.length} events created successfully` : 'Event created successfully');
         }
 
-        // Re-fetch events by bumping viewMonth dependency is not needed; we manually refresh
         setLiveEvents(prev => [...prev]); // trigger re-render
       } catch (err) {
         console.error('Failed to save event:', err);
@@ -1144,6 +1268,18 @@ export function Calendar() {
                 <MapPin size={16} color="#6b7280" />
                 <span>{selectedEvent.location}</span>
               </div>
+              {selectedEvent.vendorName && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span>Vendor: <strong>{selectedEvent.vendorName}</strong></span>
+                </div>
+              )}
+              {selectedEvent.category && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#4b5563' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+                  <span>{selectedEvent.category}</span>
+                </div>
+              )}
               {selectedEvent.description && (
                 <div style={{ padding: '12px', backgroundColor: '#f9fafb', borderRadius: '8px', fontSize: '13px', color: '#4b5563', lineHeight: '1.6', marginTop: '4px' }}>
                   {selectedEvent.description}
@@ -1797,6 +1933,189 @@ export function Calendar() {
                     </select>
                   </div>
 
+                  {/* Current Vendor (auto-populated, grayed out) */}
+                  {(() => {
+                    const currentVendor = eventForm.vendorName || getVendorForCategory(eventForm.category, eventForm.location)?.name;
+                    const currentVendorId = eventForm.vendorId || getVendorForCategory(eventForm.category, eventForm.location)?.id;
+                    const serviceType = CATEGORY_TO_SERVICE_TYPE[eventForm.category];
+                    return serviceType ? (
+                      <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Current Vendor
+                        </label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            flex: 1, padding: '10px 12px', borderRadius: '8px',
+                            border: '1px solid #e5e7eb', fontSize: '14px',
+                            color: '#6b7280', backgroundColor: '#f9fafb',
+                            fontFamily: "'DM Sans', sans-serif",
+                            boxSizing: 'border-box',
+                          }}>
+                            {currentVendor || 'No vendor assigned'}
+                          </div>
+                          {currentVendor && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowVendorChange(!showVendorChange);
+                                if (!showVendorChange) {
+                                  setVendorChangeForm({ newVendorId: '', newVendorName: '', reason: '', reasonDetails: '', scope: 'single_event' });
+                                }
+                              }}
+                              style={{
+                                padding: '8px 12px', borderRadius: '6px', border: 'none',
+                                backgroundColor: showVendorChange ? '#fef2f2' : 'transparent',
+                                color: showVendorChange ? '#dc2626' : '#1e4d6b',
+                                fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                                fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {showVendorChange ? 'Cancel' : 'Change Vendor'}
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Change Vendor Sub-Form */}
+                        {showVendorChange && currentVendor && (
+                          <div style={{
+                            marginTop: '12px', padding: '16px', borderRadius: '10px',
+                            border: '1px solid #fde68a', backgroundColor: '#fffbeb',
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                              <AlertTriangle size={16} color="#d97706" />
+                              <span style={{ fontSize: '13px', fontWeight: 700, color: '#92400e' }}>
+                                Change Vendor for {eventForm.category}
+                              </span>
+                            </div>
+
+                            {/* New Vendor dropdown */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                New Vendor
+                              </label>
+                              <select
+                                value={vendorChangeForm.newVendorId}
+                                onChange={(e) => {
+                                  const v = e.target.value;
+                                  if (v === '__add_new__') {
+                                    alert('Navigate to Vendors page to add a new vendor.');
+                                    return;
+                                  }
+                                  const found = demoVendors.find(dv => dv.id === v);
+                                  setVendorChangeForm(prev => ({ ...prev, newVendorId: v, newVendorName: found?.companyName || '' }));
+                                }}
+                                style={{
+                                  width: '100%', padding: '8px 10px', borderRadius: '6px',
+                                  border: '1px solid #e5e7eb', fontSize: '13px', color: '#111827',
+                                  fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                                  backgroundColor: 'white', boxSizing: 'border-box',
+                                }}
+                              >
+                                <option value="">Select a vendor...</option>
+                                {getVendorsForCategory(eventForm.category, eventForm.location, currentVendorId).map(v => (
+                                  <option key={v.id} value={v.id}>{v.companyName}</option>
+                                ))}
+                                <option value="__add_new__">+ Add New Vendor</option>
+                              </select>
+                            </div>
+
+                            {/* Reason dropdown (required) */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                Reason for Change *
+                              </label>
+                              <select
+                                value={vendorChangeForm.reason}
+                                onChange={(e) => setVendorChangeForm(prev => ({ ...prev, reason: e.target.value }))}
+                                style={{
+                                  width: '100%', padding: '8px 10px', borderRadius: '6px',
+                                  border: `1px solid ${!vendorChangeForm.reason && vendorChangeForm.newVendorId ? '#fca5a5' : '#e5e7eb'}`,
+                                  fontSize: '13px', color: '#111827',
+                                  fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                                  backgroundColor: 'white', boxSizing: 'border-box',
+                                }}
+                              >
+                                <option value="">Select reason...</option>
+                                {CHANGE_REASONS.map(r => (
+                                  <option key={r} value={r}>{r}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            {/* Details textarea */}
+                            <div style={{ marginBottom: '10px' }}>
+                              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                Details (optional)
+                              </label>
+                              <textarea
+                                value={vendorChangeForm.reasonDetails}
+                                onChange={(e) => setVendorChangeForm(prev => ({ ...prev, reasonDetails: e.target.value }))}
+                                placeholder="e.g., Missed 3 of last 5 scheduled cleanings..."
+                                rows={2}
+                                style={{
+                                  width: '100%', padding: '8px 10px', borderRadius: '6px',
+                                  border: '1px solid #e5e7eb', fontSize: '13px', color: '#111827',
+                                  fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                                  resize: 'vertical', boxSizing: 'border-box',
+                                }}
+                              />
+                            </div>
+
+                            {/* Scope radio */}
+                            <div style={{ marginBottom: '12px' }}>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#374151', cursor: 'pointer', marginBottom: '6px' }}>
+                                <input type="radio" name="vendor-scope" checked={vendorChangeForm.scope === 'single_event'} onChange={() => setVendorChangeForm(prev => ({ ...prev, scope: 'single_event' }))} />
+                                Apply to this event only
+                              </label>
+                              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#374151', cursor: 'pointer' }}>
+                                <input type="radio" name="vendor-scope" checked={vendorChangeForm.scope === 'all_future'} onChange={() => setVendorChangeForm(prev => ({ ...prev, scope: 'all_future' }))} />
+                                Apply to ALL future events in this category
+                              </label>
+                            </div>
+
+                            {/* Confirm / Keep buttons */}
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                type="button"
+                                disabled={!vendorChangeForm.newVendorId || !vendorChangeForm.reason}
+                                onClick={() => {
+                                  setEventForm(prev => ({
+                                    ...prev,
+                                    vendorId: vendorChangeForm.newVendorId,
+                                    vendorName: vendorChangeForm.newVendorName,
+                                  }));
+                                  setShowVendorChange(false);
+                                  showToast('Vendor changed — save event to confirm');
+                                }}
+                                style={{
+                                  flex: 1, padding: '8px', borderRadius: '6px', border: 'none',
+                                  backgroundColor: (!vendorChangeForm.newVendorId || !vendorChangeForm.reason) ? '#d1d5db' : '#1e4d6b',
+                                  color: 'white', fontWeight: 600, fontSize: '12px',
+                                  cursor: (!vendorChangeForm.newVendorId || !vendorChangeForm.reason) ? 'not-allowed' : 'pointer',
+                                  fontFamily: "'DM Sans', sans-serif",
+                                }}
+                              >
+                                Confirm Change
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setShowVendorChange(false)}
+                                style={{
+                                  flex: 1, padding: '8px', borderRadius: '6px',
+                                  border: '1px solid #e5e7eb', backgroundColor: 'white',
+                                  color: '#374151', fontWeight: 600, fontSize: '12px',
+                                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                                }}
+                              >
+                                Keep Current Vendor
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : null;
+                  })()}
+
                   {/* Description */}
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
@@ -1816,6 +2135,40 @@ export function Calendar() {
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
                     />
+                  </div>
+
+                  {/* Recurrence */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Recurrence
+                    </label>
+                    <select
+                      value={eventForm.recurrence}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, recurrence: e.target.value }))}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        backgroundColor: 'white', boxSizing: 'border-box',
+                        appearance: 'none' as const,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 10px center',
+                      }}
+                    >
+                      {RECURRENCE_OPTIONS.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                    {eventForm.recurrence !== 'one-time' && (
+                      <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6b7280' }}>
+                        {eventForm.recurrence === 'weekly' ? '6 weekly events' :
+                         eventForm.recurrence === 'monthly' ? '6 monthly events' :
+                         eventForm.recurrence === 'quarterly' ? '6 quarterly events' :
+                         eventForm.recurrence === 'semi-annual' ? '6 semi-annual events' :
+                         '6 annual events'} will be created from the start date.
+                      </p>
+                    )}
                   </div>
                 </div>
 
