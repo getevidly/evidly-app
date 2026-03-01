@@ -69,9 +69,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
     kitchen_staff: 'Lisa Nguyen',
   };
 
-  const displayName = isDemoMode
+  // Capitalize each word in a name (e.g. "arthur haggerty" → "Arthur Haggerty")
+  const capitalizeName = (name: string): string =>
+    name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+
+  const rawDisplayName = isDemoMode
     ? (demoRoleNames[userRole] || userName)
     : (profile?.full_name || user?.email?.split('@')[0] || t('topBar.user'));
+  const displayName = capitalizeName(rawDisplayName);
 
   // Build 2-letter initials from the display name (e.g. "Maria Rodriguez" → "MR")
   const getInitials = (name: string): string => {

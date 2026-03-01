@@ -44,12 +44,16 @@ export function DashboardHero({
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   const { userRole } = useRole();
 
+  // Capitalize first letter of each word
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
   // Resolve firstName: explicit prop → demo role name → auth profile → demo context
-  const resolvedFirstName = firstName
+  const rawFirstName = firstName
     || (isDemoMode ? (DEMO_ROLE_NAMES[userRole]?.firstName || demoFirstName) : null)
     || profile?.full_name?.split(' ')[0]
     || null;
-  const greetingText = greeting || `Welcome back${resolvedFirstName ? `, ${resolvedFirstName}` : ''}!`;
+  const resolvedFirstName = rawFirstName ? capitalize(rawFirstName) : null;
+  const greetingText = greeting || `Welcome Back${resolvedFirstName ? `, ${resolvedFirstName}` : ''}!`;
   const dateText = new Date().toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   });
