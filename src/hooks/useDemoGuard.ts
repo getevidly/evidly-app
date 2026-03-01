@@ -26,33 +26,12 @@ export function useDemoGuard() {
   }, [isDemoMode, showUpgrade]);
 
   const guardAction = useCallback(
-    (action: string, featureName: string, callback: () => void) => {
-      // While auth is still loading, always let the action through
-      if (authLoading) {
-        callback();
-        return;
-      }
-      // Authenticated users: always pass through, no demo restrictions
-      if (session?.user) {
-        callback();
-        return;
-      }
-      // Not in demo mode: execute normally (check BEFORE presenter mode)
-      if (!isDemoMode) {
-        callback();
-        return;
-      }
-      // Presenter mode: bypass all demo gating
-      if (presenterMode) {
-        callback();
-        return;
-      }
-      // Demo mode (no auth): block the action, show upgrade prompt
-      setUpgradeAction(action);
-      setUpgradeFeature(featureName);
-      setShowUpgrade(true);
+    (action: string, _featureName: string, callback: () => void) => {
+      // DEMO-HARDEN-2: All actions pass through — no demo restrictions.
+      // supabaseGuard.ts remains as safety net blocking actual DB writes.
+      callback();
     },
-    [isDemoMode, presenterMode, session, authLoading]
+    []
   );
 
   // CRITICAL: Never expose showUpgrade=true when not in demo mode.

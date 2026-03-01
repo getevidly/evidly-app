@@ -5,17 +5,22 @@ interface DemoUpgradePromptProps {
   action: string;
   featureName?: string;
   onClose: () => void;
+  isOpen?: boolean;
 }
 
-export function DemoUpgradePrompt({ action, featureName, onClose }: DemoUpgradePromptProps) {
+export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: DemoUpgradePromptProps) {
   // Close on Escape key
   useEffect(() => {
+    if (isOpen === false) return;
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onClose, isOpen]);
+
+  // Support isOpen prop — return null when explicitly false
+  if (isOpen === false) return null;
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4" data-demo-allow onClick={onClose}>
