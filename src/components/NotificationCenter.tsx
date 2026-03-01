@@ -1,7 +1,8 @@
 ﻿import { useState, useRef, useEffect } from 'react';
-import { Bell, X, Check, Clock, AlertTriangle, Info, ShieldAlert, ChevronRight, CheckCheck } from 'lucide-react';
+import { Bell, X, Check, Clock, AlertTriangle, Info, ShieldAlert, ChevronRight, CheckCheck, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useDemo } from '../contexts/DemoContext';
+import { DEMO_VENDOR_DOC_NOTIFICATIONS } from '../data/vendorDocumentsDemoData';
 
 // ── Types ──────────────────────────────────────────────────────
 type NotificationSeverity = 'urgent' | 'advisory' | 'info';
@@ -16,6 +17,7 @@ interface Notification {
   status: NotificationStatus;
   snoozed_until?: string;
   created_at: string;
+  category?: 'vendor_document';
 }
 
 // ── Demo data ──────────────────────────────────────────────────
@@ -121,6 +123,33 @@ const DEMO_NOTIFICATIONS: Notification[] = [
   },
 ];
 
+// Map vendor doc notifications to the Notification shape
+const VENDOR_DOC_SEVERITY_MAP: Record<string, NotificationSeverity> = {
+  new_upload: 'info',
+  updated: 'info',
+  review_completed: 'info',
+  review_required: 'advisory',
+  expiring_90: 'info',
+  expiring_60: 'info',
+  expiring_30: 'advisory',
+  expiring_14: 'urgent',
+  expired: 'urgent',
+  flagged: 'urgent',
+};
+
+const DEMO_VENDOR_NOTIFICATIONS: Notification[] = DEMO_VENDOR_DOC_NOTIFICATIONS.map(n => ({
+  id: n.id,
+  severity: VENDOR_DOC_SEVERITY_MAP[n.notification_type] || 'info',
+  title: n.title,
+  body: n.body || '',
+  link: n.action_url || '/vendors',
+  status: (n.read_at ? 'read' : 'unread') as NotificationStatus,
+  created_at: n.created_at,
+  category: 'vendor_document' as const,
+}));
+
+const ALL_DEMO_NOTIFICATIONS = [...DEMO_NOTIFICATIONS, ...DEMO_VENDOR_NOTIFICATIONS];
+
 // ── Helpers ────────────────────────────────────────────────────
 const SEVERITY_CONFIG: Record<NotificationSeverity, { label: string; color: string; bg: string; border: string; icon: typeof AlertTriangle }> = {
   urgent: { label: 'Urgent', color: '#dc2626', bg: '#fef2f2', border: '#fecaca', icon: ShieldAlert },
@@ -142,8 +171,8 @@ function timeAgo(iso: string): string {
 export function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const { isDemoMode } = useDemo();
-  const [notifications, setNotifications] = useState<Notification[]>(isDemoMode ? DEMO_NOTIFICATIONS : []);
-  const [filter, setFilter] = useState<'all' | NotificationSeverity>('all');
+  const [notifications, setNotifications] = useState<Notification[]>(isDemoMode ? ALL_DEMO_NOTIFICATIONS : []);
+  const [filter, setFilter] = useState<'all' | NotificationSeverity | 'vendor'>('all');
   const panelRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -163,6 +192,7 @@ export function NotificationCenter() {
 
   const filtered = notifications.filter(n => {
     if (n.status === 'dismissed') return false;
+    if (filter === 'vendor') return n.category === 'vendor_document';
     if (filter !== 'all' && n.severity !== filter) return false;
     return true;
   });
@@ -254,10 +284,13 @@ export function NotificationCenter() {
               { key: 'urgent' as const, label: 'Urgent' },
               { key: 'advisory' as const, label: 'Advisory' },
               { key: 'info' as const, label: 'Info' },
+              { key: 'vendor' as const, label: 'Vendor' },
             ]).map(tab => {
               const count = tab.key === 'all'
-                ? filtered.length
-                : notifications.filter(n => n.severity === tab.key && n.status !== 'dismissed').length;
+                ? notifications.filter(n => n.status !== 'dismissed').length
+                : tab.key === 'vendor'
+                  ? notifications.filter(n => n.category === 'vendor_document' && n.status !== 'dismissed').length
+                  : notifications.filter(n => n.severity === tab.key && n.status !== 'dismissed').length;
               return (
                 <button
                   key={tab.key}
@@ -295,7 +328,10 @@ export function NotificationCenter() {
                         className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center mt-0.5"
                         style={{ backgroundColor: sev.bg }}
                       >
-                        <SevIcon className="h-4 w-4" style={{ color: sev.color }} />
+                        {n.category === 'vendor_document'
+                          ? <FileText className="h-4 w-4" style={{ color: sev.color }} />
+                          : <SevIcon className="h-4 w-4" style={{ color: sev.color }} />
+                        }
                       </div>
                       {/* Content */}
                       <div className="flex-1 min-w-0">

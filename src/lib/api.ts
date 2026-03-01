@@ -182,6 +182,39 @@ export async function generateCompliancePackage(params: {
 }
 
 // =============================================
+// Vendor Document Notifications
+// =============================================
+export async function notifyVendorDocumentUpload(params: {
+  recipientEmail: string;
+  recipientName: string;
+  notificationType: string;
+  vendorName: string;
+  documentType: string;
+  documentTitle: string;
+  facility?: string;
+  uploadDate?: string;
+  expirationDate?: string;
+  status: string;
+  reviewerName?: string;
+  flagReason?: string;
+  actionUrl: string;
+}) {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/vendor-document-notify`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session?.access_token}`,
+    },
+    body: JSON.stringify(params),
+    signal: AbortSignal.timeout(5000),
+  });
+
+  return res.json();
+}
+
+// =============================================
 // Vendor Contact Log
 // =============================================
 export async function getVendorContactLog(vendorId: string) {

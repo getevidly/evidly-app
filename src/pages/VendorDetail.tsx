@@ -7,6 +7,8 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { VendorContactActions } from '../components/VendorContactActions';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { DocumentReviewCard } from '../components/vendor/DocumentReviewCard';
+import { getPendingReviewDocs, getVendorDocumentsForVendor } from '../data/vendorDocumentsDemoData';
 
 interface VendorDocument {
   name: string;
@@ -72,6 +74,21 @@ export default function VendorDetail() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showRequestModal, setShowRequestModal] = useState(false);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature, isDemoMode } = useDemoGuard();
+
+  const pendingDocs = getPendingReviewDocs(vendorId);
+  const vendorDocs = getVendorDocumentsForVendor(vendorId || '');
+
+  const handleAcceptDocument = (docId: string) => {
+    guardAction('review', 'Vendor Documents', () => {
+      toast.success('Document accepted and filed');
+    });
+  };
+
+  const handleFlagDocument = (docId: string, reason: string, _category: string) => {
+    guardAction('flag', 'Vendor Documents', () => {
+      toast.success('Document flagged — vendor will be notified');
+    });
+  };
 
   if (!isDemoMode) {
     return (
@@ -238,6 +255,52 @@ export default function VendorDetail() {
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
+
+              {/* Pending Review Section */}
+              {pendingDocs.length > 0 && (
+                <div className="mb-6">
+                  <div
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-t-lg"
+                    style={{ backgroundColor: '#FEF3C7', borderBottom: '1px solid #FDE68A' }}
+                  >
+                    <AlertTriangle size={16} style={{ color: '#D97706' }} />
+                    <span className="text-sm font-semibold" style={{ color: '#92400E' }}>
+                      Documents Pending Review ({pendingDocs.length})
+                    </span>
+                  </div>
+                  <div className="space-y-3 p-4 rounded-b-lg" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', borderTop: 'none' }}>
+                    {pendingDocs.map(doc => (
+                      <DocumentReviewCard
+                        key={doc.id}
+                        document={doc}
+                        vendorName={vendor.companyName}
+                        onAccept={handleAcceptDocument}
+                        onFlag={handleFlagDocument}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Vendor Document Records */}
+              {vendorDocs.filter(d => d.status !== 'pending_review').length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-sm font-semibold text-gray-600 mb-3">Recent Vendor Submissions</h3>
+                  <div className="space-y-3">
+                    {vendorDocs
+                      .filter(d => d.status !== 'pending_review')
+                      .map(doc => (
+                        <DocumentReviewCard
+                          key={doc.id}
+                          document={doc}
+                          vendorName={vendor.companyName}
+                          onAccept={handleAcceptDocument}
+                          onFlag={handleFlagDocument}
+                        />
+                      ))}
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-4">
                 {documents.map((doc, idx) => (

@@ -142,6 +142,77 @@ Deno.serve(async (req: Request) => {
           .eq("id", tokenRecord.upload_request_id);
       }
 
+      // ── Vendor Documents: version detection + insert ──────────
+      // Check for existing docs of same type/vendor to determine version
+      const { data: existingDocs } = await supabase
+        .from("vendor_documents")
+        .select("id, version")
+        .eq("organization_id", tokenRecord.organization_id)
+        .eq("vendor_id", tokenRecord.vendor_id)
+        .eq("document_type", tokenRecord.document_type)
+        .order("version", { ascending: false })
+        .limit(1);
+
+      const prevVersion = existingDocs?.[0];
+      const newVersion = prevVersion ? prevVersion.version + 1 : 1;
+
+      // Mark previous version as superseded
+      if (prevVersion) {
+        await supabase
+          .from("vendor_documents")
+          .update({ status: "superseded", updated_at: new Date().toISOString() })
+          .eq("id", prevVersion.id);
+      }
+
+      // Insert new vendor_documents record
+      const { data: vendorDocRecord } = await supabase
+        .from("vendor_documents")
+        .insert({
+          organization_id: tokenRecord.organization_id,
+          vendor_id: tokenRecord.vendor_id,
+          document_type: tokenRecord.document_type,
+          title: `${tokenRecord.document_type} — ${(tokenRecord as any).vendors?.name}`,
+          file_url: publicUrl,
+          file_size: file.size,
+          file_type: file.type,
+          status: "pending_review",
+          version: newVersion,
+          parent_id: prevVersion?.id || null,
+          upload_method: "secure_link",
+          uploaded_by_vendor: true,
+          vendor_notes: notes || null,
+        })
+        .select()
+        .single();
+
+      // Fire-and-forget: notify via vendor-document-notify edge function
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const notifyUrl = `${supabaseUrl}/functions/v1/vendor-document-notify`;
+      try {
+        const controller = new AbortController();
+        setTimeout(() => controller.abort(), 5000);
+        await fetch(notifyUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          },
+          body: JSON.stringify({
+            recipientEmail: "team@getevidly.com",
+            recipientName: (tokenRecord as any).organizations?.name || "Team",
+            notificationType: "new_upload",
+            vendorName: (tokenRecord as any).vendors?.name,
+            documentType: tokenRecord.document_type,
+            documentTitle: vendorDocRecord?.title || tokenRecord.document_type,
+            status: "Pending Review",
+            actionUrl: `https://app.getevidly.com/vendors/${tokenRecord.vendor_id}`,
+          }),
+          signal: controller.signal,
+        });
+      } catch {
+        // Silent fail — notification is non-critical
+      }
+
       // Log activity
       await supabase.from("activity_logs").insert({
         organization_id: tokenRecord.organization_id,
