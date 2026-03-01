@@ -6,7 +6,6 @@ import { Eye, EyeOff, Play } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { LeadCaptureModal } from '../components/LeadCaptureModal';
 import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useBranding } from '../contexts/BrandingContext';
 import { trackEvent } from '../utils/analytics';
@@ -19,7 +18,6 @@ export function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [showLeadModal, setShowLeadModal] = useState(false);
   const { signIn, user } = useAuth();
   const navigate = useNavigate();
   const recaptchaRef = useRef<ReCAPTCHA>(null);
@@ -238,7 +236,7 @@ export function Login() {
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <button
-              onClick={() => setShowLeadModal(true)}
+              onClick={() => { trackEvent('cta_click', { cta: 'login_try_demo', page: 'login' }); navigate('/demo'); }}
               className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-md text-sm font-semibold text-[#1e4d6b] bg-[#d4af37]/10 border-2 border-[#d4af37]/30 hover:bg-[#d4af37]/20 hover:border-[#d4af37]/50 transition-all"
             >
               <Play className="h-4 w-4" />
@@ -265,7 +263,6 @@ export function Login() {
           </div>
         )}
       </div>
-      <LeadCaptureModal isOpen={showLeadModal} onClose={() => setShowLeadModal(false)} />
     </div>
   );
 }
