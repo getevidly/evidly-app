@@ -56,9 +56,10 @@ function WidgetLocations({ jieScores, jurisdictions, navigate, userRole }: {
   userRole: UserRole;
 }) {
   const { t } = useTranslation();
+  const locationCardsTooltip = useTooltip('locationCards', userRole);
   return (
     <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationStatus')}<SectionTooltip content={useTooltip('locationCards', userRole)} /></h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationStatus')}<SectionTooltip content={locationCardsTooltip} /></h4>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {LOCATIONS_WITH_SCORES.map(loc => {
           const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -277,6 +278,10 @@ export default function ExecutiveDashboard() {
   const { userRole } = useRole();
   const { t } = useTranslation();
 
+  // Pre-extract tooltip strings (hooks cannot be called inside JSX)
+  const alertBannerTooltip = useTooltip('alertBanner', userRole);
+  const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
+
   const jieLocIds = useMemo(
     () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
     [],
@@ -395,7 +400,7 @@ export default function ExecutiveDashboard() {
         {/* 3. Single most-critical alert */}
         {topAlert && (
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={alertBannerTooltip} /></h4>
             <AlertBanner alerts={[topAlert] as AlertBannerItem[]} onDismiss={handleDismissAlert} navigate={navigate} />
           </div>
         )}
@@ -410,7 +415,7 @@ export default function ExecutiveDashboard() {
             typeColors={EXECUTIVE_CALENDAR.typeColors}
             typeLabels={EXECUTIVE_CALENDAR.typeLabels}
             navigate={navigate}
-            tooltipContent={useTooltip('scheduleCalendar', userRole)}
+            tooltipContent={scheduleCalendarTooltip}
           />
         </ErrorBoundary>
 

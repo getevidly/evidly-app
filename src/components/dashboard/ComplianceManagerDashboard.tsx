@@ -143,6 +143,12 @@ export default function ComplianceManagerDashboard() {
   const { userRole } = useRole();
   const { t } = useTranslation();
 
+  // Pre-extract tooltip strings (hooks cannot be called inside JSX)
+  const alertBannerTooltip = useTooltip('alertBanner', userRole);
+  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
+  const locationCardsTooltip = useTooltip('locationCards', userRole);
+  const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
+
   // JIE: Dual-authority jurisdiction data per location
   const jieLocIds = useMemo(
     () => LOCATIONS_WITH_SCORES.map(l => JIE_LOC_MAP[l.id] || l.id),
@@ -538,7 +544,7 @@ export default function ComplianceManagerDashboard() {
         {/* Alert Banners */}
         <div style={stagger(2)}>
           {visibleAlerts.length > 0 && (
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={useTooltip('alertBanner', userRole)} /></h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 flex items-center">{t('cards.alerts')}<SectionTooltip content={alertBannerTooltip} /></h4>
           )}
           <AlertBanner alerts={visibleAlerts} onDismiss={handleDismissAlert} navigate={navigate} />
           {hasMoreAlerts && (
@@ -554,13 +560,13 @@ export default function ComplianceManagerDashboard() {
         </div>
 
         {/* Where Do I Start? */}
-        <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} tooltipContent={useTooltip('urgentItems', userRole)} />
+        <WhereDoIStartSection items={COMPLIANCE_PRIORITIES} staggerOffset={3} tooltipContent={urgentItemsTooltip} />
 
         {/* ============================================================ */}
         {/* 1. LOCATION COMPLIANCE OVERVIEW                              */}
         {/* ============================================================ */}
         <div style={stagger(4)}>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationComplianceOverview')}<SectionTooltip content={useTooltip('locationCards', userRole)} /></h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4 flex items-center">{t('cards.locationComplianceOverview')}<SectionTooltip content={locationCardsTooltip} /></h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {locs.map(loc => {
               const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
@@ -725,7 +731,7 @@ export default function ComplianceManagerDashboard() {
               typeColors={COMPLIANCE_CALENDAR.typeColors}
               typeLabels={COMPLIANCE_CALENDAR.typeLabels}
               navigate={navigate}
-              tooltipContent={useTooltip('scheduleCalendar', userRole)}
+              tooltipContent={scheduleCalendarTooltip}
             />
           </ErrorBoundary>
         </div>

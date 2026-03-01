@@ -934,11 +934,6 @@ export default function EdgeFunctions() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 
-  // Guard: admin-only
-  if (!isEvidlyAdmin && !isDemoMode) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const {
     healthRows,
     filteredHealthRows,
@@ -961,6 +956,11 @@ export default function EdgeFunctions() {
   } = useEdgeFunctions();
 
   const [invokeTarget, setInvokeTarget] = useState<string | null>(null);
+
+  // Guard: admin-only
+  if (!isEvidlyAdmin && !isDemoMode) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleFilterChange = (partial: Partial<FunctionFilterState>) => {
     setFilters(prev => ({ ...prev, ...partial }));

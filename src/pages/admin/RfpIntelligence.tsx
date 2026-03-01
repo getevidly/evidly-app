@@ -1260,11 +1260,6 @@ export default function RfpIntelligence() {
   const { isEvidlyAdmin } = useAuth();
   const { isDemoMode } = useDemo();
 
-  // Access guard
-  if (!isEvidlyAdmin && !isDemoMode) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const {
     listings,
     filteredListings,
@@ -1289,6 +1284,11 @@ export default function RfpIntelligence() {
     () => listings.find(l => l.id === selectedRfpId) ?? null,
     [listings, selectedRfpId],
   );
+
+  // Access guard
+  if (!isEvidlyAdmin && !isDemoMode) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const tabs: { key: RfpTab; label: string; icon: React.ElementType }[] = [
     { key: 'feed', label: 'Feed', icon: FileSearch },

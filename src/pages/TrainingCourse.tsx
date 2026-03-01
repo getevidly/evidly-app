@@ -441,6 +441,13 @@ export function TrainingCourse() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
 
+  const [view, setView] = useState<ViewState>('overview');
+  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
+  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
+  const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set([0]));
+  const [completedModules, setCompletedModules] = useState<Set<number>>(new Set());
+  const [showAI, setShowAI] = useState(false);
+
   if (!isDemoMode) {
     return (
       <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
@@ -467,13 +474,6 @@ export function TrainingCourse() {
   // Demo: pick first in-progress enrollment, or first enrollment, or simulate
   const enrollment = enrollments.find(e => e.status === 'in_progress') || enrollments[0] || null;
   const cert = certificates[0] || null;
-
-  const [view, setView] = useState<ViewState>('overview');
-  const [activeModuleIdx, setActiveModuleIdx] = useState(0);
-  const [activeLessonIdx, setActiveLessonIdx] = useState(0);
-  const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set([0]));
-  const [completedModules, setCompletedModules] = useState<Set<number>>(new Set());
-  const [showAI, setShowAI] = useState(false);
 
   const CatIcon = course ? CATEGORY_ICON[course.category] : BookOpen;
 

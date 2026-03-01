@@ -108,28 +108,6 @@ export function CopilotInsights() {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [insightStatuses, setInsightStatuses] = useState<Record<string, CopilotStatus>>({});
 
-  // ── Live-mode empty state: no hardcoded demo data ──
-  if (!isDemoMode) {
-    return (
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#fdf8e8' }}>
-            <Bot className="h-5 w-5" style={{ color: '#d4af37' }} />
-          </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">AI Copilot Insights</h1>
-            <p className="text-sm text-gray-500">Connect your operations data to receive AI-powered insights.</p>
-          </div>
-        </div>
-        <div className="text-center py-16">
-          <Sparkles className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500 font-medium">No insights available yet</p>
-          <p className="text-gray-400 text-sm mt-1">Connect your operations data to receive AI-powered insights.</p>
-        </div>
-      </div>
-    );
-  }
-
   // Merge local status overrides with demo data
   const insights = useMemo(() => {
     return copilotInsights.map(i => ({
@@ -169,6 +147,28 @@ export function CopilotInsights() {
     acted: locationFiltered.filter(i => i.status === 'acted').length,
     dismissed: locationFiltered.filter(i => i.status === 'dismissed').length,
   }), [locationFiltered]);
+
+  // ── Live-mode empty state: no hardcoded demo data ──
+  if (!isDemoMode) {
+    return (
+      <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#fdf8e8' }}>
+            <Bot className="h-5 w-5" style={{ color: '#d4af37' }} />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">AI Copilot Insights</h1>
+            <p className="text-sm text-gray-500">Connect your operations data to receive AI-powered insights.</p>
+          </div>
+        </div>
+        <div className="text-center py-16">
+          <Sparkles className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+          <p className="text-gray-500 font-medium">No insights available yet</p>
+          <p className="text-gray-400 text-sm mt-1">Connect your operations data to receive AI-powered insights.</p>
+        </div>
+      </div>
+    );
+  }
 
   function handleAction(insight: CopilotInsight) {
     setInsightStatuses(prev => ({ ...prev, [insight.id]: 'acted' }));

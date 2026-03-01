@@ -113,11 +113,6 @@ export function AdminRegulatoryChanges() {
   const { isDemoMode } = useDemo();
   const isAdmin = isEvidlyAdmin || isDemoMode;
 
-  // Access control
-  if (!isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const [changes, setChanges] = useState<RegChange[]>(DEMO_CHANGES);
   const [showAddForm, setShowAddForm] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -131,6 +126,11 @@ export function AdminRegulatoryChanges() {
   const [newChangeType, setNewChangeType] = useState('amendment');
   const [newRawText, setNewRawText] = useState('');
   const [newSourceUrl, setNewSourceUrl] = useState('');
+
+  // Access control
+  if (!isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const pendingCount = changes.filter(c => !c.published).length;
   const publishedCount = changes.filter(c => c.published).length;

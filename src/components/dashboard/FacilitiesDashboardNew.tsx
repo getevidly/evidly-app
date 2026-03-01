@@ -171,6 +171,12 @@ export default function FacilitiesDashboardNew() {
   const { companyName, isDemoMode } = useDemo();
   const { t } = useTranslation();
 
+  // Extract useTooltip calls to top of component (rules-of-hooks)
+  const equipmentCardTooltip = useTooltip('equipmentCard', userRole);
+  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
+  const facilitySafetyTooltip = useTooltip('facilitySafety', userRole);
+  const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
+
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const defaultLoc = accessibleLocations[0]?.locationUrlId || 'downtown';
 
@@ -242,7 +248,7 @@ export default function FacilitiesDashboardNew() {
           <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
             Equipment Status
           </h3>
-          <SectionTooltip content={useTooltip('equipmentCard', userRole)} />
+          <SectionTooltip content={equipmentCardTooltip} />
         </div>
         {allCurrent ? (
           <div className="flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
@@ -311,7 +317,7 @@ export default function FacilitiesDashboardNew() {
       <ServiceCostSection />
 
       {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={useTooltip('urgentItems', userRole)} />
+      <WhereDoIStartSection items={priorityItems} staggerOffset={1} tooltipContent={urgentItemsTooltip} />
 
       {/* Facility Safety Detail — moved below fold, no score shown */}
       <Card>
@@ -321,7 +327,7 @@ export default function FacilitiesDashboardNew() {
             <div>
               <div className="flex items-center gap-2">
                 <button type="button" onClick={() => navigate('/facility-safety')} className="text-sm font-semibold text-gray-700 hover:opacity-70 transition-opacity">Facility Safety Equipment</button>
-                <SectionTooltip content={useTooltip('facilitySafety', userRole)} />
+                <SectionTooltip content={facilitySafetyTooltip} />
               </div>
               <p className="text-xs text-gray-500 mt-0.5">{fireDisplay}</p>
             </div>
@@ -357,12 +363,12 @@ export default function FacilitiesDashboardNew() {
           typeColors={FACILITIES_CALENDAR.typeColors}
           typeLabels={FACILITIES_CALENDAR.typeLabels}
           navigate={navigate}
-          tooltipContent={useTooltip('scheduleCalendar', userRole)}
+          tooltipContent={scheduleCalendarTooltip}
         />
       </ErrorBoundary>
 
       {/* Tabbed Detail Section: Equipment | Service Schedule | Vendors */}
-      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center">{t('cards.equipmentAndServices')}<SectionTooltip content={useTooltip('equipmentCard', userRole)} /></h4>
+      <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2 flex items-center">{t('cards.equipmentAndServices')}<SectionTooltip content={equipmentCardTooltip} /></h4>
       <Card>
         <TabbedDetailSection
           tabs={[

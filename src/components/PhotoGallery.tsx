@@ -20,10 +20,6 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
-  if (photos.length === 0) return null;
-
-  const selected = selectedIndex !== null ? photos[selectedIndex] : null;
-
   const goNext = useCallback(() => {
     if (selectedIndex !== null && selectedIndex < photos.length - 1) {
       setSelectedIndex(selectedIndex + 1);
@@ -47,6 +43,10 @@ export function PhotoGallery({ photos, title = 'Photo Evidence' }: PhotoGalleryP
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, [selectedIndex, goNext, goPrev]);
+
+  if (photos.length === 0) return null;
+
+  const selected = selectedIndex !== null ? photos[selectedIndex] : null;
 
   // Touch swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {

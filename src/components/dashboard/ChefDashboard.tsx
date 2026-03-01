@@ -174,6 +174,13 @@ export default function ChefDashboard() {
   const { companyName, isDemoMode } = useDemo();
   const { t } = useTranslation();
 
+  // Extract useTooltip calls to top of component (rules-of-hooks)
+  const overallScoreTooltip = useTooltip('overallScore', userRole);
+  const todaysProgressTooltip = useTooltip('todaysProgress', userRole);
+  const checklistCardTooltip = useTooltip('checklistCard', userRole);
+  const urgentItemsTooltip = useTooltip('urgentItems', userRole);
+  const scheduleCalendarTooltip = useTooltip('scheduleCalendar', userRole);
+
   const accessibleLocations = useMemo(() => getAccessibleLocations(), [getAccessibleLocations]);
   const hasMultipleLocations = accessibleLocations.length > 1;
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
@@ -240,7 +247,7 @@ export default function ChefDashboard() {
 
       {/* HACCP 2x2 tiles */}
       <div>
-        <SectionHeader>HACCP Status<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+        <SectionHeader>HACCP Status<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
         <div className="grid grid-cols-2 gap-3">
           {haccpTiles.map(tile => (
             <HACCPTile key={tile.id} tile={tile} navigate={navigate} />
@@ -318,7 +325,7 @@ export default function ChefDashboard() {
 
       {/* Today's Progress */}
       <Card>
-        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={useTooltip('todaysProgress', userRole)} /></SectionHeader>
+        <SectionHeader>{t('cards.todaysProgress')}<SectionTooltip content={todaysProgressTooltip} /></SectionHeader>
         <div className="space-y-2">
           <div className="w-full bg-gray-200 rounded-full" style={{ height: 12 }}>
             <div
@@ -338,7 +345,7 @@ export default function ChefDashboard() {
 
       {/* Food Safety locations */}
       <div>
-        <SectionHeader>{t('cards.foodSafety')}<SectionTooltip content={useTooltip('overallScore', userRole)} /></SectionHeader>
+        <SectionHeader>{t('cards.foodSafety')}<SectionTooltip content={overallScoreTooltip} /></SectionHeader>
         <div className="space-y-2">
           {CHEF_FOOD_SAFETY_LOCATIONS.map(loc => {
             const statusColor = loc.status === 'Compliant' ? '#16a34a'
@@ -376,7 +383,7 @@ export default function ChefDashboard() {
 
       {/* Checklists */}
       <div>
-        <SectionHeader>{t('cards.checklists')}<SectionTooltip content={useTooltip('checklistCard', userRole)} /></SectionHeader>
+        <SectionHeader>{t('cards.checklists')}<SectionTooltip content={checklistCardTooltip} /></SectionHeader>
         <div className="space-y-3">
           {DEMO_CHECKLISTS.map((cl) => (
             <button
@@ -420,7 +427,7 @@ export default function ChefDashboard() {
       </div>
 
       {/* Where Do I Start */}
-      <WhereDoIStartSection items={priorityItems} tooltipContent={useTooltip('urgentItems', userRole)} />
+      <WhereDoIStartSection items={priorityItems} tooltipContent={urgentItemsTooltip} />
 
       {/* Schedule Calendar */}
       <ErrorBoundary level="widget">
@@ -429,7 +436,7 @@ export default function ChefDashboard() {
           typeColors={KITCHEN_MANAGER_CALENDAR.typeColors}
           typeLabels={KITCHEN_MANAGER_CALENDAR.typeLabels}
           navigate={navigate}
-          tooltipContent={useTooltip('scheduleCalendar', userRole)}
+          tooltipContent={scheduleCalendarTooltip}
         />
       </ErrorBoundary>
 

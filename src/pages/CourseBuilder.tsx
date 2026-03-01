@@ -46,23 +46,6 @@ export function CourseBuilder() {
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
 
-  if (!isDemoMode) {
-    return (
-      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <button onClick={() => navigate('/training')}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
-          <ArrowLeft size={16} /> Back to Training
-        </button>
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Course Builder</h1>
-        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
-          <BookOpen size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
-          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>Course Builder</h2>
-          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create and manage training courses for your team.</p>
-        </div>
-      </div>
-    );
-  }
-
   // Step 1: Basics
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -85,6 +68,23 @@ export function CourseBuilder() {
   // Step 6: Assign
   const [assignLocations, setAssignLocations] = useState<Set<string>>(new Set());
   const [autoEnroll, setAutoEnroll] = useState(false);
+
+  if (!isDemoMode) {
+    return (
+      <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
+        <button onClick={() => navigate('/training')}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', color: '#1e4d6b', fontSize: 14, fontWeight: 600, cursor: 'pointer', marginBottom: 16, padding: 0, fontFamily: "'DM Sans', sans-serif" }}>
+          <ArrowLeft size={16} /> Back to Training
+        </button>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#111827', margin: '0 0 24px' }}>Course Builder</h1>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e5e7eb', padding: 48, textAlign: 'center' }}>
+          <BookOpen size={40} color="#9ca3af" style={{ marginBottom: 12 }} />
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: '#111827', margin: '0 0 8px' }}>Course Builder</h2>
+          <p style={{ fontSize: 14, color: '#6b7280', margin: 0 }}>Create and manage training courses for your team.</p>
+        </div>
+      </div>
+    );
+  }
 
   const stepIdx = STEPS.findIndex(s => s.id === step);
   const canNext = () => {

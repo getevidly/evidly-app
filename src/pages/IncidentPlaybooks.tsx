@@ -259,6 +259,15 @@ export function IncidentPlaybooks() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<PlaybookCategory | 'all'>('all');
 
+  const activeIncidents = activeIncidentPlaybooks.filter(i => i.status === 'active');
+  const completedIncidents = activeIncidentPlaybooks.filter(i => i.status === 'completed');
+
+  // Auto-switch to active tab if incidents exist on first load
+  useEffect(() => {
+    if (activeIncidents.length > 0) setActiveTab('active');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Non-demo mode: show empty state (no hardcoded data for authenticated users)
   if (!isDemoMode) {
     return (
@@ -277,15 +286,6 @@ export function IncidentPlaybooks() {
       </div>
     );
   }
-
-  const activeIncidents = activeIncidentPlaybooks.filter(i => i.status === 'active');
-  const completedIncidents = activeIncidentPlaybooks.filter(i => i.status === 'completed');
-
-  // Auto-switch to active tab if incidents exist on first load
-  useEffect(() => {
-    if (activeIncidents.length > 0) setActiveTab('active');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Filter library
   const filteredTemplates = playbookTemplates.filter(t => {

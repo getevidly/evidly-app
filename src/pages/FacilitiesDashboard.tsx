@@ -38,11 +38,6 @@ export function FacilitiesDashboard() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
 
-  // This dashboard is only for demo mode — real facilities managers use the main Dashboard page
-  if (!isDemoMode) {
-    return null;
-  }
-
   const [equipmentSystems] = useState<EquipmentStatus[]>([
     {
       id: '1',
@@ -138,6 +133,11 @@ export function FacilitiesDashboard() {
       link: '/documents'
     }
   ]);
+
+  // This dashboard is only for demo mode — real facilities managers use the main Dashboard page
+  if (!isDemoMode) {
+    return null;
+  }
 
   const currentHour = new Date().getHours();
   const greeting = currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening';
