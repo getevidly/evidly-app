@@ -14,6 +14,7 @@ import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
 import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type IoTSensorReading } from '../data/demoData';
@@ -1604,6 +1605,10 @@ export function TempLogs() {
         {/* Equipment Tab */}
         {activeTab === 'equipment' && (
           <div className="space-y-6">
+            <div className="flex items-center gap-1">
+              <h2 className="text-lg font-bold text-gray-900">Current Readings</h2>
+              <InfoTooltip content="Most recent temperature readings from all sources — manual entries and IoT sensors." />
+            </div>
             {/* Filters Section */}
             <div data-demo-allow className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
               <div className="flex flex-wrap gap-4 items-end">
@@ -1669,6 +1674,15 @@ export function TempLogs() {
                 )}
               </div>
             )}
+
+            {/* Status Legend */}
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <Check className="h-3.5 w-3.5 text-green-600" />
+                <span className="font-medium text-green-700">In Range</span>
+                <InfoTooltip content="Reading falls within the safe temperature range for this equipment type." />
+              </span>
+            </div>
 
             {/* Equipment Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

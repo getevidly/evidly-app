@@ -16,6 +16,7 @@ import { useTranslation } from '../contexts/LanguageContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { InfoTooltip } from '../components/ui/InfoTooltip';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -28,12 +29,13 @@ const F: React.CSSProperties = { fontFamily: "'Inter', 'DM Sans', sans-serif" };
 
 // ── Authority source display labels ───────────────────────────────
 const AUTHORITY_LABELS: Record<string, { label: string; color: string; bg: string }> = {
-  nfpa_96:   { label: 'NFPA 96',        color: '#b91c1c', bg: '#fef2f2' },
-  cfc:       { label: 'NFPA 96 (2024)',  color: '#c2410c', bg: '#fff7ed' },
-  nfpa_10:   { label: 'NFPA 10',        color: '#b91c1c', bg: '#fef2f2' },
-  nfpa_80:   { label: 'NFPA 80',        color: '#b91c1c', bg: '#fef2f2' },
-  nfpa_101:  { label: 'NFPA 101',       color: '#b91c1c', bg: '#fef2f2' },
-  calfire:   { label: 'CalFire Title 19', color: '#c2410c', bg: '#fff7ed' },
+  nfpa_96:   { label: 'NFPA 96',          color: '#b91c1c', bg: '#fef2f2' },
+  nfpa_17a:  { label: 'NFPA 17A',         color: '#c2410c', bg: '#fff7ed' },
+  nfpa_10:   { label: 'NFPA 10',          color: '#c2410c', bg: '#fff7ed' },
+  nfpa_80:   { label: 'NFPA 80',          color: '#b91c1c', bg: '#fef2f2' },
+  nfpa_101:  { label: 'NFPA 101',         color: '#1d4ed8', bg: '#eff6ff' },
+  cfc:       { label: 'CFC / IFC',        color: '#7c3aed', bg: '#f5f3ff' },
+  calfire:   { label: 'CalFire Title 19',  color: '#c2410c', bg: '#fff7ed' },
   evidly_best_practice: { label: 'EvidLY Best Practice', color: '#1e4d6b', bg: '#eef4f8' },
 };
 
@@ -62,34 +64,34 @@ interface CheckResponse {
 // ── Demo checklist items (matching DB seed exactly) ───────────────
 
 const DAILY_ITEMS: FireCheckItem[] = [
-  { id: 'fd-1', title: 'Hood system visual inspection', description: 'Hood system visual inspection — filters in place, no visible grease buildup', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: 'Table 12.4', authorityNote: 'NFPA 96 requires regular inspection of grease removal devices', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-2', title: 'Ansul system gauge check', description: 'Ansul system indicator — gauge in green range', category: 'suppression', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Fire suppression system must show proper pressure', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-3', title: 'Manual pull station accessible', description: 'Manual pull station — accessible, not blocked', category: 'suppression', authoritySource: 'cfc', authoritySection: '§607.2', authorityNote: 'Manual activation device must be unobstructed', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-4', title: 'K-class extinguisher in place', description: 'K-class fire extinguisher — in place near cooking equipment, pin intact', category: 'extinguisher', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Class K extinguisher required within 30ft of cooking', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-5', title: 'Exit signs illuminated', description: 'Exit signs — illuminated front and back of house', category: 'egress', authoritySource: 'cfc', authoritySection: '§1013.1', authorityNote: 'Exit signs must be illuminated at all times', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-6', title: 'Exit routes clear', description: 'Exit routes — clear and unobstructed', category: 'egress', authoritySource: 'cfc', authoritySection: '§1003.6', authorityNote: 'Means of egress must be free of obstructions', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fd-7', title: 'Emergency lighting functional', description: 'Emergency lighting — functional', category: 'egress', authoritySource: 'cfc', authoritySection: '§1008.3', authorityNote: 'Emergency lighting must activate on power failure', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-1', title: 'Hood system visual inspection', description: 'Hood system visual inspection — filters in place, no visible grease buildup', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: '§12.1', authorityNote: 'NFPA 96 requires regular inspection of grease removal devices and exhaust systems', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-2', title: 'Ansul system gauge check', description: 'Ansul system indicator — gauge in green range', category: 'suppression', authoritySource: 'nfpa_17a', authoritySection: '§8.1', authorityNote: 'NFPA 17A requires wet chemical suppression systems to show proper pressure', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-3', title: 'Manual pull station accessible', description: 'Manual pull station — accessible, not blocked', category: 'suppression', authoritySource: 'nfpa_96', authoritySection: '§12.1.1', authorityNote: 'NFPA 96 requires manual activation device to be unobstructed and accessible', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-4', title: 'K-class extinguisher in place', description: 'K-class fire extinguisher — in place near cooking equipment, pin intact', category: 'extinguisher', authoritySource: 'nfpa_10', authoritySection: '§6.6', authorityNote: 'NFPA 10 requires Class K extinguisher within 30ft travel distance of cooking equipment', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-5', title: 'Exit signs illuminated', description: 'Exit signs — illuminated front and back of house', category: 'egress', authoritySource: 'nfpa_101', authoritySection: '§7.10', authorityNote: 'NFPA 101 Life Safety Code requires exit signs to be illuminated at all times', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-6', title: 'Exit routes clear', description: 'Exit routes — clear and unobstructed', category: 'egress', authoritySource: 'nfpa_101', authoritySection: '§7.1', authorityNote: 'NFPA 101 Life Safety Code requires means of egress to be free of obstructions', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fd-7', title: 'Emergency lighting functional', description: 'Emergency lighting — functional', category: 'egress', authoritySource: 'nfpa_101', authoritySection: '§7.9', authorityNote: 'NFPA 101 Life Safety Code requires emergency lighting to activate on power failure', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
   { id: 'fd-8', title: 'Gas line connections secure', description: 'Gas line connections — no smell, secure', category: 'general_fire', authoritySource: 'evidly_best_practice', authoritySection: null, authorityNote: 'Check gas connections for leaks before firing equipment', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
 ];
 
 const WEEKLY_ITEMS: FireCheckItem[] = [
-  { id: 'fw-1', title: 'Hood filters inspection', description: 'Hood filters — remove and inspect for grease saturation', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: 'Table 12.4', authorityNote: 'Grease removal devices must be cleaned when grease buildup is evident', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-1', title: 'Hood filters inspection', description: 'Hood filters — remove and inspect for grease saturation', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: '§12.1', authorityNote: 'NFPA 96 requires grease removal devices to be cleaned when buildup is evident', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
   { id: 'fw-2', title: 'Grease trap level check', description: 'Grease trap/grease interceptor level check', category: 'hood_system', authoritySource: 'evidly_best_practice', authoritySection: null, authorityNote: 'Prevents overflow and sewer backup', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fw-3', title: 'Fire extinguishers visual', description: 'All fire extinguishers — visual inspection, accessible, charged, pin intact', category: 'extinguisher', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Portable extinguishers must be inspected monthly minimum', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fw-4', title: 'Ansul nozzles visual', description: 'Ansul nozzles — visual check for grease blockage', category: 'suppression', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Nozzle tips must be free of grease/debris', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fw-5', title: 'Emergency exit lighting test', description: 'Emergency exit lighting — test function', category: 'egress', authoritySource: 'cfc', authoritySection: '§1008.3', authorityNote: 'Emergency lighting must be tested regularly', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fw-6', title: 'Electrical panels clearance', description: 'Electrical panels — 36" clearance maintained', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§605.3', authorityNote: '36-inch clearance required for electrical panels', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fw-7', title: 'Combustible clearance 18"', description: '18" clearance from cooking equipment to combustibles', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§607.1', authorityNote: 'Maintain clearance between cooking surfaces and combustible materials', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-3', title: 'Fire extinguishers visual', description: 'All fire extinguishers — visual inspection, accessible, charged, pin intact', category: 'extinguisher', authoritySource: 'nfpa_10', authoritySection: '§7.2.1', authorityNote: 'NFPA 10 requires portable extinguishers to be visually inspected monthly minimum', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-4', title: 'Ansul nozzles visual', description: 'Ansul nozzles — visual check for grease blockage', category: 'suppression', authoritySource: 'nfpa_17a', authoritySection: '§8.1.2', authorityNote: 'NFPA 17A requires nozzle tips to be free of grease and debris', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-5', title: 'Emergency exit lighting test', description: 'Emergency exit lighting — test function', category: 'egress', authoritySource: 'nfpa_101', authoritySection: '§7.9', authorityNote: 'NFPA 101 Life Safety Code requires emergency lighting to be tested regularly', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-6', title: 'Electrical panels clearance', description: 'Electrical panels — 36" clearance maintained', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§605.3', authorityNote: 'IFC/CFC requires 36-inch clearance for electrical panels', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fw-7', title: 'Combustible clearance 18"', description: '18" clearance from cooking equipment to combustibles', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§607.1', authorityNote: 'IFC/CFC requires clearance between cooking surfaces and combustible materials', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
 ];
 
 const MONTHLY_ITEMS: FireCheckItem[] = [
-  { id: 'fm-1', title: 'Extinguisher monthly inspection', description: 'Fire extinguisher monthly inspection — document on tag', category: 'extinguisher', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Monthly inspection required per NFPA 10', requiresCorrectiveAction: false, requiresPhotoOnFail: true },
-  { id: 'fm-2', title: 'Ansul gauge photo', description: 'Ansul system gauge — photograph current reading', category: 'suppression', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Document suppression system pressure monthly', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fm-3', title: 'Hood/duct exterior inspection', description: 'Hood/duct system — visual exterior inspection', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: 'Chapter 11', authorityNote: 'Check for grease leaks at duct joints and access panels', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fm-4', title: 'Roof grease containment', description: 'Grease containment on roof — check level', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: 'Table 12.4', authorityNote: 'Rooftop grease containment must not overflow', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fm-5', title: 'Fire alarm test', description: 'Fire alarm test (if owner-testable)', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§907.8', authorityNote: 'Fire alarm systems require periodic testing', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fm-6', title: 'Sprinkler head inspection', description: 'Sprinkler head inspection — not obstructed, not painted', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§903.5', authorityNote: 'Sprinkler heads must have proper clearance and not be painted or modified', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
-  { id: 'fm-7', title: 'K-class travel distance', description: 'K-class extinguisher — verify within 30ft travel distance of cooking', category: 'extinguisher', authoritySource: 'nfpa_96', authoritySection: 'Chapter 12', authorityNote: 'Maximum 30ft travel distance to Class K extinguisher from cooking equipment', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-1', title: 'Extinguisher monthly inspection', description: 'Fire extinguisher monthly inspection — document on tag', category: 'extinguisher', authoritySource: 'nfpa_10', authoritySection: '§7.2.1.2', authorityNote: 'NFPA 10 requires monthly fire extinguisher inspection documented on tag', requiresCorrectiveAction: false, requiresPhotoOnFail: true },
+  { id: 'fm-2', title: 'Ansul gauge photo', description: 'Ansul system gauge — photograph current reading', category: 'suppression', authoritySource: 'nfpa_17a', authoritySection: '§8.3', authorityNote: 'NFPA 17A requires monthly documentation of suppression system pressure', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-3', title: 'Hood/duct exterior inspection', description: 'Hood/duct system — visual exterior inspection', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: '§11.4', authorityNote: 'NFPA 96 requires checking for grease leaks at duct joints and access panels', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-4', title: 'Roof grease containment', description: 'Grease containment on roof — check level', category: 'hood_system', authoritySource: 'nfpa_96', authoritySection: '§12.1', authorityNote: 'NFPA 96 requires rooftop grease containment to not overflow', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-5', title: 'Fire alarm test', description: 'Fire alarm test (if owner-testable)', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§907.8', authorityNote: 'IFC/CFC requires periodic fire alarm system testing', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-6', title: 'Sprinkler head inspection', description: 'Sprinkler head inspection — not obstructed, not painted', category: 'general_fire', authoritySource: 'cfc', authoritySection: '§903.5', authorityNote: 'IFC/CFC requires sprinkler heads to have proper clearance and not be painted or modified', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
+  { id: 'fm-7', title: 'K-class travel distance', description: 'K-class extinguisher — verify within 30ft travel distance of cooking', category: 'extinguisher', authoritySource: 'nfpa_10', authoritySection: '§6.6', authorityNote: 'NFPA 10 requires maximum 30ft travel distance to Class K extinguisher from cooking equipment', requiresCorrectiveAction: false, requiresPhotoOnFail: false },
 ];
 
 const ITEMS_BY_FREQUENCY: Record<Frequency, FireCheckItem[]> = {
@@ -226,8 +228,8 @@ export function FacilitySafety() {
             <Flame size={22} color="#dc2626" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}</h1>
-            <p className="text-sm text-gray-500">NFPA 96 (2024) · ANSI/UL 300</p>
+            <h1 className="text-xl font-bold text-gray-900">{t('pages.facilitySafety.checklist')}<InfoTooltip content="Track fire suppression, hood cleaning, pest control, grease trap, and other facility safety compliance." /></h1>
+            <p className="text-sm text-gray-500">NFPA 96 · NFPA 10 · NFPA 17A · NFPA 101 · IFC/CFC</p>
           </div>
         </div>
 
@@ -273,7 +275,7 @@ export function FacilitySafety() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="text-center">
-                  <div className={`text-xl font-bold px-3 py-1 rounded-full ${badgeClass}`}>{badgeText}</div>
+                  <div className={`text-xl font-bold px-3 py-1 rounded-full ${badgeClass}`}>{badgeText}<InfoTooltip content="Combined score based on service recency, documentation status, and inspection results." /></div>
                   <div className="text-xs text-gray-500 mt-1">{fireSummary}</div>
                 </div>
                 <div className="h-10 w-px bg-gray-300" />
@@ -304,18 +306,11 @@ export function FacilitySafety() {
               <div className="mt-3 pt-3 border-t border-gray-200">
                 <FireStatusBars
                   items={facilityItems}
-                  onCardClick={(key) => {
-                    const routes: Record<string, string> = {
-                      permit: '/equipment?category=permit',
-                      extinguisher: '/equipment?category=fire_extinguisher',
-                      hood: '/calendar?category=hood_cleaning',
-                      ansul: '/calendar?category=fire_suppression',
-                      pest: '/calendar?category=pest_control',
-                      grease: '/calendar?category=grease_trap',
-                      elevator: '/equipment?category=elevator',
-                      backflow: '/calendar?category=backflow',
-                    };
-                    navigate(routes[key] || '/equipment');
+                  onCardClick={(cardKey) => {
+                    const item = facilityItems.find(i => (i.key || i.label) === cardKey);
+                    if (item) {
+                      setDetailModal({ category: item.label, status: item.status });
+                    }
                   }}
                 />
               </div>
@@ -591,8 +586,8 @@ export function FacilitySafety() {
           <div className="border-t border-gray-100 p-4">
             <div className="space-y-3">
               {[
-                { service: 'Hood Cleaning', freq: 'Semi-annual / Quarterly', authority: 'NFPA 96 Chapter 11', vendor: 'IKECA-certified vendor' },
-                { service: 'Ansul System Service', freq: 'Semi-annual', authority: 'NFPA 96 Chapter 12 / ANSI/UL 300', vendor: 'Licensed fire protection vendor' },
+                { service: 'Hood Cleaning', freq: 'Semi-annual / Quarterly', authority: 'NFPA 96 §11.4', vendor: 'IKECA-certified vendor' },
+                { service: 'Ansul System Service', freq: 'Semi-annual', authority: 'NFPA 17A §8.3 / UL 300', vendor: 'Licensed fire protection vendor' },
                 { service: 'Fire Extinguisher Annual', freq: 'Annual', authority: 'NFPA 10 §7.3', vendor: 'Professional fire equipment company' },
                 { service: 'Grease Trap Cleaning', freq: 'Per schedule', authority: 'Local plumbing code', vendor: 'Licensed hauler' },
               ].map(svc => (

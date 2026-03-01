@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, useId } from 'react';
 import { Info } from 'lucide-react';
 
-interface SectionTooltipProps {
+interface InfoTooltipProps {
   content: string;
 }
 
-export function SectionTooltip({ content }: SectionTooltipProps) {
+export function InfoTooltip({ content }: InfoTooltipProps) {
   const [visible, setVisible] = useState(false);
   const tooltipId = useId();
   const wrapperRef = useRef<HTMLSpanElement>(null);
@@ -29,7 +29,7 @@ export function SectionTooltip({ content }: SectionTooltipProps) {
   if (!content) return null;
 
   return (
-    <span ref={wrapperRef} className="relative inline-flex items-center ml-1.5">
+    <span ref={wrapperRef} className="relative inline-flex items-center ml-1">
       <span
         aria-describedby={visible ? tooltipId : undefined}
         className="cursor-help inline-flex items-center"
@@ -38,24 +38,25 @@ export function SectionTooltip({ content }: SectionTooltipProps) {
         onClick={(e) => { e.stopPropagation(); setVisible(v => !v); }}
       >
         <Info
-          size={11}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
+          size={14}
+          style={{ color: '#9CA3AF' }}
+          className="hover:text-gray-600 transition-colors"
         />
       </span>
       {visible && (
         <span
           id={tooltipId}
           role="tooltip"
-          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 rounded-md px-3 py-2 text-xs leading-relaxed shadow-lg pointer-events-none"
+          className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 rounded-lg px-3 py-2 text-xs leading-relaxed shadow-lg pointer-events-none whitespace-normal"
           style={{
-            width: 280,
+            maxWidth: 280,
+            width: 'max-content',
             backgroundColor: '#111827',
             color: '#FFFFFF',
             zIndex: 9999,
           }}
         >
           {content}
-          {/* Arrow */}
           <span
             className="absolute top-full left-1/2 -translate-x-1/2"
             style={{

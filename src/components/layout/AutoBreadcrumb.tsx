@@ -256,43 +256,40 @@ function BreadcrumbNav({ items }: { items: { label: string; href?: string }[] })
       className="flex items-center flex-wrap gap-y-0.5 pb-3"
       style={{ fontFamily: 'Inter, sans-serif' }}
     >
-      {items.map((item, i) => {
-        const isLast = i === items.length - 1;
-        return (
-          <span key={i} className="flex items-center">
-            {i > 0 && (
-              <ChevronRight
-                className="mx-1.5 flex-shrink-0"
-                style={{ width: 14, height: 14, color: '#D1D5DB' }}
-              />
-            )}
-            {item.href ? (
-              <Link
-                to={item.href}
-                className="flex items-center gap-1 transition-colors"
-                style={{ fontSize: '0.875rem', color: '#6B7280' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; (e.currentTarget as HTMLElement).style.color = '#1e4d6b'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
-              >
-                {i === 0 && <Home style={{ width: 16, height: 16 }} />}
-                {item.label}
-              </Link>
-            ) : (
-              <span
-                className="flex items-center gap-1"
-                style={{
-                  fontSize: '0.875rem',
-                  color: '#1E2D4D',
-                  fontWeight: 600,
-                }}
-              >
-                {i === 0 && <Home style={{ width: 16, height: 16 }} />}
-                {item.label}
-              </span>
-            )}
-          </span>
-        );
-      })}
+      {items.map((item, i) => (
+        <span key={i} className="flex items-center">
+          {i > 0 && (
+            <ChevronRight
+              className="mx-1.5 flex-shrink-0"
+              style={{ width: 14, height: 14, color: '#D1D5DB' }}
+            />
+          )}
+          {item.href ? (
+            <Link
+              to={item.href}
+              className="flex items-center gap-1 cursor-pointer hover:underline transition-colors"
+              style={{ fontSize: '0.875rem', color: '#6B7280' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#1e4d6b'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = '#6B7280'; }}
+            >
+              {i === 0 && <Home style={{ width: 16, height: 16 }} />}
+              {item.label}
+            </Link>
+          ) : (
+            <span
+              className="flex items-center gap-1"
+              style={{
+                fontSize: '0.875rem',
+                color: '#1E2D4D',
+                fontWeight: 600,
+              }}
+            >
+              {i === 0 && <Home style={{ width: 16, height: 16 }} />}
+              {item.label}
+            </span>
+          )}
+        </span>
+      ))}
     </nav>
   );
 }

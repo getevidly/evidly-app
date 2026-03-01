@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { InfoTooltip } from '../components/ui/InfoTooltip';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -1172,14 +1173,14 @@ export function HACCP() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <EvidlyIcon size={16} />
-              <span className="text-sm text-gray-500 font-medium">Active Plans</span>
+              <span className="text-sm text-gray-500 font-medium">Active Plans<InfoTooltip content="Number of HACCP plans currently configured and monitored." /></span>
             </div>
             <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Activity className="h-4 w-4" style={{ color: overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444' }} />
-              <span className="text-sm text-gray-500 font-medium">Overall Compliance</span>
+              <span className="text-sm text-gray-500 font-medium">Overall Compliance<InfoTooltip content="Percentage of Critical Control Points meeting their defined limits." /></span>
             </div>
             <p className={`text-xl sm:text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
@@ -1188,14 +1189,14 @@ export function HACCP() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance</span>
+              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance<InfoTooltip content="Count of CCPs with all monitoring records within acceptable limits." /></span>
             </div>
             <p className="text-xl sm:text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
-              <span className="text-sm text-gray-500 font-medium">Open Actions</span>
+              <span className="text-sm text-gray-500 font-medium">Open Actions<InfoTooltip content="Corrective actions created but not yet resolved." /></span>
             </div>
             <p className={`text-xl sm:text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
