@@ -68,6 +68,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/iot-monitoring': 'Internet of Things Dashboard',
   '/jurisdiction-intelligence': 'Jurisdiction Intelligence',
   '/settings/roles-permissions': 'Role Permissions',
+  '/dashboard/training': 'Training Records',
 };
 
 // Parent routes for nested pages
@@ -98,6 +99,7 @@ const DYNAMIC_PATTERNS: { pattern: RegExp; parent: { label: string; href: string
   { pattern: /^\/playbooks\/active\/[^/]+$/, parent: { label: 'Incident Playbooks', href: '/playbooks' }, label: 'Active Playbook' },
   { pattern: /^\/playbooks\/history\/[^/]+$/, parent: { label: 'Incident Playbooks', href: '/playbooks' }, label: 'Playbook History' },
   { pattern: /^\/sensors\/[^/]+$/, parent: { label: 'Sensor Hub', href: '/sensors' }, label: 'Sensor Detail' },
+  { pattern: /^\/dashboard\/training\/[^/]+$/, parent: { label: 'Training Records', href: '/dashboard/training' }, label: 'Employee Profile' },
 ];
 
 export function AutoBreadcrumb() {

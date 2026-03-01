@@ -27,6 +27,7 @@ import {
   Flame,
   Scale,
   Shield,
+  GraduationCap,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -74,6 +75,7 @@ const PATH_ICON: Record<string, any> = {
   '/org-hierarchy': Network,
   '/settings': Settings,
   '/team': Users,
+  '/dashboard/training': GraduationCap,
   '/vendors': Store,
   '/help': HelpCircle,
   '/insurance-risk': Shield,

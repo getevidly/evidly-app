@@ -168,5 +168,6 @@ export const featureExplanations: Record<string, string> = {
   '/audit-trail': 'Every action in EvidLY is logged. View who did what, when, for complete accountability and inspection readiness.',
   '/insurance-risk': 'See how your compliance posture affects your insurance risk profile. Better compliance can lead to lower premiums.',
   '/training': 'Access training courses for your team on food safety, compliance procedures, and best practices.',
+  '/dashboard/training': 'Track employee certifications, training completion, and compliance requirements across your team. Monitor expiring certs and assign training proactively.',
   '/playbooks': 'Pre-built response procedures for common incidents. When something goes wrong, follow the playbook step by step.',
 };

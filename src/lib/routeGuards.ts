@@ -27,6 +27,9 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/vendors',               ['facilities_manager', 'owner_operator', 'executive']],
   ['/calendar',              ['facilities_manager', 'owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef']],
 
+  // Training Records
+  ['/dashboard/training',    ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager', 'chef', 'kitchen_staff']],
+
   // Administration
   ['/billing',               ['owner_operator', 'executive']],
   ['/org-hierarchy',         ['owner_operator', 'executive']],

@@ -93,6 +93,8 @@ const TrainingCourse = lazy(() => import('./pages/TrainingCourse').then(m => ({ 
 const CourseBuilder = lazy(() => import('./pages/CourseBuilder').then(m => ({ default: m.CourseBuilder })));
 const CertificateViewer = lazy(() => import('./pages/CertificateViewer').then(m => ({ default: m.CertificateViewer })));
 const EmployeeCertDetail = lazy(() => import('./pages/EmployeeCertDetail').then(m => ({ default: m.EmployeeCertDetail })));
+const TrainingRecords = lazy(() => import('./pages/TrainingRecords').then(m => ({ default: m.TrainingRecords })));
+const EmployeeTrainingProfile = lazy(() => import('./pages/EmployeeTrainingProfile').then(m => ({ default: m.EmployeeTrainingProfile })));
 const IncidentPlaybooks = lazy(() => import('./pages/IncidentPlaybooks').then(m => ({ default: m.IncidentPlaybooks })));
 const PlaybookRunner = lazy(() => import('./pages/PlaybookRunner').then(m => ({ default: m.PlaybookRunner })));
 const PlaybookBuilder = lazy(() => import('./pages/PlaybookBuilder').then(m => ({ default: m.PlaybookBuilder })));
@@ -430,6 +432,8 @@ function AppRoutes() {
           <Route path="/training/courses/builder" element={<CourseBuilder />} />
           <Route path="/training/certificates" element={<CertificateViewer />} />
           <Route path="/training/employee/:userId" element={<EmployeeCertDetail />} />
+          <Route path="/dashboard/training" element={<TrainingRecords />} />
+          <Route path="/dashboard/training/:employeeId" element={<EmployeeTrainingProfile />} />
           <Route path="/playbooks" element={<IncidentPlaybooks />} />
           <Route path="/playbooks/active/:id" element={<PlaybookRunner />} />
           <Route path="/playbooks/builder" element={<PlaybookBuilder />} />
