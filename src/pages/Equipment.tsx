@@ -967,12 +967,12 @@ export function Equipment() {
             {/* Tabs */}
             <div className="flex border-b border-gray-200 overflow-x-auto">
               {(() => {
-                const linkedSensor = iotSensors.find(s =>
+                const linkedSensor = isDemoMode ? iotSensors.find(s =>
                   s.name.toLowerCase() === selected.name.toLowerCase() ||
                   s.zone.toLowerCase() === selected.name.toLowerCase() ||
                   (selected.name.toLowerCase().includes('cooler') && s.name.toLowerCase().includes('cooler') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___')) ||
                   (selected.name.toLowerCase().includes('freezer') && s.name.toLowerCase().includes('freezer') && s.locationName.toLowerCase().includes(selected.location?.toLowerCase().split(' ')[0] || '___'))
-                );
+                ) : null;
                 const baseTabs: [string, string][] = [
                   ['overview', t('pages.equipment.overview')], ['warranty', t('pages.equipment.warrantyTab')], ['service', t('pages.equipment.serviceHistory')],
                   ['schedule', t('pages.equipment.schedule')], ['forecast', t('pages.equipment.lifecycleAndCost')], ['costs', t('pages.equipment.costBreakdown')], ['vendors', t('pages.equipment.vendors')],

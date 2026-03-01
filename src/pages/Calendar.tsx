@@ -1099,7 +1099,7 @@ export function Calendar() {
               className="w-full sm:w-auto sm:min-w-[150px]"
             >
               <option value="all">{tr('pages.calendar.allLocations')}</option>
-              {LOCATIONS.map(loc => (
+              {isDemoMode && LOCATIONS.map(loc => (
                 <option key={loc} value={loc}>{loc}</option>
               ))}
             </select>

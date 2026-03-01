@@ -1493,8 +1493,8 @@ export function TempLogs() {
   const tempValue = parseFloat(temperature);
   const isWithinRange = selectedEquipment && tempValue >= selectedEquipment.min_temp && tempValue <= selectedEquipment.max_temp;
 
-  const locations = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
-  const vendors = ['Sysco', 'US Foods', 'Performance Food Group', 'Restaurant Depot', 'Other'];
+  const locations = isDemoMode ? ['Downtown Kitchen', 'Airport Cafe', 'University Dining'] : [];
+  const vendors = isDemoMode ? ['Sysco', 'US Foods', 'Performance Food Group', 'Restaurant Depot', 'Other'] : [];
 
   return (
     <>
@@ -2708,7 +2708,29 @@ export function TempLogs() {
         )}
 
         {/* IoT Live View Tab */}
-        {activeTab === 'iot' && (() => {
+        {activeTab === 'iot' && !isDemoMode && (
+          <div className="space-y-6">
+            <EmptyState
+              icon={Wifi}
+              title="No sensors connected"
+              description="Connect your first IoT sensor to start monitoring temperatures in real time."
+            />
+            {/* Supported Sensors CTA — informational, shown in all modes */}
+            <div className="bg-gradient-to-br from-[#1e4d6b]/5 to-[#d4af37]/5 rounded-xl border border-[#1e4d6b]/10 p-5">
+              <h3 className="text-sm font-semibold text-[#1e4d6b] mb-2">Supported IoT Sensors</h3>
+              <p className="text-xs text-gray-600 mb-3">Connect any of these sensors to auto-fill your temperature log. Zero manual entry.</p>
+              <div className="flex flex-wrap gap-2">
+                {iotSensorProviders.filter(p => ['tempstick', 'sensorpush', 'compliancemate', 'cooper_atkins', 'monnit', 'testo'].includes(p.slug)).slice(0, 6).map(p => (
+                  <span key={p.slug} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-gray-200">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        {activeTab === 'iot' && isDemoMode && (() => {
           const locationSensors = locationFilter === 'all'
             ? iotSensors
             : iotSensors.filter(s => s.locationName.toLowerCase().includes(locationFilter.toLowerCase()));

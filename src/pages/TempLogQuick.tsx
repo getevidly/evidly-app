@@ -32,7 +32,7 @@ export function TempLogQuick() {
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const equipment = useMemo(() => DEMO_EQUIPMENT, []);
+  const equipment = useMemo(() => isDemoMode ? DEMO_EQUIPMENT : [], [isDemoMode]);
   const selected = equipment.find(e => e.id === selectedEquipment);
 
   const isInRange = selected && temperature
