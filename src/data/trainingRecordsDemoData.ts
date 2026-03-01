@@ -238,6 +238,56 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
   },
 ];
 
+// ── Training Catalog ────────────────────────────────────────────────────
+
+export interface TrainingCatalogItem {
+  id: string;
+  orgId: string | null;
+  name: string;
+  category: string;
+  description: string;
+  isSystem: boolean;
+  isRequired: boolean;
+  requiredBy: string | null;
+  renewalPeriodMonths: number | null;
+  createdAt: string;
+}
+
+export const TRAINING_CATALOG: TrainingCatalogItem[] = [
+  // ── System items (org-agnostic) ──
+  { id: 'cat-01', orgId: null, name: 'California Food Handler Card', category: 'food_safety', description: 'State-mandated food handler certification per CA SB 476. Required within 30 days of hire.', isSystem: true, isRequired: true, requiredBy: 'California Health & Safety Code §113948', renewalPeriodMonths: 36, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-02', orgId: null, name: 'ServSafe Food Protection Manager', category: 'food_safety', description: 'ANSI-accredited CFPM exam. At least one certified manager required per establishment during operating hours.', isSystem: true, isRequired: true, requiredBy: 'California Health & Safety Code §113947.1', renewalPeriodMonths: 60, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-03', orgId: null, name: 'HACCP Principles Training', category: 'food_safety', description: 'Hazard Analysis and Critical Control Points training. Required for specialized processes (juice, seafood).', isSystem: true, isRequired: false, requiredBy: 'FDA 21 CFR Part 120/123', renewalPeriodMonths: null, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-04', orgId: null, name: 'Allergen Awareness Training', category: 'food_safety', description: 'Big 9 allergens, cross-contact prevention, and customer communication. Becoming mandatory in many jurisdictions.', isSystem: true, isRequired: true, requiredBy: 'FDA Food Code 2-102.11', renewalPeriodMonths: 24, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-05', orgId: null, name: 'Fire Extinguisher Training', category: 'facility_safety', description: 'Annual portable extinguisher use training — types, PASS technique, and inspection procedures.', isSystem: true, isRequired: true, requiredBy: 'OSHA 29 CFR 1910.157 / NFPA 10', renewalPeriodMonths: 12, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-06', orgId: null, name: 'Hood Suppression System Awareness', category: 'facility_safety', description: 'Manual pull station location, activation procedure, and post-activation steps for commercial hood systems.', isSystem: true, isRequired: true, requiredBy: 'NFPA 96', renewalPeriodMonths: 12, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-07', orgId: null, name: 'First Aid / CPR Certification', category: 'workplace_safety', description: 'Basic first aid and CPR/AED. At least one certified person per shift recommended.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: 24, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-08', orgId: null, name: 'Kitchen Facility Safety & Equipment', category: 'facility_safety', description: 'Comprehensive facility safety covering fire systems, NFPA 96 compliance, grease fire response, and evacuation.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: 12, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-09', orgId: null, name: 'Food Handler Essentials (LMS)', category: 'food_safety', description: 'Internal EvidLY LMS course covering hygiene, temps, cross-contamination, cleaning, storage, and allergens.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: 36, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-10', orgId: null, name: 'ServSafe Manager Exam Prep (LMS)', category: 'food_safety', description: 'Internal EvidLY LMS course for CFPM exam preparation.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: 60, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-11', orgId: null, name: 'Compliance Operations (LMS)', category: 'compliance', description: 'Internal EvidLY LMS course on daily checklists, temperature logging, corrective actions, and QR Passport.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: null, createdAt: '2025-01-01T00:00:00Z' },
+  { id: 'cat-12', orgId: null, name: 'New Hire Orientation', category: 'onboarding', description: 'Covers company policies, kitchen layout, emergency contacts, and first-day procedures.', isSystem: true, isRequired: false, requiredBy: null, renewalPeriodMonths: null, createdAt: '2025-01-01T00:00:00Z' },
+  // ── Org-specific items (Pacific Coast demo org) ──
+  { id: 'cat-13', orgId: 'org-demo', name: 'Knife Skills & Safety', category: 'food_safety', description: 'Proper knife handling, sharpening, storage, and cut prevention techniques.', isSystem: false, isRequired: false, requiredBy: null, renewalPeriodMonths: null, createdAt: '2025-09-01T00:00:00Z' },
+  { id: 'cat-14', orgId: 'org-demo', name: 'Grease Trap Maintenance', category: 'facility_safety', description: 'FOG compliance, grease trap cleaning schedule, and recordkeeping for local municipality requirements.', isSystem: false, isRequired: true, requiredBy: 'Local FOG Ordinance', renewalPeriodMonths: 12, createdAt: '2025-10-15T00:00:00Z' },
+];
+
+/** Get catalog items visible to the demo org (system + org-specific). */
+export function getDemoCatalog(): TrainingCatalogItem[] {
+  return TRAINING_CATALOG.filter(c => c.isSystem || c.orgId === 'org-demo');
+}
+
+/** Get catalog categories for filter dropdowns. */
+export function getCatalogCategories(): { value: string; label: string }[] {
+  return [
+    { value: 'food_safety', label: 'Food Safety' },
+    { value: 'facility_safety', label: 'Facility Safety' },
+    { value: 'workplace_safety', label: 'Workplace Safety' },
+    { value: 'compliance', label: 'Compliance' },
+    { value: 'onboarding', label: 'Onboarding' },
+  ];
+}
+
 // ── Helpers ─────────────────────────────────────────────────────────────
 
 /** Days until a cert expires. Negative = already past. null = no expiry. */
