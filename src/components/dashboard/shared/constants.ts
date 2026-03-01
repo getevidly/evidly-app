@@ -68,13 +68,13 @@ export function getFormattedDate(): string {
 
 // ── Per-role demo user names ─────────────────────────────
 export const DEMO_ROLE_NAMES: Record<string, { firstName: string; fullName: string }> = {
-  owner_operator: { firstName: 'James', fullName: 'James Wilson' },
-  executive: { firstName: 'David', fullName: 'David Chen' },
-  compliance_manager: { firstName: 'Sarah', fullName: 'Sarah Kim' },
-  chef: { firstName: 'Maria', fullName: 'Maria Santos' },
-  facilities_manager: { firstName: 'Robert', fullName: 'Robert Okafor' },
-  kitchen_manager: { firstName: 'Carlos', fullName: 'Carlos Rivera' },
-  kitchen_staff: { firstName: 'Miguel', fullName: 'Miguel Torres' },
+  owner_operator: { firstName: 'Maria', fullName: 'Maria Rodriguez' },
+  executive: { firstName: 'James', fullName: 'James Park' },
+  compliance_manager: { firstName: 'Sofia', fullName: 'Sofia Chen' },
+  chef: { firstName: 'Ana', fullName: 'Ana Torres' },
+  facilities_manager: { firstName: 'Michael', fullName: 'Michael Torres' },
+  kitchen_manager: { firstName: 'David', fullName: 'David Kim' },
+  kitchen_staff: { firstName: 'Lisa', fullName: 'Lisa Nguyen' },
 };
 
 // ── Status color helper ──────────────────────────────────

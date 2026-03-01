@@ -38,9 +38,9 @@ const DEMO_DIGEST: DigestData = {
     { item: 'HACCP Monitoring', location: 'University Dining', detail: 'No logs this month' }, // demo
   ],
   actionItems: [
-    { priority: 'high', title: 'Renew University Dining health permit', assignee: 'James Wilson', dueDate: 'Overdue' }, // demo
+    { priority: 'high', title: 'Renew University Dining health permit', assignee: 'Maria Rodriguez', dueDate: 'Overdue' }, // demo
     { priority: 'high', title: 'Schedule fire suppression inspection — Airport Cafe', assignee: 'Maria Lopez', dueDate: 'Feb 10' }, // demo
-    { priority: 'high', title: 'Schedule fire suppression — University Dining', assignee: 'James Wilson', dueDate: 'Overdue' }, // demo
+    { priority: 'high', title: 'Schedule fire suppression — University Dining', assignee: 'Maria Rodriguez', dueDate: 'Overdue' }, // demo
     { priority: 'medium', title: 'Request updated COI from Valley Fire Systems', assignee: 'Maria Lopez', dueDate: 'Feb 14' },
     { priority: 'low', title: 'Review closing checklist completion at Airport Cafe', assignee: 'Sarah Chen', dueDate: 'Feb 16' }, // demo
   ],

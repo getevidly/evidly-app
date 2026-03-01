@@ -217,7 +217,7 @@ export const DEMO_ALERTS: RegulatoryAlert[] = [
     ],
     fullRegulatoryText: 'Assembly Bill 1247 (introduced January 2026): Amends California Health and Safety Code §113948 to require food handler certification renewal every 24 months (currently 36 months). Applies to all food handler cards issued under an accredited program. Proposed effective date: January 1, 2027.',
     sourceUrl: 'https://leginfo.legislature.ca.gov/',
-    reviewedBy: 'James Wilson',
+    reviewedBy: 'Maria Rodriguez',
     reviewedAt: '2026-01-12T09:00:00Z',
   },
   {

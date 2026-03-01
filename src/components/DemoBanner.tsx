@@ -18,7 +18,7 @@ export function DemoBanner() {
       className="w-full flex items-center justify-center gap-2 sm:gap-3 px-4 py-2 text-sm font-medium"
       style={{ backgroundColor: '#C49A2B', color: '#1a1a1a', minHeight: '36px' }}
     >
-      <span className="hidden sm:inline">You're exploring EvidLY in demo mode.</span>
+      <span className="hidden sm:inline">You're viewing sample data to preview the interface. Sign in to access your actual data.</span>
       <span className="sm:hidden text-xs font-semibold">Demo Mode</span>
       <button
         onClick={handleClick}

@@ -44,7 +44,7 @@ const DEMO_EMPLOYEES = [
   { id: '8', name: 'Lisa Wang', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-01-25', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-1105', issued: '2025-01-25', expires: '2028-01-25', status: 'active' },
   ]},
-  { id: '9', name: 'James Wilson', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-02-05', certs: [ // demo
+  { id: '9', name: 'Maria Rodriguez', role: 'Staff', appRole: 'kitchen_staff', locationId: '3', locationName: 'University Dining', hireDate: '2025-02-05', certs: [ // demo
     { type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-2206', issued: '2025-02-05', expires: '2028-02-05', status: 'active' },
   ]},
 ];

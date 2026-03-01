@@ -222,8 +222,8 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
   },
   {
-    id: 'd9', name: 'James Wilson', role: 'Staff', appRole: 'kitchen_staff',
-    email: 'james@pacificcoast.com', locationId: '3', locationName: 'University Dining',
+    id: 'd9', name: 'Maria Rodriguez', role: 'Staff', appRole: 'kitchen_staff',
+    email: 'maria.r@pacificcoast.com', locationId: '3', locationName: 'University Dining',
     hireDate: '2025-02-05', avatarUrl: null,
     certifications: [
       { id: 'tc-15', type: 'food_handler', name: 'California Food Handler Card', number: 'FH-2025-2206', authority: 'ANSI-accredited provider', issued: '2025-02-05', expires: '2028-02-05', documentUrl: null },
@@ -233,7 +233,7 @@ export const TRAINING_EMPLOYEES: TrainingEmployee[] = [
     ],
     trainingHistory: [
       { id: 'th-37', date: '2025-02-10', action: 'Training assigned', details: 'Food Handler Essentials assigned by Marcus Johnson', recordedBy: 'Marcus Johnson' },
-      { id: 'th-38', date: '2025-02-05', action: 'Cert uploaded', details: 'California Food Handler Card uploaded (FH-2025-2206)', recordedBy: 'James Wilson' },
+      { id: 'th-38', date: '2025-02-05', action: 'Cert uploaded', details: 'California Food Handler Card uploaded (FH-2025-2206)', recordedBy: 'Maria Rodriguez' },
     ],
   },
 ];

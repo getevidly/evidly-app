@@ -92,7 +92,7 @@ const schemas: Record<ImportDataType, ImportSchema> = {
       { header: 'Position', field: 'position', required: false, type: 'string' },
     ],
     exampleRows: [
-      ['Maria Santos', 'maria@example.com', 'manager', '(555) 111-2233', '2021-04-10', '2026-04-10', '2026-04-10', 'Kitchen Manager'],
+      ['Ana Torres', 'maria@example.com', 'manager', '(555) 111-2233', '2021-04-10', '2026-04-10', '2026-04-10', 'Kitchen Manager'],
       ['James Park', 'james@example.com', 'staff', '555-444-5566', '2023-09-01', '2025-09-01', '', 'Line Cook'],
     ],
   },
@@ -111,7 +111,7 @@ const schemas: Record<ImportDataType, ImportSchema> = {
       { header: 'Notes', field: 'notes', required: false, type: 'string' },
     ],
     exampleRows: [
-      ['Walk-in Cooler #1', '36.5', '2024-12-01', '08:00 AM', 'Maria Santos', 'Morning check'], // demo
+      ['Walk-in Cooler #1', '36.5', '2024-12-01', '08:00 AM', 'Ana Torres', 'Morning check'], // demo
       ['Walk-in Cooler #1', '37.2', '2024-12-01', '04:00 PM', 'James Park', 'Afternoon check'], // demo
     ],
   },

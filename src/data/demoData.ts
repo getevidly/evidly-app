@@ -19,13 +19,13 @@ export const getGrade = (score: number) => getScoreInfo(score);
 import type { UserRole } from '../contexts/RoleContext';
 
 export const demoUsers: Record<UserRole, { name: string; title: string }> = {
-  owner_operator:     { name: 'James Wilson',   title: 'Owner / Operator' },
-  executive:          { name: 'David Chen',      title: 'Executive' },
-  compliance_manager: { name: 'Sarah Kim',       title: 'Compliance Manager' },
-  chef:               { name: 'Maria Santos',    title: 'Head Chef' },
-  facilities_manager: { name: 'Robert Okafor',   title: 'Facilities Manager' },
-  kitchen_manager:    { name: 'Carlos Rivera',   title: 'Kitchen Manager' },
-  kitchen_staff:      { name: 'Miguel Torres',   title: 'Kitchen Staff' },
+  owner_operator:     { name: 'Maria Rodriguez', title: 'Owner / Operator' },
+  executive:          { name: 'James Park',      title: 'Executive' },
+  compliance_manager: { name: 'Sofia Chen',      title: 'Compliance Officer' },
+  chef:               { name: 'Ana Torres',      title: 'Chef' },
+  facilities_manager: { name: 'Michael Torres',  title: 'Facilities Manager' },
+  kitchen_manager:    { name: 'David Kim',       title: 'Kitchen Manager' },
+  kitchen_staff:      { name: 'Lisa Nguyen',     title: 'Kitchen Staff' },
 };
 
 // --------------- K2C Referral Demo Data ---------------
@@ -90,9 +90,9 @@ export interface Location {
 }
 
 export const locations: Location[] = [
-  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '742 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, actionItems: 2, stateCode: 'CA' },
-  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '5175 E Clinton Way, Fresno, CA 93727', lat: 37.2847, lng: -120.5139, actionItems: 5, stateCode: 'CA' },
-  { id: '3', urlId: 'university', name: 'University Dining', address: '1600 University Ave, Turlock, CA 95382', lat: 37.6393, lng: -120.9969, actionItems: 12, stateCode: 'CA' },
+  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '123 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, actionItems: 2, stateCode: 'CA' },
+  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '4995 E Clinton Way, Fresno, CA 93727', lat: 36.7762, lng: -119.7181, actionItems: 5, stateCode: 'CA' },
+  { id: '3', urlId: 'university', name: 'University Dining', address: '5241 N Maple Ave, Fresno, CA 93740', lat: 36.8125, lng: -119.7532, actionItems: 12, stateCode: 'CA' },
 ];
 
 // ============================================================
@@ -277,9 +277,22 @@ export const vendors: Vendor[] = [
     email: 'john@abcfire.com',
     phone: '(555) 123-4567',
     serviceType: 'Hood Cleaning',
-    lastService: '2026-01-15',
-    nextDue: '2026-04-15',
+    lastService: '2026-01-14',
+    nextDue: '2026-04-14',
     documentsCount: 3,
+    status: 'current',
+    locationId: '1',
+  },
+  {
+    id: '17',
+    companyName: 'ABC Fire Protection',
+    contactName: 'John Smith',
+    email: 'john@abcfire.com',
+    phone: '(555) 123-4567',
+    serviceType: 'Fire Extinguisher',
+    lastService: '2026-01-14',
+    nextDue: '2027-01-14',
+    documentsCount: 2,
     status: 'current',
     locationId: '1',
   },
@@ -290,7 +303,7 @@ export const vendors: Vendor[] = [
     email: 'sarah@pacificpest.com',
     phone: '(555) 234-5678',
     serviceType: 'Pest Control',
-    lastService: '2026-01-28',
+    lastService: '2026-01-27',
     nextDue: '2026-02-28',
     documentsCount: 2,
     status: 'upcoming',
@@ -303,10 +316,10 @@ export const vendors: Vendor[] = [
     email: 'mike@valleyfire.com',
     phone: '(555) 345-6789',
     serviceType: 'Fire Suppression',
-    lastService: '2025-12-10',
-    nextDue: '2026-02-24',
+    lastService: '2025-12-09',
+    nextDue: '2026-06-09',
     documentsCount: 4,
-    status: 'upcoming',
+    status: 'current',
     locationId: '1',
   },
   {
@@ -316,8 +329,8 @@ export const vendors: Vendor[] = [
     email: 'lisa@cleanairhvac.com',
     phone: '(555) 456-7890',
     serviceType: 'HVAC Service',
-    lastService: '2025-11-15',
-    nextDue: '2026-05-15',
+    lastService: '2026-01-03',
+    nextDue: '2026-07-03',
     documentsCount: 5,
     status: 'current',
     locationId: '1',
@@ -329,13 +342,26 @@ export const vendors: Vendor[] = [
     email: 'tom@greasemasters.com',
     phone: '(555) 567-8901',
     serviceType: 'Grease Trap',
-    lastService: '2026-01-05',
-    nextDue: '2026-04-05',
+    lastService: '2026-01-04',
+    nextDue: '2026-04-04',
     documentsCount: 2,
     status: 'current',
     locationId: '1',
   },
-  // Airport Cafe - mixed status (hood cleaning 5 days overdue)
+  {
+    id: '18',
+    companyName: 'FreshAir Mechanical',
+    contactName: 'Ray Cooper',
+    email: 'ray@freshairmech.com',
+    phone: '(555) 901-2345',
+    serviceType: 'Backflow Prevention',
+    lastService: '2025-12-15',
+    nextDue: '2026-12-15',
+    documentsCount: 2,
+    status: 'current',
+    locationId: '1',
+  },
+  // Airport Cafe - mixed status (hood cleaning overdue)
   {
     id: '6',
     companyName: 'ABC Fire Protection',
@@ -356,8 +382,8 @@ export const vendors: Vendor[] = [
     email: 'sarah@pacificpest.com',
     phone: '(555) 234-5678',
     serviceType: 'Pest Control',
-    lastService: '2026-02-01',
-    nextDue: '2026-03-01',
+    lastService: '2026-01-31',
+    nextDue: '2026-02-28',
     documentsCount: 2,
     status: 'upcoming',
     locationId: '2',
@@ -369,8 +395,8 @@ export const vendors: Vendor[] = [
     email: 'mike@valleyfire.com',
     phone: '(555) 345-6789',
     serviceType: 'Fire Suppression',
-    lastService: '2026-01-20',
-    nextDue: '2026-07-20',
+    lastService: '2026-01-19',
+    nextDue: '2026-07-19',
     documentsCount: 4,
     status: 'current',
     locationId: '2',
@@ -448,8 +474,8 @@ export const vendors: Vendor[] = [
     email: 'lisa@cleanairhvac.com',
     phone: '(555) 456-7890',
     serviceType: 'HVAC Service',
-    lastService: '2026-01-04',
-    nextDue: '2026-04-04',
+    lastService: '2026-01-03',
+    nextDue: '2026-07-03',
     documentsCount: 5,
     status: 'current',
     locationId: '3',
@@ -469,16 +495,16 @@ export const vendors: Vendor[] = [
   },
   {
     id: '16',
-    companyName: 'Pacific Elevator Services',
+    companyName: 'SafeLift Elevators',
     contactName: 'Mark Chen',
-    email: 'mark@pacificelevator.com',
+    email: 'mark@safelift.com',
     phone: '(555) 678-9012',
     serviceType: 'Elevator Inspection',
-    lastService: '2025-08-12',
-    nextDue: '2026-08-12',
-    documentsCount: 3,
+    lastService: '',
+    nextDue: '',
+    documentsCount: 0,
     status: 'current',
-    locationId: '2',
+    locationId: '3',
   },
 ];
 
@@ -995,12 +1021,12 @@ export const marketplaceVendors: MarketplaceVendor[] = [
 
 export const marketplaceReviews: MarketplaceReview[] = [
   // SafeGuard Hood Services (preferred, 4.9)
-  { id: 'mr-1', vendorSlug: 'safeguard-hood-services', reviewerName: 'James W.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'SafeGuard is the gold standard for hood cleaning. Their documentation is uploaded before we even get back to the office. Photos, compliance certificates, everything. Made our health inspection a breeze.', serviceType: 'Hood Cleaning', date: '2026-01-15', vendorResponse: 'Thank you James! We take pride in fast documentation turnaround. Looking forward to your next service.' },
+  { id: 'mr-1', vendorSlug: 'safeguard-hood-services', reviewerName: 'Maria R.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'SafeGuard is the gold standard for hood cleaning. Their documentation is uploaded before we even get back to the office. Photos, compliance certificates, everything. Made our health inspection a breeze.', serviceType: 'Hood Cleaning', date: '2026-01-15', vendorResponse: 'Thank you Maria! We take pride in fast documentation turnaround. Looking forward to your next service.' },
   { id: 'mr-2', vendorSlug: 'safeguard-hood-services', reviewerName: 'Linda M.', reviewerOrg: 'Fresno Eats Group', rating: 5, text: 'Switched from our old vendor and the difference is night and day. Bare metal cleaning every time, and they send before/after photos that actually show the work. Worth every penny.', serviceType: 'Hood Cleaning', date: '2025-11-20' },
   { id: 'mr-3', vendorSlug: 'safeguard-hood-services', reviewerName: 'Tom R.', reviewerOrg: 'Valley Restaurant Co', rating: 5, text: 'Best hood cleaning company in the Valley. Always on time, professional crew, and their IKECA certification gives us confidence in the quality.', serviceType: 'Hood Cleaning', date: '2025-09-08' },
   { id: 'mr-4', vendorSlug: 'safeguard-hood-services', reviewerName: 'Kevin P.', reviewerOrg: 'Campus Dining Services', rating: 4, text: 'Great service but scheduling can be tight during their busy season. Quality of work is excellent though.', serviceType: 'Hood Cleaning', date: '2025-07-22' },
   // Pacific Pest Control (preferred, 4.8)
-  { id: 'mr-5', vendorSlug: 'pacific-pest-control', reviewerName: 'Sarah C.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'Maria and her team are amazing. We had a fly problem that two other companies couldn\'t solve. Pacific Pest identified the breeding source in our floor drain and resolved it in one visit.', serviceType: 'Pest Control', date: '2026-01-28', vendorResponse: 'Thanks Sarah! Those drain fly issues can be tricky but our IPM approach helps us find the root cause. Glad we could help!' },
+  { id: 'mr-5', vendorSlug: 'pacific-pest-control', reviewerName: 'Sofia C.', reviewerOrg: 'Pacific Coast Dining', rating: 5, text: 'Maria and her team are amazing. We had a fly problem that two other companies couldn\'t solve. Pacific Pest identified the breeding source in our floor drain and resolved it in one visit.', serviceType: 'Pest Control', date: '2026-01-28', vendorResponse: 'Thanks Sofia! Those drain fly issues can be tricky but our IPM approach helps us find the root cause. Glad we could help!' },
   { id: 'mr-6', vendorSlug: 'pacific-pest-control', reviewerName: 'Mike T.', reviewerOrg: 'Airport Food Services', rating: 5, text: 'Bilingual service team is a huge plus for our kitchen staff. Reports are thorough and always uploaded same day. Never had a pest issue since we switched to Pacific.', serviceType: 'Pest Control', date: '2025-12-05' },
   { id: 'mr-7', vendorSlug: 'pacific-pest-control', reviewerName: 'Karen L.', reviewerOrg: 'University Dining', rating: 4, text: 'Reliable monthly service. They always come on schedule and the digital reports are very detailed. Only wish they had Saturday availability.', serviceType: 'Pest Control', date: '2025-10-18' },
   // ABC Fire Protection (certified, 4.6)
@@ -1161,8 +1187,8 @@ export const vendorDashboardStats = {
 };
 
 export const vendorLeads: VendorLead[] = [
-  { id: 'vl-1', operatorName: 'James Wilson', operatorOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 (2024) compliance cert for upcoming inspection.' },
-  { id: 'vl-2', operatorName: 'Maria Santos', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
+  { id: 'vl-1', operatorName: 'Maria Rodriguez', operatorOrg: 'Pacific Coast Dining', serviceType: 'Hood Cleaning', locationDetails: '1247 Fulton St, Fresno', urgency: 'high', status: 'new', receivedAt: '2026-02-10T08:30:00', description: 'Hood system cleaning for 3 stations. Last cleaned 7 months ago. Need NFPA 96 (2024) compliance cert for upcoming inspection.' },
+  { id: 'vl-2', operatorName: 'Ana Torres', operatorOrg: 'Campus Dining Services', serviceType: 'Fire Extinguisher', locationDetails: '3400 N First St, Fresno', urgency: 'normal', status: 'new', receivedAt: '2026-02-09T14:15:00', description: '12 fire extinguishers due for annual inspection. Mix of ABC and K-class units.' },
   { id: 'vl-3', operatorName: 'Robert Chang', operatorOrg: 'Valley Restaurant Group', serviceType: 'Hood Cleaning', locationDetails: '890 E Shaw Ave, Fresno', urgency: 'normal', status: 'quoted', receivedAt: '2026-02-07T10:00:00', respondedAt: '2026-02-07T13:45:00', quoteAmount: 650, description: 'Quarterly hood cleaning for single-station restaurant. Standard 8ft hood.' },
   { id: 'vl-4', operatorName: 'Susan Park', operatorOrg: 'Clovis Bistro', serviceType: 'Hood Cleaning', locationDetails: '445 Pollasky Ave, Clovis', urgency: 'high', status: 'quoted', receivedAt: '2026-02-05T09:20:00', respondedAt: '2026-02-05T11:00:00', quoteAmount: 875, description: 'Full exhaust system including rooftop unit. Health inspection in 3 weeks.' },
   { id: 'vl-5', operatorName: 'Tom Harris', operatorOrg: 'Airport Food Services', serviceType: 'Fire Extinguisher', locationDetails: 'Regional Airport', urgency: 'low', status: 'accepted', receivedAt: '2026-02-03T11:30:00', respondedAt: '2026-02-03T14:00:00', quoteAmount: 480, scheduledDate: '2026-02-18', description: '8 K-class extinguishers in food court area. Annual service.' },
@@ -1213,9 +1239,9 @@ export const vendorAnalyticsData: VendorAnalyticsSnapshot[] = [
 ];
 
 export const vendorMessages: VendorMessage[] = [
-  { id: 'vm-1', conversationId: 'conv-1', senderType: 'operator', senderName: 'James Wilson', message: 'Hi, we need hood cleaning for 3 stations. Can you accommodate a night shift next week?', timestamp: '2026-02-10T08:30:00', read: true },
-  { id: 'vm-2', conversationId: 'conv-1', senderType: 'vendor', senderName: 'John (ABC Fire)', message: 'Hi James! Yes, we can do Tuesday or Wednesday night next week. I\'ll send a quote shortly.', timestamp: '2026-02-10T09:15:00', read: true },
-  { id: 'vm-3', conversationId: 'conv-1', senderType: 'operator', senderName: 'James Wilson', message: 'Wednesday works better for us. We close at 10pm. Key code for back entrance is 4521.', timestamp: '2026-02-10T09:45:00', read: false },
+  { id: 'vm-1', conversationId: 'conv-1', senderType: 'operator', senderName: 'Maria Rodriguez', message: 'Hi, we need hood cleaning for 3 stations. Can you accommodate a night shift next week?', timestamp: '2026-02-10T08:30:00', read: true },
+  { id: 'vm-2', conversationId: 'conv-1', senderType: 'vendor', senderName: 'John (ABC Fire)', message: 'Hi Maria! Yes, we can do Tuesday or Wednesday night next week. I\'ll send a quote shortly.', timestamp: '2026-02-10T09:15:00', read: true },
+  { id: 'vm-3', conversationId: 'conv-1', senderType: 'operator', senderName: 'Maria Rodriguez', message: 'Wednesday works better for us. We close at 10pm. Key code for back entrance is 4521.', timestamp: '2026-02-10T09:45:00', read: false },
   { id: 'vm-4', conversationId: 'conv-2', senderType: 'operator', senderName: 'Lisa Chen', message: 'Confirming our Feb 14 appointment. Can your crew arrive by 10pm? We close early on Fridays.', timestamp: '2026-02-08T16:00:00', read: true },
   { id: 'vm-5', conversationId: 'conv-2', senderType: 'vendor', senderName: 'John (ABC Fire)', message: 'Confirmed! We\'ll have a 3-person crew there by 10pm sharp. Should take about 4 hours for both hoods.', timestamp: '2026-02-08T16:30:00', read: true },
   { id: 'vm-6', conversationId: 'conv-2', senderType: 'system', senderName: 'EvidLY', message: 'Service appointment confirmed for Feb 14, 2026 at 10:00 PM. Both parties will receive a reminder 24 hours before.', timestamp: '2026-02-08T16:31:00', read: true },
@@ -1584,7 +1610,7 @@ export const enterpriseHierarchy: EnterpriseHierarchyNode = {
 export const enterpriseUsers: EnterpriseUser[] = [
   { id: 'eu-1', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Jennifer Martinez', email: 'j.martinez@pacificcoastdining.com', role: 'Corporate Admin', location: 'Corporate HQ', ssoStatus: 'active', lastLogin: '2026-02-10T08:15:00Z', scimManaged: true, externalId: 'ARM-10042', groups: ['Compliance_Admins', 'Corporate_Leadership'] },
   { id: 'eu-2', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Robert Chen', email: 'r.chen@pacificcoastdining.com', role: 'Regional Manager', location: 'Western Region', ssoStatus: 'active', lastLogin: '2026-02-10T07:30:00Z', scimManaged: true, externalId: 'ARM-20156', groups: ['Regional_Managers', 'Sports_Leisure'] },
-  { id: 'eu-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Maria Santos', email: 'm.santos@pacificcoastdining.com', role: 'District Supervisor', location: 'Coastal District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
+  { id: 'eu-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Ana Torres', email: 'a.torres@pacificcoastdining.com', role: 'District Supervisor', location: 'Coastal District', ssoStatus: 'active', lastLogin: '2026-02-09T16:45:00Z', scimManaged: true, externalId: 'ARM-30289', groups: ['District_Managers', 'Sports_Leisure'] },
   { id: 'eu-4', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'David Kim', email: 'd.kim@pacificcoastdining.com', role: 'Site Manager', location: 'Oceanview Lodge', ssoStatus: 'active', lastLogin: '2026-02-10T06:00:00Z', scimManaged: true, externalId: 'ARM-40512', groups: ['Site_Managers'] },
   { id: 'eu-5', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Sarah Thompson', email: 's.thompson@pacificcoastdining.com', role: 'Site Manager', location: 'The Bayshore', ssoStatus: 'active', lastLogin: '2026-02-09T22:10:00Z', scimManaged: true, externalId: 'ARM-40513', groups: ['Site_Managers'] },
   { id: 'eu-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', name: 'Kevin Patel', email: 'k.patel@pacificcoastdining.com', role: 'Inspector', location: 'Western Region', ssoStatus: 'pending', lastLogin: '', scimManaged: true, externalId: 'ARM-50071', groups: ['Quality_Inspectors'] },
@@ -1784,7 +1810,7 @@ export const enterpriseBulkOps: EnterpriseBulkOp[] = [
   { id: 'ebo-3', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'vendor_assign', status: 'running', totalItems: 224, processedItems: 156, failedItems: 2, initiatedBy: 'Robert Chen', startedAt: '2026-02-10T08:30:00Z', description: 'Assign Cleaning Pros Plus as preferred vendor — Western Region' },
   { id: 'ebo-4', tenantId: 'ent-compass', tenantName: 'Compass Group', type: 'user_provision', status: 'completed', totalItems: 89, processedItems: 89, failedItems: 0, initiatedBy: 'Emma Williams', startedAt: '2026-02-09T11:00:00Z', description: 'SCIM bulk provision — new Chartwells employees' },
   { id: 'ebo-5', tenantId: 'ent-sodexo', tenantName: 'Sodexo', type: 'location_import', status: 'running', totalItems: 623, processedItems: 511, failedItems: 4, initiatedBy: 'Pierre Dubois', startedAt: '2026-02-10T07:00:00Z', description: 'Pilot location data import — all Sodexo sites' },
-  { id: 'ebo-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Maria Santos', startedAt: '', description: 'Schedule fire suppression inspections — Coastal District' },
+  { id: 'ebo-6', tenantId: 'ent-pcdining', tenantName: 'Pacific Coast Dining', type: 'compliance_action', status: 'pending', totalItems: 42, processedItems: 0, failedItems: 0, initiatedBy: 'Ana Torres', startedAt: '', description: 'Schedule fire suppression inspections — Coastal District' },
 ];
 
 export interface EnterprisePricingTier {
@@ -2047,7 +2073,7 @@ export const iotSensorAlerts: IoTSensorAlert[] = [
   { id: 'iot-a05', sensorId: 'iot-s15', sensorName: 'Grill Station Probe', locationName: 'University Campus', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 34, message: 'Battery at 34% — schedule replacement within next 2 weeks', createdAt: '2026-02-10T12:45:00Z', acknowledged: true, acknowledgedBy: 'Maria Chen' },
   { id: 'iot-a06', sensorId: 'iot-s02', sensorName: 'Walk-in Freezer', locationName: 'Downtown Kitchen', alertType: 'low_temp', severity: 'info', thresholdValue: -10, actualValue: -2.1, message: 'Freezer temperature nominal — firmware update v2.5.0 available', createdAt: '2026-02-10T10:00:00Z', acknowledged: true, acknowledgedBy: 'System' },
   { id: 'iot-a07', sensorId: 'iot-s04', sensorName: 'Hot Hold Station', locationName: 'Downtown Kitchen', alertType: 'battery_low', severity: 'info', thresholdValue: 20, actualValue: 65, message: 'Scheduled calibration due Feb 15 — last calibrated Nov 12, 2025', createdAt: '2026-02-10T08:00:00Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a08', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 43, message: 'Battery below 50% on critical equipment sensor — plan replacement', createdAt: '2026-02-10T09:00:00Z', acknowledged: true, acknowledgedBy: 'James Wilson' },
+  { id: 'iot-a08', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 43, message: 'Battery below 50% on critical equipment sensor — plan replacement', createdAt: '2026-02-10T09:00:00Z', acknowledged: true, acknowledgedBy: 'Maria Rodriguez' },
 ];
 
 export const iotSensorConfigs: IoTSensorConfig[] = [
@@ -2075,9 +2101,9 @@ export const iotMaintenanceLog: IoTMaintenanceEntry[] = [
   { id: 'im-02', sensorId: 'iot-s01', type: 'firmware_update', description: 'Updated firmware from v2.3.1 to v2.4.0 — improved BLE stability', performedBy: 'System', date: '2025-12-05' },
   { id: 'im-03', sensorId: 'iot-s01', type: 'battery_replacement', description: 'Replaced CR2477 coin cell battery — old battery at 12%', performedBy: 'Maria Chen', date: '2025-10-20' },
   { id: 'im-04', sensorId: 'iot-s02', type: 'calibration', description: 'Annual calibration — passed within ±0.3°F at -10°F reference', performedBy: 'TechCal Services', date: '2025-11-12' },
-  { id: 'im-05', sensorId: 'iot-s02', type: 'relocation', description: 'Moved from upper shelf to center rack for better airflow reading', performedBy: 'James Wilson', date: '2026-01-08' },
+  { id: 'im-05', sensorId: 'iot-s02', type: 'relocation', description: 'Moved from upper shelf to center rack for better airflow reading', performedBy: 'Maria Rodriguez', date: '2026-01-08' },
   { id: 'im-06', sensorId: 'iot-s04', type: 'battery_replacement', description: 'Replaced AA batteries — device showed low battery warning', performedBy: 'Maria Chen', date: '2026-01-15' },
-  { id: 'im-07', sensorId: 'iot-s04', type: 'note', description: 'Bluetooth range intermittent near walk-in door — repositioned 2 feet left', performedBy: 'James Wilson', date: '2026-02-01' },
+  { id: 'im-07', sensorId: 'iot-s04', type: 'note', description: 'Bluetooth range intermittent near walk-in door — repositioned 2 feet left', performedBy: 'Maria Rodriguez', date: '2026-02-01' },
   { id: 'im-08', sensorId: 'iot-s07', type: 'calibration', description: 'Quarterly spot-check calibration — within ±0.5°F tolerance', performedBy: 'Airport Maintenance', date: '2025-12-18' },
   { id: 'im-09', sensorId: 'iot-s07', type: 'note', description: 'Cooler door seal appears worn — temperature drift noted. Reported to facilities.', performedBy: 'Sarah Lee', date: '2026-02-09' },
   { id: 'im-10', sensorId: 'iot-s08', type: 'firmware_update', description: 'Updated to v2.4.0 — new features: configurable push interval, improved WiFi reconnect', performedBy: 'System', date: '2026-01-20' },
@@ -2299,7 +2325,7 @@ export interface ConnectedIntegration {
 export const connectedIntegrations: ConnectedIntegration[] = [
   { id: 'ci-1', platform: 'restaurant365', platformDisplayName: 'Restaurant365', status: 'connected', authType: 'oauth2', platformAccountId: 'r365-acct-8291', platformAccountName: 'EvidLY Demo Org', scopes: ['employees:read', 'locations:read', 'invoices:write'], syncConfig: { entities: ['employees', 'locations', 'vendors'], direction: 'bidirectional', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:00:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-11-15T10:00:00Z', disconnectedAt: null, employeesSynced: 47, locationsSynced: 3, vendorsSynced: 12, documentsSynced: 0 },
   { id: 'ci-2', platform: 'quickbooks', platformDisplayName: 'QuickBooks Online', status: 'connected', authType: 'oauth2', platformAccountId: 'qbo-realm-4829371', platformAccountName: 'EvidLY Foods Inc', scopes: ['com.intuit.quickbooks.accounting'], syncConfig: { entities: ['vendors', 'invoices', 'documents'], direction: 'bidirectional', frequencyMin: 360 }, lastSyncAt: '2026-02-10T13:30:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T19:30:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-12-01T09:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 18, documentsSynced: 24 },
-  { id: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', status: 'connected', authType: 'oauth2', platformAccountId: 'toast-guid-a1b2c3', platformAccountName: 'EvidLY Demo', scopes: ['employees:read', 'locations:read', 'webhooks'], syncConfig: { entities: ['employees', 'locations'], direction: 'inbound', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:55:00Z', connectedBy: 'James Wilson', connectedAt: '2026-01-10T14:00:00Z', disconnectedAt: null, employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
+  { id: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', status: 'connected', authType: 'oauth2', platformAccountId: 'toast-guid-a1b2c3', platformAccountName: 'EvidLY Demo', scopes: ['employees:read', 'locations:read', 'webhooks'], syncConfig: { entities: ['employees', 'locations'], direction: 'inbound', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:55:00Z', connectedBy: 'Maria Rodriguez', connectedAt: '2026-01-10T14:00:00Z', disconnectedAt: null, employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', status: 'connected', authType: 'certificate', platformAccountId: 'adp-org-7812', platformAccountName: 'EvidLY Foods', scopes: ['workers:read', 'events:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', lastError: '2 employees missing location assignment in ADP', errorCount: 1, nextSyncAt: '2026-02-11T03:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2026-01-20T11:00:00Z', disconnectedAt: null, employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-5', platform: 'google', platformDisplayName: 'Google Workspace', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: 'evidly-demo@evidly.com', scopes: ['drive.file', 'calendar.events', 'gmail.send'], syncConfig: { entities: ['documents'], direction: 'outbound', frequencyMin: 60 }, lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T15:58:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-10-05T08:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38 },
   { id: 'ci-6', platform: 'toast', platformDisplayName: 'Toast', status: 'error', authType: 'oauth2', platformAccountId: 'toast-guid-d4e5f6', platformAccountName: 'Airport Location', scopes: ['employees:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', lastError: 'OAuth token refresh failed — re-authorize required', errorCount: 3, nextSyncAt: '2026-02-10T16:00:00Z', connectedBy: 'Sarah Lee', connectedAt: '2026-02-01T16:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
@@ -2491,7 +2517,7 @@ export interface TrainingEnrollment {
 export const trainingEnrollments: TrainingEnrollment[] = [
   // Food Handler — Downtown
   { id: 'te-01', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-02T09:00:00Z', completedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 88 },
-  { id: 'te-02', employeeId: 'emp-02', employeeName: 'James Wilson', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-03T10:00:00Z', completedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 82 },
+  { id: 'te-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-03T10:00:00Z', completedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 82 },
   { id: 'te-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', courseId: 'tc-05', courseTitle: 'Tarjeta de Manipulador de Alimentos de California', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-20T00:00:00Z', startedAt: '2026-01-22T08:00:00Z', completedAt: null, expiresAt: '2026-02-20T00:00:00Z', progressPercent: 62, currentModuleId: 'tm-05', currentLessonId: null, scorePercent: null },
   { id: 'te-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'not_started', enrolledAt: '2026-02-05T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-03-07T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
   // CFPM Prep — Downtown manager
@@ -2527,7 +2553,7 @@ export interface TrainingCertificate {
 
 export const trainingCertificates: TrainingCertificate[] = [
   { id: 'tcert-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00142', issuedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', scorePercent: 88 },
-  { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'James Wilson', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
+  { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
   { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', certificateType: 'facility_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
   { id: 'tcert-04', employeeId: 'emp-07', employeeName: 'Alex Johnson', enrollmentId: 'te-08', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'University Campus', certificateType: 'custom', certificateNumber: 'EVD-CO-2025-00201', issuedAt: '2025-10-16T10:00:00Z', expiresAt: null, scorePercent: 95 },
   { id: 'tcert-05', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-11', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'custom', certificateNumber: 'EVD-CU-2026-00015', issuedAt: '2026-02-05T10:00:00Z', expiresAt: null, scorePercent: 90 },
@@ -2554,7 +2580,7 @@ export interface TrainingSB476Entry {
 
 export const trainingSB476Log: TrainingSB476Entry[] = [
   { id: 'sb-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.5, hourlyRateCents: 2200, totalCompensationCents: 5500, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-15', trainingCompletedDate: '2025-09-05' },
-  { id: 'sb-02', employeeId: 'emp-02', employeeName: 'James Wilson', enrollmentId: 'te-02', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.8, hourlyRateCents: 1800, totalCompensationCents: 5040, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-20', trainingCompletedDate: '2025-09-06' },
+  { id: 'sb-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.8, hourlyRateCents: 1800, totalCompensationCents: 5040, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-20', trainingCompletedDate: '2025-09-06' },
   { id: 'sb-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', enrollmentId: 'te-03', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1900, totalCompensationCents: 0, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: false, hireDate: '2026-01-10', trainingCompletedDate: null },
   { id: 'sb-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-04', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1700, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-02-03', trainingCompletedDate: null },
   { id: 'sb-05', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', locationId: 'loc-airport', locationName: 'Airport Terminal', trainingCostCents: 1500, compensableHours: 2.6, hourlyRateCents: 2000, totalCompensationCents: 5200, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-09-15', trainingCompletedDate: '2025-10-05' },
@@ -2581,8 +2607,8 @@ export const trainingQuizAttempts: TrainingQuizAttempt[] = [
   { id: 'tqa-01', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: 'tm-01', moduleTitle: 'Personal Hygiene & Handwashing', courseId: null, attemptNumber: 1, scorePercent: 90, passed: true, questionsTotal: 10, questionsCorrect: 9, timeSpentSeconds: 420, completedAt: '2025-09-02T10:15:00Z' },
   { id: 'tqa-02', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 1, scorePercent: 80, passed: true, questionsTotal: 10, questionsCorrect: 8, timeSpentSeconds: 540, completedAt: '2025-09-03T09:30:00Z' },
   { id: 'tqa-03', enrollmentId: 'te-01', employeeName: 'Maria Chen', moduleId: null, moduleTitle: null, courseId: 'tc-01', attemptNumber: 1, scorePercent: 88, passed: true, questionsTotal: 40, questionsCorrect: 35, timeSpentSeconds: 2100, completedAt: '2025-09-05T14:30:00Z' },
-  { id: 'tqa-04', enrollmentId: 'te-02', employeeName: 'James Wilson', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 1, scorePercent: 60, passed: false, questionsTotal: 10, questionsCorrect: 6, timeSpentSeconds: 380, completedAt: '2025-09-04T10:00:00Z' },
-  { id: 'tqa-05', enrollmentId: 'te-02', employeeName: 'James Wilson', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 2, scorePercent: 80, passed: true, questionsTotal: 10, questionsCorrect: 8, timeSpentSeconds: 450, completedAt: '2025-09-04T14:00:00Z' },
+  { id: 'tqa-04', enrollmentId: 'te-02', employeeName: 'Maria Rodriguez', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 1, scorePercent: 60, passed: false, questionsTotal: 10, questionsCorrect: 6, timeSpentSeconds: 380, completedAt: '2025-09-04T10:00:00Z' },
+  { id: 'tqa-05', enrollmentId: 'te-02', employeeName: 'Maria Rodriguez', moduleId: 'tm-02', moduleTitle: 'Time & Temperature Control', courseId: null, attemptNumber: 2, scorePercent: 80, passed: true, questionsTotal: 10, questionsCorrect: 8, timeSpentSeconds: 450, completedAt: '2025-09-04T14:00:00Z' },
   { id: 'tqa-06', enrollmentId: 'te-06', employeeName: 'Sarah Lee', moduleId: null, moduleTitle: null, courseId: 'tc-03', attemptNumber: 1, scorePercent: 92, passed: true, questionsTotal: 30, questionsCorrect: 28, timeSpentSeconds: 1800, completedAt: '2025-12-05T15:00:00Z' },
   { id: 'tqa-07', enrollmentId: 'te-09', employeeName: 'Priya Patel', moduleId: 'tm-06', moduleTitle: 'Foodborne Illness Prevention', courseId: null, attemptNumber: 1, scorePercent: 70, passed: true, questionsTotal: 10, questionsCorrect: 7, timeSpentSeconds: 510, completedAt: '2026-02-07T11:00:00Z' },
 ];
@@ -3271,7 +3297,7 @@ export const demoCustomPlaybooks: CustomPlaybookDraft[] = [
     severity: 'critical',
     icon: 'AlertTriangle',
     color: '#dc2626',
-    createdBy: 'James Wilson',
+    createdBy: 'Maria Rodriguez',
     createdAt: '2026-01-15T10:00:00Z',
     status: 'published',
     assignedLocations: ['Downtown Kitchen', 'Airport Terminal', 'University Campus'],
@@ -3307,14 +3333,14 @@ export const demoCustomPlaybooks: CustomPlaybookDraft[] = [
 // ── Demo Food Disposition (Power Outage aip-001) ──────────────
 
 export const demoFoodDisposition: FoodDispositionEntry[] = [
-  { id: 'fd-1', foodName: 'Chicken Breast (raw)', category: 'meat', quantity: 24, unit: 'lbs', costPerUnit: 4.50, currentTemp: 48, timeInDangerZone: 45, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 90 * 60000).toISOString(), notes: 'Above 41°F for >45 min. FDA requires discard.' },
-  { id: 'fd-2', foodName: 'Ground Beef (raw)', category: 'meat', quantity: 15, unit: 'lbs', costPerUnit: 5.25, currentTemp: 46, timeInDangerZone: 45, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 89 * 60000).toISOString(), notes: 'Above 41°F. Discard per protocol.' },
-  { id: 'fd-3', foodName: 'Shrimp (raw, peeled)', category: 'seafood', quantity: 10, unit: 'lbs', costPerUnit: 12.00, currentTemp: 47, timeInDangerZone: 40, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 88 * 60000).toISOString(), notes: 'Seafood TCS — high risk. Discard.' },
-  { id: 'fd-4', foodName: 'Whole Milk (gallons)', category: 'dairy', quantity: 6, unit: 'gallons', costPerUnit: 4.00, currentTemp: 44, timeInDangerZone: 30, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 87 * 60000).toISOString(), notes: 'Dairy above 41°F for 30 min.' },
-  { id: 'fd-5', foodName: 'Prep Salads (mixed)', category: 'prepared', quantity: 8, unit: 'trays', costPerUnit: 15.00, currentTemp: 50, timeInDangerZone: 60, decision: 'discard', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 86 * 60000).toISOString(), notes: 'Pre-prepared TCS food — well above safe temp.' },
-  { id: 'fd-6', foodName: 'Butter (sticks)', category: 'dairy', quantity: 20, unit: 'lbs', costPerUnit: 3.50, currentTemp: 55, timeInDangerZone: 60, decision: 'keep', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 85 * 60000).toISOString(), notes: 'Butter is not TCS — safe to keep at room temp.' },
-  { id: 'fd-7', foodName: 'Frozen Fries (cases)', category: 'frozen', quantity: 4, unit: 'each', costPerUnit: 22.00, currentTemp: 18, timeInDangerZone: 0, decision: 'refreeze', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 84 * 60000).toISOString(), notes: 'Still solidly frozen at 18°F. Safe to refreeze when power returns.' },
-  { id: 'fd-8', foodName: 'Chicken Stock (house-made)', category: 'prepared', quantity: 3, unit: 'gallons', costPerUnit: 8.00, currentTemp: 52, timeInDangerZone: 50, decision: 'cook_now', decisionBy: 'James Wilson', decisionAt: new Date(Date.now() - 83 * 60000).toISOString(), notes: 'Can be rapidly brought to boil on gas stove (gas still working) within 15 min.' },
+  { id: 'fd-1', foodName: 'Chicken Breast (raw)', category: 'meat', quantity: 24, unit: 'lbs', costPerUnit: 4.50, currentTemp: 48, timeInDangerZone: 45, decision: 'discard', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 90 * 60000).toISOString(), notes: 'Above 41°F for >45 min. FDA requires discard.' },
+  { id: 'fd-2', foodName: 'Ground Beef (raw)', category: 'meat', quantity: 15, unit: 'lbs', costPerUnit: 5.25, currentTemp: 46, timeInDangerZone: 45, decision: 'discard', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 89 * 60000).toISOString(), notes: 'Above 41°F. Discard per protocol.' },
+  { id: 'fd-3', foodName: 'Shrimp (raw, peeled)', category: 'seafood', quantity: 10, unit: 'lbs', costPerUnit: 12.00, currentTemp: 47, timeInDangerZone: 40, decision: 'discard', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 88 * 60000).toISOString(), notes: 'Seafood TCS — high risk. Discard.' },
+  { id: 'fd-4', foodName: 'Whole Milk (gallons)', category: 'dairy', quantity: 6, unit: 'gallons', costPerUnit: 4.00, currentTemp: 44, timeInDangerZone: 30, decision: 'discard', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 87 * 60000).toISOString(), notes: 'Dairy above 41°F for 30 min.' },
+  { id: 'fd-5', foodName: 'Prep Salads (mixed)', category: 'prepared', quantity: 8, unit: 'trays', costPerUnit: 15.00, currentTemp: 50, timeInDangerZone: 60, decision: 'discard', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 86 * 60000).toISOString(), notes: 'Pre-prepared TCS food — well above safe temp.' },
+  { id: 'fd-6', foodName: 'Butter (sticks)', category: 'dairy', quantity: 20, unit: 'lbs', costPerUnit: 3.50, currentTemp: 55, timeInDangerZone: 60, decision: 'keep', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 85 * 60000).toISOString(), notes: 'Butter is not TCS — safe to keep at room temp.' },
+  { id: 'fd-7', foodName: 'Frozen Fries (cases)', category: 'frozen', quantity: 4, unit: 'each', costPerUnit: 22.00, currentTemp: 18, timeInDangerZone: 0, decision: 'refreeze', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 84 * 60000).toISOString(), notes: 'Still solidly frozen at 18°F. Safe to refreeze when power returns.' },
+  { id: 'fd-8', foodName: 'Chicken Stock (house-made)', category: 'prepared', quantity: 3, unit: 'gallons', costPerUnit: 8.00, currentTemp: 52, timeInDangerZone: 50, decision: 'cook_now', decisionBy: 'Maria Rodriguez', decisionAt: new Date(Date.now() - 83 * 60000).toISOString(), notes: 'Can be rapidly brought to boil on gas stove (gas still working) within 15 min.' },
 ];
 
 // ── Demo Vendor Contacts ──────────────────────────────────────
@@ -3337,7 +3363,7 @@ export const demoInsuranceClaim: PlaybookInsuranceClaim = {
   itemCount: 6,
   status: 'filed',
   filedAt: new Date(Date.now() - 60 * 60000).toISOString(),
-  filedBy: 'James Wilson',
+  filedBy: 'Maria Rodriguez',
   notes: 'Power outage food loss. 6 items discarded, 1 cooked immediately, 1 refrozen. Total discarded value: $523.00. Exceeds $500 deductible.',
 };
 

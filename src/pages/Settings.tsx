@@ -25,10 +25,10 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: string }> = {
-  executive: { name: 'James Wilson', role: 'Executive', email: 'james.wilson@pacificcoastdining.com' },
-  owner_operator: { name: 'Sarah Chen', role: 'Management', email: 'sarah.chen@pacificcoastdining.com' },
+  executive: { name: 'James Park', role: 'Executive', email: 'james.park@pacificcoastdining.com' },
+  owner_operator: { name: 'Maria Rodriguez', role: 'Management', email: 'maria.rodriguez@pacificcoastdining.com' },
   kitchen_staff: { name: 'Marcus Johnson', role: 'Kitchen Staff', email: 'marcus.johnson@pacificcoastdining.com' },
-  facilities_manager: { name: 'Mike Thompson', role: 'Facilities', email: 'mike.thompson@pacificcoastdining.com' },
+  facilities_manager: { name: 'Michael Torres', role: 'Facilities', email: 'michael.torres@pacificcoastdining.com' },
 };
 
 export function Settings() {

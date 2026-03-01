@@ -1232,7 +1232,7 @@ function ComplianceOverviewTab() {
     { id: '6', name: 'Emma Rodriguez', role: 'kitchen_staff', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'allergen_awareness'] }, // demo
     { id: '7', name: 'Alex Thompson', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
     { id: '8', name: 'Lisa Wang', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
-    { id: '9', name: 'James Wilson', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
+    { id: '9', name: 'Maria Rodriguez', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
   ];
 
   const requiredReqs = certificationRequirements.filter(r => r.required);

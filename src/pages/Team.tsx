@@ -146,7 +146,7 @@ const DEMO_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    id: 'd9', full_name: 'James Wilson', email: 'james@pacificcoast.com', phone: null,
+    id: 'd9', full_name: 'Maria Rodriguez', email: 'maria.r@pacificcoast.com', phone: null,
     role: 'staff', avatar_url: null, created_at: '2025-02-01T08:00:00Z', last_active: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     location: 'University Dining', training_completed: 3, training_total: 8, temp_logs_completed: 18, checklists_completed: 12, compliance_score: 65, // demo
     certifications: [

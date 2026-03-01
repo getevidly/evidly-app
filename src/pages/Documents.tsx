@@ -73,7 +73,7 @@ const SAMPLE_DOCUMENTS: Document[] = [
 
   // === Training ===
   { id: '18', title: 'Food Handler Certificate - Emma Davis', category: 'Training', expiration_date: d(410), created_at: d(-150), status: 'active', location: 'Downtown Kitchen' }, // demo
-  { id: '19', title: 'Food Handler Certificate - James Wilson', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Cafe' }, // demo
+  { id: '19', title: 'Food Handler Certificate - Maria Rodriguez', category: 'Training', expiration_date: d(25), created_at: d(-340), status: 'active', location: 'Airport Cafe' }, // demo
   { id: '20', title: 'Food Handler Certificate - Maria Garcia', category: 'Training', expiration_date: d(-10), created_at: d(-380), status: 'active', location: 'University Dining' }, // demo
   { id: '21', title: 'Food Handler Certificate - Tom Nguyen', category: 'Training', expiration_date: d(260), created_at: d(-100), status: 'active', location: 'Downtown Kitchen' }, // demo
   { id: '22', title: 'Allergen Awareness Training - All Staff', category: 'Training', expiration_date: d(180), created_at: d(-60), status: 'active', location: 'All Locations' },

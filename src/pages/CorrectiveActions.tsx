@@ -48,49 +48,49 @@ const DEMO_ACTIONS: CorrectiveActionItem[] = [
     id: 'ca-1', title: 'Walk-in cooler temperature excursion',
     description: 'Walk-in cooler recorded 44.8°F — exceeds 41°F limit. Door was found ajar. Recheck required within 30 minutes.',
     location: 'Airport Cafe', locationId: 'airport', severity: 'critical', status: 'in_progress', // demo
-    source: 'Temperature Log', assignee: 'Carlos Rivera', createdAt: daysAgo(1), dueDate: daysFromNow(0), resolvedAt: null,
+    source: 'Temperature Log', assignee: 'David Kim', createdAt: daysAgo(1), dueDate: daysFromNow(0), resolvedAt: null,
   },
   {
     id: 'ca-2', title: 'Missing hood suppression inspection certificate',
     description: 'Annual hood suppression system inspection certificate expired. Schedule re-inspection with certified vendor.',
     location: 'University Hub', locationId: 'university', severity: 'high', status: 'open',
-    source: 'Facility Safety Audit', assignee: 'Robert Okafor', createdAt: daysAgo(5), dueDate: daysFromNow(2), resolvedAt: null,
+    source: 'Facility Safety Audit', assignee: 'Michael Torres', createdAt: daysAgo(5), dueDate: daysFromNow(2), resolvedAt: null,
   },
   {
     id: 'ca-3', title: 'Handwashing station soap dispenser empty',
     description: 'Prep area handwashing station found without soap during morning inspection. Restocked and verified.',
     location: 'Downtown Kitchen', locationId: 'downtown', severity: 'medium', status: 'resolved', // demo
-    source: 'Self-Inspection', assignee: 'Miguel Torres', createdAt: daysAgo(3), dueDate: daysAgo(1), resolvedAt: daysAgo(2),
+    source: 'Self-Inspection', assignee: 'Lisa Nguyen', createdAt: daysAgo(3), dueDate: daysAgo(1), resolvedAt: daysAgo(2),
   },
   {
     id: 'ca-4', title: 'Hot holding unit below minimum temperature',
     description: 'Hot holding unit recorded 131°F — below 135°F minimum. Food reheated to 165°F and returned to holding.',
     location: 'Downtown Kitchen', locationId: 'downtown', severity: 'high', status: 'verified', // demo
-    source: 'Temperature Log', assignee: 'Maria Santos', createdAt: daysAgo(4), dueDate: daysAgo(2), resolvedAt: daysAgo(3),
+    source: 'Temperature Log', assignee: 'Ana Torres', createdAt: daysAgo(4), dueDate: daysAgo(2), resolvedAt: daysAgo(3),
   },
   {
     id: 'ca-5', title: 'Pest control service overdue',
     description: 'Monthly pest control service is 10 days overdue. Contact vendor to reschedule immediately.',
     location: 'Airport Cafe', locationId: 'airport', severity: 'medium', status: 'open', // demo
-    source: 'Vendor Tracking', assignee: 'Robert Okafor', createdAt: daysAgo(10), dueDate: daysAgo(3), resolvedAt: null,
+    source: 'Vendor Tracking', assignee: 'Michael Torres', createdAt: daysAgo(10), dueDate: daysAgo(3), resolvedAt: null,
   },
   {
     id: 'ca-6', title: 'Employee food handler card expiring',
     description: 'Food handler certification for two staff members expires within 14 days. Schedule renewal.',
     location: 'University Hub', locationId: 'university', severity: 'low', status: 'in_progress',
-    source: 'Regulatory Tracking', assignee: 'Sarah Kim', createdAt: daysAgo(7), dueDate: daysFromNow(7), resolvedAt: null,
+    source: 'Regulatory Tracking', assignee: 'Sofia Chen', createdAt: daysAgo(7), dueDate: daysFromNow(7), resolvedAt: null,
   },
   {
     id: 'ca-7', title: 'Cutting board cross-contamination risk',
     description: 'Color-coded cutting boards not separated by protein type during prep. Staff retrained on SOP.',
     location: 'Downtown Kitchen', locationId: 'downtown', severity: 'high', status: 'resolved', // demo
-    source: 'HACCP Monitoring', assignee: 'Carlos Rivera', createdAt: daysAgo(6), dueDate: daysAgo(4), resolvedAt: daysAgo(5),
+    source: 'HACCP Monitoring', assignee: 'David Kim', createdAt: daysAgo(6), dueDate: daysAgo(4), resolvedAt: daysAgo(5),
   },
   {
     id: 'ca-8', title: 'Receiving log missing for Thursday delivery',
     description: 'Produce delivery on Thursday was not logged in the receiving log. Vendor invoice used to backfill record.',
     location: 'Airport Cafe', locationId: 'airport', severity: 'medium', status: 'verified', // demo
-    source: 'Audit Trail Review', assignee: 'Miguel Torres', createdAt: daysAgo(8), dueDate: daysAgo(5), resolvedAt: daysAgo(6),
+    source: 'Audit Trail Review', assignee: 'Lisa Nguyen', createdAt: daysAgo(8), dueDate: daysAgo(5), resolvedAt: daysAgo(6),
   },
 ];
 

@@ -60,13 +60,13 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
 
   const demoRoleNames: Record<string, string> = {
     platform_admin: 'Arthur Samuels',
-    owner_operator: 'James Wilson',
-    executive: 'David Chen',
-    compliance_manager: 'Sarah Kim',
-    chef: 'Maria Santos',
-    facilities_manager: 'Robert Okafor',
-    kitchen_manager: 'Carlos Rivera',
-    kitchen_staff: 'Miguel Torres',
+    owner_operator: 'Maria Rodriguez',
+    executive: 'James Park',
+    compliance_manager: 'Sofia Chen',
+    chef: 'Ana Torres',
+    facilities_manager: 'Michael Torres',
+    kitchen_manager: 'David Kim',
+    kitchen_staff: 'Lisa Nguyen',
   };
 
   const displayName = isDemoMode ? (demoRoleNames[userRole] || userName) : (profile?.full_name || t('topBar.user'));

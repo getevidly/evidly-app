@@ -204,7 +204,7 @@ const employeeSection: Section = {
       title: 'Food Handler Cards current',
       status: 'pass',
       evidence: ['8/9 staff members have current California Food Handler Cards (1 expiring within 30 days)'],
-      detail: 'Earliest expiry: Maria Santos \u2014 expires Aug 15, 2026',
+      detail: 'Earliest expiry: Ana Torres \u2014 expires Aug 15, 2026',
     },
     {
       citation: '\u00A7113953.3',

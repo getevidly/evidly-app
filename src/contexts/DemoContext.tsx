@@ -191,7 +191,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   };
 
   const companyName = useMemo(() => demoLead?.companyName || 'Pacific Coast Dining', [demoLead]);
-  const userName = useMemo(() => demoLead?.fullName || 'James Wilson', [demoLead]);
+  const userName = useMemo(() => demoLead?.fullName || 'Maria Rodriguez', [demoLead]);
   const firstName = useMemo(() => userName.split(' ')[0], [userName]);
 
   return (

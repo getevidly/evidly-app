@@ -69,7 +69,7 @@ export const DEMO_TEAM_MEMBERS: DemoTeamMember[] = [
   { id: 'd6', name: 'Emma Rodriguez', email: 'emma@pacificcoast.com', role: 'kitchen_staff', location: 'Downtown Kitchen' },
   { id: 'd7', name: 'Alex Thompson', email: 'alex@pacificcoast.com', role: 'facilities_manager', location: 'Downtown Kitchen' },
   { id: 'd8', name: 'Lisa Wang', email: 'lisa@pacificcoast.com', role: 'compliance_manager', location: 'Airport Cafe' },
-  { id: 'd9', name: 'James Wilson', email: 'james@pacificcoast.com', role: 'executive', location: 'All Locations' },
+  { id: 'd9', name: 'Maria Rodriguez', email: 'maria.r@pacificcoast.com', role: 'executive', location: 'All Locations' },
 ];
 
 /* ------------------------------------------------------------------ */
