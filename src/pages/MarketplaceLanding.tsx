@@ -209,7 +209,7 @@ export function MarketplaceLanding() {
             >
               EvidLY
             </span>
-            {' '}&mdash; Compliance Simplified
+            {' '}&mdash; Lead with Confidence &mdash; Know Where You Stand
           </p>
         </div>
       </div>

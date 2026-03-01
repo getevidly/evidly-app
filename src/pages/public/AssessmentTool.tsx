@@ -658,7 +658,7 @@ export function AssessmentTool() {
       <footer className="border-t border-gray-200 bg-white mt-12">
         <div className="max-w-4xl mx-auto px-4 py-4 text-center text-xs text-gray-400">
           <p>This assessment is for informational purposes only and does not constitute legal, insurance, or regulatory advice.</p>
-          <p className="mt-1">Powered by EvidLY Compliance Intelligence</p>
+          <p className="mt-1">Powered by EvidLY — Lead with Confidence</p>
         </div>
       </footer>
     </div>

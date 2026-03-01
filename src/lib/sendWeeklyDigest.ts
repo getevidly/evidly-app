@@ -164,7 +164,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
     <td><span style="color:#d4af37;font-size:28px;font-weight:800;">&#9989;</span></td>
     <td style="padding-left:12px;">
       <div style="font-size:22px;font-weight:800;color:#ffffff;">Evid<span style="color:#d4af37;">LY</span></div>
-      <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:1px;">COMPLIANCE SIMPLIFIED</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.6);letter-spacing:1px;">LEAD WITH CONFIDENCE</div>
     </td>
     <td align="right" style="color:rgba(255,255,255,0.7);font-size:12px;">Weekly Digest</td>
   </tr>
@@ -322,7 +322,7 @@ ${data.vendorUpdates.length > 0 ? `
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr><td align="center">
     <div style="font-size:16px;font-weight:800;color:#1e4d6b;">Evid<span style="color:#d4af37;">LY</span></div>
-    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Compliance Simplified</div>
+    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Lead with Confidence</div>
     <div style="margin-top:12px;font-size:12px;color:#94a3b8;">
       <a href="${dashboardUrl}/weekly-digest" style="color:#1e4d6b;text-decoration:underline;">Manage Preferences</a>
       &nbsp;&bull;&nbsp;

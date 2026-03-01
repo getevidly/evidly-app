@@ -1,7 +1,7 @@
 {
-  "name": "EvidLY - Compliance Simplified",
+  "name": "EvidLY — Lead with Confidence",
   "short_name": "EvidLY",
-  "description": "Food safety compliance management platform for restaurants and food service operations",
+  "description": "Food safety and facility safety management for restaurants and food service operations",
   "start_url": "/dashboard",
   "display": "standalone",
   "orientation": "any",

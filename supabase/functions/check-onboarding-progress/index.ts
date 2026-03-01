@@ -288,7 +288,7 @@ function buildReminderHtml(params: ReminderEmailParams): string {
   </div>
 
   <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
-    Powered by EvidLY &mdash; Compliance Simplified
+    &copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand
   </div>
 </div>`;
 }

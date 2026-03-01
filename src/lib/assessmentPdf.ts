@@ -166,7 +166,7 @@ export function generateAssessmentPdf(
   // Footer Page 1
   doc.setFontSize(7);
   doc.setTextColor(...hexToRgb(GRAY));
-  doc.text('Page 1 of 2 | Powered by EvidLY Compliance Intelligence', MARGIN, 285);
+  doc.text('Page 1 of 2 | Powered by EvidLY — Lead with Confidence', MARGIN, 285);
 
   // ── PAGE 2: THE PROGNOSIS ──────────────────────────────────────────────
 
@@ -291,7 +291,7 @@ export function generateAssessmentPdf(
 
   // Footer Page 2
   doc.setFontSize(7);
-  doc.text('Page 2 of 2 | Powered by EvidLY Compliance Intelligence', MARGIN, 285);
+  doc.text('Page 2 of 2 | Powered by EvidLY — Lead with Confidence', MARGIN, 285);
 
   return doc;
 }

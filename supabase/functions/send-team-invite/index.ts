@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
       recipientName: email.split("@")[0],
       bodyHtml: `
         <p><strong>${inviterName}</strong> has invited you to join <strong>${orgLabel}</strong> on EvidLY as <strong>${role}</strong>.</p>
-        <p>EvidLY is a compliance management platform that helps food-service teams stay audit-ready with real-time monitoring, smart checklists, and automated documentation.</p>
+        <p>EvidLY helps commercial kitchens lead with confidence through integrated food safety and facility safety management with real-time monitoring, smart checklists, and automated documentation.</p>
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
           <p style="font-weight: 600; margin: 0 0 4px 0;">Your role: ${role}</p>
           <p style="color: #64748b; font-size: 14px; margin: 0;">Invited by: ${inviterName}</p>

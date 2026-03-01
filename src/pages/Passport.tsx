@@ -382,7 +382,7 @@ export default function Passport() {
       <footer className="bg-gray-50 border-t border-gray-200 py-8 px-6 mt-16">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-gray-600 font-medium mb-2">
-            Powered by EvidLY — Compliance Simplified
+            Powered by EvidLY — Lead with Confidence
           </p>
           <a
             href="https://getevidly.com"

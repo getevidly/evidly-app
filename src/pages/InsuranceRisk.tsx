@@ -140,7 +140,7 @@ async function generateInsuranceReportPDF(result: InsuranceRiskResult, locationL
       M, H - 8, { maxWidth: contentW }
     );
     pdf.text(`Generated ${dateStr}`, M, H - 4);
-    pdf.text('EvidLY Compliance Management Platform', W - M, H - 4, { align: 'right' });
+    pdf.text('EvidLY — Lead with Confidence', W - M, H - 4, { align: 'right' });
   }
 
   let y = 20; // start after header

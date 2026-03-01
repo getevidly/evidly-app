@@ -263,7 +263,7 @@ export function HealthDeptReport() {
           pdf.rect(0, 0, pageW, hdrH, 'F');
           pdf.setFontSize(7);
           pdf.setTextColor(255, 255, 255);
-          pdf.text('EvidLY — Compliance Management Platform', margin, 6.5);
+          pdf.text('EvidLY — Lead with Confidence', margin, 6.5);
           pdf.setTextColor(212, 175, 55); // Gold
           pdf.text(reportTitle, pageW - margin, 6.5, { align: 'right' });
           // Footer

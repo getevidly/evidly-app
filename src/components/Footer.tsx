@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-[rgba(255,255,255,0.5)] leading-relaxed">
-              Compliance Simplified for commercial kitchens.
+              Lead with Confidence — Know Where You Stand.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-[rgba(255,255,255,0.1)] pt-8 text-center">
           <p className="text-sm text-[rgba(255,255,255,0.4)]">
-            &copy; 2026 EvidLY. All rights reserved. Compliance Simplified.
+            &copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand.
           </p>
         </div>
       </div>

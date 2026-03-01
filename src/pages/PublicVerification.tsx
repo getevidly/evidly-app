@@ -95,7 +95,7 @@ export default function PublicVerification() {
               <span style={{ color: '#d4af37' }}>LY</span>
             </span>
           </div>
-          <span className="text-xs text-gray-300">Compliance Simplified</span>
+          <span className="text-xs text-gray-300">Lead with Confidence</span>
         </div>
       </div>
 
@@ -144,7 +144,7 @@ export default function PublicVerification() {
           <div className="p-6 text-center" style={{ backgroundColor: '#faf8f3' }}>
             <div className="flex items-center justify-center gap-2 mb-3">
               <EvidlyIcon size={20} />
-              <span className="text-sm font-semibold text-gray-700">Verified by EvidLY — Compliance Simplified</span>
+              <span className="text-sm font-semibold text-gray-700">Verified by EvidLY — Lead with Confidence</span>
             </div>
             <p className="text-xs text-gray-500 mb-1">Verification code: {code}</p>
             <p className="text-xs text-gray-400">Member since {data.verifiedSince}</p>

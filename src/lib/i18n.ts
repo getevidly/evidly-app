@@ -710,7 +710,7 @@ const en = {
   // ── TopBar ──────────────────────────────────────────
   topBar: {
     search: 'Search...',
-    complianceSimplified: 'Compliance Simplified',
+    complianceSimplified: 'Lead with Confidence',
     myProfile: 'My Profile',
     changePassword: 'Change Password',
     signOut: 'Sign Out',
@@ -2107,7 +2107,7 @@ const es: typeof en = {
 
   topBar: {
     search: 'Buscar...',
-    complianceSimplified: 'Cumplimiento Simplificado',
+    complianceSimplified: 'Lidera con Confianza',
     myProfile: 'Mi Perfil',
     changePassword: 'Cambiar Contraseña',
     signOut: 'Cerrar Sesión',

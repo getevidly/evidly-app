@@ -140,7 +140,7 @@ function buildHtml(payload: AssessmentPayload): string {
       </div>
 
       <div style="background:#f1f5f9;padding:12px 24px;border-radius:0 0 8px 8px;font-size:11px;color:#6B7F96">
-        Powered by EvidLY Compliance Intelligence
+        Powered by EvidLY — Lead with Confidence
       </div>
     </div>
   `;

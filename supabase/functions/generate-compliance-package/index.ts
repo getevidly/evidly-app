@@ -152,7 +152,7 @@ Deno.serve(async (req: Request) => {
       const cover = pdfDoc.addPage([612, 792]);
       // Header bar
       cover.drawRectangle({ x: 0, y: 752, width: 612, height: 40, color: brandBlue });
-      cover.drawText("EvidLY — Compliance Management Platform", { x: 30, y: 768, size: 10, font: boldFont, color: rgb(1, 1, 1) });
+      cover.drawText("EvidLY — Lead with Confidence", { x: 30, y: 768, size: 10, font: boldFont, color: rgb(1, 1, 1) });
 
       cover.drawText("Compliance Package", { x: 50, y: 710, size: 26, font: boldFont, color: brandBlue });
       cover.drawText(manifest.organization || "Organization", { x: 50, y: 680, size: 16, font });

@@ -322,7 +322,7 @@ async function sendVendorEmail(
         <p style="color: #94a3b8; font-size: 12px;">This secure link is unique to you and will expire. Do not share it.</p>
       </div>
       <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #94a3b8;">
-        Powered by EvidLY — Compliance Simplified
+        &copy; 2026 EvidLY &mdash; Lead with Confidence &mdash; Know Where You Stand
       </div>
     </div>
   `;

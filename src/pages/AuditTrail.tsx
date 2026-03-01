@@ -891,7 +891,7 @@ export function AuditTrail() {
                   <EvidlyIcon size={32} />
                   <div>
                     <h2 className="text-xl font-bold">Chain of Custody Inspection Trail</h2>
-                    <p className="text-blue-200 text-sm">Demo Restaurant Group — EvidLY Compliance Platform</p>
+                    <p className="text-blue-200 text-sm">Demo Restaurant Group — EvidLY</p>
                   </div>
                 </div>
 

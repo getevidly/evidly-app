@@ -3,7 +3,7 @@
  *
  * "Evid" in Refined Gold (#A08C5A), "LY" in White (#FFFFFF).
  * Font: Syne, weight 800.
- * Tagline "COMPLIANCE SIMPLIFIED" in gold, 10px, wide tracking.
+ * Tagline "LEAD WITH CONFIDENCE" in gold, 10px, wide tracking.
  */
 
 import React from 'react';
@@ -23,7 +23,7 @@ export const EvidlyLogo: React.FC<EvidlyLogoProps> = ({
   className,
 }) => {
   return (
-    <div className={className} aria-label="EvidLY — Compliance Simplified">
+    <div className={className} aria-label="EvidLY — Lead with Confidence">
       <span style={{ fontFamily: 'Syne, system-ui, sans-serif', fontWeight: 800, fontSize: '24px', lineHeight: 1 }}>
         <span style={{ color: '#A08C5A' }}>Evid</span>
         <span style={{ color: '#FFFFFF' }}>LY</span>
@@ -37,7 +37,7 @@ export const EvidlyLogo: React.FC<EvidlyLogoProps> = ({
           marginTop: '2px',
           fontFamily: 'system-ui, sans-serif',
         }}>
-          COMPLIANCE SIMPLIFIED
+          LEAD WITH CONFIDENCE
         </div>
       )}
     </div>

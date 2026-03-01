@@ -74,7 +74,7 @@ export default function InsuranceRiskShared() {
       y += 8;
       pdf.setFontSize(10);
       pdf.setTextColor(100, 100, 100);
-      pdf.text('Powered by EvidLY Compliance Data', M, y);
+      pdf.text('Powered by EvidLY', M, y);
 
       // Location info
       y += 14;
@@ -170,7 +170,7 @@ export default function InsuranceRiskShared() {
                 <span className="text-white">Evid</span>
                 <span style={{ color: '#d4af37' }}>LY</span>
               </span>
-              <p className="text-[10px] text-gray-300 -mt-0.5">Compliance Simplified</p>
+              <p className="text-[10px] text-gray-300 -mt-0.5">Lead with Confidence</p>
             </div>
           </div>
           <span className="text-xs text-gray-300 hidden sm:block">Insurance Risk Assessment</span>
@@ -182,7 +182,7 @@ export default function InsuranceRiskShared() {
         {/* Title */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Insurance Risk Assessment</h1>
-          <p className="text-sm text-gray-500 mt-1">Powered by EvidLY Compliance Data</p>
+          <p className="text-sm text-gray-500 mt-1">Powered by EvidLY</p>
         </div>
 
         {/* Location Info */}
@@ -355,7 +355,7 @@ export default function InsuranceRiskShared() {
               <span style={{ color: '#d4af37' }}>LY</span>
             </span>
           </div>
-          <p className="text-xs text-gray-400">Compliance Simplified · evidly.com</p>
+          <p className="text-xs text-gray-400">Lead with Confidence · evidly.com</p>
         </div>
       </div>
     </div>
