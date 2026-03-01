@@ -88,8 +88,8 @@ export function BiweeklyReferralBanner() {
     <div
       style={{
         position: 'fixed',
-        bottom: '24px',
-        right: '24px',
+        bottom: '176px',
+        right: '16px',
         width: '360px',
         maxWidth: 'calc(100vw - 48px)',
         background: 'linear-gradient(135deg, #0f2040, #162a48)',
