@@ -17,6 +17,10 @@ import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
 import { iotSensors, iotSensorReadings, iotSensorProviders, type IoTSensor, type IoTSensorReading } from '../data/demoData';
+import { AddCurrentReadingModal, type CurrentReadingSaveData } from '../components/temp-logs/AddCurrentReadingModal';
+import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../components/temp-logs/AddReceivingReadingModal';
+import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
+import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
 
 interface TemperatureEquipment {
   id: string;
@@ -191,6 +195,12 @@ export function TempLogs() {
   const [showCooldownCheckModal, setShowCooldownCheckModal] = useState(false);
   const [cooldownCheckTemp, setCooldownCheckTemp] = useState('');
   const [cooldownCheckTime, setCooldownCheckTime] = useState('');
+
+  // Manual Add Reading modals
+  const [showAddCurrentModal, setShowAddCurrentModal] = useState(false);
+  const [showAddReceivingModal, setShowAddReceivingModal] = useState(false);
+  const [showAddHoldingModal, setShowAddHoldingModal] = useState(false);
+  const [showAddCooldownModal, setShowAddCooldownModal] = useState(false);
 
   useEffect(() => {
     if (isDemoMode) {
@@ -1343,6 +1353,112 @@ export function TempLogs() {
     showSuccessToast(`Temperature check logged: ${newCheck.temperature}°F`);
   };
 
+  // ── Manual Add Reading handlers ──────────────────────────────
+  const handleSaveCurrentReading = (data: CurrentReadingSaveData) => {
+    const eq = equipment.find(e => e.id === data.equipmentId);
+    if (!eq) return;
+    const isWithinRange = data.temperature >= eq.min_temp && data.temperature <= eq.max_temp;
+    const now = data.readingTime;
+    setEquipment(prev => prev.map(e =>
+      e.id === data.equipmentId
+        ? { ...e, last_check: { temperature_value: data.temperature, created_at: now, is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
+        : e
+    ));
+    setHistory(prev => [{
+      id: `manual-${Date.now()}`,
+      equipment_id: eq.id,
+      equipment_name: eq.name,
+      equipment_type: eq.equipment_type,
+      temperature_value: data.temperature,
+      is_within_range: isWithinRange,
+      recorded_by_name: 'Demo User',
+      corrective_action: !isWithinRange ? (data.correctiveAction || 'Temperature deviation noted') : null,
+      created_at: now,
+      input_method: 'manual' as InputMethod,
+    }, ...prev]);
+    if (isWithinRange) {
+      toast.success(`${data.temperature}°F logged for ${eq.name} — Within safe range`);
+    } else {
+      toast.warning(`${data.temperature}°F logged for ${eq.name} — Outside safe range`);
+    }
+  };
+
+  const handleSaveReceivingReading = (data: ReceivingReadingSaveData) => {
+    const newItem: ReceivingItem = {
+      itemDescription: data.itemDescription,
+      temperature: data.temperature ?? 0,
+      isPass: data.isPass,
+      category: data.foodCategory,
+    };
+    setReceivingItems(prev => [...prev, newItem]);
+    toast.success(`${data.itemDescription} — ${data.isPass ? 'Accepted' : 'Rejected'}`);
+  };
+
+  const handleSaveHoldingReading = (data: HoldingReadingSaveData) => {
+    const eq = equipment.find(e => e.id === data.equipmentId);
+    if (!eq) return;
+    const isWithinRange = data.temperature >= eq.min_temp && data.temperature <= eq.max_temp;
+    const now = data.readingTime;
+    setEquipment(prev => prev.map(e =>
+      e.id === data.equipmentId
+        ? { ...e, last_check: { temperature_value: data.temperature, created_at: now, is_within_range: isWithinRange, recorded_by_name: 'Demo User' } }
+        : e
+    ));
+    setHistory(prev => [{
+      id: `manual-holding-${Date.now()}`,
+      equipment_id: eq.id,
+      equipment_name: eq.name,
+      equipment_type: eq.equipment_type,
+      temperature_value: data.temperature,
+      is_within_range: isWithinRange,
+      recorded_by_name: 'Demo User',
+      corrective_action: !isWithinRange ? (data.correctiveAction || 'Temperature deviation noted') : null,
+      created_at: now,
+      input_method: 'manual' as InputMethod,
+    }, ...prev]);
+    if (isWithinRange) {
+      toast.success(`${data.temperature}°F logged for ${eq.name} — Within safe range`);
+    } else {
+      toast.warning(`${data.temperature}°F logged for ${eq.name} — Outside safe range`);
+    }
+  };
+
+  const handleSaveCooldownReading = (data: CooldownSaveData) => {
+    if (data.mode === 'check') {
+      const newCheck: CooldownCheck = {
+        temperature: data.temperature,
+        time: new Date(data.readingTime),
+      };
+      const updatedCooldowns = cooldowns.map(c => {
+        if (c.id === data.cooldownId) {
+          return { ...c, checks: [...c.checks, newCheck] };
+        }
+        return c;
+      });
+      setCooldowns(updatedCooldowns);
+      saveCooldownsToStorage(updatedCooldowns);
+      toast.success(`Temperature check logged: ${data.temperature}°F`);
+    } else {
+      const newCooldown: Cooldown = {
+        id: Date.now().toString(),
+        itemName: data.foodItem,
+        startTemp: data.startTemp,
+        startTime: new Date(data.timeStarted),
+        location: data.location,
+        startedBy: 'Demo User',
+        checks: [
+          { temperature: data.startTemp, time: new Date(data.timeStarted) },
+          { temperature: data.currentTemp, time: new Date(data.currentReadingTime) },
+        ],
+        status: 'active',
+      };
+      const updated = [...cooldowns, newCooldown];
+      setCooldowns(updated);
+      saveCooldownsToStorage(updated);
+      toast.success(`Cooldown started for ${data.foodItem}`);
+    }
+  };
+
   const handleCompleteCooldown = (cooldownId: string) => {
     const cooldown = cooldowns.find(c => c.id === cooldownId);
     if (!cooldown) return;
@@ -1519,6 +1635,13 @@ export function TempLogs() {
                 </div>
 
                 <button
+                  onClick={() => setShowAddCurrentModal(true)}
+                  className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span>Add Reading</span>
+                </button>
+                <button
                   onClick={handleOpenBatchLog}
                   className="px-6 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
                 >
@@ -1626,14 +1749,23 @@ export function TempLogs() {
         {/* Receiving Tab */}
         {activeTab === 'receiving' && (
           <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="p-3 rounded-lg" style={{ backgroundColor: '#E8EAF6' }}>
-                <Package className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="p-3 rounded-lg" style={{ backgroundColor: '#E8EAF6' }}>
+                  <Package className="h-6 w-6" style={{ color: '#1e4d6b' }} />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.logReceivingTemp')}</h2>
+                  <p className="text-sm text-gray-600">Record temperatures for incoming deliveries</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.logReceivingTemp')}</h2>
-                <p className="text-sm text-gray-600">Record temperatures for incoming deliveries</p>
-              </div>
+              <button
+                onClick={() => setShowAddReceivingModal(true)}
+                className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+              >
+                <Pencil className="h-4 w-4" />
+                <span>Add Reading</span>
+              </button>
             </div>
 
             <div className="space-y-6">
@@ -2299,13 +2431,22 @@ export function TempLogs() {
           <div className="space-y-6">
             <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-3">
               <h2 className="text-2xl font-bold text-gray-900">{t('tempLogs.cooldownTracker')}</h2>
-              <button
-                onClick={() => setShowStartCooldown(true)}
-                className="px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
-              >
-                <Play className="h-5 w-5" />
-                <span>{t('tempLogs.startCooldown')}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAddCooldownModal(true)}
+                  className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                >
+                  <Pencil className="h-4 w-4" />
+                  <span>Add Reading</span>
+                </button>
+                <button
+                  onClick={() => setShowStartCooldown(true)}
+                  className="px-6 py-3 min-h-[44px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2"
+                >
+                  <Play className="h-5 w-5" />
+                  <span>{t('tempLogs.startCooldown')}</span>
+                </button>
+              </div>
             </div>
 
             {/* Cooling Standards Reference */}
@@ -2820,9 +2961,18 @@ export function TempLogs() {
                   <h2 className="text-lg font-bold text-gray-900">Hot/Cold Holding Status</h2>
                   <p className="text-xs text-gray-500 mt-0.5">CalCode §113996 — Temperature holding compliance</p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${holdingCompliant === holdingEquip.length ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
-                  {holdingCompliant}/{holdingEquip.length} Compliant
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowAddHoldingModal(true)}
+                    className="px-4 py-2 min-h-[36px] bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] transition-colors font-medium shadow-sm flex items-center space-x-2 text-sm"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    <span>Add Reading</span>
+                  </button>
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${holdingCompliant === holdingEquip.length ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                    {holdingCompliant}/{holdingEquip.length} Compliant
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -3514,6 +3664,35 @@ export function TempLogs() {
           </div>
         </div>
       )}
+
+      {/* Manual Add Reading Modals */}
+      <AddCurrentReadingModal
+        open={showAddCurrentModal}
+        onClose={() => setShowAddCurrentModal(false)}
+        equipment={equipment.filter(eq => isStorageEquipment(eq.equipment_type))}
+        onSave={handleSaveCurrentReading}
+      />
+      <AddReceivingReadingModal
+        open={showAddReceivingModal}
+        onClose={() => setShowAddReceivingModal(false)}
+        vendors={vendors}
+        categoryConfig={CATEGORY_TEMP_CONFIG}
+        onSave={handleSaveReceivingReading}
+      />
+      <AddHoldingReadingModal
+        open={showAddHoldingModal}
+        onClose={() => setShowAddHoldingModal(false)}
+        equipment={equipment.filter(eq => isHoldingEquipment(eq.equipment_type))}
+        isHoldingHot={isHoldingHot}
+        onSave={handleSaveHoldingReading}
+      />
+      <AddCooldownReadingModal
+        open={showAddCooldownModal}
+        onClose={() => setShowAddCooldownModal(false)}
+        activeCooldowns={cooldowns.filter(c => c.status === 'active')}
+        locations={locations}
+        onSave={handleSaveCooldownReading}
+      />
     </>
   );
 }
