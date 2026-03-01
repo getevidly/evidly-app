@@ -373,17 +373,15 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* ─── ELEMENT 5: Referral Banner (conditional) ─────────────── */}
-      {showReferral && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-          <ReferralBanner
-            referralCode={demoReferral.referralCode}
-            referralUrl={demoReferral.referralUrl}
-            mealsGenerated={demoReferral.mealsGenerated}
-            isDemoMode={isDemoMode}
-          />
-        </div>
-      )}
+      {/* ─── ELEMENT 5: K2C Referral Banner (always visible) ─────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <ReferralBanner
+          referralCode={demoReferral.referralCode}
+          referralUrl={demoReferral.referralUrl}
+          mealsGenerated={demoReferral.mealsGenerated}
+          isDemoMode={isDemoMode}
+        />
+      </div>
 
     </div>
   );

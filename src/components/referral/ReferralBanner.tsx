@@ -17,9 +17,6 @@ export const ReferralBanner: React.FC<ReferralBannerProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  // K2C banner is only shown in demo mode
-  if (!isDemoMode) return null;
-
   const handleCopy = () => {
     navigator.clipboard.writeText(referralUrl).then(() => {
       setCopied(true);

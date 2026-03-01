@@ -11,7 +11,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   );
 }
 
-const rawClient = createClient(supabaseUrl, supabaseAnonKey);
+const rawClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
+});
 
 /** Guarded client — blocks writes when demo mode is active */
 export const supabase = createDemoGuardProxy(rawClient);

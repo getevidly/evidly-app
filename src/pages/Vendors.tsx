@@ -349,8 +349,8 @@ export function Vendors() {
   }, [consolidatedVendors]);
 
   const selectedVendor = selectedVendorId ? consolidatedVendors.find((v) => v.id === selectedVendorId) : null;
-  const selectedDocs = selectedVendor ? (VENDOR_DOCUMENTS[selectedVendor.id] || []) : [];
-  const selectedPerf = selectedVendor ? VENDOR_PERFORMANCE.find((p) => p.vendorId === selectedVendor.id) : null;
+  const selectedDocs = selectedVendor && isDemoMode ? (VENDOR_DOCUMENTS[selectedVendor.id] || []) : [];
+  const selectedPerf = selectedVendor && isDemoMode ? VENDOR_PERFORMANCE.find((p) => p.vendorId === selectedVendor.id) : null;
 
   const handleSelectVendor = (v: ConsolidatedVendor) => {
     setSearchParams({ id: v.id });
@@ -815,8 +815,8 @@ export function Vendors() {
                 )}
               </div>
 
-              {/* Timeline (show for Valley Fire) */}
-              {isValleyFire && (
+              {/* Timeline (show for Valley Fire in demo only) */}
+              {isDemoMode && isValleyFire && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                     <div>
@@ -1342,6 +1342,7 @@ export function Vendors() {
             <div className="bg-gradient-to-r from-[#1e4d6b] to-[#2c5f7f] rounded-lg p-4 sm:p-6 text-white">
               <h3 className="text-xl sm:text-2xl font-bold mb-2">Vendor Performance Overview</h3>
               <p className="text-gray-200 mb-4">Track reliability, service quality, and document compliance</p>
+              {isDemoMode && (
               <div className="flex items-center space-x-4 flex-wrap gap-2">
                 <div className="flex items-center space-x-2">
                   <CheckCircle2 className="h-6 w-6 text-green-400" />
@@ -1351,9 +1352,18 @@ export function Vendors() {
                   </div>
                 </div>
               </div>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {!isDemoMode && (
+              <EmptyState
+                icon={TrendingUp}
+                title="Performance data will populate after vendor activity"
+                description="Vendor reliability scores, on-time rates, and document compliance will appear here once your vendors have completed services."
+              />
+            )}
+
+            {isDemoMode && <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {consolidatedVendors.map((vendor) => {
                 const perf = VENDOR_PERFORMANCE.find((p) => p.vendorId === vendor.id);
                 if (!perf) return null;
@@ -1411,7 +1421,7 @@ export function Vendors() {
                   </div>
                 );
               })}
-            </div>
+            </div>}
           </>
         )}
       </div>

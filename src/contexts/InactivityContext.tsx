@@ -6,9 +6,9 @@ import { useIdleTimeout } from '../hooks/useIdleTimeout';
 import { LockScreen } from '../components/LockScreen';
 import { toast } from 'sonner';
 
-const LOCK_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+const LOCK_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 const LOGOUT_TIMEOUT = 180 * 60 * 1000; // 3 hours
-const WARNING_TIMEOUT = 14 * 60 * 1000; // 14 minutes
+const WARNING_TIMEOUT = 25 * 60 * 1000; // 25 minutes
 
 interface InactivityContextType {
   isLocked: boolean;
@@ -53,7 +53,7 @@ export function InactivityProvider({ children }: { children: ReactNode }) {
   }, [performLogout]);
 
   const handleWarning = useCallback(() => {
-    toast.warning('Session will lock in 1 minute due to inactivity', {
+    toast.warning('Session will lock in 5 minutes due to inactivity', {
       duration: 10000,
     });
   }, []);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2, Download, Check } from 'lucide-react';
+import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2, Download, Check, FileText } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -1029,6 +1029,69 @@ export function Settings() {
 
           {activeTab === 'security' && (
             <div className="space-y-6">
+              {/* Security Navigation Cards */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>Security & Access</h3>
+                <p className="text-sm text-gray-600 mt-1">Manage access control, audit trails, and compliance reporting.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  {
+                    icon: KeyRound,
+                    title: 'Roles & Permissions',
+                    description: 'Manage role-based access and user permissions',
+                    path: '/settings/roles-permissions',
+                  },
+                  {
+                    icon: Clock,
+                    title: 'Audit Trail',
+                    description: 'View chain of custody and compliance records',
+                    path: '/audit-trail',
+                  },
+                  {
+                    icon: FileText,
+                    title: 'Audit Report',
+                    description: 'Generate inspection and compliance reports',
+                    path: '/audit-report',
+                  },
+                ].map((card) => (
+                  <button
+                    key={card.title}
+                    onClick={() => navigate(card.path)}
+                    className="flex flex-col items-start gap-3 p-5 bg-white border border-gray-200 rounded-lg text-left hover:shadow-md hover:border-[#1e4d6b]/30 transition-all duration-150 group"
+                  >
+                    <div className="p-2 rounded-lg bg-[#1e4d6b]/10 group-hover:bg-[#1e4d6b]/15 transition-colors">
+                      <card.icon className="h-5 w-5 text-[#1e4d6b]" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900" style={{ fontFamily: 'DM Sans, sans-serif' }}>{card.title}</h4>
+                      <p className="text-xs text-gray-500 mt-1">{card.description}</p>
+                    </div>
+                    <span className="text-xs font-medium text-[#1e4d6b] group-hover:text-[#2a6a8f] transition-colors mt-auto">
+                      Manage →
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Session Info */}
+              <div className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  <span>Last login: {profile?.last_login_at ? new Date(profile.last_login_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                  </span>
+                  <span>Current session: Active</span>
+                </div>
+              </div>
+
+              {/* Separator */}
+              <hr className="border-gray-200" />
+
               <h3 className="text-xl font-bold text-gray-900">{t('settings.securityChangePassword')}</h3>
               <p className="text-sm text-gray-600">{t('settings.securityDesc')}</p>
               <div>

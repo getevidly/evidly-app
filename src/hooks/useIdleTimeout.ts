@@ -1,8 +1,10 @@
 import { useEffect, useRef, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
 
 const ACTIVITY_EVENTS = ['mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
 const CHECK_INTERVAL = 30_000; // Check every 30 seconds
 const MOUSEMOVE_THROTTLE = 5_000; // Only register mousemove every 5s
+const TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000; // Proactive token refresh every 10 min
 
 interface UseIdleTimeoutOptions {
   lockTimeout: number;
@@ -31,6 +33,8 @@ export function useIdleTimeout(options: UseIdleTimeoutOptions) {
     catch { return false; }
   })());
 
+  const lastTokenRefreshRef = useRef(Date.now());
+
   const recordActivity = useCallback(() => {
     if (!optionsRef.current.enabled || lockedRef.current) return;
     lastActivityRef.current = Date.now();
@@ -39,6 +43,12 @@ export function useIdleTimeout(options: UseIdleTimeoutOptions) {
       localStorage.setItem('evidly_last_activity', String(lastActivityRef.current));
     } catch {
       // localStorage unavailable
+    }
+
+    // Proactive token refresh: keep Supabase session alive during active use
+    if (Date.now() - lastTokenRefreshRef.current > TOKEN_REFRESH_INTERVAL) {
+      lastTokenRefreshRef.current = Date.now();
+      supabase.auth.getSession().catch(() => {});
     }
   }, []);
 

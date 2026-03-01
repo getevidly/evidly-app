@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, MapPin, X, AlertTriangle, Loader2, CheckCircle, Plus, Trash2, Edit3 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useTranslation } from '../contexts/LanguageContext';
 import { useRole } from '../contexts/RoleContext';
@@ -34,6 +34,28 @@ const eventTypes: EventType[] = [
 const typeMap = Object.fromEntries(eventTypes.map(t => [t.id, t]));
 
 const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+
+const FACILITY_SAFETY_CATEGORIES = [
+  'Hood Cleaning Inspection',
+  'Fire Suppression Inspection',
+  'Fire Extinguisher Inspection',
+  'Pest Control Service',
+  'Grease Trap Service',
+  'Elevator Inspection',
+  'Backflow Prevention Test',
+  'General Facility Safety',
+  'Other',
+];
+
+const TIME_OPTIONS = [
+  '5:00 AM', '5:30 AM', '6:00 AM', '6:30 AM', '7:00 AM', '7:30 AM',
+  '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM',
+  '2:00 PM', '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM',
+  '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM',
+  '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM', '10:00 PM', '10:30 PM',
+  '11:00 PM', '11:30 PM',
+];
 
 // ── Demo Events ──────────────────────────────────────────────
 interface CalendarEvent {
@@ -232,11 +254,172 @@ export function Calendar() {
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showEventForm, setShowEventForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [customEvents, setCustomEvents] = useState<CalendarEvent[]>([]);
+  const [eventForm, setEventForm] = useState({
+    title: '',
+    category: FACILITY_SAFETY_CATEGORIES[0],
+    date: '',
+    startTime: '9:00 AM',
+    endTime: '10:00 AM',
+    location: 'Downtown Kitchen',
+    description: '',
+  });
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   }, []);
+
+  // ── CRUD Handlers ──────────────────────────────────────────────
+  const resetForm = useCallback(() => {
+    setEventForm({
+      title: '',
+      category: FACILITY_SAFETY_CATEGORIES[0],
+      date: '',
+      startTime: '9:00 AM',
+      endTime: '10:00 AM',
+      location: 'Downtown Kitchen',
+      description: '',
+    });
+  }, []);
+
+  const openCreateForm = useCallback(() => {
+    resetForm();
+    setEditingEvent(null);
+    setShowEventForm(true);
+  }, [resetForm]);
+
+  const openEditForm = useCallback((event: CalendarEvent) => {
+    setEditingEvent(event);
+    setEventForm({
+      title: event.title,
+      category: FACILITY_SAFETY_CATEGORIES.includes(event.description?.split(' - ')[0] || '') ? event.description?.split(' - ')[0] || FACILITY_SAFETY_CATEGORIES[0] : FACILITY_SAFETY_CATEGORIES[0],
+      date: event.date,
+      startTime: event.time,
+      endTime: event.endTime || '10:00 AM',
+      location: event.location,
+      description: event.description || '',
+    });
+    setShowEventForm(true);
+  }, []);
+
+  const handleSaveEvent = useCallback(async () => {
+    if (!eventForm.title.trim() || !eventForm.date) return;
+
+    if (isDemoMode) {
+      if (editingEvent) {
+        // Update existing event in local state
+        setCustomEvents(prev => prev.map(e =>
+          e.id === editingEvent.id
+            ? {
+                ...e,
+                title: eventForm.title,
+                date: eventForm.date,
+                time: eventForm.startTime,
+                endTime: eventForm.endTime,
+                location: eventForm.location,
+                description: eventForm.description || undefined,
+              }
+            : e
+        ));
+        showToast('Event updated successfully');
+      } else {
+        // Create new event in local state
+        const newEvent: CalendarEvent = {
+          id: `custom-${Date.now()}`,
+          title: eventForm.title,
+          type: 'vendor',
+          date: eventForm.date,
+          time: eventForm.startTime,
+          endTime: eventForm.endTime,
+          location: eventForm.location,
+          description: eventForm.description || undefined,
+        };
+        setCustomEvents(prev => [...prev, newEvent]);
+        showToast('Event created successfully');
+      }
+    } else {
+      // Production mode: persist to Supabase
+      const orgId = profile?.organization_id;
+      if (!orgId) return;
+
+      try {
+        if (editingEvent) {
+          const { error } = await supabase
+            .from('calendar_events')
+            .update({
+              title: eventForm.title,
+              category: eventForm.category,
+              date: eventForm.date,
+              start_time: eventForm.startTime,
+              end_time: eventForm.endTime,
+              description: eventForm.description || null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', editingEvent.id);
+
+          if (error) throw error;
+          showToast('Event updated successfully');
+        } else {
+          const { error } = await supabase
+            .from('calendar_events')
+            .insert({
+              organization_id: orgId,
+              title: eventForm.title,
+              type: 'vendor',
+              category: eventForm.category,
+              date: eventForm.date,
+              start_time: eventForm.startTime,
+              end_time: eventForm.endTime,
+              description: eventForm.description || null,
+            });
+
+          if (error) throw error;
+          showToast('Event created successfully');
+        }
+
+        // Re-fetch events by bumping viewMonth dependency is not needed; we manually refresh
+        setLiveEvents(prev => [...prev]); // trigger re-render
+      } catch (err) {
+        console.error('Failed to save event:', err);
+        showToast('Failed to save event');
+      }
+    }
+
+    setShowEventForm(false);
+    setEditingEvent(null);
+    resetForm();
+  }, [eventForm, editingEvent, isDemoMode, profile?.organization_id, showToast, resetForm]);
+
+  const handleDeleteEvent = useCallback(async () => {
+    if (!selectedEvent) return;
+
+    if (isDemoMode) {
+      setCustomEvents(prev => prev.filter(e => e.id !== selectedEvent.id));
+      showToast('Event deleted successfully');
+    } else {
+      try {
+        const { error } = await supabase
+          .from('calendar_events')
+          .delete()
+          .eq('id', selectedEvent.id);
+
+        if (error) throw error;
+        showToast('Event deleted successfully');
+        // Trigger re-fetch
+        setLiveEvents(prev => prev.filter(e => e.id !== selectedEvent.id));
+      } catch (err) {
+        console.error('Failed to delete event:', err);
+        showToast('Failed to delete event');
+      }
+    }
+
+    setShowDeleteConfirm(false);
+    setSelectedEvent(null);
+  }, [selectedEvent, isDemoMode, showToast]);
 
   // Fetch calendar events from multiple Supabase tables in live mode
   const viewMonth = currentDate.getFullYear() * 12 + currentDate.getMonth();
@@ -264,8 +447,8 @@ export function Calendar() {
       const allEvents: CalendarEvent[] = [];
       let nextId = 10000;
 
-      // Query 5 tables in parallel
-      const [tempRes, checklistRes, equipRes, docsRes, correctiveRes] = await Promise.all([
+      // Query 6 tables in parallel
+      const [tempRes, checklistRes, equipRes, docsRes, correctiveRes, customCalRes] = await Promise.all([
         supabase
           .from('temp_check_completions')
           .select('*, temperature_equipment(name)')
@@ -295,6 +478,12 @@ export function Calendar() {
           .select('*')
           .eq('organization_id', orgId)
           .in('status', ['open', 'in_progress']),
+        supabase
+          .from('calendar_events')
+          .select('*')
+          .eq('organization_id', orgId)
+          .gte('date', startStr)
+          .lte('date', endStr),
       ]);
 
       // 1. Temperature checks → temp-check events
@@ -385,6 +574,20 @@ export function Calendar() {
         });
       }
 
+      // 6. Custom calendar events → vendor events
+      for (const ce of (customCalRes.data || [])) {
+        allEvents.push({
+          id: ce.id,
+          title: ce.title,
+          type: ce.type || 'vendor',
+          date: ce.date,
+          time: ce.start_time,
+          endTime: ce.end_time || undefined,
+          location: locMap[ce.location_id] || 'Unknown',
+          description: ce.description || undefined,
+        });
+      }
+
       setLiveEvents(allEvents);
       setLoading(false);
     }
@@ -393,9 +596,12 @@ export function Calendar() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDemoMode, profile?.organization_id, viewMonth]);
 
-  // Use live events or demo events
+  // Use live events or demo events, merged with custom events
   const demoEvents = useMemo(() => generateDemoEvents(opHours), [opHours]);
-  const events = isDemoMode ? demoEvents : liveEvents;
+  const events = useMemo(() => {
+    const base = isDemoMode ? demoEvents : liveEvents;
+    return [...base, ...customEvents];
+  }, [isDemoMode, demoEvents, liveEvents, customEvents]);
 
   const filteredEvents = useMemo(() => {
     const roleTypes = ROLE_EVENT_TYPES[userRole];
@@ -947,15 +1153,33 @@ export function Calendar() {
 
             <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
               <button
-                onClick={() => guardAction('edit', 'Calendar', () => { showToast(tr('pages.calendar.editEvent')); })}
+                onClick={() => {
+                  openEditForm(selectedEvent);
+                  setSelectedEvent(null);
+                }}
                 style={{
                   flex: 1, padding: '10px', borderRadius: '8px',
                   border: '2px solid #e5e7eb', backgroundColor: 'white',
                   fontWeight: 600, fontSize: '13px', color: '#374151',
                   cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                 }}
               >
+                <Edit3 size={14} />
                 {tr('common.edit')}
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                style={{
+                  flex: 1, padding: '10px', borderRadius: '8px',
+                  border: '2px solid #fecdd3', backgroundColor: '#fff1f2',
+                  fontWeight: 600, fontSize: '13px', color: '#dc2626',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                }}
+              >
+                <Trash2 size={14} />
+                Delete
               </button>
               <button
                 onClick={() => setSelectedEvent(null)}
@@ -1056,6 +1280,23 @@ export function Calendar() {
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
             >
               {tr('pages.calendar.today')}
+            </button>
+
+            {/* Add Event button */}
+            <button
+              onClick={openCreateForm}
+              style={{
+                padding: '8px 16px', borderRadius: '8px',
+                border: 'none', backgroundColor: '#1e4d6b',
+                fontWeight: 700, fontSize: '13px', color: 'white',
+                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                display: 'flex', alignItems: 'center', gap: '6px',
+                transition: 'background-color 0.15s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e4d6b'; }}
+            >
+              <Plus size={16} /> Add Event
             </button>
 
             {/* View toggle */}
@@ -1314,6 +1555,303 @@ export function Calendar() {
 
         {/* Event detail modal */}
         {renderEventModal()}
+
+        {/* Delete Confirmation Dialog */}
+        {showDeleteConfirm && selectedEvent && (
+          <div
+            onClick={() => setShowDeleteConfirm(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 55,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+              padding: '16px',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                backgroundColor: 'white', borderRadius: '16px',
+                boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+                maxWidth: '400px', width: '100%', padding: '24px',
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{
+                  width: '40px', height: '40px', borderRadius: '50%',
+                  backgroundColor: '#fef2f2', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <Trash2 size={20} color="#dc2626" />
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', margin: 0 }}>Delete Event</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: '#4b5563', margin: '0 0 20px 0', lineHeight: '1.5' }}>
+                Are you sure you want to delete <strong>{selectedEvent.title}</strong>? This action cannot be undone.
+              </p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  style={{
+                    flex: 1, padding: '10px', borderRadius: '8px',
+                    border: '2px solid #e5e7eb', backgroundColor: 'white',
+                    fontWeight: 600, fontSize: '13px', color: '#374151',
+                    cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteEvent}
+                  style={{
+                    flex: 1, padding: '10px', borderRadius: '8px',
+                    border: 'none', backgroundColor: '#dc2626',
+                    fontWeight: 600, fontSize: '13px', color: 'white',
+                    cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Event Form Modal (Create / Edit) */}
+        {showEventForm && (
+          <div
+            onClick={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 50,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
+              padding: '16px',
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="w-[95vw] sm:w-full"
+              style={{
+                backgroundColor: 'white', borderRadius: '16px',
+                boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
+                maxWidth: '480px', overflow: 'hidden',
+                fontFamily: "'DM Sans', sans-serif",
+              }}
+            >
+              {/* Header bar */}
+              <div style={{ height: '6px', backgroundColor: '#1e4d6b' }} />
+              <div style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0 }}>
+                    {editingEvent ? 'Edit Event' : 'Add Facility Safety Event'}
+                  </h3>
+                  <button
+                    onClick={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', borderRadius: '6px' }}
+                  >
+                    <X size={20} color="#9ca3af" />
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {/* Title */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={eventForm.title}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="e.g., Hood Cleaning Service"
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Category
+                    </label>
+                    <select
+                      value={eventForm.category}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, category: e.target.value }))}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        backgroundColor: 'white', boxSizing: 'border-box',
+                        appearance: 'none' as const,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 10px center',
+                      }}
+                    >
+                      {FACILITY_SAFETY_CATEGORIES.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Date */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Date *
+                    </label>
+                    <input
+                      type="date"
+                      value={eventForm.date}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, date: e.target.value }))}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
+                    />
+                  </div>
+
+                  {/* Start Time + End Time */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Start Time
+                      </label>
+                      <select
+                        value={eventForm.startTime}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, startTime: e.target.value }))}
+                        style={{
+                          width: '100%', padding: '10px 12px', borderRadius: '8px',
+                          border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                          fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                          backgroundColor: 'white', boxSizing: 'border-box',
+                          appearance: 'none' as const,
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 10px center',
+                        }}
+                      >
+                        {TIME_OPTIONS.map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        End Time
+                      </label>
+                      <select
+                        value={eventForm.endTime}
+                        onChange={(e) => setEventForm(prev => ({ ...prev, endTime: e.target.value }))}
+                        style={{
+                          width: '100%', padding: '10px 12px', borderRadius: '8px',
+                          border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                          fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                          backgroundColor: 'white', boxSizing: 'border-box',
+                          appearance: 'none' as const,
+                          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 10px center',
+                        }}
+                      >
+                        {TIME_OPTIONS.map(t => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Location */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Location
+                    </label>
+                    <select
+                      value={eventForm.location}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, location: e.target.value }))}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        backgroundColor: 'white', boxSizing: 'border-box',
+                        appearance: 'none' as const,
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'right 10px center',
+                      }}
+                    >
+                      {LOCATIONS.map(loc => (
+                        <option key={loc} value={loc}>{loc}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Description
+                    </label>
+                    <textarea
+                      value={eventForm.description}
+                      onChange={(e) => setEventForm(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Optional details about this event..."
+                      rows={3}
+                      style={{
+                        width: '100%', padding: '10px 12px', borderRadius: '8px',
+                        border: '1px solid #e5e7eb', fontSize: '14px', color: '#111827',
+                        fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                        resize: 'vertical', boxSizing: 'border-box',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
+                    />
+                  </div>
+                </div>
+
+                {/* Form buttons */}
+                <div style={{ marginTop: '20px', display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => { setShowEventForm(false); setEditingEvent(null); resetForm(); }}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '8px',
+                      border: '2px solid #e5e7eb', backgroundColor: 'white',
+                      fontWeight: 600, fontSize: '13px', color: '#374151',
+                      cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEvent}
+                    disabled={!eventForm.title.trim() || !eventForm.date}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '8px',
+                      border: 'none',
+                      backgroundColor: (!eventForm.title.trim() || !eventForm.date) ? '#9ca3af' : '#1e4d6b',
+                      fontWeight: 600, fontSize: '13px', color: 'white',
+                      cursor: (!eventForm.title.trim() || !eventForm.date) ? 'not-allowed' : 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                      transition: 'background-color 0.15s',
+                    }}
+                  >
+                    {editingEvent ? 'Update Event' : 'Create Event'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Toast notification */}
         {toastMessage && (
