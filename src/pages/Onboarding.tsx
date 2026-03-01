@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, MapPin, Thermometer, CheckSquare, FileText, Users, QrCode, PartyPopper, Plus } from 'lucide-react';
+import { Check, MapPin, Thermometer, CheckSquare, FileText, Users, QrCode, PartyPopper, Plus, Clock } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
+import { useOperatingHours, formatTime24to12, generateAllTimes } from '../contexts/OperatingHoursContext';
 import { supabase } from '../lib/supabase';
 import { INDUSTRY_TEMPLATES, getCategoryLabel, TemplateItem } from '../config/industryTemplates';
 import { toast } from 'sonner';
@@ -13,12 +14,13 @@ const steps = [
   { id: 1, name: 'Welcome', icon: () => <EvidlyIcon size={20} /> },
   { id: 2, name: 'Org Details', icon: () => <EvidlyIcon size={20} /> },
   { id: 3, name: 'Add Location', icon: MapPin },
-  { id: 4, name: 'Equipment', icon: Thermometer },
-  { id: 5, name: 'Checklists', icon: CheckSquare },
-  { id: 6, name: 'Documents', icon: FileText },
-  { id: 7, name: 'Team', icon: Users },
-  { id: 8, name: 'QR Codes', icon: QrCode },
-  { id: 9, name: 'Done', icon: PartyPopper },
+  { id: 4, name: 'Shifts', icon: Clock },
+  { id: 5, name: 'Equipment', icon: Thermometer },
+  { id: 6, name: 'Checklists', icon: CheckSquare },
+  { id: 7, name: 'Documents', icon: FileText },
+  { id: 8, name: 'Team', icon: Users },
+  { id: 9, name: 'QR Codes', icon: QrCode },
+  { id: 10, name: 'Done', icon: PartyPopper },
 ];
 
 export function Onboarding() {
@@ -32,9 +34,14 @@ export function Onboarding() {
   const [templateItems, setTemplateItems] = useState<TemplateItem[]>([]);
   const [industryType, setIndustryType] = useState<string>('');
   const [customItems, setCustomItems] = useState<{ [category: string]: string }>({});
+  const [shiftOpenTime, setShiftOpenTime] = useState('06:00');
+  const [shiftCloseTime, setShiftCloseTime] = useState('22:00');
+  const [shiftChangeover, setShiftChangeover] = useState('14:00');
+  const [savedLocationName, setSavedLocationName] = useState('');
   const { profile, refreshProfile } = useAuth();
   const { isDemoMode } = useDemo();
   const navigate = useNavigate();
+  const { setLocationHours, setShifts } = useOperatingHours();
 
   useEffect(() => {
     if (profile?.organization_id) {
@@ -136,6 +143,7 @@ export function Onboarding() {
 
   const handleNext = async () => {
     if (currentStep === 3 && locationName) {
+      setSavedLocationName(locationName);
       if (!isDemoMode && profile?.organization_id) {
         const { data: insertedLocation } = await supabase.from('locations').insert([
           {
@@ -145,8 +153,6 @@ export function Onboarding() {
           },
         ]).select('id').single();
 
-        // Auto-detect jurisdiction for the new location
-        // SUGGESTION: Add geocoding to parse address into city/county/state/zip components
         if (insertedLocation?.id && locationAddress) {
           try {
             const matches = await lookupJurisdiction(locationAddress, '', '', 'CA', '');
@@ -162,11 +168,25 @@ export function Onboarding() {
       setLocationAddress('');
     }
 
-    if (currentStep === 4 || currentStep === 5 || currentStep === 6) {
+    if (currentStep === 4) {
+      const locName = savedLocationName || 'Main Location';
+      setLocationHours([{
+        locationName: locName,
+        days: [false, true, true, true, true, true, false],
+        openTime: shiftOpenTime,
+        closeTime: shiftCloseTime,
+      }]);
+      setShifts([
+        { id: 's-morning', name: 'Morning', locationName: locName, startTime: shiftOpenTime, endTime: shiftChangeover, days: [false, true, true, true, true, true, false] },
+        { id: 's-evening', name: 'Evening', locationName: locName, startTime: shiftChangeover, endTime: shiftCloseTime, days: [false, true, true, true, true, true, false] },
+      ]);
+    }
+
+    if (currentStep === 5 || currentStep === 6 || currentStep === 7) {
       await saveChecklistItems();
     }
 
-    if (currentStep < 9) {
+    if (currentStep < 10) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       await updateOnboardingStep(nextStep);
@@ -177,7 +197,7 @@ export function Onboarding() {
   };
 
   const handleSkip = async () => {
-    if (currentStep < 9) {
+    if (currentStep < 10) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       await updateOnboardingStep(nextStep);
@@ -186,6 +206,8 @@ export function Onboarding() {
       navigate('/dashboard');
     }
   };
+
+  const allTimes = generateAllTimes();
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -239,28 +261,103 @@ export function Onboarding() {
         );
 
       case 4:
+        return (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Configure Shifts</h2>
+            <p className="text-gray-600 mb-6">
+              Set your operating hours and shift changeover time. This determines when temperature checks and tasks are assigned.
+            </p>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Opening Time</label>
+                  <select
+                    value={shiftOpenTime}
+                    onChange={(e) => setShiftOpenTime(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    {allTimes.filter(t => {
+                      const h = parseInt(t.value.split(':')[0]);
+                      return h >= 4 && h <= 12;
+                    }).map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Closing Time</label>
+                  <select
+                    value={shiftCloseTime}
+                    onChange={(e) => setShiftCloseTime(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                  >
+                    {allTimes.filter(t => {
+                      const h = parseInt(t.value.split(':')[0]);
+                      return h >= 16 || h === 0;
+                    }).map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Shift Changeover Time</label>
+                <p className="text-xs text-gray-500 mb-2">This is when your Morning shift ends and Evening shift begins.</p>
+                <select
+                  value={shiftChangeover}
+                  onChange={(e) => setShiftChangeover(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                >
+                  {allTimes.filter(t => {
+                    const h = parseInt(t.value.split(':')[0]);
+                    return h >= 10 && h <= 18;
+                  }).map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-gray-900 mb-3">Shift Preview</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md">
+                    <span className="font-medium text-gray-900">Morning Shift</span>
+                    <span className="text-gray-600">{formatTime24to12(shiftOpenTime)} — {formatTime24to12(shiftChangeover)}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-md">
+                    <span className="font-medium text-gray-900">Evening Shift</span>
+                    <span className="text-gray-600">{formatTime24to12(shiftChangeover)} — {formatTime24to12(shiftCloseTime)}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-3">You can add more shifts and adjust days later in Settings.</p>
+              </div>
+            </div>
+          </div>
+        );
+
       case 5:
       case 6:
+      case 7: {
         const groupedItems = groupItemsByCategory();
         const categories = Object.keys(groupedItems);
-        const stepCategory = currentStep === 4 ? 'temperature_logs' : currentStep === 5 ? 'checklists' : 'documents';
         const displayCategories = categories.filter(cat => {
-          if (currentStep === 4) return cat === 'temperature_logs';
-          if (currentStep === 5) return cat === 'checklists';
-          if (currentStep === 6) return cat === 'documents' || cat === 'vendor_services';
+          if (currentStep === 5) return cat === 'temperature_logs';
+          if (currentStep === 6) return cat === 'checklists';
+          if (currentStep === 7) return cat === 'documents' || cat === 'vendor_services';
           return false;
         });
 
-        const stepTitles = {
-          4: 'Set Up Temperature Monitoring',
-          5: 'Configure Daily Operations',
-          6: 'Set Up Documentation & Services',
+        const stepTitles: Record<number, string> = {
+          5: 'Set Up Temperature Monitoring',
+          6: 'Configure Daily Operations',
+          7: 'Set Up Documentation & Services',
         };
 
-        const stepDescriptions = {
-          4: 'We\'ve pre-selected common temperature monitoring points for your industry. Uncheck any that don\'t apply.',
-          5: 'We\'ve pre-selected common checklists for your operations. Uncheck any that don\'t apply.',
-          6: 'We\'ve pre-selected common documents and vendor services needed. Uncheck any that don\'t apply.',
+        const stepDescriptions: Record<number, string> = {
+          5: 'We\'ve pre-selected common temperature monitoring points for your industry. Uncheck any that don\'t apply.',
+          6: 'We\'ve pre-selected common checklists for your operations. Uncheck any that don\'t apply.',
+          7: 'We\'ve pre-selected common documents and vendor services needed. Uncheck any that don\'t apply.',
         };
 
         return (
@@ -325,7 +422,7 @@ export function Onboarding() {
               ))}
             </div>
 
-            {currentStep === 6 && (
+            {currentStep === 7 && (
               <div className="mt-4">
                 <button
                   type="button"
@@ -338,8 +435,9 @@ export function Onboarding() {
             )}
           </div>
         );
+      }
 
-      case 7:
+      case 8:
         return (
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Invite Team Members</h2>
@@ -420,7 +518,7 @@ export function Onboarding() {
           </div>
         );
 
-      case 8:
+      case 9:
         return (
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Print QR Codes</h2>
@@ -435,7 +533,7 @@ export function Onboarding() {
           </div>
         );
 
-      case 9:
+      case 10:
         return (
           <div className="text-center">
             <PartyPopper className="h-24 w-24 text-[#d4af37] mx-auto mb-6" />
@@ -491,22 +589,26 @@ export function Onboarding() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 mb-6">{renderStepContent()}</div>
 
         <div className="flex justify-between">
-          <button
-            onClick={handleSkip}
-            className="px-6 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-md hover:bg-gray-50 bg-white"
-          >
-            Skip
-          </button>
+          {currentStep !== 4 ? (
+            <button
+              onClick={handleSkip}
+              className="px-6 py-2 border-2 border-[#1e4d6b] text-[#1e4d6b] rounded-md hover:bg-gray-50 bg-white"
+            >
+              Skip
+            </button>
+          ) : (
+            <div />
+          )}
           <button
             onClick={handleNext}
             disabled={currentStep === 3 && !locationName}
             className={`px-8 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed shadow-sm ${
-              currentStep === 9
+              currentStep === 10
                 ? 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f] font-bold'
                 : 'bg-[#1e4d6b] text-white hover:bg-[#2a6a8f]'
             }`}
           >
-            {currentStep === 9 ? 'Get Started' : 'Next'}
+            {currentStep === 10 ? 'Get Started' : 'Next'}
           </button>
         </div>
       </div>

@@ -53,23 +53,25 @@ export function DemoWizard() {
   const { userRole } = useRole();
   const { updateLocationHours, addShift, setLocationHours, setShifts } = useOperatingHours();
 
-  // ── Bypass: Platform Admin skips the demo wizard entirely ──
-  // ── Bypass: URL param ──────────────────────────────────
+  // ── Demo always skips the wizard — go straight to dashboard ──
   const [bypassChecked, setBypassChecked] = useState(false);
   useEffect(() => {
-    if (userRole === 'platform_admin') {
-      enterDemo();
-      navigate('/dashboard', { replace: true });
-      return;
-    }
-    const bypassKey = searchParams.get('bypass');
-    const expectedKey = import.meta.env.VITE_DEMO_BYPASS_KEY;
-    if (bypassKey && expectedKey && bypassKey === expectedKey) {
-      enterDemo();
-      navigate('/dashboard', { replace: true });
-    } else {
-      setBypassChecked(true);
-    }
+    // Set seed operating hours and shifts for demo
+    setLocationHours([
+      { locationName: 'Downtown Kitchen', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '22:00' },
+      { locationName: 'Airport Cafe', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' },
+      { locationName: 'University Dining', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' },
+    ]);
+    setShifts([
+      { id: 'w1', name: 'Morning', locationName: 'Downtown Kitchen', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
+      { id: 'w2', name: 'Evening', locationName: 'Downtown Kitchen', startTime: '14:00', endTime: '22:00', days: [false, true, true, true, true, true, false] },
+      { id: 's3', name: 'Morning', locationName: 'Airport Cafe', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] },
+      { id: 's4', name: 'Afternoon', locationName: 'Airport Cafe', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] },
+      { id: 's5', name: 'Morning', locationName: 'University Dining', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
+      { id: 's6', name: 'Evening', locationName: 'University Dining', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] },
+    ]);
+    enterDemo();
+    navigate('/dashboard', { replace: true });
   }, []);
 
   // ── Bypass: Staff login ────────────────────────────────
@@ -183,9 +185,11 @@ export function DemoWizard() {
     { label: 'Your Dashboard', icon: Sparkles },
   ];
 
-  // Don't render the wizard until we've checked the bypass param
-  if (!bypassChecked) return null;
+  // Demo always redirects — show nothing while redirecting
+  return null;
 
+  // ── Below: Onboarding wizard for real (non-demo) users ──
+  // This code is kept for the real onboarding flow but never reached in demo mode.
   return (
     <div className="min-h-screen bg-[#faf8f3] flex items-center justify-center py-8 px-4">
       <div className="max-w-2xl w-full">
