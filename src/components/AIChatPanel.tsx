@@ -95,13 +95,14 @@ export function AIChatPanel({ hidden = false }: { hidden?: boolean }) {
   return (
     <>
       {/* Floating Button */}
+      {/* LAYOUT: Tour + AI Advisor must be side-by-side, never overlapping. See bottom-right floating layout spec. */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className="fixed z-[1050] flex items-center justify-center rounded-full shadow-sm transition-transform hover:scale-110"
           style={{
-            bottom: '20px',
-            right: '20px',
+            bottom: '24px',
+            right: '24px',
             width: '56px',
             height: '56px',
             backgroundColor: '#d4af37',

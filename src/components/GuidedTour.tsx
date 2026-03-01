@@ -195,12 +195,13 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
     return () => window.removeEventListener('evidly:start-guided-tour', handler);
   }, [startTour]);
 
+  /* LAYOUT: Tour + AI Advisor must be side-by-side, never overlapping. See bottom-right floating layout spec. */
   if (!isActive) {
     return (
       <button
         onClick={startTour}
         className="fixed z-[1040] flex items-center gap-2 px-4 py-3 bg-[#1e4d6b] text-white rounded-full shadow-sm hover:bg-[#163a52] transition-all hover:scale-105"
-        style={{ bottom: '84px', right: '20px' }}
+        style={{ bottom: '24px', right: '92px' }}
         title="Start guided tour"
       >
         <HelpCircle className="w-5 h-5" />
