@@ -55,7 +55,7 @@ export function RolesPermissions() {
 }
 
 function RolesPermissionsInner() {
-  const [selectedRole, setSelectedRole] = useState<UserRole>('kitchen_staff');
+  const [selectedRole, setSelectedRole] = useState<UserRole>('owner_operator');
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
   const [showExceptionModal, setShowExceptionModal] = useState(false);
   const [editUserId, setEditUserId] = useState<string | null>(null);
@@ -348,7 +348,7 @@ function RolesPermissionsInner() {
         isOpen={!!pendingChange}
         onClose={() => setPendingChange(null)}
         onConfirm={confirmPendingChange}
-        role={pendingChange?.role ?? 'kitchen_staff'}
+        role={pendingChange?.role ?? 'owner_operator'}
         permissionLabel={pendingChange?.permissionLabel ?? ''}
         permissionKey={pendingChange?.permissionKey ?? ''}
         newValue={pendingChange?.newValue ?? true}

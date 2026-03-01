@@ -327,37 +327,38 @@ export function getRoleDefaultPermissions(role: UserRole): Set<string> {
 export function getDemoRoleUserCount(role: UserRole): number {
   const DEMO_COUNTS: Partial<Record<UserRole, number>> = {
     owner_operator: 1,
-    executive: 1,
+    executive: 2,
     compliance_manager: 1,
-    chef: 1,
+    chef: 2,
     facilities_manager: 1,
-    kitchen_manager: 1,
-    kitchen_staff: 3,
+    kitchen_manager: 2,
+    kitchen_staff: 4,
   };
   return DEMO_COUNTS[role] ?? 0;
 }
 
-/** Pretty-print a role name */
+/** Pretty-print a role name (9-role system) */
 export function formatRoleName(role: UserRole): string {
   const LABELS: Record<UserRole, string> = {
-    platform_admin: 'Platform Admin',
-    owner_operator: 'Owner / Operator',
+    platform_admin: 'Admin',
+    owner_operator: 'Owner',
     executive: 'Executive',
-    compliance_manager: 'Compliance Manager',
+    compliance_manager: 'Compliance Officer',
     chef: 'Chef',
-    facilities_manager: 'Facilities Manager',
-    kitchen_manager: 'Kitchen Manager',
-    kitchen_staff: 'Kitchen Staff',
+    facilities_manager: 'Facility Manager',
+    kitchen_manager: 'Manager',
+    kitchen_staff: 'Staff',
   };
   return LABELS[role] ?? role;
 }
 
-/** Roles that can be managed (excludes platform_admin) */
+/** Roles that can be managed (excludes platform_admin), ordered by authority */
 export const MANAGEABLE_ROLES: UserRole[] = [
+  'owner_operator',
   'executive',
   'compliance_manager',
+  'kitchen_manager',
   'chef',
   'facilities_manager',
-  'kitchen_manager',
   'kitchen_staff',
 ];

@@ -61,15 +61,19 @@ export interface DemoTeamMember {
 }
 
 export const DEMO_TEAM_MEMBERS: DemoTeamMember[] = [
-  { id: 'd1', name: 'Marcus Johnson', email: 'marcus@pacificcoast.com', role: 'owner_operator', location: 'All Locations' },
-  { id: 'd2', name: 'Sarah Chen', email: 'sarah@pacificcoast.com', role: 'kitchen_manager', location: 'Downtown Kitchen' },
-  { id: 'd3', name: 'Maria Garcia', email: 'maria@pacificcoast.com', role: 'kitchen_manager', location: 'Airport Cafe' },
-  { id: 'd4', name: 'David Park', email: 'david@pacificcoast.com', role: 'kitchen_staff', location: 'University Dining' },
-  { id: 'd5', name: 'Michael Torres', email: 'michael@pacificcoast.com', role: 'kitchen_staff', location: 'Airport Cafe' },
-  { id: 'd6', name: 'Emma Rodriguez', email: 'emma@pacificcoast.com', role: 'kitchen_staff', location: 'Downtown Kitchen' },
-  { id: 'd7', name: 'Alex Thompson', email: 'alex@pacificcoast.com', role: 'facilities_manager', location: 'Downtown Kitchen' },
-  { id: 'd8', name: 'Lisa Wang', email: 'lisa@pacificcoast.com', role: 'compliance_manager', location: 'Airport Cafe' },
-  { id: 'd9', name: 'Maria Rodriguez', email: 'maria.r@pacificcoast.com', role: 'executive', location: 'All Locations' },
+  { id: 'd1', name: 'Marcus Johnson', email: 'marcus@cleaningprosplus.com', role: 'owner_operator', location: 'All Locations' },
+  { id: 'd2', name: 'Sarah Chen', email: 'sarah@cleaningprosplus.com', role: 'kitchen_manager', location: 'Downtown Kitchen' },
+  { id: 'd3', name: 'Maria Garcia', email: 'maria@cleaningprosplus.com', role: 'kitchen_manager', location: 'Airport Cafe' },
+  { id: 'd4', name: 'David Park', email: 'david@cleaningprosplus.com', role: 'kitchen_staff', location: 'University Dining' },
+  { id: 'd5', name: 'Michael Torres', email: 'michael@cleaningprosplus.com', role: 'kitchen_staff', location: 'Airport Cafe' },
+  { id: 'd6', name: 'Emma Rodriguez', email: 'emma@cleaningprosplus.com', role: 'kitchen_staff', location: 'Downtown Kitchen' },
+  { id: 'd7', name: 'Alex Thompson', email: 'alex@cleaningprosplus.com', role: 'facilities_manager', location: 'Downtown Kitchen' },
+  { id: 'd8', name: 'Lisa Wang', email: 'lisa@cleaningprosplus.com', role: 'compliance_manager', location: 'Airport Cafe' },
+  { id: 'd9', name: 'James Park', email: 'jpark@cleaningprosplus.com', role: 'executive', location: 'All Locations' },
+  { id: 'd10', name: 'Ana Torres', email: 'atorres@cleaningprosplus.com', role: 'chef', location: 'Downtown Kitchen' },
+  { id: 'd11', name: 'Carlos Reyes', email: 'creyes@cleaningprosplus.com', role: 'chef', location: 'Airport Cafe' },
+  { id: 'd12', name: 'Rachel Kim', email: 'rkim@cleaningprosplus.com', role: 'executive', location: 'All Locations' },
+  { id: 'd13', name: 'Tony Nguyen', email: 'tnguyen@cleaningprosplus.com', role: 'kitchen_staff', location: 'University Dining' },
 ];
 
 /* ------------------------------------------------------------------ */
