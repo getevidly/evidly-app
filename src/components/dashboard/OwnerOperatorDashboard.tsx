@@ -221,7 +221,7 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
 
@@ -276,9 +276,11 @@ export default function OwnerOperatorDashboard() {
   const todayStr = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   });
-  const greetFirstName = isDemoMode
+  const rawFirstName = isDemoMode
     ? (DEMO_ROLE_NAMES[userRole]?.firstName || demoFirstName)
-    : profile?.full_name?.split(' ')[0];
+    : (profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0]);
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  const greetFirstName = rawFirstName ? capitalize(rawFirstName) : null;
   const isSetupComplete = isDemoMode ? true : (profile?.onboarding_completed ?? true);
   const greetingText = isSetupComplete
     ? `Welcome back${greetFirstName ? `, ${greetFirstName}` : ''}!`

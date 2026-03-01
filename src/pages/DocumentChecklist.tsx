@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useDemo } from '../contexts/DemoContext';
 import { useAuth } from '../contexts/AuthContext';
+import { demoReferral } from '../data/demoData';
 import {
   BASE_DOCUMENTS, PILLAR_META, DEMO_CHECKLIST_STATUS, getDocumentsForState,
   type OnboardingDocument,
@@ -322,7 +323,7 @@ export function DocumentChecklist() {
               Filed! Your vendor's other clients might need this too.{' '}
               <button
                 onClick={() => guardAction('share', 'Document Checklist', () => {
-                  navigator.clipboard.writeText('https://getevidly.com/ref/PACIFIC-COAST-DK');
+                  navigator.clipboard.writeText(demoReferral.referralUrl);
                   toast.success('Referral link copied!');
                 })}
                 style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}

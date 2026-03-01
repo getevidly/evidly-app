@@ -40,17 +40,18 @@ export function DashboardHero({
   children,
 }: DashboardHeroProps) {
   const { t, locale } = useTranslation();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { isDemoMode, firstName: demoFirstName } = useDemo();
   const { userRole } = useRole();
 
   // Capitalize first letter of each word
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
-  // Resolve firstName: explicit prop → demo role name → auth profile → demo context
+  // Resolve firstName: explicit prop → demo role name → auth profile → email username
   const rawFirstName = firstName
     || (isDemoMode ? (DEMO_ROLE_NAMES[userRole]?.firstName || demoFirstName) : null)
     || profile?.full_name?.split(' ')[0]
+    || user?.email?.split('@')[0]
     || null;
   const resolvedFirstName = rawFirstName ? capitalize(rawFirstName) : null;
   const greetingText = greeting || `Welcome Back${resolvedFirstName ? `, ${resolvedFirstName}` : ''}!`;

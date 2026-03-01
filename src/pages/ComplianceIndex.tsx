@@ -7,6 +7,7 @@ import {
   ChevronDown, ChevronRight, Scale, Flame, ThermometerSun,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { demoReferral } from '../data/demoData';
 import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
@@ -369,7 +370,7 @@ export function ComplianceIndex() {
               Help raise the industry average.{' '}
               <button
                 onClick={() => {
-                  navigator.clipboard.writeText('https://getevidly.com/ref/PACIFIC-COAST-DK');
+                  navigator.clipboard.writeText(demoReferral.referralUrl);
                   toast.success('Referral link copied!');
                 }}
                 style={{ color: '#A08C5A', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600, fontSize: '12px' }}
