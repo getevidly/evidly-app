@@ -530,14 +530,16 @@ export function Sidebar() {
         <nav className="flex-1 overflow-y-auto px-3 pb-4" data-tour="sidebar-nav">
 
           {/* Home — ungrouped at top, per-role label */}
-          <SidebarNavItem
-            item={homeItem}
-            isActive={location.pathname === homeItem.path}
-            onClick={() => navigate(homeItem.path)}
-            displayLabel={getHomeLabel()}
-            displayDescription={getHomeDescription()}
-            testId={isTestMode ? 'nav-dashboard' : undefined}
-          />
+          <div data-tour="tour-dashboard">
+            <SidebarNavItem
+              item={homeItem}
+              isActive={location.pathname === homeItem.path}
+              onClick={() => navigate(homeItem.path)}
+              displayLabel={getHomeLabel()}
+              displayDescription={getHomeDescription()}
+              testId={isTestMode ? 'nav-dashboard' : undefined}
+            />
+          </div>
 
           {/* Divider after dashboard */}
           <div className="my-2 border-t border-white/10 mx-1" />
@@ -557,6 +559,7 @@ export function Sidebar() {
                   style={{ position: 'relative' }}
                   onMouseEnter={() => handleSectionEnter(section.id)}
                   onMouseLeave={handleSectionLeave}
+                  data-tour={`tour-section-${section.id}`}
                 >
                   {section.path && section.items.length === 0 ? (
                     /* Flat navigation link — no toggle, no sub-items */
@@ -684,7 +687,7 @@ export function Sidebar() {
         <SidebarUpgradeBadge />
 
         {/* Logout button — pinned to bottom */}
-        <div className="flex-shrink-0 border-t border-white/10">
+        <div className="flex-shrink-0 border-t border-white/10" data-tour="tour-logout">
           <div className="flex items-center justify-between px-4 py-3">
             <button
               onClick={handleLogout}

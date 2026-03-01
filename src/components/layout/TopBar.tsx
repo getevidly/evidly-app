@@ -145,6 +145,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
               className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30 transition-colors text-sm text-gray-300 cursor-pointer"
               title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'})`}
+              data-tour="tour-search"
             >
               <Search className="h-3.5 w-3.5" />
               <span className="text-xs">{t('topBar.search')}</span>
@@ -154,7 +155,9 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             </button>
 
             {/* Notification Center */}
-            <NotificationCenter />
+            <div data-tour="tour-alerts">
+              <NotificationCenter />
+            </div>
 
             {locations && locations.length > 0 && (
               <div className="relative">
@@ -214,7 +217,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             )}
 
             {/* Language switcher */}
-            <div className="relative">
+            <div className="relative" data-tour="tour-language">
               <button
                 onClick={() => {
                   setShowLangMenu(!showLangMenu);
@@ -258,6 +261,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 onClick={() => navigate('/help')}
                 className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
                 title={t('topBar.helpAndSupport')}
+                data-tour="tour-help-topbar"
               >
                 <HelpCircle className="h-5 w-5 text-gray-300" />
               </button>
@@ -267,6 +271,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 onClick={() => navigate('/settings')}
                 className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
                 title={t('nav.settings')}
+                data-tour="tour-settings"
               >
                 <Settings className="h-5 w-5 text-gray-300" />
               </button>
@@ -324,7 +329,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             </div>
             )}
 
-            <div className="relative">
+            <div className="relative" data-tour="tour-user">
               <button
                 onClick={() => {
                   setShowUserMenu(!showUserMenu);

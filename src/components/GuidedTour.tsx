@@ -9,34 +9,90 @@ interface TourStep {
 }
 
 const TOUR_STEPS: TourStep[] = [
+  // ── Top Menu Bar (Steps 1–6) ──
   {
-    target: 'sidebar-nav',
-    title: 'Navigation',
-    content: 'Your main navigation. Access all modules from here — temperatures, checklists, documents, vendors, and more.',
-    placement: 'right',
-  },
-  {
-    target: 'compliance-score',
-    title: 'Compliance Score',
-    content: 'Your compliance scores across 2 independent pillars: Food Safety and Facility Safety. Click either pillar to see what\'s driving the score.',
+    target: 'tour-search',
+    title: 'Search',
+    content: 'Quickly find facilities, documents, tasks, and compliance records across your account.',
     placement: 'bottom',
   },
   {
-    target: 'temp-logs-nav',
-    title: 'Temperature Logs',
-    content: 'Log temperatures for all your equipment. Set schedules, get alerts for missed checks, and track FDA-compliant cooldown monitoring.',
+    target: 'tour-alerts',
+    title: 'Alerts',
+    content: 'View notifications about compliance deadlines, out-of-range readings, and action items.',
+    placement: 'bottom',
+  },
+  {
+    target: 'tour-language',
+    title: 'Language',
+    content: 'Switch the interface language to match your preference.',
+    placement: 'bottom',
+  },
+  {
+    target: 'tour-help-topbar',
+    title: 'Help',
+    content: 'Access help articles, FAQs, and support resources.',
+    placement: 'bottom',
+  },
+  {
+    target: 'tour-settings',
+    title: 'Settings',
+    content: 'Manage your account settings, notification preferences, and system configuration.',
+    placement: 'bottom',
+  },
+  {
+    target: 'tour-user',
+    title: 'User Info',
+    content: 'View your profile, change your password, adjust settings, or sign out.',
+    placement: 'bottom',
+  },
+  // ── Sidebar Menu (Steps 7–14) ──
+  {
+    target: 'tour-dashboard',
+    title: 'Dashboard',
+    content: 'Your compliance overview \u2014 see scores, alerts, and key metrics at a glance.',
     placement: 'right',
   },
   {
-    target: 'checklists-nav',
-    title: 'Daily Checklists',
-    content: 'Opening/closing checklists, receiving logs, and custom checklists. Templates are pre-loaded for your industry type.',
+    target: 'tour-section-daily',
+    title: 'Daily Operations',
+    content: 'Manage daily food safety tasks including temperature logs, checklists, and receiving.',
     placement: 'right',
   },
   {
-    target: 'ai-advisor-nav',
-    title: 'AI Compliance Advisor',
-    content: 'Ask any compliance question — FDA regulations, HACCP requirements, health code interpretations. Trained on food safety and facility safety standards.',
+    target: 'tour-section-compliance',
+    title: 'Compliance',
+    content: 'Track your compliance status across Food Safety and Facility Safety requirements.',
+    placement: 'right',
+  },
+  {
+    target: 'tour-section-insights',
+    title: 'Insights',
+    content: 'View reports, trends, and analytics on your compliance performance.',
+    placement: 'right',
+  },
+  {
+    target: 'tour-section-tools',
+    title: 'Tools',
+    content: 'Access tools like the calendar, vendor management, training records, and document storage.',
+    placement: 'right',
+  },
+  {
+    target: 'tour-section-administration',
+    title: 'Administration',
+    content: 'Manage team members, facilities, roles, and system settings.',
+    placement: 'right',
+  },
+  {
+    target: 'tour-section-help',
+    title: 'Help',
+    content: 'Find guides, tutorials, and contact support from within the app.',
+    placement: 'right',
+  },
+  {
+    target: 'tour-logout',
+    title: 'Log Out',
+    content: 'Sign out of your EvidLY account.',
     placement: 'right',
   },
 ];
@@ -66,7 +122,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
 
     const placement = step.placement || 'bottom';
     let top = 0, left = 0;
-    const tooltipW = 340, tooltipH = 180;
+    const tooltipW = 360, tooltipH = 180;
 
     switch (placement) {
       case 'bottom':
@@ -169,7 +225,7 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
 
       {/* Tooltip */}
       <div
-        className="fixed z-[99999] w-[340px] bg-white rounded-xl shadow-sm border border-gray-200 animate-slide-up"
+        className="fixed z-[99999] w-[360px] max-h-[70vh] overflow-y-auto bg-white rounded-xl shadow-sm border border-gray-200 animate-slide-up"
         style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -183,8 +239,14 @@ export function GuidedTour({ onComplete, onActiveChange }: GuidedTourProps) {
           <p className="text-sm text-gray-600 leading-relaxed">{step.content}</p>
         </div>
         <div className="flex items-center justify-between px-5 py-3 bg-gray-50 rounded-b-xl border-t border-gray-100">
-          <span className="text-xs text-gray-400">{currentStep + 1} of {TOUR_STEPS.length}</span>
+          <span className="text-xs text-gray-400">Step {currentStep + 1} of {TOUR_STEPS.length}</span>
           <div className="flex items-center gap-2">
+            <button
+              onClick={endTour}
+              className="px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              Skip Tour
+            </button>
             {currentStep > 0 && (
               <button onClick={prev} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors">
                 <ChevronLeft className="w-4 h-4" />
