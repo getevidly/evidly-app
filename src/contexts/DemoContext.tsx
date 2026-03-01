@@ -60,7 +60,7 @@ function hasStoredAuthToken(): boolean {
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const { session, loading: authLoading } = useAuth();
+  const { session } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
     // If a Supabase token exists in localStorage, never start in demo mode
@@ -73,12 +73,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   });
 
   // ── Core invariant: authenticated sessions are NEVER in demo mode ──
-  // Three layers of protection:
-  //   1. rawDemoMode initializes to false if localStorage has auth token (synchronous)
-  //   2. isAuthenticated check blocks demo mode when session is loaded (async)
-  //   3. authLoading guard blocks demo mode while auth is resolving
+  // Two layers of protection:
+  //   1. rawDemoMode initializes to false if localStorage has auth token (prevents flash on refresh)
+  //   2. isAuthenticated check blocks demo mode when session is active
+  // Note: we do NOT gate on authLoading or hasStoredAuthToken() at runtime —
+  // when the user explicitly clicks "Try Demo", isDemoMode must be true immediately.
   const isAuthenticated = !!session?.user;
-  const isDemoMode = rawDemoMode && !isAuthenticated && !authLoading && !hasStoredAuthToken();
+  const isDemoMode = rawDemoMode && !isAuthenticated;
 
   // When user authenticates, clean up any stale demo state from sessionStorage
   useEffect(() => {
@@ -171,6 +172,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   };
 
   const enterDemo = (lead?: DemoLead) => {
+    // Clear any stale Supabase auth tokens so isDemoMode activates immediately
+    // and persists on page refresh (the rawDemoMode initializer checks hasStoredAuthToken)
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sb-') && key.endsWith('-auth-token')) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch {}
     setRawDemoMode(true);
     trackEvent('demo_start');
     try { sessionStorage.setItem(DEMO_KEY, 'true'); } catch {}
