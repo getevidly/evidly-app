@@ -25,7 +25,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, locations, selectedLocation, onLocationChange, demoMode = false }: TopBarProps) {
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLocationMenu, setShowLocationMenu] = useState(false);
@@ -69,7 +69,17 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
     kitchen_staff: 'Lisa Nguyen',
   };
 
-  const displayName = isDemoMode ? (demoRoleNames[userRole] || userName) : (profile?.full_name || t('topBar.user'));
+  const displayName = isDemoMode
+    ? (demoRoleNames[userRole] || userName)
+    : (profile?.full_name || user?.email?.split('@')[0] || t('topBar.user'));
+
+  // Build 2-letter initials from the display name (e.g. "Maria Rodriguez" → "MR")
+  const getInitials = (name: string): string => {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.charAt(0).toUpperCase();
+  };
+  const avatarInitials = getInitials(displayName);
 
   const handleChangePassword = () => {
     setPwError('');
@@ -339,8 +349,8 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                 }}
                 className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
               >
-                <div className="h-8 w-8 rounded-full bg-[#A08C5A] flex items-center justify-center text-[#1a2d4a] font-medium">
-                  {displayName.charAt(0)}
+                <div className="h-8 w-8 rounded-full bg-[#A08C5A] flex items-center justify-center text-[#1a2d4a] font-medium text-xs">
+                  {avatarInitials}
                 </div>
                 <span className="hidden md:block text-sm font-medium text-gray-200">
                   {displayName}

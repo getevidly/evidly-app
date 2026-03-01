@@ -8,7 +8,10 @@
 
 import { EvidlyIcon } from '../../ui/EvidlyIcon';
 import { useTranslation } from '../../../contexts/LanguageContext';
-import { STEEL_SLATE_GRADIENT, GOLD, FONT } from './constants';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useDemo } from '../../../contexts/DemoContext';
+import { useRole } from '../../../contexts/RoleContext';
+import { STEEL_SLATE_GRADIENT, GOLD, FONT, DEMO_ROLE_NAMES } from './constants';
 
 interface DashboardHeroProps {
   /** Main greeting text — defaults to time-based greeting */
@@ -37,15 +40,18 @@ export function DashboardHero({
   children,
 }: DashboardHeroProps) {
   const { t, locale } = useTranslation();
-  const getGreetingI18n = () => {
-    const h = new Date().getHours();
-    if (h < 12) return t('hero.goodMorning');
-    if (h < 17) return t('hero.goodAfternoon');
-    return t('hero.goodEvening');
-  };
-  const greetingText = greeting || `${getGreetingI18n()}${firstName ? `, ${firstName}` : ''}`;
+  const { profile } = useAuth();
+  const { isDemoMode, firstName: demoFirstName } = useDemo();
+  const { userRole } = useRole();
+
+  // Resolve firstName: explicit prop → demo role name → auth profile → demo context
+  const resolvedFirstName = firstName
+    || (isDemoMode ? (DEMO_ROLE_NAMES[userRole]?.firstName || demoFirstName) : null)
+    || profile?.full_name?.split(' ')[0]
+    || null;
+  const greetingText = greeting || `Welcome back${resolvedFirstName ? `, ${resolvedFirstName}` : ''}!`;
   const dateText = new Date().toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
-    weekday: 'long', month: 'long', day: 'numeric',
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   });
 
   return (

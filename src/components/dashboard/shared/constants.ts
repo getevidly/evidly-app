@@ -68,6 +68,7 @@ export function getFormattedDate(): string {
 
 // ── Per-role demo user names ─────────────────────────────
 export const DEMO_ROLE_NAMES: Record<string, { firstName: string; fullName: string }> = {
+  platform_admin: { firstName: 'Arthur', fullName: 'Arthur Samuels' },
   owner_operator: { firstName: 'Maria', fullName: 'Maria Rodriguez' },
   executive: { firstName: 'James', fullName: 'James Park' },
   compliance_manager: { firstName: 'Sofia', fullName: 'Sofia Chen' },

@@ -5,6 +5,9 @@ import {
   CheckCircle2, Hammer, AlertCircle,
 } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { useRole } from '../../contexts/RoleContext';
+import { DEMO_ROLE_NAMES } from './shared/constants';
 import {
   useDashboardData,
   type TaskItem,
@@ -217,7 +220,9 @@ function ErrorBanner({ message, onRetry }: { message: string; onRetry: () => voi
 
 export default function OwnerOperatorDashboard() {
   const navigate = useNavigate();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, firstName: demoFirstName } = useDemo();
+  const { profile } = useAuth();
+  const { userRole } = useRole();
   const { data, loading, error, refresh } = useDashboardData();
 
   // JIE: Dual-authority jurisdiction data per location
@@ -267,10 +272,17 @@ export default function OwnerOperatorDashboard() {
     return allCompliant && noCriticalOrHighAlerts;
   }, [data.locations, data.impact]);
 
-  // Date line — no year, quiet context
+  // Greeting + date
   const todayStr = new Date().toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric',
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   });
+  const greetFirstName = isDemoMode
+    ? (DEMO_ROLE_NAMES[userRole]?.firstName || demoFirstName)
+    : profile?.full_name?.split(' ')[0];
+  const isSetupComplete = isDemoMode ? true : (profile?.onboarding_completed ?? true);
+  const greetingText = isSetupComplete
+    ? `Welcome back${greetFirstName ? `, ${greetFirstName}` : ''}!`
+    : `Welcome${greetFirstName ? `, ${greetFirstName}` : ''}! Let's get started.`;
 
   if (loading) return <DashboardSkeleton />;
 
@@ -284,9 +296,12 @@ export default function OwnerOperatorDashboard() {
         </div>
       )}
 
-      {/* Date line — right-aligned, quiet context */}
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-4">
-        <p className="text-right" style={{ color: '#9CA3AF', fontSize: '13px' }}>
+      {/* Welcome greeting + date */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">
+        <h2 style={{ color: '#1E2D4D', fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.3, margin: 0 }}>
+          {greetingText}
+        </h2>
+        <p style={{ color: '#6B7F96', fontSize: '0.875rem', marginTop: '4px' }}>
           {todayStr}
         </p>
       </div>

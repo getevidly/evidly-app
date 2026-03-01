@@ -209,7 +209,6 @@ export default function FacilitiesDashboardNew() {
     return (
       <div className="space-y-6" style={FONT}>
         <DashboardHero
-          greeting={`${(() => { const h = new Date().getHours(); if (h < 12) return t('hero.goodMorning'); if (h < 17) return t('hero.goodAfternoon'); return t('hero.goodEvening'); })()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
           orgName={companyName || DEMO_ORG.name}
           locationName={locationName}
         />
@@ -229,7 +228,6 @@ export default function FacilitiesDashboardNew() {
     <div className="space-y-6" style={FONT}>
       {/* Steel-Slate Hero Banner */}
       <DashboardHero
-        greeting={`${(() => { const h = new Date().getHours(); if (h < 12) return t('hero.goodMorning'); if (h < 17) return t('hero.goodAfternoon'); return t('hero.goodEvening'); })()}, ${DEMO_ROLE_NAMES.facilities_manager.firstName}.`}
         orgName={companyName || DEMO_ORG.name}
         locationName={locationName}
       />
