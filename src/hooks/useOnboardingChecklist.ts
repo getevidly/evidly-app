@@ -132,9 +132,15 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
 
   // ── Load org profile + persisted state ────────────────
   useEffect(() => {
-    if (isDemo) {
+    if (isDemoMode) {
       // Demo = fully configured account — never show onboarding checklist
       setIsDismissed(true);
+      setLoading(false);
+      return;
+    }
+
+    if (!profile?.organization_id) {
+      // No org yet (profile still loading or brand-new user) — finish loading
       setLoading(false);
       return;
     }
