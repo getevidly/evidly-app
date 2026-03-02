@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   LayoutDashboard, MessageSquare, CalendarDays, FileText, Star, BarChart3,
   Award, Eye, TrendingUp, Clock, MapPin, Users,
   CheckCircle, XCircle, AlertTriangle, Upload, Send, ChevronRight,
   Zap, Lock, ArrowUpRight, Camera, ClipboardCheck, LogOut, Bell,
+  Mail, RefreshCw, Link2,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { supabase } from '../lib/supabase';
@@ -16,15 +17,24 @@ import {
   vendorMessages, marketplaceReviews,
   type VendorLead, type MarketplaceTier, type VendorCredentialItem,
 } from '../data/demoData';
+import {
+  DEMO_SP_PROFILE, DEMO_SP_DOCUMENTS, DEMO_CLIENT_INVITATIONS, DEMO_CLIENT_LINKS,
+  getInvitationStats,
+  type ClientInvitation, type ServiceProviderClientLink,
+} from '../data/serviceProviderDemoData';
+import { ClientInviteModal } from '../components/vendor/ClientInviteModal';
+import { BulkClientImport } from '../components/vendor/BulkClientImport';
+import { ShareInviteLinkPanel } from '../components/vendor/ShareInviteLinkPanel';
 
 // ── Types ────────────────────────────────────────────────────
-type VendorTab = 'overview' | 'leads' | 'services' | 'documents' | 'reviews' | 'analytics';
+type VendorTab = 'overview' | 'leads' | 'services' | 'clients' | 'documents' | 'reviews' | 'analytics';
 type LeadFilter = 'all' | 'new' | 'quoted' | 'accepted' | 'scheduled' | 'in_progress' | 'completed' | 'declined';
 
 const TABS: { id: VendorTab; label: string; icon: typeof LayoutDashboard; badge?: number }[] = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'leads', label: 'Leads', icon: MessageSquare, badge: vendorLeads.filter(l => l.status === 'new').length },
   { id: 'services', label: 'Services', icon: CalendarDays },
+  { id: 'clients', label: 'Clients', icon: Users, badge: DEMO_CLIENT_INVITATIONS.filter(i => i.status === 'sent' || i.status === 'delivered').length },
   { id: 'documents', label: 'Documents', icon: FileText },
   { id: 'reviews', label: 'Reviews', icon: Star },
   { id: 'analytics', label: 'Analytics', icon: BarChart3 },
@@ -119,6 +129,16 @@ export function VendorDashboard() {
   const [leadFilter, setLeadFilter] = useState<LeadFilter>('all');
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
+  // Client invitation state
+  const [clientInvitations, setClientInvitations] = useState<ClientInvitation[]>(DEMO_CLIENT_INVITATIONS);
+  const [clientLinks] = useState<ServiceProviderClientLink[]>(DEMO_CLIENT_LINKS);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showBulkImport, setShowBulkImport] = useState(false);
+  const [showShareLink, setShowShareLink] = useState(false);
+
+  // Setup gate — redirect to setup wizard if not completed
+  const setupComplete = sessionStorage.getItem('evidly_vendor_setup_complete') === 'true';
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate('/vendor/login');
@@ -146,6 +166,11 @@ export function VendorDashboard() {
     );
   }
 
+  // Redirect to setup wizard if not completed
+  if (!setupComplete) {
+    return <Navigate to="/vendor/setup" replace />;
+  }
+
   const expiringCredentials = vendorCredentials.filter(c => c.status === 'expiring' || c.status === 'expired');
   const unreadMessages = vendorMessages.filter(m => !m.read && m.senderType !== 'vendor').length;
 
@@ -158,7 +183,7 @@ export function VendorDashboard() {
           { label: 'Active Leads', value: vendorDashboardStats.activeLeads, icon: MessageSquare, color: 'text-blue-600', bg: 'bg-blue-50' },
           { label: 'Upcoming Services', value: vendorDashboardStats.upcomingServices, icon: CalendarDays, color: 'text-purple-600', bg: 'bg-purple-50' },
           { label: 'Recent Reviews', value: vendorDashboardStats.recentReviews, icon: Star, color: 'text-yellow-600', bg: 'bg-yellow-50' },
-          { label: 'Profile Views', value: vendorDashboardStats.profileViewsMonth, icon: Eye, color: 'text-green-600', bg: 'bg-green-50' },
+          { label: 'Active Clients', value: clientLinks.length, icon: Users, color: 'text-green-600', bg: 'bg-green-50' },
           { label: 'Conversion Rate', value: `${vendorDashboardStats.leadConversionRate}%`, icon: TrendingUp, color: 'text-cyan-600', bg: 'bg-cyan-50' },
           { label: 'Avg Response', value: `${vendorDashboardStats.avgResponseTime}h`, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
         ].map(s => (
@@ -230,8 +255,8 @@ export function VendorDashboard() {
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h3>
           <div className="space-y-2">
             {[
+              { label: 'Invite Clients', count: 0, action: () => setShowInviteModal(true), icon: Mail, color: 'text-green-600' },
               { label: 'Respond to New Leads', count: vendorLeads.filter(l => l.status === 'new').length, action: () => setActiveTab('leads'), icon: Send, color: 'text-blue-600' },
-              { label: 'View Messages', count: unreadMessages, action: () => toast.info('View Messages (Demo)'), icon: MessageSquare, color: 'text-purple-600' },
               { label: 'Upload Credential', count: expiringCredentials.length, action: () => setActiveTab('documents'), icon: Upload, color: 'text-amber-600' },
               { label: 'Respond to Reviews', count: vendorReviews.filter(r => !r.vendorResponse).length, action: () => setActiveTab('reviews'), icon: Star, color: 'text-yellow-600' },
             ].map(a => (
@@ -713,6 +738,172 @@ export function VendorDashboard() {
     );
   };
 
+  // ── Clients Tab ─────────────────────────────────────────
+  const renderClients = () => {
+    const stats = getInvitationStats(clientInvitations);
+    const activeClients = clientLinks;
+    const pendingInvitations = clientInvitations.filter(i => i.status !== 'signed_up');
+
+    const handleNewInvite = (invite: ClientInvitation) => {
+      setClientInvitations(prev => [invite, ...prev]);
+    };
+
+    const handleResend = (inviteId: string) => {
+      setClientInvitations(prev =>
+        prev.map(i => i.id === inviteId ? { ...i, reminder_count: i.reminder_count + 1, last_reminder_at: new Date().toISOString() } : i)
+      );
+      toast.success('Reminder sent (Demo)');
+    };
+
+    return (
+      <div className="space-y-6">
+        {/* Invitation Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[
+            { label: 'Total Sent', value: stats.total, color: 'text-gray-900', bg: 'bg-gray-50' },
+            { label: 'Delivered', value: stats.delivered, color: 'text-blue-700', bg: 'bg-blue-50' },
+            { label: 'Opened', value: stats.opened, color: 'text-purple-700', bg: 'bg-purple-50' },
+            { label: 'Signed Up', value: stats.signedUp, color: 'text-green-700', bg: 'bg-green-50' },
+            { label: 'Bounced', value: stats.bounced, color: 'text-red-700', bg: 'bg-red-50' },
+          ].map(s => (
+            <div key={s.label} className={`${s.bg} rounded-xl p-4 text-center`}>
+              <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+              <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setShowInviteModal(true)}
+            className="px-4 py-2 min-h-[44px] bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] flex items-center gap-1.5"
+          >
+            <Mail className="h-4 w-4" /> Invite Client
+          </button>
+          <button
+            onClick={() => setShowBulkImport(true)}
+            className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+          >
+            <Upload className="h-4 w-4" /> Bulk Import
+          </button>
+          <button
+            onClick={() => setShowShareLink(true)}
+            className="px-4 py-2 min-h-[44px] border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1.5"
+          >
+            <Link2 className="h-4 w-4" /> Share Invite Link
+          </button>
+        </div>
+
+        {/* Active Clients */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Active Clients ({activeClients.length})</h3>
+          {activeClients.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+              <Users className="h-10 w-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-sm text-gray-500 mb-4">No active clients yet. Invite your first client to get started.</p>
+              <button
+                onClick={() => setShowInviteModal(true)}
+                className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52]"
+              >
+                Invite Your First Client
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeClients.map(link => {
+                const invite = clientInvitations.find(i => i.id === link.invitation_id);
+                return (
+                  <div key={link.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="font-semibold text-gray-900">{invite?.business_name || 'Client'}</div>
+                        <div className="text-xs text-gray-500">{invite?.contact_name} &middot; Linked {formatDate(link.linked_at)}</div>
+                      </div>
+                      <StatusBadge status="confirmed" />
+                    </div>
+                    <div className="space-y-2 text-xs text-gray-600">
+                      {link.services_provided.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {link.services_provided.map(s => (
+                            <span key={s} className="px-2 py-0.5 bg-gray-100 rounded-full">{s}</span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-4">
+                        {link.coi_shared && <span className="flex items-center gap-1 text-green-600"><CheckCircle className="h-3 w-3" /> COI Shared</span>}
+                        {link.certs_shared && <span className="flex items-center gap-1 text-green-600"><CheckCircle className="h-3 w-3" /> Certs Shared</span>}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Pending Invitations */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900 mb-3">Pending Invitations ({pendingInvitations.length})</h3>
+          {pendingInvitations.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center text-sm text-gray-500">
+              All invitations have been accepted!
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
+              {pendingInvitations.map(inv => (
+                <div key={inv.id} className="px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-medium text-gray-900 truncate">{inv.business_name}</div>
+                    <div className="text-xs text-gray-500">{inv.contact_name} &middot; {inv.email}</div>
+                    <div className="text-xs text-gray-400 mt-0.5">
+                      Sent {formatDate(inv.sent_at)}
+                      {inv.reminder_count > 0 && ` · ${inv.reminder_count} reminder${inv.reminder_count > 1 ? 's' : ''}`}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={inv.status} />
+                    {inv.status !== 'bounced' && (
+                      <button
+                        onClick={() => handleResend(inv.id)}
+                        className="px-3 py-1.5 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 flex items-center gap-1"
+                      >
+                        <RefreshCw className="h-3 w-3" /> Resend
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Modals */}
+        <ClientInviteModal
+          isOpen={showInviteModal}
+          providerName={DEMO_SP_PROFILE.company_name}
+          providerServices={DEMO_SP_PROFILE.services}
+          onClose={() => setShowInviteModal(false)}
+          onInviteSent={handleNewInvite}
+        />
+        <BulkClientImport
+          isOpen={showBulkImport}
+          providerName={DEMO_SP_PROFILE.company_name}
+          onClose={() => setShowBulkImport(false)}
+          onImportComplete={(invites) => {
+            setClientInvitations(prev => [...invites, ...prev]);
+          }}
+        />
+        <ShareInviteLinkPanel
+          isOpen={showShareLink}
+          inviteCode={DEMO_SP_PROFILE.company_name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}
+          providerName={DEMO_SP_PROFILE.company_name}
+          onClose={() => setShowShareLink(false)}
+        />
+      </div>
+    );
+  };
+
   // ── Subscription Modal ──────────────────────────────────
   const renderSubscriptionModal = () => {
     if (!showSubscriptionModal) return null;
@@ -783,6 +974,7 @@ export function VendorDashboard() {
     overview: renderOverview,
     leads: renderLeads,
     services: renderServices,
+    clients: renderClients,
     documents: renderDocuments,
     reviews: renderReviews,
     analytics: renderAnalytics,
