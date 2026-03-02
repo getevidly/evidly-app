@@ -60,7 +60,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/vendors': { label: 'Vendor Management', parent: '/tools' },
   '/marketplace': { label: 'Marketplace', parent: '/tools' },
   '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },
-  '/checkup': { label: 'Kitchen Checkup', parent: '/tools' },
+  // /checkup removed — Kitchen Checkup is a marketing-only lead magnet, not an in-app page
   '/self-diagnosis': { label: 'Self-Diagnosis', parent: '/tools' },
   '/inspector-view': { label: 'Inspector View', parent: '/tools' },
   '/photo-evidence': { label: 'Photo Evidence', parent: '/tools' },

@@ -102,7 +102,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg-main)' }}>
+    <div className="h-screen flex flex-col" style={{ background: 'var(--bg-main)' }}>
       <Helmet>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
@@ -112,7 +112,7 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       )}
       <DemoBanner />
       <Sidebar />
-      <div className="lg:pl-60 flex flex-col flex-1 isolate">
+      <div className="lg:pl-60 flex flex-col flex-1 overflow-hidden isolate">
         <TopBar
           title={title}
           locations={locations}
@@ -121,22 +121,25 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <OfflineBanner />
-        {/* Sticky breadcrumb — always visible on scroll */}
-        <div
-          className="sticky top-0 z-40"
-          style={{
-            backgroundColor: '#FFFFFF',
-            borderBottom: '1px solid #E8EDF5',
-            boxShadow: '0 1px 3px rgba(11,22,40,0.04)',
-          }}
-        >
-          <div className="px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full py-2.5">
-            <AutoBreadcrumb />
+        {/* Scrollable content area — breadcrumb sticks inside this container */}
+        <div className="flex-1 overflow-y-auto" id="layout-scroll-container">
+          {/* STICKY BREADCRUMB — sticks to top of scroll container */}
+          <div
+            className="sticky top-0 z-40"
+            style={{
+              backgroundColor: '#FFFFFF',
+              borderBottom: '1px solid #E8EDF5',
+              boxShadow: '0 1px 3px rgba(11,22,40,0.04)',
+            }}
+          >
+            <div className="px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full py-2.5">
+              <AutoBreadcrumb />
+            </div>
           </div>
+          <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>
+            <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
+          </main>
         </div>
-        <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>
-          <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
-        </main>
       </div>
       <QuickActionsBar />
       <MobileTabBar />

@@ -128,7 +128,7 @@ const RolesPermissions = lazy(() => import('./pages/RolesPermissions').then(m =>
 const CaliforniaCompliance = lazy(() => import('./pages/public/CaliforniaCompliance').then(m => ({ default: m.CaliforniaCompliance })));
 const CountyCompliance = lazy(() => import('./pages/public/CountyCompliance').then(m => ({ default: m.CountyCompliance })));
 const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m => ({ default: m.AssessmentTool })));
-const KitchenCheckup = lazy(() => import('./pages/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
+
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
@@ -482,7 +482,7 @@ function AppRoutes() {
           <Route path="/intelligence" element={<IntelligenceHub />} />
           <Route path="/regulatory-updates" element={<RegulatoryUpdates />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
-          <Route path="/checkup" element={<KitchenCheckup />} />
+          <Route path="/checkup" element={<Navigate to="/dashboard" replace />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/intelligence" element={<CommandCenter />} />
