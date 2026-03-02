@@ -30,8 +30,8 @@ export const demoUsers: Record<UserRole, { name: string; title: string }> = {
 
 // --------------- K2C Referral Demo Data ---------------
 export const demoReferral = {
-  referralCode: 'PACI-7KM2',
-  referralUrl: 'https://getevidly.com/ref/PACI-7KM2',
+  referralCode: 'CPPL-7KM2',
+  referralUrl: 'https://getevidly.com/ref/CPPL-7KM2',
   referralsCount: 4,
   mealsGenerated: 48,        // 4 referrals × 12 meals each
   donationMultiplierMonths: 3, // doubles donation for 3 months per referral

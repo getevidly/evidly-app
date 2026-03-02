@@ -2,23 +2,51 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Copy, Check, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useDemo } from '../../contexts/DemoContext';
 import { demoReferral } from '../../data/demoData';
 import { demoK2CInvites } from '../../data/referralDemoData';
 
 interface K2CWidgetProps {
   onInviteClick: () => void;
+  /** Production referral code from DB (ignored in demo mode) */
+  referralCode?: string;
+  /** Production referral URL from DB (ignored in demo mode) */
+  referralUrl?: string;
+  /** Production meals count from DB (ignored in demo mode) */
+  mealsGenerated?: number;
+  /** Production referrals count from DB (ignored in demo mode) */
+  totalReferrals?: number;
+  /** Production signed-up count from DB (ignored in demo mode) */
+  signedUp?: number;
 }
 
-export function K2CWidget({ onInviteClick }: K2CWidgetProps) {
+export function K2CWidget({
+  onInviteClick,
+  referralCode: prodCode,
+  referralUrl: prodUrl,
+  mealsGenerated: prodMeals,
+  totalReferrals: prodReferrals,
+  signedUp: prodSignedUp,
+}: K2CWidgetProps) {
   const navigate = useNavigate();
+  const { isDemoMode } = useDemo();
   const [copied, setCopied] = useState(false);
 
-  const { referralCode, mealsGenerated } = demoReferral;
-  const totalReferrals = demoK2CInvites.length;
-  const signedUp = demoK2CInvites.filter(i => i.status === 'signed_up' || i.status === 'active').length;
+  // Demo mode: show demo seed data. Production: show real data (defaults to 0).
+  const referralCode = isDemoMode ? demoReferral.referralCode : (prodCode || '');
+  const referralUrl = isDemoMode ? demoReferral.referralUrl : (prodUrl || '');
+  const mealsGenerated = isDemoMode ? demoReferral.mealsGenerated : (prodMeals ?? 0);
+  const totalReferrals = isDemoMode ? demoK2CInvites.length : (prodReferrals ?? 0);
+  const signedUp = isDemoMode
+    ? demoK2CInvites.filter(i => i.status === 'signed_up' || i.status === 'active').length
+    : (prodSignedUp ?? 0);
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(demoReferral.referralUrl).then(() => {
+    if (!referralUrl && !referralCode) {
+      toast.info('No referral code generated yet');
+      return;
+    }
+    navigator.clipboard.writeText(referralUrl || referralCode).then(() => {
       setCopied(true);
       toast.success('Referral link copied!');
       setTimeout(() => setCopied(false), 2000);
@@ -100,7 +128,7 @@ export function K2CWidget({ onInviteClick }: K2CWidgetProps) {
             Your Referral Code
           </div>
           <div style={{ fontFamily: 'monospace', fontSize: '14px', fontWeight: 700, color: '#A08C5A', letterSpacing: '1px' }}>
-            {referralCode}
+            {referralCode || 'Not generated yet'}
           </div>
         </div>
         <button
