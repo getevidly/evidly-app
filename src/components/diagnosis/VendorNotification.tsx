@@ -20,7 +20,7 @@ type ContactMethod = 'text' | 'email' | 'both';
 
 export const VendorNotification: React.FC<Props> = ({
   result, categoryId, hasVideo, hasPhotos, photoCount,
-  locationName = 'Kitchen', orgName = 'Pacific Coast Dining',
+  locationName = 'Kitchen', orgName = 'Your Organization',
 }) => {
   const vendors = getVendorsForCategory(categoryId, DEMO_VENDORS);
   const [selectedVendorId, setSelectedVendorId] = useState<string>(vendors[0]?.id || '');

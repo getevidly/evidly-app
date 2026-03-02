@@ -28,7 +28,7 @@ interface OrgTreeNode {
 
 const orgTree: OrgTreeNode = {
   id: 'pcd',
-  name: 'Pacific Coast Dining',
+  name: 'Your Organization',
   code: 'PCD',
   type: 'corporate',
   locationCount: 3,

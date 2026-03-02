@@ -106,7 +106,7 @@ const TABS: { id: Tab; label: string; icon: typeof BarChart3 }[] = [
 
 export function ComplianceIntelligence() {
   const navigate = useNavigate();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, companyName } = useDemo();
   const [activeTab, setActiveTab] = useState<Tab>('command');
   const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
@@ -134,7 +134,7 @@ export function ComplianceIntelligence() {
             <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: '#C8102E' }}>AR</div>
             <div>
               <h1 className="text-white font-bold text-base">Compliance Intelligence</h1>
-              <p className="text-white/60 text-[10px]">Pacific Coast Dining — Enterprise Analytics</p>
+              <p className="text-white/60 text-[10px]">{companyName} — Enterprise Analytics</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ function CommandCenterTab() {
             <h2 className="text-base font-bold text-gray-900">Organization Pulse</h2>
           </div>
           <div className="flex items-center gap-3 text-[10px] text-gray-400">
-            <span>Pacific Coast Dining</span>
+            <span>{companyName}</span>
             <span>·</span>
             <span>{TOTAL_LOCATIONS}/{TOTAL_ENROLLED} locations reporting</span>
             <span>·</span>

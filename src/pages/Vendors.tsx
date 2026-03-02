@@ -204,7 +204,7 @@ export function Vendors() {
   const [manualVendors, setManualVendors] = useState<ConsolidatedVendor[]>([]);
 
   const { profile } = useAuth();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, companyName } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -1013,7 +1013,7 @@ export function Vendors() {
                       <span style={{ color: '#d4af37' }}>LY</span>
                       <span className="text-gray-900"> Secure Upload</span>
                     </h4>
-                    <p className="text-sm text-gray-500 mb-4">Pacific Coast Dining has requested documents from {selectedVendor.companyName}</p>
+                    <p className="text-sm text-gray-500 mb-4">{companyName} has requested documents from {selectedVendor.companyName}</p>
                     <div className="bg-gray-50 rounded-lg p-4 text-left mb-4">
                       <p className="text-xs font-medium text-gray-600 mb-2">Requested Documents:</p>
                       {selectedDocs.filter((d) => d.status === 'missing' || d.status === 'expired').map((doc, i) => (

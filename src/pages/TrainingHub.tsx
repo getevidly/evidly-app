@@ -917,7 +917,7 @@ function PricingTab() {
             { icon: DollarSign, title: 'Cost Savings', desc: 'Eliminates $10–20/employee third-party cert fees. ServSafe Manager prep alone costs $150–250 per person.' },
             { icon: Target, title: 'Better Compliance', desc: 'Training completion auto-updates compliance scores. Staff who train in EvidLY use EvidLY daily.' },
             { icon: EvidlyIcon, title: 'Legal Protection', desc: 'Documented training = legal defense. SB 476 compliance tracking is unique to California market.' },
-            { icon: Zap, title: 'One Platform', desc: 'Enterprise clients (Pacific Coast Dining, Compass) eliminate one more vendor. Training + compliance + operations in one tool.' },
+            { icon: Zap, title: 'One Platform', desc: 'Enterprise restaurant groups eliminate one more vendor. Training + compliance + operations in one tool.' },
           ].map(item => (
             <div key={item.title} style={{ display: 'flex', gap: 12 }}>
               <item.icon size={20} color="#1e4d6b" style={{ flexShrink: 0, marginTop: 2 }} />

@@ -1,7 +1,9 @@
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { useDemo } from '../contexts/DemoContext';
 
 export default function PassportDemo() {
+  const { companyName } = useDemo();
   const today = new Date().toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -56,7 +58,7 @@ export default function PassportDemo() {
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
           <h2 className="font-['Outfit'] text-3xl font-bold text-[#1e4d6b] mb-2">
-            Pacific Coast Dining — Downtown
+            {companyName} — Downtown
           </h2>
           <p className="text-gray-600 text-lg mb-1">1245 Fulton Street, Fresno, CA 93721</p>
           <p className="text-sm text-gray-500">Last updated: {today}</p>

@@ -17,7 +17,7 @@ const DEMO_RISK_DATA = {
   address: '1245 Fulton Street, Fresno, CA 93721',
   industrySegment: 'Casual Dining Restaurant',
   jurisdiction: 'Fresno County, CA',
-  orgName: 'Pacific Coast Dining',
+  orgName: 'Your Organization',
   generatedAt: '2026-02-12',
   validUntil: '2026-03-14',
   reportId: 'RSK-2026-0212-001',

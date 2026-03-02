@@ -34,7 +34,7 @@ const ROLE_DEMO_PROFILES: Record<UserRole, { name: string; role: string; email: 
 export function Settings() {
   const { profile, user } = useAuth();
   const { userRole } = useRole();
-  const { isDemoMode, presenterMode, togglePresenterMode } = useDemo();
+  const { isDemoMode, companyName, presenterMode, togglePresenterMode } = useDemo();
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
@@ -340,7 +340,7 @@ export function Settings() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('settings.orgName')}</label>
                 <input
                   type="text"
-                  defaultValue="Pacific Coast Dining"
+                  defaultValue={companyName}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
               </div>

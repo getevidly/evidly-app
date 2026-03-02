@@ -198,7 +198,7 @@ export function getDemoQuarterlyReport(locationUrlId: string = 'downtown'): Quar
     year: 2026,
     reportId: `BNK-2026-Q1-${locationUrlId.toUpperCase().slice(0, 3)}`,
     locationName: locationNames[locationUrlId] || 'Downtown Kitchen', // demo
-    organizationName: 'Pacific Coast Dining',
+    organizationName: 'Your Organization', // demo
     industrySegment: 'Restaurant — Casual Dining',
     jurisdiction: counties[locationUrlId] || 'Fresno County, CA',
     overallScore: benchmark.locationScore,

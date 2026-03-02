@@ -12,7 +12,7 @@ export default function TrustedBy() {
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-[2.5rem] opacity-70">🏖️</span>
-            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Pacific Coast Dining</span>
+            <span className="font-semibold text-[var(--color-text-light)] text-[0.95rem]">Multi-Location Restaurant Group</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-[2.5rem] opacity-70">🏥</span>

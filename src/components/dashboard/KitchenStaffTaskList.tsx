@@ -125,7 +125,7 @@ export default function KitchenStaffTaskList() {
   const navigate = useNavigate();
   const { locale, setLocale } = useTranslation();
   const { userRole } = useRole();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, companyName } = useDemo();
 
   const lang = (locale === 'es' ? 'es' : 'en') as 'en' | 'es';
   const s = STRINGS[lang];
@@ -185,7 +185,7 @@ export default function KitchenStaffTaskList() {
           {/* Hero Banner */}
           <DashboardHero
             firstName={staffName}
-            orgName={isDemoMode ? 'Pacific Coast Dining' : ''}
+            orgName={isDemoMode ? companyName : ''}
             locationName={isDemoMode ? DEMO_STAFF_LOCATION : ''}
           />
 

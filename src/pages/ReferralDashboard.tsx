@@ -12,15 +12,6 @@ import { useDemo } from '../contexts/DemoContext';
 import { useTranslation } from '../contexts/LanguageContext';
 import { toast } from 'sonner';
 import {
-  demoReferrals,
-  demoBadges,
-  demoNetworkScores,
-  demoK2CDonations,
-  demoVendorRipples,
-  demoHeroStories,
-  demoReferralStats,
-} from '../data/referralDemoData';
-import {
   BADGE_CONFIG,
   BADGE_LEVEL_COLORS,
   getVerifyUrl,
@@ -125,13 +116,14 @@ export function ReferralDashboard() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
-  const stats = demoReferralStats;
-  const referrals = demoReferrals;
-  const badges = demoBadges;
-  const network = demoNetworkScores;
-  const k2cDonations = demoK2CDonations;
-  const vendorRipples = demoVendorRipples;
-  const heroStories = demoHeroStories;
+  // Production: fetch from DB. Demo: empty until connected.
+  const stats = { totalReferrals: 0, converted: 0, totalRewardsEarned: 0, monthsFreeEarned: 0, k2cTotalDonated: 0, networkRank: 0, referralPoints: 0 };
+  const referrals: any[] = [];
+  const badges: ComplianceBadge[] = [];
+  const network: any[] = [];
+  const k2cDonations: any[] = [];
+  const vendorRipples: any[] = [];
+  const heroStories: any[] = [];
 
   const handleGenerateCode = (mechanic: ReferralMechanic) => {
     const code = generateReferralCode('arthur', mechanic);
@@ -197,13 +189,19 @@ export function ReferralDashboard() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <StatCard label={t('referral.totalReferrals')} value={stats.totalReferrals} icon={Share2} color="#1e4d6b" sub={`${stats.converted} ${t('referral.converted')}`} />
               <StatCard label={t('referral.rewardsEarned')} value={`$${stats.totalRewardsEarned}`} icon={Gift} color="#d4af37" sub={`${stats.monthsFreeEarned} ${t('referral.monthFree')}`} />
-              <StatCard label={t('referral.k2cDonated')} value={`$${stats.k2cTotalDonated}`} icon={Heart} color="#ef4444" sub={`3 ${t('referral.charities')}`} />
-              <StatCard label={t('referral.networkRank')} value={`#${stats.networkRank}`} icon={Trophy} color="#22c55e" sub={`${stats.referralPoints} ${t('referral.pts')}`} />
+              <StatCard label={t('referral.k2cDonated')} value={`$${stats.k2cTotalDonated}`} icon={Heart} color="#ef4444" sub={`${new Set(k2cDonations.map((d: any) => d.charityName)).size} ${t('referral.charities')}`} />
+              <StatCard label={t('referral.networkRank')} value={stats.networkRank ? `#${stats.networkRank}` : '--'} icon={Trophy} color="#22c55e" sub={`${stats.referralPoints} ${t('referral.pts')}`} />
             </div>
 
             {/* Recent Activity */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('referral.recentReferralActivity')}</h3>
+              {referrals.length === 0 ? (
+                <div className="text-center py-8">
+                  <Share2 className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No referral activity yet. Share your badge or referral link to get started.</p>
+                </div>
+              ) : (
               <div className="space-y-3">
                 {referrals.slice(0, 5).map(ref => {
                   const statusColors: Record<string, string> = {
@@ -250,6 +248,7 @@ export function ReferralDashboard() {
                   );
                 })}
               </div>
+              )}
             </div>
 
             {/* 5 Mechanics Overview */}
@@ -320,11 +319,18 @@ export function ReferralDashboard() {
               <p className="text-sm text-gray-500 mb-6">
                 {t('referral.badgesShareDescription')}
               </p>
+              {badges.length === 0 ? (
+                <div className="text-center py-8">
+                  <Award className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No badges earned yet. Achieve compliance milestones to earn shareable badges.</p>
+                </div>
+              ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {badges.map(badge => (
                   <BadgeCard key={badge.id} badge={badge} t={t} />
                 ))}
               </div>
+              )}
             </div>
 
             {/* Badge levels info */}
@@ -353,6 +359,12 @@ export function ReferralDashboard() {
               <p className="text-sm text-gray-500">{t('referral.networkLeaderboardSubtitle')}</p>
             </div>
             <div>
+              {network.length === 0 && (
+                <div className="text-center py-8">
+                  <Users className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">The compliance network leaderboard will appear as organizations join.</p>
+                </div>
+              )}
               {network.map((org, index) => {
                 const isTop3 = index < 3;
                 const rankColors = ['#d4af37', '#9ca3af', '#92400e'];
@@ -394,7 +406,7 @@ export function ReferralDashboard() {
             </div>
 
             {/* Points breakdown */}
-            <div className="p-6 bg-gray-50 border-t border-gray-100">
+            {network.length > 0 && <div className="p-6 bg-gray-50 border-t border-gray-100">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">{t('referral.howPointsWork')}</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs text-gray-600">
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-green-500" /> {t('referral.referralConverted')}</div>
@@ -402,7 +414,7 @@ export function ReferralDashboard() {
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-amber-500" /> {t('referral.referralClicked')}</div>
                 <div className="flex items-center gap-2"><TrendingUp className="h-3 w-3 text-purple-500" /> {t('referral.badgeEarnedPoints')}</div>
               </div>
-            </div>
+            </div>}
           </div>
         )}
 
@@ -427,7 +439,7 @@ export function ReferralDashboard() {
                   <div className="text-xs text-gray-500">{t('referral.donations')}</div>
                 </div>
                 <div className="bg-white/80 rounded-lg p-3 text-center">
-                  <div className="text-2xl font-bold text-red-600">3</div>
+                  <div className="text-2xl font-bold text-red-600">{new Set(k2cDonations.map((d: any) => d.charityName)).size}</div>
                   <div className="text-xs text-gray-500">{t('referral.charitiesHelped')}</div>
                 </div>
               </div>
@@ -436,6 +448,12 @@ export function ReferralDashboard() {
             {/* Donation History */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h4 className="font-semibold text-gray-900 mb-4">{t('referral.donationHistory')}</h4>
+              {k2cDonations.length === 0 ? (
+                <div className="text-center py-8">
+                  <Heart className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No K2C donations yet. Share your K2C referral link to start donating meals.</p>
+                </div>
+              ) : (
               <div className="space-y-3">
                 {k2cDonations.map(d => (
                   <div key={d.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
@@ -457,6 +475,7 @@ export function ReferralDashboard() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
 
             {/* CTA */}
@@ -481,6 +500,12 @@ export function ReferralDashboard() {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('referral.inspectionHeroStories')}</h3>
               <p className="text-sm text-gray-500 mb-6">{t('referral.storiesSubtitle')}</p>
+              {heroStories.length === 0 ? (
+                <div className="text-center py-8">
+                  <Star className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No inspection hero stories yet. Pass an inspection and share your success!</p>
+                </div>
+              ) : (
               <div className="space-y-4">
                 {heroStories.map(story => (
                   <div key={story.id} className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl border border-purple-100 p-5">
@@ -518,6 +543,7 @@ export function ReferralDashboard() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
 
             {/* Create new story CTA */}
@@ -550,6 +576,12 @@ export function ReferralDashboard() {
                 </div>
               </div>
 
+              {vendorRipples.length === 0 ? (
+                <div className="text-center py-8">
+                  <Truck className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+                  <p className="text-sm text-gray-500">No vendor ripples yet. When your vendors join EvidLY through your referral, they'll appear here.</p>
+                </div>
+              ) : (
               <div className="space-y-3">
                 {vendorRipples.map(ripple => {
                   const statusConfig: Record<string, { color: string; label: string }> = {
@@ -578,6 +610,7 @@ export function ReferralDashboard() {
                   );
                 })}
               </div>
+              )}
             </div>
 
             {/* How it works */}

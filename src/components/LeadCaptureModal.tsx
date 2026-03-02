@@ -121,7 +121,7 @@ export function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalProps) {
                   required
                   value={form.companyName}
                   onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-                  placeholder="Pacific Coast Dining"
+                  placeholder="e.g. Your Restaurant Group"
                   className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent"
                 />
               </div>

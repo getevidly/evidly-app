@@ -5,7 +5,7 @@ import { generateDigestHtml, sendWeeklyDigest, type DigestData } from '../lib/se
 
 /* ─── Demo data matching spec ─── */
 const DEMO_DIGEST: DigestData = {
-  orgName: 'Pacific Coast Dining',
+  orgName: 'Your Organization',
   weekStart: 'Feb 3, 2026',
   weekEnd: 'Feb 9, 2026',
   foodSafetyScore: 81,

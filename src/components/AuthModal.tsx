@@ -90,7 +90,7 @@ export default function AuthModal({ mode, onClose, onSwitchMode }: AuthModalProp
               </div>
               <div style={{ marginBottom:'16px' }}>
                 <label style={{ display:'block',fontSize:'14px',fontWeight:'500',color:'#374151',marginBottom:'6px' }}>Organization</label>
-                <input type="text" value={orgName} onChange={(e) => setOrgName(e.target.value)} placeholder="Pacific Coast Dining" required style={{ width:'100%',padding:'12px 16px',border:'1px solid #d1d5db',borderRadius:'8px',fontSize:'14px',boxSizing:'border-box' }} />
+                <input type="text" value={orgName} onChange={(e) => setOrgName(e.target.value)} placeholder="e.g. Your Restaurant Group" required style={{ width:'100%',padding:'12px 16px',border:'1px solid #d1d5db',borderRadius:'8px',fontSize:'14px',boxSizing:'border-box' }} />
               </div>
             </>)}
             <div style={{ marginBottom:'16px' }}>

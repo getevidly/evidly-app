@@ -109,7 +109,7 @@ function createRng(seed: number) {
 // ── Demo Data ─────────────────────────────────────────────────────
 const RAW_ORGS = [
   { name: "Bella's Italian Kitchen", industry: 'Restaurant', locs: 1 },
-  { name: 'Pacific Coast Dining', industry: 'Restaurant', locs: 3 },
+  { name: 'Your Organization', industry: 'Restaurant', locs: 3 },
   { name: 'Golden Dragon Group', industry: 'Restaurant', locs: 8 },
   { name: 'Metro Burger Co', industry: 'Restaurant', locs: 12 },
   { name: 'Fresh Catch Seafood', industry: 'Restaurant', locs: 2 },
