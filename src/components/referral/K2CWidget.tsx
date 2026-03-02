@@ -71,22 +71,22 @@ export function K2CWidget({
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <a
+          href="/kitchen-to-community"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Opens Kitchen to Community page in a new tab"
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px',
+            fontSize: '14px', fontWeight: 700, color: '#A08C5A',
+            textDecoration: 'none', cursor: 'pointer',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
+        >
           <span style={{ fontSize: '18px' }}>🍽️</span>
-          <button
-            onClick={() => navigate('/kitchen-to-community')}
-            title="Learn about Kitchen to Community"
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-              fontSize: '14px', fontWeight: 700, color: '#A08C5A',
-              textDecoration: 'none',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.textDecoration = 'underline'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.textDecoration = 'none'; }}
-          >
-            Kitchen to Community
-          </button>
-        </div>
+          Kitchen to Community
+        </a>
         <button
           onClick={() => navigate('/referrals')}
           style={{
@@ -100,18 +100,18 @@ export function K2CWidget({
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '14px' }}>
-        <div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '14px' }}>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#0B1628' }}>{mealsGenerated}</div>
           <div style={{ fontSize: '11px', color: '#6B7F96' }}>Meals Donated</div>
         </div>
         <div style={{ width: '1px', backgroundColor: '#D1D9E6' }} />
-        <div>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b' }}>{totalReferrals}</div>
           <div style={{ fontSize: '11px', color: '#6B7F96' }}>Referrals</div>
         </div>
         <div style={{ width: '1px', backgroundColor: '#D1D9E6' }} />
-        <div>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '24px', fontWeight: 800, color: '#16a34a' }}>{signedUp}</div>
           <div style={{ fontSize: '11px', color: '#6B7F96' }}>Signed Up</div>
         </div>
