@@ -1798,6 +1798,7 @@ export function Calendar() {
               borderRadius: '12px',
               padding: '16px',
               color: 'white',
+              textAlign: 'center',
             }}>
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 8px 0', fontFamily: "'DM Sans', sans-serif", textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 {tr('pages.calendar.today')}
