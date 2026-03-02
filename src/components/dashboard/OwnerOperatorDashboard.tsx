@@ -228,23 +228,24 @@ export default function OwnerOperatorDashboard() {
   const { data, loading, error, refresh } = useDashboardData();
 
   // JIE: Dual-authority jurisdiction data per location
+  const locations = data.locations ?? [];
   const jieLocIds = useMemo(
-    () => data.locations.map(l => JIE_LOC_MAP[l.id] || l.id),
-    [data.locations],
+    () => locations.map(l => JIE_LOC_MAP[l.id] || l.id),
+    [locations],
   );
   const jurisdictions = useAllLocationJurisdictions(jieLocIds, isDemoMode);
   const jieScores = useAllComplianceScores(jurisdictions, isDemoMode);
 
   // Single vs multi-location detection
-  const isSingleLocation = data.locations.length === 1;
+  const isSingleLocation = locations.length === 1;
 
   // Build location status rows
   const locationStatusRows = useMemo(
-    () => data.locations.map(loc => {
+    () => locations.map(loc => {
       const jieLocId = JIE_LOC_MAP[loc.id] || loc.id;
       return getLocationStatusInfo(loc, jieScores[jieLocId] || null, jurisdictions[jieLocId] || null);
     }),
-    [data.locations, jieScores, jurisdictions],
+    [locations, jieScores, jurisdictions],
   );
 
   // Multi-location: only show red and yellow rows (filter out green)
@@ -255,24 +256,25 @@ export default function OwnerOperatorDashboard() {
   const allGreen = !isSingleLocation && nonGreenRows.length === 0;
 
   // ONE priority alert — highest severity, most recent
+  const impact = data.impact ?? [];
   const topAlert = useMemo(() => {
-    if (data.impact.length === 0) return null;
-    const sorted = [...data.impact].sort((a, b) => {
+    if (impact.length === 0) return null;
+    const sorted = [...impact].sort((a, b) => {
       const sevOrder = { critical: 0, high: 1, medium: 2, low: 3 } as Record<string, number>;
       return (sevOrder[a.severity] ?? 3) - (sevOrder[b.severity] ?? 3);
     });
     return sorted[0];
-  }, [data.impact]);
+  }, [impact]);
 
   // Conditional referral: only show when has locations, all >= 80, AND zero critical/high alerts
   const showReferral = useMemo(() => {
-    if (data.locations.length === 0) return false;
-    const allCompliant = data.locations.every(l => l.score >= 80);
-    const noCriticalOrHighAlerts = !data.impact.some(
+    if (locations.length === 0) return false;
+    const allCompliant = locations.every(l => l.score >= 80);
+    const noCriticalOrHighAlerts = !impact.some(
       i => i.severity === 'critical' || i.severity === 'warning',
     );
     return allCompliant && noCriticalOrHighAlerts;
-  }, [data.locations, data.impact]);
+  }, [locations, impact]);
 
   // Greeting + date
   const todayStr = new Date().toLocaleDateString('en-US', {
@@ -322,7 +324,7 @@ export default function OwnerOperatorDashboard() {
 
       {/* ─── ELEMENT 2: Today's Tasks ───────────────────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
-        <TodaysTasks navigate={navigate} tasks={data.tasks} />
+        <TodaysTasks navigate={navigate} tasks={data.tasks ?? []} />
       </div>
 
       {/* ─── ELEMENT 3: ONE Priority Alert ──────────────────────── */}

@@ -56,13 +56,15 @@ export function Dashboard() {
     setSearchParams(next, { replace: true });
   };
 
+  const todayShort = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
   return (
     <div>
       {/* Tab bar */}
       <div className="flex gap-1 mb-5" style={{ borderBottom: '2px solid #e5e7eb' }}>
         {[
           { id: 'overview', label: 'Overview' },
-          { id: 'today', label: 'Today' },
+          { id: 'today', label: `Today \u2014 ${todayShort}` },
         ].map(t => (
           <button
             key={t.id}

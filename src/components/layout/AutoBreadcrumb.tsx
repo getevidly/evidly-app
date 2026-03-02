@@ -239,6 +239,10 @@ function buildBreadcrumb(pathname: string, search: string): BreadcrumbItem[] {
 
 export function AutoBreadcrumb() {
   const location = useLocation();
+
+  // Don't render on dashboard home — it's the root, breadcrumb is redundant
+  if (location.pathname === '/dashboard') return null;
+
   const items = buildBreadcrumb(location.pathname, location.search);
 
   return <BreadcrumbNav items={items} />;

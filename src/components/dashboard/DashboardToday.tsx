@@ -80,7 +80,13 @@ function DeadlineRow({ item, navigate }: { item: DeadlineItem; navigate: (path: 
 
 export function DashboardToday() {
   const navigate = useNavigate();
-  const { tasks, deadlines } = useDashboardData();
+  const { data } = useDashboardData();
+  const tasks = data.tasks ?? [];
+  const deadlines = data.deadlines ?? [];
+
+  const todayStr = new Date().toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
+  });
 
   const doneCount = tasks.filter(t => t.status === 'done').length;
   const overdueCount = tasks.filter(t => t.status === 'overdue').length;
@@ -88,6 +94,9 @@ export function DashboardToday() {
 
   return (
     <div className="space-y-5" style={{ ...FONT }}>
+      {/* Date header */}
+      <p className="text-sm" style={{ color: '#6B7F96' }}>{todayStr}</p>
+
       {/* Summary strip */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white rounded-lg p-4" style={{ border: '1px solid #e5e7eb' }}>
