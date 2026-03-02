@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { X, Heart, Send } from 'lucide-react';
+import { useState, useCallback, useRef } from 'react';
+import { X, Heart, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
@@ -8,33 +8,163 @@ interface K2CInviteModalProps {
   isOpen: boolean;
   onClose: () => void;
   referralCode: string;
+  /** Sender's name (auto-populated in message). Demo default: 'Marcus Johnson' */
+  senderName?: string;
+  /** Sender's business name (auto-populated in message). Demo default: 'Pacific Coast Kitchen' */
+  senderBusinessName?: string;
 }
 
+const K2C_PAGE_URL = 'https://app.evidly.com/kitchen-to-community';
+
 const ROLE_OPTIONS = [
-  'Owner/Operator',
-  'Kitchen Manager',
-  'Chef',
-  'Facilities Manager',
-  'Compliance Officer',
-  'Other',
+  { value: 'Owner/Operator', label: 'Owner / CEO' },
+  { value: 'Kitchen Manager', label: 'Manager' },
+  { value: 'Chef', label: 'Chef / Kitchen Manager' },
+  { value: 'Facilities Manager', label: 'Facility Manager' },
+  { value: 'Compliance Officer', label: 'Compliance Officer' },
+  { value: 'Other', label: 'Other' },
 ];
 
-const DEFAULT_MESSAGE = `Hi! I've been using EvidLY to manage food safety compliance at my kitchen, and it's been a game-changer.
+/* ------------------------------------------------------------------ */
+/*  Role-based message templates                                       */
+/* ------------------------------------------------------------------ */
 
-For every kitchen that joins through this referral, EvidLY donates 12 meals to No Kid Hungry. I thought you might be interested in both the platform and the mission.
+function getRoleMessage(
+  roleValue: string,
+  contactName: string,
+  referralLink: string,
+  senderName: string,
+  senderBusiness: string,
+): string {
+  const name = contactName.trim() || '[Contact Name]';
+  const link = referralLink || '[Referral Link]';
 
-It takes about 5 minutes to set up, and you'll see your compliance status immediately. Would love to have you join the Kitchen to Community network!`;
+  switch (roleValue) {
+    case 'Owner/Operator':
+      return `Hey ${name},
 
-export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModalProps) {
+I've been using EvidLY to manage both food safety and facility safety across my kitchen operations, and it's completely changed how I run things — I know exactly where I stand before an inspector walks through the door, every vendor is tracked, and my compliance score updates in real time.
+
+As a fellow owner, I think you'd appreciate having everything in one place instead of juggling spreadsheets, binders, and hoping your team is on top of things.
+
+Plus, for every kitchen that joins through my referral, EvidLY donates 12 meals to No Kid Hungry through their Kitchen to Community program. Learn more: ${K2C_PAGE_URL}
+
+So you'd be helping your business AND feeding kids in our community. And once you're on EvidLY, you'll get your own referral code to keep the chain going.
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+
+    case 'Kitchen Manager':
+      return `Hey ${name},
+
+I've been using EvidLY at my kitchen and wanted to pass it along — it makes managing daily operations so much easier. Temperature logs, vendor tracking, checklists, compliance scoring — everything your team does is tracked and visible in one dashboard.
+
+As a manager, you'd have clear visibility into what's getting done and what needs attention without chasing people down.
+
+Plus, for every kitchen that joins through this link, 12 meals are donated to No Kid Hungry. Learn more: ${K2C_PAGE_URL}
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+
+    case 'Chef':
+      return `Hey ${name},
+
+Fellow kitchen professional here — I started using EvidLY for food safety management and it's been a game changer. Temperature monitoring, receiving logs, HACCP tracking, and daily checklists are all in one system. No more paper logs or guessing if your team completed their checks.
+
+I think you'd really benefit from having all your food safety operations organized and inspection-ready at all times.
+
+Plus, every kitchen that joins through my referral means 12 meals donated to No Kid Hungry. Learn more: ${K2C_PAGE_URL}
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+
+    case 'Facilities Manager':
+      return `Hey ${name},
+
+I wanted to share something that's really helped me stay on top of facility safety — EvidLY tracks all my vendor services (hood cleaning, fire suppression, extinguishers, pest control, grease traps) in one place with automatic scheduling reminders and compliance scoring.
+
+No more wondering if your hood cleaning is overdue or scrambling for records before a fire marshal visit. Everything is documented and inspection-ready.
+
+Plus, every kitchen that joins through my referral means 12 meals donated to No Kid Hungry. Learn more: ${K2C_PAGE_URL}
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+
+    case 'Compliance Officer':
+      return `Hey ${name},
+
+If you're managing compliance for commercial kitchens, you need to check out EvidLY. It's the only platform I've found that covers both food safety AND facility safety with jurisdiction-specific scoring. Gap analysis, corrective action workflows, inspection readiness — it's built for people like us who need to know exactly where things stand.
+
+For every kitchen that joins through this link, EvidLY donates 12 meals to No Kid Hungry through their K2C program. Learn more: ${K2C_PAGE_URL}
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+
+    default: // 'Other' or empty
+      return `Hey ${name},
+
+I've been using EvidLY to manage food safety and facility safety at my kitchen, and it's been a game changer — I know exactly where I stand before an inspector walks through the door.
+
+I think it could really help you too. Plus, for every kitchen that joins through my referral, 12 meals are donated to No Kid Hungry. Learn more: ${K2C_PAGE_URL}
+
+So you'd be helping your business AND feeding kids in our community. And once you're on EvidLY, you'll get your own referral code to keep the chain going.
+
+Check it out: ${link}
+
+${senderName}
+${senderBusiness}`;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
+export function K2CInviteModal({
+  isOpen,
+  onClose,
+  referralCode,
+  senderName: senderNameProp,
+  senderBusinessName: senderBusinessProp,
+}: K2CInviteModalProps) {
   const { isDemoMode } = useDemo();
+
+  const senderName = senderNameProp || (isDemoMode ? 'Marcus Johnson' : 'Your Name');
+  const senderBusiness = senderBusinessProp || (isDemoMode ? 'Pacific Coast Kitchen' : 'Your Business');
+  const referralLink = referralCode
+    ? `https://getevidly.com/ref/${referralCode}`
+    : '';
 
   const [contactName, setContactName] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [role, setRole] = useState('');
-  const [message, setMessage] = useState(DEFAULT_MESSAGE);
+  const [message, setMessage] = useState(() =>
+    getRoleMessage('', '', referralLink, senderName, senderBusiness),
+  );
   const [loading, setLoading] = useState(false);
+
+  // Track whether the user has manually edited the message
+  const messageEdited = useRef(false);
+  // Track confirmation dialog for role change
+  const [pendingRole, setPendingRole] = useState<string | null>(null);
+
+  const buildMessage = useCallback(
+    (roleVal: string, name?: string) =>
+      getRoleMessage(roleVal, name ?? contactName, referralLink, senderName, senderBusiness),
+    [contactName, referralLink, senderName, senderBusiness],
+  );
 
   const resetForm = () => {
     setContactName('');
@@ -42,7 +172,9 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
     setEmail('');
     setPhone('');
     setRole('');
-    setMessage(DEFAULT_MESSAGE);
+    setMessage(getRoleMessage('', '', referralLink, senderName, senderBusiness));
+    messageEdited.current = false;
+    setPendingRole(null);
   };
 
   const handleClose = () => {
@@ -50,9 +182,59 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
     onClose();
   };
 
+  /* ── Role change logic ─────────────────────────────────────────── */
+
+  const applyRole = (newRole: string) => {
+    setRole(newRole);
+    setMessage(buildMessage(newRole));
+    messageEdited.current = false;
+    setPendingRole(null);
+  };
+
+  const handleRoleChange = (newRole: string) => {
+    if (messageEdited.current) {
+      // User has edited the message — ask before overwriting
+      setPendingRole(newRole);
+    } else {
+      applyRole(newRole);
+    }
+  };
+
+  const handleKeepEdits = () => {
+    if (pendingRole !== null) {
+      setRole(pendingRole);
+      setPendingRole(null);
+      // Keep current message as-is
+    }
+  };
+
+  const handleLoadTemplate = () => {
+    if (pendingRole !== null) {
+      applyRole(pendingRole);
+    }
+  };
+
+  /* ── Message editing ───────────────────────────────────────────── */
+
+  const handleMessageChange = (value: string) => {
+    setMessage(value);
+    messageEdited.current = true;
+  };
+
+  /* ── Contact name change → update message placeholders ─────────── */
+
+  const handleContactNameChange = (value: string) => {
+    setContactName(value);
+    // If user hasn't manually edited the message, auto-update the contact name
+    if (!messageEdited.current) {
+      setMessage(getRoleMessage(role, value, referralLink, senderName, senderBusiness));
+    }
+  };
+
+  /* ── Submit ────────────────────────────────────────────────────── */
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!contactName.trim() || !businessName.trim() || !email.trim()) return;
 
     setLoading(true);
@@ -68,11 +250,9 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
     }
 
     try {
-      // Production: send via edge function
       const { error } = await supabase.functions.invoke('k2c-referral-invite', {
         body: { contactName, businessName, email, phone, role, referralCode, message },
       });
-
       if (error) throw error;
 
       toast.success(`Invitation sent to ${contactName}!`, {
@@ -89,6 +269,16 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
 
   if (!isOpen) return null;
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%', padding: '10px 12px', borderRadius: '8px',
+    border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
+    outline: 'none', boxSizing: 'border-box',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px',
+  };
+
   return (
     <div
       style={{
@@ -103,7 +293,7 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
         backgroundColor: '#ffffff',
         borderRadius: '16px',
         width: '100%',
-        maxWidth: '520px',
+        maxWidth: '560px',
         maxHeight: '90vh',
         overflowY: 'auto',
         margin: '16px',
@@ -125,10 +315,10 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
             </div>
             <div>
               <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#0B1628' }}>
-                Feed Kids — Refer a Kitchen
+                Refer a Kitchen, Feed the Community
               </h2>
               <p style={{ margin: 0, fontSize: '12px', color: '#6B7F96' }}>
-                Every referral = 12 meals donated to No Kid Hungry
+                Every kitchen you refer = 12 meals donated to No Kid Hungry
               </p>
             </div>
           </div>
@@ -148,116 +338,131 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Contact Name */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                Contact Name *
-              </label>
+              <label style={labelStyle}>Contact Name *</label>
               <input
                 type="text"
                 value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
+                onChange={(e) => handleContactNameChange(e.target.value)}
                 placeholder="e.g., Maria Gonzalez"
                 required
-                style={{
-                  width: '100%', padding: '10px 12px', borderRadius: '8px',
-                  border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
-                  outline: 'none', boxSizing: 'border-box',
-                }}
+                style={inputStyle}
               />
             </div>
 
             {/* Business Name */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                Business Name *
-              </label>
+              <label style={labelStyle}>Business Name *</label>
               <input
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="e.g., Central Cafe & Grill"
                 required
-                style={{
-                  width: '100%', padding: '10px 12px', borderRadius: '8px',
-                  border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
-                  outline: 'none', boxSizing: 'border-box',
-                }}
+                style={inputStyle}
               />
             </div>
 
             {/* Email + Phone row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                  Email *
-                </label>
+                <label style={labelStyle}>Email *</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="email@example.com"
                   required
-                  style={{
-                    width: '100%', padding: '10px 12px', borderRadius: '8px',
-                    border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
-                    outline: 'none', boxSizing: 'border-box',
-                  }}
+                  style={inputStyle}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                  Phone
-                </label>
+                <label style={labelStyle}>Phone</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="(555) 555-0100"
-                  style={{
-                    width: '100%', padding: '10px 12px', borderRadius: '8px',
-                    border: '1px solid #D1D9E6', fontSize: '14px', color: '#0B1628',
-                    outline: 'none', boxSizing: 'border-box',
-                  }}
+                  style={inputStyle}
                 />
               </div>
             </div>
 
             {/* Role */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                Their Role
-              </label>
+              <label style={labelStyle}>Their Role</label>
               <select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) => handleRoleChange(e.target.value)}
                 style={{
-                  width: '100%', padding: '10px 12px', borderRadius: '8px',
-                  border: '1px solid #D1D9E6', fontSize: '14px', color: role ? '#0B1628' : '#6B7F96',
-                  outline: 'none', boxSizing: 'border-box', backgroundColor: '#ffffff',
+                  ...inputStyle,
+                  color: role ? '#0B1628' : '#6B7F96',
+                  backgroundColor: '#ffffff',
                 }}
               >
-                <option value="">Select role...</option>
+                <option value="">Select their role...</option>
                 {ROLE_OPTIONS.map(r => (
-                  <option key={r} value={r}>{r}</option>
+                  <option key={r.value} value={r.value}>{r.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Message */}
+            {/* Confirmation dialog for role change when message was edited */}
+            {pendingRole !== null && (
+              <div style={{
+                background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '10px',
+                padding: '12px 16px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <AlertTriangle size={16} color="#92400e" />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#92400e' }}>
+                    Changing the role will update the message.
+                  </span>
+                </div>
+                <p style={{ fontSize: '12px', color: '#a16207', margin: '0 0 10px' }}>
+                  Keep your edits or load the new template?
+                </p>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={handleKeepEdits}
+                    style={{
+                      padding: '6px 14px', borderRadius: '6px',
+                      border: '1px solid #D1D9E6', backgroundColor: '#ffffff',
+                      fontSize: '12px', fontWeight: 600, color: '#3D5068', cursor: 'pointer',
+                    }}
+                  >
+                    Keep My Edits
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLoadTemplate}
+                    style={{
+                      padding: '6px 14px', borderRadius: '6px',
+                      border: 'none', backgroundColor: '#1e4d6b',
+                      fontSize: '12px', fontWeight: 600, color: '#ffffff', cursor: 'pointer',
+                    }}
+                  >
+                    Load New Template
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Personal Note */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#0B1628', marginBottom: '4px' }}>
-                Personal Message
-              </label>
+              <label style={labelStyle}>Personal Note (optional)</label>
               <textarea
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={5}
+                onChange={(e) => handleMessageChange(e.target.value)}
+                rows={8}
                 style={{
-                  width: '100%', padding: '10px 12px', borderRadius: '8px',
-                  border: '1px solid #D1D9E6', fontSize: '13px', color: '#0B1628',
-                  outline: 'none', boxSizing: 'border-box', resize: 'vertical',
-                  lineHeight: '1.5',
+                  ...inputStyle,
+                  fontSize: '13px', resize: 'vertical', lineHeight: '1.5',
                 }}
               />
+              <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6B7F96' }}>
+                Pre-filled based on role. Edit freely — your message will be included in the referral email.
+              </p>
             </div>
 
             {/* Impact section */}
@@ -272,7 +477,7 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
                 </p>
                 <p style={{ margin: '2px 0 0', fontSize: '12px', color: '#a16207' }}>
                   Every kitchen that signs up = <strong>12 meals donated</strong> to No Kid Hungry.
-                  Your donations are doubled for 3 months per referral.
+                  Donations <strong>doubled for 3 months</strong> per referral.
                 </p>
               </div>
             </div>
@@ -308,7 +513,7 @@ export function K2CInviteModal({ isOpen, onClose, referralCode }: K2CInviteModal
               }}
             >
               <Send size={14} />
-              {loading ? 'Sending...' : 'Send Invitation'}
+              {loading ? 'Sending...' : 'Send Referral'}
             </button>
           </div>
         </form>
