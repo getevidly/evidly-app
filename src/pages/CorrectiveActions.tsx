@@ -1,113 +1,97 @@
-import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useCallback } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
   Clock,
   Filter,
   ChevronRight,
+  ChevronDown,
   User,
   MapPin,
+  FileText,
+  Archive,
+  X,
+  BookOpen,
+  PenLine,
+  Shield,
+  ArrowRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
+import { useDemoGuard } from '../hooks/useDemoGuard';
+import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import {
+  DEMO_CORRECTIVE_ACTIONS,
+  CA_SYSTEM_TEMPLATES,
+  getTemplatesByCategory,
+  CATEGORY_LABELS,
+  SEVERITY_LABELS,
+  type CACategory,
+  type CASeverity,
+  type CAStatus,
+  type CATemplate,
+  type CorrectiveActionItem,
+} from '../data/correctiveActionsDemoData';
 
-// ── Inline demo data ──────────────────────────────────────
+// ── Constants ────────────────────────────────────────────────
 
-type CASeverity = 'critical' | 'high' | 'medium' | 'low';
-type CAStatus = 'open' | 'in_progress' | 'resolved' | 'verified';
-
-interface CorrectiveActionItem {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  locationId: string;
-  severity: CASeverity;
-  status: CAStatus;
-  source: string;
-  assignee: string;
-  createdAt: string;
-  dueDate: string;
-  resolvedAt: string | null;
-}
-
-const daysAgo = (d: number) => {
-  const dt = new Date();
-  dt.setDate(dt.getDate() - d);
-  return dt.toISOString().slice(0, 10);
-};
-const daysFromNow = (d: number) => {
-  const dt = new Date();
-  dt.setDate(dt.getDate() + d);
-  return dt.toISOString().slice(0, 10);
-};
-
-const DEMO_ACTIONS: CorrectiveActionItem[] = [
-  {
-    id: 'ca-1', title: 'Walk-in cooler temperature excursion',
-    description: 'Walk-in cooler recorded 44.8°F — exceeds 41°F limit. Door was found ajar. Recheck required within 30 minutes.',
-    location: 'Airport Cafe', locationId: 'airport', severity: 'critical', status: 'in_progress', // demo
-    source: 'Temperature Log', assignee: 'David Kim', createdAt: daysAgo(1), dueDate: daysFromNow(0), resolvedAt: null,
-  },
-  {
-    id: 'ca-2', title: 'Missing hood suppression inspection certificate',
-    description: 'Annual hood suppression system inspection certificate expired. Schedule re-inspection with certified vendor.',
-    location: 'University Hub', locationId: 'university', severity: 'high', status: 'open',
-    source: 'Facility Safety Audit', assignee: 'Michael Torres', createdAt: daysAgo(5), dueDate: daysFromNow(2), resolvedAt: null,
-  },
-  {
-    id: 'ca-3', title: 'Handwashing station soap dispenser empty',
-    description: 'Prep area handwashing station found without soap during morning inspection. Restocked and verified.',
-    location: 'Downtown Kitchen', locationId: 'downtown', severity: 'medium', status: 'resolved', // demo
-    source: 'Self-Inspection', assignee: 'Lisa Nguyen', createdAt: daysAgo(3), dueDate: daysAgo(1), resolvedAt: daysAgo(2),
-  },
-  {
-    id: 'ca-4', title: 'Hot holding unit below minimum temperature',
-    description: 'Hot holding unit recorded 131°F — below 135°F minimum. Food reheated to 165°F and returned to holding.',
-    location: 'Downtown Kitchen', locationId: 'downtown', severity: 'high', status: 'verified', // demo
-    source: 'Temperature Log', assignee: 'Ana Torres', createdAt: daysAgo(4), dueDate: daysAgo(2), resolvedAt: daysAgo(3),
-  },
-  {
-    id: 'ca-5', title: 'Pest control service overdue',
-    description: 'Monthly pest control service is 10 days overdue. Contact vendor to reschedule immediately.',
-    location: 'Airport Cafe', locationId: 'airport', severity: 'medium', status: 'open', // demo
-    source: 'Vendor Tracking', assignee: 'Michael Torres', createdAt: daysAgo(10), dueDate: daysAgo(3), resolvedAt: null,
-  },
-  {
-    id: 'ca-6', title: 'Employee food handler card expiring',
-    description: 'Food handler certification for two staff members expires within 14 days. Schedule renewal.',
-    location: 'University Hub', locationId: 'university', severity: 'low', status: 'in_progress',
-    source: 'Regulatory Tracking', assignee: 'Sofia Chen', createdAt: daysAgo(7), dueDate: daysFromNow(7), resolvedAt: null,
-  },
-  {
-    id: 'ca-7', title: 'Cutting board cross-contamination risk',
-    description: 'Color-coded cutting boards not separated by protein type during prep. Staff retrained on SOP.',
-    location: 'Downtown Kitchen', locationId: 'downtown', severity: 'high', status: 'resolved', // demo
-    source: 'HACCP Monitoring', assignee: 'David Kim', createdAt: daysAgo(6), dueDate: daysAgo(4), resolvedAt: daysAgo(5),
-  },
-  {
-    id: 'ca-8', title: 'Receiving log missing for Thursday delivery',
-    description: 'Produce delivery on Thursday was not logged in the receiving log. Vendor invoice used to backfill record.',
-    location: 'Airport Cafe', locationId: 'airport', severity: 'medium', status: 'verified', // demo
-    source: 'Audit Trail Review', assignee: 'Lisa Nguyen', createdAt: daysAgo(8), dueDate: daysAgo(5), resolvedAt: daysAgo(6),
-  },
-];
-
-// ── Helpers ──────────────────────────────────────────────
+const NAVY = '#1e4d6b';
 
 const SEVERITY_CONFIG: Record<CASeverity, { label: string; color: string; bg: string; border: string }> = {
   critical: { label: 'Critical', color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },
   high:     { label: 'High', color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
-  medium:   { label: 'Medium', color: '#1e4d6b', bg: '#eef4f8', border: '#b8d4e8' },
+  medium:   { label: 'Medium', color: NAVY, bg: '#eef4f8', border: '#b8d4e8' },
   low:      { label: 'Low', color: '#166534', bg: '#f0fdf4', border: '#bbf7d0' },
 };
 
 const STATUS_CONFIG: Record<CAStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  open:        { label: 'Open', color: '#dc2626', bg: '#fef2f2', icon: AlertTriangle },
+  created:     { label: 'Created', color: '#6366f1', bg: '#eef2ff', icon: FileText },
   in_progress: { label: 'In Progress', color: '#d97706', bg: '#fffbeb', icon: Clock },
-  resolved:    { label: 'Resolved', color: '#16a34a', bg: '#f0fdf4', icon: CheckCircle2 },
-  verified:    { label: 'Verified', color: '#1e4d6b', bg: '#eef4f8', icon: CheckCircle2 },
+  completed:   { label: 'Completed', color: '#16a34a', bg: '#f0fdf4', icon: CheckCircle2 },
+  verified:    { label: 'Verified', color: NAVY, bg: '#eef4f8', icon: CheckCircle2 },
+  closed:      { label: 'Closed', color: '#6b7280', bg: '#f3f4f6', icon: Archive },
+  archived:    { label: 'Archived', color: '#9ca3af', bg: '#f9fafb', icon: Archive },
+};
+
+const LIFECYCLE_NEXT: Partial<Record<CAStatus, { label: string; next: CAStatus }>> = {
+  created:     { label: 'Start Work', next: 'in_progress' },
+  in_progress: { label: 'Mark Completed', next: 'completed' },
+  completed:   { label: 'Verify', next: 'verified' },
+  verified:    { label: 'Close', next: 'closed' },
+};
+
+const DEMO_LOCATIONS = [
+  { id: 'downtown', name: 'Downtown Kitchen' },
+  { id: 'airport', name: 'Airport Cafe' },
+  { id: 'university', name: 'University Hub' },
+];
+
+interface CreateCAForm {
+  title: string;
+  category: CACategory;
+  severity: CASeverity;
+  source: string;
+  locationId: string;
+  assignee: string;
+  dueDate: string;
+  description: string;
+  rootCause: string;
+  regulationReference: string;
+  templateId: string | null;
+}
+
+const EMPTY_FORM: CreateCAForm = {
+  title: '',
+  category: 'food_safety',
+  severity: 'medium',
+  source: '',
+  locationId: '',
+  assignee: '',
+  dueDate: '',
+  description: '',
+  rootCause: '',
+  regulationReference: '',
+  templateId: null,
 };
 
 function formatDate(iso: string): string {
@@ -115,19 +99,36 @@ function formatDate(iso: string): string {
 }
 
 function isOverdue(item: CorrectiveActionItem): boolean {
-  if (item.status === 'resolved' || item.status === 'verified') return false;
+  if (['completed', 'verified', 'closed', 'archived'].includes(item.status)) return false;
   return new Date(item.dueDate) < new Date(new Date().toISOString().slice(0, 10));
 }
 
-// ── Component ────────────────────────────────────────────
+// ── Component ────────────────────────────────────────────────
 
 export function CorrectiveActions() {
-  const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+
   const [filterStatus, setFilterStatus] = useState<'all' | CAStatus>('all');
   const [filterLocation, setFilterLocation] = useState<string>('all');
 
-  const actions = isDemoMode ? DEMO_ACTIONS : [];
+  // Modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createTab, setCreateTab] = useState<'template' | 'scratch'>('template');
+  const [templateCategory, setTemplateCategory] = useState<CACategory | 'all'>('all');
+  const [createForm, setCreateForm] = useState<CreateCAForm>(EMPTY_FORM);
+
+  // Detail view state
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Local actions state (for demo lifecycle transitions)
+  const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
+  const actions = localActions.length > 0 ? localActions : (isDemoMode ? DEMO_CORRECTIVE_ACTIONS : []);
+
+  // Initialize local state from demo data on first render
+  useState(() => {
+    if (isDemoMode) setLocalActions([...DEMO_CORRECTIVE_ACTIONS]);
+  });
 
   const filtered = useMemo(() => {
     let items = actions;
@@ -137,9 +138,9 @@ export function CorrectiveActions() {
   }, [filterStatus, filterLocation, actions]);
 
   const counts = useMemo(() => ({
-    open: actions.filter(i => i.status === 'open').length,
+    open: actions.filter(i => i.status === 'created' || i.status === 'in_progress').length,
     in_progress: actions.filter(i => i.status === 'in_progress').length,
-    resolved: actions.filter(i => i.status === 'resolved').length,
+    completed: actions.filter(i => i.status === 'completed').length,
     verified: actions.filter(i => i.status === 'verified').length,
     overdue: actions.filter(i => isOverdue(i)).length,
   }), [actions]);
@@ -152,18 +153,85 @@ export function CorrectiveActions() {
     }));
   }, [actions]);
 
+  // ── Handlers ─────────────────────────────────────────────
+
+  const handleOpenCreate = useCallback(() => {
+    guardAction('create', 'Corrective Actions', () => {
+      setCreateForm(EMPTY_FORM);
+      setCreateTab('template');
+      setTemplateCategory('all');
+      setShowCreateModal(true);
+    });
+  }, [guardAction]);
+
+  const handleSelectTemplate = useCallback((tpl: CATemplate) => {
+    setCreateForm({
+      ...EMPTY_FORM,
+      title: tpl.title,
+      category: tpl.category,
+      severity: tpl.severity,
+      description: tpl.description,
+      rootCause: tpl.suggested_root_cause,
+      regulationReference: tpl.regulation_reference,
+      templateId: tpl.id,
+      dueDate: (() => {
+        const d = new Date();
+        d.setDate(d.getDate() + tpl.recommended_timeframe_days);
+        return d.toISOString().slice(0, 10);
+      })(),
+    });
+    setCreateTab('scratch'); // switch to form view to edit
+  }, []);
+
+  const handleCreateCA = useCallback(() => {
+    guardAction('create', 'Corrective Actions', () => {
+      setShowCreateModal(false);
+      setCreateForm(EMPTY_FORM);
+      toast.success('Corrective action created');
+    });
+  }, [guardAction]);
+
+  const handleAdvanceStatus = useCallback((id: string, nextStatus: CAStatus) => {
+    guardAction('update', 'Corrective Actions', () => {
+      setLocalActions(prev => prev.map(a => {
+        if (a.id !== id) return a;
+        const now = new Date().toISOString().slice(0, 10);
+        const updates: Partial<CorrectiveActionItem> = { status: nextStatus };
+        if (nextStatus === 'completed') updates.completedAt = now;
+        if (nextStatus === 'verified') updates.verifiedAt = now;
+        if (nextStatus === 'closed') updates.closedAt = now;
+        if (nextStatus === 'archived') updates.archivedAt = now;
+        return { ...a, ...updates };
+      }));
+      toast.success(`Status updated to ${STATUS_CONFIG[nextStatus].label}`);
+    });
+  }, [guardAction]);
+
+  const handleArchive = useCallback((id: string) => {
+    guardAction('update', 'Corrective Actions', () => {
+      setLocalActions(prev => prev.map(a =>
+        a.id === id ? { ...a, status: 'archived' as CAStatus, archivedAt: new Date().toISOString().slice(0, 10) } : a
+      ));
+      toast.success('Corrective action archived');
+    });
+  }, [guardAction]);
+
+  // ── Templates for modal ─────────────────────────────────
+
+  const filteredTemplates = useMemo(() => getTemplatesByCategory(templateCategory), [templateCategory]);
+
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6" style={{ fontFamily: 'system-ui' }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold" style={{ color: '#1e4d6b' }}>Corrective Actions</h1>
+          <h1 className="text-xl font-bold" style={{ color: NAVY }}>Corrective Actions</h1>
           <p className="text-sm text-gray-500 mt-1">Track and resolve compliance violations with documented action plans.</p>
         </div>
         <button
-          onClick={() => toast.info('New Corrective Action (Demo)')}
+          onClick={handleOpenCreate}
           className="px-4 py-2 rounded-lg text-sm font-semibold text-white shrink-0"
-          style={{ backgroundColor: '#1e4d6b' }}
+          style={{ backgroundColor: NAVY }}
         >
           + New Action
         </button>
@@ -174,8 +242,8 @@ export function CorrectiveActions() {
         {[
           { label: 'Open', value: counts.open, color: '#dc2626' },
           { label: 'In Progress', value: counts.in_progress, color: '#d97706' },
-          { label: 'Resolved', value: counts.resolved, color: '#16a34a' },
-          { label: 'Verified', value: counts.verified, color: '#1e4d6b' },
+          { label: 'Completed', value: counts.completed, color: '#16a34a' },
+          { label: 'Verified', value: counts.verified, color: NAVY },
           { label: 'Overdue', value: counts.overdue, color: '#991b1b' },
         ].map(card => (
           <div key={card.label} className="bg-white rounded-lg border border-gray-200 p-4 text-center">
@@ -194,10 +262,12 @@ export function CorrectiveActions() {
           className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
         >
           <option value="all">All Statuses</option>
-          <option value="open">Open</option>
+          <option value="created">Created</option>
           <option value="in_progress">In Progress</option>
-          <option value="resolved">Resolved</option>
+          <option value="completed">Completed</option>
           <option value="verified">Verified</option>
+          <option value="closed">Closed</option>
+          <option value="archived">Archived</option>
         </select>
         <select
           value={filterLocation}
@@ -231,54 +301,386 @@ export function CorrectiveActions() {
           const stat = STATUS_CONFIG[item.status];
           const overdue = isOverdue(item);
           const StatusIcon = stat.icon;
+          const isExpanded = expandedId === item.id;
+          const lifecycle = LIFECYCLE_NEXT[item.status];
+
           return (
-            <div
-              key={item.id}
-              className="bg-white rounded-lg border border-gray-200 p-4 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
-              onClick={() => toast.info(`${item.title} — ${stat.label}`)}
-            >
-              <div className="flex items-start gap-3">
-                <StatusIcon
-                  size={18}
-                  className="shrink-0 mt-0.5"
-                  style={{ color: stat.color }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <h3 className="text-sm font-semibold text-gray-900">{item.title}</h3>
-                    <span
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"
-                      style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
-                    >
-                      {sev.label}
-                    </span>
-                    <span
-                      className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                      style={{ color: stat.color, backgroundColor: stat.bg }}
-                    >
-                      {stat.label}
-                    </span>
-                    {overdue && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50 border border-red-200">
-                        OVERDUE
+            <div key={item.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              {/* Row header */}
+              <div
+                className="p-4 cursor-pointer transition-all hover:bg-gray-50"
+                onClick={() => setExpandedId(isExpanded ? null : item.id)}
+              >
+                <div className="flex items-start gap-3">
+                  <StatusIcon
+                    size={18}
+                    className="shrink-0 mt-0.5"
+                    style={{ color: stat.color }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <h3 className="text-sm font-semibold text-gray-900">{item.title}</h3>
+                      <span
+                        className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"
+                        style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
+                      >
+                        {sev.label}
                       </span>
+                      <span
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                        style={{ color: stat.color, backgroundColor: stat.bg }}
+                      >
+                        {stat.label}
+                      </span>
+                      {overdue && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50 border border-red-200">
+                          OVERDUE
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mb-2 line-clamp-2">{item.description}</p>
+                    <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                      <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
+                      <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>
+                      <span>Source: {item.source}</span>
+                      <span>Due: {formatDate(item.dueDate)}</span>
+                      {item.completedAt && <span>Completed: {formatDate(item.completedAt)}</span>}
+                    </div>
+                  </div>
+                  {isExpanded
+                    ? <ChevronDown size={16} className="text-gray-300 shrink-0 mt-1" />
+                    : <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
+                  }
+                </div>
+              </div>
+
+              {/* Expanded detail view */}
+              {isExpanded && (
+                <div className="border-t border-gray-100 bg-gray-50 p-4 space-y-4">
+                  {/* Detail fields */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <DetailField label="Category" value={CATEGORY_LABELS[item.category]} />
+                    <DetailField label="Regulation" value={item.regulationReference || 'N/A'} />
+                    <DetailField label="Root Cause" value={item.rootCause || 'Not yet documented'} />
+                    <DetailField label="Source" value={item.source} />
+                  </div>
+                  {item.correctiveSteps && (
+                    <DetailField label="Corrective Steps" value={item.correctiveSteps} full />
+                  )}
+                  {item.preventiveMeasures && (
+                    <DetailField label="Preventive Measures" value={item.preventiveMeasures} full />
+                  )}
+
+                  {/* Lifecycle buttons */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-200">
+                    {lifecycle && item.status !== 'archived' && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleAdvanceStatus(item.id, lifecycle.next); }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5"
+                        style={{ backgroundColor: NAVY }}
+                      >
+                        <ArrowRight size={14} />
+                        {lifecycle.label}
+                      </button>
+                    )}
+                    {item.status !== 'archived' && item.status !== 'closed' && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleArchive(item.id); }}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-1.5"
+                      >
+                        <Archive size={14} />
+                        Archive
+                      </button>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mb-2 line-clamp-2">{item.description}</p>
-                  <div className="flex flex-wrap items-center gap-4 text-xs text-gray-400">
-                    <span className="flex items-center gap-1"><MapPin size={12} />{item.location}</span>
-                    <span className="flex items-center gap-1"><User size={12} />{item.assignee}</span>
-                    <span>Source: {item.source}</span>
-                    <span>Due: {formatDate(item.dueDate)}</span>
-                    {item.resolvedAt && <span>Resolved: {formatDate(item.resolvedAt)}</span>}
-                  </div>
                 </div>
-                <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
-              </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {/* ── Create CA Modal ──────────────────────────────────── */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-bold" style={{ color: NAVY }}>New Corrective Action</h2>
+              <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Tab toggle */}
+            <div className="flex border-b border-gray-200 px-6">
+              <button
+                onClick={() => setCreateTab('template')}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                  createTab === 'template'
+                    ? 'border-current text-[#1e4d6b]'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <BookOpen size={14} />
+                From Template
+              </button>
+              <button
+                onClick={() => setCreateTab('scratch')}
+                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+                  createTab === 'scratch'
+                    ? 'border-current text-[#1e4d6b]'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <PenLine size={14} />
+                From Scratch
+              </button>
+            </div>
+
+            {/* Modal body */}
+            <div className="flex-1 overflow-y-auto px-6 py-4">
+              {createTab === 'template' ? (
+                <div className="space-y-4">
+                  {/* Category chips */}
+                  <div className="flex flex-wrap gap-2">
+                    {(['all', 'food_safety', 'facility_safety', 'operational'] as const).map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setTemplateCategory(cat)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                          templateCategory === cat
+                            ? 'text-white'
+                            : 'text-gray-600 bg-gray-100 hover:bg-gray-200'
+                        }`}
+                        style={templateCategory === cat ? { backgroundColor: NAVY } : undefined}
+                      >
+                        {cat === 'all' ? 'All Templates' : CATEGORY_LABELS[cat]}
+                        <span className="ml-1 opacity-70">
+                          ({cat === 'all' ? CA_SYSTEM_TEMPLATES.length : getTemplatesByCategory(cat).length})
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Template grid */}
+                  <div className="grid grid-cols-1 gap-2 max-h-[50vh] overflow-y-auto">
+                    {filteredTemplates.map(tpl => {
+                      const sev = SEVERITY_CONFIG[tpl.severity];
+                      return (
+                        <button
+                          key={tpl.id}
+                          onClick={() => handleSelectTemplate(tpl)}
+                          className="text-left p-3 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h4 className="text-sm font-semibold text-gray-900 truncate">{tpl.title}</h4>
+                                <span
+                                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0"
+                                  style={{ color: sev.color, backgroundColor: sev.bg, border: `1px solid ${sev.border}` }}
+                                >
+                                  {sev.label}
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500 line-clamp-1">{tpl.description}</p>
+                              <div className="flex items-center gap-3 mt-1.5 text-[11px] text-gray-400">
+                                <span className="flex items-center gap-1">
+                                  <Shield size={10} />
+                                  {tpl.regulation_reference}
+                                </span>
+                                <span>{tpl.recommended_timeframe_days}d timeframe</span>
+                              </div>
+                            </div>
+                            <ChevronRight size={14} className="text-gray-300 shrink-0 mt-1" />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* From Scratch / Form view */
+                <div className="space-y-4">
+                  {createForm.templateId && (
+                    <div className="flex items-center gap-2 text-xs text-gray-500 bg-indigo-50 px-3 py-2 rounded-lg">
+                      <BookOpen size={12} className="text-indigo-500" />
+                      Pre-filled from template. Edit any field below.
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Title *</label>
+                    <input
+                      type="text"
+                      value={createForm.title}
+                      onChange={e => setCreateForm(f => ({ ...f, title: e.target.value }))}
+                      placeholder="e.g. Walk-in cooler temperature excursion"
+                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+                    />
+                  </div>
+
+                  {/* Category + Severity side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
+                      <select
+                        value={createForm.category}
+                        onChange={e => setCreateForm(f => ({ ...f, category: e.target.value as CACategory }))}
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                      >
+                        {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
+                          <option key={k} value={k}>{v}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Severity</label>
+                      <select
+                        value={createForm.severity}
+                        onChange={e => setCreateForm(f => ({ ...f, severity: e.target.value as CASeverity }))}
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                      >
+                        {Object.entries(SEVERITY_LABELS).map(([k, v]) => (
+                          <option key={k} value={k}>{v}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Source + Location side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Source</label>
+                      <input
+                        type="text"
+                        value={createForm.source}
+                        onChange={e => setCreateForm(f => ({ ...f, source: e.target.value }))}
+                        placeholder="e.g. Temperature Log"
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Location</label>
+                      <select
+                        value={createForm.locationId}
+                        onChange={e => setCreateForm(f => ({ ...f, locationId: e.target.value }))}
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2"
+                      >
+                        <option value="">Select location...</option>
+                        {DEMO_LOCATIONS.map(loc => (
+                          <option key={loc.id} value={loc.id}>{loc.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Assignee + Due Date side by side */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Assignee</label>
+                      <input
+                        type="text"
+                        value={createForm.assignee}
+                        onChange={e => setCreateForm(f => ({ ...f, assignee: e.target.value }))}
+                        placeholder="e.g. David Kim"
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Due Date</label>
+                      <input
+                        type="date"
+                        value={createForm.dueDate}
+                        onChange={e => setCreateForm(f => ({ ...f, dueDate: e.target.value }))}
+                        className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                      value={createForm.description}
+                      onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))}
+                      rows={3}
+                      placeholder="Describe the issue and required corrective actions..."
+                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+                    />
+                  </div>
+
+                  {/* Root Cause */}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Root Cause</label>
+                    <textarea
+                      value={createForm.rootCause}
+                      onChange={e => setCreateForm(f => ({ ...f, rootCause: e.target.value }))}
+                      rows={2}
+                      placeholder="Identify the underlying cause..."
+                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
+                    />
+                  </div>
+
+                  {/* Regulation Reference */}
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">Regulation Reference</label>
+                    <input
+                      type="text"
+                      value={createForm.regulationReference}
+                      onChange={e => setCreateForm(f => ({ ...f, regulationReference: e.target.value }))}
+                      placeholder="e.g. FDA 21 CFR 117.150"
+                      className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b]"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal footer */}
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              {createTab === 'scratch' && (
+                <button
+                  onClick={handleCreateCA}
+                  disabled={!createForm.title.trim()}
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white disabled:opacity-50"
+                  style={{ backgroundColor: NAVY }}
+                >
+                  Create Corrective Action
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Demo upgrade prompt */}
+      {showUpgrade && (
+        <DemoUpgradePrompt
+          action={upgradeAction}
+          feature={upgradeFeature}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Detail field helper ──────────────────────────────────────
+
+function DetailField({ label, value, full }: { label: string; value: string; full?: boolean }) {
+  return (
+    <div className={full ? 'col-span-1 sm:col-span-2' : ''}>
+      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <p className="text-sm text-gray-700">{value}</p>
     </div>
   );
 }
