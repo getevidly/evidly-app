@@ -29,6 +29,7 @@ import {
   Sparkles,
   RefreshCw,
 } from 'lucide-react';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface QueueInsight {
   id: string;
@@ -82,6 +83,7 @@ export function AdminIntelligenceQueue() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [demoEligible, setDemoEligible] = useState(false);
   const [demoPriority, setDemoPriority] = useState(0);
 
@@ -463,14 +465,23 @@ export function AdminIntelligenceQueue() {
                     {/* Reject input */}
                     {isRejecting && (
                       <div className="space-y-2 mb-3 p-3 rounded-lg bg-red-50 border border-red-100">
-                        <label className="block text-xs font-medium text-red-700">Rejection reason</label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-medium text-red-700">Rejection reason</label>
+                          <AIAssistButton
+                            fieldLabel="Rejection Reason"
+                            context={{ title: insight.title }}
+                            currentValue={rejectReason}
+                            onGenerated={(text) => { setRejectReason(text); setAiFields(prev => new Set(prev).add('rejectReason')); }}
+                          />
+                        </div>
                         <textarea
                           value={rejectReason}
-                          onChange={e => setRejectReason(e.target.value)}
+                          onChange={e => { setRejectReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rejectReason'); return n; }); }}
                           rows={2}
                           placeholder="Why is this insight being rejected?"
                           className="w-full border border-red-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-red-300 focus:border-transparent outline-none resize-none"
                         />
+                        {aiFields.has('rejectReason') && <AIGeneratedIndicator />}
                         <div className="flex gap-2">
                           <button
                             onClick={() => handleReject(insight.id)}

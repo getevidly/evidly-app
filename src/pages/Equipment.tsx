@@ -23,6 +23,9 @@ import { PhotoEvidence, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
 import { iotSensors, iotSensorReadings, iotSensorProviders } from '../data/demoData';
 import { useTranslation } from '../contexts/LanguageContext';
+import { useRole } from '../contexts/RoleContext';
+import { useTooltip } from '../hooks/useTooltip';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -650,6 +653,10 @@ export function Equipment() {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
   const { t } = useTranslation();
+  const { userRole } = useRole();
+  const ttEquipmentTotal = useTooltip('equipmentTotal', userRole);
+  const ttEquipmentWarranty = useTooltip('equipmentWarranty', userRole);
+  const ttEquipmentOverdue = useTooltip('equipmentOverdue', userRole);
   const [locationFilter, setLocationFilter] = useState('all');
   const [pillarFilter, setPillarFilter] = useState<'all' | 'facility_safety' | 'food_safety'>(() =>
     categoryParam ? 'facility_safety' : 'all'
@@ -668,6 +675,8 @@ export function Equipment() {
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [equipmentPhotos, setEquipmentPhotos] = useState<PhotoRecord[]>([]);
+  const [equipmentNotes, setEquipmentNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -859,17 +868,17 @@ export function Equipment() {
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content="All equipment and permits tracked across your facilities." /></span></div>
+            <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.across')} {locationFilter === 'all' ? `3 ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content="Equipment with warranties expiring within 90 days." /></span></div>
+            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.within90Days')}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content="Equipment past its scheduled maintenance date." /></span></div>
+            <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
           </div>
@@ -1743,8 +1752,17 @@ export function Equipment() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.notesLabel')}</label>
-                  <textarea name="notes" rows={3} placeholder="Additional notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-medium text-gray-700">{t('pages.equipment.notesLabel')}</label>
+                    <AIAssistButton
+                      fieldLabel="Notes"
+                      context={{ equipmentName: (document.querySelector('#equipment-form select[name="equipment_type"]') as HTMLSelectElement)?.value || '', serviceType: 'equipment_record' }}
+                      currentValue={equipmentNotes}
+                      onGenerated={(text) => { setEquipmentNotes(text); setAiFields(prev => new Set(prev).add('equipmentNotes')); }}
+                    />
+                  </div>
+                  <textarea name="notes" rows={3} placeholder="Additional notes..." value={equipmentNotes} onChange={(e) => { setEquipmentNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('equipmentNotes'); return s; }); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-none" />
+                  {aiFields.has('equipmentNotes') && <AIGeneratedIndicator />}
                 </div>
                 <div className="flex gap-3 pt-2">
                   <button

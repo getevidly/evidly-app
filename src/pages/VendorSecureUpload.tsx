@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Upload, CheckCircle, AlertCircle, Loader, FileText, X } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { validateSecureToken, uploadViaSecureToken } from '../lib/api';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 export function VendorSecureUpload() {
   const { token } = useParams<{ token: string }>();
@@ -11,6 +12,7 @@ export function VendorSecureUpload() {
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [notes, setNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -162,14 +164,23 @@ export function VendorSecureUpload() {
 
           {/* Notes */}
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+              <AIAssistButton
+                fieldLabel="Notes"
+                context={{ documentType: tokenData?.document_type }}
+                currentValue={notes}
+                onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+              />
+            </div>
             <textarea
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={(e) => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Any additional details about this document..."
               className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] resize-none"
               rows={3}
             />
+            {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>
 
           {/* Upload button */}

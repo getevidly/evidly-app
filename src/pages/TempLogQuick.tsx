@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Thermometer, CheckCircle, ArrowLeft, QrCode, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface QuickEquipment {
   id: string;
@@ -31,6 +32,7 @@ export function TempLogQuick() {
   const [temperature, setTemperature] = useState('');
   const [notes, setNotes] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const equipment = useMemo(() => isDemoMode ? DEMO_EQUIPMENT : [], [isDemoMode]);
   const selected = equipment.find(e => e.id === selectedEquipment);
@@ -147,14 +149,23 @@ export function TempLogQuick() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+              <AIAssistButton
+                fieldLabel="Notes"
+                context={{ temperature, equipmentName: selected?.name || '' }}
+                currentValue={notes}
+                onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+              />
+            </div>
             <textarea
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }}
               placeholder="Any observations..."
               rows={2}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
             />
+            {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>
 
           <div className="flex gap-3">

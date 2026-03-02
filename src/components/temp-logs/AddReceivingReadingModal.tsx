@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Check, X as XIcon } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from './shared';
 import type { ReadingMethod, CategoryTempConfig } from './types';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
 export interface ReceivingReadingSaveData {
   itemDescription: string;
@@ -31,6 +32,7 @@ export function AddReceivingReadingModal({ open, onClose, vendors, categoryConfi
   const [readingMethod, setReadingMethod] = useState<ReadingMethod>('manual_thermometer');
   const [readingTime, setReadingTime] = useState(formatDateTimeLocal(new Date()));
   const [notes, setNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const cfg = foodCategory ? categoryConfig[foodCategory] : null;
   const tempRequired = cfg?.tempRequired ?? true;
@@ -143,9 +145,19 @@ export function AddReceivingReadingModal({ open, onClose, vendors, categoryConfi
           <input type="datetime-local" value={readingTime} onChange={e => setReadingTime(e.target.value)} className={INPUT_CLASS} />
         </FormField>
 
-        <FormField label="Notes">
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
-        </FormField>
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-gray-700">Notes</label>
+            <AIAssistButton
+              fieldLabel="Notes"
+              context={{ equipmentName: itemDescription, temperature }}
+              currentValue={notes}
+              onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+            />
+          </div>
+          <textarea value={notes} onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
+          {aiFields.has('notes') && <AIGeneratedIndicator />}
+        </div>
 
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={handleClose} className={BTN_CANCEL}>Cancel</button>

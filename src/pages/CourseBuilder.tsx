@@ -12,6 +12,7 @@ import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { trainingCourses, type TrainingCategory } from '../data/demoData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 type Step = 'basics' | 'modules' | 'lessons' | 'questions' | 'config' | 'assign';
 
@@ -45,6 +46,7 @@ export function CourseBuilder() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Step 1: Basics
   const [title, setTitle] = useState('');
@@ -183,10 +185,19 @@ export function CourseBuilder() {
                   style={inputStyle} />
               </div>
               <div>
-                <label style={labelStyle}>Description *</label>
-                <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <label style={{ ...labelStyle, marginBottom: 0 }}>Description *</label>
+                  <AIAssistButton
+                    fieldLabel="Description"
+                    context={{ title }}
+                    currentValue={description}
+                    onGenerated={(text) => { setDescription(text); setAiFields(prev => new Set(prev).add('description')); }}
+                  />
+                </div>
+                <textarea value={description} onChange={e => { setDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('description'); return n; }); }} rows={3}
                   placeholder="Brief description of what employees will learn..."
                   style={{ ...inputStyle, resize: 'vertical' }} />
+                {aiFields.has('description') && <AIGeneratedIndicator />}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
                 <div>
@@ -306,13 +317,24 @@ export function CourseBuilder() {
                   }}
                     placeholder="Lesson title"
                     style={{ ...inputStyle, marginBottom: 8 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Content</span>
+                    <AIAssistButton
+                      fieldLabel="Lesson Content"
+                      context={{ title: lesson.title }}
+                      currentValue={lesson.content}
+                      onGenerated={(text) => { const next = [...modules[activeModuleIdx].lessons]; next[lIdx] = { ...next[lIdx], content: text }; updateModule(activeModuleIdx, { lessons: next }); setAiFields(prev => new Set(prev).add(`lesson-${lIdx}`)); }}
+                    />
+                  </div>
                   <textarea value={lesson.content} onChange={e => {
                     const next = [...modules[activeModuleIdx].lessons];
                     next[lIdx] = { ...next[lIdx], content: e.target.value };
                     updateModule(activeModuleIdx, { lessons: next });
+                    setAiFields(prev => { const n = new Set(prev); n.delete(`lesson-${lIdx}`); return n; });
                   }}
                     rows={4} placeholder="Lesson content — use bullet points (•), numbered lists, and clear headings..."
                     style={{ ...inputStyle, resize: 'vertical' }} />
+                  {aiFields.has(`lesson-${lIdx}`) && <AIGeneratedIndicator />}
                 </div>
               ))}
               <button onClick={() => addLesson(activeModuleIdx)}

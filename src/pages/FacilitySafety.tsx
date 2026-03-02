@@ -17,6 +17,7 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -150,6 +151,7 @@ export function FacilitySafety() {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [detailModal, setDetailModal] = useState<{ category: string; status: AnyStatus } | null>(null);
 
   const jieKey = `demo-loc-${locationParam}`;
@@ -451,18 +453,27 @@ export function FacilitySafety() {
                 {/* Failed item — corrective action inline */}
                 {isFailed && !isExpanded && (
                   <div className="mt-3 ml-10">
-                    <label className="text-xs font-semibold text-red-700 block mb-1">
-                      <AlertTriangle size={12} className="inline mr-1" />
-                      {t('pages.facilitySafety.correctiveAction')} {needsCorrectiveAction && <span className="text-red-500">*</span>}
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold text-red-700">
+                        <AlertTriangle size={12} className="inline mr-1" />
+                        {t('pages.facilitySafety.correctiveAction')} {needsCorrectiveAction && <span className="text-red-500">*</span>}
+                      </label>
+                      <AIAssistButton
+                        fieldLabel="Corrective Action"
+                        context={{ category: 'facility_safety', itemName: item.title }}
+                        currentValue={response.correctiveAction}
+                        onGenerated={(text) => { updateResponse(item.id, { correctiveAction: text }); setAiFields(prev => new Set(prev).add(`corrective_${item.id}`)); }}
+                      />
+                    </div>
                     <textarea
                       value={response.correctiveAction}
-                      onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
+                      onChange={e => { updateResponse(item.id, { correctiveAction: e.target.value }); setAiFields(prev => { const s = new Set(prev); s.delete(`corrective_${item.id}`); return s; }); }}
                       placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                       rows={2}
                       disabled={submitted}
                       className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
                     />
+                    {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
                   </div>
                 )}
               </div>
@@ -479,32 +490,50 @@ export function FacilitySafety() {
 
                     {/* Notes */}
                     <div>
-                      <label className="text-xs font-medium text-gray-600 block mb-1">{t('pages.facilitySafety.notes')}</label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium text-gray-600">{t('pages.facilitySafety.notes')}</label>
+                        <AIAssistButton
+                          fieldLabel="Notes"
+                          context={{ category: 'facility_safety', itemName: item.title }}
+                          currentValue={response.notes}
+                          onGenerated={(text) => { updateResponse(item.id, { notes: text }); setAiFields(prev => new Set(prev).add(`notes_${item.id}`)); }}
+                        />
+                      </div>
                       <textarea
                         value={response.notes}
-                        onChange={e => updateResponse(item.id, { notes: e.target.value })}
+                        onChange={e => { updateResponse(item.id, { notes: e.target.value }); setAiFields(prev => { const s = new Set(prev); s.delete(`notes_${item.id}`); return s; }); }}
                         placeholder={t('pages.facilitySafety.optionalNotes')}
                         rows={2}
                         disabled={submitted}
                         className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200 resize-none"
                       />
+                      {aiFields.has(`notes_${item.id}`) && <AIGeneratedIndicator />}
                     </div>
 
                     {/* Corrective action (when expanded and failed) */}
                     {isFailed && (
                       <div>
-                        <label className="text-xs font-semibold text-red-700 block mb-1">
-                          <AlertTriangle size={12} className="inline mr-1" />
-                          {t('pages.facilitySafety.correctiveAction')} *
-                        </label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-xs font-semibold text-red-700">
+                            <AlertTriangle size={12} className="inline mr-1" />
+                            {t('pages.facilitySafety.correctiveAction')} *
+                          </label>
+                          <AIAssistButton
+                            fieldLabel="Corrective Action"
+                            context={{ category: 'facility_safety', itemName: item.title }}
+                            currentValue={response.correctiveAction}
+                            onGenerated={(text) => { updateResponse(item.id, { correctiveAction: text }); setAiFields(prev => new Set(prev).add(`exp_corrective_${item.id}`)); }}
+                          />
+                        </div>
                         <textarea
                           value={response.correctiveAction}
-                          onChange={e => updateResponse(item.id, { correctiveAction: e.target.value })}
+                          onChange={e => { updateResponse(item.id, { correctiveAction: e.target.value }); setAiFields(prev => { const s = new Set(prev); s.delete(`exp_corrective_${item.id}`); return s; }); }}
                           placeholder={t('pages.facilitySafety.describeCorrectiveAction')}
                           rows={2}
                           disabled={submitted}
                           className="w-full text-sm border border-red-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-300 bg-white resize-none"
                         />
+                        {aiFields.has(`exp_corrective_${item.id}`) && <AIGeneratedIndicator />}
                       </div>
                     )}
 

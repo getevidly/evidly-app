@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL } from './shared';
 import type { Cooldown, ReadingMethod } from './types';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
 export interface CooldownNewSaveData {
   mode: 'new';
@@ -51,6 +52,7 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
   const [location, setLocation] = useState('');
   const [readingMethod, setReadingMethod] = useState<ReadingMethod>('manual_thermometer');
   const [newNotes, setNewNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Computed stage for new cooldown
   const currentTempVal = currentTemp ? parseFloat(currentTemp) : null;
@@ -145,9 +147,19 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
               <input type="datetime-local" value={checkTime} onChange={e => setCheckTime(e.target.value)} className={INPUT_CLASS} />
             </FormField>
 
-            <FormField label="Notes">
-              <textarea value={checkNotes} onChange={e => setCheckNotes(e.target.value)} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
-            </FormField>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <AIAssistButton
+                  fieldLabel="Notes"
+                  context={{ equipmentName: selectedCooldown?.itemName || '', temperature: checkTemp }}
+                  currentValue={checkNotes}
+                  onGenerated={(text) => { setCheckNotes(text); setAiFields(prev => new Set(prev).add('checkNotes')); }}
+                />
+              </div>
+              <textarea value={checkNotes} onChange={e => { setCheckNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('checkNotes'); return s; }); }} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
+              {aiFields.has('checkNotes') && <AIGeneratedIndicator />}
+            </div>
           </>
         ) : (
           <>
@@ -197,9 +209,19 @@ export function AddCooldownReadingModal({ open, onClose, activeCooldowns, locati
               <ReadingMethodSelect value={readingMethod} onChange={setReadingMethod} />
             </FormField>
 
-            <FormField label="Notes">
-              <textarea value={newNotes} onChange={e => setNewNotes(e.target.value)} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
-            </FormField>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium text-gray-700">Notes</label>
+                <AIAssistButton
+                  fieldLabel="Notes"
+                  context={{ equipmentName: foodItem, temperature: currentTemp }}
+                  currentValue={newNotes}
+                  onGenerated={(text) => { setNewNotes(text); setAiFields(prev => new Set(prev).add('newNotes')); }}
+                />
+              </div>
+              <textarea value={newNotes} onChange={e => { setNewNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newNotes'); return s; }); }} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
+              {aiFields.has('newNotes') && <AIGeneratedIndicator />}
+            </div>
           </>
         )}
 

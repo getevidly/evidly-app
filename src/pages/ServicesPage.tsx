@@ -16,6 +16,7 @@ import {
 } from '../config/vendorCategories';
 import { DEMO_SERVICE_RECORDS, type DemoServiceRecord } from '../data/demoServiceRecords';
 import { vendors as demoVendors, locations as demoLocations } from '../data/demoData';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -81,6 +82,7 @@ export default function ServicesPage() {
   // Local records added via Log Service
   const [localRecords, setLocalRecords] = useState<DemoServiceRecord[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const { isDemoMode } = useDemo();
 
@@ -579,14 +581,23 @@ export default function ServicesPage() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-medium text-gray-700">Notes</label>
+                    <AIAssistButton
+                      fieldLabel="Notes"
+                      context={{ serviceName: logForm.serviceId }}
+                      currentValue={logForm.notes}
+                      onGenerated={(text) => { setLogForm({ ...logForm, notes: text }); setAiFields(prev => new Set(prev).add('notes')); }}
+                    />
+                  </div>
                   <textarea
                     value={logForm.notes}
-                    onChange={(e) => setLogForm({ ...logForm, notes: e.target.value })}
+                    onChange={(e) => { setLogForm({ ...logForm, notes: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
                     placeholder="Service details, observations, follow-up items..."
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
                   />
+                  {aiFields.has('notes') && <AIGeneratedIndicator />}
                 </div>
               </div>
 

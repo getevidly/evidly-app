@@ -54,6 +54,7 @@ import {
   Cpu,
   Coins,
 } from 'lucide-react';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip,
   CartesianGrid, ResponsiveContainer, LineChart, Line, Legend,
@@ -720,6 +721,7 @@ function DetailPanel({ item, onClose, onAction }: {
   onAction: (action: RfpActionType, notes?: string) => void;
 }) {
   const [notes, setNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const cls = item.classification;
   const tier = cls ? TIER_COLORS[cls.relevance_tier] : null;
   const days = daysUntil(item.due_date);
@@ -874,14 +876,24 @@ function DetailPanel({ item, onClose, onAction }: {
 
           {/* Notes + Actions */}
           <div className="border-t pt-4" style={{ borderColor: CARD_BORDER }}>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Notes</label>
+              <AIAssistButton
+                fieldLabel="Notes"
+                context={{ rfpTitle: item.title }}
+                currentValue={notes}
+                onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+              />
+            </div>
             <textarea
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Add notes about this RFP…"
-              className="w-full text-sm p-3 rounded-lg border mb-3 resize-none"
+              className="w-full text-sm p-3 rounded-lg border mb-1 resize-none"
               style={{ borderColor: CARD_BORDER, color: TEXT_PRIMARY }}
               rows={3}
             />
+            {aiFields.has('notes') && <AIGeneratedIndicator />}
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => { onAction('pursuing', notes); setNotes(''); }}

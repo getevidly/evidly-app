@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Siren,
@@ -251,6 +252,9 @@ export function PlaybookRunner() {
   const [showAbandonModal, setShowAbandonModal] = useState(false);
   const [abandonReason, setAbandonReason] = useState('');
   const [skippedSteps, setSkippedSteps] = useState<Set<number>>(new Set());
+
+  // AI assist
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Signature
   const [showSignaturePad, setShowSignaturePad] = useState(false);
@@ -625,13 +629,25 @@ export function PlaybookRunner() {
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px', lineHeight: 1.5 }}>
               Skipping a step will be flagged in the compliance report. A reason is required.
             </p>
-            <textarea
-              value={skipReason}
-              onChange={e => setSkipReason(e.target.value)}
-              placeholder="Enter reason for skipping this step (required)..."
-              rows={3}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', outline: 'none', boxSizing: 'border-box', marginBottom: 16 }}
-            />
+            <div style={{ marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Skip Reason</span>
+                <AIAssistButton
+                  fieldLabel="Skip Reason"
+                  context={{ stepTitle: step.title }}
+                  currentValue={skipReason}
+                  onGenerated={(text) => { setSkipReason(text); setAiFields(prev => new Set(prev).add('skipReason')); }}
+                />
+              </div>
+              <textarea
+                value={skipReason}
+                onChange={e => { setSkipReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('skipReason'); return n; }); }}
+                placeholder="Enter reason for skipping this step (required)..."
+                rows={3}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+              />
+              {aiFields.has('skipReason') && <AIGeneratedIndicator />}
+            </div>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button onClick={() => { setShowSkipModal(false); setSkipReason(''); }} style={{ padding: '8px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                 Cancel
@@ -658,13 +674,25 @@ export function PlaybookRunner() {
             <p style={{ fontSize: 13, color: '#6b7280', margin: '0 0 16px', lineHeight: 1.5 }}>
               This will end the active response. A partial report will be saved and the regional manager will be notified. A reason is required.
             </p>
-            <textarea
-              value={abandonReason}
-              onChange={e => setAbandonReason(e.target.value)}
-              placeholder="Enter reason for abandoning (required)..."
-              rows={3}
-              style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', outline: 'none', boxSizing: 'border-box', marginBottom: 16 }}
-            />
+            <div style={{ marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>Abandon Reason</span>
+                <AIAssistButton
+                  fieldLabel="Abandon Reason"
+                  context={{ playbookName: incident.templateTitle }}
+                  currentValue={abandonReason}
+                  onGenerated={(text) => { setAbandonReason(text); setAiFields(prev => new Set(prev).add('abandonReason')); }}
+                />
+              </div>
+              <textarea
+                value={abandonReason}
+                onChange={e => { setAbandonReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('abandonReason'); return n; }); }}
+                placeholder="Enter reason for abandoning (required)..."
+                rows={3}
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
+              />
+              {aiFields.has('abandonReason') && <AIGeneratedIndicator />}
+            </div>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
               <button onClick={() => { setShowAbandonModal(false); setAbandonReason(''); }} style={{ padding: '8px 18px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>
                 Cancel
@@ -928,17 +956,26 @@ export function PlaybookRunner() {
               {/* Notes */}
               {step.notePrompt && (
                 <div style={{ marginBottom: 20 }}>
-                  <h4 style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: '0 0 6px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <FileText size={15} /> Notes
-                  </h4>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <h4 style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <FileText size={15} /> Notes
+                    </h4>
+                    <AIAssistButton
+                      fieldLabel="Notes"
+                      context={{ stepTitle: step.title }}
+                      currentValue={stepNotes[stepKey] || ''}
+                      onGenerated={(text) => { setStepNotes(prev => ({ ...prev, [stepKey]: text })); setAiFields(prev => new Set(prev).add(`notes-${stepKey}`)); }}
+                    />
+                  </div>
                   <p style={{ fontSize: 12, color: '#6b7280', margin: '0 0 8px' }}>{step.notePrompt}</p>
                   <textarea
                     value={stepNotes[stepKey] || ''}
-                    onChange={e => setStepNotes(prev => ({ ...prev, [stepKey]: e.target.value }))}
+                    onChange={e => { setStepNotes(prev => ({ ...prev, [stepKey]: e.target.value })); setAiFields(prev => { const n = new Set(prev); n.delete(`notes-${stepKey}`); return n; }); }}
                     rows={3}
                     placeholder="Enter notes..."
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 13, fontFamily: "'DM Sans', sans-serif", resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
                   />
+                  {aiFields.has(`notes-${stepKey}`) && <AIGeneratedIndicator />}
                 </div>
               )}
 

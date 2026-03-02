@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Mail, FileText, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { AIAssistButton, AIGeneratedIndicator } from './ui/AIAssistButton';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
   const [recipientType, setRecipientType] = useState('health-inspector');
   const [includeCompliance, setIncludeCompliance] = useState(false);
   const [message, setMessage] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
@@ -196,16 +198,25 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Personal Message (Optional)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Personal Message (Optional)
+                    </label>
+                    <AIAssistButton
+                      fieldLabel="Personal Message"
+                      context={{}}
+                      currentValue={message}
+                      onGenerated={(text) => { setMessage(text); setAiFields(prev => new Set(prev).add('message')); }}
+                    />
+                  </div>
                   <textarea
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    onChange={(e) => { setMessage(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('message'); return n; }); }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
                     placeholder="Add a personal message..."
                   />
+                  {aiFields.has('message') && <AIGeneratedIndicator />}
                 </div>
               </div>
 

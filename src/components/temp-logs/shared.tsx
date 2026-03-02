@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import type { ReadingMethod } from './types';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
 // ── Modal Shell ──────────────────────────────────────────────
 interface ModalShellProps {
@@ -77,9 +78,11 @@ interface OutOfRangeWarningProps {
   maxTemp: number;
   correctiveAction: string;
   onCorrectiveActionChange: (v: string) => void;
+  equipmentName?: string;
 }
 
-export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAction, onCorrectiveActionChange }: OutOfRangeWarningProps) {
+export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAction, onCorrectiveActionChange, equipmentName }: OutOfRangeWarningProps) {
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const rangeText = minTemp === -Infinity
     ? `0°F or below`
     : `${minTemp}–${maxTemp}°F`;
@@ -92,16 +95,25 @@ export function OutOfRangeWarning({ temperature, minTemp, maxTemp, correctiveAct
           {temperature}°F is outside the safe range ({rangeText})
         </span>
       </div>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5">
-        Corrective action taken <span className="text-gray-400">(recommended)</span>
-      </label>
+      <div className="flex items-center justify-between mb-1.5">
+        <label className="text-sm font-medium text-gray-700">
+          Corrective action taken <span className="text-gray-400">(recommended)</span>
+        </label>
+        <AIAssistButton
+          fieldLabel="Corrective Action"
+          context={{ temperature: String(temperature), equipmentName: equipmentName || '', status: 'out_of_range' }}
+          currentValue={correctiveAction}
+          onGenerated={(text) => { onCorrectiveActionChange(text); setAiFields(prev => new Set(prev).add('correctiveAction')); }}
+        />
+      </div>
       <textarea
         value={correctiveAction}
-        onChange={(e) => onCorrectiveActionChange(e.target.value)}
+        onChange={(e) => { onCorrectiveActionChange(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
         rows={2}
         placeholder="Describe corrective action taken..."
         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
       />
+      {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
     </div>
   );
 }

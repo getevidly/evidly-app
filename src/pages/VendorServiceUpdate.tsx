@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   Loader, AlertCircle, CheckCircle, CalendarDays, XCircle,
   Clock, MapPin, Wrench, Building2, ChevronRight,
@@ -59,6 +60,7 @@ export function VendorServiceUpdate() {
   // Canceled form
   const [cancelReason, setCancelReason] = useState('');
   const [cancelNotes, setCancelNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Success state
   const [submittedType, setSubmittedType] = useState<'completed' | 'rescheduled' | 'canceled' | null>(null);
@@ -339,14 +341,23 @@ export function VendorServiceUpdate() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+                  <AIAssistButton
+                    fieldLabel="Notes"
+                    context={{ vendorName: tokenData?.organizationName || '', serviceName: tokenData?.serviceName || '' }}
+                    currentValue={completionNotes}
+                    onGenerated={(text) => { setCompletionNotes(text); setAiFields(prev => new Set(prev).add('completionNotes')); }}
+                  />
+                </div>
                 <textarea
                   value={completionNotes}
-                  onChange={(e) => setCompletionNotes(e.target.value)}
+                  onChange={(e) => { setCompletionNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('completionNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any observations or notes about the service performed..."
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
                 />
+                {aiFields.has('completionNotes') && <AIGeneratedIndicator />}
               </div>
               <div className="flex gap-3 pt-2">
                 <button
@@ -405,14 +416,23 @@ export function VendorServiceUpdate() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes (optional)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-gray-700">Additional Notes (optional)</label>
+                  <AIAssistButton
+                    fieldLabel="Additional Notes"
+                    context={{ vendorName: tokenData?.organizationName || '' }}
+                    currentValue={rescheduleNotes}
+                    onGenerated={(text) => { setRescheduleNotes(text); setAiFields(prev => new Set(prev).add('rescheduleNotes')); }}
+                  />
+                </div>
                 <textarea
                   value={rescheduleNotes}
-                  onChange={(e) => setRescheduleNotes(e.target.value)}
+                  onChange={(e) => { setRescheduleNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('rescheduleNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the schedule change..."
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
                 />
+                {aiFields.has('rescheduleNotes') && <AIGeneratedIndicator />}
               </div>
               <div className="flex gap-3 pt-2">
                 <button
@@ -460,14 +480,23 @@ export function VendorServiceUpdate() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Additional Notes (optional)</label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-medium text-gray-700">Additional Notes (optional)</label>
+                  <AIAssistButton
+                    fieldLabel="Additional Notes"
+                    context={{ vendorName: tokenData?.organizationName || '' }}
+                    currentValue={cancelNotes}
+                    onGenerated={(text) => { setCancelNotes(text); setAiFields(prev => new Set(prev).add('cancelNotes')); }}
+                  />
+                </div>
                 <textarea
                   value={cancelNotes}
-                  onChange={(e) => setCancelNotes(e.target.value)}
+                  onChange={(e) => { setCancelNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('cancelNotes'); return s; }); }}
                   rows={3}
                   placeholder="Any details about the cancellation..."
                   className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
                 />
+                {aiFields.has('cancelNotes') && <AIGeneratedIndicator />}
               </div>
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <p className="text-xs text-amber-700">

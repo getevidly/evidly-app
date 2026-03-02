@@ -3,6 +3,7 @@ import { X, Heart, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../../contexts/DemoContext';
 import { supabase } from '../../lib/supabase';
+import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
 
 interface K2CInviteModalProps {
   isOpen: boolean;
@@ -154,6 +155,7 @@ export function K2CInviteModal({
     getRoleMessage('', '', referralLink, senderName, senderBusiness),
   );
   const [loading, setLoading] = useState(false);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Track whether the user has manually edited the message
   const messageEdited = useRef(false);
@@ -450,16 +452,25 @@ export function K2CInviteModal({
 
             {/* Personal Note */}
             <div>
-              <label style={labelStyle}>Personal Note (optional)</label>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <label style={{ ...labelStyle, marginBottom: 0 }}>Personal Note (optional)</label>
+                <AIAssistButton
+                  fieldLabel="Personal Note"
+                  context={{ recipientName: contactName }}
+                  currentValue={message}
+                  onGenerated={(text) => { handleMessageChange(text); setAiFields(prev => new Set(prev).add('message')); }}
+                />
+              </div>
               <textarea
                 value={message}
-                onChange={(e) => handleMessageChange(e.target.value)}
+                onChange={(e) => { handleMessageChange(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('message'); return n; }); }}
                 rows={8}
                 style={{
                   ...inputStyle,
                   fontSize: '13px', resize: 'vertical', lineHeight: '1.5',
                 }}
               />
+              {aiFields.has('message') && <AIGeneratedIndicator />}
               <p style={{ margin: '4px 0 0', fontSize: '11px', color: '#6B7F96' }}>
                 Pre-filled based on role. Edit freely — your message will be included in the referral email.
               </p>

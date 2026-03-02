@@ -22,6 +22,7 @@ import { AddCurrentReadingModal, type CurrentReadingSaveData } from '../componen
 import { AddReceivingReadingModal, type ReceivingReadingSaveData } from '../components/temp-logs/AddReceivingReadingModal';
 import { AddHoldingReadingModal, type HoldingReadingSaveData } from '../components/temp-logs/AddHoldingReadingModal';
 import { AddCooldownReadingModal, type CooldownSaveData } from '../components/temp-logs/AddCooldownReadingModal';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface TemperatureEquipment {
   id: string;
@@ -145,6 +146,7 @@ export function TempLogs() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [tempPhotos, setTempPhotos] = useState<PhotoRecord[]>([]);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Current Readings filters
   const [sortBy, setSortBy] = useState<'outOfRange' | 'alphabetical' | 'mostRecent'>('outOfRange');
@@ -1952,14 +1954,23 @@ export function TempLogs() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Notes <span className="text-red-500">*</span></label>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-sm font-medium text-gray-700">Notes <span className="text-red-500">*</span></label>
+                          <AIAssistButton
+                            fieldLabel="Notes"
+                            context={{ temperature: String(pendingFailItem?.temperature || ''), equipmentName: pendingFailItem?.itemDescription || '', status: 'out_of_range' }}
+                            currentValue={ccpNotes}
+                            onGenerated={(text) => { setCcpNotes(text); setAiFields(prev => new Set(prev).add('ccpNotes')); }}
+                          />
+                        </div>
                         <textarea
                           value={ccpNotes}
-                          onChange={(e) => setCcpNotes(e.target.value)}
+                          onChange={(e) => { setCcpNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('ccpNotes'); return s; }); }}
                           rows={3}
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                           placeholder="Describe the corrective action taken..."
                         />
+                        {aiFields.has('ccpNotes') && <AIGeneratedIndicator />}
                       </div>
 
                       <div>
@@ -2050,14 +2061,23 @@ export function TempLogs() {
 
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('tempLogs.notesOptional')}</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">{t('tempLogs.notesOptional')}</label>
+                  <AIAssistButton
+                    fieldLabel="Notes"
+                    context={{ temperature: String(receivingItems.length > 0 ? receivingItems[receivingItems.length - 1]?.temperature || '' : ''), equipmentName: vendorName }}
+                    currentValue={receivingNotes}
+                    onGenerated={(text) => { setReceivingNotes(text); setAiFields(prev => new Set(prev).add('receivingNotes')); }}
+                  />
+                </div>
                 <textarea
                   value={receivingNotes}
-                  onChange={(e) => setReceivingNotes(e.target.value)}
+                  onChange={(e) => { setReceivingNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('receivingNotes'); return s; }); }}
                   rows={3}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   placeholder="Additional notes..."
                 />
+                {aiFields.has('receivingNotes') && <AIGeneratedIndicator />}
               </div>
 
               {/* Summary Card */}
@@ -3378,17 +3398,26 @@ export function TempLogs() {
                     </div>
                   ) : (
                     <>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        {t('common.correctiveActionRequired')} <span className="text-red-600">*</span>
-                      </label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          {t('common.correctiveActionRequired')} <span className="text-red-600">*</span>
+                        </label>
+                        <AIAssistButton
+                          fieldLabel="Corrective Action"
+                          context={{ temperature, equipmentName: selectedEquipment?.name || '', status: 'out_of_range' }}
+                          currentValue={correctiveAction}
+                          onGenerated={(text) => { setCorrectiveAction(text); setAiFields(prev => new Set(prev).add('correctiveAction')); }}
+                        />
+                      </div>
                       <textarea
                         value={correctiveAction}
-                        onChange={(e) => setCorrectiveAction(e.target.value)}
+                        onChange={(e) => { setCorrectiveAction(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
                         required
                         rows={3}
                         className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                         placeholder="Describe the corrective action taken..."
                       />
+                      {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
                     </>
                   )}
                 </div>

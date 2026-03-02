@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   Scale,
   Plus,
@@ -126,6 +127,7 @@ export function AdminRegulatoryChanges() {
   const [newChangeType, setNewChangeType] = useState('amendment');
   const [newRawText, setNewRawText] = useState('');
   const [newSourceUrl, setNewSourceUrl] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Access control
   if (!isAdmin) {
@@ -301,16 +303,25 @@ export function AdminRegulatoryChanges() {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Raw Regulatory Text / Description
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-700">
+                Raw Regulatory Text / Description
+              </label>
+              <AIAssistButton
+                fieldLabel="Regulatory Text"
+                context={{ jurisdiction: newSource }}
+                currentValue={newRawText}
+                onGenerated={(text) => { setNewRawText(text); setAiFields(prev => new Set(prev).add('newRawText')); }}
+              />
+            </div>
             <textarea
               value={newRawText}
-              onChange={e => setNewRawText(e.target.value)}
+              onChange={e => { setNewRawText(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('newRawText'); return n; }); }}
               placeholder="Paste the regulatory text here. Claude will generate a plain-English summary for customers."
               rows={6}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
             />
+            {aiFields.has('newRawText') && <AIGeneratedIndicator />}
           </div>
 
           <div className="mb-4">
@@ -419,22 +430,40 @@ export function AdminRegulatoryChanges() {
                           {isEditing ? (
                             <div className="space-y-3 mb-3">
                               <div>
-                                <label className="text-xs font-medium text-gray-600 mb-1 block">Summary</label>
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="text-xs font-medium text-gray-600">Summary</label>
+                                  <AIAssistButton
+                                    fieldLabel="Summary"
+                                    context={{ title: change.title }}
+                                    currentValue={editSummary}
+                                    onGenerated={(text) => { setEditSummary(text); setAiFields(prev => new Set(prev).add('editSummary')); }}
+                                  />
+                                </div>
                                 <textarea
                                   value={editSummary}
-                                  onChange={e => setEditSummary(e.target.value)}
+                                  onChange={e => { setEditSummary(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editSummary'); return n; }); }}
                                   rows={3}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
                                 />
+                                {aiFields.has('editSummary') && <AIGeneratedIndicator />}
                               </div>
                               <div>
-                                <label className="text-xs font-medium text-gray-600 mb-1 block">What operators need to do</label>
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="text-xs font-medium text-gray-600">What operators need to do</label>
+                                  <AIAssistButton
+                                    fieldLabel="Operator Impact"
+                                    context={{ title: change.title, summary: editSummary }}
+                                    currentValue={editImpact}
+                                    onGenerated={(text) => { setEditImpact(text); setAiFields(prev => new Set(prev).add('editImpact')); }}
+                                  />
+                                </div>
                                 <textarea
                                   value={editImpact}
-                                  onChange={e => setEditImpact(e.target.value)}
+                                  onChange={e => { setEditImpact(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editImpact'); return n; }); }}
                                   rows={3}
                                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] resize-y"
                                 />
+                                {aiFields.has('editImpact') && <AIGeneratedIndicator />}
                               </div>
                               <div className="flex gap-2">
                                 <button

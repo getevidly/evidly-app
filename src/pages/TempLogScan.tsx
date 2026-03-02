@@ -4,6 +4,7 @@ import { QrCode, Camera, CheckCircle, AlertTriangle, ArrowLeft, Keyboard } from 
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { equipmentQRCodes } from '../data/demoData';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 type ScanState = 'scanning' | 'found' | 'entry' | 'success';
 
@@ -62,6 +63,7 @@ export function TempLogScan() {
   const [showManualInput, setShowManualInput] = useState(false);
   const [demoScanIdx, setDemoScanIdx] = useState(0);
   const [correctiveAction, setCorrectiveAction] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const isInRange = matched && temperature
     ? parseFloat(temperature) >= matched.minTemp && parseFloat(temperature) <= matched.maxTemp
@@ -222,16 +224,25 @@ export function TempLogScan() {
 
             {isInRange === false && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <label className="block text-xs font-bold text-red-800 mb-1">
-                  {matched.ccp} Corrective Action Required
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-bold text-red-800">
+                    {matched.ccp} Corrective Action Required
+                  </label>
+                  <AIAssistButton
+                    fieldLabel="Corrective Action"
+                    context={{ temperature, equipmentName: matched.name, status: 'out_of_range' }}
+                    currentValue={correctiveAction}
+                    onGenerated={(text) => { setCorrectiveAction(text); setAiFields(prev => new Set(prev).add('correctiveAction')); }}
+                  />
+                </div>
                 <textarea
                   value={correctiveAction}
-                  onChange={e => setCorrectiveAction(e.target.value)}
+                  onChange={e => { setCorrectiveAction(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('correctiveAction'); return s; }); }}
                   placeholder="Describe corrective action taken..."
                   rows={2}
                   className="w-full px-3 py-2 border border-red-200 rounded-lg text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 bg-white"
                 />
+                {aiFields.has('correctiveAction') && <AIGeneratedIndicator />}
                 {!correctiveAction.trim() && (
                   <p className="text-[10px] text-red-600 mt-1">Required — cannot submit without corrective action</p>
                 )}
@@ -239,14 +250,23 @@ export function TempLogScan() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes (optional)</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm font-medium text-gray-700">Notes (optional)</label>
+                <AIAssistButton
+                  fieldLabel="Notes"
+                  context={{ temperature, equipmentName: matched.name }}
+                  currentValue={notes}
+                  onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+                />
+              </div>
               <textarea
                 value={notes}
-                onChange={e => setNotes(e.target.value)}
+                onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }}
                 placeholder="Any observations..."
                 rows={2}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#1e4d6b] focus:border-[#1e4d6b]"
               />
+              {aiFields.has('notes') && <AIGeneratedIndicator />}
             </div>
 
             <div className="flex gap-3">

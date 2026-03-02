@@ -75,6 +75,7 @@ import {
   ClipboardList,
   ExternalLink,
 } from 'lucide-react';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
 // ── Constants ────────────────────────────────────────────────
 
@@ -959,6 +960,7 @@ function NotificationsTab({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const [editBody, setEditBody] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [previewId, setPreviewId] = useState<string | null>(null);
 
   const filtered = statusFilter
@@ -1032,13 +1034,25 @@ function NotificationsTab({
 
                   {/* Body (editable) */}
                   {isEditing ? (
-                    <textarea
-                      value={editBody}
-                      onChange={e => setEditBody(e.target.value)}
-                      rows={3}
-                      className="w-full text-xs px-2 py-1 rounded border mt-1"
-                      style={{ borderColor: BRAND_BLUE, color: TEXT_SECONDARY }}
-                    />
+                    <div className="mt-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>Body</label>
+                        <AIAssistButton
+                          fieldLabel="Notification Body"
+                          context={{ title: editTitle || notif.title }}
+                          currentValue={editBody}
+                          onGenerated={(text) => { setEditBody(text); setAiFields(prev => new Set(prev).add('editBody')); }}
+                        />
+                      </div>
+                      <textarea
+                        value={editBody}
+                        onChange={e => { setEditBody(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('editBody'); return n; }); }}
+                        rows={3}
+                        className="w-full text-xs px-2 py-1 rounded border"
+                        style={{ borderColor: BRAND_BLUE, color: TEXT_SECONDARY }}
+                      />
+                      {aiFields.has('editBody') && <AIGeneratedIndicator />}
+                    </div>
                   ) : (
                     <div className="text-xs mt-1" style={{ color: TEXT_SECONDARY }}>{notif.body}</div>
                   )}

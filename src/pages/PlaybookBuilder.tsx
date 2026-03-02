@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   Siren, ArrowLeft, ChevronRight, ChevronLeft, Plus, Trash2,
   ChevronUp, ChevronDown, CheckCircle2, Camera, Thermometer,
@@ -60,6 +61,7 @@ export function PlaybookBuilder() {
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [step, setStep] = useState<Step>('basics');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Step 1: Basics
   const [title, setTitle] = useState('');
@@ -218,10 +220,19 @@ export function PlaybookBuilder() {
                   style={inputStyle} />
               </div>
               <div>
-                <label style={labelStyle}>Description</label>
-                <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <label style={{ ...labelStyle, marginBottom: 0 }}>Description</label>
+                  <AIAssistButton
+                    fieldLabel="Description"
+                    context={{ title }}
+                    currentValue={description}
+                    onGenerated={(text) => { setDescription(text); setAiFields(prev => new Set(prev).add('description')); }}
+                  />
+                </div>
+                <textarea value={description} onChange={e => { setDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('description'); return n; }); }} rows={3}
                   placeholder="Describe the purpose of this playbook and when it should be activated..."
                   style={{ ...inputStyle, resize: 'vertical' }} />
+                {aiFields.has('description') && <AIGeneratedIndicator />}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -296,10 +307,19 @@ export function PlaybookBuilder() {
 
                   {/* Instructions */}
                   <div style={{ marginBottom: 14 }}>
-                    <label style={labelStyle}>Instructions</label>
-                    <textarea value={s.instructions} onChange={e => updateStep(idx, { instructions: e.target.value })}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <label style={{ ...labelStyle, marginBottom: 0 }}>Instructions</label>
+                      <AIAssistButton
+                        fieldLabel="Instructions"
+                        context={{ stepTitle: s.title }}
+                        currentValue={s.instructions}
+                        onGenerated={(text) => { updateStep(idx, { instructions: text }); setAiFields(prev => new Set(prev).add(`instructions-${idx}`)); }}
+                      />
+                    </div>
+                    <textarea value={s.instructions} onChange={e => { updateStep(idx, { instructions: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete(`instructions-${idx}`); return n; }); }}
                       rows={3} placeholder="Detailed instructions for this step..."
                       style={{ ...inputStyle, resize: 'vertical' }} />
+                    {aiFields.has(`instructions-${idx}`) && <AIGeneratedIndicator />}
                   </div>
 
                   {/* Toggle switches */}

@@ -9,6 +9,7 @@ import { useRole } from '../contexts/RoleContext';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface Alert {
   id: string;
@@ -269,6 +270,7 @@ export function Alerts() {
   const [openReassignDropdown, setOpenReassignDropdown] = useState<string | null>(null);
   const [customSnoozeDate, setCustomSnoozeDate] = useState('');
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const teamMembers = [
     { id: '1', name: 'Marcus Johnson', role: 'Manager' },
@@ -770,16 +772,25 @@ export function Alerts() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('pages.alerts.actionTaken')} <span className="text-red-600">*</span>
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    {t('pages.alerts.actionTaken')} <span className="text-red-600">*</span>
+                  </label>
+                  <AIAssistButton
+                    fieldLabel="Action Taken"
+                    context={{ title: selectedAlert.title, severity: selectedAlert?.severity }}
+                    currentValue={resolutionNotes}
+                    onGenerated={(text) => { setResolutionNotes(text); setAiFields(prev => new Set(prev).add('resolutionNotes')); }}
+                  />
+                </div>
                 <textarea
                   value={resolutionNotes}
-                  onChange={(e) => setResolutionNotes(e.target.value)}
+                  onChange={(e) => { setResolutionNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('resolutionNotes'); return n; }); }}
                   rows={4}
                   placeholder={t('pages.alerts.actionTakenPlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                 />
+                {aiFields.has('resolutionNotes') && <AIGeneratedIndicator />}
               </div>
 
               <div>

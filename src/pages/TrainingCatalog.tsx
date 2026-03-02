@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   getDemoCatalog, getCatalogCategories, TRAINING_EMPLOYEES,
   type TrainingCatalogItem,
@@ -660,6 +661,7 @@ function AddTrainingModal({
   onSave: () => void;
   onToggleRole: (role: string) => void;
 }) {
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   return (
     <div
       style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
@@ -785,17 +787,26 @@ function AddTrainingModal({
 
         {/* Description */}
         <div style={{ marginBottom: 24 }}>
-          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: BODY_TEXT, marginBottom: 6 }}>Description</label>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: BODY_TEXT }}>Description</label>
+            <AIAssistButton
+              fieldLabel="Description"
+              context={{ name: form.name, category: form.category }}
+              currentValue={form.description}
+              onGenerated={(text) => { setForm(prev => ({ ...prev, description: text })); setAiFields(prev => new Set(prev).add('description')); }}
+            />
+          </div>
           <textarea
             placeholder="Brief description of the training requirement..."
             value={form.description}
-            onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+            onChange={e => { setForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const n = new Set(prev); n.delete('description'); return n; }); }}
             rows={3}
             style={{
               width: '100%', padding: '9px 12px', borderRadius: 8, border: `1px solid ${CARD_BORDER}`,
               fontSize: 13, color: BODY_TEXT, boxSizing: 'border-box', resize: 'vertical',
             }}
           />
+          {aiFields.has('description') && <AIGeneratedIndicator />}
         </div>
 
         {/* Actions */}

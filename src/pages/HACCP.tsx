@@ -3,8 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { AlertTriangle, CheckCircle, Clock, Thermometer, Activity, ChevronRight, XCircle, MapPin, Loader2, ChevronDown, FileText, Plus, Trash2, Save, Download, Wifi, Pencil, Shield } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useRole } from '../contexts/RoleContext';
+import { useTooltip } from '../hooks/useTooltip';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { supabase } from '../lib/supabase';
@@ -365,6 +367,10 @@ export function HACCP() {
   const urlLocation = searchParams.get('location') || '';
   const [selectedLocation, setSelectedLocation] = useState(urlLocation || 'all');
   const { getAccessibleLocations, userRole } = useRole();
+  const ttActivePlans = useTooltip('haccpActivePlans', userRole);
+  const ttOverallCompliance = useTooltip('haccpOverallCompliance', userRole);
+  const ttCCPsInCompliance = useTooltip('haccpCCPsInCompliance', userRole);
+  const ttOpenActions = useTooltip('haccpOpenActions', userRole);
   const haccpAccessibleLocs = getAccessibleLocations();
   // Owner/Exec see condensed overview unless drilling into a specific location
   const isCondensedView = (userRole === 'owner_operator' || userRole === 'executive') && !urlLocation;
@@ -965,6 +971,9 @@ export function HACCP() {
   // Inspector Package date range
   const [exportRange, setExportRange] = useState<'7' | '30' | '90' | 'all'>('30');
 
+  // AI Assist state — tracks which fields have AI-generated content
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+
   // ── Owner / Executive condensed view ──────────────────────────────
   if (isCondensedView) {
     const REVERSE_LOC_MAP: Record<string, string> = { '1': 'downtown', '2': 'airport', '3': 'university' };
@@ -1173,14 +1182,14 @@ export function HACCP() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <EvidlyIcon size={16} />
-              <span className="text-sm text-gray-500 font-medium">Active Plans<InfoTooltip content="Number of HACCP plans currently configured and monitored." /></span>
+              <span className="text-sm text-gray-500 font-medium">Active Plans<InfoTooltip content={ttActivePlans} /></span>
             </div>
             <p className="text-xl sm:text-3xl font-bold text-[#1e4d6b] text-center">{filteredPlans.length}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <Activity className="h-4 w-4" style={{ color: overallCompliance >= 90 ? '#22c55e' : overallCompliance >= 75 ? '#eab308' : overallCompliance >= 60 ? '#f59e0b' : '#ef4444' }} />
-              <span className="text-sm text-gray-500 font-medium">Overall Compliance<InfoTooltip content="Percentage of Critical Control Points meeting their defined limits." /></span>
+              <span className="text-sm text-gray-500 font-medium">Overall Compliance<InfoTooltip content={ttOverallCompliance} /></span>
             </div>
             <p className={`text-xl sm:text-3xl font-bold text-center ${overallCompliance >= 90 ? 'text-green-600' : overallCompliance >= 75 ? 'text-yellow-600' : overallCompliance >= 60 ? 'text-amber-600' : 'text-red-600'}`}>
               {overallCompliance}%
@@ -1189,14 +1198,14 @@ export function HACCP() {
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: '4px solid #16a34a' }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance<InfoTooltip content="Count of CCPs with all monitoring records within acceptable limits." /></span>
+              <span className="text-sm text-gray-500 font-medium">CCPs in Compliance<InfoTooltip content={ttCCPsInCompliance} /></span>
             </div>
             <p className="text-xl sm:text-3xl font-bold text-green-600 text-center">{passingCCPs}/{totalCCPs}</p>
           </div>
           <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5" style={{ borderLeft: `4px solid ${openActions > 0 ? '#ef4444' : '#16a34a'}` }}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <AlertTriangle className="h-4 w-4" style={{ color: openActions > 0 ? '#ef4444' : '#16a34a' }} />
-              <span className="text-sm text-gray-500 font-medium">Open Actions<InfoTooltip content="Corrective actions created but not yet resolved." /></span>
+              <span className="text-sm text-gray-500 font-medium">Open Actions<InfoTooltip content={ttOpenActions} /></span>
             </div>
             <p className={`text-xl sm:text-3xl font-bold text-center ${openActions > 0 ? 'text-red-600' : 'text-green-600'}`}>{openActions}</p>
           </div>
@@ -1687,12 +1696,30 @@ export function HACCP() {
                       </div>
                     </div>
                     <div className="mb-3">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Deviation Description</label>
-                      <textarea value={newCA.deviation} onChange={(e) => setNewCA({ ...newCA, deviation: e.target.value })} rows={2} placeholder="Describe the deviation from the critical limit..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium text-gray-600">Deviation Description</label>
+                        <AIAssistButton
+                          fieldLabel="Deviation Description"
+                          context={{ title: 'HACCP Deviation', planName: newCA.planName, ccpNumber: newCA.ccpNumber, criticalLimit: newCA.criticalLimit, recordedValue: newCA.recordedValue }}
+                          currentValue={newCA.deviation}
+                          onGenerated={(text) => { setNewCA({ ...newCA, deviation: text }); setAiFields(prev => new Set(prev).add('deviation')); }}
+                        />
+                      </div>
+                      <textarea value={newCA.deviation} onChange={(e) => { setNewCA({ ...newCA, deviation: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('deviation'); return n; }); }} rows={2} placeholder="Describe the deviation from the critical limit..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      {aiFields.has('deviation') && <AIGeneratedIndicator />}
                     </div>
                     <div className="mb-4">
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Action Taken</label>
-                      <textarea value={newCA.actionTaken} onChange={(e) => setNewCA({ ...newCA, actionTaken: e.target.value })} rows={2} placeholder="Describe the corrective action taken..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium text-gray-600">Action Taken</label>
+                        <AIAssistButton
+                          fieldLabel="Action Taken"
+                          context={{ title: 'HACCP Corrective Action', planName: newCA.planName, ccpNumber: newCA.ccpNumber, criticalLimit: newCA.criticalLimit, recordedValue: newCA.recordedValue, deviation: newCA.deviation }}
+                          currentValue={newCA.actionTaken}
+                          onGenerated={(text) => { setNewCA({ ...newCA, actionTaken: text }); setAiFields(prev => new Set(prev).add('actionTaken')); }}
+                        />
+                      </div>
+                      <textarea value={newCA.actionTaken} onChange={(e) => { setNewCA({ ...newCA, actionTaken: e.target.value }); setAiFields(prev => { const n = new Set(prev); n.delete('actionTaken'); return n; }); }} rows={2} placeholder="Describe the corrective action taken..." className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                      {aiFields.has('actionTaken') && <AIGeneratedIndicator />}
                     </div>
                     <div className="flex space-x-3">
                       <button
@@ -1894,8 +1921,17 @@ export function HACCP() {
                     <input type="text" value={tplProductName} onChange={(e) => setTplProductName(e.target.value)} placeholder="e.g., Grilled Chicken Sandwich" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Description</label>
-                    <textarea value={tplProductDesc} onChange={(e) => setTplProductDesc(e.target.value)} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Product Description</label>
+                      <AIAssistButton
+                        fieldLabel="Product Description"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, intendedUse: tplIntendedUse, distribution: tplDistribution, targetConsumer: tplTargetConsumer }}
+                        currentValue={tplProductDesc}
+                        onGenerated={(text) => { setTplProductDesc(text); setAiFields(prev => new Set(prev).add('productDescription')); }}
+                      />
+                    </div>
+                    <textarea value={tplProductDesc} onChange={(e) => { setTplProductDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('productDescription'); return n; }); }} placeholder="Describe the food product, including how it is processed, stored, and served..." rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('productDescription') && <AIGeneratedIndicator />}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
@@ -1917,16 +1953,43 @@ export function HACCP() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-gray-900">Ingredients and Materials</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Raw Materials</label>
-                    <textarea value={tplRawMaterials} onChange={(e) => setTplRawMaterials(e.target.value)} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Raw Materials</label>
+                      <AIAssistButton
+                        fieldLabel="Raw Materials"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc }}
+                        currentValue={tplRawMaterials}
+                        onGenerated={(text) => { setTplRawMaterials(text); setAiFields(prev => new Set(prev).add('rawMaterials')); }}
+                      />
+                    </div>
+                    <textarea value={tplRawMaterials} onChange={(e) => { setTplRawMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('rawMaterials'); return n; }); }} placeholder="List all raw materials and ingredients (one per line)" rows={5} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('rawMaterials') && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Processing Aids</label>
-                    <textarea value={tplProcessingAids} onChange={(e) => setTplProcessingAids(e.target.value)} placeholder="List any processing aids used" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Processing Aids</label>
+                      <AIAssistButton
+                        fieldLabel="Processing Aids"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, rawMaterials: tplRawMaterials }}
+                        currentValue={tplProcessingAids}
+                        onGenerated={(text) => { setTplProcessingAids(text); setAiFields(prev => new Set(prev).add('processingAids')); }}
+                      />
+                    </div>
+                    <textarea value={tplProcessingAids} onChange={(e) => { setTplProcessingAids(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('processingAids'); return n; }); }} placeholder="List any processing aids used" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('processingAids') && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Packaging Materials</label>
-                    <textarea value={tplPackagingMaterials} onChange={(e) => setTplPackagingMaterials(e.target.value)} placeholder="List packaging materials" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Packaging Materials</label>
+                      <AIAssistButton
+                        fieldLabel="Packaging Materials"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, rawMaterials: tplRawMaterials }}
+                        currentValue={tplPackagingMaterials}
+                        onGenerated={(text) => { setTplPackagingMaterials(text); setAiFields(prev => new Set(prev).add('packagingMaterials')); }}
+                      />
+                    </div>
+                    <textarea value={tplPackagingMaterials} onChange={(e) => { setTplPackagingMaterials(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('packagingMaterials'); return n; }); }} placeholder="List packaging materials" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('packagingMaterials') && <AIGeneratedIndicator />}
                   </div>
                 </div>
               )}
@@ -1936,16 +1999,43 @@ export function HACCP() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-gray-900">Intended Use and Consumers</h3>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Intended Use</label>
-                    <textarea value={tplUseDescription} onChange={(e) => setTplUseDescription(e.target.value)} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Intended Use</label>
+                      <AIAssistButton
+                        fieldLabel="Intended Use"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, distribution: tplDistribution, targetConsumer: tplTargetConsumer }}
+                        currentValue={tplUseDescription}
+                        onGenerated={(text) => { setTplUseDescription(text); setAiFields(prev => new Set(prev).add('intendedUse')); }}
+                      />
+                    </div>
+                    <textarea value={tplUseDescription} onChange={(e) => { setTplUseDescription(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('intendedUse'); return n; }); }} placeholder="Describe how the product is intended to be used by the end consumer" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('intendedUse') && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Target Population</label>
-                    <textarea value={tplTargetPopulation} onChange={(e) => setTplTargetPopulation(e.target.value)} placeholder="Identify the target population" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Target Population</label>
+                      <AIAssistButton
+                        fieldLabel="Target Population"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, intendedUse: tplUseDescription }}
+                        currentValue={tplTargetPopulation}
+                        onGenerated={(text) => { setTplTargetPopulation(text); setAiFields(prev => new Set(prev).add('targetPopulation')); }}
+                      />
+                    </div>
+                    <textarea value={tplTargetPopulation} onChange={(e) => { setTplTargetPopulation(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('targetPopulation'); return n; }); }} placeholder="Identify the target population" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('targetPopulation') && <AIGeneratedIndicator />}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Special Considerations</label>
-                    <textarea value={tplSpecialConsiderations} onChange={(e) => setTplSpecialConsiderations(e.target.value)} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm font-medium text-gray-700">Special Considerations</label>
+                      <AIAssistButton
+                        fieldLabel="Special Considerations"
+                        context={{ title: 'HACCP Plan', productName: tplProductName, productDescription: tplProductDesc, targetPopulation: tplTargetPopulation, intendedUse: tplUseDescription }}
+                        currentValue={tplSpecialConsiderations}
+                        onGenerated={(text) => { setTplSpecialConsiderations(text); setAiFields(prev => new Set(prev).add('specialConsiderations')); }}
+                      />
+                    </div>
+                    <textarea value={tplSpecialConsiderations} onChange={(e) => { setTplSpecialConsiderations(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('specialConsiderations'); return n; }); }} placeholder="Note any special considerations (allergens, vulnerable populations)" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                    {aiFields.has('specialConsiderations') && <AIGeneratedIndicator />}
                   </div>
                 </div>
               )}
@@ -2006,12 +2096,30 @@ export function HACCP() {
                             </select>
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
-                            <textarea value={hazard.description} onChange={(e) => updateHazard(idx, 'description', e.target.value)} placeholder="Describe the specific hazard" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="text-xs font-medium text-gray-600">Description</label>
+                              <AIAssistButton
+                                fieldLabel="Description"
+                                context={{ title: 'Hazard Description', hazardType: hazard.type, significance: hazard.significance, productName: tplProductName }}
+                                currentValue={hazard.description}
+                                onGenerated={(text) => { updateHazard(idx, 'description', text); setAiFields(prev => new Set(prev).add(`hazardDescription_${idx}`)); }}
+                              />
+                            </div>
+                            <textarea value={hazard.description} onChange={(e) => { updateHazard(idx, 'description', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`hazardDescription_${idx}`); return n; }); }} placeholder="Describe the specific hazard" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            {aiFields.has(`hazardDescription_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div className="md:col-span-2">
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Preventive Measures</label>
-                            <textarea value={hazard.preventive} onChange={(e) => updateHazard(idx, 'preventive', e.target.value)} placeholder="Describe preventive measures" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="text-xs font-medium text-gray-600">Preventive Measures</label>
+                              <AIAssistButton
+                                fieldLabel="Preventive Measures"
+                                context={{ title: 'HACCP Preventive Measure', hazardType: hazard.type, hazardDescription: hazard.description, significance: hazard.significance, productName: tplProductName }}
+                                currentValue={hazard.preventive}
+                                onGenerated={(text) => { updateHazard(idx, 'preventive', text); setAiFields(prev => new Set(prev).add(`preventiveMeasures_${idx}`)); }}
+                              />
+                            </div>
+                            <textarea value={hazard.preventive} onChange={(e) => { updateHazard(idx, 'preventive', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`preventiveMeasures_${idx}`); return n; }); }} placeholder="Describe preventive measures" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            {aiFields.has(`preventiveMeasures_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                         </div>
                       </div>
@@ -2057,16 +2165,43 @@ export function HACCP() {
                             <input type="text" value={ccp.criticalLimit} onChange={(e) => updateCCP(idx, 'criticalLimit', e.target.value)} placeholder="e.g., >= 165F for poultry" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Monitoring Procedure</label>
-                            <textarea value={ccp.monitoring} onChange={(e) => updateCCP(idx, 'monitoring', e.target.value)} placeholder="What, how, frequency, who" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="text-xs font-medium text-gray-600">Monitoring Procedure</label>
+                              <AIAssistButton
+                                fieldLabel="Monitoring Procedure"
+                                context={{ title: 'HACCP Monitoring Procedure', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, productName: tplProductName }}
+                                currentValue={ccp.monitoring}
+                                onGenerated={(text) => { updateCCP(idx, 'monitoring', text); setAiFields(prev => new Set(prev).add(`monitoringProcedure_${idx}`)); }}
+                              />
+                            </div>
+                            <textarea value={ccp.monitoring} onChange={(e) => { updateCCP(idx, 'monitoring', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`monitoringProcedure_${idx}`); return n; }); }} placeholder="What, how, frequency, who" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            {aiFields.has(`monitoringProcedure_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Corrective Action</label>
-                            <textarea value={ccp.corrective} onChange={(e) => updateCCP(idx, 'corrective', e.target.value)} placeholder="Actions when limit not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="text-xs font-medium text-gray-600">Corrective Action</label>
+                              <AIAssistButton
+                                fieldLabel="Corrective Action"
+                                context={{ title: 'HACCP Corrective Action', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, productName: tplProductName }}
+                                currentValue={ccp.corrective}
+                                onGenerated={(text) => { updateCCP(idx, 'corrective', text); setAiFields(prev => new Set(prev).add(`correctiveAction_${idx}`)); }}
+                              />
+                            </div>
+                            <textarea value={ccp.corrective} onChange={(e) => { updateCCP(idx, 'corrective', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`correctiveAction_${idx}`); return n; }); }} placeholder="Actions when limit not met" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            {aiFields.has(`correctiveAction_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Verification</label>
-                            <textarea value={ccp.verification} onChange={(e) => updateCCP(idx, 'verification', e.target.value)} placeholder="Verification activities" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            <div className="flex items-center justify-between mb-1">
+                              <label className="text-xs font-medium text-gray-600">Verification</label>
+                              <AIAssistButton
+                                fieldLabel="Verification"
+                                context={{ title: 'HACCP Verification', ccpNumber: ccp.ccpNum, processStep: ccp.step, hazard: ccp.hazard, criticalLimit: ccp.criticalLimit, monitoringProcedure: ccp.monitoring, productName: tplProductName }}
+                                currentValue={ccp.verification}
+                                onGenerated={(text) => { updateCCP(idx, 'verification', text); setAiFields(prev => new Set(prev).add(`verification_${idx}`)); }}
+                              />
+                            </div>
+                            <textarea value={ccp.verification} onChange={(e) => { updateCCP(idx, 'verification', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`verification_${idx}`); return n; }); }} placeholder="Verification activities" rows={2} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]" />
+                            {aiFields.has(`verification_${idx}`) && <AIGeneratedIndicator />}
                           </div>
                           <div>
                             <label className="block text-xs font-medium text-gray-600 mb-1">Records</label>

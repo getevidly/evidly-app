@@ -17,6 +17,7 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { EmptyState } from '../components/EmptyState';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -493,6 +494,7 @@ export function IncidentLog() {
 
   // Comment
   const [commentText, setCommentText] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Fetch incidents from Supabase in live mode
   useEffect(() => {
@@ -1262,16 +1264,25 @@ export function IncidentLog() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('incidents.whatActionTaken')}
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      {t('incidents.whatActionTaken')}
+                    </label>
+                    <AIAssistButton
+                      fieldLabel="What Action Taken"
+                      context={{ title: inc.title, severity: inc.severity }}
+                      currentValue={actionText}
+                      onGenerated={(text) => { setActionText(text); setAiFields(prev => new Set(prev).add('actionText')); }}
+                    />
+                  </div>
                   <textarea
                     value={actionText}
-                    onChange={e => setActionText(e.target.value)}
+                    onChange={e => { setActionText(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('actionText'); return s; }); }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                     placeholder="Describe the corrective action taken..."
                   />
+                  {aiFields.has('actionText') && <AIGeneratedIndicator />}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.estimatedCompletion')}</label>
@@ -1323,16 +1334,25 @@ export function IncidentLog() {
               <h3 className="text-xl font-bold text-gray-900 mb-4">{t('incidents.resolveIncident')}</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('incidents.resolutionSummary')}
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium text-gray-700">
+                      {t('incidents.resolutionSummary')}
+                    </label>
+                    <AIAssistButton
+                      fieldLabel="Resolution Summary"
+                      context={{ title: inc.title, description: inc.description }}
+                      currentValue={resolutionSummary}
+                      onGenerated={(text) => { setResolutionSummary(text); setAiFields(prev => new Set(prev).add('resolutionSummary')); }}
+                    />
+                  </div>
                   <textarea
                     value={resolutionSummary}
-                    onChange={e => setResolutionSummary(e.target.value)}
+                    onChange={e => { setResolutionSummary(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('resolutionSummary'); return s; }); }}
                     rows={3}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                     placeholder="Summarize how the incident was resolved..."
                   />
+                  {aiFields.has('resolutionSummary') && <AIGeneratedIndicator />}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('incidents.rootCause')}</label>
@@ -1474,16 +1494,25 @@ export function IncidentLog() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('incidents.descriptionField')} <span className="text-red-600">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium text-gray-700">
+                {t('incidents.descriptionField')} <span className="text-red-600">*</span>
+              </label>
+              <AIAssistButton
+                fieldLabel="Description"
+                context={{ title: newTitle, severity: newSeverity, location: newLocation }}
+                currentValue={newDescription}
+                onGenerated={(text) => { setNewDescription(text); setAiFields(prev => new Set(prev).add('newDescription')); }}
+              />
+            </div>
             <textarea
               value={newDescription}
-              onChange={e => setNewDescription(e.target.value)}
+              onChange={e => { setNewDescription(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('newDescription'); return s; }); }}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               placeholder={t('incidents.descriptionPlaceholder')}
             />
+            {aiFields.has('newDescription') && <AIGeneratedIndicator />}
           </div>
           <PhotoEvidence
             photos={newPhotos}

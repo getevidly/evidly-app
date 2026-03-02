@@ -3,6 +3,7 @@ import { X, GraduationCap, Search, CheckCircle2 } from 'lucide-react';
 import { trainingCourses } from '../../data/demoData';
 import type { TrainingEmployee } from '../../data/trainingRecordsDemoData';
 import { CARD_BG, CARD_BORDER, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../dashboard/shared/constants';
+import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
 
 const NAVY = '#1e4d6b';
 
@@ -21,6 +22,7 @@ export function AssignTrainingModal({ open, onClose, employeeId, employeeName, e
   const [selectedCourse, setSelectedCourse] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [notes, setNotes] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [error, setError] = useState('');
 
   const filteredEmployees = useMemo(() => {
@@ -154,14 +156,23 @@ export function AssignTrainingModal({ open, onClose, employeeId, employeeName, e
 
           {/* Notes */}
           <div>
-            <label style={{ fontSize: 13, fontWeight: 600, color: BODY_TEXT, display: 'block', marginBottom: 6 }}>Notes / Instructions (optional)</label>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <label style={{ fontSize: 13, fontWeight: 600, color: BODY_TEXT }}>Notes / Instructions (optional)</label>
+              <AIAssistButton
+                fieldLabel="Notes"
+                context={{ trainingName: activeCourses.find(c => c.id === selectedCourse)?.title }}
+                currentValue={notes}
+                onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+              />
+            </div>
             <textarea
               value={notes}
-              onChange={e => setNotes(e.target.value)}
+              onChange={e => { setNotes(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               rows={3}
               placeholder="Any additional instructions for the employee..."
               style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: `1px solid ${CARD_BORDER}`, fontSize: 13, color: BODY_TEXT, resize: 'vertical', background: CARD_BG }}
             />
+            {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>
 
           {error && (

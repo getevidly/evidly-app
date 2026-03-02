@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Styles ───────────────────────────────────────────────────────
 const F = { fontFamily: "'DM Sans', sans-serif" };
@@ -93,6 +94,7 @@ export function HelpSupport() {
   const [ticketPriority, setTicketPriority] = useState('normal');
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketDesc, setTicketDesc] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
   const [ticketNumber, setTicketNumber] = useState('');
 
@@ -374,8 +376,17 @@ export function HelpSupport() {
 
         {/* Description */}
         <div style={{ marginBottom: '16px' }}>
-          <label style={labelStyle}>Description *</label>
-          <textarea value={ticketDesc} onChange={e => setTicketDesc(e.target.value)} placeholder="Describe your issue in detail. Include steps to reproduce if applicable..." rows={5} style={{ ...inputStyle, resize: 'vertical' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <label style={{ ...labelStyle, marginBottom: 0 }}>Description *</label>
+            <AIAssistButton
+              fieldLabel="Description"
+              context={{ feature: ticketCat }}
+              currentValue={ticketDesc}
+              onGenerated={(text) => { setTicketDesc(text); setAiFields(prev => new Set(prev).add('ticketDesc')); }}
+            />
+          </div>
+          <textarea value={ticketDesc} onChange={e => { setTicketDesc(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('ticketDesc'); return n; }); }} placeholder="Describe your issue in detail. Include steps to reproduce if applicable..." rows={5} style={{ ...inputStyle, resize: 'vertical' }} />
+          {aiFields.has('ticketDesc') && <AIGeneratedIndicator />}
         </div>
 
         {/* File upload */}

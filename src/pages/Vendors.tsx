@@ -20,6 +20,7 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { EmptyState } from '../components/EmptyState';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   VENDOR_CATEGORIES,
   SERVICE_TYPE_TO_CATEGORY,
@@ -208,6 +209,7 @@ export function Vendors() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -1672,14 +1674,23 @@ export function Vendors() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-sm font-medium text-gray-700">Notes <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
+                    <AIAssistButton
+                      fieldLabel="Notes"
+                      context={{ vendorName: vendorForm.companyName }}
+                      currentValue={vendorForm.notes}
+                      onGenerated={(text) => { setVendorForm(prev => ({ ...prev, notes: text })); setAiFields(prev => new Set(prev).add('vendorNotes')); }}
+                    />
+                  </div>
                   <textarea
                     value={vendorForm.notes}
-                    onChange={(e) => setVendorForm({ ...vendorForm, notes: e.target.value })}
+                    onChange={(e) => { setVendorForm({ ...vendorForm, notes: e.target.value }); setAiFields(prev => { const s = new Set(prev); s.delete('vendorNotes'); return s; }); }}
                     placeholder="Any additional details..."
                     rows={2}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
                   />
+                  {aiFields.has('vendorNotes') && <AIGeneratedIndicator />}
                 </div>
 
                 {/* Info box */}

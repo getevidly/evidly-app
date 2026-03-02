@@ -13,6 +13,7 @@ import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { getStateLabel } from '../lib/stateCodes';
 import { PhotoEvidence, PhotoButton, type PhotoRecord } from '../components/PhotoEvidence';
 import { PhotoGallery } from '../components/PhotoGallery';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -346,6 +347,7 @@ export function SelfAudit() {
 
   // Photo evidence
   const [auditPhotos, setAuditPhotos] = useState<PhotoRecord[]>([]);
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Check for saved state on mount
   useEffect(() => {
@@ -681,13 +683,25 @@ export function SelfAudit() {
               {/* Fail details */}
               {item.status === 'fail' && (
                 <div className="mt-3 pt-3 border-t border-red-200 space-y-3">
-                  <textarea
-                    value={item.notes}
-                    onChange={(e) => setItemNotes(currentSection, ii, e.target.value)}
-                    placeholder="Describe the issue..."
-                    rows={2}
-                    className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] resize-none"
-                  />
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-gray-700">Issue Description</span>
+                      <AIAssistButton
+                        fieldLabel="Issue Description"
+                        context={{ itemName: item.text }}
+                        currentValue={item.notes}
+                        onGenerated={(text) => { setItemNotes(currentSection, ii, text); setAiFields(prev => new Set(prev).add(`notes-${item.id}`)); }}
+                      />
+                    </div>
+                    <textarea
+                      value={item.notes}
+                      onChange={(e) => { setItemNotes(currentSection, ii, e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete(`notes-${item.id}`); return n; }); }}
+                      placeholder="Describe the issue..."
+                      rows={2}
+                      className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/30 focus:border-[#1e4d6b] resize-none"
+                    />
+                    {aiFields.has(`notes-${item.id}`) && <AIGeneratedIndicator />}
+                  </div>
                   <div>
                     <p className="text-xs font-medium text-gray-700 mb-1.5">Severity</p>
                     <div className="flex gap-2">

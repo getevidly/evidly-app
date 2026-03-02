@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, AlertTriangle } from 'lucide-react';
 import type { FlagCategory } from '../../types/vendorDocuments';
+import { AIAssistButton, AIGeneratedIndicator } from '../ui/AIAssistButton';
 
 const NAVY = '#1E2D4D';
 
@@ -22,6 +23,7 @@ interface FlagDocumentModalProps {
 export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit }: FlagDocumentModalProps) {
   const [category, setCategory] = useState<FlagCategory>('wrong_document');
   const [reason, setReason] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const handleSubmit = () => {
     if (!reason.trim()) return;
@@ -77,17 +79,26 @@ export function FlagDocumentModal({ documentTitle, vendorName, onClose, onSubmit
 
           {/* Reason */}
           <div>
-            <label className="block text-xs font-medium mb-1.5" style={{ color: '#6B7F96' }}>
-              Describe the Issue <span className="text-red-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-medium" style={{ color: '#6B7F96' }}>
+                Describe the Issue <span className="text-red-500">*</span>
+              </label>
+              <AIAssistButton
+                fieldLabel="Issue Description"
+                context={{ documentType: documentTitle, flagCategory: category }}
+                currentValue={reason}
+                onGenerated={(text) => { setReason(text); setAiFields(prev => new Set(prev).add('reason')); }}
+              />
+            </div>
             <textarea
               value={reason}
-              onChange={e => setReason(e.target.value)}
+              onChange={e => { setReason(e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('reason'); return n; }); }}
               placeholder="e.g., Coverage amount is below our $1M requirement"
               rows={3}
               className="w-full px-3 py-2 rounded-md text-sm border resize-none"
               style={{ borderColor: '#D1D9E6', color: NAVY }}
             />
+            {aiFields.has('reason') && <AIGeneratedIndicator />}
           </div>
         </div>
 

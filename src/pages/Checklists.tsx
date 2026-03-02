@@ -15,6 +15,7 @@ import { Camera } from 'lucide-react';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useNotifications } from '../contexts/NotificationContext';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 interface ChecklistTemplate {
   id: string;
@@ -600,6 +601,7 @@ export function Checklists() {
   const [templateItems, setTemplateItems] = useState<ChecklistTemplateItem[]>([]);
   const [itemResponses, setItemResponses] = useState<ItemResponse>({});
   const [itemPhotos, setItemPhotos] = useState<Record<string, PhotoRecord[]>>({});
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [currentProgress, setCurrentProgress] = useState(0);
 
@@ -1279,16 +1281,26 @@ export function Checklists() {
             </div>
             {response?.response_value === 'no' && (
               <div className="mt-3">
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('common.correctiveActionRequired')}</label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">{t('common.correctiveActionRequired')}</label>
+                  <AIAssistButton
+                    fieldLabel="Corrective Action"
+                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '' }}
+                    currentValue={response.corrective_action}
+                    onGenerated={(text) => { handleItemResponse(item.id, 'no', false, text); setAiFields(prev => new Set(prev).add(`corrective_${item.id}`)); }}
+                  />
+                </div>
                 <textarea
                   value={response.corrective_action}
-                  onChange={(e) =>
-                    handleItemResponse(item.id, 'no', false, e.target.value)
-                  }
+                  onChange={(e) => {
+                    handleItemResponse(item.id, 'no', false, e.target.value);
+                    setAiFields(prev => { const s = new Set(prev); s.delete(`corrective_${item.id}`); return s; });
+                  }}
                   rows={2}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
                   placeholder="Describe the corrective action..."
                 />
+                {aiFields.has(`corrective_${item.id}`) && <AIGeneratedIndicator />}
               </div>
             )}
             <div className="mt-2">
@@ -1337,16 +1349,28 @@ export function Checklists() {
             {/* Required corrective action for failed CCP items */}
             {response?.is_pass === false && item.haccp_ccp && (
               <div className="mt-3 border-l-4 border-red-500 pl-3 bg-red-50 rounded-r-lg py-2 pr-3">
-                <label className="text-sm font-semibold text-red-700 flex items-center gap-1 mb-1">
-                  <AlertTriangle size={14} /> Corrective Action Required *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-sm font-semibold text-red-700 flex items-center gap-1">
+                    <AlertTriangle size={14} /> Corrective Action Required *
+                  </label>
+                  <AIAssistButton
+                    fieldLabel="Corrective Action"
+                    context={{ itemName: checklistItemMap[item.title] || item.title, checklistName: selectedTemplate?.name || '' }}
+                    currentValue={response.corrective_action}
+                    onGenerated={(text) => { handleItemResponse(item.id, response.response_value, false, text); setAiFields(prev => new Set(prev).add(`ccp_corrective_${item.id}`)); }}
+                  />
+                </div>
                 <textarea
                   value={response.corrective_action}
-                  onChange={(e) => handleItemResponse(item.id, response.response_value, false, e.target.value)}
+                  onChange={(e) => {
+                    handleItemResponse(item.id, response.response_value, false, e.target.value);
+                    setAiFields(prev => { const s = new Set(prev); s.delete(`ccp_corrective_${item.id}`); return s; });
+                  }}
                   rows={2}
                   className="w-full px-3 py-2 border border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 text-sm"
                   placeholder="Describe corrective action taken..."
                 />
+                {aiFields.has(`ccp_corrective_${item.id}`) && <AIGeneratedIndicator />}
               </div>
             )}
             <div className="mt-2">

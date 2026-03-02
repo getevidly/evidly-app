@@ -14,6 +14,7 @@ import {
 } from '../data/demoData';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Helper: Tier Badge ──────────────────────────────────────────
 function TierBadge({ tier }: { tier: MarketplaceTier }) {
@@ -80,6 +81,7 @@ export function VendorProfile() {
     description: '',
     urgency: 'Normal',
   });
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Star-breakdown for Reviews tab (must be before early return to satisfy rules of hooks)
   const starBreakdown = useMemo(() => {
@@ -603,14 +605,23 @@ export function VendorProfile() {
             />
 
             {/* Description */}
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-700">Description</label>
+              <AIAssistButton
+                fieldLabel="Description"
+                context={{ vendorName: vendor.companyName }}
+                currentValue={requestForm.description}
+                onGenerated={(text) => { setRequestForm(prev => ({ ...prev, description: text })); setAiFields(prev => new Set(prev).add('requestDescription')); }}
+              />
+            </div>
             <textarea
               value={requestForm.description}
-              onChange={e => setRequestForm(prev => ({ ...prev, description: e.target.value }))}
+              onChange={e => { setRequestForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('requestDescription'); return s; }); }}
               placeholder="Describe your needs..."
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37] mb-4"
             />
+            {aiFields.has('requestDescription') && <AIGeneratedIndicator />}
 
             {/* Urgency */}
             <label className="block text-sm font-medium text-gray-700 mb-1">Urgency</label>

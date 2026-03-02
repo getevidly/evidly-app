@@ -13,6 +13,8 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { InfoTooltip } from '../components/ui/InfoTooltip';
+import { useTooltip } from '../hooks/useTooltip';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import { vendors as demoVendors } from '../data/demoData';
 import { ENHANCED_VENDOR_PERFORMANCE } from '../data/vendorServiceWorkflowDemo';
 
@@ -373,6 +375,7 @@ export function Calendar() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { userRole } = useRole();
+  const ttCalendarSubtitle = useTooltip('calendarSubtitle', userRole);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEvents, setLiveEvents] = useState<CalendarEvent[]>([]);
@@ -416,6 +419,7 @@ export function Calendar() {
   const [freqReductionAck, setFreqReductionAck] = useState(false);
   const [freqReductionReason, setFreqReductionReason] = useState('');
   const [freqReductionDetails, setFreqReductionDetails] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -1546,7 +1550,7 @@ export function Calendar() {
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')} <InfoTooltip content="Schedule and track facility safety events, inspections, and vendor services. Food safety events are system-generated." /></h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')} <InfoTooltip content={ttCalendarSubtitle} /></h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
@@ -2253,12 +2257,20 @@ export function Calendar() {
 
                             {/* Details textarea */}
                             <div style={{ marginBottom: '10px' }}>
-                              <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                                Details (optional)
-                              </label>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <label style={{ fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                  Details (optional)
+                                </label>
+                                <AIAssistButton
+                                  fieldLabel="Details"
+                                  context={{ type: 'vendor_change', vendorName: vendorChangeForm.newVendorName || eventForm.vendorName }}
+                                  currentValue={vendorChangeForm.reasonDetails}
+                                  onGenerated={(text) => { setVendorChangeForm(prev => ({ ...prev, reasonDetails: text })); setAiFields(prev => new Set(prev).add('vendorChangeDetails')); }}
+                                />
+                              </div>
                               <textarea
                                 value={vendorChangeForm.reasonDetails}
-                                onChange={(e) => setVendorChangeForm(prev => ({ ...prev, reasonDetails: e.target.value }))}
+                                onChange={(e) => { setVendorChangeForm(prev => ({ ...prev, reasonDetails: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('vendorChangeDetails'); return s; }); }}
                                 placeholder="e.g., Missed 3 of last 5 scheduled cleanings..."
                                 rows={2}
                                 style={{
@@ -2268,6 +2280,7 @@ export function Calendar() {
                                   resize: 'vertical', boxSizing: 'border-box',
                                 }}
                               />
+                              {aiFields.has('vendorChangeDetails') && <AIGeneratedIndicator />}
                             </div>
 
                             {/* Scope radio */}
@@ -2335,12 +2348,20 @@ export function Calendar() {
 
                   {/* Description */}
                   <div style={{ order: 7 }}>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Description
-                    </label>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <label style={{ fontSize: '12px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Description
+                      </label>
+                      <AIAssistButton
+                        fieldLabel="Description"
+                        context={{ eventType: eventForm.category, title: eventForm.title, vendorName: eventForm.vendorName }}
+                        currentValue={eventForm.description}
+                        onGenerated={(text) => { setEventForm(prev => ({ ...prev, description: text })); setAiFields(prev => new Set(prev).add('eventDescription')); }}
+                      />
+                    </div>
                     <textarea
                       value={eventForm.description}
-                      onChange={(e) => setEventForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) => { setEventForm(prev => ({ ...prev, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('eventDescription'); return s; }); }}
                       placeholder="Optional details about this event..."
                       rows={3}
                       style={{
@@ -2352,6 +2373,7 @@ export function Calendar() {
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#1e4d6b'; }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; }}
                     />
+                    {aiFields.has('eventDescription') && <AIGeneratedIndicator />}
                   </div>
 
                   {/* Recurrence */}
@@ -2461,9 +2483,17 @@ export function Calendar() {
                           ))}
                         </select>
 
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '4px' }}>
+                          <AIAssistButton
+                            fieldLabel="Frequency Reduction Details"
+                            context={{ type: 'frequency_reduction' }}
+                            currentValue={freqReductionDetails}
+                            onGenerated={(text) => { setFreqReductionDetails(text); setAiFields(prev => new Set(prev).add('freqReductionDetails')); }}
+                          />
+                        </div>
                         <textarea
                           value={freqReductionDetails}
-                          onChange={(e) => setFreqReductionDetails(e.target.value)}
+                          onChange={(e) => { setFreqReductionDetails(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('freqReductionDetails'); return s; }); }}
                           placeholder="Explain why this reduction is acceptable..."
                           rows={2}
                           style={{
@@ -2474,6 +2504,7 @@ export function Calendar() {
                             resize: 'vertical', boxSizing: 'border-box',
                           }}
                         />
+                        {aiFields.has('freqReductionDetails') && <AIGeneratedIndicator />}
                       </div>
                     </div>
                   )}

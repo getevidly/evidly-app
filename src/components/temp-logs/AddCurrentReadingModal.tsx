@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { ModalShell, FormField, ReadingMethodSelect, OutOfRangeWarning, tempInputClass, formatDateTimeLocal, INPUT_CLASS, BTN_PRIMARY, BTN_CANCEL, isOutOfRange } from './shared';
 import type { TemperatureEquipment, ReadingMethod } from './types';
+import { AIAssistButton, AIGeneratedIndicator } from '../../components/ui/AIAssistButton';
 
 export interface CurrentReadingSaveData {
   equipmentId: string;
@@ -26,6 +27,7 @@ export function AddCurrentReadingModal({ open, onClose, equipment, onSave }: Pro
   const [readingTime, setReadingTime] = useState(formatDateTimeLocal(new Date()));
   const [notes, setNotes] = useState('');
   const [correctiveAction, setCorrectiveAction] = useState('');
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const selectedEq = equipment.find(e => e.id === equipmentId);
   const tempVal = temperature ? parseFloat(temperature) : null;
@@ -105,6 +107,7 @@ export function AddCurrentReadingModal({ open, onClose, equipment, onSave }: Pro
             maxTemp={selectedEq.max_temp}
             correctiveAction={correctiveAction}
             onCorrectiveActionChange={setCorrectiveAction}
+            equipmentName={selectedEq.name}
           />
         )}
 
@@ -116,9 +119,19 @@ export function AddCurrentReadingModal({ open, onClose, equipment, onSave }: Pro
           <input type="datetime-local" value={readingTime} onChange={e => setReadingTime(e.target.value)} className={INPUT_CLASS} />
         </FormField>
 
-        <FormField label="Notes">
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
-        </FormField>
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-gray-700">Notes</label>
+            <AIAssistButton
+              fieldLabel="Notes"
+              context={{ equipmentName: selectedEq?.name || '', temperature }}
+              currentValue={notes}
+              onGenerated={(text) => { setNotes(text); setAiFields(prev => new Set(prev).add('notes')); }}
+            />
+          </div>
+          <textarea value={notes} onChange={e => { setNotes(e.target.value); setAiFields(prev => { const s = new Set(prev); s.delete('notes'); return s; }); }} rows={2} placeholder="Optional notes..." className={INPUT_CLASS} />
+          {aiFields.has('notes') && <AIGeneratedIndicator />}
+        </div>
 
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={handleClose} className={BTN_CANCEL}>Cancel</button>

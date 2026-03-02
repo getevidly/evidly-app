@@ -4,6 +4,7 @@ import { ArrowLeft, Save, Wrench, Calendar, Truck, FileText, CheckCircle, XCircl
 import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -56,6 +57,7 @@ export function ServiceRecordEntry() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const equipment = EQUIPMENT_NAMES[equipmentId || ''];
 
@@ -259,16 +261,25 @@ export function ServiceRecordEntry() {
 
           {/* Notes */}
           <div>
-            <label className={labelClass}>
-              Notes {form.passFail === 'fail' && <span className="text-red-500">*</span>}
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className={labelClass} style={{ marginBottom: 0 }}>
+                Notes {form.passFail === 'fail' && <span className="text-red-500">*</span>}
+              </label>
+              <AIAssistButton
+                fieldLabel="Notes"
+                context={{ serviceName: form.serviceType }}
+                currentValue={form.notes}
+                onGenerated={(text) => { update('notes', text); setAiFields(prev => new Set(prev).add('notes')); }}
+              />
+            </div>
             <textarea
               value={form.notes}
-              onChange={e => update('notes', e.target.value)}
+              onChange={e => { update('notes', e.target.value); setAiFields(prev => { const n = new Set(prev); n.delete('notes'); return n; }); }}
               placeholder="Service details, findings, recommendations..."
               rows={4}
               className={`${inputClass} resize-none`}
             />
+            {aiFields.has('notes') && <AIGeneratedIndicator />}
           </div>
 
           {/* Document upload placeholder */}
