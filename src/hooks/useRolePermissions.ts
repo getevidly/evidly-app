@@ -84,17 +84,23 @@ export function useRolePermissions(): UseRolePermissionsReturn {
   const { isDemoMode } = useDemo();
   const { profile } = useAuth();
 
-  // ── Demo state ──────────────────────────────────────────────────
-  const [roleOverrides, setRoleOverrides] = useState<RolePermissionOverride[]>([...DEMO_ROLE_OVERRIDES]);
-  const [userExceptions, setUserExceptions] = useState<UserPermissionException[]>([...DEMO_USER_EXCEPTIONS]);
-  const [auditLog, setAuditLog] = useState<PermissionAuditEntry[]>([...DEMO_AUDIT_LOG]);
+  // ── State (demo: seeded, production: empty until loaded from Supabase) ──
+  const [roleOverrides, setRoleOverrides] = useState<RolePermissionOverride[]>(
+    isDemoMode ? [...DEMO_ROLE_OVERRIDES] : [],
+  );
+  const [userExceptions, setUserExceptions] = useState<UserPermissionException[]>(
+    isDemoMode ? [...DEMO_USER_EXCEPTIONS] : [],
+  );
+  const [auditLog, setAuditLog] = useState<PermissionAuditEntry[]>(
+    isDemoMode ? [...DEMO_AUDIT_LOG] : [],
+  );
   const [loading] = useState(false);
-  const teamMembers = DEMO_TEAM_MEMBERS;
+  const teamMembers = isDemoMode ? DEMO_TEAM_MEMBERS : [];
 
   // ── Helpers ─────────────────────────────────────────────────────
 
   const currentUserName = useMemo(() => {
-    if (isDemoMode) return 'Sarah Chen';
+    if (isDemoMode) return 'James Chen';
     return profile?.full_name ?? 'Unknown';
   }, [isDemoMode, profile]);
 

@@ -131,12 +131,12 @@ export function UserExceptionsTable({
         <div className="px-6 py-12 text-center">
           <UserCog className="w-10 h-10 mx-auto mb-3" style={{ color: '#D1D9E6' }} />
           <p className="text-sm font-medium" style={{ color: '#3D5068' }}>
-            {search ? 'No matching exceptions' : 'No user exceptions yet'}
+            {search ? 'No matching exceptions' : 'No user exceptions configured'}
           </p>
           <p className="text-xs mt-1" style={{ color: '#6B7F96' }}>
             {search
               ? 'Try a different search term'
-              : 'Add exceptions to give individual users more or less access than their role default'}
+              : 'All users follow their role\u2019s default permissions. Use the Add Exception button to grant or restrict specific permissions for individual team members.'}
           </p>
         </div>
       ) : (
