@@ -56,7 +56,7 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/iot-platform': { label: 'IoT Platform', parent: '/insights' },
 
   // ── Tools children ──
-  '/calendar': { label: 'Calendar', parent: '/tools' },
+  '/calendar': { label: 'Calendar', parent: '/dashboard' },
   '/vendors': { label: 'Vendor Management', parent: '/tools' },
   '/marketplace': { label: 'Marketplace', parent: '/tools' },
   '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },

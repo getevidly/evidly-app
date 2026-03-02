@@ -359,14 +359,16 @@ export function Sidebar() {
   // ── Per-role configuration (with org-type overlays) ──
   const roleConfig = useMemo(() => getRoleConfig(userRole, orgType), [userRole, orgType]);
   const homeItem = useMemo(() => getHomeItemForRole(userRole), [userRole]);
+  const topLevelItems = roleConfig.topLevelItems ?? [];
   const sections = roleConfig.sections;
 
   // ── Flat list of visible item IDs for test API ──
   const visibleItemIds = useMemo(() => {
     const ids = [homeItem.id];
+    topLevelItems.forEach(i => ids.push(i.id));
     sections.forEach(s => s.items.forEach(i => ids.push(i.id)));
     return ids;
-  }, [homeItem, sections]);
+  }, [homeItem, topLevelItems, sections]);
 
   // ── Collapsible section state ──
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
@@ -540,6 +542,19 @@ export function Sidebar() {
               testId={isTestMode ? 'nav-dashboard' : undefined}
             />
           </div>
+
+          {/* Top-level items (e.g. Calendar) — direct links below Dashboard */}
+          {topLevelItems.map(item => (
+            <SidebarNavItem
+              key={item.id}
+              item={item}
+              isActive={location.pathname === item.path}
+              onClick={() => navigate(item.path)}
+              displayLabel={getLabel(item)}
+              displayDescription={getDescription(item)}
+              testId={isTestMode ? `nav-${item.id}` : undefined}
+            />
+          ))}
 
           {/* Divider after dashboard */}
           <div className="my-2 border-t border-white/10 mx-1" />

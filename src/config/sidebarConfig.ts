@@ -34,6 +34,7 @@ export interface RoleHomeItem {
 
 export interface RoleSidebarConfig {
   home: RoleHomeItem;
+  topLevelItems?: NavItem[];
   sections: SidebarSection[];
 }
 
@@ -297,6 +298,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Platform admin — full access to every feature, every location, every tool.',
       descriptionEs: 'Administrador de plataforma — acceso total a todas las funciones.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and incident tracking.',
@@ -323,8 +325,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/equipment',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, self-diagnosis, and inspector arrival mode.',
-        [I.calendar, I.inspectorArrival, I.kitchenCheckup, I.selfDiagnosis],
+        'Tools', 'Kitchen checkup, self-diagnosis, and inspector arrival mode.',
+        [I.inspectorArrival, I.kitchenCheckup, I.selfDiagnosis],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
@@ -377,6 +379,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Kitchen operations dashboard — tasks, temps, and team overview.',
       descriptionEs: 'Panel de operaciones de cocina — tareas, temperaturas y equipo.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
@@ -393,8 +396,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, and equipment troubleshooting.',
-        [I.calendar, I.kitchenCheckup, I.selfDiagnosis],
+        'Tools', 'Kitchen checkup and equipment troubleshooting.',
+        [I.kitchenCheckup, I.selfDiagnosis],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
@@ -417,6 +420,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Your compliance overview — scores, open items, alerts, and priorities.',
       descriptionEs: 'Su resumen de cumplimiento — puntuaciones, alertas y prioridades.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature logs, HACCP plans, corrective actions, and food safety overview.',
@@ -438,8 +442,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, and equipment troubleshooting.',
-        [I.calendar, I.kitchenCheckup, I.selfDiagnosis],
+        'Tools', 'Kitchen checkup and equipment troubleshooting.',
+        [I.kitchenCheckup, I.selfDiagnosis],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
@@ -462,6 +466,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Compliance overview — scoring, regulatory status, and inspection readiness.',
       descriptionEs: 'Resumen de cumplimiento — puntuaciones, estado regulatorio y preparación.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, and corrective actions.',
@@ -483,8 +488,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar and kitchen checkup self-assessment.',
-        [I.calendar, I.kitchenCheckup],
+        'Tools', 'Kitchen checkup self-assessment.',
+        [I.kitchenCheckup],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
@@ -507,6 +512,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Equipment status, maintenance schedules, and vendor services.',
       descriptionEs: 'Estado del equipo, calendarios de mantenimiento y servicios de proveedores.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('facility-safety', 'Facility Safety', '🔥',
         'Facility Safety', 'Facility safety compliance, incidents, and inspection readiness.',
@@ -532,8 +538,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         [I.serviceReporting, I.services, I.vendors],
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, equipment troubleshooting, and service Return on Investment.',
-        [I.calendar, I.kitchenCheckup, I.selfDiagnosis, I.serviceROI],
+        'Tools', 'Kitchen checkup, equipment troubleshooting, and service Return on Investment.',
+        [I.kitchenCheckup, I.selfDiagnosis, I.serviceROI],
         '/tools',
       ),
       section('insights', 'Insights', '💡',
@@ -561,6 +567,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Multi-location compliance overview — alerts, tasks, and operational status.',
       descriptionEs: 'Resumen de cumplimiento multi-ubicación — alertas, tareas y estado operativo.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists, temperature monitoring, HACCP plans, corrective actions, and food safety overview.',
@@ -582,8 +589,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/insights',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, inspector arrival mode, and self-diagnosis.',
-        [I.calendar, I.inspectorArrival, I.kitchenCheckup, I.selfDiagnosis],
+        'Tools', 'Kitchen checkup, inspector arrival mode, and self-diagnosis.',
+        [I.inspectorArrival, I.kitchenCheckup, I.selfDiagnosis],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
@@ -606,6 +613,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       description: 'Organization-wide analytics, benchmarks, and strategic compliance insights.',
       descriptionEs: 'Analítica organizacional, benchmarks y perspectivas estratégicas de cumplimiento.',
     },
+    topLevelItems: [I.calendar],
     sections: [
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Food safety scoring and compliance overview.',
@@ -627,8 +635,8 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
         '/compliance',
       ),
       section('tools', 'Tools', '🔧',
-        'Tools', 'Calendar, kitchen checkup, and service Return on Investment analysis.',
-        [I.calendar, I.kitchenCheckup, I.serviceROI],
+        'Tools', 'Kitchen checkup and service Return on Investment analysis.',
+        [I.kitchenCheckup, I.serviceROI],
         '/tools',
       ),
       section('administration', 'Administration', '⚙️',
