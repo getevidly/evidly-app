@@ -62,6 +62,7 @@ export function K2CWidget({
       boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)',
       position: 'relative',
       overflow: 'hidden',
+      textAlign: 'center',
     }}>
       {/* Gold accent bar */}
       <div style={{
@@ -70,14 +71,14 @@ export function K2CWidget({
       }} />
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
         <a
           href="/kitchen-to-community"
           target="_blank"
           rel="noopener noreferrer"
           title="Opens Kitchen to Community page in a new tab"
           style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontSize: '14px', fontWeight: 700, color: '#A08C5A',
             textDecoration: 'none', cursor: 'pointer',
           }}
@@ -87,16 +88,6 @@ export function K2CWidget({
           <span style={{ fontSize: '18px' }}>🍽️</span>
           Kitchen to Community
         </a>
-        <button
-          onClick={() => navigate('/referrals')}
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-            fontSize: '12px', fontWeight: 600, color: '#1e4d6b',
-            display: 'flex', alignItems: 'center', gap: '4px',
-          }}
-        >
-          View All <ArrowRight size={12} />
-        </button>
       </div>
 
       {/* Stats row */}
@@ -119,11 +110,11 @@ export function K2CWidget({
 
       {/* Referral code */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
         background: 'rgba(160, 140, 90, 0.1)', border: '1px solid rgba(160, 140, 90, 0.3)',
         borderRadius: '8px', padding: '8px 12px', marginBottom: '14px',
       }}>
-        <div>
+        <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '10px', color: '#6B7F96', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>
             Your Referral Code
           </div>
@@ -147,7 +138,7 @@ export function K2CWidget({
       {/* Impact message */}
       <p style={{
         fontSize: '12px', color: '#3D5068', margin: '0 0 14px',
-        lineHeight: '1.5',
+        lineHeight: '1.5', textAlign: 'center',
       }}>
         Every kitchen you refer = <strong style={{ color: '#A08C5A' }}>12 meals donated</strong> to No Kid Hungry.
         Your donations are <strong style={{ color: '#A08C5A' }}>doubled for 3 months</strong> per referral.
@@ -174,6 +165,19 @@ export function K2CWidget({
       >
         <Heart size={16} />
         Feed Kids — Refer a Kitchen
+      </button>
+
+      {/* View All link */}
+      <button
+        onClick={() => navigate('/referrals')}
+        style={{
+          background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          fontSize: '12px', fontWeight: 600, color: '#1e4d6b',
+          display: 'inline-flex', alignItems: 'center', gap: '4px',
+          marginTop: '10px',
+        }}
+      >
+        View All Referrals <ArrowRight size={12} />
       </button>
     </div>
   );
