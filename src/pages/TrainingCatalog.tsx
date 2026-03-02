@@ -3,6 +3,7 @@ import {
   Search, BookOpen, ShieldCheck, Building2, RefreshCw,
   Plus, Layers, Lock, X, GraduationCap,
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
@@ -128,6 +129,7 @@ export function TrainingCatalog() {
     guardAction('create', 'Training Catalog', () => {
       setShowAddModal(false);
       setAddForm(EMPTY_FORM);
+      toast.success('Training item saved');
     });
   };
 

@@ -86,7 +86,7 @@ export const DEMO_ROLE_OVERRIDES: RolePermissionOverride[] = [
     role: 'kitchen_manager',
     permissionKey: 'sidebar.intelligence',
     granted: true,
-    modifiedBy: 'Sarah Chen',
+    modifiedBy: 'James Chen',
     modifiedAt: '2026-02-15T10:30:00Z',
   },
   {
@@ -94,7 +94,7 @@ export const DEMO_ROLE_OVERRIDES: RolePermissionOverride[] = [
     role: 'kitchen_staff',
     permissionKey: 'sidebar.incidents',
     granted: true,
-    modifiedBy: 'Sarah Chen',
+    modifiedBy: 'James Chen',
     modifiedAt: '2026-02-18T09:00:00Z',
   },
 ];
@@ -113,7 +113,7 @@ export const DEMO_USER_EXCEPTIONS: UserPermissionException[] = [
     permissionKey: 'sidebar.billing',
     granted: true,
     reason: 'Temporary access for Q1 budget review',
-    grantedBy: 'Sarah Chen',
+    grantedBy: 'James Chen',
     grantedAt: '2026-02-20T14:00:00Z',
   },
   {
@@ -125,7 +125,7 @@ export const DEMO_USER_EXCEPTIONS: UserPermissionException[] = [
     permissionKey: 'sidebar.analytics',
     granted: true,
     reason: 'Needs analytics for quarterly report',
-    grantedBy: 'Sarah Chen',
+    grantedBy: 'James Chen',
     grantedAt: '2026-02-20T14:05:00Z',
   },
   {
@@ -149,7 +149,7 @@ export const DEMO_USER_EXCEPTIONS: UserPermissionException[] = [
 export const DEMO_AUDIT_LOG: PermissionAuditEntry[] = [
   {
     id: 'al-1',
-    changedBy: 'Sarah Chen',
+    changedBy: 'James Chen',
     changeType: 'role_default_change',
     targetRole: 'kitchen_manager',
     permissionKey: 'sidebar.intelligence',
@@ -159,7 +159,7 @@ export const DEMO_AUDIT_LOG: PermissionAuditEntry[] = [
   },
   {
     id: 'al-2',
-    changedBy: 'Sarah Chen',
+    changedBy: 'James Chen',
     changeType: 'user_exception_add',
     targetUserId: 'd3',
     targetUserName: 'Maria Garcia',
@@ -181,7 +181,7 @@ export const DEMO_AUDIT_LOG: PermissionAuditEntry[] = [
   },
   {
     id: 'al-4',
-    changedBy: 'Sarah Chen',
+    changedBy: 'James Chen',
     changeType: 'role_default_change',
     targetRole: 'kitchen_staff',
     permissionKey: 'sidebar.incidents',
