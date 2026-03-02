@@ -131,6 +131,11 @@ const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m
 const KitchenCheckup = lazy(() => import('./pages/KitchenCheckup').then(m => ({ default: m.KitchenCheckup })));
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
+const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
+const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
+const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
+const ToolsHub = lazy(() => import('./pages/ToolsHub').then(m => ({ default: m.ToolsHub })));
+const AdminHub = lazy(() => import('./pages/AdminHub').then(m => ({ default: m.AdminHub })));
 
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
@@ -393,6 +398,11 @@ function AppRoutes() {
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/food-safety" element={<FoodSafetyHub />} />
+          <Route path="/compliance" element={<ComplianceHub />} />
+          <Route path="/insights" element={<InsightsHub />} />
+          <Route path="/tools" element={<ToolsHub />} />
+          <Route path="/admin" element={<AdminHub />} />
           <Route path="/temp-logs" element={<TempLogs />} />
           <Route path="/iot-monitoring" element={<IoTMonitoring />} />
           <Route path="/checklists" element={<Checklists />} />
@@ -483,7 +493,7 @@ function AppRoutes() {
           <Route path="/regulatory-tracking" element={<Navigate to="/regulatory-alerts" replace />} />
           <Route path="/ai-insights" element={<Navigate to="/ai-advisor" replace />} />
           <Route path="/analytics" element={<Navigate to="/analysis" replace />} />
-          <Route path="/compliance" element={<Navigate to="/compliance-index" replace />} />
+          <Route path="/daily-operations" element={<Navigate to="/dashboard" replace />} />
           <Route path="/locations" element={<Navigate to="/org-hierarchy" replace />} />
           <Route path="/inspections" element={<Navigate to="/self-audit" replace />} />
           <Route path="/certifications" element={<Navigate to="/training/certificates" replace />} />

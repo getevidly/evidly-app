@@ -18,7 +18,7 @@ const ROUTE_LABELS: Record<string, string> = {
   '/calendar': 'Calendar',
 
   // Food Safety / Compliance
-  '/scoring-breakdown': 'Food Safety Overview',
+  '/scoring-breakdown': 'Food Safety',
   '/facility-safety': 'Facility Safety',
   '/compliance-index': 'Compliance Index',
   '/insurance-risk': 'Insurance Risk',
@@ -128,6 +128,12 @@ const PARENT_ROUTES: Record<string, { label: string; href: string }[]> = {
   '/sensors/add': [{ label: 'Sensor Hub', href: '/sensors' }],
   '/improve-score': [{ label: 'Insurance Risk', href: '/insurance-risk' }],
   '/insurance-settings': [{ label: 'Insurance Risk', href: '/insurance-risk' }],
+  // Food Safety hierarchy
+  '/temp-logs': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
+  '/checklists': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
+  '/haccp': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
+  '/corrective-actions': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
+  '/incidents': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
 };
 
 // ── Dynamic route patterns (with :params) ───────────────────────

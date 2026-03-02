@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   DEMO_CORRECTIVE_ACTIONS,
   CA_SYSTEM_TEMPLATES,
@@ -120,6 +121,9 @@ export function CorrectiveActions() {
 
   // Detail view state
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // AI Assist tracking
+  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Local actions state (for demo lifecycle transitions)
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
@@ -602,26 +606,44 @@ export function CorrectiveActions() {
 
                   {/* Description */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-medium text-gray-700">Description</label>
+                      <AIAssistButton
+                        fieldLabel="Description"
+                        context={{ title: createForm.title, severity: createForm.severity, category: createForm.category, location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name, source: createForm.source }}
+                        currentValue={createForm.description}
+                        onGenerated={(text) => { setCreateForm(f => ({ ...f, description: text })); setAiFields(prev => new Set(prev).add('description')); }}
+                      />
+                    </div>
                     <textarea
                       value={createForm.description}
-                      onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))}
+                      onChange={e => { setCreateForm(f => ({ ...f, description: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('description'); return s; }); }}
                       rows={3}
                       placeholder="Describe the issue and required corrective actions..."
                       className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
                     />
+                    {aiFields.has('description') && <AIGeneratedIndicator />}
                   </div>
 
                   {/* Root Cause */}
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">Root Cause</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-medium text-gray-700">Root Cause</label>
+                      <AIAssistButton
+                        fieldLabel="Root Cause"
+                        context={{ title: createForm.title, severity: createForm.severity, category: createForm.category, description: createForm.description, location: DEMO_LOCATIONS.find(l => l.id === createForm.locationId)?.name }}
+                        currentValue={createForm.rootCause}
+                        onGenerated={(text) => { setCreateForm(f => ({ ...f, rootCause: text })); setAiFields(prev => new Set(prev).add('rootCause')); }}
+                      />
+                    </div>
                     <textarea
                       value={createForm.rootCause}
-                      onChange={e => setCreateForm(f => ({ ...f, rootCause: e.target.value }))}
+                      onChange={e => { setCreateForm(f => ({ ...f, rootCause: e.target.value })); setAiFields(prev => { const s = new Set(prev); s.delete('rootCause'); return s; }); }}
                       rows={2}
                       placeholder="Identify the underlying cause..."
                       className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1e4d6b] resize-none"
                     />
+                    {aiFields.has('rootCause') && <AIGeneratedIndicator />}
                   </div>
 
                   {/* Regulation Reference */}
