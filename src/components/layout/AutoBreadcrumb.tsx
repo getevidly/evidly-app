@@ -252,7 +252,7 @@ function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center flex-wrap gap-y-0.5 pb-3"
+      className="flex items-center flex-wrap gap-y-0.5"
       style={{ fontFamily: 'Inter, sans-serif' }}
     >
       {items.map((item, i) => (

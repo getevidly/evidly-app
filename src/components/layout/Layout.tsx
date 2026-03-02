@@ -19,6 +19,7 @@ import { DemoWatermark } from '../DemoWatermark';
 import { DemoRestrictions } from '../DemoRestrictions';
 import { DemoButtonGuard } from '../DemoButtonGuard';
 import { QuickActionsBar } from './QuickActionsBar';
+import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
@@ -120,6 +121,19 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
           demoMode={demoMode}
         />
         <OfflineBanner />
+        {/* Sticky breadcrumb — always visible on scroll */}
+        <div
+          className="sticky top-0 z-40"
+          style={{
+            backgroundColor: '#FFFFFF',
+            borderBottom: '1px solid #E8EDF5',
+            boxShadow: '0 1px 3px rgba(11,22,40,0.04)',
+          }}
+        >
+          <div className="px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full py-2.5">
+            <AutoBreadcrumb />
+          </div>
+        </div>
         <main className={`flex-1 relative ${isDemoMode ? 'pb-48 md:pb-28' : 'pb-36 md:pb-[72px]'}`}>
           <div className="py-6 px-4 sm:px-6 lg:px-8 max-w-[1200px] mx-auto w-full">{children}</div>
         </main>
