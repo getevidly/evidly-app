@@ -1,157 +1,127 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 
-// ── Route-to-label mapping ──────────────────────────────────────
-const ROUTE_LABELS: Record<string, string> = {
-  // Core
-  '/dashboard': 'Dashboard',
-  '/temp-logs': 'Temperature Monitoring',
-  '/checklists': 'Checklists',
-  '/documents': 'Documents',
-  '/document-checklist': 'Document Checklist',
-  '/vendors': 'Vendor Management',
-  '/marketplace': 'Marketplace',
-  '/haccp': 'HACCP Management',
-  '/alerts': 'Alerts',
-  '/incidents': 'Incident Log',
-  '/corrective-actions': 'Corrective Actions',
-  '/calendar': 'Calendar',
+// ── Parent-chain route hierarchy ─────────────────────────
+// Every route has a label and optional parent route.
+// buildBreadcrumb() walks up the parent chain to produce crumbs.
 
-  // Food Safety / Compliance
-  '/scoring-breakdown': 'Food Safety',
-  '/facility-safety': 'Facility Safety',
-  '/compliance-index': 'Compliance Index',
-  '/insurance-risk': 'Insurance Risk',
-  '/improve-score': 'Improve Score',
-  '/insurance-settings': 'Insurance Settings',
-  '/benchmarks': 'Benchmarks',
-  '/health-dept-report': 'Health Dept Report',
-  '/regulatory-alerts': 'Regulatory Updates',
-  '/jurisdiction': 'Jurisdiction Settings',
-  '/audit-report': 'Inspection Report',
+const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
+  '/dashboard': { label: 'Dashboard' },
 
-  // Insights & Analytics
-  '/ai-advisor': 'AI Advisor',
-  '/analysis': 'Predictive Analytics',
-  '/copilot': 'Compliance Copilot',
-  '/intelligence': 'Intelligence Hub',
-  '/regulatory-updates': 'Regulatory Updates',
-  '/business-intelligence': 'Business Intelligence',
-  '/weekly-digest': 'Weekly Digest',
+  // ── Category hubs (parent = dashboard) ──
+  '/food-safety': { label: 'Food Safety', parent: '/dashboard' },
+  '/facility-safety': { label: 'Facility Safety', parent: '/dashboard' },
+  '/compliance': { label: 'Compliance', parent: '/dashboard' },
+  '/insights': { label: 'Insights', parent: '/dashboard' },
+  '/tools': { label: 'Tools', parent: '/dashboard' },
+  '/admin': { label: 'Administration', parent: '/dashboard' },
 
-  // Tools
-  '/reports': 'Reports',
-  '/equipment': 'Equipment Lifecycle',
-  '/self-audit': 'Self-Inspection',
-  '/self-inspection': 'Self-Inspection',
-  '/photo-evidence': 'Photo Evidence',
-  '/audit-trail': 'Audit Trail',
-  '/inspector-view': 'Inspector View',
-  '/services': 'Services',
-  '/checkup': 'Kitchen Checkup',
-  '/self-diagnosis': 'Self-Diagnosis',
+  // ── Food Safety children ──
+  '/temp-logs': { label: 'Temperature Monitoring', parent: '/food-safety' },
+  '/checklists': { label: 'Checklists', parent: '/food-safety' },
+  '/haccp': { label: 'HACCP Management', parent: '/food-safety' },
+  '/corrective-actions': { label: 'Corrective Actions', parent: '/food-safety' },
+  '/scoring-breakdown': { label: 'Food Safety Overview', parent: '/food-safety' },
 
-  // IoT / Sensors
-  '/iot-monitoring': 'IoT Dashboard',
-  '/iot-platform': 'IoT Platform',
-  '/sensors': 'Sensor Hub',
-  '/sensors/add': 'Add Sensor',
+  // ── Compliance children ──
+  '/compliance-index': { label: 'Compliance Index', parent: '/compliance' },
+  '/documents': { label: 'Documents', parent: '/compliance' },
+  '/document-checklist': { label: 'Document Checklist', parent: '/compliance' },
+  '/incidents': { label: 'Incident Log', parent: '/compliance' },
+  '/insurance-risk': { label: 'Insurance Risk', parent: '/compliance' },
+  '/improve-score': { label: 'Improve Score', parent: '/insurance-risk' },
+  '/insurance-settings': { label: 'Insurance Settings', parent: '/insurance-risk' },
+  '/regulatory-alerts': { label: 'Regulatory Updates', parent: '/compliance' },
+  '/reports': { label: 'Reports', parent: '/compliance' },
+  '/self-audit': { label: 'Self-Inspection', parent: '/compliance' },
+  '/self-inspection': { label: 'Self-Inspection', parent: '/compliance' },
+  '/services': { label: 'Vendor Services', parent: '/compliance' },
+  '/jurisdiction': { label: 'Jurisdiction Settings', parent: '/compliance' },
+  '/health-dept-report': { label: 'Health Dept Report', parent: '/compliance' },
+  '/audit-report': { label: 'Inspection Report', parent: '/compliance' },
 
-  // Training
-  '/training': 'Training',
-  '/training/certificates': 'Certificates',
-  '/training/courses/builder': 'Course Builder',
-  '/dashboard/training': 'Training Records',
-  '/dashboard/training-catalog': 'Training Catalog',
+  // ── Insights children ──
+  '/ai-advisor': { label: 'AI Advisor', parent: '/insights' },
+  '/analysis': { label: 'Analytics', parent: '/insights' },
+  '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
+  '/intelligence': { label: 'Intelligence Hub', parent: '/insights' },
+  '/copilot': { label: 'Compliance Copilot', parent: '/insights' },
+  '/business-intelligence': { label: 'Business Intelligence', parent: '/insights' },
+  '/regulatory-updates': { label: 'Regulatory Updates', parent: '/insights' },
+  '/iot-monitoring': { label: 'IoT Dashboard', parent: '/insights' },
+  '/audit-trail': { label: 'Audit Trail', parent: '/insights' },
+  '/weekly-digest': { label: 'Weekly Digest', parent: '/insights' },
+  '/sensors': { label: 'Sensor Hub', parent: '/insights' },
+  '/sensors/add': { label: 'Add Sensor', parent: '/sensors' },
+  '/iot-platform': { label: 'IoT Platform', parent: '/insights' },
 
-  // Playbooks
-  '/playbooks': 'Incident Playbooks',
-  '/playbooks/builder': 'Playbook Builder',
-  '/playbooks/analytics': 'Playbook Analytics',
+  // ── Tools children ──
+  '/calendar': { label: 'Calendar', parent: '/tools' },
+  '/vendors': { label: 'Vendor Management', parent: '/tools' },
+  '/marketplace': { label: 'Marketplace', parent: '/tools' },
+  '/equipment': { label: 'Equipment Lifecycle', parent: '/tools' },
+  '/checkup': { label: 'Kitchen Checkup', parent: '/tools' },
+  '/self-diagnosis': { label: 'Self-Diagnosis', parent: '/tools' },
+  '/inspector-view': { label: 'Inspector View', parent: '/tools' },
+  '/photo-evidence': { label: 'Photo Evidence', parent: '/tools' },
+  '/playbooks': { label: 'Incident Playbooks', parent: '/tools' },
+  '/playbooks/builder': { label: 'Playbook Builder', parent: '/playbooks' },
+  '/playbooks/analytics': { label: 'Playbook Analytics', parent: '/playbooks' },
+  '/alerts': { label: 'Alerts', parent: '/tools' },
 
-  // Team & Admin
-  '/team': 'Team',
-  '/leaderboard': 'Leaderboard',
-  '/referrals': 'Referrals',
-  '/org-hierarchy': 'Locations',
-  '/import': 'Import Data',
-  '/help': 'Help & Support',
+  // ── Administration children ──
+  '/team': { label: 'Team', parent: '/admin' },
+  '/settings': { label: 'Settings', parent: '/admin' },
+  '/settings/branding': { label: 'Branding', parent: '/settings' },
+  '/settings/sensors': { label: 'Sensors', parent: '/settings' },
+  '/settings/integrations': { label: 'Integrations', parent: '/settings' },
+  '/settings/api-keys': { label: 'API Keys', parent: '/settings' },
+  '/settings/webhooks': { label: 'Webhooks', parent: '/settings' },
+  '/settings/roles-permissions': { label: 'Roles & Permissions', parent: '/settings' },
+  '/integrations': { label: 'Integrations', parent: '/admin' },
+  '/developers': { label: 'Developer Portal', parent: '/admin' },
+  '/org-hierarchy': { label: 'Locations', parent: '/admin' },
+  '/import': { label: 'Import Data', parent: '/admin' },
+  '/leaderboard': { label: 'Leaderboard', parent: '/admin' },
+  '/referrals': { label: 'Referrals', parent: '/admin' },
+  '/training': { label: 'Training Hub', parent: '/admin' },
+  '/training/certificates': { label: 'Certificates', parent: '/training' },
+  '/training/courses/builder': { label: 'Course Builder', parent: '/training' },
+  '/dashboard/training': { label: 'Training Records', parent: '/admin' },
+  '/dashboard/training-catalog': { label: 'Training Catalog', parent: '/dashboard/training' },
+  '/help': { label: 'Help & Support', parent: '/dashboard' },
 
-  // Settings
-  '/settings': 'Settings',
-  '/settings/branding': 'Branding',
-  '/settings/sensors': 'Sensors',
-  '/settings/integrations': 'Integrations',
-  '/settings/api-keys': 'API Keys',
-  '/settings/webhooks': 'Webhooks',
-  '/settings/roles-permissions': 'Roles & Permissions',
-  '/integrations': 'Integrations',
-  '/developers': 'Developer Portal',
+  // ── Admin-only routes ──
+  '/admin/onboard-client': { label: 'Client Onboarding', parent: '/admin' },
+  '/admin/usage-analytics': { label: 'Usage Analytics', parent: '/admin' },
+  '/admin/regulatory-changes': { label: 'Regulatory Changes', parent: '/admin' },
+  '/admin/intelligence-queue': { label: 'Intelligence Queue', parent: '/admin' },
+  '/admin/intelligence': { label: 'Command Center', parent: '/admin' },
+  '/admin/rfp-intelligence': { label: 'RFP Intelligence', parent: '/admin' },
+  '/admin/assessments': { label: 'Assessment Leads', parent: '/admin' },
+  '/admin/system/edge-functions': { label: 'Edge Functions', parent: '/admin/intelligence' },
 
-  // Admin
-  '/admin/onboard-client': 'Client Onboarding',
-  '/admin/usage-analytics': 'Usage Analytics',
-  '/admin/regulatory-changes': 'Regulatory Changes',
-  '/admin/intelligence-queue': 'Intelligence Queue',
-  '/admin/intelligence': 'Command Center',
-  '/admin/rfp-intelligence': 'RFP Intelligence',
-  '/admin/assessments': 'Assessment Leads',
-  '/admin/system/edge-functions': 'Edge Functions',
-
-  // Legal
-  '/terms': 'Terms of Service',
-  '/privacy': 'Privacy Policy',
+  // ── Legal ──
+  '/terms': { label: 'Terms of Service', parent: '/dashboard' },
+  '/privacy': { label: 'Privacy Policy', parent: '/dashboard' },
 };
 
-// ── Parent routes for nested pages ──────────────────────────────
-const PARENT_ROUTES: Record<string, { label: string; href: string }[]> = {
-  '/settings/branding': [{ label: 'Settings', href: '/settings' }],
-  '/settings/sensors': [{ label: 'Settings', href: '/settings' }],
-  '/settings/integrations': [{ label: 'Settings', href: '/settings' }],
-  '/settings/api-keys': [{ label: 'Settings', href: '/settings' }],
-  '/settings/webhooks': [{ label: 'Settings', href: '/settings' }],
-  '/settings/roles-permissions': [{ label: 'Settings', href: '/settings' }],
-  '/admin/onboard-client': [{ label: 'Administration', href: '/team' }],
-  '/admin/usage-analytics': [{ label: 'Administration', href: '/team' }],
-  '/admin/regulatory-changes': [{ label: 'Administration', href: '/team' }],
-  '/admin/intelligence-queue': [{ label: 'Administration', href: '/team' }],
-  '/admin/intelligence': [{ label: 'Administration', href: '/team' }],
-  '/admin/rfp-intelligence': [{ label: 'Administration', href: '/team' }],
-  '/admin/assessments': [{ label: 'Administration', href: '/team' }],
-  '/admin/system/edge-functions': [{ label: 'Administration', href: '/team' }, { label: 'System', href: '/admin/intelligence' }],
-  '/training/certificates': [{ label: 'Training', href: '/training' }],
-  '/training/courses/builder': [{ label: 'Training', href: '/training' }],
-  '/dashboard/training': [{ label: 'Dashboard', href: '/dashboard' }],
-  '/dashboard/training-catalog': [{ label: 'Dashboard', href: '/dashboard' }, { label: 'Training Records', href: '/dashboard/training' }],
-  '/playbooks/builder': [{ label: 'Incident Playbooks', href: '/playbooks' }],
-  '/playbooks/analytics': [{ label: 'Incident Playbooks', href: '/playbooks' }],
-  '/sensors/add': [{ label: 'Sensor Hub', href: '/sensors' }],
-  '/improve-score': [{ label: 'Insurance Risk', href: '/insurance-risk' }],
-  '/insurance-settings': [{ label: 'Insurance Risk', href: '/insurance-risk' }],
-  // Food Safety hierarchy
-  '/temp-logs': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
-  '/checklists': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
-  '/haccp': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
-  '/corrective-actions': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
-  '/incidents': [{ label: 'Food Safety', href: '/scoring-breakdown' }],
-};
-
-// ── Dynamic route patterns (with :params) ───────────────────────
-const DYNAMIC_PATTERNS: { pattern: RegExp; parents: { label: string; href: string }[]; label: string }[] = [
-  { pattern: /^\/vendors\/[^/]+$/, parents: [{ label: 'Vendor Management', href: '/vendors' }], label: 'Vendor Detail' },
-  { pattern: /^\/marketplace\/[^/]+$/, parents: [{ label: 'Marketplace', href: '/marketplace' }], label: 'Vendor Profile' },
-  { pattern: /^\/training\/course\/[^/]+$/, parents: [{ label: 'Training', href: '/training' }], label: 'Course' },
-  { pattern: /^\/training\/employee\/[^/]+$/, parents: [{ label: 'Training', href: '/training' }], label: 'Employee Certifications' },
-  { pattern: /^\/playbooks\/active\/[^/]+$/, parents: [{ label: 'Incident Playbooks', href: '/playbooks' }], label: 'Active Playbook' },
-  { pattern: /^\/playbooks\/history\/[^/]+$/, parents: [{ label: 'Incident Playbooks', href: '/playbooks' }], label: 'Playbook History' },
-  { pattern: /^\/sensors\/(?!add)[^/]+$/, parents: [{ label: 'Sensor Hub', href: '/sensors' }], label: 'Sensor Detail' },
-  { pattern: /^\/dashboard\/training\/[^/]+$/, parents: [{ label: 'Training Records', href: '/dashboard/training' }], label: 'Employee Profile' },
-  { pattern: /^\/reports\/[^/]+$/, parents: [{ label: 'Reports', href: '/reports' }], label: 'Report' },
-  { pattern: /^\/equipment\/[^/]+\/service\/new$/, parents: [{ label: 'Equipment Lifecycle', href: '/equipment' }], label: 'New Service Record' },
-  { pattern: /^\/equipment\/[^/]+$/, parents: [{ label: 'Equipment Lifecycle', href: '/equipment' }], label: 'Equipment Detail' },
+// ── Dynamic route patterns ───────────────────────────────
+const DYNAMIC_PATTERNS: { pattern: RegExp; parent: string; label: string }[] = [
+  { pattern: /^\/vendors\/[^/]+$/, parent: '/vendors', label: 'Vendor Detail' },
+  { pattern: /^\/marketplace\/[^/]+$/, parent: '/marketplace', label: 'Vendor Profile' },
+  { pattern: /^\/training\/course\/[^/]+$/, parent: '/training', label: 'Course' },
+  { pattern: /^\/training\/employee\/[^/]+$/, parent: '/training', label: 'Employee Certifications' },
+  { pattern: /^\/playbooks\/active\/[^/]+$/, parent: '/playbooks', label: 'Active Playbook' },
+  { pattern: /^\/playbooks\/history\/[^/]+$/, parent: '/playbooks', label: 'Playbook History' },
+  { pattern: /^\/sensors\/(?!add)[^/]+$/, parent: '/sensors', label: 'Sensor Detail' },
+  { pattern: /^\/dashboard\/training\/[^/]+$/, parent: '/dashboard/training', label: 'Employee Profile' },
+  { pattern: /^\/reports\/[^/]+$/, parent: '/reports', label: 'Report' },
+  { pattern: /^\/equipment\/[^/]+\/service\/new$/, parent: '/equipment', label: 'New Service Record' },
+  { pattern: /^\/equipment\/[^/]+$/, parent: '/equipment', label: 'Equipment Detail' },
 ];
 
-// ── Query-parameter context labels ──────────────────────────────
+// ── Query-parameter context labels ──────────────────────
 const QUERY_CONTEXT_PARAMS: Record<string, Record<string, string>> = {
   category: {
     hood_cleaning: 'Hood Cleaning',
@@ -187,75 +157,94 @@ function getQueryContext(search: string): string | null {
   return null;
 }
 
+// ── Build breadcrumb by walking up parent chain ─────────
+
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+function buildBreadcrumb(pathname: string, search: string): BreadcrumbItem[] {
+  // Resolve current route — check static hierarchy first, then dynamic patterns
+  let currentLabel: string | null = null;
+  let currentParent: string | undefined;
+
+  const staticEntry = ROUTE_HIERARCHY[pathname];
+  if (staticEntry) {
+    currentLabel = staticEntry.label;
+    currentParent = staticEntry.parent;
+  } else {
+    const dynamicMatch = DYNAMIC_PATTERNS.find(dp => dp.pattern.test(pathname));
+    if (dynamicMatch) {
+      currentLabel = dynamicMatch.label;
+      currentParent = dynamicMatch.parent;
+    }
+  }
+
+  // Fallback: titleize last path segment
+  if (!currentLabel) {
+    const segments = pathname.split('/').filter(Boolean);
+    const last = segments[segments.length - 1] || '';
+    currentLabel = last.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    // Try to guess parent from path
+    if (segments.length > 1) {
+      const parentPath = '/' + segments.slice(0, -1).join('/');
+      if (ROUTE_HIERARCHY[parentPath]) {
+        currentParent = parentPath;
+      }
+    }
+  }
+
+  // Dashboard special case
+  if (pathname === '/dashboard') {
+    const dashItems: BreadcrumbItem[] = [{ label: 'Dashboard' }];
+    const ctx = getQueryContext(search);
+    if (ctx) {
+      dashItems[0].href = '/dashboard';
+      dashItems.push({ label: ctx });
+    }
+    return dashItems;
+  }
+
+  // Walk up parent chain to build items (bottom-up, then reverse)
+  const items: BreadcrumbItem[] = [];
+
+  // Current page (non-clickable, bold)
+  let label = currentLabel;
+  const ctx = getQueryContext(search);
+  if (ctx) label = `${label} (${ctx})`;
+  items.push({ label });
+
+  // Walk up parents (stop before dashboard — we prepend it manually)
+  let parentPath = currentParent;
+  const visited = new Set<string>();
+  while (parentPath && parentPath !== '/dashboard' && !visited.has(parentPath)) {
+    visited.add(parentPath);
+    const parentEntry = ROUTE_HIERARCHY[parentPath];
+    if (!parentEntry) break;
+    items.push({ label: parentEntry.label, href: parentPath });
+    parentPath = parentEntry.parent;
+  }
+
+  // Reverse so root is first
+  items.reverse();
+
+  // Prepend Dashboard as linked root
+  items.unshift({ label: 'Dashboard', href: '/dashboard' });
+
+  return items;
+}
+
+// ── Component ───────────────────────────────────────────
+
 export function AutoBreadcrumb() {
   const location = useLocation();
-  const pathname = location.pathname;
-
-  // Build breadcrumb items: always start with Dashboard home
-  const items: { label: string; href?: string }[] = [];
-
-  // Dashboard is home — if we're ON dashboard, just show it as current (non-linked)
-  if (pathname === '/dashboard') {
-    items.push({ label: 'Dashboard' });
-
-    const ctx = getQueryContext(location.search);
-    if (ctx) {
-      items[0].href = '/dashboard';
-      items.push({ label: ctx });
-    }
-
-    return <BreadcrumbNav items={items} />;
-  }
-
-  // Everything else starts with a linked Dashboard
-  items.push({ label: 'Dashboard', href: '/dashboard' });
-
-  // Check for dynamic routes first
-  const dynamicMatch = DYNAMIC_PATTERNS.find(dp => dp.pattern.test(pathname));
-  if (dynamicMatch) {
-    for (const parent of dynamicMatch.parents) {
-      items.push({ label: parent.label, href: parent.href });
-    }
-    items.push({ label: dynamicMatch.label });
-  } else {
-    // Check for parent routes
-    const parents = PARENT_ROUTES[pathname];
-    if (parents) {
-      for (const parent of parents) {
-        items.push({ label: parent.label, href: parent.href });
-      }
-    }
-
-    // Current page label
-    const label = ROUTE_LABELS[pathname];
-    if (label) {
-      // Avoid duplicating if the last parent has the same label
-      const lastItem = items[items.length - 1];
-      if (lastItem && lastItem.label === label) {
-        // Remove href to make it the current (non-clickable) item
-        delete lastItem.href;
-      } else {
-        items.push({ label });
-      }
-    } else {
-      // Fallback: titleize last path segment
-      const segments = pathname.split('/').filter(Boolean);
-      const last = segments[segments.length - 1] || '';
-      items.push({ label: last.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) });
-    }
-  }
-
-  // Append query parameter context to the last item
-  const ctx = getQueryContext(location.search);
-  if (ctx) {
-    const last = items[items.length - 1];
-    last.label = `${last.label} (${ctx})`;
-  }
+  const items = buildBreadcrumb(location.pathname, location.search);
 
   return <BreadcrumbNav items={items} />;
 }
 
-function BreadcrumbNav({ items }: { items: { label: string; href?: string }[] }) {
+function BreadcrumbNav({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav
       aria-label="Breadcrumb"

@@ -17,7 +17,19 @@ export type TooltipSection =
   | 'auditLogCard'
   | 'alertBanner'
   | 'bottomBarActions'
-  | 'scheduleCalendar';
+  | 'scheduleCalendar'
+  | 'haccpActivePlans'
+  | 'haccpOverallCompliance'
+  | 'haccpCCPsInCompliance'
+  | 'haccpOpenActions'
+  | 'facilitySafetyCurrent'
+  | 'facilitySafetyNoStatus'
+  | 'facilitySafetyExpiring'
+  | 'facilitySafetyOverdue'
+  | 'equipmentTotal'
+  | 'equipmentWarranty'
+  | 'equipmentOverdue'
+  | 'calendarSubtitle';
 
 export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = {
   // ── TOOLTIPS-1 (original 5 sections) ──────────────────────
@@ -329,6 +341,129 @@ export const tooltipContent: Record<TooltipSection, Record<UserRole, string>> = 
       'Scheduled vendor visits and equipment maintenance that may affect kitchen operations.',
     kitchen_staff:
       'Scheduled events that may affect your shift \u2014 vendor visits and equipment maintenance.',
+  },
+
+  // ── TOOLTIPS-3 (HACCP, Facility Safety status, Equipment, Calendar) ──
+
+  haccpActivePlans: {
+    platform_admin: 'Number of HACCP plans currently configured and monitored across all locations.',
+    owner_operator: 'Number of HACCP plans currently configured and monitored across all locations.',
+    executive: 'Total active HACCP plans in your portfolio. Each plan covers specific hazards and critical control points.',
+    compliance_manager: 'Active HACCP plans with assigned CCPs and monitoring schedules. Each plan must have documented verification.',
+    chef: 'HACCP plans configured for your kitchen. Each plan defines the critical control points you monitor daily.',
+    facilities_manager: 'Number of HACCP plans currently configured and monitored.',
+    kitchen_manager: 'Active HACCP plans for your location. Ensure all CCPs are being monitored per schedule.',
+    kitchen_staff: 'The number of food safety plans your kitchen follows.',
+  },
+  haccpOverallCompliance: {
+    platform_admin: 'Percentage of CCPs meeting their defined critical limits across all active HACCP plans.',
+    owner_operator: 'Percentage of CCPs meeting their defined critical limits across all active HACCP plans.',
+    executive: 'Overall CCP compliance rate. Below 100% indicates active deviations requiring corrective action.',
+    compliance_manager: 'CCP compliance percentage based on the latest monitoring records. Deviations must have documented corrective actions.',
+    chef: 'How well your kitchen is meeting critical control point limits. 100% means all CCPs are within safe ranges.',
+    facilities_manager: 'Percentage of critical control points meeting their defined limits.',
+    kitchen_manager: 'Your location\'s CCP compliance rate. Address any deviations before the next monitoring cycle.',
+    kitchen_staff: 'Shows whether food safety control points are meeting their targets.',
+  },
+  haccpCCPsInCompliance: {
+    platform_admin: 'Count of CCPs with monitoring records within acceptable limits out of total active CCPs.',
+    owner_operator: 'Count of CCPs with monitoring records within acceptable limits out of total active CCPs.',
+    executive: 'CCPs meeting limits versus total. Any CCP out of compliance requires documented corrective action.',
+    compliance_manager: 'CCPs currently in compliance. Out-of-compliance CCPs must have corrective actions logged within the defined timeframe.',
+    chef: 'How many of your critical control points are currently within safe limits.',
+    facilities_manager: 'Count of critical control points with monitoring records within acceptable limits.',
+    kitchen_manager: 'CCPs in compliance at your location. Follow up on any that are out of range.',
+    kitchen_staff: 'The number of food safety checkpoints that are currently passing.',
+  },
+  haccpOpenActions: {
+    platform_admin: 'Corrective actions created from CCP deviations but not yet resolved. These are audit findings waiting to happen.',
+    owner_operator: 'Corrective actions created from CCP deviations but not yet resolved. These are audit findings waiting to happen.',
+    executive: 'Unresolved corrective actions from HACCP deviations. High counts indicate systemic food safety issues.',
+    compliance_manager: 'Open corrective actions requiring resolution and verification. Each must be closed with documented evidence.',
+    chef: 'Corrective actions that need your attention. Resolve these to keep your HACCP plan in compliance.',
+    facilities_manager: 'Open corrective actions from HACCP plan deviations.',
+    kitchen_manager: 'Open corrective actions at your location. Assign to team members and track to resolution.',
+    kitchen_staff: 'Tasks that need to be fixed to keep food safety on track.',
+  },
+  facilitySafetyCurrent: {
+    platform_admin: 'Service or inspection is up to date and compliant. No action required.',
+    owner_operator: 'Service or inspection is up to date and compliant. No action required.',
+    executive: 'This category is current \u2014 service records and inspections are within required intervals.',
+    compliance_manager: 'Verified current \u2014 service date, inspection record, or certification is within the required interval.',
+    chef: 'This facility safety item is up to date. No action needed.',
+    facilities_manager: 'Service or inspection is current and documented. Next due date is tracked automatically.',
+    kitchen_manager: 'This item is compliant \u2014 no action needed at this time.',
+    kitchen_staff: 'This safety check is current. Everything is good.',
+  },
+  facilitySafetyNoStatus: {
+    platform_admin: 'No service records or inspections on file for this category. Documentation needed.',
+    owner_operator: 'No service records or inspections on file for this category. Documentation needed.',
+    executive: 'Missing documentation \u2014 no service records or inspections filed for this category.',
+    compliance_manager: 'No records on file. This creates a documentation gap during inspections \u2014 upload or schedule service.',
+    chef: 'No records found for this item. Contact your Facilities Manager to update.',
+    facilities_manager: 'No service records on file. Upload documentation or schedule service to establish compliance baseline.',
+    kitchen_manager: 'No records for this item. Contact your Facilities Manager.',
+    kitchen_staff: 'No information is on file for this safety item.',
+  },
+  facilitySafetyExpiring: {
+    platform_admin: 'Service or inspection due within 30 days. Schedule renewal to maintain compliance.',
+    owner_operator: 'Service or inspection due within 30 days. Schedule renewal to maintain compliance.',
+    executive: 'Expiring within 30 days \u2014 service renewal or re-inspection needed to avoid lapse.',
+    compliance_manager: 'Approaching expiration \u2014 schedule renewal within 30 days to prevent compliance lapse.',
+    chef: 'This item expires soon. Your Facilities Manager should schedule renewal.',
+    facilities_manager: 'Due within 30 days. Schedule vendor service or inspection to prevent compliance lapse.',
+    kitchen_manager: 'Expiring soon \u2014 ensure renewal is scheduled before the due date.',
+    kitchen_staff: 'This safety item is coming due soon. Your manager will handle it.',
+  },
+  facilitySafetyOverdue: {
+    platform_admin: 'Past the scheduled service or inspection date. Compliance failure \u2014 immediate action required.',
+    owner_operator: 'Past the scheduled service or inspection date. Compliance failure \u2014 immediate action required.',
+    executive: 'Overdue \u2014 this category has lapsed and represents an active compliance failure.',
+    compliance_manager: 'Overdue service or inspection. This is an active violation that will be cited during inspection.',
+    chef: 'This item is overdue. Alert your Facilities Manager immediately.',
+    facilities_manager: 'Overdue \u2014 past scheduled service or inspection date. Schedule immediately to restore compliance.',
+    kitchen_manager: 'This item is past due. Escalate to your Facilities Manager for immediate attention.',
+    kitchen_staff: 'This safety item is overdue. Tell your manager right away.',
+  },
+  equipmentTotal: {
+    platform_admin: 'All equipment and permits tracked across your facilities, including service history and warranty status.',
+    owner_operator: 'All equipment and permits tracked across your facilities, including service history and warranty status.',
+    executive: 'Total tracked assets across your portfolio. Includes kitchen equipment, permits, and facility systems.',
+    compliance_manager: 'Equipment registry size. Each item should have current service records and maintenance documentation.',
+    chef: 'Total pieces of equipment tracked at your location.',
+    facilities_manager: 'Your complete asset register \u2014 all equipment, permits, and facility systems with service tracking.',
+    kitchen_manager: 'Equipment tracked at your location. Tap to view service history and maintenance schedules.',
+    kitchen_staff: 'The total number of tracked equipment items.',
+  },
+  equipmentWarranty: {
+    platform_admin: 'Equipment with warranties expiring within 90 days. Plan for renewal or replacement.',
+    owner_operator: 'Equipment with warranties expiring within 90 days. Plan for renewal or replacement.',
+    executive: 'Warranties expiring soon. Budget impact if replacements are needed.',
+    compliance_manager: 'Equipment with warranties expiring within 90 days. Service contracts may need renewal.',
+    chef: 'Equipment in your kitchen with warranties expiring soon.',
+    facilities_manager: 'Warranties expiring within 90 days. Review coverage and plan renewals or replacements.',
+    kitchen_manager: 'Equipment warranties expiring soon. Coordinate with Facilities for renewal.',
+    kitchen_staff: 'Equipment warranties that are expiring soon.',
+  },
+  equipmentOverdue: {
+    platform_admin: 'Equipment past its scheduled maintenance date. Overdue maintenance creates compliance and liability risk.',
+    owner_operator: 'Equipment past its scheduled maintenance date. Overdue maintenance creates compliance and liability risk.',
+    executive: 'Overdue maintenance items. Deferred maintenance increases operational and compliance risk.',
+    compliance_manager: 'Equipment with overdue maintenance. Missing service records are flagged during inspections.',
+    chef: 'Equipment in your kitchen that is past its maintenance date. Report to your manager.',
+    facilities_manager: 'Equipment past scheduled maintenance. Schedule service immediately to restore compliance.',
+    kitchen_manager: 'Overdue equipment at your location. Coordinate with Facilities for service scheduling.',
+    kitchen_staff: 'Equipment that needs maintenance. Let your manager know.',
+  },
+  calendarSubtitle: {
+    platform_admin: 'Schedule and track facility safety events, inspections, vendor services, and compliance deadlines across all locations.',
+    owner_operator: 'Schedule and track facility safety events, inspections, vendor services, and compliance deadlines across all locations.',
+    executive: 'Portfolio calendar for inspections, renewals, and strategic compliance milestones.',
+    compliance_manager: 'Compliance calendar \u2014 inspections, permit renewals, self-inspections, and regulatory deadlines.',
+    chef: 'Your kitchen\'s upcoming schedule \u2014 vendor visits, equipment maintenance, and inspections.',
+    facilities_manager: 'Maintenance calendar \u2014 vendor visits, equipment service, permit renewals, and inspection windows.',
+    kitchen_manager: 'Your location\'s compliance schedule \u2014 inspections, vendor visits, and deadlines.',
+    kitchen_staff: 'Upcoming events that may affect your work schedule.',
   },
 };
 
@@ -644,6 +779,129 @@ export const tooltipContentEs: Record<TooltipSection, Record<UserRole, string>> 
       'Visitas de proveedores programadas y mantenimiento de equipos que pueden afectar las operaciones de cocina.',
     kitchen_staff:
       'Eventos programados que pueden afectar su turno — visitas de proveedores y mantenimiento de equipos.',
+  },
+
+  // ── TOOLTIPS-3 Spanish translations ──
+
+  haccpActivePlans: {
+    platform_admin: 'Número de planes HACCP configurados y monitoreados actualmente en todas las ubicaciones.',
+    owner_operator: 'Número de planes HACCP configurados y monitoreados actualmente en todas las ubicaciones.',
+    executive: 'Total de planes HACCP activos en su portafolio.',
+    compliance_manager: 'Planes HACCP activos con PCC asignados y programas de monitoreo.',
+    chef: 'Planes HACCP configurados para su cocina.',
+    facilities_manager: 'Número de planes HACCP configurados y monitoreados.',
+    kitchen_manager: 'Planes HACCP activos para su ubicación.',
+    kitchen_staff: 'El número de planes de seguridad alimentaria que sigue su cocina.',
+  },
+  haccpOverallCompliance: {
+    platform_admin: 'Porcentaje de PCC que cumplen sus límites críticos definidos.',
+    owner_operator: 'Porcentaje de PCC que cumplen sus límites críticos definidos.',
+    executive: 'Tasa general de cumplimiento de PCC.',
+    compliance_manager: 'Porcentaje de cumplimiento de PCC basado en los últimos registros de monitoreo.',
+    chef: 'Qué tan bien su cocina cumple los límites de puntos críticos de control.',
+    facilities_manager: 'Porcentaje de puntos críticos de control que cumplen sus límites.',
+    kitchen_manager: 'Tasa de cumplimiento de PCC de su ubicación.',
+    kitchen_staff: 'Muestra si los puntos de control de seguridad alimentaria cumplen sus objetivos.',
+  },
+  haccpCCPsInCompliance: {
+    platform_admin: 'Número de PCC con registros de monitoreo dentro de límites aceptables.',
+    owner_operator: 'Número de PCC con registros de monitoreo dentro de límites aceptables.',
+    executive: 'PCC que cumplen límites versus total.',
+    compliance_manager: 'PCC actualmente en cumplimiento.',
+    chef: 'Cuántos de sus puntos críticos de control están dentro de los límites seguros.',
+    facilities_manager: 'Número de puntos críticos de control dentro de límites aceptables.',
+    kitchen_manager: 'PCC en cumplimiento en su ubicación.',
+    kitchen_staff: 'El número de puntos de control de seguridad alimentaria que están aprobando.',
+  },
+  haccpOpenActions: {
+    platform_admin: 'Acciones correctivas creadas pero no resueltas.',
+    owner_operator: 'Acciones correctivas creadas pero no resueltas.',
+    executive: 'Acciones correctivas no resueltas de desviaciones HACCP.',
+    compliance_manager: 'Acciones correctivas abiertas que requieren resolución y verificación.',
+    chef: 'Acciones correctivas que necesitan su atención.',
+    facilities_manager: 'Acciones correctivas abiertas de desviaciones del plan HACCP.',
+    kitchen_manager: 'Acciones correctivas abiertas en su ubicación.',
+    kitchen_staff: 'Tareas que deben corregirse para mantener la seguridad alimentaria.',
+  },
+  facilitySafetyCurrent: {
+    platform_admin: 'Servicio o inspección al día y en cumplimiento.',
+    owner_operator: 'Servicio o inspección al día y en cumplimiento.',
+    executive: 'Esta categoría está vigente.',
+    compliance_manager: 'Verificado vigente — registro de servicio o inspección dentro del intervalo requerido.',
+    chef: 'Este elemento de seguridad de instalaciones está al día.',
+    facilities_manager: 'Servicio o inspección vigente y documentado.',
+    kitchen_manager: 'Este elemento cumple — no se requiere acción.',
+    kitchen_staff: 'Esta verificación de seguridad está al día.',
+  },
+  facilitySafetyNoStatus: {
+    platform_admin: 'Sin registros de servicio o inspecciones en archivo para esta categoría.',
+    owner_operator: 'Sin registros de servicio o inspecciones en archivo para esta categoría.',
+    executive: 'Documentación faltante.',
+    compliance_manager: 'Sin registros en archivo. Esto crea una brecha documental.',
+    chef: 'Sin registros encontrados. Contacte a su Gerente de Instalaciones.',
+    facilities_manager: 'Sin registros de servicio en archivo. Suba documentación o programe servicio.',
+    kitchen_manager: 'Sin registros para este elemento.',
+    kitchen_staff: 'No hay información en archivo para este elemento de seguridad.',
+  },
+  facilitySafetyExpiring: {
+    platform_admin: 'Servicio o inspección vence dentro de 30 días.',
+    owner_operator: 'Servicio o inspección vence dentro de 30 días.',
+    executive: 'Vence dentro de 30 días.',
+    compliance_manager: 'Se acerca el vencimiento — programe renovación dentro de 30 días.',
+    chef: 'Este elemento vence pronto.',
+    facilities_manager: 'Vence dentro de 30 días. Programe servicio.',
+    kitchen_manager: 'Vence pronto — asegúrese de que la renovación esté programada.',
+    kitchen_staff: 'Este elemento de seguridad vence pronto.',
+  },
+  facilitySafetyOverdue: {
+    platform_admin: 'Pasada la fecha de servicio o inspección programada. Acción inmediata requerida.',
+    owner_operator: 'Pasada la fecha de servicio o inspección programada. Acción inmediata requerida.',
+    executive: 'Vencido — esta categoría ha caducado.',
+    compliance_manager: 'Servicio o inspección vencido. Violación activa.',
+    chef: 'Este elemento está vencido. Alerte a su Gerente de Instalaciones.',
+    facilities_manager: 'Vencido — programe inmediatamente para restaurar el cumplimiento.',
+    kitchen_manager: 'Este elemento está vencido. Escale a su Gerente de Instalaciones.',
+    kitchen_staff: 'Este elemento de seguridad está vencido. Informe a su gerente.',
+  },
+  equipmentTotal: {
+    platform_admin: 'Todo el equipo y permisos rastreados en sus instalaciones.',
+    owner_operator: 'Todo el equipo y permisos rastreados en sus instalaciones.',
+    executive: 'Total de activos rastreados en su portafolio.',
+    compliance_manager: 'Tamaño del registro de equipos.',
+    chef: 'Total de equipos rastreados en su ubicación.',
+    facilities_manager: 'Su registro completo de activos.',
+    kitchen_manager: 'Equipos rastreados en su ubicación.',
+    kitchen_staff: 'El número total de equipos rastreados.',
+  },
+  equipmentWarranty: {
+    platform_admin: 'Equipos con garantías que vencen dentro de 90 días.',
+    owner_operator: 'Equipos con garantías que vencen dentro de 90 días.',
+    executive: 'Garantías que vencen pronto.',
+    compliance_manager: 'Equipos con garantías que vencen dentro de 90 días.',
+    chef: 'Equipos con garantías que vencen pronto.',
+    facilities_manager: 'Garantías que vencen dentro de 90 días.',
+    kitchen_manager: 'Garantías de equipos que vencen pronto.',
+    kitchen_staff: 'Garantías de equipos que vencen pronto.',
+  },
+  equipmentOverdue: {
+    platform_admin: 'Equipos pasados de su fecha de mantenimiento programada.',
+    owner_operator: 'Equipos pasados de su fecha de mantenimiento programada.',
+    executive: 'Elementos de mantenimiento vencidos.',
+    compliance_manager: 'Equipos con mantenimiento vencido.',
+    chef: 'Equipos que necesitan mantenimiento.',
+    facilities_manager: 'Equipos pasados de mantenimiento programado.',
+    kitchen_manager: 'Equipos vencidos en su ubicación.',
+    kitchen_staff: 'Equipos que necesitan mantenimiento.',
+  },
+  calendarSubtitle: {
+    platform_admin: 'Programe y rastree eventos de seguridad de instalaciones, inspecciones, servicios de proveedores y fechas límite de cumplimiento.',
+    owner_operator: 'Programe y rastree eventos de seguridad de instalaciones, inspecciones, servicios de proveedores y fechas límite de cumplimiento.',
+    executive: 'Calendario del portafolio para inspecciones, renovaciones y hitos de cumplimiento.',
+    compliance_manager: 'Calendario de cumplimiento — inspecciones, renovaciones de permisos y fechas límite regulatorias.',
+    chef: 'El calendario de su cocina — visitas de proveedores, mantenimiento e inspecciones.',
+    facilities_manager: 'Calendario de mantenimiento — visitas de proveedores, servicio de equipos y ventanas de inspección.',
+    kitchen_manager: 'El calendario de cumplimiento de su ubicación.',
+    kitchen_staff: 'Próximos eventos que pueden afectar su horario de trabajo.',
   },
 };
 

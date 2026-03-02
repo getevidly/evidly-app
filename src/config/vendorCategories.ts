@@ -111,7 +111,6 @@ export const SERVICE_TYPE_TO_CATEGORY: Record<string, string> = {
   'Fire Extinguisher Service': 'fire_extinguisher',
   'Grease Trap / Interceptor': 'grease_trap',
   'Grease Trap / Interceptor Service': 'grease_trap',
-  'Grease Trap': 'grease_trap',
   'Backflow Prevention': 'backflow',
   'Backflow Prevention Testing': 'backflow',
   'Backflow Testing': 'backflow',
