@@ -1015,15 +1015,15 @@ export function HACCP() {
 
           {/* Summary stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: '4px solid #1e4d6b' }}>
+            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: '4px solid #1e4d6b' }}>
               <p className="text-sm text-gray-500 font-medium mb-1">Active CCPs</p>
               <p className="text-2xl font-bold" style={{ color: '#1e4d6b' }}>{allPlans.flatMap(p => p.ccps).length}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
+            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalDeviations > 0 ? '#DC2626' : '#22c55e'}` }}>
               <p className="text-sm text-gray-500 font-medium mb-1">Deviations</p>
               <p className="text-2xl font-bold" style={{ color: totalDeviations > 0 ? '#DC2626' : '#22c55e' }}>{totalDeviations}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm p-5" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#f59e0b' : '#22c55e'}` }}>
+            <div className="bg-white rounded-xl shadow-sm p-5 text-center" style={{ borderLeft: `4px solid ${totalOpenCAs > 0 ? '#f59e0b' : '#22c55e'}` }}>
               <p className="text-sm text-gray-500 font-medium mb-1">Open Corrective Actions</p>
               <p className="text-2xl font-bold" style={{ color: totalOpenCAs > 0 ? '#f59e0b' : '#22c55e' }}>{totalOpenCAs}</p>
             </div>
