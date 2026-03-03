@@ -98,6 +98,8 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/admin/intelligence': { label: 'Command Center', parent: '/admin' },
   '/admin/rfp-intelligence': { label: 'RFP Intelligence', parent: '/admin' },
   '/admin/assessments': { label: 'Assessment Leads', parent: '/admin' },
+  '/admin/demo-generator': { label: 'Demo Generator', parent: '/admin' },
+  '/admin/demos': { label: 'Demo Pipeline', parent: '/admin' },
   '/admin/system/edge-functions': { label: 'Edge Functions', parent: '/admin/intelligence' },
 
   // ── Legal ──

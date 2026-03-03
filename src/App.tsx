@@ -129,6 +129,10 @@ const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m
 
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
+const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
+const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
+const DemoRequest = lazy(() => import('./pages/DemoRequest'));
+const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
 const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
@@ -379,6 +383,8 @@ function AppRoutes() {
         <Route path="/reset-password" element={<Suspense fallback={<PageSkeleton />}><ResetPassword /></Suspense>} />
         <Route path="/email-confirmed" element={<Suspense fallback={<PageSkeleton />}><EmailConfirmed /></Suspense>} />
         <Route path="/demo" element={<Suspense fallback={<PageSkeleton />}><DemoWizard /></Suspense>} />
+        <Route path="/demo/request" element={<Suspense fallback={<PageSkeleton />}><DemoRequest /></Suspense>} />
+        <Route path="/demo/schedule/:sessionId" element={<Suspense fallback={<PageSkeleton />}><DemoSchedule /></Suspense>} />
         <Route path="/auth/callback" element={<Suspense fallback={<PageSkeleton />}><AuthCallback /></Suspense>} />
         <Route path="/vendor/login" element={<Suspense fallback={<PageSkeleton />}><VendorLogin /></Suspense>} />
         <Route path="/vendor/register" element={<Suspense fallback={<PageSkeleton />}><VendorRegister /></Suspense>} />
@@ -486,6 +492,8 @@ function AppRoutes() {
           <Route path="/admin/intelligence-queue" element={<AdminIntelligenceQueue />} />
           <Route path="/admin/intelligence" element={<CommandCenter />} />
           <Route path="/admin/rfp-intelligence" element={<RfpIntelligence />} />
+          <Route path="/admin/demo-generator" element={<DemoGenerator />} />
+          <Route path="/admin/demos" element={<DemoPipeline />} />
           <Route path="/admin/assessments" element={<AssessmentLeads />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}

@@ -26,6 +26,7 @@ import {
   Flame,
   Shield,
   GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 import { useRole } from '../../contexts/RoleContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -81,6 +82,8 @@ const PATH_ICON: Record<string, any> = {
   '/receiving-log': FileText,
   '/checklists': ClipboardList,
   '/temp-logs': Thermometer,
+  '/admin/demo-generator': Sparkles,
+  '/admin/demos': Target,
 };
 
 function getIconForPath(path: string): any {

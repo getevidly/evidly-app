@@ -242,6 +242,18 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  // ── Demo Generator (Admin) ──
+  demoGenerator: {
+    id: 'demo-generator', label: 'Demo Generator', path: '/admin/demo-generator', icon: '✨',
+    roles: [], description: 'Generate personalized, jurisdiction-accurate demo environments for sales prospects.',
+    badge: 'NEW',
+  },
+  demoPipeline: {
+    id: 'demo-pipeline', label: 'Demo Pipeline', path: '/admin/demos', icon: '🎯',
+    roles: [], description: 'Manage prospect demo pipeline — scheduling, generation, live demos, and conversion.',
+    badge: 'NEW',
+  },
+
   // ── Assessment (Admin) ──
   assessmentLeads: {
     id: 'assessment-leads', label: 'Assessment Leads', path: '/admin/assessments', icon: '📊',
@@ -323,7 +335,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, assessment leads, command center, and role permissions.',
-        [I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
+        [I.assessmentLeads, I.commandCenter, I.demoGenerator, I.demoPipeline, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
         '/admin',
       ),
       section('system', 'System', '🖥️',
@@ -587,7 +599,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, and role permissions.',
-        [I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
+        [I.demoGenerator, I.demoPipeline, I.equipment, I.iotSensors, I.locations, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
         '/admin',
       ),
       section('help', 'Help', '❓',
