@@ -221,10 +221,10 @@ function StatsBar({ stats }: { stats: import('../../types/commandCenter').Comman
       {items.map(item => (
         <div
           key={item.label}
-          className="rounded-lg border px-4 py-3"
+          className="rounded-lg border px-4 py-3 text-center"
           style={{ backgroundColor: CARD_BG, borderColor: CARD_BORDER }}
         >
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center justify-center gap-2 mb-1">
             <item.icon size={14} style={{ color: item.color }} />
             <span className="text-xs font-medium" style={{ color: TEXT_TERTIARY }}>{item.label}</span>
           </div>

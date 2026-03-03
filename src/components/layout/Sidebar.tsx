@@ -370,24 +370,29 @@ export function Sidebar() {
     return ids;
   }, [homeItem, topLevelItems, sections]);
 
-  // ── Collapsible section state ──
+  // ── Collapsible section state (accordion — one section at a time) ──
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>(() => {
     try {
       const saved = localStorage.getItem(COLLAPSED_SECTIONS_KEY);
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    // Default: all sections collapsed (auto-expand effect opens the active one)
+    return {};
   });
 
   const toggleSection = useCallback((sectionId: string) => {
     setCollapsed(prev => {
       const isCurrentlyCollapsed = prev[sectionId] !== false;
-      const next = { ...prev, [sectionId]: isCurrentlyCollapsed ? false : true };
+      // Accordion: collapse every section, then open the clicked one (if it was collapsed)
+      const next: Record<string, boolean> = {};
+      for (const s of sections) {
+        next[s.id] = true; // collapse all
+      }
+      next[sectionId] = isCurrentlyCollapsed ? false : true;
       try { localStorage.setItem(COLLAPSED_SECTIONS_KEY, JSON.stringify(next)); } catch {}
       return next;
     });
-  }, []);
+  }, [sections]);
 
   // ── Section tooltip hover state ──
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
@@ -474,22 +479,18 @@ export function Sidebar() {
     };
   }, [isTestMode, visibleItemIds, userRole]);
 
-  // Auto-expand section containing the active route
+  // Auto-expand section containing the active route (accordion: collapse others)
   useEffect(() => {
     setCollapsed(prev => {
-      let changed = false;
-      const next = { ...prev };
+      const activeSection = sections.find(s => s.items.some(item => location.pathname === item.path));
+      if (!activeSection || prev[activeSection.id] === false) return prev;
+      // Collapse all, expand only the active section
+      const next: Record<string, boolean> = {};
       for (const s of sections) {
-        if (next[s.id] !== false && s.items.some(item => location.pathname === item.path)) {
-          next[s.id] = false;
-          changed = true;
-        }
+        next[s.id] = s.id === activeSection.id ? false : true;
       }
-      if (changed) {
-        try { localStorage.setItem(COLLAPSED_SECTIONS_KEY, JSON.stringify(next)); } catch {}
-        return next;
-      }
-      return prev;
+      try { localStorage.setItem(COLLAPSED_SECTIONS_KEY, JSON.stringify(next)); } catch {}
+      return next;
     });
   }, [location.pathname, sections]);
 

@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import {
   Search,
   Star,
@@ -14,10 +15,20 @@ import {
   SlidersHorizontal,
   ArrowRight,
   Building2,
+  Plus,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  Send,
+  Shield,
+  UserPlus,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
+import { useRole } from '../contexts/RoleContext';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 import {
   marketplaceVendors,
   marketplaceCategories,
@@ -211,14 +222,7 @@ export function VendorMarketplace() {
   ]);
 
   if (!isDemoMode) {
-    return (
-      <div className="min-h-screen bg-[#f7f9fb] flex items-center justify-center">
-        <div className="p-8 text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Marketplace</h2>
-          <p className="text-gray-500">Browse verified vendors for your service needs.</p>
-        </div>
-      </div>
-    );
+    return <ProductionMarketplace />;
   }
 
   /* ---- whether any filter is active ---- */

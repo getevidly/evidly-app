@@ -868,23 +868,23 @@ export function Equipment() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
             <div className="text-xs text-gray-400 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#d97706]">{kpis.warrantyExpiring}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.within90Days')}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><AlertTriangle className="h-5 w-5 text-[#dc2626]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.maintenanceOverdue')} <InfoTooltip content={ttEquipmentOverdue} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#dc2626]">{kpis.maintenanceOverdue}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.needsImmediateAttention')}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <div className="flex items-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2"><Clock className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.avgEquipmentAge')}</span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.avgAge}</div>
             <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.years')}</div>
           </div>

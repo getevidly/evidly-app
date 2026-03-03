@@ -788,24 +788,24 @@ export function AuditReport() {
 
                       {/* KPI grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="p-3 rounded-lg border border-gray-200 text-center">
                           <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalTemps.toLocaleString()}</div>
                           <div className="text-xs text-gray-500">Temperature Readings</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.tempPassRate}% pass rate</div>
                         </div>
-                        <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="p-3 rounded-lg border border-gray-200 text-center">
                           <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalChecklists}</div>
                           <div className="text-xs text-gray-500">Checklists Completed</div>
                           <div className="text-xs font-semibold text-green-600 mt-1">{summary.avgScore}% avg score</div>
                         </div>
-                        <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="p-3 rounded-lg border border-gray-200 text-center">
                           <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalIncidents}</div>
                           <div className="text-xs text-gray-500">Incidents Logged</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.openIncidents > 0 ? '#d97706' : '#16a34a' }}>
                             {summary.resolvedIncidents} resolved, {summary.openIncidents} open
                           </div>
                         </div>
-                        <div className="p-3 rounded-lg border border-gray-200">
+                        <div className="p-3 rounded-lg border border-gray-200 text-center">
                           <div className="text-2xl font-bold text-[#1e4d6b]">{summary.totalDocs}</div>
                           <div className="text-xs text-gray-500">Documents on File</div>
                           <div className="text-xs font-semibold mt-1" style={{ color: summary.expiredDocs > 0 ? '#dc2626' : '#16a34a' }}>

@@ -370,14 +370,14 @@ function LiveMonitorTab({ sensors, selectedSensor, setSelectedSensor, onlineCoun
           { label: 'Critical Alerts', value: criticalAlerts, total: null, color: '#ef4444', icon: XCircle },
           { label: 'Readings Today', value: totalReadingsToday, total: null, color: '#1e4d6b', icon: Database },
         ].map(item => (
-          <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: item.color + '15' }}>
-              <item.icon className="h-5 w-5" style={{ color: item.color }} />
+          <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: item.color + '15' }}>
+                <item.icon className="h-5 w-5" style={{ color: item.color }} />
+              </div>
             </div>
-            <div>
-              <div className="text-2xl font-bold text-gray-900">{item.value}{item.total !== null && <span className="text-sm font-normal text-gray-400">/{item.total}</span>}</div>
-              <div className="text-xs text-gray-500">{item.label}</div>
-            </div>
+            <div className="text-2xl font-bold text-gray-900">{item.value}{item.total !== null && <span className="text-sm font-normal text-gray-400">/{item.total}</span>}</div>
+            <div className="text-xs text-gray-500">{item.label}</div>
           </div>
         ))}
       </div>

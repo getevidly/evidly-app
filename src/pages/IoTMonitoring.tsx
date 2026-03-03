@@ -178,8 +178,8 @@ export default function IoTMonitoring() {
         <div className="space-y-6">
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-[#eef4f8] flex items-center justify-center">
                   <Radio className="h-4 w-4 text-[#1e4d6b]" />
                 </div>
@@ -187,8 +187,8 @@ export default function IoTMonitoring() {
               </div>
               <p className="text-2xl font-bold text-gray-900">{iotSensors.length}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
                   <Wifi className="h-4 w-4 text-green-600" />
                 </div>
@@ -196,8 +196,8 @@ export default function IoTMonitoring() {
               </div>
               <p className="text-2xl font-bold text-green-700">{onlineCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
                   <AlertTriangle className="h-4 w-4 text-amber-600" />
                 </div>
@@ -205,8 +205,8 @@ export default function IoTMonitoring() {
               </div>
               <p className="text-2xl font-bold text-amber-700">{warningCount}</p>
             </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+              <div className="flex items-center justify-center gap-2 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
                   <WifiOff className="h-4 w-4 text-red-600" />
                 </div>

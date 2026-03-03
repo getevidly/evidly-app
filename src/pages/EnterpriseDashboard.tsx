@@ -262,8 +262,8 @@ function OverviewTab({ showToast }: { showToast: (msg: string) => void }) {
             { label: 'Critical', value: `${locationsCritical} (<60)`, icon: AlertTriangle, alert: locationsCritical > 0 },
             { label: 'Alerts', value: String(criticalAlerts), icon: AlertTriangle, alert: criticalAlerts > 0 },
           ].map(s => (
-            <div key={s.label} className={`rounded-xl border p-3 ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-gray-50'}`}>
-              <div className="flex items-center gap-1.5 mb-1">
+            <div key={s.label} className={`rounded-xl border p-3 text-center ${(s as any).alert ? 'border-red-200 bg-red-50' : (s as any).highlight ? 'border-blue-200 bg-blue-50/50' : 'border-gray-200 bg-gray-50'}`}>
+              <div className="flex items-center justify-center gap-1.5 mb-1">
                 <s.icon className="h-3.5 w-3.5" style={{ color: (s as any).alert ? '#ef4444' : '#1e4d6b' }} />
                 <span className="text-[10px] text-gray-500">{s.label}</span>
               </div>
