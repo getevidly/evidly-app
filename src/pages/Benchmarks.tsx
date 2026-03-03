@@ -462,15 +462,17 @@ export function Benchmarks() {
                 Subcategory Deep Dive
               </h2>
             </div>
-            <div className="p-4 sm:p-6 space-y-3">
-              {SUBCATEGORY_DATA.map((item) => (
-                <div key={item.name} className="flex items-center gap-4">
-                  <div className="w-52 text-sm text-gray-700">{item.name}</div>
-                  <ScoreBar value={typeof item.yours === 'number' ? Math.round(item.yours) : 0} color="#1e4d6b" />
-                  <div className="w-20 text-xs text-gray-500 text-right">Avg: {item.avg}{item.unit}</div>
-                  <PercentileBadge pct={percentile(typeof item.yours === 'number' ? Math.round(item.yours) : 0, typeof item.avg === 'number' ? Math.round(item.avg) : 0)} />
-                </div>
-              ))}
+            <div className="p-4 sm:p-6 overflow-x-auto">
+              <div className="space-y-3 min-w-[400px]">
+                {SUBCATEGORY_DATA.map((item) => (
+                  <div key={item.name} className="flex items-center gap-4">
+                    <div className="w-52 text-sm text-gray-700">{item.name}</div>
+                    <ScoreBar value={typeof item.yours === 'number' ? Math.round(item.yours) : 0} color="#1e4d6b" />
+                    <div className="w-20 text-xs text-gray-500 text-right">Avg: {item.avg}{item.unit}</div>
+                    <PercentileBadge pct={percentile(typeof item.yours === 'number' ? Math.round(item.yours) : 0, typeof item.avg === 'number' ? Math.round(item.avg) : 0)} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </FeatureGate>

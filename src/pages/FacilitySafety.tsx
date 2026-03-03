@@ -298,7 +298,7 @@ export function FacilitySafety() {
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 mb-1">{t('pages.facilitySafety.progress')}</div>
-                <div className="w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
+                <div className="w-28 sm:w-40 h-2.5 bg-white rounded-full overflow-hidden border" style={{ borderColor: '#d1d5db' }}>
                   <div className="h-full rounded-full transition-all duration-300" style={{ width: `${progressPercent}%`, backgroundColor: progressPercent === 100 ? '#16a34a' : NAVY }} />
                 </div>
                 <div className="text-xs text-gray-500 mt-0.5">{progressPercent}%</div>
