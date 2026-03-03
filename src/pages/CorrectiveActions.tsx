@@ -62,9 +62,9 @@ const LIFECYCLE_NEXT: Partial<Record<CAStatus, { label: string; next: CAStatus }
 };
 
 const DEMO_LOCATIONS = [
-  { id: 'downtown', name: 'Downtown Kitchen' },
-  { id: 'airport', name: 'Airport Cafe' },
-  { id: 'university', name: 'University Hub' },
+  { id: 'downtown', name: 'Location 1' },
+  { id: 'airport', name: 'Location 2' },
+  { id: 'university', name: 'Location 3' },
 ];
 
 interface CreateCAForm {

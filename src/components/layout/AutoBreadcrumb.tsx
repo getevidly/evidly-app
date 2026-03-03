@@ -133,9 +133,9 @@ const QUERY_CONTEXT_PARAMS: Record<string, Record<string, string>> = {
     general: 'General',
   },
   location: {
-    downtown: 'Downtown',
-    airport: 'Airport',
-    university: 'University',
+    downtown: 'Location 1',
+    airport: 'Location 2',
+    university: 'Location 3',
   },
   tab: {
     current: 'Current Readings',

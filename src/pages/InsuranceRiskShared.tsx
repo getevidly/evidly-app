@@ -13,7 +13,7 @@ const DEMO_RISK_DATA = {
   riskTier: 'Preferred Risk' as const,
   tierColor: '#22c55e',
   tierBg: '#f0fdf4',
-  locationName: 'Downtown Kitchen', // demo
+  locationName: 'Location 1', // demo
   address: '1245 Fulton Street, Fresno, CA 93721',
   industrySegment: 'Casual Dining Restaurant',
   jurisdiction: 'Fresno County, CA',

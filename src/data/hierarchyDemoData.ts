@@ -73,19 +73,19 @@ export function computeRollup(
 
 function buildTree(scores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }>): HierarchyNode {
   const downtown: HierarchyNode = {
-    id: 'pcd-downtown', level: 'location', name: 'Downtown Kitchen', code: 'PCD-DWN',
+    id: 'pcd-downtown', level: 'location', name: 'Location 1', code: 'PCD-DWN',
     complianceScore: scores.downtown.overall, foodSafety: scores.downtown.foodSafety,
     facilitySafety: scores.downtown.facilitySafety,
     locationCount: 1,
   };
   const airport: HierarchyNode = {
-    id: 'pcd-airport', level: 'location', name: 'Airport Cafe', code: 'PCD-AIR',
+    id: 'pcd-airport', level: 'location', name: 'Location 2', code: 'PCD-AIR',
     complianceScore: scores.airport.overall, foodSafety: scores.airport.foodSafety,
     facilitySafety: scores.airport.facilitySafety,
     locationCount: 1,
   };
   const university: HierarchyNode = {
-    id: 'pcd-university', level: 'location', name: 'University Dining', code: 'PCD-UNI',
+    id: 'pcd-university', level: 'location', name: 'Location 3', code: 'PCD-UNI',
     complianceScore: scores.university.overall, foodSafety: scores.university.foodSafety,
     facilitySafety: scores.university.facilitySafety,
     locationCount: 1,

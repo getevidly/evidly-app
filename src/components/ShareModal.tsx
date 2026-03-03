@@ -21,10 +21,10 @@ export function ShareModal({ isOpen, onClose, preselectedDocuments = [], documen
   const [sent, setSent] = useState(false);
 
   const availableDocuments = [
-    'Business License - Downtown',
+    'Business License - Location 1',
     'Food Handler Certificate - John Smith',
     'Fire Suppression Certificate',
-    'Health Permit - Downtown',
+    'Health Permit - Location 1',
     'COI - A1 Fire Protection',
   ];
 

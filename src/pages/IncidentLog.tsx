@@ -123,7 +123,7 @@ const ROOT_CAUSES: { value: RootCause; label: string }[] = [
   { value: 'unknown', label: 'Unknown' },
 ];
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+const LOCATIONS = ['Location 1', 'Location 2', 'Location 3']; // demo
 
 const TEAM_MEMBERS = [
   'Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres',
@@ -142,7 +142,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Walk-in Cooler temperature at 47°F',
     description: 'Walk-in cooler #1 recorded at 47°F during routine check, exceeding the 41°F maximum. All perishable items at risk.',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
     status: 'in_progress',
     assignedTo: 'Maria Garcia',
     reportedBy: 'John Smith',
@@ -171,7 +171,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Closing checklist — floor drains not cleaned',
     description: 'Closing checklist item "Check floor drains" marked as No. Drains visibly clogged with debris.',
-    location: 'Airport Cafe', // demo
+    location: 'Location 2', // demo
     status: 'resolved',
     assignedTo: 'Emily Rogers',
     reportedBy: 'David Kim',
@@ -203,7 +203,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Health inspector citation — improper food storage',
     description: 'Inspector noted raw chicken stored above ready-to-eat items in prep cooler. Citation #HD-2026-0041 issued.',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
     status: 'verified',
     assignedTo: 'Maria Garcia',
     reportedBy: 'Sarah Chen',
@@ -236,7 +236,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Hot holding unit not reaching 135°F',
     description: 'Hot holding unit #2 stuck at 128°F. Cannot maintain safe hot holding temperature for buffet line.',
-    location: 'University Dining', // demo
+    location: 'Location 3', // demo
     status: 'assigned',
     assignedTo: 'Michael Torres',
     reportedBy: 'Emily Rogers',
@@ -256,7 +256,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'critical',
     title: 'Rodent droppings found in dry storage',
     description: 'Staff found rodent droppings near flour storage in dry goods area. Immediate pest control needed.',
-    location: 'Airport Cafe', // demo
+    location: 'Location 2', // demo
     status: 'in_progress',
     assignedTo: 'David Kim',
     reportedBy: 'Maria Garcia',
@@ -281,7 +281,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'minor',
     title: 'Customer reported lukewarm soup',
     description: 'Customer at table 12 complained soup was not hot enough. Server confirmed soup ladle left out, not returned to warmer.',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
     status: 'resolved',
     assignedTo: 'John Smith',
     reportedBy: 'Emily Rogers',
@@ -308,7 +308,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'minor',
     title: 'Wet floor near dishwash station — no sign posted',
     description: 'Wet floor observed near dishwash area without caution signage. Near-miss slip reported by prep cook.',
-    location: 'University Dining', // demo
+    location: 'Location 3', // demo
     status: 'verified',
     assignedTo: 'Michael Torres',
     reportedBy: 'David Kim',
@@ -338,7 +338,7 @@ const DEMO_INCIDENTS: Incident[] = [
     severity: 'major',
     title: 'Prep cooler temp at 44°F during morning check',
     description: 'Prep cooler read 44°F during opening check. Door seal appears worn. Items still safe but at threshold.',
-    location: 'Airport Cafe', // demo
+    location: 'Location 2', // demo
     status: 'reported',
     assignedTo: 'Emily Rogers',
     reportedBy: 'John Smith',

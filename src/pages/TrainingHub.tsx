@@ -415,9 +415,9 @@ function CertificationsTab() {
 
   // CFPM coverage summary
   const cfpmLocations = [
-    { name: 'Downtown Kitchen', hasCFPM: true, count: 1, required: 1 }, // demo
-    { name: 'Airport Terminal', hasCFPM: false, count: 0, required: 1 },
-    { name: 'University Campus', hasCFPM: false, count: 0, required: 1 },
+    { name: 'Location 1', hasCFPM: true, count: 1, required: 1 }, // demo
+    { name: 'Location 2', hasCFPM: false, count: 0, required: 1 },
+    { name: 'Location 3', hasCFPM: false, count: 0, required: 1 },
   ];
 
   return (
@@ -971,9 +971,9 @@ function AssignTrainingModal({ onClose }: { onClose: () => void }) {
   const [dueDate, setDueDate] = useState('');
 
   const employees = [
-    { id: 'emp-03', name: 'Sofia Reyes', location: 'Downtown Kitchen', checked: false }, // demo
-    { id: 'emp-04', name: 'Tyler Brooks', location: 'Downtown Kitchen', checked: false }, // demo
-    { id: 'emp-09', name: 'Carlos Mendoza', location: 'Airport Terminal', checked: false },
+    { id: 'emp-03', name: 'Sofia Reyes', location: 'Location 1', checked: false }, // demo
+    { id: 'emp-04', name: 'Tyler Brooks', location: 'Location 1', checked: false }, // demo
+    { id: 'emp-09', name: 'Carlos Mendoza', location: 'Location 2', checked: false },
   ];
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
@@ -1224,15 +1224,15 @@ function RequirementsTab() {
 function ComplianceOverviewTab() {
   // Compute compliance metrics from demo data
   const DEMO_EMPLOYEES = [
-    { id: '1', name: 'Marcus Johnson', role: 'owner_operator', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm', 'fire_extinguisher_training', 'haccp_training'] }, // demo
-    { id: '2', name: 'Sarah Chen', role: 'kitchen_manager', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'cfpm'] }, // demo
-    { id: '3', name: 'Maria Garcia', role: 'kitchen_manager', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler', 'cfpm'] }, // demo
-    { id: '4', name: 'David Park', role: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] }, // demo
-    { id: '5', name: 'Michael Torres', role: 'kitchen_staff', locationId: '2', locationName: 'Airport Cafe', certs: ['food_handler'] }, // demo
-    { id: '6', name: 'Emma Rodriguez', role: 'kitchen_staff', locationId: '1', locationName: 'Downtown Kitchen', certs: ['food_handler', 'allergen_awareness'] }, // demo
-    { id: '7', name: 'Alex Thompson', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
-    { id: '8', name: 'Lisa Wang', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
-    { id: '9', name: 'Maria Rodriguez', role: 'kitchen_staff', locationId: '3', locationName: 'University Dining', certs: ['food_handler'] }, // demo
+    { id: '1', name: 'Marcus Johnson', role: 'owner_operator', locationId: '1', locationName: 'Location 1', certs: ['food_handler', 'cfpm', 'fire_extinguisher_training', 'haccp_training'] }, // demo
+    { id: '2', name: 'Sarah Chen', role: 'kitchen_manager', locationId: '1', locationName: 'Location 1', certs: ['food_handler', 'cfpm'] }, // demo
+    { id: '3', name: 'Maria Garcia', role: 'kitchen_manager', locationId: '2', locationName: 'Location 2', certs: ['food_handler', 'cfpm'] }, // demo
+    { id: '4', name: 'David Park', role: 'kitchen_staff', locationId: '2', locationName: 'Location 2', certs: ['food_handler'] }, // demo
+    { id: '5', name: 'Michael Torres', role: 'kitchen_staff', locationId: '2', locationName: 'Location 2', certs: ['food_handler'] }, // demo
+    { id: '6', name: 'Emma Rodriguez', role: 'kitchen_staff', locationId: '1', locationName: 'Location 1', certs: ['food_handler', 'allergen_awareness'] }, // demo
+    { id: '7', name: 'Alex Thompson', role: 'kitchen_staff', locationId: '3', locationName: 'Location 3', certs: ['food_handler'] }, // demo
+    { id: '8', name: 'Lisa Wang', role: 'kitchen_staff', locationId: '3', locationName: 'Location 3', certs: ['food_handler'] }, // demo
+    { id: '9', name: 'Maria Rodriguez', role: 'kitchen_staff', locationId: '3', locationName: 'Location 3', certs: ['food_handler'] }, // demo
   ];
 
   const requiredReqs = certificationRequirements.filter(r => r.required);
@@ -1253,9 +1253,9 @@ function ComplianceOverviewTab() {
 
   // Per-location breakdown
   const locations = [
-    { id: '1', name: 'Downtown Kitchen' }, // demo
-    { id: '2', name: 'Airport Cafe' }, // demo
-    { id: '3', name: 'University Dining' }, // demo
+    { id: '1', name: 'Location 1' }, // demo
+    { id: '2', name: 'Location 2' }, // demo
+    { id: '3', name: 'Location 3' }, // demo
   ];
 
   const locationStats = locations.map(loc => {
@@ -1275,7 +1275,7 @@ function ComplianceOverviewTab() {
 
   // All gaps
   const allGaps = employeeCompliance.flatMap(emp =>
-    emp.missing.map(req => ({ employeeName: emp.name, locationName: emp.locationId === '1' ? 'Downtown Kitchen' : emp.locationId === '2' ? 'Airport Cafe' : 'University Dining', certName: req.certName, authority: req.authority, certType: req.certType })) // demo
+    emp.missing.map(req => ({ employeeName: emp.name, locationName: emp.locationId === '1' ? 'Location 1' : emp.locationId === '2' ? 'Location 2' : 'Location 3', certName: req.certName, authority: req.authority, certType: req.certType })) // demo
   );
 
   // In-progress enrollments filling gaps

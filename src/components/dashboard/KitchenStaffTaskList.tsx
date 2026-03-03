@@ -35,19 +35,19 @@ interface StaffTask {
   completedAt?: string;
 }
 
-const DEMO_STAFF_LOCATION = 'Downtown Kitchen';
+const DEMO_STAFF_LOCATION = 'Location 1';
 
 // Calendar demo events for kitchen staff
 const STAFF_CALENDAR_EVENTS: CalendarEvent[] = (() => {
   const today = new Date();
   const fmt = (d: Date) => d.toISOString().slice(0, 10);
   return [
-    { date: fmt(today), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'high' as const }, // demo
-    { date: fmt(today), type: 'temp_check', title: 'AM Temperature Logs', location: 'Downtown Kitchen', priority: 'high' as const }, // demo
-    { date: fmt(today), type: 'checklist', title: 'Closing Checklist', location: 'Downtown Kitchen', priority: 'medium' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'high' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 86400000)), type: 'temp_check', title: 'AM Temperature Logs', location: 'Downtown Kitchen', priority: 'high' as const }, // demo
-    { date: fmt(new Date(today.getTime() + 2 * 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Downtown Kitchen', priority: 'medium' as const }, // demo
+    { date: fmt(today), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const }, // demo
+    { date: fmt(today), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const }, // demo
+    { date: fmt(today), type: 'checklist', title: 'Closing Checklist', location: 'Location 1', priority: 'medium' as const }, // demo
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'high' as const }, // demo
+    { date: fmt(new Date(today.getTime() + 86400000)), type: 'temp_check', title: 'AM Temperature Logs', location: 'Location 1', priority: 'high' as const }, // demo
+    { date: fmt(new Date(today.getTime() + 2 * 86400000)), type: 'checklist', title: 'Opening Checklist', location: 'Location 1', priority: 'medium' as const }, // demo
   ];
 })();
 

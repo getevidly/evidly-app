@@ -42,7 +42,7 @@ interface CriticalControlPoint {
   source: 'temp_log' | 'checklist' | 'iot_sensor';
   equipmentName?: string;
   sensorName?: string;
-  locationId: string; // '1'=Downtown, '2'=Airport, '3'=University
+  locationId: string; // '1'=Location 1, '2'=Location 2, '3'=Location 3
 }
 
 interface CorrectiveActionRecord {
@@ -282,7 +282,7 @@ const HACCP_PLANS: HACCPPlan[] = [
   },
 ];
 
-// Location ID mapping: '1'=Downtown, '2'=Airport, '3'=University
+// Location ID mapping: '1'=Location 1, '2'=Location 2, '3'=Location 3
 const LOCATION_ID_MAP: Record<string, string> = { 'downtown': '1', 'airport': '2', 'university': '3' };
 
 // Auto-generated corrective actions from out-of-range readings

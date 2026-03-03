@@ -79,7 +79,7 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
       {
         id: 'demo-2',
         icon: 'alert',
-        message: '3 temperature checks missed — Airport Cafe', // demo
+        message: '3 temperature checks missed — Location 2', // demo
         time: new Date(Date.now() - 4 * 60 * 60 * 1000),
         read: false,
         link: '/temp-logs',

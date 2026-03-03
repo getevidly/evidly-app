@@ -28,7 +28,7 @@ interface ReportSection {
 
 // ── Demo data generators ───────────────────────────────────────────
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+const LOCATIONS = ['Location 1', 'Location 2', 'Location 3']; // demo
 const EQUIPMENT = [
   { name: 'Walk-in Cooler #1', type: 'Cooler', min: 34, max: 41 }, // demo
   { name: 'Walk-in Freezer', type: 'Freezer', min: -Infinity, max: 0 },

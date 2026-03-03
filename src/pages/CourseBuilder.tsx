@@ -476,7 +476,7 @@ export function CourseBuilder() {
               <label style={labelStyle}>Assign to Locations</label>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {['loc-downtown', 'loc-airport', 'loc-university'].map(locId => { // demo
-                  const names: Record<string, string> = { 'loc-downtown': 'Downtown Kitchen', 'loc-airport': 'Airport Terminal', 'loc-university': 'University Campus' }; // demo
+                  const names: Record<string, string> = { 'loc-downtown': 'Location 1', 'loc-airport': 'Location 2', 'loc-university': 'Location 3' }; // demo
                   return (
                     <label key={locId} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer', minHeight: 48 }}>
                       <input type="checkbox" checked={assignLocations.has(locId)}

@@ -51,7 +51,7 @@ interface CustodyEntry {
 
 // ── Constants ──────────────────────────────────────────────────────
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+const LOCATIONS = ['Location 1', 'Location 2', 'Location 3']; // demo
 const USERS = ['Sarah Chen', 'Maria Garcia', 'John Smith', 'Emily Rogers', 'David Kim', 'Michael Torres'];
 const HISTORY_KEY = 'evidly_audit_trail_history';
 

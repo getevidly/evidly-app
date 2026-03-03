@@ -108,9 +108,9 @@ const TAB_LABELS: Record<Frequency, string> = {
 };
 
 const LOCATIONS = [
-  { urlId: 'downtown', name: 'Downtown Kitchen' }, // demo
-  { urlId: 'airport', name: 'Airport Cafe' }, // demo
-  { urlId: 'university', name: 'University Dining' }, // demo
+  { urlId: 'downtown', name: 'Location 1' }, // demo
+  { urlId: 'airport', name: 'Location 2' }, // demo
+  { urlId: 'university', name: 'Location 3' }, // demo
 ];
 
 // Demo pre-filled check history (some items pre-completed for demo realism)
@@ -160,7 +160,7 @@ export function FacilitySafety() {
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
   const fireSummary = override?.facilitySafety?.summary || '';
   const fireStatus = override?.facilitySafety?.status || 'unknown';
-  const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen'; // demo
+  const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Location 1'; // demo
 
   const items = useMemo(() => {
     if (userRole === 'kitchen_staff' && activeTab !== 'daily') return [];

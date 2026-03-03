@@ -234,7 +234,7 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
   const jurisdictions: JurisdictionInfo[] = [
     {
       locationId: 'downtown',
-      locationName: 'Downtown Kitchen', // demo
+      locationName: 'Location 1', // demo
       jurisdictionId: 'fresno-county-food',
       agencyName: 'Fresno County Department of Public Health',
       agencyType: 'county_health',
@@ -248,7 +248,7 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
     },
     {
       locationId: 'airport',
-      locationName: 'Airport Cafe', // demo
+      locationName: 'Location 2', // demo
       jurisdictionId: 'merced-county-food',
       agencyName: 'Merced County Department of Public Health',
       agencyType: 'county_health',
@@ -262,7 +262,7 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
     },
     {
       locationId: 'university',
-      locationName: 'University Dining', // demo
+      locationName: 'Location 3', // demo
       jurisdictionId: 'stanislaus-county-food',
       agencyName: 'Stanislaus County Dept. of Environmental Resources',
       agencyType: 'county_health',
@@ -279,8 +279,8 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
   const correlations: CorrelationInsight[] = [
     {
       id: 'corr-1',
-      title: 'Staff turnover correlation at University Dining', // demo
-      headline: 'High turnover driving compliance decline at University Dining', // demo
+      title: 'Staff turnover correlation at Location 3', // demo
+      headline: 'High turnover driving compliance decline at Location 3', // demo
       summary: '51% annual turnover rate directly correlates with 46-point checklist completion gap. Each 10% turnover reduction estimated to improve compliance by 8-12 points.',
       impactLevel: 'critical',
       urgency: 'immediate',
@@ -292,9 +292,9 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
     },
     {
       id: 'corr-2',
-      title: 'Facility safety document cascade risk at Airport Cafe', // demo
+      title: 'Facility safety document cascade risk at Location 2', // demo
       headline: 'Hood cleaning certificate expiry compounds active facility safety failure',
-      summary: 'Airport Cafe has an active facility safety failure and hood cleaning certificate expiring in 18 days. If unresolved, AHJ has grounds for immediate enforcement under NFPA 96 (2024).', // demo
+      summary: 'Location 2 has an active facility safety failure and hood cleaning certificate expiring in 18 days. If unresolved, AHJ has grounds for immediate enforcement under NFPA 96 (2024).', // demo
       impactLevel: 'high',
       urgency: 'urgent',
       affectedPillars: ['facility_safety'],

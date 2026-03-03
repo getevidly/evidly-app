@@ -265,7 +265,7 @@ export const DEMO_CLIENT_INVITATIONS: ClientInvitation[] = [
     vendorId: 'v-cpp-1',
     inviteCode: 'cpp-inv-downtown',
     contactName: 'James Chen',
-    businessName: 'Downtown Kitchen',
+    businessName: 'Location 1',
     email: 'james@downtownkitchen.com',
     phone: '(209) 555-1001',
     role: 'Owner',
@@ -374,7 +374,7 @@ export const DEMO_CLIENT_LINKS: ServiceProviderClientLink[] = [
     id: 'cl-1',
     vendorId: 'v-cpp-1',
     orgId: 'org-downtown',
-    orgName: 'Downtown Kitchen',
+    orgName: 'Location 1',
     contactName: 'James Chen',
     locationCount: 3,
     servicesProvided: ['hood_cleaning', 'fan_performance'],
@@ -488,6 +488,6 @@ export const BULK_CSV_COLUMNS = [
 
 export function generateCSVTemplate(): string {
   const headers = BULK_CSV_COLUMNS.map(c => c.header).join(',');
-  const example = 'Downtown Kitchen,James Chen,james@downtownkitchen.com,(209) 555-1001,owner,hood_cleaning,quarterly,3';
+  const example = 'Location 1,James Chen,james@downtownkitchen.com,(209) 555-1001,owner,hood_cleaning,quarterly,3';
   return `${headers}\n${example}`;
 }

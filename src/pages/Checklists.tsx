@@ -342,7 +342,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'complete' as const,
     assignee: 'Marcus J.',
     completedAt: '6:15 AM',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
   },
   {
     id: 't2',
@@ -352,7 +352,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'in_progress' as const,
     assignee: 'Sarah T.',
     completedAt: '',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
   },
   {
     id: 't3',
@@ -362,7 +362,7 @@ const DEMO_TODAY_CHECKLISTS = [
     status: 'not_started' as const,
     assignee: 'Evening Shift',
     completedAt: '',
-    location: 'Downtown Kitchen', // demo
+    location: 'Location 1', // demo
   },
 ];
 
@@ -478,7 +478,7 @@ interface HACCPSummaryCCP {
 const DEMO_HACCP_SUMMARY: HACCPSummaryCCP[] = [
   { name: 'Cooking Temperature', limit: '165°F+', status: 'in_limit' },
   { name: 'Cold Holding', limit: '41°F−', status: 'in_limit' },
-  { name: 'Hot Holding', limit: '135°F+', status: 'deviation', deviationTime: '11:30 AM', caCreated: true, locationName: 'Airport Cafe' }, // demo
+  { name: 'Hot Holding', limit: '135°F+', status: 'deviation', deviationTime: '11:30 AM', caCreated: true, locationName: 'Location 2' }, // demo
   { name: 'Cooling', limit: '2hr rule', status: 'in_limit' },
   { name: 'Sanitizer Concentration', limit: '200ppm+', status: 'in_limit' },
 ];
@@ -761,7 +761,7 @@ export function Checklists() {
         status: 'not_started' as const,
         assignee: userName,
         completedAt: 'Just now',
-        location: 'Downtown Kitchen', // demo
+        location: 'Location 1', // demo
       }, ...prev]);
       setLoading(false);
       setActiveView('today');
@@ -881,7 +881,7 @@ export function Checklists() {
         status: 'not_started' as const,
         assignee: userName,
         completedAt: 'Just now',
-        location: 'Downtown Kitchen', // demo
+        location: 'Location 1', // demo
       }, ...prev]);
       setLoading(false);
       setShowTemplateModal(false);
