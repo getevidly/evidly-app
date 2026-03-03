@@ -1156,25 +1156,26 @@ export function Calendar() {
                         </div>
                       )}
                     </div>
-                    {/* Daily temp/checklist status indicators */}
+                    {/* Daily temp/checklist status indicators — only when data exists */}
                     {dateKey <= todayKey && (() => {
                       const ds = dailyStatus[dateKey];
+                      if (!ds) return null;
                       const isPast = dateKey < todayKey;
                       return (
                         <div style={{ display: 'flex', gap: '3px', marginTop: 'auto', padding: '1px 2px 0' }}>
                           <span style={{
                             fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
-                            backgroundColor: ds?.tempDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
-                            color: ds?.tempDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
+                            backgroundColor: ds.tempDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
+                            color: ds.tempDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
                           }}>
-                            T{ds?.tempDone ? '✓' : isPast ? '✗' : '…'}
+                            T{ds.tempDone ? '✓' : isPast ? '✗' : '…'}
                           </span>
                           <span style={{
                             fontSize: '9px', fontWeight: 700, padding: '0 3px', borderRadius: '3px', fontFamily: "'DM Sans', sans-serif",
-                            backgroundColor: ds?.checklistDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
-                            color: ds?.checklistDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
+                            backgroundColor: ds.checklistDone ? '#f0fdf4' : isPast ? '#fef2f2' : '#fffbeb',
+                            color: ds.checklistDone ? '#16a34a' : isPast ? '#dc2626' : '#d97706',
                           }}>
-                            C{ds?.checklistDone ? '✓' : isPast ? '✗' : '…'}
+                            C{ds.checklistDone ? '✓' : isPast ? '✗' : '…'}
                           </span>
                         </div>
                       );
