@@ -109,7 +109,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     setUserRoleRaw(role);
     try { localStorage.setItem('evidly-demo-role', role); } catch {}
   }, []);
-  const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(INITIAL_TEMP_COVERAGE);
+  const [tempCoverageAssignments, setTempCoverageAssignments] = useState<TempCoverageAssignment[]>(isDemoMode ? INITIAL_TEMP_COVERAGE : []);
 
   // ── Sync role from database when a real session exists ──
   // When an authenticated user has a profile, use the database role.

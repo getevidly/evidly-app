@@ -665,12 +665,10 @@ export function Analysis() {
             { label: 'Watch', count: lowCount, bg: '#eff6ff', border: '#bfdbfe', color: '#1e40af', icon: <Eye className="h-5 w-5" style={{ color: '#2563eb' }} /> },
             { label: 'Resolved This Week', count: resolvedThisWeek, bg: '#f0fdf4', border: '#bbf7d0', color: '#166534', icon: <CheckCircle className="h-5 w-5" style={{ color: '#16a34a' }} /> },
           ].map((kpi) => (
-            <div key={kpi.label} style={{ backgroundColor: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: '12px', padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {kpi.icon}
-              <div>
-                <div style={{ fontSize: '24px', fontWeight: 700, color: kpi.color, ...F }}>{kpi.count}</div>
-                <div style={{ fontSize: '12px', fontWeight: 500, color: kpi.color, opacity: 0.8, ...F }}>{kpi.label}</div>
-              </div>
+            <div key={kpi.label} style={{ backgroundColor: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '6px' }}>{kpi.icon}</div>
+              <div style={{ fontSize: '24px', fontWeight: 700, color: kpi.color, ...F }}>{kpi.count}</div>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: kpi.color, opacity: 0.8, ...F }}>{kpi.label}</div>
             </div>
           ))}
         </div>

@@ -485,7 +485,7 @@ export default function ComplianceManagerDashboard() {
           <button
             type="button"
             onClick={() => navigate('/compliance')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Score</p>
@@ -495,7 +495,7 @@ export default function ComplianceManagerDashboard() {
           <button
             type="button"
             onClick={() => navigate('/corrective-actions')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Open CAs</p>
@@ -505,7 +505,7 @@ export default function ComplianceManagerDashboard() {
           <button
             type="button"
             onClick={() => navigate('/calendar')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Next Deadline</p>
@@ -515,7 +515,7 @@ export default function ComplianceManagerDashboard() {
           <button
             type="button"
             onClick={() => navigate('/documents')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Docs Current</p>

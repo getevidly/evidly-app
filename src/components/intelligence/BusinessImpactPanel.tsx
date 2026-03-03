@@ -23,7 +23,7 @@ export const BusinessImpactPanel: React.FC<{ data: any }> = ({ data }) => {
         ].map((m, i) => (
           <div key={i} style={{
             background: '#EEF1F7', border: '1px solid #D1D9E6',
-            borderRadius: '10px', padding: '16px',
+            borderRadius: '10px', padding: '16px', textAlign: 'center' as const,
           }}>
             <p style={{ color: '#3D5068', fontSize: '11px', margin: '0 0 6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', fontFamily: 'system-ui' }}>{m.label}</p>
             <p style={{ color: m.color, fontSize: '24px', fontWeight: 800, margin: '0 0 4px', fontFamily: 'monospace' }}>{m.value}</p>

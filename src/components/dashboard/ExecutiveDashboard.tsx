@@ -347,7 +347,7 @@ export default function ExecutiveDashboard() {
           <button
             type="button"
             onClick={() => navigate('/compliance')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Portfolio Score</p>
@@ -357,7 +357,7 @@ export default function ExecutiveDashboard() {
           <button
             type="button"
             onClick={() => navigate('/risk-score')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fef2f2', border: '1px solid #fecaca', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Risk Exposure</p>
@@ -367,7 +367,7 @@ export default function ExecutiveDashboard() {
           <button
             type="button"
             onClick={() => navigate('/org-hierarchy')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Locations</p>
@@ -377,7 +377,7 @@ export default function ExecutiveDashboard() {
           <button
             type="button"
             onClick={() => navigate('/calendar')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#fffbeb', border: '1px solid #fde68a', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
             <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Next Deadline</p>
@@ -387,10 +387,10 @@ export default function ExecutiveDashboard() {
           <button
             type="button"
             onClick={() => navigate('/ai-advisor')}
-            className="rounded-xl p-4 text-left transition-all hover:shadow-md"
+            className="rounded-xl p-4 text-center transition-all hover:shadow-md"
             style={{ backgroundColor: '#f0f4ff', border: '1px solid #c7d2fe', boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}
           >
-            <div className="flex items-center gap-1.5 mb-1">
+            <div className="flex items-center justify-center gap-1.5 mb-1">
               <EvidlyIcon size={12} />
               <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">AI Risk Exposure</p>
             </div>
