@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, ReactNode, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
@@ -21,11 +21,17 @@ import { DemoButtonGuard } from '../DemoButtonGuard';
 import { QuickActionsBar } from './QuickActionsBar';
 import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
 import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
 import { MobileDailyTasks } from '../mobile/MobileDailyTasks';
+
+// Lazy-load production mobile component — desktop never downloads this JS
+const MobileDailyTasksProduction = lazy(() =>
+  import('../mobile/MobileDailyTasksProduction').then(m => ({ default: m.MobileDailyTasksProduction }))
+);
 
 interface LocationOption {
   id: string;
@@ -43,6 +49,7 @@ interface LayoutProps {
 
 export function Layout({ children, title, locations, selectedLocation, onLocationChange, demoMode = false }: LayoutProps) {
   const { tourActive, isDemoMode, presenterMode } = useDemo();
+  const { session } = useAuth();
   const { setNotifications, notifications: currentNotifications } = useNotifications();
   const [guidedTourActive, setGuidedTourActive] = useState(false);
   const handleGuidedTourActiveChange = useCallback((active: boolean) => setGuidedTourActive(active), []);
@@ -161,6 +168,12 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       {/* Mobile daily tasks overlay — demo mode, mobile/tablet, dashboard route only */}
       {isDemoMode && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
         <MobileDailyTasks />
+      )}
+      {/* Production mobile daily tasks — authenticated, mobile/tablet, dashboard route only */}
+      {!isDemoMode && !!session?.user && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
+        <Suspense fallback={null}>
+          <MobileDailyTasksProduction />
+        </Suspense>
       )}
     </div>
   );

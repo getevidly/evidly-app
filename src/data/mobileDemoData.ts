@@ -23,6 +23,7 @@ export interface MobileTask {
   icon: string;
   status: 'due' | 'upcoming';
   time: string;
+  path?: string;
 }
 
 export interface MobileNavTab {
