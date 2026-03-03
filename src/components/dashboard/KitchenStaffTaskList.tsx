@@ -58,7 +58,7 @@ const STAFF_CALENDAR_COLORS: Record<string, string> = {
 
 const STAFF_CALENDAR_LABELS: Record<string, string> = {
   checklist: 'Checklist',
-  temp_check: 'Temp Check',
+  temp_check: 'Temp Reading',
 };
 
 const INITIAL_TASKS: StaffTask[] = [

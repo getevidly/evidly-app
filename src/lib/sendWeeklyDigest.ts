@@ -243,7 +243,7 @@ export function generateDigestHtml(data: DigestData, dashboardUrl: string = 'htt
   <tr>
     <td width="48%" valign="top" style="padding-right:12px;">
       <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
-        <div style="font-size:14px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">&#127777; Temperature Checks</div>
+        <div style="font-size:14px;font-weight:700;color:#1e4d6b;margin-bottom:12px;">&#127777; Temperature Readings</div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">Total Checks</td><td style="font-size:15px;font-weight:700;color:#1e4d6b;text-align:right;">${data.tempStats.total}</td></tr>
           <tr><td style="font-size:13px;color:#6b7280;padding:4px 0;">On-Time Rate</td><td style="font-size:15px;font-weight:700;color:${data.tempStats.onTimePercent >= 95 ? '#22c55e' : '#d4af37'};text-align:right;">${data.tempStats.onTimePercent}%</td></tr>

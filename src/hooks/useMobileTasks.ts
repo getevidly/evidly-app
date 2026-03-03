@@ -114,7 +114,7 @@ export function useMobileTasks(orgId: string | undefined, role: UserRole): UseMo
                     : 'Temperature reading';
                   allTasks.push({
                     id: `temp-${e.id}`,
-                    title: `Temp Check: ${e.name}`,
+                    title: `Temp Reading: ${e.name}`,
                     subtitle: typeLabel,
                     icon: '🌡️',
                     status: 'due',

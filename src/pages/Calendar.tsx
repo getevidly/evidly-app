@@ -28,7 +28,7 @@ interface EventType {
 }
 
 const eventTypes: EventType[] = [
-  { id: 'temp-check', label: 'Temperature Check', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+  { id: 'temp-check', label: 'Temperature Reading', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
   { id: 'checklist', label: 'Checklist', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
   { id: 'vendor', label: 'Vendor Service', color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
   { id: 'inspection', label: 'Inspection', color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
@@ -364,7 +364,7 @@ export function Calendar() {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
   const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 640;
-  const [view, setView] = useState<ViewMode>(isMobileInit ? 'day' : 'week');
+  const [view, setView] = useState<ViewMode>('day');
   const [isMobile, setIsMobile] = useState(isMobileInit);
 
   useEffect(() => {
@@ -799,7 +799,7 @@ export function Calendar() {
         const eqName = t.temperature_equipment?.name || 'Equipment';
         allEvents.push({
           id: String(nextId++),
-          title: `Temp Check: ${eqName}`,
+          title: `Temp Reading: ${eqName}`,
           type: 'temp-check',
           date: formatDateKey(createdAt),
           time: createdAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
@@ -1095,7 +1095,7 @@ export function Calendar() {
     // Desktop: 7-column grid
     return (
       <div style={{ overflowX: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(120px, 1fr))', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(120px, 1fr))', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
           {DAYS.map(day => (
             <div key={day} style={{ padding: '10px 8px', textAlign: 'center', fontWeight: 700, fontSize: '12px', color: '#6b7280', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', fontFamily: "'DM Sans', sans-serif", letterSpacing: '0.5px', textTransform: 'uppercase' }}>
               {day}
@@ -1277,7 +1277,7 @@ export function Calendar() {
     // Desktop: 8-column time grid
     return (
       <div style={{ overflowX: 'auto' }}>
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
+        <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
           {/* Header row */}
           <div style={{ display: 'grid', gridTemplateColumns: '60px repeat(7, 1fr)', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
             <div style={{ padding: '10px 4px' }} />

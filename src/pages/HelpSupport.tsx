@@ -59,7 +59,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
 
 const QUICK_HELP = [
   { id: 'qh-1', title: 'Quick Start Guide', icon: '🚀', desc: 'Get up and running in under 10 minutes', color: '#1b4965' },
-  { id: 'qh-2', title: 'Daily Temp Checks', icon: '🌡️', desc: 'Step-by-step temperature logging walkthrough', color: '#dc2626' },
+  { id: 'qh-2', title: 'Daily Temp Readings', icon: '🌡️', desc: 'Step-by-step temperature logging walkthrough', color: '#dc2626' },
   { id: 'qh-3', title: 'Understanding Scores', icon: '🛡️', desc: 'How your compliance score is calculated', color: '#16a34a' },
 ];
 

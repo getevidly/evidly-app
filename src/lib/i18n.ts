@@ -319,7 +319,7 @@ const en = {
     upcomingDeadlines: 'Upcoming Deadlines',
     scoreImpact: 'Score Impact',
     teamActivity: 'Team Activity',
-    tempChecks: 'Temp Checks',
+    tempChecks: 'Temp Readings',
     locationStatus: 'Location Status',
     yourDashboard: 'Your Dashboard',
     customizeDashboard: 'Customize Dashboard',

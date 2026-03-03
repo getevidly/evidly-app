@@ -3679,7 +3679,7 @@ export function TempLogs() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-xl p-4 sm:p-5 w-[95vw] sm:w-auto max-w-lg sm:max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold mb-2">{selectedCooldown.itemName}</h3>
-            <p className="text-gray-600 mb-6">Log Temperature Check</p>
+            <p className="text-gray-600 mb-6">Log Temperature Reading</p>
 
             <form onSubmit={handleLogCooldownCheck} className="space-y-4">
               <div>
