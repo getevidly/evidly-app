@@ -664,7 +664,7 @@ const ARIZONA: JurisdictionProfile = {
   ],
 };
 
-// ── Fresno County (Downtown Kitchen) ──────────────────────── // demo
+// ── Fresno County (Location 1) ──────────────────────── // demo
 
 const FRESNO_COUNTY: JurisdictionProfile = {
   id: 'county-fresno',
@@ -699,7 +699,7 @@ const FRESNO_COUNTY: JurisdictionProfile = {
   ],
 };
 
-// ── Merced County (Airport Cafe) ──────────────────────────── // demo
+// ── Merced County (Location 2) ──────────────────────────── // demo
 
 const MERCED_COUNTY: JurisdictionProfile = {
   id: 'county-merced',
@@ -733,7 +733,7 @@ const MERCED_COUNTY: JurisdictionProfile = {
   ],
 };
 
-// ── Stanislaus County (University Dining) ─────────────────── // demo
+// ── Stanislaus County (Location 3) ─────────────────── // demo
 
 const STANISLAUS_COUNTY: JurisdictionProfile = {
   id: 'county-stanislaus',
@@ -1055,7 +1055,7 @@ const SAN_FRANCISCO: JurisdictionProfile = {
   ],
 };
 
-// ── City of Modesto (overlay for University Dining) ───────── // demo
+// ── City of Modesto (overlay for Location 3) ───────── // demo
 
 const MODESTO_CITY: JurisdictionProfile = {
   id: 'city-modesto',
@@ -1160,7 +1160,7 @@ export interface LocationJurisdiction {
 
 export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [ // demo
   {
-    locationName: 'Downtown Kitchen', // demo
+    locationName: 'Location 1', // demo
     address: '1245 Fulton Street',
     city: 'Fresno',
     county: 'Fresno County',
@@ -1171,7 +1171,7 @@ export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [ // demo
     jurisdictionChain: ['federal-fda', 'state-ca', 'county-fresno'],
   },
   {
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     address: '1636 Macready Drive',
     city: 'Merced',
     county: 'Merced County',
@@ -1182,7 +1182,7 @@ export const DEMO_LOCATION_JURISDICTIONS: LocationJurisdiction[] = [ // demo
     jurisdictionChain: ['federal-fda', 'state-ca', 'county-merced'],
   },
   {
-    locationName: 'University Dining', // demo
+    locationName: 'Location 3', // demo
     address: '1 University Circle',
     city: 'Modesto',
     county: 'Stanislaus County',

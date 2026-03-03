@@ -129,9 +129,9 @@ const REGULATION_SUMMARIES: Record<string, string> = {
 // ── Location name → urlId mapping (for scoring-breakdown link) ──
 
 const LOCATION_URL_ID: Record<string, string> = {
-  'Downtown Kitchen': 'downtown', // demo
-  'Airport Cafe': 'airport', // demo
-  'University Dining': 'university', // demo
+  'Location 1': 'downtown', // demo
+  'Location 2': 'airport', // demo
+  'Location 3': 'university', // demo
 };
 
 // Look up jurisdictionData entries for a given county name (e.g. "Fresno County" → "Fresno")
@@ -320,7 +320,7 @@ function AddLocationDialog({
               type="text"
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g., Downtown Kitchen" // demo
+              placeholder="e.g., Location 1" // demo
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
             />
           </div>
@@ -330,7 +330,7 @@ function AddLocationDialog({
               type="text"
               value={address}
               onChange={e => setAddress(e.target.value)}
-              placeholder="e.g., 1245 Fulton Street"
+              placeholder="e.g., 123 Main Street"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b]/20 focus:border-[#1e4d6b]"
             />
           </div>
@@ -695,15 +695,17 @@ export function JurisdictionSettings() {
   const [addedLocations, setAddedLocations] = useState<LocationJurisdictionConfig[]>([]);
   const [regulationOverrides, setRegulationOverrides] = useState<Record<string, Record<string, boolean>>>({});
 
-  // Precompute profiles and gaps for demo locations
-  const locationProfiles = DEMO_LOCATION_JURISDICTIONS.map(loc => ({
-    location: loc,
-    profile: autoConfigureLocation(loc),
-  }));
-  const complianceGaps = getDemoComplianceGaps();
+  // Precompute profiles and gaps for demo locations (only in demo mode)
+  const locationProfiles = isDemoMode
+    ? DEMO_LOCATION_JURISDICTIONS.map(loc => ({
+        location: loc,
+        profile: autoConfigureLocation(loc),
+      }))
+    : [];
+  const complianceGaps = isDemoMode ? getDemoComplianceGaps() : [];
 
   // Demo location configs (with regulation status)
-  const demoConfigs = getDemoLocationConfigs();
+  const demoConfigs = isDemoMode ? getDemoLocationConfigs() : [];
 
   // Key California regulations (the 11 from user requirements)
   const keyRegulations = getKeyCaliforniaRegulations();
@@ -950,9 +952,9 @@ export function JurisdictionSettings() {
       {!isDemoMode && locationProfiles.length === 0 && addedLocations.length === 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center mb-6">
           <BookOpen className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">No jurisdiction configured yet</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">Add your first location to configure jurisdiction-specific compliance requirements.</h3>
           <p className="text-sm text-gray-500 mb-4">
-            Set your county to see your inspector's scoring system, grading criteria, and violation patterns.
+            Once you add a location, EvidLY will auto-detect your county and layer the relevant federal, state, and local requirements.
           </p>
           <button
             onClick={() => setShowAddDialog(true)}

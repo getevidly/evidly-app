@@ -50,7 +50,7 @@ interface Section {
 // ---------------------------------------------------------------------------
 
 const location = {
-  name: 'Downtown Kitchen', // demo
+  name: 'Location 1', // demo
   stateCode: 'CA',
   county: 'Fresno County',
 };
@@ -675,14 +675,14 @@ export function InspectorView() {
                     <thead><tr className="bg-gray-50 border-b"><th className="text-left px-3 py-2 font-semibold text-gray-600">Name</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Location</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Cert #</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Expires</th><th className="text-left px-3 py-2 font-semibold text-gray-600">Status</th></tr></thead>
                     <tbody>
                       {[
-                        { name: 'Marcus Johnson', loc: 'Downtown', num: 'FH-2025-4481', exp: 'Jun 15, 2028', ok: true },
-                        { name: 'Sarah Chen', loc: 'Downtown', num: 'FH-2025-5502', exp: 'Aug 20, 2028', ok: true },
-                        { name: 'Emma Rodriguez', loc: 'Downtown', num: 'FH-2025-9912', exp: 'Jul 10, 2028', ok: true },
-                        { name: 'Maria Garcia', loc: 'Airport', num: 'FH-2025-3390', exp: 'Sep 1, 2028', ok: true },
-                        { name: 'David Park', loc: 'Airport', num: 'FH-2024-2201', exp: 'Apr 2, 2027', ok: true },
-                        { name: 'Michael Torres', loc: 'Airport', num: 'FH-2023-1188', exp: 'Feb 26, 2026', ok: false },
-                        { name: 'Alex Thompson', loc: 'University', num: 'FH-2024-8834', exp: 'Dec 10, 2027', ok: true },
-                        { name: 'Lisa Wang', loc: 'University', num: 'FH-2025-1105', exp: 'Jan 25, 2028', ok: true },
+                        { name: 'Marcus Johnson', loc: 'Loc 1', num: 'FH-2025-4481', exp: 'Jun 15, 2028', ok: true },
+                        { name: 'Sarah Chen', loc: 'Loc 1', num: 'FH-2025-5502', exp: 'Aug 20, 2028', ok: true },
+                        { name: 'Emma Rodriguez', loc: 'Loc 1', num: 'FH-2025-9912', exp: 'Jul 10, 2028', ok: true },
+                        { name: 'Maria Garcia', loc: 'Loc 2', num: 'FH-2025-3390', exp: 'Sep 1, 2028', ok: true },
+                        { name: 'David Park', loc: 'Loc 2', num: 'FH-2024-2201', exp: 'Apr 2, 2027', ok: true },
+                        { name: 'Michael Torres', loc: 'Loc 2', num: 'FH-2023-1188', exp: 'Feb 26, 2026', ok: false },
+                        { name: 'Alex Thompson', loc: 'Loc 3', num: 'FH-2024-8834', exp: 'Dec 10, 2027', ok: true },
+                        { name: 'Lisa Wang', loc: 'Loc 3', num: 'FH-2025-1105', exp: 'Jan 25, 2028', ok: true },
                       ].map((r, i) => (
                         <tr key={i} className="border-b border-gray-100 last:border-0"><td className="px-3 py-2 font-medium">{r.name}</td><td className="px-3 py-2 text-gray-600">{r.loc}</td><td className="px-3 py-2"><code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{r.num}</code></td><td className={`px-3 py-2 ${r.ok ? 'text-gray-600' : 'text-red-600 font-medium'}`}>{r.exp}</td><td className="px-3 py-2"><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${r.ok ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>{r.ok ? 'Active' : 'Expiring'}</span></td></tr>
                       ))}

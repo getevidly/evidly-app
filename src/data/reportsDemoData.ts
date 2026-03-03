@@ -56,7 +56,7 @@ const TOP_ISSUES = [
 ];
 
 const TOP_POSITIVES = [
-  { item: 'Daily opening checklists 100% at Downtown', category: 'Checklists' },
+  { item: 'Daily opening checklists 100% at Location 1', category: 'Checklists' },
   { item: 'Temperature logging compliance improving weekly', category: 'Temp Logs' },
   { item: 'All hood cleaning certificates current', category: 'Facility Safety' },
   { item: 'Zero health department violations this quarter', category: 'Food Safety' },
@@ -138,16 +138,16 @@ const TEMP_COMPLIANCE: Record<string, { week: string; compliance: number }[]> = 
 };
 
 const STAFF_CERTS = [
-  { name: 'John Smith', location: 'Downtown Kitchen', locationId: '1', status: 'Current', expires: '2026-08-15', daysLeft: 190 },
-  { name: 'Sarah Johnson', location: 'Airport Cafe', locationId: '2', status: 'Coming Due', expires: '2026-03-20', daysLeft: 20 },
-  { name: 'Mike Davis', location: 'University Dining', locationId: '3', status: 'Coming Due', expires: '2026-03-10', daysLeft: 10 },
-  { name: 'Emily Chen', location: 'Downtown Kitchen', locationId: '1', status: 'Needs Renewal', expires: '2026-01-30', daysLeft: -29 },
+  { name: 'John Smith', location: 'Location 1', locationId: '1', status: 'Current', expires: '2026-08-15', daysLeft: 190 },
+  { name: 'Sarah Johnson', location: 'Location 2', locationId: '2', status: 'Coming Due', expires: '2026-03-20', daysLeft: 20 },
+  { name: 'Mike Davis', location: 'Location 3', locationId: '3', status: 'Coming Due', expires: '2026-03-10', daysLeft: 10 },
+  { name: 'Emily Chen', location: 'Location 1', locationId: '1', status: 'Needs Renewal', expires: '2026-01-30', daysLeft: -29 },
 ];
 
 const OPEN_CORRECTIVE_ACTIONS = [
-  { action: 'Replace walk-in cooler thermometer', status: 'Open', daysOpen: 2, location: 'Downtown Kitchen', locationId: '1' },
-  { action: 'Retrain staff on temp log procedures', status: 'In Progress', daysOpen: 5, location: 'Airport Cafe', locationId: '2' },
-  { action: 'Schedule fire suppression inspection', status: 'Resolved', daysOpen: 0, location: 'University Dining', locationId: '3' },
+  { action: 'Replace walk-in cooler thermometer', status: 'Open', daysOpen: 2, location: 'Location 1', locationId: '1' },
+  { action: 'Retrain staff on temp log procedures', status: 'In Progress', daysOpen: 5, location: 'Location 2', locationId: '2' },
+  { action: 'Schedule fire suppression inspection', status: 'Resolved', daysOpen: 0, location: 'Location 3', locationId: '3' },
 ];
 
 // ── 2. Inspection Readiness ────────────────────────────────────────────
@@ -234,16 +234,16 @@ const DOCUMENT_INVENTORY: Record<string, { type: string; total: number; current:
 };
 
 const EXPIRATION_TIMELINE = [
-  { document: 'Valley Fire - COI', type: 'Insurance', expires: '2026-02-15', daysLeft: 9, location: 'Downtown Kitchen' },
-  { document: 'Sarah Johnson - Food Handler', type: 'Certification', expires: '2026-03-20', daysLeft: 20, location: 'Airport Cafe' },
+  { document: 'Valley Fire - COI', type: 'Insurance', expires: '2026-02-15', daysLeft: 9, location: 'Location 1' },
+  { document: 'Sarah Johnson - Food Handler', type: 'Certification', expires: '2026-03-20', daysLeft: 20, location: 'Location 2' },
   { document: 'A1 Fire - Workers Comp', type: 'Insurance', expires: '2026-03-01', daysLeft: 1, location: 'All Locations' },
-  { document: 'Mike Davis - Food Handler', type: 'Certification', expires: '2026-03-10', daysLeft: 10, location: 'University Dining' },
+  { document: 'Mike Davis - Food Handler', type: 'Certification', expires: '2026-03-10', daysLeft: 10, location: 'Location 3' },
 ];
 
 const MISSING_DOCS = [
-  { document: 'Pest Control COI', location: 'Airport Cafe', category: 'Insurance', daysOverdue: 5 },
-  { document: 'Hood Cleaning Certificate', location: 'University Dining', category: 'Service', daysOverdue: 2 },
-  { document: 'Fire Alarm Inspection', location: 'Downtown Kitchen', category: 'Certification', daysOverdue: 0 },
+  { document: 'Pest Control COI', location: 'Location 2', category: 'Insurance', daysOverdue: 5 },
+  { document: 'Hood Cleaning Certificate', location: 'Location 3', category: 'Service', daysOverdue: 2 },
+  { document: 'Fire Alarm Inspection', location: 'Location 1', category: 'Certification', daysOverdue: 0 },
 ];
 
 // ── 4. Document Status ─────────────────────────────────────────────────
@@ -258,10 +258,10 @@ export function getDocumentStatusData(location: string) {
 
 // ── Equipment data ─────────────────────────────────────────────────────
 const EQUIPMENT_CERTS = [
-  { equipment: 'Fire Suppression System', location: 'Downtown Kitchen', locationId: '1', status: 'Current', expires: '2026-07-15' },
-  { equipment: 'Fire Suppression System', location: 'Airport Cafe', locationId: '2', status: 'Coming Due', expires: '2026-03-20' },
-  { equipment: 'Hood System', location: 'University Dining', locationId: '3', status: 'Current', expires: '2026-05-10' },
-  { equipment: 'Fire Alarm', location: 'Downtown Kitchen', locationId: '1', status: 'Current', expires: '2026-08-01' },
+  { equipment: 'Fire Suppression System', location: 'Location 1', locationId: '1', status: 'Current', expires: '2026-07-15' },
+  { equipment: 'Fire Suppression System', location: 'Location 2', locationId: '2', status: 'Coming Due', expires: '2026-03-20' },
+  { equipment: 'Hood System', location: 'Location 3', locationId: '3', status: 'Current', expires: '2026-05-10' },
+  { equipment: 'Fire Alarm', location: 'Location 1', locationId: '1', status: 'Current', expires: '2026-08-01' },
 ];
 
 const MAINTENANCE_SCHEDULE = [
@@ -291,15 +291,15 @@ export function getTempLogSummaryData(location: string) {
 
 // ── HACCP data ─────────────────────────────────────────────────────────
 const HACCP_COMPLIANCE = [
-  { location: 'Downtown Kitchen', monitoring: 98, records: 100, corrective: 95 },
-  { location: 'Airport Cafe', monitoring: 92, records: 95, corrective: 90 },
-  { location: 'University Dining', monitoring: 88, records: 92, corrective: 85 },
+  { location: 'Location 1', monitoring: 98, records: 100, corrective: 95 },
+  { location: 'Location 2', monitoring: 92, records: 95, corrective: 90 },
+  { location: 'Location 3', monitoring: 88, records: 92, corrective: 85 },
 ];
 
 const HACCP_DEVIATIONS = [
-  { date: '2026-02-12', controlPoint: 'CCP-1: Cooking', reading: '148°F (req 165°F)', correctiveAction: 'Continued cooking to 165°F', resolved: '2026-02-12', location: 'Airport Cafe' },
-  { date: '2026-02-08', controlPoint: 'CCP-2: Cold Storage', reading: '43°F (req ≤41°F)', correctiveAction: 'Adjusted thermostat, rechecked in 1 hr', resolved: '2026-02-08', location: 'University Dining' },
-  { date: '2026-01-28', controlPoint: 'CCP-3: Receiving', reading: '45°F (req ≤41°F)', correctiveAction: 'Rejected delivery, notified vendor', resolved: '2026-01-28', location: 'Downtown Kitchen' },
+  { date: '2026-02-12', controlPoint: 'CCP-1: Cooking', reading: '148°F (req 165°F)', correctiveAction: 'Continued cooking to 165°F', resolved: '2026-02-12', location: 'Location 2' },
+  { date: '2026-02-08', controlPoint: 'CCP-2: Cold Storage', reading: '43°F (req ≤41°F)', correctiveAction: 'Adjusted thermostat, rechecked in 1 hr', resolved: '2026-02-08', location: 'Location 3' },
+  { date: '2026-01-28', controlPoint: 'CCP-3: Receiving', reading: '45°F (req ≤41°F)', correctiveAction: 'Rejected delivery, notified vendor', resolved: '2026-01-28', location: 'Location 1' },
 ];
 
 // ── 7. HACCP Summary ───────────────────────────────────────────────────
@@ -321,9 +321,9 @@ const INSURANCE_ITEMS = [
 ];
 
 const INSURANCE_GAPS = [
-  'Fire extinguisher inspection coming due at Airport Cafe (20 days)',
-  'Pest Control COI missing for Airport Cafe',
-  'NFPA 96 documentation incomplete for University Dining',
+  'Fire extinguisher inspection coming due at Location 2 (20 days)',
+  'Pest Control COI missing for Location 2',
+  'NFPA 96 documentation incomplete for Location 3',
 ];
 
 // ── 8. Insurance Documentation ─────────────────────────────────────────
@@ -376,10 +376,10 @@ export function getTrainingCertData(location: string) {
 
 // ── Grease trap data ───────────────────────────────────────────────────
 const GREASE_TRAP_HISTORY = [
-  { date: '2026-01-25', vendor: 'Valley Pumping Co.', gallons: 180, facility: 'Fresno Recycling Center', manifest: 'GT-2026-0125-DT', location: 'Downtown Kitchen' },
-  { date: '2025-12-20', vendor: 'Valley Pumping Co.', gallons: 165, facility: 'Fresno Recycling Center', manifest: 'GT-2025-1220-DT', location: 'Downtown Kitchen' },
-  { date: '2026-01-28', vendor: 'Valley Pumping Co.', gallons: 120, facility: 'Fresno Recycling Center', manifest: 'GT-2026-0128-AP', location: 'Airport Cafe' },
-  { date: '2026-02-01', vendor: 'Central Valley Grease', gallons: 200, facility: 'Tulare Oil Recyclers', manifest: 'GT-2026-0201-UN', location: 'University Dining' },
+  { date: '2026-01-25', vendor: 'Valley Pumping Co.', gallons: 180, facility: 'Fresno Recycling Center', manifest: 'GT-2026-0125-DT', location: 'Location 1' },
+  { date: '2025-12-20', vendor: 'Valley Pumping Co.', gallons: 165, facility: 'Fresno Recycling Center', manifest: 'GT-2025-1220-DT', location: 'Location 1' },
+  { date: '2026-01-28', vendor: 'Valley Pumping Co.', gallons: 120, facility: 'Fresno Recycling Center', manifest: 'GT-2026-0128-AP', location: 'Location 2' },
+  { date: '2026-02-01', vendor: 'Central Valley Grease', gallons: 200, facility: 'Tulare Oil Recyclers', manifest: 'GT-2026-0201-UN', location: 'Location 3' },
 ];
 
 // ── 10. Grease Trap / FOG ──────────────────────────────────────────────

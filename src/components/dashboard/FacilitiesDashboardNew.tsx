@@ -161,9 +161,9 @@ const SEVERITY_BORDER: Record<string, string> = {
 // ===============================================
 
 const FAC_LOC_NAMES: Record<string, string> = {
-  downtown: 'Downtown Kitchen', // demo
-  airport: 'Airport Cafe', // demo
-  university: 'University Dining', // demo
+  downtown: 'Location 1', // demo
+  airport: 'Location 2', // demo
+  university: 'Location 3', // demo
 };
 
 export default function FacilitiesDashboardNew() {
@@ -183,7 +183,7 @@ export default function FacilitiesDashboardNew() {
 
   const jieKey = JIE_LOC_MAP[defaultLoc] || `demo-loc-${defaultLoc}`;
   const override = DEMO_LOCATION_GRADE_OVERRIDES[jieKey];
-  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Downtown Kitchen'; // demo
+  const locationName = FAC_LOC_NAMES[defaultLoc] || 'Location 1'; // demo
 
   const fireGrade = override?.facilitySafety?.grade || 'Pending';
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';

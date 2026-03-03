@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { locations, locationScores } from '../data/demoData';
+import { locations as demoLocations, locationScores } from '../data/demoData';
 import {
   generateHealthDeptReport,
   COUNTY_TEMPLATES,
@@ -98,6 +98,8 @@ function CountBadge({ count, color }: { count: number; color: string }) {
 // ── Main Page Component ────────────────────────────────────
 
 export function HealthDeptReport() {
+  const { isDemoMode } = useDemo();
+  const locations = isDemoMode ? demoLocations : [];
   const [activeView, setActiveView] = useState<'generate' | 'preview' | 'history' | 'self-audit'>('generate');
   const [selectedLocation, setSelectedLocation] = useState(locations[0]?.urlId || 'downtown');
   const [countyTemplate, setCountyTemplate] = useState<CountyTemplate>('generic');
@@ -109,7 +111,6 @@ export function HealthDeptReport() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
-  const { isDemoMode } = useDemo();
 
   const [sections, setSections] = useState({
     facilityInfo: true,

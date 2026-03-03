@@ -44,7 +44,7 @@ const orgTree: OrgTreeNode = {
       children: [
         {
           id: 'downtown-kitchen',
-          name: 'Downtown Kitchen', // demo
+          name: 'Location 1', // demo
           code: 'DK',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.downtown.foodSafety.gradeDisplay,
@@ -55,7 +55,7 @@ const orgTree: OrgTreeNode = {
         },
         {
           id: 'airport-cafe',
-          name: 'Airport Cafe', // demo
+          name: 'Location 2', // demo
           code: 'AC',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.airport.foodSafety.gradeDisplay,
@@ -66,7 +66,7 @@ const orgTree: OrgTreeNode = {
         },
         {
           id: 'university-dining',
-          name: 'University Dining', // demo
+          name: 'Location 3', // demo
           code: 'UD',
           type: 'location',
           foodSafetyStatus: LOCATION_JURISDICTION_STATUS.university.foodSafety.gradeDisplay,

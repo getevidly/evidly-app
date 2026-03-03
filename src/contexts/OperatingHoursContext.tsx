@@ -19,18 +19,18 @@ export interface ShiftConfig {
 
 // ── Defaults (demo defaults) ──
 const DEMO_HOURS: LocationHours[] = [
-  { locationName: 'Downtown Kitchen', days: [false, true, true, true, true, true, true], openTime: '05:00', closeTime: '23:00' }, // demo
-  { locationName: 'Airport Cafe', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' }, // demo
-  { locationName: 'University Dining', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' }, // demo
+  { locationName: 'Location 1', days: [false, true, true, true, true, true, true], openTime: '05:00', closeTime: '23:00' }, // demo
+  { locationName: 'Location 2', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' }, // demo
+  { locationName: 'Location 3', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' }, // demo
 ];
 
 const DEMO_SHIFTS: ShiftConfig[] = [
-  { id: 's1', name: 'Morning', locationName: 'Downtown Kitchen', startTime: '05:00', endTime: '13:00', days: [false, true, true, true, true, true, true] }, // demo
-  { id: 's2', name: 'Evening', locationName: 'Downtown Kitchen', startTime: '13:00', endTime: '23:00', days: [false, true, true, true, true, true, true] }, // demo
-  { id: 's3', name: 'Morning', locationName: 'Airport Cafe', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] }, // demo
-  { id: 's4', name: 'Afternoon', locationName: 'Airport Cafe', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] }, // demo
-  { id: 's5', name: 'Morning', locationName: 'University Dining', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] }, // demo
-  { id: 's6', name: 'Evening', locationName: 'University Dining', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] }, // demo
+  { id: 's1', name: 'Morning', locationName: 'Location 1', startTime: '05:00', endTime: '13:00', days: [false, true, true, true, true, true, true] }, // demo
+  { id: 's2', name: 'Evening', locationName: 'Location 1', startTime: '13:00', endTime: '23:00', days: [false, true, true, true, true, true, true] }, // demo
+  { id: 's3', name: 'Morning', locationName: 'Location 2', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] }, // demo
+  { id: 's4', name: 'Afternoon', locationName: 'Location 2', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] }, // demo
+  { id: 's5', name: 'Morning', locationName: 'Location 3', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] }, // demo
+  { id: 's6', name: 'Evening', locationName: 'Location 3', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] }, // demo
 ];
 
 // ── Helpers ──

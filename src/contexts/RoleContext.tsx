@@ -25,9 +25,9 @@ export interface TempCoverageAssignment {
 }
 
 const ALL_LOCATIONS: LocationAssignment[] = [ // demo
-  { locationId: '1', locationUrlId: 'downtown', locationName: 'Downtown Kitchen' }, // demo
-  { locationId: '2', locationUrlId: 'airport', locationName: 'Airport Cafe' }, // demo
-  { locationId: '3', locationUrlId: 'university', locationName: 'University Dining' }, // demo
+  { locationId: '1', locationUrlId: 'downtown', locationName: 'Location 1' }, // demo
+  { locationId: '2', locationUrlId: 'airport', locationName: 'Location 2' }, // demo
+  { locationId: '3', locationUrlId: 'university', locationName: 'Location 3' }, // demo
 ];
 
 const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
@@ -35,10 +35,10 @@ const ROLE_LOCATION_ASSIGNMENTS: Record<UserRole, LocationAssignment[]> = {
   owner_operator: ALL_LOCATIONS,                       // All locations — owner sees everything
   executive: ALL_LOCATIONS,
   compliance_manager: ALL_LOCATIONS,                // All locations — compliance spans org
-  chef: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]],       // Downtown + Airport (same as kitchen_manager)
+  chef: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]],       // Location 1 + Location 2 (same as kitchen_manager)
   facilities_manager: ALL_LOCATIONS,                // All locations — facilities services entire org
-  kitchen_manager: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Downtown + Airport
-  kitchen_staff: [ALL_LOCATIONS[0]],                // Downtown only
+  kitchen_manager: [ALL_LOCATIONS[0], ALL_LOCATIONS[1]], // Location 1 + Location 2
+  kitchen_staff: [ALL_LOCATIONS[0]],                // Location 1 only
 };
 
 const INITIAL_TEMP_COVERAGE: TempCoverageAssignment[] = [
@@ -47,7 +47,7 @@ const INITIAL_TEMP_COVERAGE: TempCoverageAssignment[] = [
     userId: 'd5',
     userName: 'Michael Torres',
     locationId: '2',
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     grantedBy: 'Sarah Chen',
     grantedByRole: 'executive',
     startDate: '2026-02-10',

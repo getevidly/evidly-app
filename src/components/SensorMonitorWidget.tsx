@@ -58,7 +58,7 @@ export function SensorMonitorWidget({ locationFilter }: { locationFilter?: strin
   const sensors = useMemo(() => {
     if (!isDemoMode) return [];
     if (!locationFilter || locationFilter === 'all') return iotSensors;
-    const locMap: Record<string, string> = { downtown: 'Downtown Kitchen', airport: 'Airport Terminal', university: 'University Campus' }; // demo
+    const locMap: Record<string, string> = { downtown: 'Location 1', airport: 'Airport Terminal', university: 'University Campus' }; // demo
     const locName = locMap[locationFilter] || locationFilter;
     return iotSensors.filter(s => s.locationName === locName);
   }, [locationFilter, isDemoMode]);

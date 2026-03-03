@@ -25,7 +25,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
   {
     id: 'n-1',
     severity: 'urgent',
-    title: 'Hood Cleaning Overdue — Airport Cafe', // demo
+    title: 'Hood Cleaning Overdue — Location 2', // demo
     body: '95 days since last hood cleaning. 90-day cycle exceeded by 5 days.',
     link: '/vendors',
     status: 'unread',
@@ -35,7 +35,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-2',
     severity: 'urgent',
     title: 'Walk-in Cooler Temp Trending Up',
-    body: '3 readings above 38°F this week at University Dining.', // demo
+    body: '3 readings above 38°F this week at Location 3.', // demo
     link: '/temp-logs',
     status: 'unread',
     created_at: new Date(Date.now() - 3 * 3600000).toISOString(),
@@ -44,7 +44,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-3',
     severity: 'urgent',
     title: 'Health Permit Expires in 14 Days',
-    body: 'Downtown Kitchen permit expires Feb 23. Renewal not started.', // demo
+    body: 'Location 1 permit expires Feb 23. Renewal not started.', // demo
     link: '/documents',
     status: 'unread',
     created_at: new Date(Date.now() - 6 * 3600000).toISOString(),
@@ -53,7 +53,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-4',
     severity: 'urgent',
     title: 'Fire Suppression Inspection Overdue',
-    body: 'University Dining — 4 months overdue. Insurance compliance at risk.', // demo
+    body: 'Location 3 — 4 months overdue. Insurance compliance at risk.', // demo
     link: '/vendors',
     status: 'unread',
     created_at: new Date(Date.now() - 12 * 3600000).toISOString(),
@@ -62,7 +62,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-5',
     severity: 'advisory',
     title: 'Checklist Completion Dropped 12%',
-    body: 'University Dining weekly rate fell from 89% to 78%.', // demo
+    body: 'Location 3 weekly rate fell from 89% to 78%.', // demo
     link: '/checklists',
     status: 'unread',
     created_at: new Date(Date.now() - 8 * 3600000).toISOString(),
@@ -71,7 +71,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-6',
     severity: 'advisory',
     title: 'Food Handler Cert Expiring — Emma Davis',
-    body: 'Expires March 11 at Airport Cafe. Renewal course: 8 hours.', // demo
+    body: 'Expires March 11 at Location 2. Renewal course: 8 hours.', // demo
     link: '/team',
     status: 'unread',
     created_at: new Date(Date.now() - 18 * 3600000).toISOString(),
@@ -80,7 +80,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-7',
     severity: 'advisory',
     title: 'Grease Trap Service 5 Days Overdue',
-    body: 'Downtown Kitchen quarterly pumping is 5 days past due.', // demo
+    body: 'Location 1 quarterly pumping is 5 days past due.', // demo
     link: '/vendors',
     status: 'unread',
     created_at: new Date(Date.now() - 24 * 3600000).toISOString(),
@@ -89,7 +89,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-8',
     severity: 'advisory',
     title: 'Vendor COI Expired — Valley Fire Protection',
-    body: 'Liability insurance expired 3 days ago. Affects Airport Cafe.', // demo
+    body: 'Liability insurance expired 3 days ago. Affects Location 2.', // demo
     link: '/vendors',
     status: 'unread',
     created_at: new Date(Date.now() - 30 * 3600000).toISOString(),
@@ -107,7 +107,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
     id: 'n-10',
     severity: 'info',
     title: 'AI Insight: Freezer Temp Variance Increasing',
-    body: 'Downtown Kitchen variance up from ±1°F to ±2.5°F.', // demo
+    body: 'Location 1 variance up from ±1°F to ±2.5°F.', // demo
     link: '/temp-logs',
     status: 'unread',
     created_at: new Date(Date.now() - 72 * 3600000).toISOString(),
@@ -115,7 +115,7 @@ const DEMO_NOTIFICATIONS: Notification[] = [
   {
     id: 'n-11',
     severity: 'info',
-    title: 'Opening Checklist Slowdown — Airport Cafe', // demo
+    title: 'Opening Checklist Slowdown — Location 2', // demo
     body: 'Average completion time increased from 18 to 25 minutes.',
     link: '/checklists',
     status: 'read',
@@ -225,10 +225,13 @@ export function NotificationCenter() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-md hover:bg-gray-100 transition-colors duration-150"
+        className="relative p-2 rounded-md transition-colors duration-150"
+        style={{ color: '#1E2D4D' }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
         title="Notifications"
       >
-        <Bell className="h-5 w-5 text-gray-500" />
+        <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
           <span
             className="absolute -top-0.5 -right-0.5 flex items-center justify-center"

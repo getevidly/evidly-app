@@ -22,13 +22,13 @@ const iconMap = {
 };
 
 const demoActivities: ActivityItem[] = [
-  { id: '1', icon: 'temp', user: 'Marcus R.', action: 'Completed walk-in cooler temp check', location: 'Downtown Kitchen', time: '2 min ago', url: '/temp-logs' }, // demo
-  { id: '2', icon: 'checklist', user: 'Sarah T.', action: 'Finished opening checklist (14/14)', location: 'Downtown Kitchen', time: '18 min ago', url: '/checklists' }, // demo
-  { id: '3', icon: 'upload', user: 'ABC Fire Protection', action: 'Uploaded hood cleaning certificate', location: 'Airport Cafe', time: '1 hour ago', url: '/vendors' }, // demo
-  { id: '4', icon: 'alert', user: 'System', action: 'Fire suppression report expired', location: 'Airport Cafe', time: '2 hours ago', url: '/alerts' }, // demo
-  { id: '5', icon: 'temp', user: 'James L.', action: 'Logged hot hold cabinet temps', location: 'University Dining', time: '3 hours ago', url: '/temp-logs' }, // demo
-  { id: '6', icon: 'document', user: 'Admin', action: 'Health permit renewal uploaded', location: 'Downtown Kitchen', time: '5 hours ago', url: '/documents' }, // demo
-  { id: '7', icon: 'checklist', user: 'Maria G.', action: 'Completed closing checklist (10/10)', location: 'Airport Cafe', time: 'Yesterday', url: '/checklists' }, // demo
+  { id: '1', icon: 'temp', user: 'Marcus R.', action: 'Completed walk-in cooler temp check', location: 'Location 1', time: '2 min ago', url: '/temp-logs' }, // demo
+  { id: '2', icon: 'checklist', user: 'Sarah T.', action: 'Finished opening checklist (14/14)', location: 'Location 1', time: '18 min ago', url: '/checklists' }, // demo
+  { id: '3', icon: 'upload', user: 'ABC Fire Protection', action: 'Uploaded hood cleaning certificate', location: 'Location 2', time: '1 hour ago', url: '/vendors' }, // demo
+  { id: '4', icon: 'alert', user: 'System', action: 'Fire suppression report expired', location: 'Location 2', time: '2 hours ago', url: '/alerts' }, // demo
+  { id: '5', icon: 'temp', user: 'James L.', action: 'Logged hot hold cabinet temps', location: 'Location 3', time: '3 hours ago', url: '/temp-logs' }, // demo
+  { id: '6', icon: 'document', user: 'Admin', action: 'Health permit renewal uploaded', location: 'Location 1', time: '5 hours ago', url: '/documents' }, // demo
+  { id: '7', icon: 'checklist', user: 'Maria G.', action: 'Completed closing checklist (10/10)', location: 'Location 2', time: 'Yesterday', url: '/checklists' }, // demo
 ];
 
 export function LiveActivityFeed() {

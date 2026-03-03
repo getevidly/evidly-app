@@ -42,8 +42,8 @@ interface AlertItem {
 }
 
 const EXEC_ALERTS: AlertItem[] = [
-  { id: 'ea1', severity: 'critical', message: 'University Dining Facility Safety dropped below 65 — 3 equipment inspections overdue', location: 'University Dining', pillar: 'Facility Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' }, // demo
-  { id: 'ea2', severity: 'warning', message: 'Airport Cafe walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Airport Cafe', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' }, // demo
+  { id: 'ea1', severity: 'critical', message: 'Location 3 Facility Safety dropped below 65 — 3 equipment inspections overdue', location: 'Location 3', pillar: 'Facility Safety', actionLabel: 'Take Action', route: '/dashboard?location=university' }, // demo
+  { id: 'ea2', severity: 'warning', message: 'Location 2 walk-in cooler trending warm — 3 out-of-range readings this week', location: 'Location 2', pillar: 'Food Safety', actionLabel: 'View Temps', route: '/temp-logs?location=airport' }, // demo
 ];
 
 // ================================================================

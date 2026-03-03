@@ -15,18 +15,18 @@ export interface ServiceWorkflowStep {
 
 // ABC Fire Protection — hood cleaning, upcoming, full reminder flow
 export const ABC_FIRE_WORKFLOW: ServiceWorkflowStep[] = [
-  { day: -30, label: '30-Day Reminder', description: 'Initial service reminder sent to ABC Fire Protection for Hood Cleaning at Downtown Kitchen', date: '2026-02-13', status: 'sent' },
+  { day: -30, label: '30-Day Reminder', description: 'Initial service reminder sent to ABC Fire Protection for Hood Cleaning at Location 1', date: '2026-02-13', status: 'sent' },
   { day: -14, label: '14-Day Reminder', description: 'Follow-up reminder sent — service due in 2 weeks', date: '2026-03-01', status: 'sent' },
   { day: -7, label: '7-Day Reminder', description: 'One week notice sent with service update link', date: '2026-03-08', status: 'sent' },
   { day: -3, label: '3-Day Reminder', description: 'Urgent reminder — service due in 3 days', date: '2026-03-12', status: 'pending' },
   { day: -1, label: '1-Day Reminder', description: 'Final reminder — service due tomorrow', date: '2026-03-14', status: 'pending' },
-  { day: 0, label: 'Service Due', description: 'Hood Cleaning scheduled at Downtown Kitchen', date: '2026-03-15', status: 'pending' },
+  { day: 0, label: 'Service Due', description: 'Hood Cleaning scheduled at Location 1', date: '2026-03-15', status: 'pending' },
   { day: 7, label: 'Overdue Alert', description: 'Service is 7 days overdue — escalation to management', date: '2026-03-22', status: 'pending', escalation: 'CC: Owner/Manager' },
 ];
 
 // Pacific Pest Control — completed on time
 export const PACIFIC_PEST_WORKFLOW: ServiceWorkflowStep[] = [
-  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Pacific Pest Control for monthly service at Airport Cafe', date: '2026-01-29', status: 'sent' },
+  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Pacific Pest Control for monthly service at Location 2', date: '2026-01-29', status: 'sent' },
   { day: -14, label: '14-Day Reminder', description: 'Follow-up reminder sent', date: '2026-02-14', status: 'sent' },
   { day: -7, label: '7-Day Reminder', description: 'One week notice with service update link', date: '2026-02-21', status: 'sent' },
   { day: -1, label: '1-Day Reminder', description: 'Final reminder — service due tomorrow', date: '2026-02-27', status: 'sent' },
@@ -36,7 +36,7 @@ export const PACIFIC_PEST_WORKFLOW: ServiceWorkflowStep[] = [
 
 // CleanAir HVAC — rescheduled
 export const CLEANAIR_HVAC_WORKFLOW: ServiceWorkflowStep[] = [
-  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to CleanAir HVAC for maintenance at University Dining', date: '2026-02-03', status: 'sent' },
+  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to CleanAir HVAC for maintenance at Location 3', date: '2026-02-03', status: 'sent' },
   { day: -14, label: '14-Day Reminder', description: 'Follow-up reminder sent', date: '2026-02-19', status: 'sent' },
   { day: -7, label: '7-Day Reminder', description: 'One week notice with service update link', date: '2026-02-26', status: 'sent' },
   { day: -3, label: 'Vendor Rescheduled', description: 'CleanAir HVAC rescheduled to March 12 — reason: parts on backorder', date: '2026-03-02', status: 'vendor_responded', vendorAction: 'rescheduled' },
@@ -46,7 +46,7 @@ export const CLEANAIR_HVAC_WORKFLOW: ServiceWorkflowStep[] = [
 
 // Valley Fire — overdue, escalation
 export const VALLEY_FIRE_WORKFLOW: ServiceWorkflowStep[] = [
-  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Valley Fire Systems for fire suppression inspection at Downtown Kitchen', date: '2026-01-25', status: 'sent' },
+  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Valley Fire Systems for fire suppression inspection at Location 1', date: '2026-01-25', status: 'sent' },
   { day: -14, label: '14-Day Reminder', description: 'Follow-up reminder sent', date: '2026-02-10', status: 'sent' },
   { day: -7, label: '7-Day Reminder', description: 'One week notice with service update link', date: '2026-02-17', status: 'sent' },
   { day: -3, label: '3-Day Reminder', description: 'Urgent reminder sent', date: '2026-02-21', status: 'sent' },
@@ -57,18 +57,18 @@ export const VALLEY_FIRE_WORKFLOW: ServiceWorkflowStep[] = [
 
 // Metro Backflow — canceled
 export const METRO_BACKFLOW_WORKFLOW: ServiceWorkflowStep[] = [
-  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Metro Backflow Testing at Airport Cafe', date: '2026-02-18', status: 'sent' },
+  { day: -30, label: '30-Day Reminder', description: 'Service reminder sent to Metro Backflow Testing at Location 2', date: '2026-02-18', status: 'sent' },
   { day: -14, label: '14-Day Reminder', description: 'Follow-up reminder sent', date: '2026-03-06', status: 'sent' },
   { day: -10, label: 'Vendor Canceled', description: 'Metro Backflow canceled service — reason: vendor change, client switching providers', date: '2026-03-10', status: 'vendor_responded', vendorAction: 'canceled' },
 ];
 
 // ── Vendor → Workflow mapping ──────────────────────────────────────
 export const VENDOR_WORKFLOW_MAP: Record<string, { workflow: ServiceWorkflowStep[]; serviceLabel: string; locationLabel: string }> = {
-  '1': { workflow: ABC_FIRE_WORKFLOW, serviceLabel: 'Hood Cleaning', locationLabel: 'Downtown Kitchen' },
-  '2': { workflow: PACIFIC_PEST_WORKFLOW, serviceLabel: 'Pest Control Service', locationLabel: 'Airport Cafe' },
-  '4': { workflow: CLEANAIR_HVAC_WORKFLOW, serviceLabel: 'HVAC Service & Maintenance', locationLabel: 'University Dining' },
-  '3': { workflow: VALLEY_FIRE_WORKFLOW, serviceLabel: 'Fire Suppression Inspection', locationLabel: 'Downtown Kitchen' },
-  '5': { workflow: METRO_BACKFLOW_WORKFLOW, serviceLabel: 'Backflow Prevention Testing', locationLabel: 'Airport Cafe' },
+  '1': { workflow: ABC_FIRE_WORKFLOW, serviceLabel: 'Hood Cleaning', locationLabel: 'Location 1' },
+  '2': { workflow: PACIFIC_PEST_WORKFLOW, serviceLabel: 'Pest Control Service', locationLabel: 'Location 2' },
+  '4': { workflow: CLEANAIR_HVAC_WORKFLOW, serviceLabel: 'HVAC Service & Maintenance', locationLabel: 'Location 3' },
+  '3': { workflow: VALLEY_FIRE_WORKFLOW, serviceLabel: 'Fire Suppression Inspection', locationLabel: 'Location 1' },
+  '5': { workflow: METRO_BACKFLOW_WORKFLOW, serviceLabel: 'Backflow Prevention Testing', locationLabel: 'Location 2' },
 };
 
 // ── Verification Records ───────────────────────────────────────────
@@ -92,7 +92,7 @@ export const DEMO_VERIFICATIONS: DemoVerification[] = [
     vendorId: '2',
     vendorName: 'Pacific Pest Control',
     serviceName: 'Pest Control Service',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     updateType: 'completed',
     verificationStatus: 'confirmed',
     verifiedBy: 'Maria Rodriguez (Kitchen Manager)',
@@ -104,7 +104,7 @@ export const DEMO_VERIFICATIONS: DemoVerification[] = [
     vendorId: '3',
     vendorName: 'Valley Fire Systems',
     serviceName: 'Fire Suppression Inspection',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     updateType: 'completed',
     verificationStatus: 'disputed',
     disputeReason: 'Service was not performed — technician arrived but left without completing inspection. No tags updated.',
@@ -117,7 +117,7 @@ export const DEMO_VERIFICATIONS: DemoVerification[] = [
     vendorId: '4',
     vendorName: 'CleanAir HVAC',
     serviceName: 'HVAC Service & Maintenance',
-    locationName: 'University Dining',
+    locationName: 'Location 3',
     updateType: 'rescheduled',
     verificationStatus: 'pending',
     submittedAt: '2026-03-02T11:00:00Z',

@@ -58,17 +58,17 @@ export function DemoWizard() {
   useEffect(() => {
     // Set seed operating hours and shifts for demo
     setLocationHours([
-      { locationName: 'Downtown Kitchen', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '22:00' },
-      { locationName: 'Airport Cafe', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' },
-      { locationName: 'University Dining', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' },
+      { locationName: 'Location 1', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '22:00' },
+      { locationName: 'Location 2', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' },
+      { locationName: 'Location 3', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' },
     ]);
     setShifts([
-      { id: 'w1', name: 'Morning', locationName: 'Downtown Kitchen', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
-      { id: 'w2', name: 'Evening', locationName: 'Downtown Kitchen', startTime: '14:00', endTime: '22:00', days: [false, true, true, true, true, true, false] },
-      { id: 's3', name: 'Morning', locationName: 'Airport Cafe', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] },
-      { id: 's4', name: 'Afternoon', locationName: 'Airport Cafe', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] },
-      { id: 's5', name: 'Morning', locationName: 'University Dining', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
-      { id: 's6', name: 'Evening', locationName: 'University Dining', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] },
+      { id: 'w1', name: 'Morning', locationName: 'Location 1', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
+      { id: 'w2', name: 'Evening', locationName: 'Location 1', startTime: '14:00', endTime: '22:00', days: [false, true, true, true, true, true, false] },
+      { id: 's3', name: 'Morning', locationName: 'Location 2', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] },
+      { id: 's4', name: 'Afternoon', locationName: 'Location 2', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] },
+      { id: 's5', name: 'Morning', locationName: 'Location 3', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
+      { id: 's6', name: 'Evening', locationName: 'Location 3', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] },
     ]);
     enterDemo();
     navigate('/dashboard', { replace: true });
@@ -137,18 +137,18 @@ export function DemoWizard() {
     // Store operating hours to shared context
     const locName = lead.locationName || 'My Kitchen';
     setLocationHours([
-      { locationName: 'Downtown Kitchen', days: wizardDays, openTime: wizardOpenTime, closeTime: wizardCloseTime },
-      { locationName: 'Airport Cafe', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' },
-      { locationName: 'University Dining', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' },
+      { locationName: 'Location 1', days: wizardDays, openTime: wizardOpenTime, closeTime: wizardCloseTime },
+      { locationName: 'Location 2', days: [true, true, true, true, true, true, true], openTime: '04:00', closeTime: '22:00' },
+      { locationName: 'Location 3', days: [false, true, true, true, true, true, false], openTime: '06:00', closeTime: '21:00' },
     ]);
     if (showShifts) {
       setShifts([
-        { id: 'w1', name: wizardShift1Name, locationName: 'Downtown Kitchen', startTime: wizardOpenTime, endTime: wizardShift1End, days: wizardDays },
-        { id: 'w2', name: wizardShift2Name, locationName: 'Downtown Kitchen', startTime: wizardShift1End, endTime: wizardCloseTime, days: wizardDays },
-        { id: 's3', name: 'Morning', locationName: 'Airport Cafe', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] },
-        { id: 's4', name: 'Afternoon', locationName: 'Airport Cafe', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] },
-        { id: 's5', name: 'Morning', locationName: 'University Dining', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
-        { id: 's6', name: 'Evening', locationName: 'University Dining', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] },
+        { id: 'w1', name: wizardShift1Name, locationName: 'Location 1', startTime: wizardOpenTime, endTime: wizardShift1End, days: wizardDays },
+        { id: 'w2', name: wizardShift2Name, locationName: 'Location 1', startTime: wizardShift1End, endTime: wizardCloseTime, days: wizardDays },
+        { id: 's3', name: 'Morning', locationName: 'Location 2', startTime: '04:00', endTime: '12:00', days: [true, true, true, true, true, true, true] },
+        { id: 's4', name: 'Afternoon', locationName: 'Location 2', startTime: '12:00', endTime: '22:00', days: [true, true, true, true, true, true, true] },
+        { id: 's5', name: 'Morning', locationName: 'Location 3', startTime: '06:00', endTime: '14:00', days: [false, true, true, true, true, true, false] },
+        { id: 's6', name: 'Evening', locationName: 'Location 3', startTime: '14:00', endTime: '21:00', days: [false, true, true, true, true, true, false] },
       ]);
     }
 
@@ -321,7 +321,7 @@ export function DemoWizard() {
                 )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name your {lead.locationType === 'multi' ? 'first ' : ''}location</label>
-                  <input type="text" value={lead.locationName} onChange={e => setLead({ ...lead, locationName: e.target.value })} placeholder="e.g. Downtown Kitchen, Main Campus" className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
+                  <input type="text" value={lead.locationName} onChange={e => setLead({ ...lead, locationName: e.target.value })} placeholder="e.g. Location 1, Main Campus" className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#d4af37] focus:border-transparent" />
                 </div>
               </div>
             </div>

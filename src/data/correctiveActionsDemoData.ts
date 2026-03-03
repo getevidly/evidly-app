@@ -275,7 +275,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-1', title: 'Walk-in cooler temperature excursion',
     description: 'Walk-in cooler recorded 44.8\u00B0F \u2014 exceeds 41\u00B0F limit. Door was found ajar. Recheck required within 30 minutes.',
-    location: 'Airport Cafe', locationId: 'airport', category: 'food_safety', severity: 'critical', status: 'in_progress',
+    location: 'Location 2', locationId: 'airport', category: 'food_safety', severity: 'critical', status: 'in_progress',
     source: 'Temperature Log', assignee: 'David Kim', createdAt: daysAgo(1), dueDate: daysFromNow(0),
     completedAt: null, verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'Walk-in cooler door found ajar after delivery. Door gasket worn.',
@@ -286,7 +286,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-2', title: 'Missing hood suppression inspection certificate',
     description: 'Annual hood suppression system inspection certificate expired. Schedule re-inspection with certified vendor.',
-    location: 'University Hub', locationId: 'university', category: 'facility_safety', severity: 'high', status: 'created',
+    location: 'Location 3', locationId: 'university', category: 'facility_safety', severity: 'high', status: 'created',
     source: 'Facility Safety Audit', assignee: 'Michael Torres', createdAt: daysAgo(5), dueDate: daysFromNow(2),
     completedAt: null, verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'Vendor contract lapsed \u2014 annual inspection not scheduled.',
@@ -296,7 +296,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-3', title: 'Handwashing station soap dispenser empty',
     description: 'Prep area handwashing station found without soap during morning inspection. Restocked and verified.',
-    location: 'Downtown Kitchen', locationId: 'downtown', category: 'food_safety', severity: 'medium', status: 'completed',
+    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'medium', status: 'completed',
     source: 'Self-Inspection', assignee: 'Lisa Nguyen', createdAt: daysAgo(3), dueDate: daysAgo(1), completedAt: daysAgo(2),
     verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'Closing crew did not restock soap dispensers.',
@@ -307,7 +307,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-4', title: 'Hot holding unit below minimum temperature',
     description: 'Hot holding unit recorded 131\u00B0F \u2014 below 135\u00B0F minimum. Food reheated to 165\u00B0F and returned to holding.',
-    location: 'Downtown Kitchen', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'verified',
+    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'verified',
     source: 'Temperature Log', assignee: 'Ana Torres', createdAt: daysAgo(4), dueDate: daysAgo(2), completedAt: daysAgo(3),
     verifiedAt: daysAgo(2), closedAt: null, archivedAt: null,
     rootCause: 'Holding unit thermostat drifting low. Calibration overdue.',
@@ -318,7 +318,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-5', title: 'Pest control service overdue',
     description: 'Monthly pest control service is 10 days overdue. Contact vendor to reschedule immediately.',
-    location: 'Airport Cafe', locationId: 'airport', category: 'operational', severity: 'medium', status: 'created',
+    location: 'Location 2', locationId: 'airport', category: 'operational', severity: 'medium', status: 'created',
     source: 'Vendor Tracking', assignee: 'Michael Torres', createdAt: daysAgo(10), dueDate: daysAgo(3),
     completedAt: null, verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'Vendor had scheduling conflict. Rescheduling not followed up.',
@@ -328,7 +328,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-6', title: 'Employee food handler card expiring',
     description: 'Food handler certification for two staff members expires within 14 days. Schedule renewal.',
-    location: 'University Hub', locationId: 'university', category: 'food_safety', severity: 'low', status: 'in_progress',
+    location: 'Location 3', locationId: 'university', category: 'food_safety', severity: 'low', status: 'in_progress',
     source: 'Regulatory Tracking', assignee: 'Sofia Chen', createdAt: daysAgo(7), dueDate: daysFromNow(7),
     completedAt: null, verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'Certification renewal not flagged until 14-day warning.',
@@ -339,7 +339,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-7', title: 'Cutting board cross-contamination risk',
     description: 'Color-coded cutting boards not separated by protein type during prep. Staff retrained on SOP.',
-    location: 'Downtown Kitchen', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'completed',
+    location: 'Location 1', locationId: 'downtown', category: 'food_safety', severity: 'high', status: 'completed',
     source: 'HACCP Monitoring', assignee: 'David Kim', createdAt: daysAgo(6), dueDate: daysAgo(4), completedAt: daysAgo(5),
     verifiedAt: null, closedAt: null, archivedAt: null,
     rootCause: 'New prep cook not trained on color-coded board system.',
@@ -350,7 +350,7 @@ export const DEMO_CORRECTIVE_ACTIONS: CorrectiveActionItem[] = [
   {
     id: 'ca-8', title: 'Receiving log missing for Thursday delivery',
     description: 'Produce delivery on Thursday was not logged in the receiving log. Vendor invoice used to backfill record.',
-    location: 'Airport Cafe', locationId: 'airport', category: 'food_safety', severity: 'medium', status: 'verified',
+    location: 'Location 2', locationId: 'airport', category: 'food_safety', severity: 'medium', status: 'verified',
     source: 'Audit Trail Review', assignee: 'Lisa Nguyen', createdAt: daysAgo(8), dueDate: daysAgo(5), completedAt: daysAgo(6),
     verifiedAt: daysAgo(5), closedAt: null, archivedAt: null,
     rootCause: 'Delivery arrived during lunch rush. Receiving staff pulled to front-of-house.',

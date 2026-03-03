@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { toast } from 'sonner';
+import { useDemo } from '../contexts/DemoContext';
 
 // ── Demo data for public insurer view ─────────────────────────
 
@@ -13,7 +14,7 @@ const DEMO_RISK_DATA = {
   riskTier: 'Preferred Risk' as const,
   tierColor: '#22c55e',
   tierBg: '#f0fdf4',
-  locationName: 'Downtown Kitchen', // demo
+  locationName: 'Location 1', // demo
   address: '1245 Fulton Street, Fresno, CA 93721',
   industrySegment: 'Casual Dining Restaurant',
   jurisdiction: 'Fresno County, CA',
@@ -44,7 +45,20 @@ const DEMO_RISK_DATA = {
 
 export default function InsuranceRiskShared() {
   const { shareToken } = useParams<{ shareToken: string }>();
-  const d = DEMO_RISK_DATA;
+  const { isDemoMode } = useDemo();
+
+  // In production, these fields would be fetched via the shareToken from Supabase.
+  // For now, use demo data in demo mode, or generic placeholders in production.
+  const d = isDemoMode
+    ? DEMO_RISK_DATA
+    : {
+        ...DEMO_RISK_DATA,
+        locationName: 'Your Location',
+        address: '',
+        orgName: 'Your Organization',
+        jurisdiction: '',
+        reportId: `RSK-${shareToken || 'PREVIEW'}`,
+      };
 
   const handleDownloadPDF = async () => {
     try {

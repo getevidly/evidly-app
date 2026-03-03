@@ -90,9 +90,9 @@ export interface Location {
 }
 
 export const locations: Location[] = [
-  { id: '1', urlId: 'downtown', name: 'Downtown Kitchen', address: '123 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, actionItems: 2, stateCode: 'CA' },
-  { id: '2', urlId: 'airport', name: 'Airport Cafe', address: '4995 E Clinton Way, Fresno, CA 93727', lat: 36.7762, lng: -119.7181, actionItems: 5, stateCode: 'CA' },
-  { id: '3', urlId: 'university', name: 'University Dining', address: '5241 N Maple Ave, Fresno, CA 93740', lat: 36.8125, lng: -119.7532, actionItems: 12, stateCode: 'CA' },
+  { id: '1', urlId: 'downtown', name: 'Location 1', address: '123 Main St, Fresno, CA 93721', lat: 36.7378, lng: -119.7871, actionItems: 2, stateCode: 'CA' },
+  { id: '2', urlId: 'airport', name: 'Location 2', address: '4995 E Clinton Way, Fresno, CA 93727', lat: 36.7762, lng: -119.7181, actionItems: 5, stateCode: 'CA' },
+  { id: '3', urlId: 'university', name: 'Location 3', address: '5241 N Maple Ave, Fresno, CA 93740', lat: 36.8125, lng: -119.7532, actionItems: 12, stateCode: 'CA' },
 ];
 
 // ============================================================
@@ -132,7 +132,7 @@ export const DEMO_ORG = {
 export const DEMO_LOCATIONS = [
   {
     id: 'downtown',
-    name: 'Downtown Kitchen',
+    name: 'Location 1',
     foodSafety: { ops: 97, docs: 94 },
     facilitySafety: { ops: 88, docs: 95 },
     trend: +3,
@@ -140,7 +140,7 @@ export const DEMO_LOCATIONS = [
   },
   {
     id: 'airport',
-    name: 'Airport Cafe',
+    name: 'Location 2',
     foodSafety: { ops: 88, docs: 80 },
     facilitySafety: { ops: 75, docs: 82 },
     trend: -1,
@@ -148,7 +148,7 @@ export const DEMO_LOCATIONS = [
   },
   {
     id: 'university',
-    name: 'University Dining',
+    name: 'Location 3',
     foodSafety: { ops: 74, docs: 69 },
     facilitySafety: { ops: 60, docs: 67 },
     trend: +5,
@@ -221,7 +221,7 @@ export const DEMO_WEEKLY_ACTIVITY = {
 export const DEMO_ATTENTION_ITEMS = [
   {
     locationId: 'university',
-    locationName: 'University Dining',
+    locationName: 'Location 3',
     status: 'critical' as const,
     summary: '3 equipment inspections overdue. Fire suppression certificate expires in 12 days. Action Required.',
     action: 'Take Action',
@@ -229,7 +229,7 @@ export const DEMO_ATTENTION_ITEMS = [
   },
   {
     locationId: 'airport',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     status: 'attention' as const,
     summary: '3 out-of-range temperature readings this week. Walk-in cooler trending warm \u2014 schedule service.',
     action: 'View Temps',
@@ -269,7 +269,7 @@ export interface Vendor {
 }
 
 export const vendors: Vendor[] = [
-  // Downtown Kitchen - all current
+  // Location 1 - all current
   {
     id: '1',
     companyName: 'ABC Fire Protection',
@@ -361,7 +361,7 @@ export const vendors: Vendor[] = [
     status: 'current',
     locationId: '1',
   },
-  // Airport Cafe - mixed status (hood cleaning overdue)
+  // Location 2 - mixed status (hood cleaning overdue)
   {
     id: '6',
     companyName: 'ABC Fire Protection',
@@ -427,7 +427,7 @@ export const vendors: Vendor[] = [
     status: 'upcoming',
     locationId: '2',
   },
-  // University Dining - poor status
+  // Location 3 - poor status
   {
     id: '11',
     companyName: 'ABC Fire Protection',
@@ -536,29 +536,29 @@ export interface NeedsAttentionItem {
 }
 
 export const needsAttentionItems: NeedsAttentionItem[] = [
-  // Downtown Kitchen - 2 items
-  { id: '1', title: '1 Closing Checklist Submitted Late', detail: 'Downtown Kitchen — Feb 4', color: 'amber', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '1' },
+  // Location 1 - 2 items
+  { id: '1', title: '1 Closing Checklist Submitted Late', detail: 'Location 1 — Feb 4', color: 'amber', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '1' },
   { id: '2', title: 'Fire Suppression Due in 15 Days', detail: 'Valley Fire — due Feb 24 (−3.75 pts graduated)', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '1' },
-  // Airport Cafe - 7 items
-  { id: '3', title: '3 Temperature Checks Missed', detail: 'Airport Cafe — missed this week', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
-  { id: '4', title: 'Opening Checklist Late 2 Days This Week', detail: 'Airport Cafe — Feb 4, Feb 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  // Location 2 - 7 items
+  { id: '3', title: '3 Temperature Checks Missed', detail: 'Location 2 — missed this week', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  { id: '4', title: 'Opening Checklist Late 2 Days This Week', detail: 'Location 2 — Feb 4, Feb 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
   { id: '5', title: 'Hood Cleaning 5 Days OVERDUE', detail: 'ABC Fire — was due Feb 4 (−30 pts Equipment)', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
   { id: '6', title: 'Grease Trap Service Due Soon', detail: 'Grease Masters — due Mar 20', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
-  { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Airport Cafe — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
-  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Airport Cafe — expires in 14 days', color: 'amber', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
-  { id: '9', title: 'Pest Control Report Missing', detail: 'Airport Cafe — last visit Feb 1', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
-  // University Dining - 12 items
-  { id: '10', title: '5 Temperature Checks Missed', detail: 'University Dining — missed this week (Ice Machine excluded, tracked under Equipment)', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
-  { id: '11', title: 'Opening Checklists Missed 3 Days', detail: 'University Dining — Feb 3, 4, 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
-  { id: '12', title: 'HACCP Monitoring Overdue', detail: 'University Dining — no logs this month', color: 'red', url: '/haccp', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '7', title: 'Valley Fire COI Expiring in 12 Days', detail: 'Location 2 — graduated penalty −7.5 pts', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '8', title: 'Food Handler Cert Expiring', detail: 'Location 2 — expires in 14 days', color: 'amber', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '2' },
+  { id: '9', title: 'Pest Control Report Missing', detail: 'Location 2 — last visit Feb 1', color: 'amber', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  // Location 3 - 12 items
+  { id: '10', title: '5 Temperature Checks Missed', detail: 'Location 3 — missed this week (Ice Machine excluded, tracked under Equipment)', color: 'red', url: '/temp-logs', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '11', title: 'Opening Checklists Missed 3 Days', detail: 'Location 3 — Feb 3, 4, 5', color: 'red', url: '/checklists', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '12', title: 'HACCP Monitoring Overdue', detail: 'Location 3 — no logs this month', color: 'red', url: '/haccp', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '13', title: 'Fire Suppression 4 Months Overdue', detail: 'Valley Fire — due Jan 10', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
   { id: '14', title: 'Grease Trap 2 Months Overdue', detail: 'Grease Masters — due Jan 20', color: 'red', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
   { id: '15', title: 'Hood Cleaning Due in 5 Days', detail: 'ABC Fire — due Feb 15', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '16', title: 'Health Permit EXPIRED', detail: 'University Dining — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '17', title: '3 Vendor COIs Expired', detail: 'University Dining — action required', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '18', title: '2 Food Handler Certs Expired', detail: 'University Dining — −10 pts Documentation', color: 'red', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
+  { id: '16', title: 'Health Permit EXPIRED', detail: 'Location 3 — expired Jan 6 (−25 pts Documentation)', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '17', title: '3 Vendor COIs Expired', detail: 'Location 3 — action required', color: 'red', url: '/documents', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
+  { id: '18', title: '2 Food Handler Certs Expired', detail: 'Location 3 — −10 pts Documentation', color: 'red', url: '/training', roles: ['owner_operator', 'kitchen_staff'], locationId: '3' },
   { id: '19', title: 'Pest Control Service Due Soon', detail: 'Pacific Pest — due Mar 1', color: 'amber', url: '/vendors', roles: ['owner_operator', 'facilities_manager'], locationId: '3' },
-  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Airport Cafe — monitor at next quarterly service (NFPA 96 (2024) Chapter 7)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
+  { id: '20', title: 'Exhaust Fan — Bearing Noise Reported', detail: 'Location 2 — monitor at next quarterly service (NFPA 96 (2024) Chapter 7)', color: 'amber', url: '/equipment', roles: ['owner_operator', 'facilities_manager'], locationId: '2' },
 ];
 
 export interface ScoreImpactItem {
@@ -576,60 +576,60 @@ export interface ScoreImpactItem {
 // Facility Safety: Hood cleaning, Fire suppression, Fire extinguisher, Equip maintenance, Equip condition
 
 export const scoreImpactData: ScoreImpactItem[] = [
-  // ─── Downtown Kitchen ─── Operational (94/100)
+  // ─── Location 1 ─── Operational (94/100)
   { status: 'current', label: 'Temperature Logs On Schedule', impact: '+34 of 35', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'Checklists Complete', impact: '+28 of 30', action: '1 Late Submission', actionLink: '/checklists', pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'Incident Resolution (<2 hrs)', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
 
-  // ─── Downtown Kitchen ─── Equipment (88/100)
+  // ─── Location 1 ─── Equipment (88/100)
   { status: 'current', label: 'Hood Cleaning', impact: '+30 of 30', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
   { status: 'due_soon', label: 'Fire Suppression (due in 15 days, −3.75 graduated)', impact: '+21 of 25', action: 'Schedule Inspection', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '1' },
   { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
   { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
   { status: 'current', label: 'Equipment Condition', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '1' },
 
-  // ─── Downtown Kitchen ─── Documentation (folds into Food Safety)
+  // ─── Location 1 ─── Documentation (folds into Food Safety)
   { status: 'current', label: 'Vendor Certificates (All Current)', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: 'Renewal in 60 Days', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '1' },
   { status: 'due_soon', label: 'Food Handler Certs (1 staff due in 25 days, −1.5 graduated)', impact: '+17 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '1' },
   { status: 'current', label: 'Insurance Certificates', impact: '+9 of 15', action: 'Renewal Approaching', actionLink: '/documents', pillar: 'Food Safety', locationId: '1' },
 
-  // ─── Airport Cafe ─── Operational (72/100)
+  // ─── Location 2 ─── Operational (72/100)
   { status: 'overdue', label: 'Temperature Logs (3 missed this week)', impact: '+23 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'Checklists', impact: '+21 of 30', action: 'Late 2 Days This Week', actionLink: '/checklists', pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'Incident Resolution (2-12 hrs avg)', impact: '+16 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'HACCP Monitoring', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
 
-  // ─── Airport Cafe ─── Equipment (62/100)
+  // ─── Location 2 ─── Equipment (62/100)
   { status: 'overdue', label: 'Hood Cleaning 5 DAYS OVERDUE (−30 full penalty)', impact: '0 of 30', action: 'Contact ABC Fire', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '2' },
   { status: 'current', label: 'Fire Suppression Inspection', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
   { status: 'current', label: 'Fire Extinguisher', impact: '+20 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
   { status: 'current', label: 'Equipment Maintenance', impact: '+12 of 15', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
   { status: 'current', label: 'Equipment Condition (Good)', impact: '+5 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '2' },
 
-  // ─── Airport Cafe ─── Documentation (folds into Food Safety)
+  // ─── Location 2 ─── Documentation (folds into Food Safety)
   { status: 'due_soon', label: 'Vendor Cert (1 due in 12 days, −7.5 graduated)', impact: '+18 of 25', action: 'Request Updated COI', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'Health Permit', impact: '+25 of 25', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '2' },
   { status: 'due_soon', label: 'Food Handler Cert (1 staff due in 14 days, −3 graduated)', impact: '+16 of 20', action: 'View Training', actionLink: '/training', pillar: 'Food Safety', locationId: '2' },
   { status: 'missing', label: 'Pest Control Report Missing', impact: '0 of 15', action: 'Request from Vendor', actionLink: '/vendors', pillar: 'Food Safety', locationId: '2' },
 
-  // ─── University Dining ─── Operational (62/100)
+  // ─── Location 3 ─── Operational (62/100)
   { status: 'overdue', label: '5 Temperature Checks Missed This Week', impact: '+10 of 35', action: 'Log Now', actionLink: '/temp-logs', pillar: 'Food Safety', locationId: '3' },
   { status: 'overdue', label: 'Opening Checklists Missed 3 Days', impact: '+10 of 30', action: 'Complete Now', actionLink: '/checklists', pillar: 'Food Safety', locationId: '3' },
   { status: 'current', label: 'Incident Resolution (24-48 hrs avg)', impact: '+8 of 20', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
   { status: 'overdue', label: 'HACCP Monitoring Not Done This Month', impact: '0 of 15', action: 'Start HACCP Review', actionLink: '/haccp', pillar: 'Food Safety', locationId: '3' },
 
-  // ─── University Dining ─── Equipment (55/100)
+  // ─── Location 3 ─── Equipment (55/100)
   { status: 'due_soon', label: 'Hood Cleaning Due in 5 Days (−15 graduated)', impact: '+15 of 30', action: 'Confirm Scheduled', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
   { status: 'overdue', label: 'Fire Suppression 4 MONTHS OVERDUE (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Schedule Now', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
   { status: 'current', label: 'Fire Extinguisher', impact: '+15 of 20', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '3' },
   { status: 'overdue', label: 'Grease Trap 2 MONTHS OVERDUE (−15 full penalty)', impact: '0 of 15', action: 'Schedule Service', actionLink: '/vendors', pillar: 'Facility Safety', locationId: '3' },
   { status: 'current', label: 'Equipment Condition (Fair)', impact: '+6 of 10', action: null, actionLink: null, pillar: 'Facility Safety', locationId: '3' },
 
-  // ─── University Dining ─── Documentation (folds into Food Safety)
+  // ─── Location 3 ─── Documentation (folds into Food Safety)
   { status: 'expired', label: 'Health Permit EXPIRED (−25 full penalty)', impact: '0 of 25', action: 'URGENT: Renew Now', actionLink: '/documents', pillar: 'Food Safety', locationId: '3' },
   { status: 'current', label: 'Business License', impact: '+15 of 15', action: null, actionLink: null, pillar: 'Food Safety', locationId: '3' },
   { status: 'expired', label: '3 Vendor COIs EXPIRED', impact: '0 of 25', action: 'Request All COIs', actionLink: '/vendors', pillar: 'Food Safety', locationId: '3' },
@@ -1028,7 +1028,7 @@ export const marketplaceReviews: MarketplaceReview[] = [
   // Pacific Pest Control (preferred, 4.8)
   { id: 'mr-5', vendorSlug: 'pacific-pest-control', reviewerName: 'Sofia C.', reviewerOrg: 'EvidLY Demo Org', rating: 5, text: 'Maria and her team are amazing. We had a fly problem that two other companies couldn\'t solve. Pacific Pest identified the breeding source in our floor drain and resolved it in one visit.', serviceType: 'Pest Control', date: '2026-01-28', vendorResponse: 'Thanks Sofia! Those drain fly issues can be tricky but our IPM approach helps us find the root cause. Glad we could help!' },
   { id: 'mr-6', vendorSlug: 'pacific-pest-control', reviewerName: 'Mike T.', reviewerOrg: 'Airport Food Services', rating: 5, text: 'Bilingual service team is a huge plus for our kitchen staff. Reports are thorough and always uploaded same day. Never had a pest issue since we switched to Pacific.', serviceType: 'Pest Control', date: '2025-12-05' },
-  { id: 'mr-7', vendorSlug: 'pacific-pest-control', reviewerName: 'Karen L.', reviewerOrg: 'University Dining', rating: 4, text: 'Reliable monthly service. They always come on schedule and the digital reports are very detailed. Only wish they had Saturday availability.', serviceType: 'Pest Control', date: '2025-10-18' },
+  { id: 'mr-7', vendorSlug: 'pacific-pest-control', reviewerName: 'Karen L.', reviewerOrg: 'Location 3', rating: 4, text: 'Reliable monthly service. They always come on schedule and the digital reports are very detailed. Only wish they had Saturday availability.', serviceType: 'Pest Control', date: '2025-10-18' },
   // ABC Fire Protection (certified, 4.6)
   { id: 'mr-8', vendorSlug: 'abc-fire-protection', reviewerName: 'Daniel F.', reviewerOrg: 'Downtown Grill', rating: 5, text: 'John and his crew do excellent work. They cleaned our 3-story hood system in one night shift without disrupting our operation. Documentation was uploaded next morning.', serviceType: 'Hood Cleaning', date: '2025-12-10' },
   { id: 'mr-9', vendorSlug: 'abc-fire-protection', reviewerName: 'Nancy W.', reviewerOrg: 'Fresno Bistro', rating: 4, text: 'Good hood cleaning service at a fair price. They could improve their scheduling communication but the quality of work is consistently good.', serviceType: 'Hood Cleaning', date: '2025-08-15' },
@@ -1052,7 +1052,7 @@ export const marketplaceReviews: MarketplaceReview[] = [
   // Central Valley Pest Solutions (certified, 4.7)
   { id: 'mr-22', vendorSlug: 'central-valley-pest-solutions', reviewerName: 'Diane W.', reviewerOrg: 'Madera Dining', rating: 5, text: 'Their eco-friendly approach actually works better than traditional methods. Digital reports are a nice touch and very detailed.', serviceType: 'Pest Control', date: '2025-11-25' },
   // CleanAir HVAC (verified, 4.3)
-  { id: 'mr-23', vendorSlug: 'cleanair-hvac', reviewerName: 'Jeff R.', reviewerOrg: 'Downtown Kitchen Co', rating: 4, text: 'Fixed our walk-in cooler quickly. David knew exactly what the problem was. Pricing was fair and they had the part on the truck.', serviceType: 'Refrigeration', date: '2025-10-15' },
+  { id: 'mr-23', vendorSlug: 'cleanair-hvac', reviewerName: 'Jeff R.', reviewerOrg: 'Location 1 Co', rating: 4, text: 'Fixed our walk-in cooler quickly. David knew exactly what the problem was. Pricing was fair and they had the part on the truck.', serviceType: 'Refrigeration', date: '2025-10-15' },
   // AllClear Refrigeration (verified, 4.2)
   { id: 'mr-24', vendorSlug: 'allclear-refrigeration', reviewerName: 'Samantha Y.', reviewerOrg: 'Sushi Fresh', rating: 5, text: 'Called at 6am when our walk-in died overnight. Kevin had a tech there by 8am and everything was back to temp by 10. Saved thousands in product.', serviceType: 'Refrigeration', date: '2025-12-01' },
   { id: 'mr-25', vendorSlug: 'allclear-refrigeration', reviewerName: 'Mark H.', reviewerOrg: 'Valley Steakhouse', rating: 3, text: 'Service was eventually good but took three visits to properly diagnose the issue. Would recommend for straightforward repairs.', serviceType: 'Refrigeration', date: '2025-08-20' },
@@ -1969,25 +1969,25 @@ export const iotSensorProviders: IoTSensorProvider[] = [
 ];
 
 export const iotSensors: IoTSensor[] = [
-  // Downtown Kitchen (6 sensors)
-  { id: 'iot-s01', providerSlug: 'sensorpush', name: 'Walk-in Cooler #1', macAddress: 'SP:A4:3B:7C:12:F0', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-01', batteryPct: 87, signalRssi: -42, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:12Z', currentTempF: 36.2, currentHumidity: 45 },
-  { id: 'iot-s02', providerSlug: 'sensorpush', name: 'Walk-in Freezer', macAddress: 'SP:A4:3B:7C:12:F1', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Walk-in Freezer', equipmentLinkId: 'eq-wif-01', batteryPct: 72, signalRssi: -55, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:10Z', currentTempF: -2.1, currentHumidity: 28 },
-  { id: 'iot-s03', providerSlug: 'tempstick', name: 'Prep Area Monitor', macAddress: 'TS:B8:2A:5D:09:E3', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Prep Station', equipmentLinkId: null, batteryPct: 94, signalRssi: -38, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 68.4, currentHumidity: 52 },
-  { id: 'iot-s04', providerSlug: 'cooper-atkins', name: 'Hot Hold Station', macAddress: 'CA:BLE:01:4A:88:C2', type: 'temperature', locationName: 'Downtown Kitchen', zone: 'Hot Holding', equipmentLinkId: 'eq-hh-01', batteryPct: 65, signalRssi: -60, firmware: 'BLE-1.8', status: 'online', lastSeenAt: '2026-02-10T13:30:00Z', currentTempF: 148.5, currentHumidity: null },
-  { id: 'iot-s05', providerSlug: 'monnit', name: 'Dry Storage Ambient', macAddress: 'MN:C7:4E:1B:33:A7', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Dry Storage', equipmentLinkId: null, batteryPct: 91, signalRssi: -48, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:01Z', currentTempF: 72.1, currentHumidity: 38 },
-  { id: 'iot-s06', providerSlug: 'testo', name: 'Receiving Dock', macAddress: 'TE:D5:8F:2A:77:B1', type: 'combo', locationName: 'Downtown Kitchen', zone: 'Receiving', equipmentLinkId: null, batteryPct: 100, signalRssi: -35, firmware: 'Saveris-3.2', status: 'warning', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 58.3, currentHumidity: 61 },
-  // Airport Terminal (5 sensors)
-  { id: 'iot-s07', providerSlug: 'sensorpush', name: 'Walk-in Cooler A', macAddress: 'SP:A4:3B:7C:14:A2', type: 'combo', locationName: 'Airport Terminal', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-02', batteryPct: 43, signalRssi: -62, firmware: 'v2.4.1', status: 'warning', lastSeenAt: '2026-02-10T14:57:00Z', currentTempF: 47.1, currentHumidity: 68 },
-  { id: 'iot-s08', providerSlug: 'sensorpush', name: 'Reach-in Cooler B', macAddress: 'SP:A4:3B:7C:14:A3', type: 'combo', locationName: 'Airport Terminal', zone: 'Reach-in Cooler', equipmentLinkId: null, batteryPct: 81, signalRssi: -45, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:05Z', currentTempF: 38.7, currentHumidity: 42 },
-  { id: 'iot-s09', providerSlug: 'tempstick', name: 'Display Case', macAddress: 'TS:B8:2A:5D:11:F7', type: 'combo', locationName: 'Airport Terminal', zone: 'Display Case', equipmentLinkId: null, batteryPct: 88, signalRssi: -40, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 40.2, currentHumidity: 44 },
-  { id: 'iot-s10', providerSlug: 'monnit', name: 'Kitchen Ambient', macAddress: 'MN:C7:4E:1B:35:B9', type: 'combo', locationName: 'Airport Terminal', zone: 'Kitchen', equipmentLinkId: null, batteryPct: 78, signalRssi: -52, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:00Z', currentTempF: 74.8, currentHumidity: 55 },
-  { id: 'iot-s11', providerSlug: 'compliancemate', name: 'Blast Chiller', macAddress: 'CM:CSV:IMPORT:01', type: 'temperature', locationName: 'Airport Terminal', zone: 'Blast Chiller', equipmentLinkId: null, batteryPct: 100, signalRssi: 0, firmware: 'CSV-Import', status: 'online', lastSeenAt: '2026-02-10T08:00:00Z', currentTempF: 34.0, currentHumidity: null },
-  // University Campus (5 sensors)
-  { id: 'iot-s12', providerSlug: 'sensorpush', name: 'Main Walk-in', macAddress: 'SP:A4:3B:7C:16:D4', type: 'combo', locationName: 'University Campus', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-03', batteryPct: 95, signalRssi: -37, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:20Z', currentTempF: 35.8, currentHumidity: 41 },
-  { id: 'iot-s13', providerSlug: 'sensorpush', name: 'Salad Bar Cooler', macAddress: 'SP:A4:3B:7C:16:D5', type: 'combo', locationName: 'University Campus', zone: 'Salad Bar', equipmentLinkId: null, batteryPct: 0, signalRssi: 0, firmware: 'v2.3.8', status: 'offline', lastSeenAt: '2026-02-09T22:15:00Z', currentTempF: 0, currentHumidity: null },
-  { id: 'iot-s14', providerSlug: 'tempstick', name: 'Beverage Cooler', macAddress: 'TS:B8:2A:5D:13:G1', type: 'combo', locationName: 'University Campus', zone: 'Beverage Station', equipmentLinkId: null, batteryPct: 62, signalRssi: -58, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 37.4, currentHumidity: 39 },
-  { id: 'iot-s15', providerSlug: 'cooper-atkins', name: 'Grill Station Probe', macAddress: 'CA:BLE:02:5B:99:D3', type: 'temperature', locationName: 'University Campus', zone: 'Grill Station', equipmentLinkId: null, batteryPct: 34, signalRssi: -65, firmware: 'BLE-1.8', status: 'warning', lastSeenAt: '2026-02-10T12:45:00Z', currentTempF: 165.2, currentHumidity: null },
-  { id: 'iot-s16', providerSlug: 'deltatrak', name: 'Cold Chain Dock', macAddress: 'DT:FL:8A:2C:44:E6', type: 'temperature', locationName: 'University Campus', zone: 'Receiving Dock', equipmentLinkId: null, batteryPct: 100, signalRssi: -41, firmware: 'FL-2.1', status: 'online', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 33.9, currentHumidity: null },
+  // Location 1 (6 sensors)
+  { id: 'iot-s01', providerSlug: 'sensorpush', name: 'Walk-in Cooler #1', macAddress: 'SP:A4:3B:7C:12:F0', type: 'combo', locationName: 'Location 1', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-01', batteryPct: 87, signalRssi: -42, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:12Z', currentTempF: 36.2, currentHumidity: 45 },
+  { id: 'iot-s02', providerSlug: 'sensorpush', name: 'Walk-in Freezer', macAddress: 'SP:A4:3B:7C:12:F1', type: 'combo', locationName: 'Location 1', zone: 'Walk-in Freezer', equipmentLinkId: 'eq-wif-01', batteryPct: 72, signalRssi: -55, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:10Z', currentTempF: -2.1, currentHumidity: 28 },
+  { id: 'iot-s03', providerSlug: 'tempstick', name: 'Prep Area Monitor', macAddress: 'TS:B8:2A:5D:09:E3', type: 'combo', locationName: 'Location 1', zone: 'Prep Station', equipmentLinkId: null, batteryPct: 94, signalRssi: -38, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 68.4, currentHumidity: 52 },
+  { id: 'iot-s04', providerSlug: 'cooper-atkins', name: 'Hot Hold Station', macAddress: 'CA:BLE:01:4A:88:C2', type: 'temperature', locationName: 'Location 1', zone: 'Hot Holding', equipmentLinkId: 'eq-hh-01', batteryPct: 65, signalRssi: -60, firmware: 'BLE-1.8', status: 'online', lastSeenAt: '2026-02-10T13:30:00Z', currentTempF: 148.5, currentHumidity: null },
+  { id: 'iot-s05', providerSlug: 'monnit', name: 'Dry Storage Ambient', macAddress: 'MN:C7:4E:1B:33:A7', type: 'combo', locationName: 'Location 1', zone: 'Dry Storage', equipmentLinkId: null, batteryPct: 91, signalRssi: -48, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:01Z', currentTempF: 72.1, currentHumidity: 38 },
+  { id: 'iot-s06', providerSlug: 'testo', name: 'Receiving Dock', macAddress: 'TE:D5:8F:2A:77:B1', type: 'combo', locationName: 'Location 1', zone: 'Receiving', equipmentLinkId: null, batteryPct: 100, signalRssi: -35, firmware: 'Saveris-3.2', status: 'warning', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 58.3, currentHumidity: 61 },
+  // Location 2 (5 sensors)
+  { id: 'iot-s07', providerSlug: 'sensorpush', name: 'Walk-in Cooler A', macAddress: 'SP:A4:3B:7C:14:A2', type: 'combo', locationName: 'Location 2', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-02', batteryPct: 43, signalRssi: -62, firmware: 'v2.4.1', status: 'warning', lastSeenAt: '2026-02-10T14:57:00Z', currentTempF: 47.1, currentHumidity: 68 },
+  { id: 'iot-s08', providerSlug: 'sensorpush', name: 'Reach-in Cooler B', macAddress: 'SP:A4:3B:7C:14:A3', type: 'combo', locationName: 'Location 2', zone: 'Reach-in Cooler', equipmentLinkId: null, batteryPct: 81, signalRssi: -45, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:05Z', currentTempF: 38.7, currentHumidity: 42 },
+  { id: 'iot-s09', providerSlug: 'tempstick', name: 'Display Case', macAddress: 'TS:B8:2A:5D:11:F7', type: 'combo', locationName: 'Location 2', zone: 'Display Case', equipmentLinkId: null, batteryPct: 88, signalRssi: -40, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 40.2, currentHumidity: 44 },
+  { id: 'iot-s10', providerSlug: 'monnit', name: 'Kitchen Ambient', macAddress: 'MN:C7:4E:1B:35:B9', type: 'combo', locationName: 'Location 2', zone: 'Kitchen', equipmentLinkId: null, batteryPct: 78, signalRssi: -52, firmware: 'v4.0.2', status: 'online', lastSeenAt: '2026-02-10T14:59:00Z', currentTempF: 74.8, currentHumidity: 55 },
+  { id: 'iot-s11', providerSlug: 'compliancemate', name: 'Blast Chiller', macAddress: 'CM:CSV:IMPORT:01', type: 'temperature', locationName: 'Location 2', zone: 'Blast Chiller', equipmentLinkId: null, batteryPct: 100, signalRssi: 0, firmware: 'CSV-Import', status: 'online', lastSeenAt: '2026-02-10T08:00:00Z', currentTempF: 34.0, currentHumidity: null },
+  // Location 3 (5 sensors)
+  { id: 'iot-s12', providerSlug: 'sensorpush', name: 'Main Walk-in', macAddress: 'SP:A4:3B:7C:16:D4', type: 'combo', locationName: 'Location 3', zone: 'Walk-in Cooler', equipmentLinkId: 'eq-wic-03', batteryPct: 95, signalRssi: -37, firmware: 'v2.4.1', status: 'online', lastSeenAt: '2026-02-10T14:58:20Z', currentTempF: 35.8, currentHumidity: 41 },
+  { id: 'iot-s13', providerSlug: 'sensorpush', name: 'Salad Bar Cooler', macAddress: 'SP:A4:3B:7C:16:D5', type: 'combo', locationName: 'Location 3', zone: 'Salad Bar', equipmentLinkId: null, batteryPct: 0, signalRssi: 0, firmware: 'v2.3.8', status: 'offline', lastSeenAt: '2026-02-09T22:15:00Z', currentTempF: 0, currentHumidity: null },
+  { id: 'iot-s14', providerSlug: 'tempstick', name: 'Beverage Cooler', macAddress: 'TS:B8:2A:5D:13:G1', type: 'combo', locationName: 'Location 3', zone: 'Beverage Station', equipmentLinkId: null, batteryPct: 62, signalRssi: -58, firmware: 'v3.1.0', status: 'online', lastSeenAt: '2026-02-10T14:55:00Z', currentTempF: 37.4, currentHumidity: 39 },
+  { id: 'iot-s15', providerSlug: 'cooper-atkins', name: 'Grill Station Probe', macAddress: 'CA:BLE:02:5B:99:D3', type: 'temperature', locationName: 'Location 3', zone: 'Grill Station', equipmentLinkId: null, batteryPct: 34, signalRssi: -65, firmware: 'BLE-1.8', status: 'warning', lastSeenAt: '2026-02-10T12:45:00Z', currentTempF: 165.2, currentHumidity: null },
+  { id: 'iot-s16', providerSlug: 'deltatrak', name: 'Cold Chain Dock', macAddress: 'DT:FL:8A:2C:44:E6', type: 'temperature', locationName: 'Location 3', zone: 'Receiving Dock', equipmentLinkId: null, batteryPct: 100, signalRssi: -41, firmware: 'FL-2.1', status: 'online', lastSeenAt: '2026-02-10T14:50:00Z', currentTempF: 33.9, currentHumidity: null },
 ];
 
 // Helper: threshold rules by zone
@@ -1999,81 +1999,81 @@ const TH_REC = { min: null, max: 41, rule: 'receiving_cold_fda' };
 
 // 3 readings per sensor — universal data model with compliance status
 export const iotSensorReadings: IoTSensorReading[] = [
-  // Downtown Walk-in Cooler #1 (max 41°F)
+  // Location 1 Walk-in Cooler #1 (max 41°F)
   { sensorId: 'iot-s01', timestamp: '2026-02-10T14:58:12Z', temperatureF: 36.2, humidityPct: 45, pressureHpa: null, batteryPct: 87, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s01', timestamp: '2026-02-10T14:57:12Z', temperatureF: 36.1, humidityPct: 45, pressureHpa: null, batteryPct: 87, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s01', timestamp: '2026-02-10T14:56:12Z', temperatureF: 36.3, humidityPct: 44, pressureHpa: null, batteryPct: 87, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
-  // Downtown Walk-in Freezer (max 0°F)
+  // Location 1 Walk-in Freezer (max 0°F)
   { sensorId: 'iot-s02', timestamp: '2026-02-10T14:58:10Z', temperatureF: -2.1, humidityPct: 28, pressureHpa: null, batteryPct: 72, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_FREEZE },
   { sensorId: 'iot-s02', timestamp: '2026-02-10T14:57:10Z', temperatureF: -1.8, humidityPct: 28, pressureHpa: null, batteryPct: 72, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_FREEZE },
   { sensorId: 'iot-s02', timestamp: '2026-02-10T14:56:10Z', temperatureF: -2.3, humidityPct: 29, pressureHpa: null, batteryPct: 72, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_FREEZE },
-  // Downtown Prep Area (ambient — no strict threshold)
+  // Location 1 Prep Area (ambient — no strict threshold)
   { sensorId: 'iot-s03', timestamp: '2026-02-10T14:55:00Z', temperatureF: 68.4, humidityPct: 52, pressureHpa: null, batteryPct: 94, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
   { sensorId: 'iot-s03', timestamp: '2026-02-10T14:50:00Z', temperatureF: 68.1, humidityPct: 51, pressureHpa: null, batteryPct: 94, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
   { sensorId: 'iot-s03', timestamp: '2026-02-10T14:45:00Z', temperatureF: 67.9, humidityPct: 52, pressureHpa: null, batteryPct: 94, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
-  // Downtown Hot Hold (min 135°F)
+  // Location 1 Hot Hold (min 135°F)
   { sensorId: 'iot-s04', timestamp: '2026-02-10T13:30:00Z', temperatureF: 148.5, humidityPct: null, pressureHpa: null, batteryPct: 65, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
   { sensorId: 'iot-s04', timestamp: '2026-02-10T13:15:00Z', temperatureF: 150.1, humidityPct: null, pressureHpa: null, batteryPct: 65, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
   { sensorId: 'iot-s04', timestamp: '2026-02-10T13:00:00Z', temperatureF: 147.8, humidityPct: null, pressureHpa: null, batteryPct: 66, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
-  // Downtown Dry Storage (max 75°F)
+  // Location 1 Dry Storage (max 75°F)
   { sensorId: 'iot-s05', timestamp: '2026-02-10T14:59:01Z', temperatureF: 72.1, humidityPct: 38, pressureHpa: null, batteryPct: 91, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_DRY },
   { sensorId: 'iot-s05', timestamp: '2026-02-10T14:58:01Z', temperatureF: 72.0, humidityPct: 38, pressureHpa: null, batteryPct: 91, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_DRY },
   { sensorId: 'iot-s05', timestamp: '2026-02-10T14:57:01Z', temperatureF: 71.8, humidityPct: 39, pressureHpa: null, batteryPct: 91, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_DRY },
-  // Downtown Receiving Dock (max 41°F for cold — but this is ambient receiving)
+  // Location 1 Receiving Dock (max 41°F for cold — but this is ambient receiving)
   { sensorId: 'iot-s06', timestamp: '2026-02-10T14:50:00Z', temperatureF: 58.3, humidityPct: 61, pressureHpa: 1013.2, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_REC },
   { sensorId: 'iot-s06', timestamp: '2026-02-10T14:45:00Z', temperatureF: 56.8, humidityPct: 60, pressureHpa: 1013.1, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_REC },
   { sensorId: 'iot-s06', timestamp: '2026-02-10T14:40:00Z', temperatureF: 55.2, humidityPct: 59, pressureHpa: 1013.0, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_REC },
-  // Airport Walk-in Cooler A — VIOLATION: temp spike to 47°F
+  // Location 2 Walk-in Cooler A — VIOLATION: temp spike to 47°F
   { sensorId: 'iot-s07', timestamp: '2026-02-10T14:57:00Z', temperatureF: 47.1, humidityPct: 68, pressureHpa: null, batteryPct: 43, isAnomaly: true, quality: 'good', complianceStatus: 'violation', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s07', timestamp: '2026-02-10T14:56:00Z', temperatureF: 44.8, humidityPct: 62, pressureHpa: null, batteryPct: 43, isAnomaly: true, quality: 'good', complianceStatus: 'violation', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s07', timestamp: '2026-02-10T14:55:00Z', temperatureF: 39.2, humidityPct: 50, pressureHpa: null, batteryPct: 44, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_COLD },
-  // Airport Reach-in B (max 41°F)
+  // Location 2 Reach-in B (max 41°F)
   { sensorId: 'iot-s08', timestamp: '2026-02-10T14:58:05Z', temperatureF: 38.7, humidityPct: 42, pressureHpa: null, batteryPct: 81, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s08', timestamp: '2026-02-10T14:57:05Z', temperatureF: 38.5, humidityPct: 42, pressureHpa: null, batteryPct: 81, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s08', timestamp: '2026-02-10T14:56:05Z', temperatureF: 38.9, humidityPct: 43, pressureHpa: null, batteryPct: 81, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
-  // Airport Display Case (max 41°F) — warning: 40.2 approaching threshold
+  // Location 2 Display Case (max 41°F) — warning: 40.2 approaching threshold
   { sensorId: 'iot-s09', timestamp: '2026-02-10T14:55:00Z', temperatureF: 40.2, humidityPct: 44, pressureHpa: null, batteryPct: 88, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s09', timestamp: '2026-02-10T14:50:00Z', temperatureF: 40.0, humidityPct: 44, pressureHpa: null, batteryPct: 88, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s09', timestamp: '2026-02-10T14:45:00Z', temperatureF: 39.8, humidityPct: 45, pressureHpa: null, batteryPct: 88, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_COLD },
-  // Airport Kitchen Ambient
+  // Location 2 Kitchen Ambient
   { sensorId: 'iot-s10', timestamp: '2026-02-10T14:59:00Z', temperatureF: 74.8, humidityPct: 55, pressureHpa: null, batteryPct: 78, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
   { sensorId: 'iot-s10', timestamp: '2026-02-10T14:58:00Z', temperatureF: 74.5, humidityPct: 55, pressureHpa: null, batteryPct: 78, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
   { sensorId: 'iot-s10', timestamp: '2026-02-10T14:57:00Z', temperatureF: 74.2, humidityPct: 54, pressureHpa: null, batteryPct: 78, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: null },
-  // Airport Blast Chiller (CSV import, max 41°F)
+  // Location 2 Blast Chiller (CSV import, max 41°F)
   { sensorId: 'iot-s11', timestamp: '2026-02-10T08:00:00Z', temperatureF: 34.0, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s11', timestamp: '2026-02-10T07:00:00Z', temperatureF: 33.5, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s11', timestamp: '2026-02-10T06:00:00Z', temperatureF: 33.8, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
-  // University Main Walk-in (max 41°F)
+  // Location 3 Main Walk-in (max 41°F)
   { sensorId: 'iot-s12', timestamp: '2026-02-10T14:58:20Z', temperatureF: 35.8, humidityPct: 41, pressureHpa: null, batteryPct: 95, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s12', timestamp: '2026-02-10T14:57:20Z', temperatureF: 35.7, humidityPct: 41, pressureHpa: null, batteryPct: 95, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s12', timestamp: '2026-02-10T14:56:20Z', temperatureF: 35.9, humidityPct: 42, pressureHpa: null, batteryPct: 95, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
-  // University Salad Bar — OFFLINE (battery dead, last reading was violation)
+  // Location 3 Salad Bar — OFFLINE (battery dead, last reading was violation)
   { sensorId: 'iot-s13', timestamp: '2026-02-09T22:15:00Z', temperatureF: 41.2, humidityPct: 55, pressureHpa: null, batteryPct: 2, isAnomaly: true, quality: 'suspect', complianceStatus: 'violation', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s13', timestamp: '2026-02-09T22:10:00Z', temperatureF: 40.8, humidityPct: 54, pressureHpa: null, batteryPct: 3, isAnomaly: false, quality: 'suspect', complianceStatus: 'warning', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s13', timestamp: '2026-02-09T22:05:00Z', temperatureF: 40.5, humidityPct: 53, pressureHpa: null, batteryPct: 3, isAnomaly: false, quality: 'good', complianceStatus: 'warning', thresholdApplied: TH_COLD },
-  // University Beverage Cooler (max 41°F)
+  // Location 3 Beverage Cooler (max 41°F)
   { sensorId: 'iot-s14', timestamp: '2026-02-10T14:55:00Z', temperatureF: 37.4, humidityPct: 39, pressureHpa: null, batteryPct: 62, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s14', timestamp: '2026-02-10T14:50:00Z', temperatureF: 37.2, humidityPct: 39, pressureHpa: null, batteryPct: 62, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s14', timestamp: '2026-02-10T14:45:00Z', temperatureF: 37.5, humidityPct: 40, pressureHpa: null, batteryPct: 62, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
-  // University Grill Station (min 135°F)
+  // Location 3 Grill Station (min 135°F)
   { sensorId: 'iot-s15', timestamp: '2026-02-10T12:45:00Z', temperatureF: 165.2, humidityPct: null, pressureHpa: null, batteryPct: 34, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
   { sensorId: 'iot-s15', timestamp: '2026-02-10T12:30:00Z', temperatureF: 162.8, humidityPct: null, pressureHpa: null, batteryPct: 34, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
   { sensorId: 'iot-s15', timestamp: '2026-02-10T12:15:00Z', temperatureF: 168.0, humidityPct: null, pressureHpa: null, batteryPct: 35, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_HOT },
-  // University Cold Chain Dock (max 41°F)
+  // Location 3 Cold Chain Dock (max 41°F)
   { sensorId: 'iot-s16', timestamp: '2026-02-10T14:50:00Z', temperatureF: 33.9, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s16', timestamp: '2026-02-10T14:40:00Z', temperatureF: 34.1, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
   { sensorId: 'iot-s16', timestamp: '2026-02-10T14:30:00Z', temperatureF: 33.7, humidityPct: null, pressureHpa: null, batteryPct: 100, isAnomaly: false, quality: 'good', complianceStatus: 'in_range', thresholdApplied: TH_COLD },
 ];
 
 export const iotSensorAlerts: IoTSensorAlert[] = [
-  { id: 'iot-a01', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'high_temp', severity: 'critical', thresholdValue: 41, actualValue: 47.1, message: 'Walk-in cooler temperature exceeded 41°F — possible door left open or compressor failure', createdAt: '2026-02-10T14:57:00Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a02', sensorId: 'iot-s13', sensorName: 'Salad Bar Cooler', locationName: 'University Campus', alertType: 'offline', severity: 'critical', thresholdValue: 30, actualValue: 960, message: 'Sensor offline for 16+ hours — battery depleted. Replace battery immediately.', createdAt: '2026-02-10T06:15:00Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a03', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'rapid_change', severity: 'warning', thresholdValue: 5, actualValue: 7.9, message: 'Temperature rose 7.9°F in 2 minutes — abnormal rate of change detected', createdAt: '2026-02-10T14:56:30Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a04', sensorId: 'iot-s06', sensorName: 'Receiving Dock', locationName: 'Downtown Kitchen', alertType: 'humidity_high', severity: 'warning', thresholdValue: 60, actualValue: 61, message: 'Humidity at receiving dock above 60% threshold — check ventilation', createdAt: '2026-02-10T14:50:00Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a05', sensorId: 'iot-s15', sensorName: 'Grill Station Probe', locationName: 'University Campus', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 34, message: 'Battery at 34% — schedule replacement within next 2 weeks', createdAt: '2026-02-10T12:45:00Z', acknowledged: true, acknowledgedBy: 'Maria Chen' },
-  { id: 'iot-a06', sensorId: 'iot-s02', sensorName: 'Walk-in Freezer', locationName: 'Downtown Kitchen', alertType: 'low_temp', severity: 'info', thresholdValue: -10, actualValue: -2.1, message: 'Freezer temperature nominal — firmware update v2.5.0 available', createdAt: '2026-02-10T10:00:00Z', acknowledged: true, acknowledgedBy: 'System' },
-  { id: 'iot-a07', sensorId: 'iot-s04', sensorName: 'Hot Hold Station', locationName: 'Downtown Kitchen', alertType: 'battery_low', severity: 'info', thresholdValue: 20, actualValue: 65, message: 'Scheduled calibration due Feb 15 — last calibrated Nov 12, 2025', createdAt: '2026-02-10T08:00:00Z', acknowledged: false, acknowledgedBy: null },
-  { id: 'iot-a08', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 43, message: 'Battery below 50% on critical equipment sensor — plan replacement', createdAt: '2026-02-10T09:00:00Z', acknowledged: true, acknowledgedBy: 'Maria Rodriguez' },
+  { id: 'iot-a01', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Location 2', alertType: 'high_temp', severity: 'critical', thresholdValue: 41, actualValue: 47.1, message: 'Walk-in cooler temperature exceeded 41°F — possible door left open or compressor failure', createdAt: '2026-02-10T14:57:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a02', sensorId: 'iot-s13', sensorName: 'Salad Bar Cooler', locationName: 'Location 3', alertType: 'offline', severity: 'critical', thresholdValue: 30, actualValue: 960, message: 'Sensor offline for 16+ hours — battery depleted. Replace battery immediately.', createdAt: '2026-02-10T06:15:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a03', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Location 2', alertType: 'rapid_change', severity: 'warning', thresholdValue: 5, actualValue: 7.9, message: 'Temperature rose 7.9°F in 2 minutes — abnormal rate of change detected', createdAt: '2026-02-10T14:56:30Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a04', sensorId: 'iot-s06', sensorName: 'Receiving Dock', locationName: 'Location 1', alertType: 'humidity_high', severity: 'warning', thresholdValue: 60, actualValue: 61, message: 'Humidity at receiving dock above 60% threshold — check ventilation', createdAt: '2026-02-10T14:50:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a05', sensorId: 'iot-s15', sensorName: 'Grill Station Probe', locationName: 'Location 3', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 34, message: 'Battery at 34% — schedule replacement within next 2 weeks', createdAt: '2026-02-10T12:45:00Z', acknowledged: true, acknowledgedBy: 'Maria Chen' },
+  { id: 'iot-a06', sensorId: 'iot-s02', sensorName: 'Walk-in Freezer', locationName: 'Location 1', alertType: 'low_temp', severity: 'info', thresholdValue: -10, actualValue: -2.1, message: 'Freezer temperature nominal — firmware update v2.5.0 available', createdAt: '2026-02-10T10:00:00Z', acknowledged: true, acknowledgedBy: 'System' },
+  { id: 'iot-a07', sensorId: 'iot-s04', sensorName: 'Hot Hold Station', locationName: 'Location 1', alertType: 'battery_low', severity: 'info', thresholdValue: 20, actualValue: 65, message: 'Scheduled calibration due Feb 15 — last calibrated Nov 12, 2025', createdAt: '2026-02-10T08:00:00Z', acknowledged: false, acknowledgedBy: null },
+  { id: 'iot-a08', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Location 2', alertType: 'battery_low', severity: 'warning', thresholdValue: 20, actualValue: 43, message: 'Battery below 50% on critical equipment sensor — plan replacement', createdAt: '2026-02-10T09:00:00Z', acknowledged: true, acknowledgedBy: 'Maria Rodriguez' },
 ];
 
 export const iotSensorConfigs: IoTSensorConfig[] = [
@@ -2104,7 +2104,7 @@ export const iotMaintenanceLog: IoTMaintenanceEntry[] = [
   { id: 'im-05', sensorId: 'iot-s02', type: 'relocation', description: 'Moved from upper shelf to center rack for better airflow reading', performedBy: 'Maria Rodriguez', date: '2026-01-08' },
   { id: 'im-06', sensorId: 'iot-s04', type: 'battery_replacement', description: 'Replaced AA batteries — device showed low battery warning', performedBy: 'Maria Chen', date: '2026-01-15' },
   { id: 'im-07', sensorId: 'iot-s04', type: 'note', description: 'Bluetooth range intermittent near walk-in door — repositioned 2 feet left', performedBy: 'Maria Rodriguez', date: '2026-02-01' },
-  { id: 'im-08', sensorId: 'iot-s07', type: 'calibration', description: 'Quarterly spot-check calibration — within ±0.5°F tolerance', performedBy: 'Airport Maintenance', date: '2025-12-18' },
+  { id: 'im-08', sensorId: 'iot-s07', type: 'calibration', description: 'Quarterly spot-check calibration — within ±0.5°F tolerance', performedBy: 'Location 2 Maintenance', date: '2025-12-18' },
   { id: 'im-09', sensorId: 'iot-s07', type: 'note', description: 'Cooler door seal appears worn — temperature drift noted. Reported to facilities.', performedBy: 'Sarah Lee', date: '2026-02-09' },
   { id: 'im-10', sensorId: 'iot-s08', type: 'firmware_update', description: 'Updated to v2.4.0 — new features: configurable push interval, improved WiFi reconnect', performedBy: 'System', date: '2026-01-20' },
   { id: 'im-11', sensorId: 'iot-s12', type: 'calibration', description: 'Initial calibration after deployment — passed within ±0.2°F', performedBy: 'TechCal Services', date: '2025-09-15' },
@@ -2147,14 +2147,14 @@ export interface IoTDoorEvent {
 }
 
 export const iotDoorEvents: IoTDoorEvent[] = [
-  { id: 'door-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:02:00Z', closedAt: '2026-02-10T11:03:12Z', durationSec: 72, correlatedTempRise: 0.8 },
-  { id: 'door-02', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:15:00Z', closedAt: '2026-02-10T11:15:45Z', durationSec: 45, correlatedTempRise: 0.3 },
-  { id: 'door-03', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:28:00Z', closedAt: '2026-02-10T11:30:30Z', durationSec: 150, correlatedTempRise: 1.5 },
-  { id: 'door-04', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T11:45:00Z', closedAt: '2026-02-10T11:46:08Z', durationSec: 68, correlatedTempRise: 0.6 },
-  { id: 'door-05', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen', openedAt: '2026-02-10T12:10:00Z', closedAt: '2026-02-10T12:12:20Z', durationSec: 140, correlatedTempRise: 1.2 },
-  { id: 'door-06', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal', openedAt: '2026-02-10T14:30:00Z', closedAt: '2026-02-10T14:38:15Z', durationSec: 495, correlatedTempRise: 5.8 },
-  { id: 'door-07', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'University Campus', openedAt: '2026-02-10T12:00:00Z', closedAt: '2026-02-10T12:01:30Z', durationSec: 90, correlatedTempRise: 0.7 },
-  { id: 'door-08', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'University Campus', openedAt: '2026-02-10T12:22:00Z', closedAt: '2026-02-10T12:22:50Z', durationSec: 50, correlatedTempRise: 0.4 },
+  { id: 'door-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1', openedAt: '2026-02-10T11:02:00Z', closedAt: '2026-02-10T11:03:12Z', durationSec: 72, correlatedTempRise: 0.8 },
+  { id: 'door-02', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1', openedAt: '2026-02-10T11:15:00Z', closedAt: '2026-02-10T11:15:45Z', durationSec: 45, correlatedTempRise: 0.3 },
+  { id: 'door-03', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1', openedAt: '2026-02-10T11:28:00Z', closedAt: '2026-02-10T11:30:30Z', durationSec: 150, correlatedTempRise: 1.5 },
+  { id: 'door-04', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1', openedAt: '2026-02-10T11:45:00Z', closedAt: '2026-02-10T11:46:08Z', durationSec: 68, correlatedTempRise: 0.6 },
+  { id: 'door-05', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1', openedAt: '2026-02-10T12:10:00Z', closedAt: '2026-02-10T12:12:20Z', durationSec: 140, correlatedTempRise: 1.2 },
+  { id: 'door-06', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Location 2', openedAt: '2026-02-10T14:30:00Z', closedAt: '2026-02-10T14:38:15Z', durationSec: 495, correlatedTempRise: 5.8 },
+  { id: 'door-07', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'Location 3', openedAt: '2026-02-10T12:00:00Z', closedAt: '2026-02-10T12:01:30Z', durationSec: 90, correlatedTempRise: 0.7 },
+  { id: 'door-08', sensorId: 'iot-s12', sensorName: 'Main Walk-in', locationName: 'Location 3', openedAt: '2026-02-10T12:22:00Z', closedAt: '2026-02-10T12:22:50Z', durationSec: 50, correlatedTempRise: 0.4 },
 ];
 
 // ── IoT Cooling Curves ───────────────────────────────────────────────────────
@@ -2176,7 +2176,7 @@ export interface IoTCoolingLog {
 
 export const iotCoolingLogs: IoTCoolingLog[] = [
   {
-    id: 'cool-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Downtown Kitchen',
+    id: 'cool-01', sensorId: 'iot-s01', sensorName: 'Walk-in Cooler #1', locationName: 'Location 1',
     foodItem: 'Chicken Stock (5 gal)', startTemp: 165, targetTemp: 41, startTime: '2026-02-10T09:00:00Z',
     readings: [
       { time: '2026-02-10T09:00:00Z', temp: 165 }, { time: '2026-02-10T09:30:00Z', temp: 142 },
@@ -2188,7 +2188,7 @@ export const iotCoolingLogs: IoTCoolingLog[] = [
     meetsStandard: true, standard: 'FDA: 135→70°F in 2hr, 70→41°F in 4hr', totalMin: 270,
   },
   {
-    id: 'cool-02', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Airport Terminal',
+    id: 'cool-02', sensorId: 'iot-s07', sensorName: 'Walk-in Cooler A', locationName: 'Location 2',
     foodItem: 'Rice Pilaf (hotel pan)', startTemp: 180, targetTemp: 41, startTime: '2026-02-10T08:00:00Z',
     readings: [
       { time: '2026-02-10T08:00:00Z', temp: 180 }, { time: '2026-02-10T08:30:00Z', temp: 155 },
@@ -2216,9 +2216,9 @@ export interface IoTComplianceImpact {
 }
 
 export const iotComplianceImpact: IoTComplianceImpact[] = [
-  { locationName: 'Downtown Kitchen', totalReadings: 8640, inRangeReadings: 8510, tempComplianceRate: 98.5, dataCompletenessScore: 99, sensorCount: 6, manualLogReduction: 94, avgResponseTimeMin: 1.8, insuranceNote: 'Automated 24/7 monitoring with 6 sensors reporting every 1-5 minutes' },
-  { locationName: 'Airport Terminal', totalReadings: 7200, inRangeReadings: 6840, tempComplianceRate: 95.0, dataCompletenessScore: 97, sensorCount: 5, manualLogReduction: 88, avgResponseTimeMin: 2.5, insuranceNote: 'Automated monitoring with 5 sensors; 1 violation event recorded' },
-  { locationName: 'University Campus', totalReadings: 4320, inRangeReadings: 4190, tempComplianceRate: 97.0, dataCompletenessScore: 85, sensorCount: 5, manualLogReduction: 78, avgResponseTimeMin: 3.2, insuranceNote: 'Automated monitoring with 5 sensors; 1 offline sensor affecting coverage' },
+  { locationName: 'Location 1', totalReadings: 8640, inRangeReadings: 8510, tempComplianceRate: 98.5, dataCompletenessScore: 99, sensorCount: 6, manualLogReduction: 94, avgResponseTimeMin: 1.8, insuranceNote: 'Automated 24/7 monitoring with 6 sensors reporting every 1-5 minutes' },
+  { locationName: 'Location 2', totalReadings: 7200, inRangeReadings: 6840, tempComplianceRate: 95.0, dataCompletenessScore: 97, sensorCount: 5, manualLogReduction: 88, avgResponseTimeMin: 2.5, insuranceNote: 'Automated monitoring with 5 sensors; 1 violation event recorded' },
+  { locationName: 'Location 3', totalReadings: 4320, inRangeReadings: 4190, tempComplianceRate: 97.0, dataCompletenessScore: 85, sensorCount: 5, manualLogReduction: 78, avgResponseTimeMin: 3.2, insuranceNote: 'Automated monitoring with 5 sensors; 1 offline sensor affecting coverage' },
 ];
 
 // ── IoT Sparkline Data (4-hour mini charts per sensor) ───────────────────────
@@ -2328,7 +2328,7 @@ export const connectedIntegrations: ConnectedIntegration[] = [
   { id: 'ci-3', platform: 'toast', platformDisplayName: 'Toast', status: 'connected', authType: 'oauth2', platformAccountId: 'toast-guid-a1b2c3', platformAccountName: 'EvidLY Demo', scopes: ['employees:read', 'locations:read', 'webhooks'], syncConfig: { entities: ['employees', 'locations'], direction: 'inbound', frequencyMin: 360 }, lastSyncAt: '2026-02-10T14:55:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T20:55:00Z', connectedBy: 'Maria Rodriguez', connectedAt: '2026-01-10T14:00:00Z', disconnectedAt: null, employeesSynced: 52, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-4', platform: 'adp', platformDisplayName: 'ADP Workforce Now', status: 'connected', authType: 'certificate', platformAccountId: 'adp-org-7812', platformAccountName: 'EvidLY Foods', scopes: ['workers:read', 'events:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-10T03:00:00Z', lastSyncStatus: 'partial', lastError: '2 employees missing location assignment in ADP', errorCount: 1, nextSyncAt: '2026-02-11T03:00:00Z', connectedBy: 'Maria Chen', connectedAt: '2026-01-20T11:00:00Z', disconnectedAt: null, employeesSynced: 45, locationsSynced: 3, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-5', platform: 'google', platformDisplayName: 'Google Workspace', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: 'evidly-demo@evidly.com', scopes: ['drive.file', 'calendar.events', 'gmail.send'], syncConfig: { entities: ['documents'], direction: 'outbound', frequencyMin: 60 }, lastSyncAt: '2026-02-10T14:58:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '2026-02-10T15:58:00Z', connectedBy: 'Maria Chen', connectedAt: '2025-10-05T08:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 38 },
-  { id: 'ci-6', platform: 'toast', platformDisplayName: 'Toast', status: 'error', authType: 'oauth2', platformAccountId: 'toast-guid-d4e5f6', platformAccountName: 'Airport Location', scopes: ['employees:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', lastError: 'OAuth token refresh failed — re-authorize required', errorCount: 3, nextSyncAt: '2026-02-10T16:00:00Z', connectedBy: 'Sarah Lee', connectedAt: '2026-02-01T16:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
+  { id: 'ci-6', platform: 'toast', platformDisplayName: 'Toast', status: 'error', authType: 'oauth2', platformAccountId: 'toast-guid-d4e5f6', platformAccountName: 'Location 2', scopes: ['employees:read'], syncConfig: { entities: ['employees'], direction: 'inbound', frequencyMin: 1440 }, lastSyncAt: '2026-02-09T14:00:00Z', lastSyncStatus: 'failed', lastError: 'OAuth token refresh failed — re-authorize required', errorCount: 3, nextSyncAt: '2026-02-10T16:00:00Z', connectedBy: 'Sarah Lee', connectedAt: '2026-02-01T16:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
   { id: 'ci-7', platform: 'slack', platformDisplayName: 'Slack', status: 'connected', authType: 'oauth2', platformAccountId: null, platformAccountName: '#kitchen-compliance', scopes: ['incoming-webhook', 'chat:write'], syncConfig: { entities: ['notifications'], direction: 'outbound', frequencyMin: 0 }, lastSyncAt: '2026-02-10T13:22:00Z', lastSyncStatus: 'success', lastError: null, errorCount: 0, nextSyncAt: '', connectedBy: 'Maria Chen', connectedAt: '2026-01-12T10:00:00Z', disconnectedAt: null, employeesSynced: 0, locationsSynced: 0, vendorsSynced: 0, documentsSynced: 0 },
 ];
 
@@ -2515,24 +2515,24 @@ export interface TrainingEnrollment {
 }
 
 export const trainingEnrollments: TrainingEnrollment[] = [
-  // Food Handler — Downtown
-  { id: 'te-01', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-02T09:00:00Z', completedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 88 },
-  { id: 'te-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-03T10:00:00Z', completedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 82 },
-  { id: 'te-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', courseId: 'tc-05', courseTitle: 'Tarjeta de Manipulador de Alimentos de California', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-20T00:00:00Z', startedAt: '2026-01-22T08:00:00Z', completedAt: null, expiresAt: '2026-02-20T00:00:00Z', progressPercent: 62, currentModuleId: 'tm-05', currentLessonId: null, scorePercent: null },
-  { id: 'te-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'not_started', enrolledAt: '2026-02-05T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-03-07T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
-  // CFPM Prep — Downtown manager
-  { id: 'te-05', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-02', courseTitle: 'ServSafe Manager Exam Prep', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'manager', enrollmentReason: 'manager_assigned', status: 'in_progress', enrolledAt: '2026-01-05T00:00:00Z', startedAt: '2026-01-08T09:00:00Z', completedAt: null, expiresAt: null, progressPercent: 45, currentModuleId: 'tm-cfpm-05', currentLessonId: null, scorePercent: null },
-  // Facility Safety — Airport
-  { id: 'te-06', employeeId: 'emp-05', employeeName: 'Sarah Lee', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'completed', enrolledAt: '2025-12-01T00:00:00Z', startedAt: '2025-12-03T10:00:00Z', completedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 92 },
-  { id: 'te-07', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-02-01T00:00:00Z', startedAt: '2026-02-03T08:00:00Z', completedAt: null, expiresAt: '2026-03-03T00:00:00Z', progressPercent: 38, currentModuleId: 'tm-11', currentLessonId: null, scorePercent: null },
-  // Compliance Ops — University
-  { id: 'te-08', employeeId: 'emp-07', employeeName: 'Alex Johnson', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'University Campus', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-15T00:00:00Z', startedAt: '2025-10-15T14:00:00Z', completedAt: '2025-10-16T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 95 },
+  // Food Handler — Location 1
+  { id: 'te-01', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-02T09:00:00Z', completedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 88 },
+  { id: 'te-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-09-01T00:00:00Z', startedAt: '2025-09-03T10:00:00Z', completedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 82 },
+  { id: 'te-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', courseId: 'tc-05', courseTitle: 'Tarjeta de Manipulador de Alimentos de California', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-20T00:00:00Z', startedAt: '2026-01-22T08:00:00Z', completedAt: null, expiresAt: '2026-02-20T00:00:00Z', progressPercent: 62, currentModuleId: 'tm-05', currentLessonId: null, scorePercent: null },
+  { id: 'te-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'not_started', enrolledAt: '2026-02-05T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-03-07T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
+  // CFPM Prep — Location 1 manager
+  { id: 'te-05', employeeId: 'emp-01', employeeName: 'Maria Chen', courseId: 'tc-02', courseTitle: 'ServSafe Manager Exam Prep', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'manager', enrollmentReason: 'manager_assigned', status: 'in_progress', enrolledAt: '2026-01-05T00:00:00Z', startedAt: '2026-01-08T09:00:00Z', completedAt: null, expiresAt: null, progressPercent: 45, currentModuleId: 'tm-cfpm-05', currentLessonId: null, scorePercent: null },
+  // Facility Safety — Location 2
+  { id: 'te-06', employeeId: 'emp-05', employeeName: 'Sarah Lee', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'completed', enrolledAt: '2025-12-01T00:00:00Z', startedAt: '2025-12-03T10:00:00Z', completedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 92 },
+  { id: 'te-07', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-02-01T00:00:00Z', startedAt: '2026-02-03T08:00:00Z', completedAt: null, expiresAt: '2026-03-03T00:00:00Z', progressPercent: 38, currentModuleId: 'tm-11', currentLessonId: null, scorePercent: null },
+  // Compliance Ops — Location 3
+  { id: 'te-08', employeeId: 'emp-07', employeeName: 'Alex Johnson', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'Location 3', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-15T00:00:00Z', startedAt: '2025-10-15T14:00:00Z', completedAt: '2025-10-16T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 95 },
   // New hires needing training
-  { id: 'te-09', employeeId: 'emp-08', employeeName: 'Priya Patel', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-university', locationName: 'University Campus', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-28T00:00:00Z', startedAt: '2026-01-30T09:00:00Z', completedAt: null, expiresAt: '2026-02-28T00:00:00Z', progressPercent: 78, currentModuleId: 'tm-07', currentLessonId: null, scorePercent: null },
-  { id: 'te-10', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'not_started', enrolledAt: '2026-02-08T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-04-15T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
+  { id: 'te-09', employeeId: 'emp-08', employeeName: 'Priya Patel', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-university', locationName: 'Location 3', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'in_progress', enrolledAt: '2026-01-28T00:00:00Z', startedAt: '2026-01-30T09:00:00Z', completedAt: null, expiresAt: '2026-02-28T00:00:00Z', progressPercent: 78, currentModuleId: 'tm-07', currentLessonId: null, scorePercent: null },
+  { id: 'te-10', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'expiring_cert', status: 'not_started', enrolledAt: '2026-02-08T00:00:00Z', startedAt: null, completedAt: null, expiresAt: '2026-04-15T00:00:00Z', progressPercent: 0, currentModuleId: null, currentLessonId: null, scorePercent: null },
   // Custom training
-  { id: 'te-11', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', enrolledBy: 'manager', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2026-02-05T00:00:00Z', startedAt: '2026-02-05T09:00:00Z', completedAt: '2026-02-05T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 90 },
-  { id: 'te-12', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-01T00:00:00Z', startedAt: '2025-10-02T09:00:00Z', completedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 76 },
+  { id: 'te-11', employeeId: 'emp-04', employeeName: 'Tyler Brooks', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Location 1', enrolledBy: 'manager', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2026-02-05T00:00:00Z', startedAt: '2026-02-05T09:00:00Z', completedAt: '2026-02-05T10:00:00Z', expiresAt: null, progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 90 },
+  { id: 'te-12', employeeId: 'emp-06', employeeName: 'David Park', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Location 2', enrolledBy: 'system', enrollmentReason: 'new_hire', status: 'completed', enrolledAt: '2025-10-01T00:00:00Z', startedAt: '2025-10-02T09:00:00Z', completedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', progressPercent: 100, currentModuleId: null, currentLessonId: null, scorePercent: 76 },
 ];
 
 export interface TrainingCertificate {
@@ -2552,12 +2552,12 @@ export interface TrainingCertificate {
 }
 
 export const trainingCertificates: TrainingCertificate[] = [
-  { id: 'tcert-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00142', issuedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', scorePercent: 88 },
-  { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
-  { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Airport Terminal', certificateType: 'facility_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
-  { id: 'tcert-04', employeeId: 'emp-07', employeeName: 'Alex Johnson', enrollmentId: 'te-08', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'University Campus', certificateType: 'custom', certificateNumber: 'EVD-CO-2025-00201', issuedAt: '2025-10-16T10:00:00Z', expiresAt: null, scorePercent: 95 },
-  { id: 'tcert-05', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-11', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', certificateType: 'custom', certificateNumber: 'EVD-CU-2026-00015', issuedAt: '2026-02-05T10:00:00Z', expiresAt: null, scorePercent: 90 },
-  { id: 'tcert-06', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Airport Terminal', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00285', issuedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', scorePercent: 76 },
+  { id: 'tcert-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00142', issuedAt: '2025-09-05T14:30:00Z', expiresAt: '2028-09-05T00:00:00Z', scorePercent: 88 },
+  { id: 'tcert-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00158', issuedAt: '2025-09-06T11:00:00Z', expiresAt: '2028-09-06T00:00:00Z', scorePercent: 82 },
+  { id: 'tcert-03', employeeId: 'emp-05', employeeName: 'Sarah Lee', enrollmentId: 'te-06', courseId: 'tc-03', courseTitle: 'Kitchen Facility Safety & Equipment', locationId: 'loc-airport', locationName: 'Location 2', certificateType: 'facility_safety', certificateNumber: 'EVD-FS-2025-00089', issuedAt: '2025-12-05T15:00:00Z', expiresAt: '2026-12-05T00:00:00Z', scorePercent: 92 },
+  { id: 'tcert-04', employeeId: 'emp-07', employeeName: 'Alex Johnson', enrollmentId: 'te-08', courseId: 'tc-04', courseTitle: 'EvidLY Compliance Operations', locationId: 'loc-university', locationName: 'Location 3', certificateType: 'custom', certificateNumber: 'EVD-CO-2025-00201', issuedAt: '2025-10-16T10:00:00Z', expiresAt: null, scorePercent: 95 },
+  { id: 'tcert-05', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-11', courseId: 'tc-06', courseTitle: 'New Hire Orientation — EvidLY Demo', locationId: 'loc-downtown', locationName: 'Location 1', certificateType: 'custom', certificateNumber: 'EVD-CU-2026-00015', issuedAt: '2026-02-05T10:00:00Z', expiresAt: null, scorePercent: 90 },
+  { id: 'tcert-06', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', courseId: 'tc-01', courseTitle: 'California Food Handler Card', locationId: 'loc-airport', locationName: 'Location 2', certificateType: 'food_handler', certificateNumber: 'EVD-FH-2025-00285', issuedAt: '2025-10-05T16:00:00Z', expiresAt: '2028-10-05T00:00:00Z', scorePercent: 76 },
 ];
 
 export interface TrainingSB476Entry {
@@ -2579,12 +2579,12 @@ export interface TrainingSB476Entry {
 }
 
 export const trainingSB476Log: TrainingSB476Entry[] = [
-  { id: 'sb-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.5, hourlyRateCents: 2200, totalCompensationCents: 5500, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-15', trainingCompletedDate: '2025-09-05' },
-  { id: 'sb-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 2.8, hourlyRateCents: 1800, totalCompensationCents: 5040, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-20', trainingCompletedDate: '2025-09-06' },
-  { id: 'sb-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', enrollmentId: 'te-03', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1900, totalCompensationCents: 0, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: false, hireDate: '2026-01-10', trainingCompletedDate: null },
-  { id: 'sb-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-04', locationId: 'loc-downtown', locationName: 'Downtown Kitchen', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1700, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-02-03', trainingCompletedDate: null },
-  { id: 'sb-05', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', locationId: 'loc-airport', locationName: 'Airport Terminal', trainingCostCents: 1500, compensableHours: 2.6, hourlyRateCents: 2000, totalCompensationCents: 5200, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-09-15', trainingCompletedDate: '2025-10-05' },
-  { id: 'sb-06', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', enrollmentId: 'te-10', locationId: 'loc-airport', locationName: 'Airport Terminal', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1800, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-01-15', trainingCompletedDate: null },
+  { id: 'sb-01', employeeId: 'emp-01', employeeName: 'Maria Chen', enrollmentId: 'te-01', locationId: 'loc-downtown', locationName: 'Location 1', trainingCostCents: 1500, compensableHours: 2.5, hourlyRateCents: 2200, totalCompensationCents: 5500, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-15', trainingCompletedDate: '2025-09-05' },
+  { id: 'sb-02', employeeId: 'emp-02', employeeName: 'Maria Rodriguez', enrollmentId: 'te-02', locationId: 'loc-downtown', locationName: 'Location 1', trainingCostCents: 1500, compensableHours: 2.8, hourlyRateCents: 1800, totalCompensationCents: 5040, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-08-20', trainingCompletedDate: '2025-09-06' },
+  { id: 'sb-03', employeeId: 'emp-03', employeeName: 'Sofia Reyes', enrollmentId: 'te-03', locationId: 'loc-downtown', locationName: 'Location 1', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1900, totalCompensationCents: 0, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: false, hireDate: '2026-01-10', trainingCompletedDate: null },
+  { id: 'sb-04', employeeId: 'emp-04', employeeName: 'Tyler Brooks', enrollmentId: 'te-04', locationId: 'loc-downtown', locationName: 'Location 1', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1700, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-02-03', trainingCompletedDate: null },
+  { id: 'sb-05', employeeId: 'emp-06', employeeName: 'David Park', enrollmentId: 'te-12', locationId: 'loc-airport', locationName: 'Location 2', trainingCostCents: 1500, compensableHours: 2.6, hourlyRateCents: 2000, totalCompensationCents: 5200, trainingDuringWorkHours: true, employeeRelievedOfDuties: true, completedWithin30Days: true, hireDate: '2025-09-15', trainingCompletedDate: '2025-10-05' },
+  { id: 'sb-06', employeeId: 'emp-09', employeeName: 'Carlos Mendoza', enrollmentId: 'te-10', locationId: 'loc-airport', locationName: 'Location 2', trainingCostCents: 1500, compensableHours: 0, hourlyRateCents: 1800, totalCompensationCents: 0, trainingDuringWorkHours: false, employeeRelievedOfDuties: false, completedWithin30Days: false, hireDate: '2026-01-15', trainingCompletedDate: null },
 ];
 
 export interface TrainingQuizAttempt {
@@ -3141,7 +3141,7 @@ const fortyFiveMinAgo = new Date(Date.now() - 45 * 60000).toISOString();
 export const activeIncidentPlaybooks: ActiveIncidentPlaybook[] = [
   {
     id: 'aip-001', templateId: 'pb-power-outage', templateTitle: 'Power Outage Response',
-    severity: 'critical', status: 'active', location: 'Airport Terminal',
+    severity: 'critical', status: 'active', location: 'Location 2',
     initiatedBy: 'Sarah Lee', initiatedAt: twoHoursAgo, completedAt: null,
     currentStepNumber: 5, totalSteps: 9,
     stepLogs: [
@@ -3160,7 +3160,7 @@ export const activeIncidentPlaybooks: ActiveIncidentPlaybook[] = [
   },
   {
     id: 'aip-002', templateId: 'pb-failed-inspection', templateTitle: 'Failed Health Inspection Response',
-    severity: 'high', status: 'completed', location: 'University Campus',
+    severity: 'high', status: 'completed', location: 'Location 3',
     initiatedBy: 'Alex Johnson', initiatedAt: threeDaysAgo, completedAt: oneDayAgo,
     currentStepNumber: 7, totalSteps: 7,
     stepLogs: [
@@ -3177,7 +3177,7 @@ export const activeIncidentPlaybooks: ActiveIncidentPlaybook[] = [
   },
   {
     id: 'aip-003', templateId: 'pb-employee-injury', templateTitle: 'Employee Injury Response',
-    severity: 'high', status: 'active', location: 'Downtown Kitchen',
+    severity: 'high', status: 'active', location: 'Location 1',
     initiatedBy: 'Maria Garcia', initiatedAt: fortyFiveMinAgo, completedAt: null,
     currentStepNumber: 3, totalSteps: 7,
     stepLogs: [
@@ -3300,7 +3300,7 @@ export const demoCustomPlaybooks: CustomPlaybookDraft[] = [
     createdBy: 'Maria Rodriguez',
     createdAt: '2026-01-15T10:00:00Z',
     status: 'published',
-    assignedLocations: ['Downtown Kitchen', 'Airport Terminal', 'University Campus'],
+    assignedLocations: ['Location 1', 'Location 2', 'Location 3'],
     reviewSchedule: 'quarterly',
     steps: [
       { id: 'ac-1', stepNumber: 1, title: 'Assess Customer Condition', instructions: 'Determine severity: Is the customer having difficulty breathing, swelling, or hives? Call 911 immediately if anaphylaxis suspected. Retrieve the EpiPen from the first aid station if available.', requirePhoto: false, requireTemp: false, requireSignature: false, requireText: true, checklistItems: ['Assess customer symptoms', 'Call 911 if severe', 'Locate EpiPen kit'], timeLimitMinutes: 5, escalationContact: 'General Manager', escalationMinutes: 3 },
@@ -3320,7 +3320,7 @@ export const demoCustomPlaybooks: CustomPlaybookDraft[] = [
     createdBy: 'Sarah Chen',
     createdAt: '2026-01-20T14:30:00Z',
     status: 'published',
-    assignedLocations: ['Downtown Kitchen', 'Airport Terminal'],
+    assignedLocations: ['Location 1', 'Location 2'],
     reviewSchedule: 'annually',
     steps: [
       { id: 'dr-1', stepNumber: 1, title: 'Document the Failure', instructions: 'Record the vendor name, driver name, delivery invoice number, and the specific reason for rejection (temperature, damage, pest evidence, wrong items, expired dates).', requirePhoto: true, requireTemp: true, requireSignature: false, requireText: true, checklistItems: ['Record vendor/driver info', 'Record invoice number', 'Document rejection reason'], timeLimitMinutes: 10, escalationContact: '', escalationMinutes: null },
@@ -3418,9 +3418,9 @@ export const demoPlaybookAnalytics: PlaybookAnalyticsData = {
     { stepTitle: 'Post-Incident Report', completionRate: 78, avgDurationMin: 30 },
   ],
   locationComparison: [
-    { location: 'Downtown Kitchen', totalIncidents: 5, avgResponseMin: 42, complianceRate: 96, foodLossDollars: 850 },
-    { location: 'Airport Terminal', totalIncidents: 8, avgResponseMin: 55, complianceRate: 88, foodLossDollars: 2340 },
-    { location: 'University Campus', totalIncidents: 3, avgResponseMin: 38, complianceRate: 94, foodLossDollars: 420 },
+    { location: 'Location 1', totalIncidents: 5, avgResponseMin: 42, complianceRate: 96, foodLossDollars: 850 },
+    { location: 'Location 2', totalIncidents: 8, avgResponseMin: 55, complianceRate: 88, foodLossDollars: 2340 },
+    { location: 'Location 3', totalIncidents: 3, avgResponseMin: 38, complianceRate: 94, foodLossDollars: 420 },
   ],
 };
 
@@ -3483,7 +3483,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-001',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     insightType: 'alert',
     severity: 'critical',
     title: 'Walk-in Cooler #2 — repeated temperature excursions',
@@ -3499,7 +3499,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-002',
     locationId: '3',
-    locationName: 'University Dining',
+    locationName: 'Location 3',
     insightType: 'alert',
     severity: 'critical',
     title: 'Health permit expired — renewal overdue',
@@ -3516,7 +3516,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-003',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     insightType: 'prediction',
     severity: 'warning',
     title: 'Prep Line Fridge — temperature trending up',
@@ -3536,7 +3536,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-004',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     insightType: 'alert',
     severity: 'warning',
     title: 'Hood cleaning overdue by 5 days',
@@ -3556,7 +3556,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-005',
     locationId: '3',
-    locationName: 'University Dining',
+    locationName: 'Location 3',
     insightType: 'pattern',
     severity: 'warning',
     title: 'Checklist completion gaps detected',
@@ -3572,7 +3572,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-006',
     locationId: '3',
-    locationName: 'University Dining',
+    locationName: 'Location 3',
     insightType: 'pattern',
     severity: 'warning',
     title: '"Hand sink soap stocked" fails frequently',
@@ -3587,7 +3587,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-007',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     insightType: 'recommendation',
     severity: 'info',
     title: 'Fire suppression system warranty expires in 45 days',
@@ -3600,11 +3600,11 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-008',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     insightType: 'summary',
     severity: 'info',
     title: 'Weekly Compliance Summary — Feb 3–9',
-    message: 'Overall Score: 91% (+3% vs last week). Highlights: 168 temperature readings logged, all in range. 7/7 daily checklists completed. 0 incidents this week. Hood cleaning completed on schedule. Fire suppression inspection coming up in 15 days. Great week — your Downtown Kitchen is in the top 5% of similar operations.',
+    message: 'Overall Score: 91% (+3% vs last week). Highlights: 168 temperature readings logged, all in range. 7/7 daily checklists completed. 0 incidents this week. Hood cleaning completed on schedule. Fire suppression inspection coming up in 15 days. Great week — your Location 1 is in the top 5% of similar operations.',
     sourceModule: 'compliance',
     actionType: 'weekly_summary',
     actionLabel: 'View Full Report',
@@ -3616,7 +3616,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-009',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     insightType: 'summary',
     severity: 'info',
     title: 'Weekly Compliance Summary — Feb 3–9',
@@ -3632,7 +3632,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-010',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     insightType: 'recommendation',
     severity: 'info',
     title: 'Seasonal tip: Spring pest prevention',
@@ -3647,7 +3647,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-011',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     insightType: 'alert',
     severity: 'warning',
     title: 'Regulatory Update: NFPA 96 (2024) Table 12.4 — Exhaust fan inspection clarified',
@@ -3663,7 +3663,7 @@ export const copilotInsights: CopilotInsight[] = [
   {
     id: 'ci-012',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     insightType: 'recommendation',
     severity: 'info',
     title: 'Regulatory Update: FDA cold holding guidance updated',
@@ -3697,7 +3697,7 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     equipmentId: 'eq-1',
     qrCode: 'EVIDLY-EQ-WK1COOL3R',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     equipmentName: 'Walk-in Cooler',
     labelPrintedAt: daysAgo(14),
     createdAt: daysAgo(30),
@@ -3707,7 +3707,7 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     equipmentId: 'eq-2',
     qrCode: 'EVIDLY-EQ-WK1FR33Z',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     equipmentName: 'Walk-in Freezer',
     labelPrintedAt: daysAgo(14),
     createdAt: daysAgo(30),
@@ -3717,7 +3717,7 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     equipmentId: 'eq-3',
     qrCode: 'EVIDLY-EQ-H0TH0LD1',
     locationId: '1',
-    locationName: 'Downtown Kitchen',
+    locationName: 'Location 1',
     equipmentName: 'Hot Holding Unit',
     labelPrintedAt: null,
     createdAt: daysAgo(30),
@@ -3727,7 +3727,7 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     equipmentId: 'eq-4',
     qrCode: 'EVIDLY-EQ-C0LDH0L2',
     locationId: '2',
-    locationName: 'Airport Cafe',
+    locationName: 'Location 2',
     equipmentName: 'Cold Holding Unit',
     labelPrintedAt: daysAgo(7),
     createdAt: daysAgo(21),
@@ -3737,7 +3737,7 @@ export const equipmentQRCodes: EquipmentQRCode[] = [
     equipmentId: 'eq-5',
     qrCode: 'EVIDLY-EQ-PR3PFR1D',
     locationId: '3',
-    locationName: 'University Hub',
+    locationName: 'Location 3',
     equipmentName: 'Prep Station Fridge',
     labelPrintedAt: null,
     createdAt: daysAgo(21),
@@ -3769,18 +3769,18 @@ export interface TemperatureLog {
 }
 
 export const temperatureLogs: TemperatureLog[] = [
-  { id: 'tl-1', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 38.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Downtown Kitchen' },
-  { id: 'tl-2', facilityId: '1', equipmentId: 'eq-2', inputMethod: 'iot_sensor', temperature: -4.1, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-2', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Downtown Kitchen' },
-  { id: 'tl-3', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 142, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(1), shift: 'morning', logType: 'hot_holding', loggedBy: 'user-km-1', sensorId: null, qrCodeId: null, notes: 'Soup holding steady', correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Downtown Kitchen' },
-  { id: 'tl-4', facilityId: '1', equipmentId: 'eq-4', inputMethod: 'qr_scan', temperature: 39.5, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(1.5), shift: 'morning', logType: 'cold_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: 'qr-4', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Cold Holding Unit', locationName: 'Downtown Kitchen' },
-  { id: 'tl-5', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'manual', temperature: 44.8, requiredMin: null, requiredMax: 41, tempPass: false, readingTime: hoursAgo(2), shift: 'morning', logType: 'equipment_check', loggedBy: 'user-km-2', sensorId: null, qrCodeId: null, notes: 'Door was left open', correctiveAction: 'Closed door, rechecking in 30 min', haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Airport Cafe' },
-  { id: 'tl-6', facilityId: '2', equipmentId: 'eq-a2', inputMethod: 'iot_sensor', temperature: -2.3, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.25), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-ap-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Airport Cafe' },
-  { id: 'tl-7', facilityId: '3', equipmentId: 'eq-u1', inputMethod: 'qr_scan', temperature: 40.1, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(3), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-3', sensorId: null, qrCodeId: 'qr-5', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Reach-in Cooler', locationName: 'University Hub' },
-  { id: 'tl-8', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 131, requiredMin: 135, requiredMax: null, tempPass: false, readingTime: hoursAgo(4), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Reheated to 165°F', correctiveAction: 'Reheated to 165°F and returned to holding', haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Downtown Kitchen' },
-  { id: 'tl-9', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 39.0, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(4.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Downtown Kitchen' },
-  { id: 'tl-10', facilityId: '3', equipmentId: 'eq-u2', inputMethod: 'manual', temperature: 138, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(5), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-km-3', sensorId: null, qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'University Hub' },
-  { id: 'tl-11', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'qr_scan', temperature: 40.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(5.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-2', sensorId: null, qrCodeId: 'qr-4', notes: 'Recheck after door fix', correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Airport Cafe' },
-  { id: 'tl-12', facilityId: '1', equipmentId: 'eq-5', inputMethod: 'manual', temperature: 37.4, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(6), shift: 'evening', logType: 'pre_shift', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Evening shift check', correctiveAction: null, haccpCcpNumber: null, equipmentName: 'Prep Station Fridge', locationName: 'Downtown Kitchen' },
+  { id: 'tl-1', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 38.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
+  { id: 'tl-2', facilityId: '1', equipmentId: 'eq-2', inputMethod: 'iot_sensor', temperature: -4.1, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.5), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-2', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Location 1' },
+  { id: 'tl-3', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 142, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(1), shift: 'morning', logType: 'hot_holding', loggedBy: 'user-km-1', sensorId: null, qrCodeId: null, notes: 'Soup holding steady', correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-4', facilityId: '1', equipmentId: 'eq-4', inputMethod: 'qr_scan', temperature: 39.5, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(1.5), shift: 'morning', logType: 'cold_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: 'qr-4', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Cold Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-5', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'manual', temperature: 44.8, requiredMin: null, requiredMax: 41, tempPass: false, readingTime: hoursAgo(2), shift: 'morning', logType: 'equipment_check', loggedBy: 'user-km-2', sensorId: null, qrCodeId: null, notes: 'Door was left open', correctiveAction: 'Closed door, rechecking in 30 min', haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
+  { id: 'tl-6', facilityId: '2', equipmentId: 'eq-a2', inputMethod: 'iot_sensor', temperature: -2.3, requiredMin: null, requiredMax: 0, tempPass: true, readingTime: hoursAgo(0.25), shift: 'morning', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-ap-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Freezer', locationName: 'Location 2' },
+  { id: 'tl-7', facilityId: '3', equipmentId: 'eq-u1', inputMethod: 'qr_scan', temperature: 40.1, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(3), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-3', sensorId: null, qrCodeId: 'qr-5', notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Reach-in Cooler', locationName: 'Location 3' },
+  { id: 'tl-8', facilityId: '1', equipmentId: 'eq-3', inputMethod: 'manual', temperature: 131, requiredMin: 135, requiredMax: null, tempPass: false, readingTime: hoursAgo(4), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Reheated to 165°F', correctiveAction: 'Reheated to 165°F and returned to holding', haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 1' },
+  { id: 'tl-9', facilityId: '1', equipmentId: 'eq-1', inputMethod: 'iot_sensor', temperature: 39.0, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(4.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: null, sensorId: 'sensor-dt-1', qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 1' },
+  { id: 'tl-10', facilityId: '3', equipmentId: 'eq-u2', inputMethod: 'manual', temperature: 138, requiredMin: 135, requiredMax: null, tempPass: true, readingTime: hoursAgo(5), shift: 'afternoon', logType: 'hot_holding', loggedBy: 'user-km-3', sensorId: null, qrCodeId: null, notes: null, correctiveAction: null, haccpCcpNumber: 'CCP-02', equipmentName: 'Hot Holding Unit', locationName: 'Location 3' },
+  { id: 'tl-11', facilityId: '2', equipmentId: 'eq-a1', inputMethod: 'qr_scan', temperature: 40.2, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(5.5), shift: 'afternoon', logType: 'equipment_check', loggedBy: 'user-ks-2', sensorId: null, qrCodeId: 'qr-4', notes: 'Recheck after door fix', correctiveAction: null, haccpCcpNumber: 'CCP-01', equipmentName: 'Walk-in Cooler', locationName: 'Location 2' },
+  { id: 'tl-12', facilityId: '1', equipmentId: 'eq-5', inputMethod: 'manual', temperature: 37.4, requiredMin: null, requiredMax: 41, tempPass: true, readingTime: hoursAgo(6), shift: 'evening', logType: 'pre_shift', loggedBy: 'user-ks-1', sensorId: null, qrCodeId: null, notes: 'Evening shift check', correctiveAction: null, haccpCcpNumber: null, equipmentName: 'Prep Station Fridge', locationName: 'Location 1' },
 ];
 
 // ── Cooling Logs (FS-5) ─────────────────────────────────────
@@ -3820,7 +3820,7 @@ export const coolingLogs: CoolingLogEntry[] = [
     targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-1),
     finalActualTemp: 39, finalActualTime: hoursAgo(0.5), finalPass: true,
     overallPass: true, inputMethod: 'manual', correctiveAction: null,
-    loggedBy: 'user-km-1', sensorId: null, notes: 'Ice bath cooling', locationName: 'Downtown Kitchen',
+    loggedBy: 'user-km-1', sensorId: null, notes: 'Ice bath cooling', locationName: 'Location 1',
   },
   {
     id: 'cool-2', facilityId: '1', foodItem: 'Beef Chili', batchId: 'B-0217-B',
@@ -3830,7 +3830,7 @@ export const coolingLogs: CoolingLogEntry[] = [
     targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-3),
     finalActualTemp: null, finalActualTime: null, finalPass: null,
     overallPass: null, inputMethod: 'iot_sensor', correctiveAction: 'continued_cooling',
-    loggedBy: null, sensorId: 'sensor-dt-3', notes: 'Stage 1 missed by 2°F, split into shallow pans', locationName: 'Downtown Kitchen',
+    loggedBy: null, sensorId: 'sensor-dt-3', notes: 'Stage 1 missed by 2°F, split into shallow pans', locationName: 'Location 1',
   },
   {
     id: 'cool-3', facilityId: '2', foodItem: 'Rice Pilaf', batchId: 'B-0217-C',
@@ -3840,7 +3840,7 @@ export const coolingLogs: CoolingLogEntry[] = [
     targetFinalTemp: 41, targetFinalDeadline: hoursAgo(-4),
     finalActualTemp: null, finalActualTime: null, finalPass: null,
     overallPass: null, inputMethod: 'manual', correctiveAction: null,
-    loggedBy: 'user-km-2', sensorId: null, notes: 'Active cooling in progress', locationName: 'Airport Cafe',
+    loggedBy: 'user-km-2', sensorId: null, notes: 'Active cooling in progress', locationName: 'Location 2',
   },
 ];
 
@@ -4019,7 +4019,7 @@ export const demoIntelligence = {
   complianceMatrix: [
     {
       locationId: 'downtown',
-      locationName: 'Downtown Kitchen',
+      locationName: 'Location 1',
       jurisdiction: 'Fresno County DPH',
       foodSafetyStatus: 'Compliant',
       facilitySafetyVerdict: 'Pass',
@@ -4038,7 +4038,7 @@ export const demoIntelligence = {
     },
     {
       locationId: 'airport',
-      locationName: 'Airport Cafe',
+      locationName: 'Location 2',
       jurisdiction: 'Merced County DPH',
       foodSafetyStatus: 'Satisfactory',
       facilitySafetyVerdict: 'Fail',
@@ -4060,7 +4060,7 @@ export const demoIntelligence = {
     },
     {
       locationId: 'university',
-      locationName: 'University Dining',
+      locationName: 'Location 3',
       jurisdiction: 'Stanislaus County DER',
       foodSafetyStatus: 'Action Required',
       facilitySafetyVerdict: 'Fail',
@@ -4122,28 +4122,28 @@ export const demoIntelligence = {
     {
       id: 'threat_1',
       severity: 'critical' as const,
-      title: 'University Dining reinspection deadline',
+      title: 'Location 3 reinspection deadline',
       description: 'Action Required status with 6 open items. Reinspection window closes March 1.',
       daysToImpact: 9,
-      location: 'University Dining',
+      location: 'Location 3',
       regulatoryBasis: 'Stanislaus County DPH reinspection protocol',
     },
     {
       id: 'threat_2',
       severity: 'high' as const,
-      title: 'Airport Cafe Facility Safety Fail \u2014 hood cleaning certificate expires in 18 days',
+      title: 'Location 2 Facility Safety Fail \u2014 hood cleaning certificate expires in 18 days',
       description: 'Certificate expiration will compound existing Facility Safety Fail status.',
       daysToImpact: 18,
-      location: 'Airport Cafe',
+      location: 'Location 2',
       regulatoryBasis: 'NFPA 96 (2024) Table 12.4',
     },
     {
       id: 'threat_3',
       severity: 'high' as const,
-      title: 'Staff turnover at 51% \u2014 University Dining compliance decline accelerating',
+      title: 'Staff turnover at 51% \u2014 Location 3 compliance decline accelerating',
       description: 'Turnover rate 3\u00D7 org average. Checklist completion dropped 24 points in 60 days.',
       daysToImpact: 30,
-      location: 'University Dining',
+      location: 'Location 3',
       regulatoryBasis: 'Internal compliance trend analysis',
     },
   ],
@@ -4152,14 +4152,14 @@ export const demoIntelligence = {
     {
       title: 'CalCode Amendment — Cooling Requirements',
       effectiveDate: '2026-06-01',
-      affectedLocations: ['Downtown Kitchen', 'Airport Cafe', 'University Dining'],
+      affectedLocations: ['Location 1', 'Location 2', 'Location 3'],
       impact: 'medium' as const,
       description: 'Updated cooling time requirements under CalCode.',
     },
     {
       title: 'NFPA 96 Hood Cleaning Frequency Review',
       effectiveDate: '2026-09-01',
-      affectedLocations: ['Airport Cafe', 'University Dining'],
+      affectedLocations: ['Location 2', 'Location 3'],
       impact: 'high' as const,
       description: 'AHJ enforcement of Table 12.4 frequency schedules increasing in Central Valley.',
     },

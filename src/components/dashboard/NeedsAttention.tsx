@@ -159,7 +159,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View',
     actionRoute: '/temp-logs',
     locationId: 'airport',
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     daysUntilDue: 0,
   },
   {
@@ -171,7 +171,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'Schedule',
     actionRoute: '/vendors',
     locationId: 'airport',
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     daysUntilDue: 12,
   },
   {
@@ -183,7 +183,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View',
     actionRoute: '/checklists',
     locationId: 'downtown',
-    locationName: 'Downtown Kitchen', // demo
+    locationName: 'Location 1', // demo
     daysUntilDue: 0,
   },
   {
@@ -195,7 +195,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'View Docs',
     actionRoute: '/documents',
     locationId: 'airport',
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     daysUntilDue: 18,
   },
   {
@@ -207,7 +207,7 @@ export const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     actionLabel: 'Log Temp',
     actionRoute: '/temp-logs',
     locationId: 'downtown',
-    locationName: 'Downtown Kitchen', // demo
+    locationName: 'Location 1', // demo
     daysUntilDue: 0,
   },
 ];

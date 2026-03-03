@@ -85,10 +85,10 @@ interface EquipmentItem {
 // ── Constants ──────────────────────────────────────────────────────
 
 const NOW = new Date('2026-02-09');
-const LOCATIONS = [
-  { id: '1', name: 'Downtown Kitchen' }, // demo
-  { id: '2', name: 'Airport Cafe' }, // demo
-  { id: '3', name: 'University Dining' }, // demo
+const DEMO_LOCATIONS = [
+  { id: '1', name: 'Location 1' }, // demo
+  { id: '2', name: 'Location 2' }, // demo
+  { id: '3', name: 'Location 3' }, // demo
 ];
 
 const EQUIPMENT_TYPES = [
@@ -205,11 +205,11 @@ function getEquipmentPillar(item: EquipmentItem): 'facility_safety' | 'food_safe
 // ── Demo Data ──────────────────────────────────────────────────────
 
 const DEMO_EQUIPMENT: EquipmentItem[] = [
-  // ─── Downtown Kitchen ─── // demo
+  // ─── Location 1 ─── // demo
   {
     id: 'EQ-001', name: 'Walk-in Cooler #1', type: 'Walk-in Cooler', // demo
     make: 'True Manufacturing', model: 'TG2R-2S', serial: 'TM-2019-04821',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2019-01-15', purchasePrice: 9500,
     warrantyExpiry: '2024-01-15', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-800-878-3633 / warranty@truemfg.com',
@@ -235,7 +235,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-002', name: 'Walk-in Freezer', type: 'Walk-in Freezer',
     make: 'Kolpak', model: 'QS7-1010-FT', serial: 'KP-2021-11247',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2021-03-10', purchasePrice: 12500,
     warrantyExpiry: '2027-03-10', warrantyProvider: 'Kolpak', warrantyTerms: '6-year compressor, 3-year parts',
     warrantyContact: '1-800-965-5727 / support@kolpak.com',
@@ -258,7 +258,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-003', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-48', serial: 'CA-2018-30982',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2018-08-20', purchasePrice: 18000,
     warrantyExpiry: '2023-08-20', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     warrantyContact: '1-800-334-9256',
@@ -284,7 +284,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-004', name: 'Fire Suppression System', type: 'Fire Suppression System',
     make: 'Ansul', model: 'R-102', serial: 'AN-2020-78543',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2020-11-05', purchasePrice: 6500,
     warrantyExpiry: '2026-11-05', warrantyProvider: 'Ansul / Tyco', warrantyTerms: '6-year system warranty',
     condition: 'Good', nextMaintenanceDue: '2026-05-05', maintenanceInterval: 'Semi-Annual',
@@ -302,7 +302,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-005', name: 'Commercial Fryer #1', type: 'Commercial Fryer',
     make: 'Frymaster', model: 'PH155', serial: 'FM-2020-45210',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2020-06-12', purchasePrice: 4200,
     warrantyExpiry: '2025-06-12', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Good', nextMaintenanceDue: '2026-06-12', maintenanceInterval: 'Annual',
@@ -319,7 +319,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-006', name: 'Commercial Fryer #2', type: 'Commercial Fryer',
     make: 'Frymaster', model: 'PH155', serial: 'FM-2022-62187',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2022-01-18', purchasePrice: 4500,
     warrantyExpiry: '2027-01-18', warrantyProvider: 'Frymaster', warrantyTerms: '5-year parts, 1-year labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-07-18', maintenanceInterval: 'Annual',
@@ -335,7 +335,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-007', name: 'Commercial Dishwasher', type: 'Commercial Dishwasher',
     make: 'Hobart', model: 'AM15', serial: 'HB-2017-19843',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2017-09-01', purchasePrice: 12000,
     warrantyExpiry: '2022-09-01', warrantyProvider: 'Hobart', warrantyTerms: '5-year parts and labor',
     warrantyContact: '1-888-446-2278 / hobart.service@itw.com',
@@ -359,11 +359,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Full mechanical inspection', interval: 'Annual', lastDone: '2025-06-15', nextDue: '2026-06-15' },
     ],
   },
-  // ─── Airport Cafe ─── // demo
+  // ─── Location 2 ─── // demo
   {
     id: 'EQ-008', name: 'Walk-in Cooler', type: 'Walk-in Cooler',
     make: 'True Manufacturing', model: 'T-49', serial: 'TM-2022-58293',
-    locationId: '2', location: 'Airport Cafe', // demo
+    locationId: '2', location: 'Location 2', // demo
     installDate: '2022-02-14', purchasePrice: 8500,
     warrantyExpiry: '2027-02-14', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Excellent', nextMaintenanceDue: '2026-02-14', maintenanceInterval: 'Quarterly',
@@ -381,7 +381,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-009', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-36', serial: 'CA-2020-41567',
-    locationId: '2', location: 'Airport Cafe', // demo
+    locationId: '2', location: 'Location 2', // demo
     installDate: '2020-05-22', purchasePrice: 14000,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
@@ -403,7 +403,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-010', name: 'Ice Machine', type: 'Ice Machine',
     make: 'Manitowoc', model: 'IYT-0620A', serial: 'MW-2021-33901',
-    locationId: '2', location: 'Airport Cafe', // demo
+    locationId: '2', location: 'Location 2', // demo
     installDate: '2021-07-08', purchasePrice: 5200,
     warrantyExpiry: '2024-07-08', warrantyProvider: 'Manitowoc Ice', warrantyTerms: '3-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-01-08', maintenanceInterval: 'Quarterly',
@@ -423,11 +423,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Deep clean — full disassembly per manufacturer specs', interval: 'Semi-Annual', lastDone: '2025-07-08', nextDue: '2026-01-08' },
     ],
   },
-  // ─── University Dining ─── // demo
+  // ─── Location 3 ─── // demo
   {
     id: 'EQ-011', name: 'Walk-in Cooler', type: 'Walk-in Cooler',
     make: 'True Manufacturing', model: 'TG2R-2S', serial: 'TM-2018-28410',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2018-04-10', purchasePrice: 9500,
     warrantyExpiry: '2023-04-10', warrantyProvider: 'True Manufacturing', warrantyTerms: '5-year parts and labor',
     condition: 'Fair', nextMaintenanceDue: '2026-04-10', maintenanceInterval: 'Quarterly',
@@ -445,7 +445,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-012', name: 'Walk-in Freezer', type: 'Walk-in Freezer',
     make: 'Kolpak', model: 'QS7-810-FT', serial: 'KP-2019-22014',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2019-10-01', purchasePrice: 11000,
     warrantyExpiry: '2024-10-01', warrantyProvider: 'Kolpak', warrantyTerms: '5-year compressor, 3-year parts',
     condition: 'Good', nextMaintenanceDue: '2026-04-01', maintenanceInterval: 'Quarterly',
@@ -463,7 +463,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-013', name: 'Hood Ventilation System', type: 'Hood System',
     make: 'Captive Aire', model: 'CK-48', serial: 'CA-2017-18765',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2017-02-15', purchasePrice: 18000,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
@@ -481,7 +481,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-014', name: 'Commercial Oven #1', type: 'Commercial Oven',
     make: 'Vulcan', model: 'VC5ED', serial: 'VL-2020-50321',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2020-03-20', purchasePrice: 7800,
     warrantyExpiry: '2025-03-20', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     condition: 'Good', nextMaintenanceDue: '2026-03-20', maintenanceInterval: 'Annual',
@@ -497,7 +497,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-015', name: 'Commercial Oven #2', type: 'Commercial Oven',
     make: 'Vulcan', model: 'VC5GD', serial: 'VL-2021-61482',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2021-08-10', purchasePrice: 8200,
     warrantyExpiry: '2026-08-10', warrantyProvider: 'Vulcan', warrantyTerms: '5-year limited parts',
     warrantyContact: '1-800-814-2028 / vulcan.service@itw.com',
@@ -513,11 +513,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
       { task: 'Thermostat calibration & burner cleaning', interval: 'Annual', lastDone: '2025-08-10', nextDue: '2026-08-10' },
     ],
   },
-  // ─── Downtown Kitchen — Ice Machine ─── // demo
+  // ─── Location 1 — Ice Machine ─── // demo
   {
     id: 'EQ-016', name: 'Ice Machine', type: 'Ice Machine',
     make: 'Hoshizaki', model: 'KM-660MAJ', serial: 'HZ-2022-55123',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2022-03-15', purchasePrice: 7800,
     warrantyExpiry: '2025-03-15', warrantyProvider: 'Hoshizaki', warrantyTerms: '3-year parts and labor',
     condition: 'Good', nextMaintenanceDue: '2026-02-28', maintenanceInterval: 'Monthly',
@@ -541,7 +541,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-017', name: 'Upblast Exhaust Fan — Main Hood', type: 'Exhaust Fan',
     make: 'Captive Aire', model: 'DU33HFA', serial: 'CA-2021-44812',
-    locationId: '1', location: 'Downtown Kitchen', // demo
+    locationId: '1', location: 'Location 1', // demo
     installDate: '2021-03-15', purchasePrice: 3200,
     warrantyExpiry: '2026-03-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Good', nextMaintenanceDue: '2026-03-10', maintenanceInterval: 'Quarterly',
@@ -562,7 +562,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-018', name: 'Upblast Exhaust Fan', type: 'Exhaust Fan',
     make: 'Greenheck', model: 'CUBE-141', serial: 'GH-2020-31290',
-    locationId: '2', location: 'Airport Cafe', // demo
+    locationId: '2', location: 'Location 2', // demo
     installDate: '2020-05-22', purchasePrice: 2800,
     warrantyExpiry: '2025-05-22', warrantyProvider: 'Greenheck', warrantyTerms: '5-year parts',
     condition: 'Fair', nextMaintenanceDue: '2026-02-22', maintenanceInterval: 'Quarterly',
@@ -582,7 +582,7 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
   {
     id: 'EQ-019', name: 'Upblast Exhaust Fan — Main Line', type: 'Exhaust Fan',
     make: 'Captive Aire', model: 'DU40HFA', serial: 'CA-2017-18901',
-    locationId: '3', location: 'University Dining', // demo
+    locationId: '3', location: 'Location 3', // demo
     installDate: '2017-02-15', purchasePrice: 3500,
     warrantyExpiry: '2022-02-15', warrantyProvider: 'Captive Aire', warrantyTerms: '5-year limited',
     condition: 'Fair', nextMaintenanceDue: '2026-02-15', maintenanceInterval: 'Quarterly',
@@ -600,11 +600,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     ],
   },
 
-  // ─── Fire Extinguisher — Downtown Kitchen ───
+  // ─── Fire Extinguisher — Location 1 ───
   {
     id: 'EQ-020', name: 'K-Class Fire Extinguisher (Kitchen)', type: 'Fire Extinguisher',
     make: 'Amerex', model: 'B262', serial: 'AX-KC-2024-0341',
-    location: 'Downtown Kitchen', installDate: '2024-03-15',
+    location: 'Location 1', installDate: '2024-03-15',
     warrantyExpiry: '2029-03-15', condition: 'Excellent',
     nextMaintenanceDue: '2026-09-15', lastServiceDate: '2026-03-10',
     pillar: 'facility_safety' as const,
@@ -620,11 +620,11 @@ const DEMO_EQUIPMENT: EquipmentItem[] = [
     ],
   },
 
-  // ─── Fire Extinguisher — Airport Cafe ───
+  // ─── Fire Extinguisher — Location 2 ───
   {
     id: 'EQ-021', name: 'ABC Fire Extinguisher (Hallway)', type: 'Fire Extinguisher',
     make: 'Kidde', model: 'Pro 10 MP', serial: 'KD-ABC-2023-8812',
-    location: 'Airport Cafe', installDate: '2023-06-01',
+    location: 'Location 2', installDate: '2023-06-01',
     warrantyExpiry: '2029-06-01', condition: 'Good',
     nextMaintenanceDue: '2026-06-01', lastServiceDate: '2025-06-05',
     pillar: 'facility_safety' as const,
@@ -670,6 +670,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const locations = isDemoMode ? DEMO_LOCATIONS : [];
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
@@ -839,7 +840,7 @@ export function Equipment() {
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">{t('pages.equipment.allLocations')}</option>
-              {LOCATIONS.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
+              {locations.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
             </select>
             <select
               value={pillarFilter}
@@ -870,7 +871,7 @@ export function Equipment() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
-            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.across')} {locationFilter === 'all' ? `3 ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}</div>
+            <div className="text-xs text-gray-400 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
@@ -910,6 +911,15 @@ export function Equipment() {
         {loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+          </div>
+        )}
+
+        {/* Production empty state — no locations */}
+        {!loading && !isDemoMode && locations.length === 0 && allEquipment.length === 0 && (
+          <div className="text-center py-12 text-[var(--text-secondary)]">
+            <Package className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+            <p className="font-medium text-lg">Add your first location to begin tracking equipment.</p>
+            <p className="text-sm mt-1">Once you add a location, you can register and track equipment lifecycle data here.</p>
           </div>
         )}
 
@@ -1674,7 +1684,7 @@ export function Equipment() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.location')}</label>
                     <select name="location" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                      {LOCATIONS.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                      {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
@@ -1773,7 +1783,7 @@ export function Equipment() {
                         if (formData) {
                           const { error } = await supabase.from('equipment').insert({
                             organization_id: profile.organization_id,
-                            location_id: formData.get('location') || LOCATIONS[0].id,
+                            location_id: formData.get('location') || (locations[0]?.id ?? ''),
                             name: `${formData.get('equipment_type') || 'Equipment'} - New`,
                             equipment_type: formData.get('equipment_type') || 'Other',
                             make: formData.get('make') || '',

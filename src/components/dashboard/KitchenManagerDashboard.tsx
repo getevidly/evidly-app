@@ -174,11 +174,11 @@ export default function KitchenManagerDashboard() {
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
   const KM_LOC_NAMES: Record<string, string> = {
-    downtown: 'Downtown Kitchen', // demo
-    airport: 'Airport Cafe', // demo
-    university: 'University Dining', // demo
+    downtown: 'Location 1', // demo
+    airport: 'Location 2', // demo
+    university: 'Location 3', // demo
   };
-  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen'; // demo
+  const locationName = KM_LOC_NAMES[selectedLocationUrlId] || 'Location 1'; // demo
 
   // Animated progress bar
   const [animatedProgress, setAnimatedProgress] = useState(0);

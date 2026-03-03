@@ -141,14 +141,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         />
       )}
 
-      <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 bg-[#1a2d4a] shadow-sm">
+      <div data-topbar className="sticky top-0 z-50 flex-shrink-0 flex h-16 shadow-sm" style={{ backgroundColor: '#FAF7F0', borderBottom: '2px solid #A08C5A' }}>
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <div className="text-sm md:text-base font-semibold text-white truncate max-w-[200px] lg:max-w-none">
+            <div className="text-sm md:text-base font-semibold truncate max-w-[200px] lg:max-w-none" style={{ color: '#1E2D4D' }}>
               {isDemoMode ? companyName : profile?.organization_name || title}
             </div>
             {userRole === 'platform_admin' && (
-              <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1a2d4a] uppercase whitespace-nowrap flex-shrink-0">
+              <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
               </span>
             )}
@@ -158,13 +158,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             {/* Quick Switcher trigger (Ctrl+K) */}
             <button
               onClick={() => window.dispatchEvent(new Event('open-quick-switcher'))}
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/20 bg-white/10 hover:bg-white/15 hover:border-white/30 transition-colors text-sm text-gray-300 cursor-pointer"
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm cursor-pointer"
+              style={{ backgroundColor: '#ffffff', borderColor: '#d4c9a8', color: '#1E2D4D' }}
               title={`${t('topBar.quickSearch')} (${navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'})`}
               data-tour="tour-search"
             >
               <Search className="h-3.5 w-3.5" />
               <span className="text-xs">{t('topBar.search')}</span>
-              <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-white/10 border border-white/20 rounded text-gray-400">
+              <kbd className="ml-1 px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 border border-gray-300 rounded text-gray-500">
                 {navigator.platform?.includes('Mac') ? '\u2318K' : 'Ctrl+K'}
               </kbd>
             </button>
@@ -183,15 +184,18 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     setShowUserMenu(false);
                     setShowLangMenu(false);
                   }}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
+                  style={{ color: '#1E2D4D' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 >
-                  <MapPin className="h-5 w-5 text-gray-300" />
-                  <span className="text-sm font-medium text-gray-200">
+                  <MapPin className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+                  <span className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
                     {selectedLocation
                       ? locations.find((loc) => loc.id === selectedLocation)?.name || t('common.allLocations')
                       : t('common.allLocations')}
                   </span>
-                  <ChevronDown className="h-4 w-4 text-gray-300" />
+                  <ChevronDown className="h-4 w-4" style={{ color: '#6b7280' }} />
                 </button>
                 {showLocationMenu && (
                   <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -240,11 +244,14 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   setShowRoleMenu(false);
                   setShowUserMenu(false);
                 }}
-                className="flex items-center space-x-1.5 px-2.5 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                className="flex items-center space-x-1.5 px-2.5 py-2 rounded-md transition-colors duration-150"
+                style={{ color: '#1E2D4D' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('topBar.language')}
               >
-                <Globe className="h-4 w-4 text-gray-300" />
-                <span className="text-xs font-semibold text-gray-300 uppercase">{locale}</span>
+                <Globe className="h-4 w-4" style={{ color: '#1E2D4D' }} />
+                <span className="text-xs font-semibold uppercase" style={{ color: '#1E2D4D' }}>{locale}</span>
               </button>
               {showLangMenu && (
                 <div className="origin-top-right absolute right-0 mt-2 w-44 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -274,21 +281,27 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
             {canAccessHelp && (
               <button
                 onClick={() => navigate('/help')}
-                className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                className="p-2 rounded-md transition-colors duration-150"
+                style={{ color: '#1E2D4D' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('topBar.helpAndSupport')}
                 data-tour="tour-help-topbar"
               >
-                <HelpCircle className="h-5 w-5 text-gray-300" />
+                <HelpCircle className="h-5 w-5" />
               </button>
             )}
             {canAccessSettings && (
               <button
                 onClick={() => navigate('/settings')}
-                className="p-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                className="p-2 rounded-md transition-colors duration-150"
+                style={{ color: '#1E2D4D' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 title={t('nav.settings')}
                 data-tour="tour-settings"
               >
-                <Settings className="h-5 w-5 text-gray-300" />
+                <Settings className="h-5 w-5" />
               </button>
             )}
 
@@ -302,17 +315,20 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   setShowUserMenu(false);
                   setShowLangMenu(false);
                 }}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
+                style={{ color: '#1E2D4D' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
                 {...(isTestMode ? { 'data-testid': 'role-switcher-button' } : {})}
               >
-                <Users className="h-5 w-5 text-gray-300" />
-                <span className="text-sm font-medium text-gray-200">
+                <Users className="h-5 w-5" style={{ color: '#1E2D4D' }} />
+                <span className="text-sm font-medium" style={{ color: '#1E2D4D' }}>
                   {roleLabels[userRole]}
                 </span>
                 {isTestMode && (
                   <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500 text-white">TEST</span>
                 )}
-                <ChevronDown className="h-4 w-4 text-gray-300" />
+                <ChevronDown className="h-4 w-4" style={{ color: '#6b7280' }} />
               </button>
               {showRoleMenu && (
                 <div className="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">
@@ -352,15 +368,18 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                   setShowRoleMenu(false);
                   setShowLangMenu(false);
                 }}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-white/10 transition-colors duration-150"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-150"
+                style={{ color: '#1E2D4D' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(160,140,90,0.1)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'; }}
               >
-                <div className="h-8 w-8 rounded-full bg-[#A08C5A] flex items-center justify-center text-[#1a2d4a] font-medium text-xs">
+                <div className="h-8 w-8 rounded-full flex items-center justify-center font-medium text-xs" style={{ backgroundColor: 'rgba(160,140,90,0.15)', color: '#1E2D4D' }}>
                   {avatarInitials}
                 </div>
-                <span className="hidden md:block text-sm font-medium text-gray-200">
+                <span className="hidden md:block text-sm font-medium" style={{ color: '#1E2D4D' }}>
                   {displayName}
                 </span>
-                <ChevronDown className="h-4 w-4 text-gray-300" />
+                <ChevronDown className="h-4 w-4" style={{ color: '#6b7280' }} />
               </button>
               {showUserMenu && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-sm bg-white ring-1 ring-black ring-opacity-5 z-50">

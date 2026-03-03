@@ -68,9 +68,9 @@ const DEMO_TEAM = [
 const DEMO_PROGRESS = 52;
 
 const CHEF_FOOD_SAFETY_LOCATIONS = [
-  { name: 'Downtown Kitchen', jurisdiction: 'Fresno County', status: 'Compliant', detail: 'No Open Majors' }, // demo
-  { name: 'Airport Cafe', jurisdiction: 'Merced County', status: 'Satisfactory', detail: 'Satisfactory' }, // demo
-  { name: 'University Dining', jurisdiction: 'Stanislaus County', status: 'Action Required', detail: '3 Major Open' }, // demo
+  { name: 'Location 1', jurisdiction: 'Fresno County', status: 'Compliant', detail: 'No Open Majors' }, // demo
+  { name: 'Location 2', jurisdiction: 'Merced County', status: 'Satisfactory', detail: 'Satisfactory' }, // demo
+  { name: 'Location 3', jurisdiction: 'Stanislaus County', status: 'Action Required', detail: '3 Major Open' }, // demo
 ];
 
 const HACCP_TILES = [
@@ -187,11 +187,11 @@ export default function ChefDashboard() {
   const [selectedLocationUrlId, setSelectedLocationUrlId] = useState(accessibleLocations[0]?.locationUrlId || 'downtown');
 
   const LOC_NAMES: Record<string, string> = {
-    downtown: 'Downtown Kitchen', // demo
-    airport: 'Airport Cafe', // demo
-    university: 'University Dining', // demo
+    downtown: 'Location 1', // demo
+    airport: 'Location 2', // demo
+    university: 'Location 3', // demo
   };
-  const locationName = LOC_NAMES[selectedLocationUrlId] || 'Downtown Kitchen'; // demo
+  const locationName = LOC_NAMES[selectedLocationUrlId] || 'Location 1'; // demo
 
   // Data gating: demo data only in demo mode, empty in live mode
   const checklists = isDemoMode ? DEMO_CHECKLISTS : [];

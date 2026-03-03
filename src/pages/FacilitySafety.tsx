@@ -107,10 +107,10 @@ const TAB_LABELS: Record<Frequency, string> = {
   monthly: 'Monthly',
 };
 
-const LOCATIONS = [
-  { urlId: 'downtown', name: 'Downtown Kitchen' }, // demo
-  { urlId: 'airport', name: 'Airport Cafe' }, // demo
-  { urlId: 'university', name: 'University Dining' }, // demo
+const DEMO_LOCATIONS = [
+  { urlId: 'downtown', name: 'Location 1' }, // demo
+  { urlId: 'airport', name: 'Location 2' }, // demo
+  { urlId: 'university', name: 'Location 3' }, // demo
 ];
 
 // Demo pre-filled check history (some items pre-completed for demo realism)
@@ -143,6 +143,7 @@ export function FacilitySafety() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
 
+  const locations = isDemoMode ? DEMO_LOCATIONS : [];
   const locationParam = searchParams.get('location') || 'downtown';
   const [activeTab, setActiveTab] = useState<Frequency>('daily');
   const [responses, setResponses] = useState<Record<string, CheckResponse>>(() => {
@@ -160,7 +161,7 @@ export function FacilitySafety() {
   const fireDisplay = override?.facilitySafety?.gradeDisplay || 'Pending Verification';
   const fireSummary = override?.facilitySafety?.summary || '';
   const fireStatus = override?.facilitySafety?.status || 'unknown';
-  const locationName = LOCATIONS.find(l => l.urlId === locationParam)?.name || 'Downtown Kitchen'; // demo
+  const locationName = locations.find(l => l.urlId === locationParam)?.name || 'Location 1'; // demo
 
   const items = useMemo(() => {
     if (userRole === 'kitchen_staff' && activeTab !== 'daily') return [];
@@ -236,6 +237,7 @@ export function FacilitySafety() {
         </div>
 
         {/* Location selector */}
+        {locations.length > 0 && (
         <div className="flex items-center gap-2">
           <MapPin size={14} className="text-gray-400" />
           <select
@@ -244,13 +246,25 @@ export function FacilitySafety() {
             className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2"
             style={{ focusRingColor: GOLD } as any}
           >
-            {LOCATIONS.map(loc => (
+            {locations.map(loc => (
               <option key={loc.urlId} value={loc.urlId}>{loc.name}</option>
             ))}
           </select>
         </div>
+        )}
       </div>
 
+      {/* Production empty state — no locations */}
+      {locations.length === 0 && !isDemoMode && (
+        <div className="text-center py-12 text-[var(--text-secondary)]">
+          <Flame size={32} className="mx-auto mb-3 text-gray-300" />
+          <p className="font-medium text-lg">Add a location to begin facility safety tracking.</p>
+          <p className="text-sm mt-1">Once you add a location, your facility safety checklists and status will appear here.</p>
+        </div>
+      )}
+
+      {/* Main content — only render when locations exist */}
+      {locations.length > 0 && (<>
       {/* Facility Safety Status Card */}
       {(() => {
         const noData = completedCount === 0 && passCount === 0 && failCount === 0;
@@ -645,6 +659,7 @@ export function FacilitySafety() {
 
       {/* Bottom padding for Quick Actions bar */}
       <div className="h-24" />
+      </>)}
 
       {showUpgrade && (
         <DemoUpgradePrompt

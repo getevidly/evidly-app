@@ -261,7 +261,7 @@ export const THE_88_TEST = {
 export const DEMO_LOCATIONS = [
   {
     id: 'demo-loc-downtown',
-    name: 'Downtown Kitchen',
+    name: 'Location 1',
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-fresno')!,
     score: 92,
     foodSafety: { ops: 97, docs: 94 },
@@ -271,7 +271,7 @@ export const DEMO_LOCATIONS = [
   },
   {
     id: 'demo-loc-airport',
-    name: 'Airport Cafe',
+    name: 'Location 2',
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-merced')!,
     score: 85,
     foodSafety: { ops: 88, docs: 80 },
@@ -281,7 +281,7 @@ export const DEMO_LOCATIONS = [
   },
   {
     id: 'demo-loc-university',
-    name: 'University Dining',
+    name: 'Location 3',
     jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-stanislaus')!,
     score: 88,
     foodSafety: { ops: 91, docs: 86 },

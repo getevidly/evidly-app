@@ -37,9 +37,9 @@ const SEVERITIES = [
 const COLOR_OPTIONS = ['#dc2626', '#1e4d6b', '#15803d', '#7c3aed', '#d4af37', '#0369a1'];
 
 const LOCATIONS = [
-  { id: 'loc-downtown', name: 'Downtown Kitchen' }, // demo
-  { id: 'loc-airport', name: 'Airport Terminal' },
-  { id: 'loc-university', name: 'University Campus' },
+  { id: 'loc-downtown', name: 'Location 1' }, // demo
+  { id: 'loc-airport', name: 'Location 2' },
+  { id: 'loc-university', name: 'Location 3' },
 ];
 
 interface StepDraft {

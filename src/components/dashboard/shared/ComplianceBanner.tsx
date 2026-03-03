@@ -26,18 +26,18 @@ interface ComplianceAlert {
 }
 
 // Demo data: pre-defined threshold alerts based on known demo scores
-// Downtown 91 (clear), Airport 69 (critical), University 56 (critical)
+// Location 1: 91 (clear), Location 2: 69 (critical), Location 3: 56 (critical)
 const DEMO_COMPLIANCE_ALERTS: ComplianceAlert[] = [
   {
     id: 'cb-airport-fire',
-    locationName: 'Airport Cafe', // demo
+    locationName: 'Location 2', // demo
     pillar: 'Facility Safety',
     score: 69,
     severity: 'critical',
   },
   {
     id: 'cb-university-fire',
-    locationName: 'University Dining', // demo
+    locationName: 'Location 3', // demo
     pillar: 'Facility Safety',
     score: 56,
     severity: 'critical',

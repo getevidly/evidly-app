@@ -389,10 +389,10 @@ export function Settings() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
-                  {[
-                    { name: 'Downtown Kitchen', address: '1245 Fulton Street, Fresno, CA 93721' }, // demo
-                    { name: 'Airport Cafe', address: '1636 Macready Drive, Merced, CA 95340' }, // demo
-                    { name: 'University Dining', address: '1 University Circle, Modesto, CA 95348' }, // demo
+                  {isDemoMode ? [
+                    { name: 'Location 1', address: '1245 Fulton Street, Fresno, CA 93721' }, // demo
+                    { name: 'Location 2', address: '1636 Macready Drive, Merced, CA 95340' }, // demo
+                    { name: 'Location 3', address: '1 University Circle, Modesto, CA 95348' }, // demo
                   ].map((loc) => (
                     <div key={loc.name} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
@@ -404,7 +404,11 @@ export function Settings() {
                       </div>
                       <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('settings.active')}</span>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="p-4 text-center text-sm text-gray-500 border border-dashed border-gray-200 rounded-lg">
+                      No locations configured. Add your first location below.
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => toast.info('Add Location (Demo)')}
@@ -773,9 +777,9 @@ export function Settings() {
           {activeTab === 'jurisdiction' && (() => {
             const availableCounties = getAvailableCounties();
             const locationJurisdictions = [
-              { name: 'Downtown Kitchen', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' }, // demo
-              { name: 'Airport Cafe', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' }, // demo
-              { name: 'University Dining', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' }, // demo
+              { name: 'Location 1', detectedCounty: 'Fresno County', detectedSlug: 'fresno', chain: 'Federal → California → Fresno County' }, // demo
+              { name: 'Location 2', detectedCounty: 'Merced County', detectedSlug: 'merced', chain: 'Federal → California → Merced County' }, // demo
+              { name: 'Location 3', detectedCounty: 'Stanislaus County', detectedSlug: 'stanislaus', chain: 'Federal → California → Stanislaus County → City of Modesto' }, // demo
             ];
             return (
             <div className="space-y-6">

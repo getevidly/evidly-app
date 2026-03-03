@@ -39,7 +39,7 @@ const eventTypes: EventType[] = [
 
 const typeMap = Object.fromEntries(eventTypes.map(t => [t.id, t]));
 
-const LOCATIONS = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+const LOCATIONS = ['Location 1', 'Location 2', 'Location 3']; // demo
 
 const FACILITY_SAFETY_CATEGORIES = [
   'Hood Cleaning Inspection',
@@ -85,9 +85,9 @@ const CATEGORY_TO_SERVICE_TYPE: Record<string, string> = {
 };
 
 const LOCATION_ID_MAP: Record<string, string> = {
-  'Downtown Kitchen': '1',
-  'Airport Cafe': '2',
-  'University Dining': '3',
+  'Location 1': '1',
+  'Location 2': '2',
+  'Location 3': '3',
 };
 
 const CHANGE_REASONS = [
@@ -219,7 +219,7 @@ function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[]
   rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay())); // forward to Saturday
 
   // Cycle locations for recurring events
-  const locationCycle = ['Downtown Kitchen', 'Airport Cafe', 'University Dining']; // demo
+  const locationCycle = ['Location 1', 'Location 2', 'Location 3']; // demo
 
   for (let dt = new Date(rangeStart); dt <= rangeEnd; dt.setDate(dt.getDate() + 1)) {
     const dayOfWeek = dt.getDay();
@@ -247,43 +247,43 @@ function generateDemoEvents(locationHoursData: LocationHours[]): CalendarEvent[]
   // ── One-off events ──
   const oneOffs: Omit<CalendarEvent, 'id'>[] = [
     // Today
-    { title: 'Staff Safety Meeting', type: 'meeting', date: d(todayDate), time: '2:00 PM', endTime: '3:00 PM', location: 'Downtown Kitchen', description: 'Monthly food safety briefing with all kitchen staff' }, // demo
+    { title: 'Staff Safety Meeting', type: 'meeting', date: d(todayDate), time: '2:00 PM', endTime: '3:00 PM', location: 'Location 1', description: 'Monthly food safety briefing with all kitchen staff' }, // demo
     // Yesterday
-    { title: 'Health Department Inspection', type: 'inspection', date: d(todayDate - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Annual routine health inspection' }, // demo
+    { title: 'Health Department Inspection', type: 'inspection', date: d(todayDate - 1), time: '10:00 AM', endTime: '12:00 PM', location: 'Location 2', description: 'Annual routine health inspection' }, // demo
     // Tomorrow
-    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Downtown Kitchen', description: 'Quarterly hood and duct cleaning', vendorId: '1', vendorName: 'ABC Fire Protection', category: 'Hood Cleaning Inspection', recurrence: 'quarterly' }, // demo
+    { title: 'Hood Cleaning Service', type: 'vendor', date: d(todayDate + 1), time: '11:00 PM', endTime: '3:00 AM', location: 'Location 1', description: 'Quarterly hood and duct cleaning', vendorId: '1', vendorName: 'ABC Fire Protection', category: 'Hood Cleaning Inspection', recurrence: 'quarterly' }, // demo
     // +2 days
-    { title: 'Team Compliance Meeting', type: 'meeting', date: d(todayDate + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Downtown Kitchen', description: 'Weekly compliance review and corrective action follow-up' }, // demo
-    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Airport Cafe', description: 'Monthly grease trap pumping', vendorId: '8', vendorName: 'Valley Grease Solutions', category: 'Grease Trap Service', recurrence: 'monthly' }, // demo
+    { title: 'Team Compliance Meeting', type: 'meeting', date: d(todayDate + 2), time: '2:00 PM', endTime: '4:00 PM', location: 'Location 1', description: 'Weekly compliance review and corrective action follow-up' }, // demo
+    { title: 'Grease Trap Service', type: 'vendor', date: d(todayDate + 2), time: '5:00 AM', endTime: '7:00 AM', location: 'Location 2', description: 'Monthly grease trap pumping', vendorId: '8', vendorName: 'Valley Grease Solutions', category: 'Grease Trap Service', recurrence: 'monthly' }, // demo
     // +3 days
-    { title: 'Fire Suppression Inspection', type: 'vendor', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Downtown Kitchen', description: 'Semi-annual fire suppression system inspection', vendorId: '3', vendorName: 'Valley Fire Systems', category: 'Fire Suppression Inspection', recurrence: 'semi-annual' }, // demo
-    { title: 'HACCP Plan Review', type: 'checklist', date: d(todayDate + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'University Dining' }, // demo
+    { title: 'Fire Suppression Inspection', type: 'vendor', date: d(todayDate + 3), time: '9:00 AM', endTime: '11:00 AM', location: 'Location 1', description: 'Semi-annual fire suppression system inspection', vendorId: '3', vendorName: 'Valley Fire Systems', category: 'Fire Suppression Inspection', recurrence: 'semi-annual' }, // demo
+    { title: 'HACCP Plan Review', type: 'checklist', date: d(todayDate + 3), time: '1:00 PM', endTime: '3:00 PM', location: 'Location 3' }, // demo
     // +5 days
-    { title: 'ServSafe Certification Renewal', type: 'certification', date: d(todayDate + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Downtown Kitchen', description: 'Manager certification renewal exam' }, // demo
-    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe', vendorId: '6', vendorName: 'Pacific Pest Control', category: 'Pest Control Service', recurrence: 'monthly' }, // demo
+    { title: 'ServSafe Certification Renewal', type: 'certification', date: d(todayDate + 5), time: '9:00 AM', endTime: '5:00 PM', location: 'Location 1', description: 'Manager certification renewal exam' }, // demo
+    { title: 'Pest Control Service', type: 'vendor', date: d(todayDate + 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Location 2', vendorId: '6', vendorName: 'Pacific Pest Control', category: 'Pest Control Service', recurrence: 'monthly' }, // demo
     // +7 days
-    { title: 'Refrigeration Maintenance', type: 'vendor', date: d(todayDate + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'University Dining', description: 'Quarterly refrigeration system maintenance' }, // demo
-    { title: 'Manager Safety Meeting', type: 'meeting', date: d(todayDate + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Downtown Kitchen' }, // demo
+    { title: 'Refrigeration Maintenance', type: 'vendor', date: d(todayDate + 7), time: '7:00 AM', endTime: '10:00 AM', location: 'Location 3', description: 'Quarterly refrigeration system maintenance' }, // demo
+    { title: 'Manager Safety Meeting', type: 'meeting', date: d(todayDate + 7), time: '3:00 PM', endTime: '5:00 PM', location: 'Location 1' }, // demo
     // -3 days
-    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Downtown Kitchen', description: 'Annual fire extinguisher inspection and tagging', vendorId: '17', vendorName: 'ABC Fire Protection', category: 'Fire Extinguisher Inspection', recurrence: 'annual' }, // demo
+    { title: 'Fire Extinguisher Service', type: 'vendor', date: d(todayDate - 3), time: '8:00 AM', endTime: '10:00 AM', location: 'Location 1', description: 'Annual fire extinguisher inspection and tagging', vendorId: '17', vendorName: 'ABC Fire Protection', category: 'Fire Extinguisher Inspection', recurrence: 'annual' }, // demo
     // -5 days — overdue corrective action
-    { title: 'Fix Walk-in Door Seal', type: 'corrective', date: d(todayDate - 5), time: '9:00 AM', endTime: '12:00 PM', location: 'Airport Cafe', description: 'Walk-in cooler door gasket is torn — replace seal to maintain temperature integrity', overdue: true }, // demo
-    { title: 'HVAC Filter Replacement', type: 'vendor', date: d(todayDate - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Airport Cafe', description: 'Quarterly HVAC filter replacement' }, // demo
+    { title: 'Fix Walk-in Door Seal', type: 'corrective', date: d(todayDate - 5), time: '9:00 AM', endTime: '12:00 PM', location: 'Location 2', description: 'Walk-in cooler door gasket is torn — replace seal to maintain temperature integrity', overdue: true }, // demo
+    { title: 'HVAC Filter Replacement', type: 'vendor', date: d(todayDate - 5), time: '6:00 AM', endTime: '8:00 AM', location: 'Location 2', description: 'Quarterly HVAC filter replacement' }, // demo
     // -7 days
-    { title: 'Plumbing Inspection', type: 'vendor', date: d(todayDate - 7), time: '8:00 AM', endTime: '9:00 AM', location: 'Downtown Kitchen' }, // demo
+    { title: 'Plumbing Inspection', type: 'vendor', date: d(todayDate - 7), time: '8:00 AM', endTime: '9:00 AM', location: 'Location 1' }, // demo
     // +10 days
-    { title: 'Health Permit Renewal', type: 'certification', date: d(todayDate + 10), time: '9:00 AM', location: 'Airport Cafe', allDay: true }, // demo
-    { title: 'Deep Cleaning Service', type: 'vendor', date: d(todayDate + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'University Dining' }, // demo
+    { title: 'Health Permit Renewal', type: 'certification', date: d(todayDate + 10), time: '9:00 AM', location: 'Location 2', allDay: true }, // demo
+    { title: 'Deep Cleaning Service', type: 'vendor', date: d(todayDate + 10), time: '10:00 PM', endTime: '4:00 AM', location: 'Location 3' }, // demo
     // +14 days
-    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Downtown Kitchen', description: 'Internal compliance inspection across all pillars' }, // demo
+    { title: 'Quarterly Compliance Review', type: 'inspection', date: d(todayDate + 14), time: '10:00 AM', endTime: '2:00 PM', location: 'Location 1', description: 'Internal compliance inspection across all pillars' }, // demo
     // -2 days — another overdue corrective
-    { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'University Dining', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true }, // demo
+    { title: 'Recalibrate Freezer Thermometer', type: 'corrective', date: d(todayDate - 2), time: '8:00 AM', endTime: '9:00 AM', location: 'Location 3', description: 'Walk-in freezer thermometer reading 3°F high — recalibrate or replace', overdue: true }, // demo
     // -10 days
-    { title: 'Walk-in Cooler Repair', type: 'vendor', date: d(todayDate - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Airport Cafe' }, // demo
+    { title: 'Walk-in Cooler Repair', type: 'vendor', date: d(todayDate - 10), time: '7:00 AM', endTime: '11:00 AM', location: 'Location 2' }, // demo
     // +20 days — Facility Safety seed events
-    { title: 'Backflow Prevention Test', type: 'vendor', date: d(todayDate + 20), time: '7:00 AM', endTime: '9:00 AM', location: 'Downtown Kitchen', description: 'Annual backflow preventer certification test', vendorId: '5', vendorName: 'Central Cal Backflow', category: 'Backflow Prevention Test', recurrence: 'annual' }, // demo
+    { title: 'Backflow Prevention Test', type: 'vendor', date: d(todayDate + 20), time: '7:00 AM', endTime: '9:00 AM', location: 'Location 1', description: 'Annual backflow preventer certification test', vendorId: '5', vendorName: 'Central Cal Backflow', category: 'Backflow Prevention Test', recurrence: 'annual' }, // demo
     // +25 days
-    { title: 'Elevator Inspection', type: 'vendor', date: d(todayDate + 25), time: '8:00 AM', endTime: '10:00 AM', location: 'University Dining', description: 'Annual elevator safety inspection and certification', vendorId: '16', vendorName: 'Valley Elevator Co.', category: 'Elevator Inspection', recurrence: 'annual' }, // demo
+    { title: 'Elevator Inspection', type: 'vendor', date: d(todayDate + 25), time: '8:00 AM', endTime: '10:00 AM', location: 'Location 3', description: 'Annual elevator safety inspection and certification', vendorId: '16', vendorName: 'Valley Elevator Co.', category: 'Elevator Inspection', recurrence: 'annual' }, // demo
   ];
 
   for (const e of oneOffs) {
@@ -390,7 +390,7 @@ export function Calendar() {
     date: '',
     startTime: '9:00 AM',
     endTime: '10:00 AM',
-    location: 'Downtown Kitchen',
+    location: 'Location 1',
     description: '',
     vendorId: '',
     vendorName: '',
@@ -499,7 +499,7 @@ export function Calendar() {
       date: '',
       startTime: '9:00 AM',
       endTime: '10:00 AM',
-      location: 'Downtown Kitchen',
+      location: 'Location 1',
       description: '',
       vendorId: '',
       vendorName: '',

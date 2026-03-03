@@ -34,7 +34,7 @@ const ALL_DATA: EquipmentSummary = {
   alerts: [
     { text: 'Commercial Dishwasher \u2014 past 8-yr useful life, replacement recommended', severity: 'red' },
     { text: 'Hood Ventilation \u2014 warranty expired, fire suppression inspection overdue at Airport', severity: 'amber' },
-    { text: 'Exhaust Fan \u2014 bearing noise reported at Airport Cafe', severity: 'amber' }, // demo
+    { text: 'Exhaust Fan \u2014 bearing noise reported at Location 2', severity: 'amber' }, // demo
   ],
 };
 
