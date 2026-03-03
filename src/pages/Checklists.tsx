@@ -198,13 +198,13 @@ const TEMPLATE_CATEGORIES = [
         estimatedTime: '10 min',
         role: 'Kitchen Staff',
         items: [
-          'Verify internal temp of each protein type',
-          'Check cooking equipment calibration',
-          'Document any corrective actions',
-          'Verify thermometer accuracy',
-          'Record cook time',
-          'Supervisor verification',
-        ],
+          { title: 'Verify internal temp of each protein type', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-05', haccp_critical_limit: 'Poultry ≥165°F, Ground ≥155°F, Whole cuts ≥145°F', is_critical: true, requires_corrective_action: true },
+          { title: 'Check cooking equipment calibration', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+          { title: 'Document any corrective actions', item_type: 'text_input', authority_source: 'calcode', authority_section: '§113996', requires_corrective_action: true },
+          { title: 'Verify thermometer accuracy', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114157' },
+          { title: 'Record cook time', item_type: 'text_input', authority_source: 'evidly_best_practice' },
+          { title: 'Supervisor verification', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+        ] as TemplateItemDef[],
       },
       {
         key: 'cooling_log',
@@ -213,15 +213,15 @@ const TEMPLATE_CATEGORIES = [
         estimatedTime: '5 min per check',
         role: 'Kitchen Staff',
         items: [
-          'Record start temp and time — clock starts NOW (CA: from cooked temp, not 135°F)',
-          'FDA Stage 1: 135°F → 70°F within 2 hours',
-          'CA Stage 1 (eff. Apr 1, 2026): Cooked temp → 70°F within 2 hours (stricter — clock starts at actual cooked temp)',
-          'Check temp at 2-hour mark (must be at or below 70°F)',
-          'Stage 2: 70°F → 41°F within 4 additional hours (6 hours total)',
-          'Check temp at 6-hour mark (must be at or below 41°F)',
-          'Document cooling method used (ice bath, blast chiller, shallow pans)',
-          'Corrective action if temps not met — discard food or re-heat to 165°F and re-cool',
-        ],
+          { title: 'Record start temp and time — clock starts NOW (CA: from cooked temp, not 135°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '135→70°F in 2hrs, 70→41°F in 4hrs', is_critical: true },
+          { title: 'FDA Stage 1: 135°F → 70°F within 2 hours', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F at 2hr mark', temp_max: 70, is_critical: true, requires_corrective_action: true },
+          { title: 'CA Stage 1 (eff. Apr 1, 2026): Cooked temp → 70°F within 2 hours (stricter — clock starts at actual cooked temp)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F at 2hr mark (from cooked temp)', temp_max: 70, is_critical: true, requires_corrective_action: true },
+          { title: 'Check temp at 2-hour mark (must be at or below 70°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤70°F', temp_max: 70, is_critical: true },
+          { title: 'Stage 2: 70°F → 41°F within 4 additional hours (6 hours total)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤41°F at 6hr mark', temp_max: 41, is_critical: true, requires_corrective_action: true },
+          { title: 'Check temp at 6-hour mark (must be at or below 41°F)', item_type: 'temperature', authority_source: 'calcode', authority_section: '§114002', haccp_ccp: 'CCP-03', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true },
+          { title: 'Document cooling method used (ice bath, blast chiller, shallow pans)', item_type: 'text_input', authority_source: 'evidly_best_practice' },
+          { title: 'Corrective action if temps not met — discard food or re-heat to 165°F and re-cool', item_type: 'text_input', authority_source: 'calcode', authority_section: '§114002', requires_corrective_action: true },
+        ] as TemplateItemDef[],
       },
       {
         key: 'hot_holding',
@@ -230,11 +230,11 @@ const TEMPLATE_CATEGORIES = [
         estimatedTime: '5 min',
         role: 'Kitchen Staff',
         items: [
-          'Verify all items above 135°F',
-          'Check food covers in place',
-          'Verify holding time labels',
-          'Document any items discarded',
-        ],
+          { title: 'Verify all items above 135°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-02', haccp_critical_limit: '≥135°F', temp_min: 135, is_critical: true, requires_corrective_action: true },
+          { title: 'Check food covers in place', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+          { title: 'Verify holding time labels', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114000' },
+          { title: 'Document any items discarded', item_type: 'text_input', authority_source: 'evidly_best_practice', requires_corrective_action: true },
+        ] as TemplateItemDef[],
       },
       {
         key: 'cold_holding',
@@ -243,11 +243,11 @@ const TEMPLATE_CATEGORIES = [
         estimatedTime: '5 min',
         role: 'Facilities',
         items: [
-          'Verify all items below 41°F',
-          'Check cooler door seals',
-          'Verify date labels current',
-          'Document any items discarded',
-        ],
+          { title: 'Verify all items below 41°F', item_type: 'temperature', authority_source: 'calcode', authority_section: '§113996', haccp_ccp: 'CCP-01', haccp_critical_limit: '≤41°F', temp_max: 41, is_critical: true, requires_corrective_action: true },
+          { title: 'Check cooler door seals', item_type: 'checkbox', authority_source: 'evidly_best_practice' },
+          { title: 'Verify date labels current', item_type: 'yes_no', authority_source: 'calcode', authority_section: '§114059' },
+          { title: 'Document any items discarded', item_type: 'text_input', authority_source: 'evidly_best_practice', requires_corrective_action: true },
+        ] as TemplateItemDef[],
       },
     ],
   },
@@ -458,6 +458,89 @@ const PREBUILT_TEMPLATES = {
     type: 'receiving',
     frequency: 'daily',
     items: TEMPLATE_CATEGORIES[0].templates[3].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  // HACCP Checklists
+  cooking_temp: {
+    name: 'Cooking Temperature Log',
+    type: 'custom',
+    frequency: 'daily',
+    items: TEMPLATE_CATEGORIES[1].templates[0].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  cooling_log: {
+    name: 'Cooling Log',
+    type: 'custom',
+    frequency: 'daily',
+    items: TEMPLATE_CATEGORIES[1].templates[1].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  hot_holding: {
+    name: 'Hot Holding Monitoring',
+    type: 'custom',
+    frequency: 'daily',
+    items: TEMPLATE_CATEGORIES[1].templates[2].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  cold_holding: {
+    name: 'Cold Holding Monitoring',
+    type: 'custom',
+    frequency: 'daily',
+    items: TEMPLATE_CATEGORIES[1].templates[3].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  // Equipment Maintenance
+  ice_machine_weekly: {
+    name: 'Ice Machine Weekly Cleaning',
+    type: 'custom',
+    frequency: 'weekly',
+    items: TEMPLATE_CATEGORIES[2].templates[0].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  ice_machine_monthly: {
+    name: 'Ice Machine Monthly Service (FDA §4-602.11)',
+    type: 'custom',
+    frequency: 'monthly',
+    items: TEMPLATE_CATEGORIES[2].templates[1].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  exhaust_fan_monthly: {
+    name: 'Exhaust Fan Monthly Inspection (NFPA 96)',
+    type: 'custom',
+    frequency: 'monthly',
+    items: TEMPLATE_CATEGORIES[2].templates[2].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  exhaust_fan_quarterly: {
+    name: 'Exhaust Fan Quarterly Service (NFPA 96 (2024) Table 12.4)',
+    type: 'custom',
+    frequency: 'monthly',
+    items: TEMPLATE_CATEGORIES[2].templates[3].items.map(item => {
+      const d = getItemDef(item);
+      return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
+    }),
+  },
+  equipment_weekly: {
+    name: 'Equipment Weekly Inspection',
+    type: 'custom',
+    frequency: 'weekly',
+    items: TEMPLATE_CATEGORIES[2].templates[4].items.map(item => {
       const d = getItemDef(item);
       return { title: d.title, type: d.item_type || 'checkbox', required: true, ...d };
     }),
@@ -1187,6 +1270,43 @@ export function Checklists() {
     });
   };
 
+  const handleEditTemplate = async (template: ChecklistTemplate) => {
+    // Pre-fill the template modal with existing data
+    setTemplateName(template.name);
+    setTemplateType(template.checklist_type);
+    setTemplateFrequency(template.frequency);
+
+    // Load items
+    if (isDemoMode || !profile?.organization_id) {
+      const localItems = demoItemsMap[template.id] || [];
+      setItems(localItems.map(i => ({ title: i.title, type: i.item_type, required: i.is_required })));
+    } else {
+      const { data } = await supabase
+        .from('checklist_template_items')
+        .select('*')
+        .eq('template_id', template.id)
+        .order('order');
+      if (data) {
+        setItems(data.map((i: any) => ({ title: i.title, type: i.item_type, required: i.is_required })));
+      }
+    }
+
+    // Delete the old template first, then open modal to create updated version
+    if (isDemoMode || !profile?.organization_id) {
+      setTemplates(prev => prev.filter(t => t.id !== template.id));
+      setDemoItemsMap(prev => {
+        const copy = { ...prev };
+        delete copy[template.id];
+        return copy;
+      });
+    } else {
+      await supabase.from('checklist_templates').delete().eq('id', template.id);
+      fetchTemplates();
+    }
+
+    setShowTemplateModal(true);
+  };
+
   // ── Authority badge + CCP tag helper ──
   const renderAuthBadges = (item: ChecklistTemplateItem) => (
     <span className="inline-flex items-center gap-1 ml-1 align-middle">
@@ -1539,8 +1659,19 @@ export function Checklists() {
                     key={cl.id}
                     className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md hover:border-gray-300"
                     onClick={() => {
-                      setActiveView('templates');
-                      toast.info(`${templateNameMap[cl.name] || cl.name} — ${cl.completed}/${cl.total} items complete`);
+                      // Find a matching template from user templates or demo items map
+                      const match = templates.find(t => t.name === cl.name);
+                      if (match) {
+                        handleStartChecklist(match);
+                      } else {
+                        // Check demo items map for prebuilt templates
+                        const demoMatch = Object.entries(demoItemsMap).find(([, items]) => items.length > 0 && todayChecklists.find(tc => tc.id === cl.id));
+                        if (demoMatch) {
+                          handleStartChecklist({ id: demoMatch[0], name: cl.name, checklist_type: 'custom', frequency: 'daily', is_active: true, items_count: cl.total });
+                        } else {
+                          toast.info(`${templateNameMap[cl.name] || cl.name} — ${cl.completed}/${cl.total} items complete`);
+                        }
+                      }
                     }}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -1590,7 +1721,20 @@ export function Checklists() {
                       </div>
                       {cl.status !== 'complete' && (
                         <button
-                          onClick={() => toast.info(`${templateNameMap[cl.name] || cl.name} opened`)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const match = templates.find(t => t.name === cl.name);
+                            if (match) {
+                              handleStartChecklist(match);
+                            } else {
+                              const demoMatch = Object.entries(demoItemsMap).find(([, items]) => items.length > 0 && todayChecklists.find(tc => tc.id === cl.id));
+                              if (demoMatch) {
+                                handleStartChecklist({ id: demoMatch[0], name: cl.name, checklist_type: 'custom', frequency: 'daily', is_active: true, items_count: cl.total });
+                              } else {
+                                toast.info(`${templateNameMap[cl.name] || cl.name} opened`);
+                              }
+                            }
+                          }}
                           className="px-4 py-2 bg-[#1e4d6b] text-white text-sm rounded-lg hover:bg-[#163a52] transition-colors font-medium"
                         >
                           {cl.status === 'in_progress' ? t('common.continue') : t('common.start')}
@@ -1678,6 +1822,41 @@ export function Checklists() {
                             {t('checklists.useTemplate')}
                           </button>
                         )}
+                        {/* CCP info for HACCP templates */}
+                        {cat.category === 'HACCP Checklists' && (() => {
+                          const ccpItems = tmpl.items.filter(item => {
+                            const d = getItemDef(item);
+                            return !!d.haccp_ccp;
+                          });
+                          const uniqueCcps = [...new Set(ccpItems.map(item => getItemDef(item).haccp_ccp))];
+                          if (uniqueCcps.length === 0) return null;
+                          return (
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {uniqueCcps.map(ccp => {
+                                const ccpItem = ccpItems.find(item => getItemDef(item).haccp_ccp === ccp);
+                                const def = ccpItem ? getItemDef(ccpItem) : null;
+                                return (
+                                  <span key={ccp} className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-amber-50 text-amber-800 border border-amber-200" title={def?.haccp_critical_limit || ''}>
+                                    <Shield size={10} />
+                                    {ccp}
+                                    {def?.haccp_critical_limit && <span className="text-amber-600 font-normal ml-0.5">{def.haccp_critical_limit}</span>}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          );
+                        })()}
+                        {/* CA Stage 1 callout for cooling_log */}
+                        {tmpl.key === 'cooling_log' && (() => {
+                          const isActive = new Date() >= new Date('2026-04-01');
+                          return (
+                            <div className={`mt-2 text-[11px] rounded-lg px-3 py-2 ${isActive ? 'bg-red-50 border border-red-200 text-red-800' : 'bg-amber-50 border border-amber-200 text-amber-800'}`}>
+                              <span className="font-bold">{isActive ? 'NOW IN EFFECT' : 'Effective Apr 1, 2026'}:</span>{' '}
+                              CA Stage 1 — cooling clock starts at actual cooked temp, not 135°F. Stricter than FDA rule.
+                              {isActive && <span className="font-semibold"> This template reflects the CA requirement.</span>}
+                            </div>
+                          );
+                        })()}
                       </div>
                     );
                   })}
@@ -1712,9 +1891,17 @@ export function Checklists() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900">
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                            <div className="flex items-center justify-end gap-2">
+                              <button onClick={() => handleStartChecklist(template)} className="text-[#1e4d6b] hover:text-[#163a52]" title="Start checklist">
+                                <Play className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => handleEditTemplate(template)} className="text-gray-500 hover:text-gray-700" title="Edit template">
+                                <Edit2 className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => handleDeleteTemplate(template.id)} className="text-red-600 hover:text-red-900" title="Delete template">
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

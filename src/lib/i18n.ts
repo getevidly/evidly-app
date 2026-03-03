@@ -528,6 +528,7 @@ const en = {
     newTemplate: 'New Template',
     dailyOperations: 'Daily Operations',
     haccpChecklists: 'HACCP Checklists',
+    equipmentMaintenance: 'Equipment Maintenance',
     // Template names (pre-built)
     openingChecklist: 'Opening Checklist',
     closingChecklist: 'Closing Checklist',
@@ -1951,6 +1952,7 @@ const es: typeof en = {
     newTemplate: 'Nueva Plantilla',
     dailyOperations: 'Operaciones Diarias',
     haccpChecklists: 'Listas HACCP',
+    equipmentMaintenance: 'Mantenimiento de Equipos',
     openingChecklist: 'Lista de Apertura',
     closingChecklist: 'Lista de Cierre',
     midDayCheck: 'Verificación de Seguridad Alimentaria del Mediodía',
