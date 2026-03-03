@@ -394,7 +394,7 @@ function isOverdue(incident: Incident): boolean {
 // ── Component ──────────────────────────────────────────────────────
 
 export function IncidentLog() {
-  const { userRole } = useRole();
+  const { userRole, getAccessibleLocations } = useRole();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const canVerify = userRole === 'executive' || userRole === 'owner_operator';
@@ -447,6 +447,7 @@ export function IncidentLog() {
   // Auth & demo mode
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const locationOptions = isDemoMode ? LOCATIONS : getAccessibleLocations().map(l => l.locationName);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -474,7 +475,7 @@ export function IncidentLog() {
   // Create form
   const [newType, setNewType] = useState<IncidentType>('temperature_violation');
   const [newSeverity, setNewSeverity] = useState<Severity>('major');
-  const [newLocation, setNewLocation] = useState(LOCATIONS[0]);
+  const [newLocation, setNewLocation] = useState(locationOptions[0] || '');
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
@@ -1477,7 +1478,7 @@ export function IncidentLog() {
               onChange={e => setNewLocation(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
-              {LOCATIONS.map(l => (
+              {locationOptions.map(l => (
                 <option key={l} value={l}>{l}</option>
               ))}
             </select>
@@ -1619,7 +1620,7 @@ export function IncidentLog() {
             </select>
             <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('common.allLocations')}</option>
-              {LOCATIONS.map(l => <option key={l} value={l}>{l}</option>)}
+              {locationOptions.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
             <select value={assigneeFilter} onChange={e => setAssigneeFilter(e.target.value)} className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
               <option value="all">{t('incidents.allAssignees')}</option>

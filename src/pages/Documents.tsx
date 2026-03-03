@@ -837,7 +837,7 @@ export function Documents() {
                 expiration_date: cf.overrides.expiryDate || null,
                 created_at: new Date().toISOString(),
                 status: 'active',
-                location: selectedLocation === 'All Locations' ? 'Location 1' : selectedLocation, // demo
+                location: selectedLocation === 'All Locations' ? (docAccessibleLocs[0]?.locationName || '') : selectedLocation,
                 provided_by: cf.overrides.vendorName || undefined,
                 categorization_source: wasEdited ? 'manual' as const : 'ai' as const,
                 manual_category_override: wasEdited,

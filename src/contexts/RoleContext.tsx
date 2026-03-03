@@ -122,8 +122,9 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   }, [isDemoMode, session, profile?.role]);
 
   const getAccessibleLocations = useCallback((): LocationAssignment[] => {
+    if (!isDemoMode) return []; // Production: locations come from DB via user_location_access
     return ROLE_LOCATION_ASSIGNMENTS[userRole] || [];
-  }, [userRole]);
+  }, [userRole, isDemoMode]);
 
   const getAccessibleLocationUrlIds = useCallback((): string[] => {
     return getAccessibleLocations().map(l => l.locationUrlId);
