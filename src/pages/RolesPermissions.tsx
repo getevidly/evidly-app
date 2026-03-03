@@ -57,7 +57,6 @@ const PERMISSION_DISPLAY_NAMES: Record<string, string> = {
   'sidebar.jurisdiction-intelligence': 'Jurisdiction Intelligence',
   'sidebar.regulatory': 'Regulatory Updates',
   'sidebar.benchmarks': 'Benchmarks',
-  'sidebar.business-intelligence': 'Business Intelligence',
   'sidebar.violation-trends': 'Violation Trends',
   'sidebar.iot-dashboard': 'IoT Dashboard',
   'sidebar.refrigeration': 'Refrigeration',

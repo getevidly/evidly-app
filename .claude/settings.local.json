@@ -54,7 +54,8 @@
       "Bash(git checkout:*)",
       "Bash(npx vercel:*)",
       "Bash(for f in FacilitySafety Equipment ComplianceIndex Vendors)",
-      "Bash(do echo \"$f:\")"
+      "Bash(do echo \"$f:\")",
+      "Bash(git check-ignore:*)"
     ]
   }
 }

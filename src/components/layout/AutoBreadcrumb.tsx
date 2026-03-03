@@ -47,8 +47,6 @@ const ROUTE_HIERARCHY: Record<string, { label: string; parent?: string }> = {
   '/benchmarks': { label: 'Benchmarks', parent: '/insights' },
   '/intelligence': { label: 'Intelligence Hub', parent: '/insights' },
   '/copilot': { label: 'Compliance Copilot', parent: '/insights' },
-  '/business-intelligence': { label: 'Business Intelligence', parent: '/insights' },
-  '/regulatory-updates': { label: 'Regulatory Updates', parent: '/insights' },
   '/iot-monitoring': { label: 'IoT Dashboard', parent: '/insights' },
   '/audit-trail': { label: 'Audit Trail', parent: '/insights' },
   '/weekly-digest': { label: 'Weekly Digest', parent: '/insights' },

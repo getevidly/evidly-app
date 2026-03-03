@@ -75,9 +75,7 @@ const EnterpriseDashboard = lazy(() => import('./pages/EnterpriseDashboard').the
 const EnterpriseLanding = lazy(() => import('./pages/EnterpriseLanding').then(m => ({ default: m.EnterpriseLanding })));
 const EnterpriseExecutive = lazy(() => import('./pages/EnterpriseExecutive').then(m => ({ default: m.EnterpriseExecutive })));
 const ComplianceIntelligence = lazy(() => import('./pages/ComplianceIntelligence').then(m => ({ default: m.ComplianceIntelligence })));
-const BusinessIntelligence = lazy(() => import('./pages/CorporateIntelligence').then(m => ({ default: m.BusinessIntelligence })));
 const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub').then(m => ({ default: m.IntelligenceHub })));
-const RegulatoryUpdates = lazy(() => import('./pages/RegulatoryUpdates').then(m => ({ default: m.RegulatoryUpdates })));
 const IoTSensorHub = lazy(() => import('./pages/IoTSensorHub').then(m => ({ default: m.IoTSensorHub })));
 const IoTSensorLanding = lazy(() => import('./pages/IoTSensorLanding').then(m => ({ default: m.IoTSensorLanding })));
 const SensorHub = lazy(() => import('./pages/SensorHub').then(m => ({ default: m.SensorHub })));
@@ -394,7 +392,7 @@ function AppRoutes() {
         <Route path="/enterprise/admin" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><EnterpriseExecutive /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/enterprise/intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><ComplianceIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
-        <Route path="/business-intelligence" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><BusinessIntelligence /></Suspense></ErrorBoundary></ProtectedRoute>} />
+        <Route path="/business-intelligence" element={<Navigate to="/intelligence" replace />} />
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
@@ -481,7 +479,7 @@ function AppRoutes() {
           <Route path="/audit-trail" element={<AuditTrail />} />
           <Route path="/copilot" element={<CopilotInsights />} />
           <Route path="/intelligence" element={<IntelligenceHub />} />
-          <Route path="/regulatory-updates" element={<RegulatoryUpdates />} />
+          <Route path="/regulatory-updates" element={<Navigate to="/intelligence" replace />} />
           <Route path="/self-diagnosis" element={<SelfDiagnosis />} />
           <Route path="/checkup" element={<Navigate to="/dashboard" replace />} />
           <Route path="/admin/regulatory-changes" element={<AdminRegulatoryChanges />} />

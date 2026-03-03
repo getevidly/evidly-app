@@ -175,7 +175,6 @@ const PERMISSION_CATEGORIES: PermissionCategory[] = [
       { key: 'sidebar.jurisdiction-intelligence', label: 'Jurisdiction Intelligence', description: 'Jurisdiction-level intelligence' },
       { key: 'sidebar.regulatory', label: 'Regulatory Updates', description: 'View regulatory change alerts' },
       { key: 'sidebar.benchmarks', label: 'Benchmarks', description: 'View performance benchmarks' },
-      { key: 'sidebar.business-intelligence', label: 'Business Intelligence', description: 'Access BI dashboards' },
       { key: 'sidebar.violation-trends', label: 'Violation Trends', description: 'View violation trend analysis' },
       { key: 'bottom.regulatory', label: 'Mobile: Regulatory', description: 'Regulatory in mobile bottom bar' },
       { key: 'bottom.benchmarks', label: 'Mobile: Benchmarks', description: 'Benchmarks in mobile bottom bar' },
