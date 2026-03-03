@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { AlertTriangle, TrendingUp, TrendingDown, CheckCircle, ArrowRight, Info, Clock, ChevronDown, UserPlus, X, CheckCircle2, ShieldAlert, Eye, Loader2 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
-import { scoreImpactData, locations } from '../data/demoData';
+import { scoreImpactData, locations as demoLocations } from '../data/demoData';
 import { useRole } from '../contexts/RoleContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
@@ -278,6 +278,7 @@ export function Analysis() {
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
   const { getAccessibleLocations, showAllLocationsOption } = useRole();
+  const locations = isDemoMode ? demoLocations : [];
   const analysisAccessibleLocs = getAccessibleLocations();
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [actionLocationFilter, setActionLocationFilter] = useState('all');

@@ -85,7 +85,7 @@ interface EquipmentItem {
 // ── Constants ──────────────────────────────────────────────────────
 
 const NOW = new Date('2026-02-09');
-const LOCATIONS = [
+const DEMO_LOCATIONS = [
   { id: '1', name: 'Location 1' }, // demo
   { id: '2', name: 'Location 2' }, // demo
   { id: '3', name: 'Location 3' }, // demo
@@ -670,6 +670,7 @@ export function Equipment() {
 
   const { profile } = useAuth();
   const { isDemoMode } = useDemo();
+  const locations = isDemoMode ? DEMO_LOCATIONS : [];
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [loading, setLoading] = useState(false);
   const [liveEquipment, setLiveEquipment] = useState<EquipmentItem[]>([]);
@@ -839,7 +840,7 @@ export function Equipment() {
               className="w-full sm:w-auto px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
             >
               <option value="all">{t('pages.equipment.allLocations')}</option>
-              {LOCATIONS.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
+              {locations.map(l => <option key={l.id} value={l.name}>{l.name}</option>)}
             </select>
             <select
               value={pillarFilter}
@@ -870,7 +871,7 @@ export function Equipment() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><Package className="h-5 w-5 text-[#1e4d6b]" /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.totalEquipment')} <InfoTooltip content={ttEquipmentTotal} /></span></div>
             <div className="text-xl sm:text-3xl font-bold text-[#1e4d6b]">{kpis.total}</div>
-            <div className="text-xs text-gray-400 mt-1">{t('pages.equipment.across')} {locationFilter === 'all' ? `3 ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}</div>
+            <div className="text-xs text-gray-400 mt-1">{locations.length > 0 ? `${t('pages.equipment.across')} ${locationFilter === 'all' ? `${locations.length} ${t('pages.equipment.locations')}` : `1 ${t('pages.equipment.location')}`}` : ''}</div>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <div className="flex items-center gap-2 mb-2"><EvidlyIcon size={20} /><span className="text-xs text-gray-500 uppercase font-semibold">{t('pages.equipment.warrantyExpiring')} <InfoTooltip content={ttEquipmentWarranty} /></span></div>
@@ -910,6 +911,15 @@ export function Equipment() {
         {loading && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="h-8 w-8 animate-spin text-[#1e4d6b]" />
+          </div>
+        )}
+
+        {/* Production empty state — no locations */}
+        {!loading && !isDemoMode && locations.length === 0 && allEquipment.length === 0 && (
+          <div className="text-center py-12 text-[var(--text-secondary)]">
+            <Package className="h-10 w-10 mx-auto mb-3 text-gray-300" />
+            <p className="font-medium text-lg">Add your first location to begin tracking equipment.</p>
+            <p className="text-sm mt-1">Once you add a location, you can register and track equipment lifecycle data here.</p>
           </div>
         )}
 
@@ -1674,7 +1684,7 @@ export function Equipment() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.equipment.location')}</label>
                     <select name="location" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]">
-                      {LOCATIONS.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+                      {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
                     </select>
                   </div>
                   <div>
@@ -1773,7 +1783,7 @@ export function Equipment() {
                         if (formData) {
                           const { error } = await supabase.from('equipment').insert({
                             organization_id: profile.organization_id,
-                            location_id: formData.get('location') || LOCATIONS[0].id,
+                            location_id: formData.get('location') || (locations[0]?.id ?? ''),
                             name: `${formData.get('equipment_type') || 'Equipment'} - New`,
                             equipment_type: formData.get('equipment_type') || 'Other',
                             make: formData.get('make') || '',

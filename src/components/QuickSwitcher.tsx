@@ -14,7 +14,8 @@ import {
   BarChart3,
   X,
 } from 'lucide-react';
-import { locations, locationScores, getGrade } from '../data/demoData';
+import { locations as demoLocations, locationScores, getGrade } from '../data/demoData';
+import { useDemo } from '../contexts/DemoContext';
 
 interface QuickItem {
   id: string;
@@ -45,6 +46,8 @@ export function QuickSwitcher() {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const { isDemoMode } = useDemo();
+  const locations = isDemoMode ? demoLocations : [];
 
   // Build location items from demo data
   const locationItems: QuickItem[] = useMemo(() =>
@@ -57,7 +60,7 @@ export function QuickSwitcher() {
       score: locationScores[loc.urlId]?.foodSafety ?? 0,
       icon: MapPin,
     })),
-  []);
+  [locations]);
 
   const allItems = useMemo(() => [...locationItems, ...pages], [locationItems]);
 

@@ -389,7 +389,7 @@ export function Settings() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">{t('settings.locations')}</label>
                 <div className="space-y-3">
-                  {[
+                  {isDemoMode ? [
                     { name: 'Location 1', address: '1245 Fulton Street, Fresno, CA 93721' }, // demo
                     { name: 'Location 2', address: '1636 Macready Drive, Merced, CA 95340' }, // demo
                     { name: 'Location 3', address: '1 University Circle, Modesto, CA 95348' }, // demo
@@ -404,7 +404,11 @@ export function Settings() {
                       </div>
                       <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">{t('settings.active')}</span>
                     </div>
-                  ))}
+                  )) : (
+                    <div className="p-4 text-center text-sm text-gray-500 border border-dashed border-gray-200 rounded-lg">
+                      No locations configured. Add your first location below.
+                    </div>
+                  )}
                 </div>
                 <button
                   onClick={() => toast.info('Add Location (Demo)')}
