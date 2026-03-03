@@ -414,6 +414,7 @@ function AppRoutes() {
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:vendorId" element={<VendorDetail />} />
           <Route path="/marketplace" element={<VendorMarketplace />} />
+          <Route path="/marketplace/vendor/:vendorSlug" element={<VendorProfile />} />
           <Route path="/marketplace/:vendorSlug" element={<VendorProfile />} />
           <Route path="/haccp" element={<HACCP />} />
           <Route path="/alerts" element={<Alerts />} />

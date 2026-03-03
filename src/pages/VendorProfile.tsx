@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ArrowLeft, Star, Clock, MapPin, Award,
   Phone, Mail, Globe, CheckCircle, XCircle, Calendar, MessageSquare,
-  Users, TrendingUp, Building2, Send, ChevronDown,
+  Users, TrendingUp, Building2, Send, ChevronDown, Loader2,
 } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
@@ -15,6 +15,7 @@ import {
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { supabase } from '../lib/supabase';
 
 // ── Helper: Tier Badge ──────────────────────────────────────────
 function TierBadge({ tier }: { tier: MarketplaceTier }) {
@@ -59,6 +60,377 @@ function StarRating({ rating, size = 'sm' }: { rating: number; size?: 'sm' | 'lg
   );
 }
 
+// ── Review source badge ─────────────────────────────────────────
+const SOURCE_CONFIG: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  google: { label: 'Google', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+  yelp: { label: 'Yelp', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' },
+  evidly: { label: 'EvidLY', bg: 'bg-green-50', text: 'text-green-700', border: 'border-green-200' },
+};
+
+function ReviewSourceBadge({ source }: { source: string }) {
+  const config = SOURCE_CONFIG[source] || SOURCE_CONFIG.evidly;
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium border ${config.bg} ${config.text} ${config.border}`}>
+      {source === 'evidly' && <EvidlyIcon size={10} />}
+      {config.label}
+    </span>
+  );
+}
+
+// ── Production Vendor Profile (DB-backed) ──────────────────────
+interface DbVendorFull {
+  id: string;
+  slug: string;
+  company_name: string;
+  description: string | null;
+  tier: MarketplaceTier;
+  contact_name: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  years_in_business: number;
+  service_area: string[];
+  response_time_hours: number;
+  certifications: { name: string; verified: boolean; expirationDate?: string }[];
+  languages: string[];
+  created_at: string;
+}
+
+interface DbReview {
+  id: string;
+  reviewer_name: string | null;
+  reviewer_org_name: string | null;
+  rating: number;
+  review_text: string | null;
+  service_type: string | null;
+  source: string;
+  vendor_response: string | null;
+  created_at: string;
+}
+
+function ProductionVendorProfile() {
+  const { vendorSlug } = useParams<{ vendorSlug: string }>();
+  const navigate = useNavigate();
+
+  const [vendor, setVendor] = useState<DbVendorFull | null>(null);
+  const [reviews, setReviews] = useState<DbReview[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'about' | 'reviews'>('about');
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'google' | 'yelp' | 'evidly'>('all');
+
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      try {
+        // Try by ID first (from /marketplace/vendor/:id), then by slug
+        let query = supabase.from('marketplace_vendors').select('*');
+        // Check if vendorSlug looks like a UUID
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vendorSlug || '');
+        if (isUuid) {
+          query = query.eq('id', vendorSlug);
+        } else {
+          query = query.eq('slug', vendorSlug);
+        }
+        const { data: vendorData } = await query.single();
+
+        if (vendorData) {
+          setVendor(vendorData as DbVendorFull);
+
+          const { data: reviewData } = await supabase
+            .from('marketplace_reviews')
+            .select('*')
+            .eq('marketplace_vendor_id', vendorData.id)
+            .order('created_at', { ascending: false });
+
+          setReviews((reviewData as DbReview[]) || []);
+        }
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (vendorSlug) load();
+  }, [vendorSlug]);
+
+  const filteredReviews = useMemo(() => {
+    if (sourceFilter === 'all') return reviews;
+    return reviews.filter(r => r.source === sourceFilter);
+  }, [reviews, sourceFilter]);
+
+  const starBreakdown = useMemo(() => {
+    const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    reviews.forEach(r => {
+      const rounded = Math.round(r.rating);
+      if (counts[rounded] !== undefined) counts[rounded]++;
+    });
+    return counts;
+  }, [reviews]);
+
+  const avgRating = useMemo(() => {
+    if (reviews.length === 0) return 0;
+    return reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  }, [reviews]);
+
+  const sourceCounts = useMemo(() => {
+    const counts = { google: 0, yelp: 0, evidly: 0 };
+    reviews.forEach(r => {
+      if (r.source in counts) counts[r.source as keyof typeof counts]++;
+    });
+    return counts;
+  }, [reviews]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (!vendor) {
+    return (
+      <div className="p-8 text-center">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor not found</h2>
+        <p className="text-gray-600 mb-4">The vendor you are looking for does not exist or has been removed.</p>
+        <button
+          onClick={() => navigate('/marketplace')}
+          className="inline-flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg"
+          style={{ color: '#1e4d6b' }}
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Breadcrumb items={[
+        { label: 'Dashboard', href: '/dashboard' },
+        { label: 'Marketplace', href: '/marketplace' },
+        { label: vendor.company_name },
+      ]} />
+
+      <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+        <button
+          onClick={() => navigate('/marketplace')}
+          className="flex items-center gap-1 text-sm hover:underline mb-4"
+          style={{ color: '#1e4d6b' }}
+        >
+          <ArrowLeft className="h-4 w-4" /> Back to Marketplace
+        </button>
+
+        {/* Profile Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#eef4f8' }}>
+                <Building2 className="h-8 w-8" style={{ color: '#1e4d6b' }} />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">{vendor.company_name}</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <TierBadge tier={vendor.tier} />
+                </div>
+                {reviews.length > 0 && (
+                  <div className="mt-1">
+                    <StarRating rating={avgRating} size="lg" />
+                    <span className="text-sm text-gray-500 ml-1">({reviews.length} reviews)</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => toast.info('Quote requests require a subscription')}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-white text-sm font-medium min-h-[44px]"
+              style={{ backgroundColor: '#1e4d6b' }}
+            >
+              <Send className="h-4 w-4" /> Request Quote
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-600">
+            <span className="flex items-center gap-1"><Building2 className="h-4 w-4" />{vendor.years_in_business} years in business</span>
+            <span className="flex items-center gap-1"><Clock className="h-4 w-4" />Responds in ~{vendor.response_time_hours} hours</span>
+            {vendor.service_area?.length > 0 && (
+              <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{vendor.service_area.slice(0, 3).join(', ')}</span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-600">
+            {vendor.phone && <span className="flex items-center gap-1"><Phone className="h-4 w-4" />{vendor.phone}</span>}
+            {vendor.email && <span className="flex items-center gap-1"><Mail className="h-4 w-4" />{vendor.email}</span>}
+            {vendor.website && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{vendor.website}</span>}
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
+          {[
+            { id: 'about' as const, label: 'About' },
+            { id: 'reviews' as const, label: `Reviews (${reviews.length})` },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-3 text-sm cursor-pointer transition-colors whitespace-nowrap min-h-[44px] ${
+                activeTab === tab.id ? 'border-b-2 font-semibold' : 'text-gray-500 hover:text-gray-700'
+              }`}
+              style={activeTab === tab.id ? { borderColor: '#d4af37', color: '#1e4d6b' } : undefined}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* About Tab */}
+        {activeTab === 'about' && (
+          <div>
+            {vendor.description && <p className="text-gray-700 leading-relaxed">{vendor.description}</p>}
+
+            {vendor.certifications?.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Certifications</h3>
+                <div className="space-y-2">
+                  {vendor.certifications.map((cert, idx) => (
+                    <div key={idx} className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 p-3">
+                      {cert.verified ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-gray-300" />}
+                      <span className="text-sm text-gray-900">{cert.name}</span>
+                      {cert.expirationDate && <span className="text-xs text-gray-400 ml-auto">Exp: {cert.expirationDate}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {vendor.service_area?.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                  <MapPin className="h-4 w-4" /> Service Area
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {vendor.service_area.map((city: string) => (
+                    <span key={city} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+                      {city}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {vendor.languages?.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-gray-700 mb-2">Languages</h3>
+                <div className="flex flex-wrap gap-2">
+                  {vendor.languages.map((lang: string) => (
+                    <span key={lang} className="px-3 py-1 rounded-full text-sm" style={{ backgroundColor: '#eef4f8', color: '#1e4d6b' }}>
+                      {lang}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Reviews Tab — Three-Source Reviews */}
+        {activeTab === 'reviews' && (
+          <div>
+            {/* Rating summary + source filter */}
+            <div className="flex items-center gap-8 mb-6 flex-wrap">
+              <div className="text-center">
+                <div className="text-2xl sm:text-4xl font-bold text-gray-900">{avgRating.toFixed(1)}</div>
+                <StarRating rating={avgRating} size="lg" />
+                <p className="text-sm text-gray-500 mt-1">based on {reviews.length} reviews</p>
+              </div>
+
+              <div className="flex-1 min-w-0 sm:min-w-[200px] space-y-1">
+                {[5, 4, 3, 2, 1].map(starLevel => {
+                  const count = starBreakdown[starLevel] || 0;
+                  const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                  return (
+                    <div key={starLevel} className="flex items-center gap-2 text-sm">
+                      <span className="w-3 text-gray-600 text-right">{starLevel}</span>
+                      <Star className="h-3.5 w-3.5" fill="#d4af37" stroke="#d4af37" />
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: '#d4af37' }} />
+                      </div>
+                      <span className="w-5 text-gray-500 text-xs">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Source filter tabs */}
+            <div className="flex gap-2 mb-6 flex-wrap">
+              {[
+                { id: 'all' as const, label: `All (${reviews.length})` },
+                { id: 'google' as const, label: `Google (${sourceCounts.google})` },
+                { id: 'yelp' as const, label: `Yelp (${sourceCounts.yelp})` },
+                { id: 'evidly' as const, label: `EvidLY (${sourceCounts.evidly})` },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSourceFilter(tab.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors min-h-[32px] ${
+                    sourceFilter === tab.id
+                      ? 'bg-[#1e4d6b] text-white border-[#1e4d6b]'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Review cards */}
+            <div className="space-y-4">
+              {filteredReviews.map(review => (
+                <div key={review.id} className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <span className="font-semibold text-gray-900">{review.reviewer_name || 'Anonymous'}</span>
+                      {review.reviewer_org_name && (
+                        <span className="text-gray-500 text-sm ml-2">{review.reviewer_org_name}</span>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-1 flex-wrap">
+                    <StarRating rating={review.rating} />
+                    <ReviewSourceBadge source={review.source || 'evidly'} />
+                    {review.service_type && (
+                      <span className="bg-gray-100 rounded-full px-2 py-0.5 text-xs text-gray-600">{review.service_type}</span>
+                    )}
+                  </div>
+
+                  {review.review_text && <p className="text-sm text-gray-700 mt-2">{review.review_text}</p>}
+
+                  {review.vendor_response && (
+                    <div className="mt-3 bg-gray-50 rounded-lg p-3">
+                      <span className="text-xs font-semibold text-gray-500">Vendor Response</span>
+                      <p className="text-sm text-gray-600 mt-1">{review.vendor_response}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {filteredReviews.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-8">
+                  {sourceFilter === 'all' ? 'No reviews yet for this vendor.' : `No ${SOURCE_CONFIG[sourceFilter]?.label} reviews yet.`}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ──────────────────────────────────────────────
 export function VendorProfile() {
   const { vendorSlug } = useParams<{ vendorSlug: string }>();
@@ -94,12 +466,7 @@ export function VendorProfile() {
   }, [vendorReviews]);
 
   if (!isDemoMode) {
-    return (
-      <div className="p-8 text-center">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">Vendor Profile</h2>
-        <p className="text-gray-500">Vendor profile not available.</p>
-      </div>
-    );
+    return <ProductionVendorProfile />;
   }
 
   // ── Not found ───────────────────────────────────────────────

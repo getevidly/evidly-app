@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
+import { useDemo } from '../contexts/DemoContext';
 
 // ── Brand ─────────────────────────────────────────────────────────
 const NAVY = '#1e4d6b';
@@ -58,8 +59,10 @@ export function ServiceRecordEntry() {
   const [submitting, setSubmitting] = useState(false);
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
+  const { isDemoMode } = useDemo();
 
-  const equipment = EQUIPMENT_NAMES[equipmentId || ''];
+  // Only use hardcoded equipment lookup in demo mode
+  const equipment = isDemoMode ? EQUIPMENT_NAMES[equipmentId || ''] : undefined;
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -185,7 +188,7 @@ export function ServiceRecordEntry() {
                 type="text"
                 value={form.vendorName}
                 onChange={e => update('vendorName', e.target.value)}
-                placeholder="Vendor / technician name"
+                placeholder="Select vendor"
                 className={inputClass}
               />
             </div>
