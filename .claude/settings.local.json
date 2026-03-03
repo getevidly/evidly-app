@@ -52,7 +52,9 @@
       "Bash(git merge:*)",
       "Bash(git stash:*)",
       "Bash(git checkout:*)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "Bash(for f in FacilitySafety Equipment ComplianceIndex Vendors)",
+      "Bash(do echo \"$f:\")"
     ]
   }
 }
