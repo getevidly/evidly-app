@@ -27,16 +27,16 @@ ALTER TABLE training_catalog ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "training_catalog_select" ON training_catalog
   FOR SELECT USING (
     is_system = true
-    OR org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid())
+    OR org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
   );
 
 -- Only owners / admins can insert org-specific items
 CREATE POLICY "training_catalog_insert" ON training_catalog
   FOR INSERT WITH CHECK (
     org_id IN (
-      SELECT p.org_id FROM profiles p
-      WHERE p.id = auth.uid()
-        AND p.role IN ('owner_operator', 'executive', 'platform_admin')
+      SELECT organization_id FROM user_profiles
+      WHERE id = auth.uid()
+        AND role IN ('owner_operator', 'executive', 'platform_admin')
     )
   );
 
@@ -44,9 +44,9 @@ CREATE POLICY "training_catalog_insert" ON training_catalog
 CREATE POLICY "training_catalog_update" ON training_catalog
   FOR UPDATE USING (
     org_id IN (
-      SELECT p.org_id FROM profiles p
-      WHERE p.id = auth.uid()
-        AND p.role IN ('owner_operator', 'executive', 'platform_admin')
+      SELECT organization_id FROM user_profiles
+      WHERE id = auth.uid()
+        AND role IN ('owner_operator', 'executive', 'platform_admin')
     )
   );
 

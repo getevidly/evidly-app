@@ -12,7 +12,7 @@
 
 CREATE TABLE IF NOT EXISTS temperature_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  facility_id uuid NOT NULL REFERENCES facilities(id) ON DELETE CASCADE,
+  facility_id uuid NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
   equipment_id uuid NOT NULL REFERENCES temperature_equipment(id) ON DELETE CASCADE,
   input_method text NOT NULL CHECK (input_method IN ('manual', 'qr_scan', 'iot_sensor')),
   temperature decimal NOT NULL,
@@ -57,7 +57,7 @@ CREATE INDEX IF NOT EXISTS idx_temp_logs_type
 
 CREATE TABLE IF NOT EXISTS cooling_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  facility_id uuid NOT NULL REFERENCES facilities(id) ON DELETE CASCADE,
+  facility_id uuid NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
   food_item text NOT NULL,
   batch_id text NULL,
   start_temp decimal NOT NULL,
@@ -164,8 +164,9 @@ CREATE POLICY "temperature_logs_select"
   ON temperature_logs FOR SELECT
   USING (
     facility_id IN (
-      SELECT om.organization_id FROM organization_members om
-      WHERE om.user_id = auth.uid()
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
     )
   );
 
@@ -173,8 +174,9 @@ CREATE POLICY "temperature_logs_insert"
   ON temperature_logs FOR INSERT
   WITH CHECK (
     facility_id IN (
-      SELECT om.organization_id FROM organization_members om
-      WHERE om.user_id = auth.uid()
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
     )
   );
 
@@ -182,8 +184,9 @@ CREATE POLICY "cooling_logs_select"
   ON cooling_logs FOR SELECT
   USING (
     facility_id IN (
-      SELECT om.organization_id FROM organization_members om
-      WHERE om.user_id = auth.uid()
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
     )
   );
 
@@ -191,8 +194,9 @@ CREATE POLICY "cooling_logs_insert"
   ON cooling_logs FOR INSERT
   WITH CHECK (
     facility_id IN (
-      SELECT om.organization_id FROM organization_members om
-      WHERE om.user_id = auth.uid()
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
+      WHERE up.id = auth.uid()
     )
   );
 

@@ -7,37 +7,54 @@
 -- Hard kill on queries exceeding 10 seconds
 ALTER DATABASE postgres SET statement_timeout = '10s';
 
--- Composite: temp_logs by org + recorded date (dashboard recent activity)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_temp_logs_org_recorded
-  ON temp_logs(organization_id, recorded_at DESC);
+-- Wrap each index in a DO block so missing tables/columns don't abort the migration
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_temp_logs_org_recorded
+    ON temp_logs(organization_id, recorded_at DESC);
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Composite: documents by org + expiration (expiry alert cron job)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_documents_org_expiration
-  ON documents(organization_id, expiration_date)
-  WHERE expiration_date IS NOT NULL;
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_documents_org_expiration
+    ON documents(organization_id, expiration_date)
+    WHERE expiration_date IS NOT NULL;
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Composite: checklists by location + created date (daily ops page)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_checklists_location_created
-  ON checklists(location_id, created_at DESC);
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_checklists_location_created
+    ON checklists(location_id, created_at DESC);
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Composite: checklist_completions by completed date (today's progress)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_checklist_completions_completed
-  ON checklist_completions(completed_at DESC);
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_checklist_completions_completed
+    ON checklist_completions(completed_at DESC);
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Composite: vendor_client_relationships by org (vendor lookup)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_vcr_org
-  ON vendor_client_relationships(organization_id);
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_vcr_org
+    ON vendor_client_relationships(organization_id);
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Composite: activity_logs by org + created date (audit trail page)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_activity_logs_org_created
-  ON activity_logs(organization_id, created_at DESC);
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_activity_logs_org_created
+    ON activity_logs(organization_id, created_at DESC);
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Partial: unread notifications per org (notification dropdown)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_notifications_unread
-  ON notifications(organization_id, created_at DESC)
-  WHERE read_at IS NULL;
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_notifications_unread
+    ON notifications(organization_id, created_at DESC)
+    WHERE read_at IS NULL;
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;
 
--- Partial: vendor_service_records by due date + active status (reminder cron)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_vsr_overdue
-  ON vendor_service_records(service_due_date, status)
-  WHERE status IN ('upcoming', 'overdue');
+DO $$ BEGIN
+  CREATE INDEX IF NOT EXISTS idx_vsr_overdue
+    ON vendor_service_records(service_due_date, status)
+    WHERE status IN ('upcoming', 'overdue');
+EXCEPTION WHEN undefined_table OR undefined_column THEN NULL;
+END $$;

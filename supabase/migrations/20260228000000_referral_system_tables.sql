@@ -89,16 +89,16 @@ alter table public.k2c_donations enable row level security;
 alter table public.vendor_ripples enable row level security;
 
 create policy "Users can view own org referrals" on public.referrals
-  for select using (organization_id = (select organization_id from public.profiles where id = auth.uid()));
+  for select using (organization_id = (select organization_id from public.user_profiles where id = auth.uid()));
 
 create policy "Users can insert own org referrals" on public.referrals
-  for insert with check (organization_id = (select organization_id from public.profiles where id = auth.uid()));
+  for insert with check (organization_id = (select organization_id from public.user_profiles where id = auth.uid()));
 
 create policy "Users can view own org badges" on public.compliance_badges
-  for select using (organization_id = (select organization_id from public.profiles where id = auth.uid()));
+  for select using (organization_id = (select organization_id from public.user_profiles where id = auth.uid()));
 
 create policy "Anyone can view network scores" on public.network_scores
   for select using (true);
 
 create policy "Users can view own org k2c" on public.k2c_donations
-  for select using (organization_id = (select organization_id from public.profiles where id = auth.uid()));
+  for select using (organization_id = (select organization_id from public.user_profiles where id = auth.uid()));

@@ -78,16 +78,7 @@ CREATE INDEX IF NOT EXISTS idx_sp_docs_expiry ON service_provider_documents(expi
 
 ALTER TABLE service_provider_documents ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "sp_docs_select" ON service_provider_documents
-  FOR SELECT USING (
-    vendor_id IN (
-      SELECT vendor_id FROM vendor_users WHERE user_id = auth.uid()
-    )
-    OR vendor_id IN (
-      SELECT vendor_id FROM service_provider_client_links
-      WHERE org_id IN (SELECT org_id FROM profiles WHERE id = auth.uid())
-    )
-  );
+-- NOTE: sp_docs_select policy deferred until after service_provider_client_links is created (see below)
 
 CREATE POLICY "sp_docs_insert" ON service_provider_documents
   FOR INSERT WITH CHECK (
@@ -183,7 +174,7 @@ CREATE POLICY "sp_links_select" ON service_provider_client_links
       SELECT vendor_id FROM vendor_users WHERE user_id = auth.uid()
     )
     OR org_id IN (
-      SELECT org_id FROM profiles WHERE id = auth.uid()
+      SELECT organization_id FROM user_profiles WHERE id = auth.uid()
     )
   );
 
@@ -191,5 +182,17 @@ CREATE POLICY "sp_links_insert" ON service_provider_client_links
   FOR INSERT WITH CHECK (
     vendor_id IN (
       SELECT vendor_id FROM vendor_users WHERE user_id = auth.uid()
+    )
+  );
+
+-- Deferred policy: sp_docs_select (needs service_provider_client_links)
+CREATE POLICY "sp_docs_select" ON service_provider_documents
+  FOR SELECT USING (
+    vendor_id IN (
+      SELECT vendor_id FROM vendor_users WHERE user_id = auth.uid()
+    )
+    OR vendor_id IN (
+      SELECT vendor_id FROM service_provider_client_links
+      WHERE org_id IN (SELECT organization_id FROM user_profiles WHERE id = auth.uid())
     )
   );

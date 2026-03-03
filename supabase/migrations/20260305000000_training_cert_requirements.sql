@@ -42,7 +42,7 @@ CREATE POLICY "Admins can manage their org requirements"
 
 CREATE TABLE IF NOT EXISTS training_records (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  facility_id     uuid REFERENCES facilities(id) ON DELETE CASCADE,
+  facility_id     uuid REFERENCES locations(id) ON DELETE CASCADE,
   user_id         uuid NOT NULL,
   training_type   text NOT NULL,
   training_name   text NOT NULL,
@@ -63,8 +63,8 @@ CREATE POLICY "Users can view their org training records"
   ON training_records FOR SELECT
   USING (
     facility_id IN (
-      SELECT f.id FROM facilities f
-      JOIN user_profiles up ON up.organization_id = f.organization_id
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
       WHERE up.id = auth.uid()
     )
   );
@@ -73,8 +73,8 @@ CREATE POLICY "Managers can manage training records"
   ON training_records FOR ALL
   USING (
     facility_id IN (
-      SELECT f.id FROM facilities f
-      JOIN user_profiles up ON up.organization_id = f.organization_id
+      SELECT l.id FROM locations l
+      JOIN user_profiles up ON up.organization_id = l.organization_id
       WHERE up.id = auth.uid()
     )
   );

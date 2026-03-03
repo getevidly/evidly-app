@@ -5,6 +5,8 @@
 -- cached risk scores, and API access audit log.
 -- ============================================================
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- ── API Partner Registry ────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS api_partners (
@@ -28,7 +30,7 @@ CREATE TABLE IF NOT EXISTS risk_score_shares (
   location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
   organization_id UUID NOT NULL,
   shared_by UUID NOT NULL,
-  share_token TEXT NOT NULL UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex'),
+  share_token TEXT NOT NULL UNIQUE DEFAULT replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''),
   recipient_name TEXT,
   recipient_email TEXT,
   expires_at TIMESTAMPTZ NOT NULL,
@@ -38,7 +40,7 @@ CREATE TABLE IF NOT EXISTS risk_score_shares (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_rss_token ON risk_score_shares(share_token) WHERE expires_at > NOW();
+CREATE INDEX IF NOT EXISTS idx_rss_token ON risk_score_shares(share_token);
 CREATE INDEX IF NOT EXISTS idx_rss_org ON risk_score_shares(organization_id);
 
 -- ── API Access Audit Log ─────────────────────────────────────

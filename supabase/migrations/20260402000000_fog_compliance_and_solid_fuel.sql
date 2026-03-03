@@ -58,7 +58,7 @@ DO $$ BEGIN
   ) THEN
     CREATE POLICY org_member_select ON grease_trap_services FOR SELECT
       USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
+        SELECT organization_id FROM user_profiles WHERE id = auth.uid()
       ));
   END IF;
 
@@ -67,7 +67,7 @@ DO $$ BEGIN
   ) THEN
     CREATE POLICY org_member_insert ON grease_trap_services FOR INSERT
       WITH CHECK (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
+        SELECT organization_id FROM user_profiles WHERE id = auth.uid()
       ));
   END IF;
 
@@ -76,7 +76,7 @@ DO $$ BEGIN
   ) THEN
     CREATE POLICY org_member_update ON grease_trap_services FOR UPDATE
       USING (organization_id IN (
-        SELECT organization_id FROM profiles WHERE id = auth.uid()
+        SELECT organization_id FROM user_profiles WHERE id = auth.uid()
       ));
   END IF;
 END $$;
@@ -96,24 +96,30 @@ END $$;
 DO $$
 DECLARE
   v_template_id UUID;
+  v_org_id UUID;
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'checklist_templates') THEN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'checklist_templates')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'checklist_templates' AND column_name = 'pillar')
+  THEN
+    SELECT id INTO v_org_id FROM organizations LIMIT 1;
+    IF v_org_id IS NULL THEN RETURN; END IF;
+    IF EXISTS (SELECT 1 FROM checklist_templates WHERE name = 'Solid-Fuel Cooking — NFPA 96 Chapter 14') THEN RETURN; END IF;
+
     -- Create the solid-fuel compliance template
     INSERT INTO checklist_templates (
-      id, name, description, checklist_type, frequency, pillar, is_active, is_system
+      id, organization_id, name, checklist_type, frequency, pillar, is_active
     ) VALUES (
       gen_random_uuid(),
+      v_org_id,
       'Solid-Fuel Cooking — NFPA 96 Chapter 14',
-      'Additional compliance requirements for locations with wood-fired, charcoal, or pellet cooking equipment per NFPA 96 (2024) Chapter 14.',
       'compliance',
       'monthly',
       'facility_safety',
-      true,
       true
     ) RETURNING id INTO v_template_id;
 
     -- Insert checklist items
-    INSERT INTO checklist_template_items (template_id, item_text, description, pillar, "order") VALUES
+    INSERT INTO checklist_template_items (template_id, item_text, authority_note, pillar, "order") VALUES
       (v_template_id, 'Dedicated exhaust system inspection', 'Verify solid-fuel exhaust is not shared with standard hoods — NFPA 96 §14.4', 'facility_safety', 1),
       (v_template_id, 'Spark arrestor inspection', 'Inspect spark arrestor for damage, blockage, and proper installation — NFPA 96 §14.5', 'facility_safety', 2),
       (v_template_id, 'Grease removal device rated for solid fuel', 'Confirm grease removal device is listed for solid-fuel applications — NFPA 96 §14.6', 'facility_safety', 3),
@@ -128,8 +134,9 @@ END $$;
 -- ─── 4. Add new equipment types to any CHECK constraints if they exist ─
 
 -- Update equipment compliance_pillar for new facility_safety types
-UPDATE equipment SET compliance_pillar = 'facility_safety'
-  WHERE type IN ('grease_interceptor', 'backflow_preventer', 'wood_fired_oven', 'charcoal_grill', 'wood_smoker', 'pellet_smoker')
-    AND (compliance_pillar IS NULL OR compliance_pillar = 'food_safety');
-
-COMMIT;
+DO $$ BEGIN
+  UPDATE equipment SET compliance_pillar = 'facility_safety'
+    WHERE type IN ('grease_interceptor', 'backflow_preventer', 'wood_fired_oven', 'charcoal_grill', 'wood_smoker', 'pellet_smoker')
+      AND (compliance_pillar IS NULL OR compliance_pillar = 'food_safety');
+EXCEPTION WHEN undefined_column THEN NULL;
+END $$;

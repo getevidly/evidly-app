@@ -79,23 +79,23 @@ ALTER TABLE corrective_actions ENABLE ROW LEVEL SECURITY;
 
 -- Templates: system templates (org_id IS NULL) readable by all, org templates by org members
 CREATE POLICY "templates_select" ON corrective_action_templates
-  FOR SELECT USING (organization_id IS NULL OR organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR SELECT USING (organization_id IS NULL OR organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 CREATE POLICY "templates_insert" ON corrective_action_templates
-  FOR INSERT WITH CHECK (organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR INSERT WITH CHECK (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 CREATE POLICY "templates_update" ON corrective_action_templates
-  FOR UPDATE USING (organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR UPDATE USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 -- Corrective actions: org-scoped
 CREATE POLICY "ca_select" ON corrective_actions
-  FOR SELECT USING (organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR SELECT USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 CREATE POLICY "ca_insert" ON corrective_actions
-  FOR INSERT WITH CHECK (organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR INSERT WITH CHECK (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 CREATE POLICY "ca_update" ON corrective_actions
-  FOR UPDATE USING (organization_id = auth.jwt()->>'organization_id'::text::uuid);
+  FOR UPDATE USING (organization_id = (SELECT organization_id FROM user_profiles WHERE id = auth.uid()));
 
 -- Service role bypass
 CREATE POLICY "templates_service_all" ON corrective_action_templates
