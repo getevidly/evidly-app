@@ -78,6 +78,7 @@ const PATH_ICON: Record<string, any> = {
   '/team': Users,
   '/dashboard/training': GraduationCap,
   '/vendors': Store,
+  '/marketplace': Store,
   '/help': HelpCircle,
   '/insurance-risk': Shield,
   '/allergen-tracking': AlertTriangle,
