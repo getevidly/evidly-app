@@ -65,7 +65,7 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     location: 'Location 3', // demo
     status: 'active',
     created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    action_label: 'View Temp Logs',
+    action_label: 'View Temperature Readings',
     action_href: '/temp-logs',
   },
   {
@@ -205,7 +205,7 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     location: 'Location 1', // demo
     status: 'active',
     created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-    action_label: 'View Temp Logs',
+    action_label: 'View Temperature Readings',
     action_href: '/temp-logs',
   },
   {
@@ -234,7 +234,7 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     status: 'resolved',
     resolved_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     created_at: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
-    action_label: 'View Temp Logs',
+    action_label: 'View Temperature Readings',
     action_href: '/temp-logs',
   },
   {
@@ -249,7 +249,7 @@ const DEMO_ALERTS: PredictiveAlert[] = [
     status: 'resolved',
     resolved_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     created_at: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-    action_label: 'View Temp Logs',
+    action_label: 'View Temperature Readings',
     action_href: '/temp-logs',
   },
 ];

@@ -916,7 +916,7 @@ export function Team() {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.temp_logs_completed || 0}</div>
-                    <div className="text-xs text-gray-500">Temp Logs</div>
+                    <div className="text-xs text-gray-500">Temperature Readings</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-[#1e4d6b]">{selectedMember.checklists_completed || 0}</div>

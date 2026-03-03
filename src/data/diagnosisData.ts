@@ -138,7 +138,7 @@ export const DECISION_TREE: Record<string, DiagnosisNode> = {
         equipment: 'Walk-In / Reach-In Refrigerator',
         description: 'A non-cooling refrigeration unit is a food safety emergency. Product in the danger zone (41\u00b0F\u2013135\u00b0F) for more than 4 hours must be discarded.',
         likelyCauses: ['Compressor failure', 'Refrigerant leak', 'Condenser coils dirty or blocked', 'Thermostat failure', 'Door gasket failure allowing warm air in'],
-        immediateSteps: ['1. Check thermostat setting', '2. Check condenser coils \u2014 clean if visibly dirty', '3. Check door gaskets for tears or gaps', '4. Begin temperature monitoring \u2014 log every 30 minutes', '5. Move critical product to working unit if available', '6. Call refrigeration service', '7. Document in EvidLY Temp Logs'],
+        immediateSteps: ['1. Check thermostat setting', '2. Check condenser coils \u2014 clean if visibly dirty', '3. Check door gaskets for tears or gaps', '4. Begin temperature monitoring \u2014 log every 30 minutes', '5. Move critical product to working unit if available', '6. Call refrigeration service', '7. Document in EvidLY Temperature Readings'],
         preventionSteps: ['Monthly condenser coil cleaning', 'Quarterly gasket inspection', 'Annual refrigeration service'],
         whenToCallProfessional: 'Immediately. Product loss cost exceeds service call cost.',
         regulatoryNote: 'FDA Food Code requires cold holding at 41\u00b0F or below. Product above 41\u00b0F for 4+ hours must be discarded.',

@@ -150,7 +150,7 @@ const DEMO_INCIDENTS: Incident[] = [
     updatedAt: h(1),
     sourceType: 'temp_log',
     sourceId: 'TL-4521',
-    sourceLabel: 'Temp Log #4521 — Walk-in Cooler',
+    sourceLabel: 'Temperature Reading #4521 — Walk-in Cooler',
     photos: [],
     resolutionPhotos: [],
     correctiveAction: 'Called refrigeration repair tech. Moved high-risk items to backup cooler.',
@@ -346,7 +346,7 @@ const DEMO_INCIDENTS: Incident[] = [
     updatedAt: h(1),
     sourceType: 'temp_log',
     sourceId: 'TL-4530',
-    sourceLabel: 'Temp Log #4530 — Prep Cooler',
+    sourceLabel: 'Temperature Reading #4530 — Prep Cooler',
     photos: [],
     resolutionPhotos: [],
     timeline: [

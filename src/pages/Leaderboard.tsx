@@ -246,12 +246,12 @@ export function Leaderboard() {
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
             </div>
 
-            {/* 100% Temp Logs - EARNED */}
+            {/* 100% Temperature Readings - EARNED */}
             <div style={{ background: 'linear-gradient(135deg, #f0f7fc 0%, #e1eef6 100%)', border: '2px solid #1e4d6b', borderRadius: '12px', padding: '24px', textAlign: 'center' }}>
               <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#1e4d6b', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
                 <Target className="h-8 w-8" style={{ color: '#d4af37' }} />
               </div>
-              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>100% Temp Logs</h4>
+              <h4 style={{ fontWeight: 700, color: '#111827', marginBottom: '4px' }}>100% Temperature Readings</h4>
               <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '8px' }}>All temperature logs current for 30 days</p>
               <span style={{ fontSize: '11px', fontWeight: 600, color: '#1e4d6b', backgroundColor: '#dbeafe', padding: '3px 10px', borderRadius: '4px' }}>EARNED</span>
             </div>

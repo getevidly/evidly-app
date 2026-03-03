@@ -256,7 +256,7 @@ const kitchenStaff: MobileRoleData = {
     { id: 't3', title: 'Walk-in Freezer Temp', subtitle: 'Unit #2 — Cold Storage', icon: '🌡️', status: 'due', time: 'Due 6:30 AM' },
     { id: 't4', title: 'Hot Hold Station Check', subtitle: 'Service Line', icon: '🌡️', status: 'upcoming', time: 'Due 10:30 AM' },
     { id: 't5', title: 'Midday Checklist', subtitle: 'Kitchen & Front of House', icon: '📋', status: 'upcoming', time: 'Due 12:00 PM' },
-    { id: 't6', title: 'Receiving Temp Log', subtitle: 'Loading Dock', icon: '📦', status: 'upcoming', time: 'When delivery arrives' },
+    { id: 't6', title: 'Receiving Temperature Log', subtitle: 'Loading Dock', icon: '📦', status: 'upcoming', time: 'When delivery arrives' },
     { id: 't7', title: 'Closing Checklist', subtitle: 'Full Kitchen', icon: '📋', status: 'upcoming', time: 'Due 9:00 PM' },
   ],
   bottomNav: [

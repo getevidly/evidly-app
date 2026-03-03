@@ -49,7 +49,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: 'Opening, closing, food safety, and custom daily task lists with completion tracking.',
   },
   temperatures: {
-    id: 'temperatures', label: 'Temperature Logs', path: '/temp-logs', icon: '🌡️',
+    id: 'temperatures', label: 'Temperature Readings', path: '/temp-logs', icon: '🌡️',
     roles: [], description: 'Record temperatures manually, via QR Code scan, or from Internet of Things sensors — storage, receiving, and cooking.',
   },
   incidents: {
@@ -61,7 +61,7 @@ const I: Record<string, NavItem> = {
     roles: [], description: '(View) Review incident reports and compliance issues across locations.', // demo
   },
   temperaturesViewOnly: {
-    id: 'temperatures', label: 'Temperature Logs 👁', path: '/temp-logs', icon: '🌡️',
+    id: 'temperatures', label: 'Temperature Readings 👁', path: '/temp-logs', icon: '🌡️',
     roles: [], description: '(View) Review temperature monitoring records and compliance history.',
   },
 
@@ -828,7 +828,7 @@ export const DEMO_ROLES: DemoRoleDefinition[] = [
   {
     role: 'kitchen_staff',
     label: 'Kitchen Staff',
-    description: 'Task-focused: checklists, temp logs, and issue reporting',
+    description: 'Task-focused: checklists, temperature readings, and issue reporting',
     i18nKey: 'topBar.kitchenStaff',
     i18nDescKey: 'topBar.roleDescKitchenStaff',
   },

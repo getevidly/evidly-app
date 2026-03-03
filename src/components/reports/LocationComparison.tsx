@@ -43,7 +43,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
     let y = drawReportHeader(doc, 'Location Comparison', 'Side-by-side scores and metrics', 'All Locations', 'Current');
     y = drawSectionHeading(doc, 'Comparison Table', y);
     drawTable(doc,
-      ['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklists', 'Temp Logs', 'Open Items'],
+      ['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklists', 'Temperature Readings', 'Open Items'],
       data.map(l => [l.location, String(l.foodSafety), String(l.facilitySafety), String(l.overall), `${l.checklistCompletion}%`, `${l.tempCompliance}%`, String(l.openItems)]),
       y,
     );
@@ -99,7 +99,7 @@ export default function LocationComparison({ config }: { config: ReportTypeConfi
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: `2px solid ${CARD_BORDER}` }}>
-                {['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklist %', 'Temp Log %', 'Open Items'].map(h => (
+                {['Location', 'Food Safety', 'Facility Safety', 'Overall', 'Checklist %', 'Temperature Reading %', 'Open Items'].map(h => (
                   <th key={h} className="text-left py-2 px-3 text-xs font-semibold" style={{ color: MUTED }}>{h}</th>
                 ))}
               </tr>

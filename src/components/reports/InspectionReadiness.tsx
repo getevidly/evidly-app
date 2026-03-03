@@ -68,7 +68,7 @@ export default function InspectionReadiness({ config }: { config: ReportTypeConf
           </div>
           <div className="text-center">
             <p className="text-lg font-bold" style={{ color: BODY_TEXT }}>{data.tempAvg}%</p>
-            <p className="text-[11px]" style={{ color: MUTED }}>Temp Log Compliance</p>
+            <p className="text-[11px]" style={{ color: MUTED }}>Temperature Reading Compliance</p>
           </div>
         </div>
       </div>

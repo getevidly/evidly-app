@@ -284,7 +284,7 @@ export function Alerts() {
   const alertTypes: { value: string; label: string }[] = [
     { value: 'all', label: t('pages.calendar.allTypes') },
     { value: 'document_expiring', label: 'Document Expiring' },
-    { value: 'missed_log', label: 'Missed Temp Logs' },
+    { value: 'missed_log', label: 'Missed Temperature Readings' },
     { value: 'vendor_overdue', label: 'Vendor Overdue' },
     { value: 'staff_certification', label: 'Staff Certification' },
     { value: 'checklist_incomplete', label: 'Checklist Incomplete' },

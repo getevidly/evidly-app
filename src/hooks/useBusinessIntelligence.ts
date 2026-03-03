@@ -199,7 +199,7 @@ function buildDemoData(): Omit<BusinessIntelligenceData, 'loading' | 'error'> {
     if (loc.tempLogCompletionRate < 0.75) {
       drivers.push({
         dimension: 'operational',
-        factor: 'Temp Log Gaps',
+        factor: 'Temperature Reading Gaps',
         description: `${Math.round(loc.tempLogCompletionRate * 100)}% completion — food safety risk`,
         severity: loc.tempLogCompletionRate < 0.65 ? 'high' : 'medium',
         score_impact: Math.round((1 - loc.tempLogCompletionRate) * 25),

@@ -76,7 +76,7 @@ export const ComplianceHeatMap: React.FC<Props> = ({ snapshots }) => {
         <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Food Safety</span>
         <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Facility Safety</span>
         <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Checklists</span>
-        <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Temp Logs</span>
+        <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Temperature Readings</span>
         <span style={{ fontSize: '10px', color: '#3D5068', textAlign: 'center', fontWeight: 600, fontFamily: F, textTransform: 'uppercase' }}>Risk</span>
       </div>
 

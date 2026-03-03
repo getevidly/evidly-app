@@ -57,7 +57,7 @@ const TOP_ISSUES = [
 
 const TOP_POSITIVES = [
   { item: 'Daily opening checklists 100% at Location 1', category: 'Checklists' },
-  { item: 'Temperature logging compliance improving weekly', category: 'Temp Logs' },
+  { item: 'Temperature logging compliance improving weekly', category: 'Temperature Readings' },
   { item: 'All hood cleaning certificates current', category: 'Facility Safety' },
   { item: 'Zero health department violations this quarter', category: 'Food Safety' },
   { item: 'Staff training completion up 15% month-over-month', category: 'Training' },

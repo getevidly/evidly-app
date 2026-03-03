@@ -216,7 +216,7 @@ function buildDemoImpact(): ImpactItem[] {
 
 const DEMO_ALERTS: AlertItem[] = [ // demo
   { id: 'a1', severity: 'critical', message: 'Location 3 score dropped below 70 — would fail inspection', location: 'Location 3', pillar: 'Overall', actionLabel: 'View Details', route: '/dashboard?location=university' }, // demo
-  { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Location 2', pillar: 'Food Safety', actionLabel: 'View Temp Log', route: '/temp-logs?location=airport' }, // demo
+  { id: 'a2', severity: 'warning', message: '3 out-of-range temperature readings this week', location: 'Location 2', pillar: 'Food Safety', actionLabel: 'View Temperature Readings', route: '/temp-logs?location=airport' }, // demo
   { id: 'a3', severity: 'warning', message: 'Walk-in cooler trending warm — schedule service', location: 'Location 2', pillar: 'Facility Safety', actionLabel: 'Schedule', route: '/equipment' }, // demo
   // Intelligence-sourced alerts (critical/high insights)
   ...DEMO_INTELLIGENCE_INSIGHTS

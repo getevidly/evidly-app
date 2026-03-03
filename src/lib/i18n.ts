@@ -432,9 +432,9 @@ const en = {
     justRecently: 'Just recently',
   },
 
-  // ── Temperature Logs ────────────────────────────────
+  // ── Temperature Readings ────────────────────────────────
   tempLogs: {
-    title: 'Temperature Logs',
+    title: 'Temperature Readings',
     subtitle: 'Monitor and record equipment temperatures',
     currentReadings: 'Current Readings',
     history: 'History',
@@ -746,7 +746,7 @@ const en = {
     roleDescChef: 'Kitchen operations, checklists, temps, and team oversight',
     roleDescFacilitiesManager: 'Equipment, vendors, facility safety, and maintenance alerts',
     roleDescKitchenManager: 'Daily operations, checklists, team management',
-    roleDescKitchenStaff: 'Task-focused: checklists, temp logs, and issue reporting',
+    roleDescKitchenStaff: 'Task-focused: checklists, temperature readings, and issue reporting',
   },
 
   // ── Settings ────────────────────────────────────────

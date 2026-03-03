@@ -14,7 +14,7 @@ export const TrendEngine: React.FC<Props> = ({ data }) => {
 
   const metricLabels: Record<string, { label: string; format: (v: number) => string }> = {
     checklistRate: { label: 'Checklist Completion %', format: v => `${Math.round(v * 100)}%` },
-    tempLogRate:   { label: 'Temp Log Completion %', format: v => `${Math.round(v * 100)}%` },
+    tempLogRate:   { label: 'Temperature Reading Completion %', format: v => `${Math.round(v * 100)}%` },
     openItems:     { label: 'Open Compliance Items', format: v => String(Math.round(v)) },
   };
 

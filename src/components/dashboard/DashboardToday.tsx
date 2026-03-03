@@ -258,7 +258,7 @@ export function DashboardToday() {
           <button
             key={link.route}
             type="button"
-            onClick={() => navigate(link.route)}
+            onClick={() => navigate(link.route, { state: { fromTab: 'today' } })}
             className="group bg-white rounded-xl p-4 flex items-center gap-3 cursor-pointer hover:shadow-md hover:-translate-y-0.5 hover:border-gray-300 transition-all duration-200"
             style={{ border: '1px solid #e5e7eb' }}
           >

@@ -15,7 +15,7 @@ export const RegionalBenchmark: React.FC<Props> = ({ data }) => {
       topDecile: Math.round(benchmarks.topDecileChecklistCompletion * 100),
     },
     {
-      metric: 'Temp Log Completion',
+      metric: 'Temperature Reading Completion',
       org: Math.round(orgMetrics.avgTempLogCompletion * 100),
       industry: Math.round(benchmarks.avgTempLogCompletion * 100),
       topDecile: Math.round(benchmarks.topDecileTempLogCompletion * 100),

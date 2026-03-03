@@ -1342,7 +1342,7 @@ function BrandingTab({ showToast }: { showToast: (msg: string) => void }) {
                   <span className="text-[10px] font-bold truncate" style={{ color: colors.sidebarText }}>{platformName}</span>
                 </div>
                 <div className="space-y-1">
-                  {['Dashboard', 'Temp Logs', 'Checklists', 'Vendors', 'Reports'].map((item, i) => (
+                  {['Dashboard', 'Temperature Readings', 'Checklists', 'Vendors', 'Reports'].map((item, i) => (
                     <div key={item} className="flex items-center gap-2 px-2 py-1.5 rounded-md" style={i === 0 ? { backgroundColor: colors.primaryColor + '40' } : {}}>
                       <div className="w-3 h-3 rounded" style={{ backgroundColor: colors.sidebarText + '40' }} />
                       <span className="text-[10px]" style={{ color: i === 0 ? colors.sidebarText : colors.sidebarText + '99' }}>{item}</span>
