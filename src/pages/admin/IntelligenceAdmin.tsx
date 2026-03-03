@@ -641,7 +641,7 @@ function StatCard({ label, value, accent, bg, borderColor, isText }: {
 }) {
   return (
     <div
-      className="rounded-xl p-3"
+      className="rounded-xl p-3 text-center"
       style={{
         backgroundColor: bg || '#FFFFFF',
         border: `1px solid ${borderColor || '#D1D9E6'}`,

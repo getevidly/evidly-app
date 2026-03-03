@@ -145,19 +145,19 @@ function StatCard({ label, value, icon: Icon, color }: {
 }) {
   return (
     <div
-      className="rounded-xl px-4 py-3 border flex items-center gap-3"
+      className="rounded-xl px-4 py-3 border text-center"
       style={{ background: CARD_BG, borderColor: CARD_BORDER }}
     >
-      <div
-        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-        style={{ background: `${color}18` }}
-      >
-        <Icon size={20} style={{ color }} />
+      <div className="flex items-center justify-center mb-2">
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+          style={{ background: `${color}18` }}
+        >
+          <Icon size={20} style={{ color }} />
+        </div>
       </div>
-      <div className="min-w-0">
-        <div className="text-2xl font-bold" style={{ color: TEXT_PRIMARY }}>{value}</div>
-        <div className="text-xs" style={{ color: TEXT_TERTIARY }}>{label}</div>
-      </div>
+      <div className="text-2xl font-bold" style={{ color: TEXT_PRIMARY }}>{value}</div>
+      <div className="text-xs" style={{ color: TEXT_TERTIARY }}>{label}</div>
     </div>
   );
 }
