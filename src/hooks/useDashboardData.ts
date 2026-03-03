@@ -243,7 +243,7 @@ const DEMO_ACTIVITY: ActivityItem[] = [
 
 const DEMO_MODULE_STATUSES: ModuleStatus[] = [
   { id: 'mod-checklists', label: 'Checklists', metric: '2/3 complete', status: 'warning', route: '/checklists' },
-  { id: 'mod-temp', label: 'Temp Logs', metric: '14/35 logged', status: 'warning', route: '/temp-logs' },
+  { id: 'mod-temp', label: 'Temperature Readings', metric: '14/35 logged', status: 'warning', route: '/temp-logs' },
   { id: 'mod-equipment', label: 'Equipment', metric: '2 overdue', status: 'critical', route: '/equipment' },
   { id: 'mod-haccp', label: 'HACCP', metric: '6 plans active', status: 'good', route: '/haccp' },
   { id: 'mod-training', label: 'Training', metric: '89% compliant', status: 'good', route: '/training' },

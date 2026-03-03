@@ -5,6 +5,7 @@
  * and module statuses. Pulls from existing useDashboardData() hook.
  */
 
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CheckCircle2, Clock, AlertTriangle, ChevronRight,
@@ -83,6 +84,7 @@ export function DashboardToday() {
   const { data } = useDashboardData();
   const tasks = data.tasks ?? [];
   const deadlines = data.deadlines ?? [];
+  const [showOverdueOnly, setShowOverdueOnly] = useState(false);
 
   const todayStr = new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
@@ -129,7 +131,13 @@ export function DashboardToday() {
         {/* Overdue */}
         <button
           type="button"
-          onClick={() => navigate('/corrective-actions')}
+          onClick={() => {
+            setShowOverdueOnly(true);
+            setTimeout(() => {
+              const el = document.getElementById('todays-tasks');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }, 50);
+          }}
           className={`rounded-xl border-l-4 p-4 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 relative overflow-hidden text-left ${
             overdueCount > 0
               ? 'border-l-red-500 bg-gradient-to-br from-white to-red-50'
@@ -174,25 +182,56 @@ export function DashboardToday() {
         </button>
       </div>
 
-      {/* Today's Tasks */}
+      {/* Today's Tasks / Overdue Items */}
       <div id="todays-tasks" className="bg-white rounded-xl" style={{ border: '1px solid #e5e7eb' }}>
         <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid #F0F0F0' }}>
-          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>Today's Tasks</h3>
-          <span className="text-xs font-medium" style={{ color: NAVY }}>{doneCount}/{tasks.length} complete</span>
+          <h3 className="text-sm font-semibold" style={{ color: BODY_TEXT }}>
+            {showOverdueOnly ? 'Overdue Items' : "Today's Tasks"}
+          </h3>
+          {showOverdueOnly ? (
+            <button
+              type="button"
+              onClick={() => setShowOverdueOnly(false)}
+              className="text-xs font-medium cursor-pointer hover:underline"
+              style={{ color: NAVY }}
+            >
+              Show all tasks
+            </button>
+          ) : (
+            <span className="text-xs font-medium" style={{ color: NAVY }}>{doneCount}/{tasks.length} complete</span>
+          )}
         </div>
-        {tasks.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="text-4xl mb-3">🎯</div>
-            <p className="font-semibold text-lg" style={{ color: '#1E2D4D' }}>You're all caught up!</p>
-            <p className="text-sm text-gray-400 mt-1">No tasks scheduled for today. Enjoy the calm.</p>
-          </div>
-        ) : (
-          <div>
-            {tasks.map(task => (
-              <TaskRow key={task.id} task={task} navigate={navigate} />
-            ))}
-          </div>
-        )}
+        {(() => {
+          const visibleTasks = showOverdueOnly ? tasks.filter(t => t.status === 'overdue') : tasks;
+          if (visibleTasks.length === 0) return (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">{showOverdueOnly ? '✅' : '🎯'}</div>
+              <p className="font-semibold text-lg" style={{ color: '#1E2D4D' }}>
+                {showOverdueOnly ? 'No overdue items' : "You're all caught up!"}
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                {showOverdueOnly ? 'All tasks are on track.' : 'No tasks scheduled for today. Enjoy the calm.'}
+              </p>
+              {showOverdueOnly && (
+                <button
+                  type="button"
+                  onClick={() => setShowOverdueOnly(false)}
+                  className="mt-3 text-sm font-medium cursor-pointer hover:underline"
+                  style={{ color: NAVY }}
+                >
+                  Show all tasks
+                </button>
+              )}
+            </div>
+          );
+          return (
+            <div>
+              {visibleTasks.map(task => (
+                <TaskRow key={task.id} task={task} navigate={navigate} />
+              ))}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Upcoming Deadlines */}
@@ -212,9 +251,9 @@ export function DashboardToday() {
       {/* Quick links — centered, clickable, with colored icons and hover animations */}
       <div className="grid grid-cols-3 gap-3">
         {([
-          { label: 'Checklists', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
           { label: 'Calendar', icon: CalendarDays, route: '/calendar', iconBg: '#eff6ff', iconColor: '#3b82f6' },
-          { label: 'Temp Logs', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
+          { label: 'Temperature Readings', icon: Thermometer, route: '/temp-logs', iconBg: '#fef2f2', iconColor: '#ef4444' },
+          { label: 'Checklists', icon: ClipboardCheck, route: '/checklists', iconBg: 'rgba(160,140,90,0.08)', iconColor: '#A08C5A' },
         ] as const).map(link => (
           <button
             key={link.route}
