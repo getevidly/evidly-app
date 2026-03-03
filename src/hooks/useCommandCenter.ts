@@ -37,6 +37,7 @@ import type {
   SignalFilterState,
   SignalReviewAction,
   ActivityLogEntry,
+  SourceHealthStatus,
 } from '../types/commandCenter';
 import { EMPTY_SIGNAL_FILTERS } from '../types/commandCenter';
 
@@ -127,6 +128,70 @@ function applySignalFilters(items: Signal[], f: SignalFilterState): Signal[] {
   }
 
   return result;
+}
+
+/** Derive CrawlSourceHealth[] from recent crawl execution logs */
+function deriveSourceHealthFromLog(log: CrawlExecution[]): CrawlSourceHealth[] {
+  const map = new Map<string, {
+    source_id: string;
+    source_name: string;
+    source_type: string;
+    runs: { status: string; started_at: string; completed_at: string | null; duration_ms: number | null; events_new: number; error_message: string | null }[];
+  }>();
+
+  for (const entry of log) {
+    if (!map.has(entry.source_id)) {
+      map.set(entry.source_id, {
+        source_id: entry.source_id,
+        source_name: entry.source_name,
+        source_type: (entry.metadata as any)?.type || 'unknown',
+        runs: [],
+      });
+    }
+    map.get(entry.source_id)!.runs.push({
+      status: entry.status,
+      started_at: entry.started_at,
+      completed_at: entry.completed_at,
+      duration_ms: entry.duration_ms,
+      events_new: entry.events_new,
+      error_message: entry.error_message,
+    });
+  }
+
+  const now = Date.now();
+  const day = 24 * 60 * 60 * 1000;
+
+  return Array.from(map.values()).map(({ source_id, source_name, source_type, runs }) => {
+    const successRuns = runs.filter(r => r.status === 'success');
+    const failedRecent = runs.slice(0, 3).filter(r => r.status === 'failed').length;
+    const lastRun = runs[0];
+    const lastSuccess = successRuns[0];
+    const avgDuration = successRuns.length > 0
+      ? Math.round(successRuns.reduce((sum, r) => sum + (r.duration_ms || 0), 0) / successRuns.length)
+      : 0;
+    const eventsLast24h = runs
+      .filter(r => new Date(r.started_at).getTime() > now - day)
+      .reduce((sum, r) => sum + r.events_new, 0);
+
+    let status: SourceHealthStatus = 'healthy';
+    if (failedRecent >= 3) status = 'down';
+    else if (failedRecent >= 2) status = 'error';
+    else if (failedRecent >= 1) status = 'degraded';
+    else if (runs.length === 0) status = 'unknown';
+
+    return {
+      source_id,
+      source_name,
+      source_type,
+      status,
+      last_crawl_at: lastRun?.started_at || null,
+      last_success_at: lastSuccess?.started_at || null,
+      error_count: runs.filter(r => r.status === 'failed').length,
+      uptime_pct: runs.length > 0 ? Math.round((successRuns.length / runs.length) * 100) : 100,
+      avg_duration_ms: avgDuration,
+      events_last_24h: eventsLast24h,
+    };
+  }).sort((a, b) => (b.events_last_24h - a.events_last_24h));
 }
 
 function computeStats(
@@ -234,8 +299,9 @@ export function useCommandCenter(): UseCommandCenterReturn {
         setGamePlans(gpRes.data ?? []);
         setPlatformUpdates(puRes.data ?? []);
         setNotifications(cnRes.data ?? []);
-        setCrawlLog(clRes.data ?? []);
-        setSourceHealth([]);
+        const crawlData = clRes.data ?? [];
+        setCrawlLog(crawlData);
+        setSourceHealth(deriveSourceHealthFromLog(crawlData));
       }
       setLastRefreshedAt(new Date());
     } catch (err: unknown) {

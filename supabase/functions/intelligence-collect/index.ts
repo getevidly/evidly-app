@@ -135,10 +135,10 @@ const INTELLIGENCE_SOURCES: IntelligenceSource[] = [
     type: "web_page", category: "recall_alert", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety", "facility_safety"],
     promptContext: "NAFEM product alerts. Focus on food equipment recalls, safety updates, and technology changes for commercial kitchens." },
   // ══════ REGULATORY UPDATES (8 sources) — feed Regulatory Updates page ══════
-  { id: "federal_register_food", name: "Federal Register Food Safety Final Rules", url: "https://www.federalregister.gov/api/v1/documents?conditions%5Bagencies%5D%5B%5D=food-and-drug-administration&conditions%5Btype%5D%5B%5D=RULE&conditions%5Btopics%5D%5B%5D=food-safety&per_page=5&order=newest",
+  { id: "federal_register_food", name: "Federal Register Food Safety Final Rules", url: "https://www.federalregister.gov/api/v1/documents?conditions%5Bagencies%5D%5B%5D=food-and-drug-administration&conditions%5Btype%5D%5B%5D=RULE&per_page=5&order=newest",
     type: "json_api", category: "regulatory_updates", defaultSeverity: "high", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "Federal Register final rules from FDA affecting food safety. Focus on new compliance requirements, effective dates, and impact on California commercial kitchens." },
-  { id: "federal_register_proposed", name: "Federal Register Proposed Food Safety Rules", url: "https://www.federalregister.gov/api/v1/documents?conditions%5Bagencies%5D%5B%5D=food-and-drug-administration&conditions%5Btype%5D%5B%5D=PRORULE&conditions%5Btopics%5D%5B%5D=food-safety&per_page=5&order=newest",
+  { id: "federal_register_proposed", name: "Federal Register Proposed Food Safety Rules", url: "https://www.federalregister.gov/api/v1/documents?conditions%5Bagencies%5D%5B%5D=food-and-drug-administration&conditions%5Btype%5D%5B%5D=PRORULE&per_page=5&order=newest",
     type: "json_api", category: "regulatory_updates", defaultSeverity: "medium", defaultScope: "national", pillar: ["food_safety"],
     promptContext: "Federal Register proposed rules from FDA affecting food safety. Focus on upcoming regulatory changes operators should prepare for." },
   { id: "fda_import_alerts", name: "FDA Import Alerts for Food Products", url: "https://api.fda.gov/food/enforcement.json",
@@ -816,6 +816,39 @@ Deno.serve(async (req: Request) => {
   console.log(
     `[intelligence-collect] Phase 4 done: ${newCount} inserted, ${errors.length} errors, ${duration_ms}ms total`,
   );
+
+  // ── Phase 5: Log per-source crawl results to crawl_execution_log ──
+  try {
+    const crawlRows = INTELLIGENCE_SOURCES.map((source) => {
+      const sr = sourceResults[source.id] || { fetched: 0, new: 0, skipped: 0 };
+      const hasError = !!sr.error;
+      return {
+        source_id: source.id,
+        source_name: source.name,
+        started_at: new Date(startTime).toISOString(),
+        completed_at: new Date().toISOString(),
+        status: hasError ? "failed" : sr.fetched > 0 ? "success" : "partial",
+        events_found: sr.fetched,
+        events_new: sr.new,
+        events_duplicate: sr.skipped,
+        duration_ms,
+        error_message: sr.error || null,
+        metadata: { pillar: source.pillar, category: source.category, type: source.type },
+      };
+    });
+
+    const { error: crawlLogErr } = await supabase
+      .from("crawl_execution_log")
+      .insert(crawlRows);
+
+    if (crawlLogErr) {
+      console.warn(`[intelligence-collect] Crawl log insert failed: ${crawlLogErr.message}`);
+    } else {
+      console.log(`[intelligence-collect] Phase 5 done: logged ${crawlRows.length} source results to crawl_execution_log`);
+    }
+  } catch (logErr) {
+    console.warn("[intelligence-collect] Crawl logging error:", (logErr as Error).message);
+  }
 
   // ── Email Arthur when new insights arrive ──
   if (newInsights.length > 0) {
