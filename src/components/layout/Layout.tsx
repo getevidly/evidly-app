@@ -23,7 +23,9 @@ import { AutoBreadcrumb } from './AutoBreadcrumb';
 import { useDemo } from '../../contexts/DemoContext';
 import { useNotifications } from '../../contexts/NotificationContext';
 import { useRealtimeNotifications } from '../../hooks/useRealtimeNotifications';
+import { useMobile } from '../../hooks/useMobile';
 import { trackEvent } from '../../utils/analytics';
+import { MobileDailyTasks } from '../mobile/MobileDailyTasks';
 
 interface LocationOption {
   id: string;
@@ -69,6 +71,9 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       });
     }
   }, [setNotifications, currentNotifications]));
+
+  // Mobile daily tasks overlay (demo only, mobile/tablet, dashboard route)
+  const { isMobile, isTablet } = useMobile();
 
   // Track page visits for demo CTAs (stored in sessionStorage for cross-component access)
   const location = useLocation();
@@ -153,6 +158,10 @@ export function Layout({ children, title, locations, selectedLocation, onLocatio
       <DemoWatermark />
       <DemoRestrictions />
       <DemoButtonGuard />
+      {/* Mobile daily tasks overlay — demo mode, mobile/tablet, dashboard route only */}
+      {isDemoMode && (isMobile || isTablet) && (location.pathname === '/dashboard' || location.pathname === '/') && (
+        <MobileDailyTasks />
+      )}
     </div>
   );
 }

@@ -363,7 +363,15 @@ export function Calendar() {
   const categoryParam = searchParams.get('category');
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
-  const [view, setView] = useState<ViewMode>('week');
+  const isMobileInit = typeof window !== 'undefined' && window.innerWidth < 640;
+  const [view, setView] = useState<ViewMode>(isMobileInit ? 'day' : 'week');
+  const [isMobile, setIsMobile] = useState(isMobileInit);
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [locationFilter, setLocationFilter] = useState('all');
@@ -1021,6 +1029,70 @@ export function Calendar() {
   const renderMonthView = () => {
     const days = getMonthDays(currentDate.getFullYear(), currentDate.getMonth());
 
+    // Mobile: compact day list
+    if (isMobile) {
+      const monthDays = days.filter((d): d is Date => d !== null);
+      return (
+        <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden' }}>
+          <div style={{ padding: '10px 12px', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb', fontFamily: "'DM Sans', sans-serif", fontSize: '12px', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>
+            {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </div>
+          <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+            {monthDays.map((day, idx) => {
+              const dateKey = formatDateKey(day);
+              const dayEvents = eventsByDate[dateKey] || [];
+              const isToday = isSameDay(day, today);
+              return (
+                <div
+                  key={idx}
+                  onClick={() => { setCurrentDate(day); setView('day'); }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    padding: '10px 12px', cursor: 'pointer',
+                    borderBottom: idx < monthDays.length - 1 ? '1px solid #f3f4f6' : 'none',
+                    backgroundColor: isToday ? '#fffbeb' : 'white',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  <div style={{ width: '40px', textAlign: 'center', flexShrink: 0 }}>
+                    <div style={{ fontSize: '10px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase' }}>
+                      {DAYS[day.getDay()].slice(0, 3)}
+                    </div>
+                    <div style={{
+                      fontSize: '18px', fontWeight: 700,
+                      color: isToday ? '#1e4d6b' : '#111827',
+                      width: '32px', height: '32px', borderRadius: '50%',
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      backgroundColor: isToday ? 'transparent' : 'transparent',
+                      border: isToday ? '2px solid #d4af37' : 'none',
+                    }}>
+                      {day.getDate()}
+                    </div>
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {dayEvents.length === 0 ? (
+                      <span style={{ fontSize: '12px', color: '#d1d5db' }}>—</span>
+                    ) : (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+                        {dayEvents.slice(0, 3).map(event => renderEventChip(event))}
+                        {dayEvents.length > 3 && (
+                          <span style={{ fontSize: '10px', color: '#6b7280', fontWeight: 600, padding: '1px 4px', fontFamily: "'DM Sans', sans-serif" }}>
+                            +{dayEvents.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <ChevronRight size={14} color="#d1d5db" />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // Desktop: 7-column grid
     return (
       <div style={{ overflowX: 'auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(120px, 1fr))', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
@@ -1121,6 +1193,88 @@ export function Calendar() {
   const renderWeekView = () => {
     const weekDays = getWeekDays(currentDate);
 
+    // Mobile: stacked day cards
+    if (isMobile) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {weekDays.map((day, idx) => {
+            const isToday = isSameDay(day, today);
+            const dateKey = formatDateKey(day);
+            const dayEvents = eventsByDate[dateKey] || [];
+            return (
+              <div
+                key={idx}
+                onClick={() => { setCurrentDate(day); setView('day'); }}
+                style={{
+                  border: `1px solid ${isToday ? '#d4af37' : '#e5e7eb'}`,
+                  borderRadius: '12px', overflow: 'hidden', cursor: 'pointer',
+                  backgroundColor: isToday ? '#fffbeb' : 'white',
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '10px 14px',
+                  borderBottom: dayEvents.length > 0 ? '1px solid #f3f4f6' : 'none',
+                  backgroundColor: isToday ? '#fef3c7' : '#f9fafb',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: isToday ? '#1e4d6b' : '#374151' }}>
+                      {DAYS[day.getDay()]}
+                    </span>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: isToday ? '#92400e' : '#6b7280' }}>
+                      {MONTHS[day.getMonth()].slice(0, 3)} {day.getDate()}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {dayEvents.length > 0 && (
+                      <span style={{
+                        fontSize: '11px', fontWeight: 700, color: '#1e4d6b',
+                        backgroundColor: '#e0f2fe', padding: '2px 8px', borderRadius: '10px',
+                      }}>
+                        {dayEvents.length}
+                      </span>
+                    )}
+                    <ChevronRight size={14} color="#d1d5db" />
+                  </div>
+                </div>
+                {dayEvents.length > 0 && (
+                  <div style={{ padding: '8px 14px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    {dayEvents.slice(0, 4).map(event => {
+                      const t = typeMap[event.type];
+                      return (
+                        <div
+                          key={event.id}
+                          onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            padding: '6px 8px', borderRadius: '6px',
+                            backgroundColor: t?.bg || '#f3f4f6',
+                            borderLeft: `3px solid ${t?.color || '#999'}`,
+                            fontSize: '12px', fontWeight: 600,
+                            color: t?.color || '#333',
+                          }}
+                        >
+                          <span style={{ fontSize: '11px', color: '#6b7280', flexShrink: 0 }}>{event.time}</span>
+                          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.title}</span>
+                        </div>
+                      );
+                    })}
+                    {dayEvents.length > 4 && (
+                      <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, paddingLeft: '8px' }}>
+                        +{dayEvents.length - 4} more
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Desktop: 8-column time grid
     return (
       <div style={{ overflowX: 'auto' }}>
         <div style={{ border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', minWidth: '840px' }}>
@@ -1590,98 +1744,104 @@ export function Calendar() {
           </div>
 
           {/* Right: Today + View toggle + Filters */}
-          <div data-demo-allow style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            {/* Today button */}
-            <button
-              onClick={goToday}
-              style={{
-                padding: '8px 16px', borderRadius: '8px',
-                border: '2px solid #d4af37', backgroundColor: '#fffbeb',
-                fontWeight: 700, fontSize: '13px', color: '#92400e',
-                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fef3c7'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
-            >
-              {tr('pages.calendar.today')}
-            </button>
+          <div data-demo-allow style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: '10px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
+            {/* Action row: Today + Add Event + View toggle */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              {/* Today button */}
+              <button
+                onClick={goToday}
+                style={{
+                  padding: '8px 16px', borderRadius: '8px',
+                  border: '2px solid #d4af37', backgroundColor: '#fffbeb',
+                  fontWeight: 700, fontSize: '13px', color: '#92400e',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fef3c7'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#fffbeb'; }}
+              >
+                {tr('pages.calendar.today')}
+              </button>
 
-            {/* Add Event button */}
-            <button
-              onClick={openCreateForm}
-              style={{
-                padding: '8px 16px', borderRadius: '8px',
-                border: 'none', backgroundColor: '#1e4d6b',
-                fontWeight: 700, fontSize: '13px', color: 'white',
-                cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
-                display: 'flex', alignItems: 'center', gap: '6px',
-                transition: 'background-color 0.15s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e4d6b'; }}
-            >
-              <Plus size={16} /> Add Event
-            </button>
+              {/* Add Event button */}
+              <button
+                onClick={openCreateForm}
+                style={{
+                  padding: '8px 16px', borderRadius: '8px',
+                  border: 'none', backgroundColor: '#1e4d6b',
+                  fontWeight: 700, fontSize: '13px', color: 'white',
+                  cursor: 'pointer', fontFamily: "'DM Sans', sans-serif",
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  transition: 'background-color 0.15s',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#2a6a8f'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1e4d6b'; }}
+              >
+                <Plus size={16} /> Add Event
+              </button>
 
-            {/* View toggle */}
-            <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-              {(['day', 'week', 'month'] as ViewMode[]).map(v => (
-                <button
-                  key={v}
-                  onClick={() => setView(v)}
-                  style={{
-                    padding: '8px 12px', fontSize: '13px', fontWeight: 600,
-                    fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
-                    backgroundColor: view === v ? '#1e4d6b' : 'white',
-                    color: view === v ? 'white' : '#4b5563',
-                    borderRight: v !== 'month' ? '1px solid #e5e7eb' : 'none',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {tr(`pages.calendar.${v}`)}
-                </button>
-              ))}
+              {/* View toggle */}
+              <div style={{ display: 'flex', borderRadius: '8px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
+                {(['day', 'week', 'month'] as ViewMode[]).map(v => (
+                  <button
+                    key={v}
+                    onClick={() => setView(v)}
+                    style={{
+                      padding: '8px 12px', fontSize: '13px', fontWeight: 600,
+                      fontFamily: "'DM Sans', sans-serif", border: 'none', cursor: 'pointer',
+                      backgroundColor: view === v ? '#1e4d6b' : 'white',
+                      color: view === v ? 'white' : '#4b5563',
+                      borderRight: v !== 'month' ? '1px solid #e5e7eb' : 'none',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {tr(`pages.calendar.${v}`)}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Type filter select */}
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              style={selectStyle}
-              className="w-full sm:w-auto sm:min-w-[150px]"
-            >
-              <option value="all">{tr('pages.calendar.allTypes')}</option>
-              {eventTypes.map(t => (
-                <option key={t.id} value={t.id}>{t.label}</option>
-              ))}
-            </select>
+            {/* Filter row: stacks full-width on mobile */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              {/* Type filter select */}
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                style={selectStyle}
+                className="w-full sm:w-auto sm:min-w-[150px]"
+              >
+                <option value="all">{tr('pages.calendar.allTypes')}</option>
+                {eventTypes.map(t => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
+                ))}
+              </select>
 
-            {/* Location filter select */}
-            <select
-              value={locationFilter}
-              onChange={(e) => setLocationFilter(e.target.value)}
-              style={selectStyle}
-              className="w-full sm:w-auto sm:min-w-[150px]"
-            >
-              <option value="all">{tr('pages.calendar.allLocations')}</option>
-              {isDemoMode && LOCATIONS.map(loc => (
-                <option key={loc} value={loc}>{loc}</option>
-              ))}
-            </select>
+              {/* Location filter select */}
+              <select
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                style={selectStyle}
+                className="w-full sm:w-auto sm:min-w-[150px]"
+              >
+                <option value="all">{tr('pages.calendar.allLocations')}</option>
+                {isDemoMode && LOCATIONS.map(loc => (
+                  <option key={loc} value={loc}>{loc}</option>
+                ))}
+              </select>
 
-            {/* Category filter select */}
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              style={selectStyle}
-              className="w-full sm:w-auto sm:min-w-[150px]"
-            >
-              <option value="all">All Categories</option>
-              {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+              {/* Category filter select */}
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                style={selectStyle}
+                className="w-full sm:w-auto sm:min-w-[150px]"
+              >
+                <option value="all">All Categories</option>
+                {FACILITY_SAFETY_CATEGORIES.filter(c => c !== 'Other').map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 

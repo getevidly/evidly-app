@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
   ChevronRight, ChevronDown, Settings, AlertTriangle,
-  Building2, Upload, MapPin,
+  Building2, Upload, MapPin, Plus,
 } from 'lucide-react';
 import { LOCATION_JURISDICTION_STATUS } from '../data/demoData';
 import { useDemo } from '../contexts/DemoContext';
+import { useOperatingHours } from '../contexts/OperatingHoursContext';
+import { getAvailableCounties } from '../lib/jurisdictionScoring';
+import { AddLocationModal, type NewLocationData } from '../components/locations/AddLocationModal';
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -26,7 +29,7 @@ interface OrgTreeNode {
 
 // ── Demo Data ────────────────────────────────────────────────
 
-const orgTree: OrgTreeNode = {
+const INITIAL_ORG_TREE: OrgTreeNode = {
   id: 'pcd',
   name: 'Your Organization',
   code: 'PCD',
@@ -382,16 +385,76 @@ function collectLocations(node: OrgTreeNode): OrgTreeNode[] {
   return node.children.flatMap(c => collectLocations(c));
 }
 
+function collectCodes(node: OrgTreeNode): string[] {
+  if (node.type === 'location') return [node.code];
+  if (!node.children) return [];
+  return node.children.flatMap(c => collectCodes(c));
+}
+
 // ── Main Page ────────────────────────────────────────────────
 
 export function OrgHierarchy() {
   const navigate = useNavigate();
   const { isDemoMode } = useDemo();
+  const { locationHours, setLocationHours } = useOperatingHours();
+  const [orgTreeState, setOrgTreeState] = useState<OrgTreeNode>(INITIAL_ORG_TREE);
   const [selectedId, setSelectedId] = useState('');
-  const selectedNode = isDemoMode && selectedId ? findTreeNode(orgTree, selectedId) : null;
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const selectedNode = isDemoMode && selectedId ? findTreeNode(orgTreeState, selectedId) : null;
+  const allLocations = collectLocations(orgTreeState);
+  const isSingleLocation = allLocations.length === 1;
+  const existingCodes = collectCodes(orgTreeState);
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
+  };
+
+  const handleAddLocation = (data: NewLocationData) => {
+    const newId = `loc-${Date.now()}`;
+    const counties = getAvailableCounties();
+    const county = counties.find(c => c.slug === data.jurisdictionSlug);
+
+    const newNode: OrgTreeNode = {
+      id: newId,
+      name: data.name,
+      code: data.code,
+      type: 'location',
+      openItems: 0,
+      foodSafetyStatus: 'Compliant',
+      foodSafetyJurisdiction: county?.name || 'Health Department',
+      facilitySafetyVerdict: 'Pass',
+      facilitySafetyAhj: 'Local Fire Department',
+    };
+
+    setOrgTreeState(prev => {
+      const updated = { ...prev };
+      if (updated.children && updated.children.length > 0) {
+        const firstRegion = { ...updated.children[0] };
+        firstRegion.children = [...(firstRegion.children || []), newNode];
+        firstRegion.locationCount = (firstRegion.locationCount || 0) + 1;
+        updated.children = [firstRegion, ...updated.children.slice(1)];
+      } else {
+        updated.children = [newNode];
+      }
+      updated.locationCount = (updated.locationCount || 0) + 1;
+      return updated;
+    });
+
+    // Register operating hours
+    setLocationHours([
+      ...locationHours,
+      {
+        locationName: data.name,
+        days: data.days,
+        openTime: data.openTime,
+        closeTime: data.closeTime,
+      },
+    ]);
+
+    setSelectedId(newId);
+    setShowAddModal(false);
+    toast.success(`${data.name} added successfully`);
   };
 
   return (
@@ -406,6 +469,13 @@ export function OrgHierarchy() {
           <p className="text-gray-500 text-sm mt-1">Compliance status across your locations</p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            Add Location
+          </button>
           <button
             onClick={() => navigate('/import?type=locations')}
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#1e4d6b] text-sm font-medium text-[#1e4d6b] hover:bg-[#eef4f8] transition-colors cursor-pointer"
@@ -428,9 +498,25 @@ export function OrgHierarchy() {
         <div className="rounded-xl border border-gray-200 bg-white p-12 flex flex-col items-center justify-center text-center" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
           <MapPin className="h-12 w-12 text-gray-300 mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No locations added yet</h3>
-          <p className="text-sm text-gray-500 max-w-md">Add your first location to get started.</p>
+          <p className="text-sm text-gray-500 max-w-md mb-4">Add your first location to get started.</p>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-[#1e4d6b] text-sm font-medium text-white hover:bg-[#163a52] transition-colors cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            Add Location
+          </button>
         </div>
-      ) : (
+
+      ) : isDemoMode && isSingleLocation ? (
+        /* Single-location flat view — location IS the organization */
+        <div className="max-w-2xl">
+          <div className="rounded-xl border border-gray-200 bg-white p-5" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
+            <LocationDetail node={allLocations[0]} />
+          </div>
+        </div>
+
+      ) : isDemoMode ? (
       <>
       {/* Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-[40%_1px_1fr] gap-5 items-stretch">
@@ -439,7 +525,7 @@ export function OrgHierarchy() {
           <div className="rounded-xl border border-gray-200 bg-white p-4 h-full" style={{ boxShadow: '0 1px 3px rgba(11,22,40,.06), 0 1px 2px rgba(11,22,40,.04)' }}>
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Organization Tree</h3>
             <div className="space-y-0.5">
-              <TreeNodeRow node={orgTree} selectedId={selectedId} onSelect={handleSelect} />
+              <TreeNodeRow node={orgTreeState} selectedId={selectedId} onSelect={handleSelect} />
             </div>
           </div>
         </div>
@@ -464,7 +550,15 @@ export function OrgHierarchy() {
         </div>
       </div>
       </>
-      )}
+      ) : null}
+
+      {/* Add Location Modal */}
+      <AddLocationModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSave={handleAddLocation}
+        existingCodes={existingCodes}
+      />
     </div>
   );
 }
