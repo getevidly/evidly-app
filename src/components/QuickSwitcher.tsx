@@ -6,12 +6,11 @@ import {
   FileText,
   LayoutDashboard,
   ShieldCheck,
-  Thermometer,
-  CheckSquare,
-  Truck,
+  CalendarDays,
+  Building2,
   Brain,
+  Wrench,
   Settings,
-  BarChart3,
   X,
 } from 'lucide-react';
 import { locations as demoLocations, locationScores, getGrade } from '../data/demoData';
@@ -29,14 +28,13 @@ interface QuickItem {
 
 const pages: QuickItem[] = [
   { id: 'dashboard', label: 'Dashboard', href: '/dashboard', type: 'page', icon: LayoutDashboard },
-  { id: 'documents', label: 'Facility Safety Docs', href: '/documents', type: 'page', icon: FileText },
-  { id: 'temp-logs', label: 'Temperature Logs', href: '/temp-logs', type: 'page', icon: Thermometer },
-  { id: 'checklists', label: 'Daily Checklists', href: '/checklists', type: 'page', icon: CheckSquare },
-  { id: 'scoring', label: 'Compliance Overview', href: '/scoring-breakdown', type: 'page', icon: ShieldCheck },
-  { id: 'vendors', label: 'Vendor Management', href: '/vendors', type: 'page', icon: Truck },
-  { id: 'analysis', label: 'Predictive Alerts', href: '/analysis', type: 'page', icon: Brain },
-  { id: 'benchmarks', label: 'Benchmarks', href: '/benchmarks', type: 'page', icon: BarChart3 },
-  { id: 'settings', label: 'Settings', href: '/settings', type: 'page', icon: Settings },
+  { id: 'calendar', label: 'Calendar', href: '/calendar', type: 'page', icon: CalendarDays },
+  { id: 'food-safety', label: 'Food Safety', href: '/food-safety', type: 'page', icon: ShieldCheck },
+  { id: 'facility-safety', label: 'Facility Safety', href: '/facility-safety', type: 'page', icon: Building2 },
+  { id: 'compliance', label: 'Compliance', href: '/compliance', type: 'page', icon: FileText },
+  { id: 'insights', label: 'Insights', href: '/insights', type: 'page', icon: Brain },
+  { id: 'tools', label: 'Tools', href: '/tools', type: 'page', icon: Wrench },
+  { id: 'admin', label: 'Administration', href: '/admin', type: 'page', icon: Settings },
 ];
 
 export function QuickSwitcher() {
