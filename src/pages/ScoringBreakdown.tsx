@@ -124,6 +124,10 @@ export function ScoringBreakdown() {
           <ClipboardCheck className="mx-auto h-12 w-12 text-gray-300 mb-4" />
           <h2 className="text-lg font-semibold text-gray-700 mb-2">No food safety data yet</h2>
           <p className="text-sm text-gray-500 mb-6">Add locations and complete checklists to see your food safety scoring breakdown.</p>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3" style={{ backgroundColor: '#1e4d6b' }}>
+            Add Location
+          </button>
+          <br />
           <button onClick={() => navigate('/dashboard')} className="text-sm font-medium text-[#1e4d6b] hover:underline">
             Back to Dashboard
           </button>

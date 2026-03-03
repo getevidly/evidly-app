@@ -605,6 +605,18 @@ export function Analysis() {
           </select>
         </div>
 
+        {/* Empty state — non-demo with no locations */}
+        {!isDemoMode && locations.length === 0 && alerts.length === 0 && !loading && (
+          <div style={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '48px 24px', textAlign: 'center', marginBottom: '20px' }}>
+            <ShieldAlert className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
+            <h2 style={{ fontSize: '18px', fontWeight: 600, color: '#374151', marginBottom: '8px', ...F }}>No compliance analysis data yet</h2>
+            <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '20px', ...F }}>Add a location to begin receiving predictive compliance alerts.</p>
+            <button onClick={() => navigate('/org-hierarchy')} style={{ padding: '10px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: '#1e4d6b', border: 'none', borderRadius: '8px', cursor: 'pointer', ...F }}>
+              Add Location
+            </button>
+          </div>
+        )}
+
         {/* Filter Bar */}
         <div data-demo-allow style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px', padding: '12px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
           <select value={alertSeverityFilter} onChange={e => setAlertSeverityFilter(e.target.value as any)} style={selectStyle}>

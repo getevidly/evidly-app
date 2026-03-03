@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, Users, Mail, Clock, X, Smartphone, RotateCw, Search, Award, Activity, MapPin, CheckCircle2, TrendingUp, Calendar, MoreVertical, KeyRound, GraduationCap } from 'lucide-react';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { useAuth } from '../contexts/AuthContext';
@@ -170,7 +170,8 @@ export function Team() {
   const { profile } = useAuth();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showInviteModal, setShowInviteModal] = useState(searchParams.get('action') === 'add');
   const [showBulkInviteModal, setShowBulkInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
@@ -1079,7 +1080,7 @@ export function Team() {
 
       <TeamInviteModal
         isOpen={showInviteModal}
-        onClose={() => setShowInviteModal(false)}
+        onClose={() => { setShowInviteModal(false); if (searchParams.has('action')) { searchParams.delete('action'); setSearchParams(searchParams, { replace: true }); } }}
         organizationId={profile?.organization_id || ''}
         onInviteSent={handleInviteSent}
         locations={accessibleLocations.map(l => ({ locationId: l.locationId, locationName: l.locationName }))}

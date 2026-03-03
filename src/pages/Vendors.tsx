@@ -1350,7 +1350,10 @@ export function Vendors() {
               <div className="text-center py-12 text-[var(--text-secondary)]">
                 <MapPin className="h-10 w-10 mx-auto mb-3 text-gray-300" />
                 <p className="font-medium text-lg">Add a location to configure required vendor services.</p>
-                <p className="text-sm mt-1">Once you add a location, EvidLY will identify required vendor services for your compliance needs.</p>
+                <p className="text-sm mt-1 mb-5">Once you add a location, EvidLY will identify required vendor services for your compliance needs.</p>
+                <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+                  Add Location
+                </button>
               </div>
             )}
 

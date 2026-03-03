@@ -231,9 +231,12 @@ export function ComplianceIndex() {
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center mt-6">
           <BarChart3 className="h-12 w-12 mx-auto mb-4" style={{ color: '#9ca3af' }} />
           <h2 className="text-lg font-semibold text-gray-900 mb-2">No Compliance Index Data</h2>
-          <p className="text-sm text-gray-500 max-w-md mx-auto">
+          <p className="text-sm text-gray-500 max-w-md mx-auto mb-5">
             Add a location to start tracking compliance scores.
           </p>
+          <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+            Add Location
+          </button>
         </div>
       </>
     );

@@ -124,10 +124,10 @@ export function TrainingRecords() {
             Add team members first to start tracking training.
           </p>
           <button
-            onClick={() => navigate('/team')}
+            onClick={() => navigate('/team?action=add')}
             style={{ marginTop: 20, padding: '10px 20px', borderRadius: 8, background: NAVY, color: '#fff', border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
           >
-            Go to Team Management
+            Add Team Member
           </button>
         </div>
       </div>

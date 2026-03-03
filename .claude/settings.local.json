@@ -51,7 +51,8 @@
       "Bash(git commit --amend -m \"$\\(cat <<''EOF''\nCOMMAND-CENTER-2: upgrade Intelligence Command Center with enhanced 5-tab UI\n\nSignal Queue: 5-section review drawer \\(What Changed, AI Triage, Game Plan, Actions, Activity Log\\), re-triage, create platform update.\nGame Plans: 4-column kanban \\(Pending/In Progress/Complete/Dismissed\\), linked signal refs.\nPlatform Updates: validation checklist before apply, disabled button until validated.\nNotifications: email preview, send test, hold for digest, inline edit.\nCrawl Health: alert banner for 3+ failures, freshness matrix, run now, source toggle.\nInfrastructure: URL tab sync \\(?tab=signals\\), auto-refresh \\(30s/60s\\), last-updated indicator.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git merge:*)",
       "Bash(git stash:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npx vercel:*)"
     ]
   }
 }

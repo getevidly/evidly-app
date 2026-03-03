@@ -919,7 +919,10 @@ export function Equipment() {
           <div className="text-center py-12 text-[var(--text-secondary)]">
             <Package className="h-10 w-10 mx-auto mb-3 text-gray-300" />
             <p className="font-medium text-lg">Add your first location to begin tracking equipment.</p>
-            <p className="text-sm mt-1">Once you add a location, you can register and track equipment lifecycle data here.</p>
+            <p className="text-sm mt-1 mb-5">Once you add a location, you can register and track equipment lifecycle data here.</p>
+            <button onClick={() => navigate('/org-hierarchy')} className="px-5 py-2.5 text-sm font-medium text-white rounded-lg" style={{ backgroundColor: '#1e4d6b' }}>
+              Add Location
+            </button>
           </div>
         )}
 
