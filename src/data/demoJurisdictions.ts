@@ -1256,7 +1256,6 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       if (score >= closureMin) return { grade: 'C', passFail: 'fail', display: `C \u2014 ${score}` };
       return { grade: 'CLOSURE', passFail: 'fail', display: `Closure \u2014 ${score}` };
     }
-    case 'green_yellow_red':
     case 'color_placard': {
       // GYR placard — Green=pass, Yellow=conditional, Red=closed
       // In demo mode, score >= 80 = all majors corrected (Green)

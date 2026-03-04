@@ -209,14 +209,13 @@ const SANTA_CLARA_COUNTY: CountyScoringProfile = {
   systemType: 'color_placard_with_score',
   startingScore: 100,
   deductions: { critical: 8, major: 3, minor: 2, good_practice: 0 },
-  getGrade: (_score, hasCritical) => {
-    // Santa Clara: GYR placard based on major violation COUNT + separate numeric score
-    // GREEN = ≤1 major corrected, YELLOW = 2+ majors corrected, RED = imminent threat
-    // In the scoring engine we use hasCritical as proxy for uncorrected violations
-    if (hasCritical) return { label: 'RED', color: '#ef4444', passing: false, special: 'Closure — imminent health/safety threat' };
-    // Without full violation count data, use score as proxy
-    // Score itself is just compliance indicator; placard is the status
-    return { label: 'GREEN', color: '#22c55e', passing: true };
+  getGrade: (score) => {
+    // Santa Clara: DUAL GYR placard + numeric score (both published)
+    // GREEN=90-100, YELLOW=70-89, RED=<70
+    // Score: 100-pt deductive (Major=8, Moderate=3, Minor=2)
+    if (score >= 90) return { label: 'GREEN', color: '#22c55e', passing: true };
+    if (score >= 70) return { label: 'YELLOW', color: '#f59e0b', passing: true };
+    return { label: 'RED', color: '#ef4444', passing: false, special: 'Closure — imminent health/safety threat' };
   },
 };
 
