@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   AlertTriangle,
   CheckCircle2,
   Clock,
   Filter,
   ChevronRight,
-  ChevronDown,
   User,
   MapPin,
   FileText,
@@ -14,11 +14,12 @@ import {
   BookOpen,
   PenLine,
   Shield,
-  ArrowRight,
+  ArrowDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
+import { useRole } from '../contexts/RoleContext';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
@@ -27,6 +28,7 @@ import {
   getTemplatesByCategory,
   CATEGORY_LABELS,
   SEVERITY_LABELS,
+  isOverdue,
   type CACategory,
   type CASeverity,
   type CAStatus,
@@ -54,18 +56,16 @@ const STATUS_CONFIG: Record<CAStatus, { label: string; color: string; bg: string
   archived:    { label: 'Archived', color: '#9ca3af', bg: '#f9fafb', icon: Archive },
 };
 
-const LIFECYCLE_NEXT: Partial<Record<CAStatus, { label: string; next: CAStatus }>> = {
-  created:     { label: 'Start Work', next: 'in_progress' },
-  in_progress: { label: 'Mark Completed', next: 'completed' },
-  completed:   { label: 'Verify', next: 'verified' },
-  verified:    { label: 'Close', next: 'closed' },
-};
+const SEVERITY_ORDER: Record<CASeverity, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
 const DEMO_LOCATIONS = [
   { id: 'downtown', name: 'Location 1' },
   { id: 'airport', name: 'Location 2' },
   { id: 'university', name: 'Location 3' },
 ];
+
+// Kitchen staff demo user name
+const KITCHEN_STAFF_NAME = 'Lisa Nguyen';
 
 interface CreateCAForm {
   title: string;
@@ -99,19 +99,24 @@ function formatDate(iso: string): string {
   return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function isOverdue(item: CorrectiveActionItem): boolean {
-  if (['completed', 'verified', 'closed', 'archived'].includes(item.status)) return false;
-  return new Date(item.dueDate) < new Date(new Date().toISOString().slice(0, 10));
-}
+type SortOption = 'due_date' | 'severity' | 'created' | 'status';
 
 // ── Component ────────────────────────────────────────────────
 
 export function CorrectiveActions() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { userRole } = useRole();
+
+  // URL param pre-filter
+  const urlLocation = searchParams.get('location') || 'all';
 
   const [filterStatus, setFilterStatus] = useState<'all' | CAStatus>('all');
-  const [filterLocation, setFilterLocation] = useState<string>('all');
+  const [filterLocation, setFilterLocation] = useState<string>(urlLocation);
+  const [filterSeverity, setFilterSeverity] = useState<'all' | CASeverity>('all');
+  const [sortBy, setSortBy] = useState<SortOption>('due_date');
 
   // Modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -119,27 +124,57 @@ export function CorrectiveActions() {
   const [templateCategory, setTemplateCategory] = useState<CACategory | 'all'>('all');
   const [createForm, setCreateForm] = useState<CreateCAForm>(EMPTY_FORM);
 
-  // Detail view state
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
   // AI Assist tracking
   const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   // Local actions state (for demo lifecycle transitions)
   const [localActions, setLocalActions] = useState<CorrectiveActionItem[]>([]);
-  const actions = localActions.length > 0 ? localActions : (isDemoMode ? DEMO_CORRECTIVE_ACTIONS : []);
+  const allActions = localActions.length > 0 ? localActions : (isDemoMode ? DEMO_CORRECTIVE_ACTIONS : []);
 
   // Initialize local state from demo data on first render
   useState(() => {
     if (isDemoMode) setLocalActions([...DEMO_CORRECTIVE_ACTIONS]);
   });
 
+  // Role-based visibility filtering
+  const actions = useMemo(() => {
+    if (userRole === 'kitchen_staff') {
+      return allActions.filter(i => i.assignee === KITCHEN_STAFF_NAME);
+    }
+    if (userRole === 'facilities_manager') {
+      return allActions.filter(i => i.category === 'facility_safety');
+    }
+    return allActions;
+  }, [allActions, userRole]);
+
+  // Permission flags
+  const canCreate = userRole !== 'kitchen_staff';
+
   const filtered = useMemo(() => {
     let items = actions;
     if (filterStatus !== 'all') items = items.filter(i => i.status === filterStatus);
     if (filterLocation !== 'all') items = items.filter(i => i.locationId === filterLocation);
+    if (filterSeverity !== 'all') items = items.filter(i => i.severity === filterSeverity);
+
+    // Sort
+    items = [...items].sort((a, b) => {
+      switch (sortBy) {
+        case 'severity':
+          return SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+        case 'created':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'status': {
+          const statusOrder: Record<string, number> = { created: 0, in_progress: 1, completed: 2, verified: 3, closed: 4, archived: 5 };
+          return (statusOrder[a.status] ?? 5) - (statusOrder[b.status] ?? 5);
+        }
+        case 'due_date':
+        default:
+          return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      }
+    });
+
     return items;
-  }, [filterStatus, filterLocation, actions]);
+  }, [filterStatus, filterLocation, filterSeverity, sortBy, actions]);
 
   const counts = useMemo(() => ({
     open: actions.filter(i => i.status === 'created' || i.status === 'in_progress').length,
@@ -195,34 +230,11 @@ export function CorrectiveActions() {
     });
   }, [guardAction]);
 
-  const handleAdvanceStatus = useCallback((id: string, nextStatus: CAStatus) => {
-    guardAction('update', 'Corrective Actions', () => {
-      setLocalActions(prev => prev.map(a => {
-        if (a.id !== id) return a;
-        const now = new Date().toISOString().slice(0, 10);
-        const updates: Partial<CorrectiveActionItem> = { status: nextStatus };
-        if (nextStatus === 'completed') updates.completedAt = now;
-        if (nextStatus === 'verified') updates.verifiedAt = now;
-        if (nextStatus === 'closed') updates.closedAt = now;
-        if (nextStatus === 'archived') updates.archivedAt = now;
-        return { ...a, ...updates };
-      }));
-      toast.success(`Status updated to ${STATUS_CONFIG[nextStatus].label}`);
-    });
-  }, [guardAction]);
-
-  const handleArchive = useCallback((id: string) => {
-    guardAction('update', 'Corrective Actions', () => {
-      setLocalActions(prev => prev.map(a =>
-        a.id === id ? { ...a, status: 'archived' as CAStatus, archivedAt: new Date().toISOString().slice(0, 10) } : a
-      ));
-      toast.success('Corrective action archived');
-    });
-  }, [guardAction]);
-
   // ── Templates for modal ─────────────────────────────────
 
   const filteredTemplates = useMemo(() => getTemplatesByCategory(templateCategory), [templateCategory]);
+
+  const hasAnyFilters = filterStatus !== 'all' || filterLocation !== 'all' || filterSeverity !== 'all';
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-6" style={{ fontFamily: 'system-ui' }}>
@@ -232,13 +244,15 @@ export function CorrectiveActions() {
           <h1 className="text-xl font-bold" style={{ color: NAVY }}>Corrective Actions</h1>
           <p className="text-sm text-gray-500 mt-1">Track and resolve compliance violations with documented action plans.</p>
         </div>
-        <button
-          onClick={handleOpenCreate}
-          className="px-4 py-2 rounded-lg text-sm font-semibold text-white shrink-0"
-          style={{ backgroundColor: NAVY }}
-        >
-          + New Action
-        </button>
+        {canCreate && (
+          <button
+            onClick={handleOpenCreate}
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-white shrink-0"
+            style={{ backgroundColor: NAVY }}
+          >
+            + New Action
+          </button>
+        )}
       </div>
 
       {/* Summary cards */}
@@ -283,9 +297,33 @@ export function CorrectiveActions() {
             <option key={loc.id} value={loc.id}>{loc.name}</option>
           ))}
         </select>
-        {(filterStatus !== 'all' || filterLocation !== 'all') && (
+        <select
+          value={filterSeverity}
+          onChange={(e) => setFilterSeverity(e.target.value as any)}
+          className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+        >
+          <option value="all">All Severities</option>
+          <option value="critical">Critical</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <div className="flex items-center gap-1.5 ml-auto">
+          <ArrowDown size={12} className="text-gray-400" />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-700"
+          >
+            <option value="due_date">Sort: Due Date</option>
+            <option value="severity">Sort: Severity</option>
+            <option value="created">Sort: Newest</option>
+            <option value="status">Sort: Status</option>
+          </select>
+        </div>
+        {hasAnyFilters && (
           <button
-            onClick={() => { setFilterStatus('all'); setFilterLocation('all'); }}
+            onClick={() => { setFilterStatus('all'); setFilterLocation('all'); setFilterSeverity('all'); }}
             className="text-xs text-gray-500 hover:text-gray-700 underline"
           >
             Clear filters
@@ -295,26 +333,37 @@ export function CorrectiveActions() {
 
       {/* Action list */}
       <div className="space-y-3">
-        {filtered.length === 0 && (
+        {/* Empty state: no actions at all */}
+        {actions.length === 0 && (
+          <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+            <AlertTriangle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+            <p className="text-sm font-medium text-gray-700">No corrective actions yet</p>
+            <p className="text-xs text-gray-500 mt-1">
+              When violations or issues are found, create a corrective action to track resolution.
+            </p>
+          </div>
+        )}
+
+        {/* Empty state: no matches */}
+        {actions.length > 0 && filtered.length === 0 && (
           <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-400 text-sm">
             No corrective actions match the selected filters.
           </div>
         )}
+
         {filtered.map(item => {
           const sev = SEVERITY_CONFIG[item.severity];
           const stat = STATUS_CONFIG[item.status];
           const overdue = isOverdue(item);
           const StatusIcon = stat.icon;
-          const isExpanded = expandedId === item.id;
-          const lifecycle = LIFECYCLE_NEXT[item.status];
 
           return (
-            <div key={item.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              {/* Row header */}
-              <div
-                className="p-4 cursor-pointer transition-all hover:bg-gray-50"
-                onClick={() => setExpandedId(isExpanded ? null : item.id)}
-              >
+            <div
+              key={item.id}
+              className="bg-white rounded-lg border border-gray-200 overflow-hidden cursor-pointer transition-all hover:shadow-sm hover:border-gray-300"
+              onClick={() => navigate(`/corrective-actions/${item.id}`)}
+            >
+              <div className="p-4">
                 <div className="flex items-start gap-3">
                   <StatusIcon
                     size={18}
@@ -351,54 +400,9 @@ export function CorrectiveActions() {
                       {item.completedAt && <span>Completed: {formatDate(item.completedAt)}</span>}
                     </div>
                   </div>
-                  {isExpanded
-                    ? <ChevronDown size={16} className="text-gray-300 shrink-0 mt-1" />
-                    : <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
-                  }
+                  <ChevronRight size={16} className="text-gray-300 shrink-0 mt-1" />
                 </div>
               </div>
-
-              {/* Expanded detail view */}
-              {isExpanded && (
-                <div className="border-t border-gray-100 bg-gray-50 p-4 space-y-4">
-                  {/* Detail fields */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <DetailField label="Category" value={CATEGORY_LABELS[item.category]} />
-                    <DetailField label="Regulation" value={item.regulationReference || 'N/A'} />
-                    <DetailField label="Root Cause" value={item.rootCause || 'Not yet documented'} />
-                    <DetailField label="Source" value={item.source} />
-                  </div>
-                  {item.correctiveSteps && (
-                    <DetailField label="Corrective Steps" value={item.correctiveSteps} full />
-                  )}
-                  {item.preventiveMeasures && (
-                    <DetailField label="Preventive Measures" value={item.preventiveMeasures} full />
-                  )}
-
-                  {/* Lifecycle buttons */}
-                  <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-gray-200">
-                    {lifecycle && item.status !== 'archived' && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleAdvanceStatus(item.id, lifecycle.next); }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5"
-                        style={{ backgroundColor: NAVY }}
-                      >
-                        <ArrowRight size={14} />
-                        {lifecycle.label}
-                      </button>
-                    )}
-                    {item.status !== 'archived' && item.status !== 'closed' && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleArchive(item.id); }}
-                        className="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 flex items-center gap-1.5"
-                      >
-                        <Archive size={14} />
-                        Archive
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           );
         })}
@@ -692,17 +696,6 @@ export function CorrectiveActions() {
           onClose={() => setShowUpgrade(false)}
         />
       )}
-    </div>
-  );
-}
-
-// ── Detail field helper ──────────────────────────────────────
-
-function DetailField({ label, value, full }: { label: string; value: string; full?: boolean }) {
-  return (
-    <div className={full ? 'col-span-1 sm:col-span-2' : ''}>
-      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
-      <p className="text-sm text-gray-700">{value}</p>
     </div>
   );
 }

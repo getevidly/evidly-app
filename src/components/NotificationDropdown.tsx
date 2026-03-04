@@ -108,6 +108,22 @@ export function NotificationDropdown({ isOpen, onClose, demoMode = false }: Noti
         read: false,
         link: '/vendors',
       },
+      {
+        id: 'demo-ca-1',
+        icon: 'alert',
+        message: 'Corrective action overdue — Walk-in cooler temp excursion',
+        time: new Date(Date.now() - 3 * 60 * 60 * 1000),
+        read: false,
+        link: '/corrective-actions/ca-1',
+      },
+      {
+        id: 'demo-ca-2',
+        icon: 'alert',
+        message: 'Corrective action due today — Hood suppression inspection',
+        time: new Date(Date.now() - 5 * 60 * 60 * 1000),
+        read: false,
+        link: '/corrective-actions/ca-2',
+      },
     ];
     sessionStorage.setItem('evidly_notifications', JSON.stringify(demoNotifs));
     setNotifications(demoNotifs);

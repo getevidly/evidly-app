@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard' | 'color_placard_with_numeric_score' | 'inspection_report';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'green_yellow_red' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'inspection_report';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard' | 'color_placard_with_numeric_score' | 'color_placard_and_numeric' | 'inspection_report';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'green_yellow_red' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'green_yellow_red_numeric' | 'inspection_report';
 
 export interface DemoJurisdiction {
   id: string;
@@ -34,7 +34,7 @@ export interface DemoJurisdiction {
 }
 
 // ═══════════════════════════════════════════════════════════
-// THE 15 DEMO JURISDICTIONS
+// THE 16 DEMO JURISDICTIONS
 // These power the jurisdiction switcher in sales demos.
 // Each demonstrates a different scoring/grading model.
 // ═══════════════════════════════════════════════════════════
@@ -740,6 +740,40 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ SOLANO COUNTY — VERIFIED (2026-03) ═══
+    // Violation report only. Last 2 inspections per facility online.
+    // NO letter grade. NO numeric score. NO placard. MEDIUM transparency.
+    id: 'demo-solano',
+    county: 'Solano',
+    agencyName: 'Solano County Department of Resource Management — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'violation_report_only',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      onlineHistoryDepth: 'last_2_inspections',
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'Solano County provides violation reports only. No letter grade, numeric score, or color placard. The two most recent inspections per facility are available online.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City Fire Departments / Fairfield Fire / Vacaville Fire / Vallejo Fire',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 2200,
+    dataSourceTier: 3,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — No letter grade, no numeric score, no placard. Last 2 inspections online. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
+  {
     // ═══ VENTURA COUNTY — STANDARDIZED (March 2026) ═══
     // Pass/fail inspection placard. NOT Green/Yellow/Red color-coded.
     // Placard = dated pass card with inspector name, EHD website, EHD phone.
@@ -881,6 +915,43 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     gradeExplanation: 'Inspection Report Only — No letter grade, no numeric score, no placard confirmed. Most recent data online with disclaimer.',
     passFailLabel: 'No Grade',
     demoScore: 90,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
+  {
+    // ═══ SHASTA COUNTY — STANDARDIZED (March 2026) ═══
+    // NO confirmed letter grade, numeric score, or color placard.
+    // Inspection report only. Online inspection data available; full reports by records request.
+    // Transparency: MEDIUM. County covers Redding metro food inspections.
+    // Source: co.shasta.ca.us/departments/resource-management/environmental-health — verified March 2026.
+    id: 'demo-shasta',
+    county: 'Shasta',
+    agencyName: 'Shasta County Department of Resource Management — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      fullReportAtFacility: true,
+      recordsRequestAvailable: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'Shasta County provides standard CalCode inspection reports for all food facilities, including those in the City of Redding. No confirmed letter grade, numeric score, or color placard system. Inspection data available online; full reports available upon records request. County seat is Redding.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Redding Fire / City of Anderson Fire / Shasta Lake City Fire',
+    hasLocalAmendments: false,
+    facilityCount: null,
+    dataSourceTier: 3,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Inspection Report Only — No confirmed letter grade, numeric score, or color placard. Online inspection data available. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
@@ -1353,6 +1424,20 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
+    case 'green_yellow_red_numeric': {
+      // San Francisco — GYR placard + numeric score (0-100), both published
+      // CRITICAL: SF uses High/Moderate/Low RISK TIERS — not Major/Minor
+      // GREEN=90-100, YELLOW=70-89, RED=<70 or imminent hazard
+      const sfPass = jurisdiction.passThreshold || 90;
+      const sfWarn = jurisdiction.warningThreshold || 70;
+      if (score >= sfPass) {
+        return { grade: 'GREEN', passFail: 'pass', display: `\u{1F7E2} Green — ${score}` };
+      }
+      if (score >= sfWarn) {
+        return { grade: 'YELLOW', passFail: 'warning', display: `\u{1F7E1} Yellow — ${score} (Conditional Pass)` };
+      }
+      return { grade: 'RED', passFail: 'fail', display: `\u{1F534} Red — ${score} (Closed)` };
+    }
     case 'report_only':
     default:
       // DEPRECATED — treat same as pass_reinspect for backward compatibility
@@ -1416,11 +1501,11 @@ export const ALL_CA_JURISDICTIONS: Array<{
   agencyName: string;
   scoringType: ScoringType;
   gradingType: GradingType;
-  facilityCount: number;
+  facilityCount: number | null;
   tier: number;
 }> = [
   { county: 'Los Angeles', agencyName: 'LA County DPH — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 88000, tier: 1 },
-  { county: 'San Francisco', agencyName: 'SF DPH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 7500, tier: 1 },
+  { county: 'San Francisco', agencyName: 'San Francisco Department of Public Health (SFDPH) — Environmental Health Branch', scoringType: 'color_placard_and_numeric', gradingType: 'green_yellow_red_numeric', facilityCount: 7000, tier: 1 },
   { county: 'Sonoma', agencyName: 'Sonoma County DHS', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 3200, tier: 1 },
   { county: 'Sacramento', agencyName: 'Sacramento County EMD', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 8500, tier: 2 },
   { county: 'Orange', agencyName: 'Orange County Health Care Agency — Environmental Health Division', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 17000, tier: 2 },
@@ -1442,12 +1527,12 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Monterey', agencyName: 'Monterey County Health Department — Environmental Health Bureau', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 2 },
   { county: 'Tulare', agencyName: 'Tulare County Division of Environmental Health', scoringType: 'numeric_score', gradingType: 'numeric_score_no_letter', facilityCount: 3500, tier: 3 },
   { county: 'Placer', agencyName: 'Placer County Health and Human Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 2200, tier: 1 },
-  { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
+  { county: 'Solano', agencyName: 'Solano County Department of Resource Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'violation_report_only', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
   { county: 'Napa', agencyName: 'Napa County PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1100, tier: 3 },
   { county: 'Santa Cruz', agencyName: 'Santa Cruz County Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 3 },
   { county: 'Butte', agencyName: 'Butte County Public Health Department — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 1200, tier: 2 },
-  { county: 'Shasta', agencyName: 'Shasta County HHSA', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1000, tier: 3 },
+  { county: 'Shasta', agencyName: 'Shasta County Department of Resource Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: null, tier: 3 },
   { county: 'El Dorado', agencyName: 'El Dorado County Environmental Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 1200, tier: 3 },
   { county: 'Los Angeles', city: 'Long Beach', agencyName: 'Long Beach Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 3000, tier: 3 },
   { county: 'Los Angeles', city: 'Pasadena', agencyName: 'Pasadena PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1200, tier: 3 },

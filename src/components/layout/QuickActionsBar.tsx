@@ -19,7 +19,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🌡️', label: 'Temps', route: '/temp-logs', permission: 'bottom.temps' },
     { emoji: '🔥', label: 'Facility Safety', route: '/facility-safety', permission: 'bottom.facility-safety' },
     { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
-    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
+    { emoji: '🔧', label: 'Fix Items', route: '/corrective-actions', permission: 'bottom.corrective-actions' },
   ],
   executive: [
     { emoji: '📊', label: 'Reporting', route: '/reports', permission: 'bottom.reports' },
@@ -33,7 +33,7 @@ const ROLE_ACTIONS: Record<UserRole, QuickAction[]> = {
     { emoji: '🔎', label: 'Self-Inspect', route: '/self-inspection', permission: 'bottom.self-inspect' },
     { emoji: '⚠️', label: 'Violations', route: '/analysis', permission: 'bottom.violations' },
     { emoji: '📰', label: 'Regulatory', route: '/regulatory-alerts', permission: 'bottom.regulatory' },
-    { emoji: '🔔', label: 'Alerts', route: '/analysis', permission: 'bottom.alerts' },
+    { emoji: '🔧', label: 'Fix Items', route: '/corrective-actions', permission: 'bottom.corrective-actions' },
   ],
   chef: [
     { emoji: '📋', label: 'Checklists', route: '/checklists', permission: 'bottom.checklists' },

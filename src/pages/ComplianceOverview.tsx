@@ -36,6 +36,12 @@ import {
 } from '../data/demoJurisdictions';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { getReadinessColor } from '../utils/inspectionReadiness';
+import {
+  DEMO_CORRECTIVE_ACTIONS,
+  isOverdue as isCAOverdue,
+  SEVERITY_LABELS,
+  type CorrectiveActionItem,
+} from '../data/correctiveActionsDemoData';
 
 // ── Brand Colors (EvidLY spec) ───────────────────────────────
 
@@ -740,6 +746,79 @@ export function ComplianceOverview() {
           <PillarSkeleton pillar="facility_safety" />
         )}
       </div>
+
+      {/* Corrective Actions for selected location */}
+      {!isYosemite && <CorrectiveActionsSummary locationId={locationParam} navigate={navigate} />}
+    </div>
+  );
+}
+
+// ── Corrective Actions Summary (per-location) ───────────────
+
+const SEV_COLORS: Record<string, { color: string; bg: string; border: string }> = {
+  critical: { color: '#991b1b', bg: '#fef2f2', border: '#fecaca' },
+  high:     { color: '#92400e', bg: '#fffbeb', border: '#fde68a' },
+  medium:   { color: '#1e4d6b', bg: '#eef4f8', border: '#b8d4e8' },
+  low:      { color: '#166534', bg: '#f0fdf4', border: '#bbf7d0' },
+};
+const SEV_ORDER: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+
+function CorrectiveActionsSummary({ locationId, navigate }: { locationId: string; navigate: (p: string) => void }) {
+  const openCAs = DEMO_CORRECTIVE_ACTIONS
+    .filter(a => a.locationId === locationId && (a.status === 'created' || a.status === 'in_progress'))
+    .sort((a, b) => (SEV_ORDER[a.severity] ?? 3) - (SEV_ORDER[b.severity] ?? 3));
+
+  const top3 = openCAs.slice(0, 3);
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-gray-800">Open Corrective Actions</h3>
+        {openCAs.length > 0 && (
+          <span className="text-xs font-bold px-2 py-0.5 rounded-full text-red-700 bg-red-50">
+            {openCAs.length}
+          </span>
+        )}
+      </div>
+
+      {openCAs.length === 0 ? (
+        <p className="text-xs text-gray-400">No open corrective actions for this location.</p>
+      ) : (
+        <div className="space-y-2">
+          {top3.map(ca => {
+            const sevCfg = SEV_COLORS[ca.severity] || SEV_COLORS.medium;
+            const overdue = isCAOverdue(ca);
+            return (
+              <button
+                key={ca.id}
+                onClick={() => navigate(`/corrective-actions/${ca.id}`)}
+                className="w-full flex items-center gap-3 p-2.5 rounded-lg text-left hover:bg-gray-50 transition-colors"
+                style={{ border: '1px solid #e5e7eb' }}
+              >
+                <span
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase shrink-0"
+                  style={{ color: sevCfg.color, backgroundColor: sevCfg.bg, border: `1px solid ${sevCfg.border}` }}
+                >
+                  {SEVERITY_LABELS[ca.severity]}
+                </span>
+                <span className="text-xs text-gray-700 flex-1 truncate">{ca.title}</span>
+                {overdue && (
+                  <span className="text-[9px] font-bold text-red-600">OVERDUE</span>
+                )}
+              </button>
+            );
+          })}
+          {openCAs.length > 3 && (
+            <button
+              onClick={() => navigate(`/corrective-actions?location=${locationId}`)}
+              className="text-xs font-semibold w-full text-center py-1"
+              style={{ color: '#1e4d6b' }}
+            >
+              View all {openCAs.length} &rarr;
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

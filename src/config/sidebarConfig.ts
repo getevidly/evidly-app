@@ -528,7 +528,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
     sections: [
       section('facility-safety', 'Facility Safety', '🔥',
         'Facility Safety', 'Facility safety compliance, incidents, and inspection readiness.',
-        [I.incidents, I.inspectorArrival], '/facility-safety',
+        [I.incidents, I.correctiveActions, I.inspectorArrival], '/facility-safety',
       ),
       section('food-safety', 'Food Safety', '🍽️',
         'Food Safety', 'Checklists for daily food safety operations.',
@@ -643,7 +643,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('compliance', 'Compliance', '📋',
         'Compliance', 'Incidents, insurance risk, Know Your Inspector, regulatory tracking, compliance reporting, vendor services, and vendor marketplace.',
-        [I.complianceOverview, I.incidentsViewOnly, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
+        [I.complianceOverview, I.correctiveActions, I.incidentsViewOnly, I.insuranceRisk, I.jurisdictionIntelligence, I.regulatory, I.reporting, I.services, I.vendorMarketplace],
         '/compliance',
       ),
       section('tools', 'Tools', '🔧',

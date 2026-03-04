@@ -86,6 +86,7 @@ const SensorDetail = lazy(() => import('./pages/SensorDetail').then(m => ({ defa
 const IoTSensorPlatform = lazy(() => import('./pages/IoTSensorPlatform').then(m => ({ default: m.IoTSensorPlatform })));
 
 const CorrectiveActions = lazy(() => import('./pages/CorrectiveActions').then(m => ({ default: m.CorrectiveActions })));
+const CorrectiveActionDetail = lazy(() => import('./pages/CorrectiveActionDetail').then(m => ({ default: m.CorrectiveActionDetail })));
 const IntegrationHub = lazy(() => import('./pages/IntegrationHub').then(m => ({ default: m.IntegrationHub })));
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings').then(m => ({ default: m.BrandingSettings })));
 const DeveloperPortal = lazy(() => import('./pages/DeveloperPortal').then(m => ({ default: m.DeveloperPortal })));
@@ -502,6 +503,7 @@ function AppRoutes() {
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
+          <Route path="/corrective-actions/:actionId" element={<CorrectiveActionDetail />} />
           {/* Blueprint route aliases — FIX-03 */}
           <Route path="/incident-playbook" element={<Navigate to="/playbooks" replace />} />
           <Route path="/regulatory-tracking" element={<Navigate to="/regulatory-alerts" replace />} />

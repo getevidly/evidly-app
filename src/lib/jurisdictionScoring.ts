@@ -273,6 +273,19 @@ const STANISLAUS_COUNTY: CountyScoringProfile = {
   },
 };
 
+const SOLANO_COUNTY: CountyScoringProfile = {
+  countySlug: 'solano',
+  countyName: 'Solano County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Solano has NO letter grade, NO numeric score, NO placard — violation report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const TULARE_COUNTY: CountyScoringProfile = {
   countySlug: 'tulare',
   countyName: 'Tulare County',
@@ -421,6 +434,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'placer': PLACER_COUNTY,
   'butte': BUTTE_COUNTY,
   'el-dorado': EL_DORADO_COUNTY,
+  'solano': SOLANO_COUNTY,
 };
 
 /**
