@@ -380,6 +380,7 @@ export function useDashboardData(): {
 
     // Authenticated user without an org yet — show empty, never demo data
     if (!orgId) {
+      console.warn('[useDashboardData] org_id not available — skipping fetch');
       setData(buildEmptyPayload());
       setLoading(false);
       return;

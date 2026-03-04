@@ -137,7 +137,7 @@ export function useOnboardingChecklist(): UseOnboardingChecklistReturn {
     }
 
     if (!profile?.organization_id) {
-      // No org yet (profile still loading or brand-new user) — finish loading
+      console.warn('[useOnboardingChecklist] org_id not available — skipping fetch');
       setLoading(false);
       return;
     }

@@ -113,6 +113,7 @@ export function usePermission(permission: string): boolean {
   // Fetch org overrides in production mode (once)
   useEffect(() => {
     if (isDemoMode || !orgId || !userId) {
+      if (!isDemoMode && !orgId) console.warn('[usePermission] org_id not available — using defaults');
       setOrgReady(true);
       return;
     }

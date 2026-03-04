@@ -29,7 +29,10 @@ export function useRealtimeNotifications(
   const orgId = profile?.organization_id;
 
   const subscribe = useCallback(() => {
-    if (!orgId) return;
+    if (!orgId) {
+      console.warn('[useRealtimeNotifications] org_id not available — skipping subscribe');
+      return;
+    }
 
     // Clean up existing channel
     if (channelRef.current) {
