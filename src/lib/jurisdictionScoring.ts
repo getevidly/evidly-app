@@ -92,14 +92,15 @@ const SAN_DIEGO_COUNTY: CountyScoringProfile = {
 const KERN_COUNTY: CountyScoringProfile = {
   countySlug: 'kern',
   countyName: 'Kern County',
-  systemType: 'color_placard',
+  systemType: 'letter_grade',
   startingScore: 100,
   deductions: { critical: 5, major: 5, minor: 3, good_practice: 1 },
   getGrade: (score) => {
-    if (score >= 90) return { label: 'Blue', color: '#3b82f6', passing: true };
-    if (score >= 80) return { label: 'Green', color: '#22c55e', passing: true };
-    if (score >= 70) return { label: 'Yellow', color: '#f59e0b', passing: true };
-    return { label: 'Red', color: '#ef4444', passing: false };
+    // Kern raised closure threshold to 75 (not 70). Kern County Code Ch 8.58.
+    if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
+    if (score >= 80) return { label: 'B', color: '#f59e0b', passing: false };
+    if (score >= 75) return { label: 'C', color: '#ef4444', passing: false };
+    return { label: 'Closure', color: '#ef4444', passing: false, special: 'Permit suspended — facility closed' };
   },
 };
 
