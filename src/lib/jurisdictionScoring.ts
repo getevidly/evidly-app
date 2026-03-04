@@ -390,6 +390,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   // Southern California
   'santa-barbara': SANTA_BARBARA_COUNTY,
   'ventura': VENTURA_COUNTY,
+  'placer': PLACER_COUNTY,
 };
 
 /**

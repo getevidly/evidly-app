@@ -1448,7 +1448,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Santa Cruz', agencyName: 'Santa Cruz County Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 3 },
   { county: 'Butte', agencyName: 'Butte County PH', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 1200, tier: 3 },
   { county: 'Shasta', agencyName: 'Shasta County HHSA', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1000, tier: 3 },
-  { county: 'El Dorado', agencyName: 'El Dorado County EM', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 3 },
+  { county: 'El Dorado', agencyName: 'El Dorado County Environmental Management — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 1200, tier: 3 },
   { county: 'Los Angeles', city: 'Long Beach', agencyName: 'Long Beach Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 3000, tier: 3 },
   { county: 'Los Angeles', city: 'Pasadena', agencyName: 'Pasadena PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1200, tier: 3 },
   { county: 'Alameda', city: 'Berkeley', agencyName: 'Berkeley EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 800, tier: 3 },
