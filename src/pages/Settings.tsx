@@ -18,6 +18,7 @@ import { useOffline } from '../contexts/OfflineContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { useMobile } from '../hooks/useMobile';
+import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -38,6 +39,7 @@ export function Settings() {
   const { locationHours, updateLocationHours, getShiftsForLocation, addShift, removeShift, updateShift } = useOperatingHours();
   const { t, locale, setLocale } = useTranslation();
   const navigate = useNavigate();
+  const { jurisdictions: monitoredJurisdictions, loading: jurisdictionsLoading } = useRegulatoryChanges();
   const canEditHours = userRole === 'executive' || userRole === 'owner_operator';
   const [activeTab, setActiveTab] = useState('profile');
   const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' });
@@ -744,21 +746,28 @@ export function Settings() {
                 <h4 className="font-semibold text-gray-900 mb-4">Monitored Jurisdictions</h4>
                 <p className="text-xs text-gray-500 mb-3">Auto-populated from your location addresses. Add custom jurisdictions if needed.</p>
                 <div className="space-y-2">
-                  {[
-                    { name: 'Fresno County, CA', type: 'County' },
-                    { name: 'Merced County, CA', type: 'County' },
-                    { name: 'Stanislaus County, CA', type: 'County' },
-                    { name: 'California (State)', type: 'State' },
+                  {jurisdictionsLoading ? (
+                    <p className="text-sm text-gray-500 py-2">Loading jurisdictions...</p>
+                  ) : monitoredJurisdictions.length === 0 ? (
+                    <p className="text-sm text-gray-500 py-2">No locations found. Add locations to enable jurisdiction monitoring.</p>
+                  ) : (
+                    [...monitoredJurisdictions.map(j => ({
+                      name: j.type === 'county' ? `${j.name} County, ${j.state}`
+                           : j.type === 'state' ? `${j.name} (State)`
+                           : `${j.name}, ${j.state}`,
+                      type: j.type === 'county' ? 'County' : j.type === 'state' ? 'State' : 'City',
+                    })),
                     { name: 'Federal (FDA, OSHA)', type: 'Federal' },
-                  ].map((j) => (
-                    <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-xl bg-white">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-[#1e4d6b]" />
-                        <span className="text-sm text-gray-700">{j.name}</span>
+                    ].map((j) => (
+                      <div key={j.name} className="flex items-center justify-between py-2 px-3 border border-gray-200 rounded-xl bg-white">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-[#1e4d6b]" />
+                          <span className="text-sm text-gray-700">{j.name}</span>
+                        </div>
+                        <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
                       </div>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
-                    </div>
-                  ))}
+                    ))
+                  )}
                   <button
                     onClick={() => toast.success('Custom jurisdiction added')}
                     className="w-full py-2 text-sm border border-dashed border-gray-300 rounded-md hover:bg-gray-50 text-gray-600"

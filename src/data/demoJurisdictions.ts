@@ -779,6 +779,16 @@ export const DEMO_LOCATIONS = [
     gradeDisplay: 'Pass',
     tagline: 'CalCode pass/reinspect standard',
   },
+  {
+    id: 'demo-loc-yosemite',
+    name: 'Yosemite (Aramark)',
+    jurisdiction: DEMO_JURISDICTIONS.find(j => j.id === 'demo-yosemite')!,
+    score: 90,
+    foodSafety: { ops: 92, docs: 88 },
+    facilitySafety: { ops: 86, docs: 90 },
+    gradeDisplay: 'Pass (Dual Jurisdiction)',
+    tagline: 'Multi-AHJ — County + NPS federal overlay',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -878,6 +888,36 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
       greaseStatus: 'current',
       elevatorStatus: 'no_status',
       backflowStatus: 'expired',
+    },
+  },
+  'demo-loc-yosemite': {
+    foodSafety: {
+      grade: 'Pass (Dual Jurisdiction)',
+      gradeDisplay: 'Pass (Dual Jurisdiction)',
+      summary: 'Mariposa County CalCode + NPS FDA Food Code — both authorities satisfied',
+      status: 'passing',
+      details: {
+        majorViolations: 0, minorViolations: 1, uncorrectedMajors: 0,
+        dualAhj: true,
+        primaryAuthority: 'Mariposa County Environmental Health',
+        federalOverlay: 'NPS — Yosemite Environmental Health',
+        primaryStatus: 'passing',
+        federalStatus: 'passing',
+      },
+    },
+    facilitySafety: {
+      grade: 'Compliant',
+      gradeDisplay: 'Compliant (Dual Authority)',
+      summary: 'CAL FIRE MMU + NPS Structural Fire — both authorities satisfied',
+      status: 'passing',
+      permitStatus: 'current',
+      hoodStatus: 'current',
+      extinguisherStatus: 'current',
+      ansulStatus: 'current',
+      pestStatus: 'no_status',
+      greaseStatus: 'current',
+      elevatorStatus: 'no_status',
+      backflowStatus: 'no_status',
     },
   },
 };
