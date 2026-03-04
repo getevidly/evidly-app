@@ -55,7 +55,9 @@
       "Bash(npx vercel:*)",
       "Bash(for f in FacilitySafety Equipment ComplianceIndex Vendors)",
       "Bash(do echo \"$f:\")",
-      "Bash(git check-ignore:*)"
+      "Bash(git check-ignore:*)",
+      "WebSearch",
+      "WebFetch(domain:rivcoeh.org)"
     ]
   }
 }

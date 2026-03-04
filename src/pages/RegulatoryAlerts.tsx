@@ -9,7 +9,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
-  DEMO_ALERTS, MONITORED_SOURCES, CUSTOMER_JURISDICTIONS,
+  DEMO_ALERTS, MONITORED_SOURCES,
   type RegulatoryAlert, type RegulatorySource, type ImpactLevel, type AlertStatus
 } from '../lib/regulatoryMonitor';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -27,7 +27,7 @@ export function RegulatoryAlerts() {
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isDemoMode } = useDemo();
-  const { alerts: liveAlerts, alertStatuses, markAsRead, loading, error } = useRegulatoryChanges();
+  const { alerts: liveAlerts, alertStatuses, markAsRead, jurisdictions, loading, error } = useRegulatoryChanges();
 
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [impactFilter, setImpactFilter] = useState<string>('all');
@@ -256,7 +256,11 @@ export function RegulatoryAlerts() {
             {filteredAlerts.length === 0 && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 text-center">
                 <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No alerts match your current filters.</p>
+                <p className="text-sm text-gray-500">
+                  {sourceAlerts.length === 0
+                    ? 'No regulatory updates yet.'
+                    : 'No alerts match your current filters.'}
+                </p>
               </div>
             )}
 
@@ -445,12 +449,16 @@ export function RegulatoryAlerts() {
               </div>
               <p className="text-xs text-gray-500 mt-1">Monitoring based on your location addresses</p>
               <div className="mt-3">
-                {CUSTOMER_JURISDICTIONS.map((j, i) => (
-                  <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                    <span className="text-sm text-gray-700">{j.name}, {j.state}</span>
-                    <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
-                  </div>
-                ))}
+                {jurisdictions.length === 0 ? (
+                  <p className="text-xs text-gray-400 py-2">Add a location to see your jurisdictions.</p>
+                ) : (
+                  jurisdictions.map((j, i) => (
+                    <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                      <span className="text-sm text-gray-700">{j.name}, {j.state}</span>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">{j.type}</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

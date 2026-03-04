@@ -8,7 +8,9 @@ import {
   MONITORED_SOURCES,
   type RegulatoryAlert,
   type AlertStatus,
+  type Jurisdiction,
 } from '../lib/regulatoryMonitor';
+import { locations as demoLocations } from '../data/demoData';
 import type { DbRegulatorySource, DbChangeWithSource } from '../types/regulatory';
 import { dbImpactToUiImpact, dbSourceToUiSource } from '../types/regulatory';
 
@@ -113,6 +115,7 @@ interface UseRegulatoryChangesReturn {
 
   adminChanges: AdminRegChange[];
   sources: DbRegulatorySource[];
+  jurisdictions: Jurisdiction[];
   analyzeWithAI: (sourceId: string, rawText: string, changeType: string, sourceUrl?: string) => Promise<void>;
   publishChange: (changeId: string) => Promise<void>;
   unpublishChange: (changeId: string) => Promise<void>;
@@ -132,6 +135,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
 
   const [dbChanges, setDbChanges] = useState<DbChangeWithSource[]>([]);
   const [dbSources, setDbSources] = useState<DbRegulatorySource[]>([]);
+  const [dbLocations, setDbLocations] = useState<Array<{ name: string; address: string; county?: string }>>([]);
   const [loading, setLoading] = useState(!isDemoMode);
   const [error, setError] = useState<string | null>(null);
 
@@ -148,7 +152,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     setError(null);
 
     try {
-      const [changesRes, sourcesRes] = await Promise.all([
+      const [changesRes, sourcesRes, locationsRes] = await Promise.all([
         supabase
           .from('regulatory_changes')
           .select('*, regulatory_sources(*), regulatory_change_reads(*)')
@@ -158,15 +162,29 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
           .select('*')
           .eq('active', true)
           .order('code_name'),
+        supabase
+          .from('locations')
+          .select('name, address, county')
+          .order('name'),
       ]);
 
-      if (changesRes.error) throw changesRes.error;
-      if (sourcesRes.error) throw sourcesRes.error;
+      // Table may not exist or RLS may block — treat as empty, not error
+      if (changesRes.error) {
+        console.warn('[Regulatory Changes] Changes query:', changesRes.error.message);
+      }
+      if (sourcesRes.error) {
+        console.warn('[Regulatory Changes] Sources query:', sourcesRes.error.message);
+      }
+      if (locationsRes.error) {
+        console.warn('[Regulatory Changes] Locations query:', locationsRes.error.message);
+      }
 
       setDbChanges(changesRes.data ?? []);
       setDbSources(sourcesRes.data ?? []);
+      setDbLocations(locationsRes.data ?? []);
     } catch (err: any) {
-      console.error('[Regulatory Changes] Load error:', err);
+      // Only network/connection failures reach here
+      console.error('[Regulatory Changes] Connection error:', err);
       setError(err.message ?? 'Failed to load regulatory data');
     } finally {
       setLoading(false);
@@ -231,6 +249,59 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     }
     return statuses;
   }, [isDemoMode, demoStatuses, dbChanges, user?.id]);
+
+  // ── Derived: Jurisdictions from user locations ──────────
+
+  const jurisdictions = useMemo<Jurisdiction[]>(() => {
+    const locs = isDemoMode
+      ? demoLocations.map(l => ({ name: l.name, address: l.address, county: undefined }))
+      : dbLocations;
+
+    if (locs.length === 0) return [];
+
+    const seen = new Set<string>();
+    const result: Jurisdiction[] = [];
+    const states = new Set<string>();
+
+    for (const loc of locs) {
+      // Use county if available from DB
+      if (loc.county) {
+        const key = `county-${loc.county}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          // Parse state from address
+          const parts = (loc.address || '').split(',').map((p: string) => p.trim());
+          const stateZip = parts[parts.length - 1] || '';
+          const state = stateZip.split(' ')[0] || '';
+          result.push({ name: loc.county, state, type: 'county' });
+          if (state) states.add(state);
+        }
+        continue;
+      }
+
+      // Parse city + state from address: "street, city, state zip"
+      const parts = (loc.address || '').split(',').map((p: string) => p.trim());
+      if (parts.length >= 2) {
+        const stateZip = parts[parts.length - 1] || '';
+        const state = stateZip.split(' ')[0] || '';
+        const city = parts[parts.length - 2] || '';
+        const key = `city-${city}-${state}`;
+        if (city && state && !seen.has(key)) {
+          seen.add(key);
+          result.push({ name: city, state, type: 'city' });
+        }
+        if (state) states.add(state);
+      }
+    }
+
+    // Add state-level entries
+    for (const state of states) {
+      const stateName = state === 'CA' ? 'California' : state;
+      result.push({ name: stateName, state, type: 'state' });
+    }
+
+    return result;
+  }, [isDemoMode, dbLocations]);
 
   // ── Derived: Admin changes ──────────────────────────────
 
@@ -448,6 +519,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     markAsRead,
     adminChanges,
     sources: isDemoMode ? [] : dbSources,
+    jurisdictions,
     analyzeWithAI,
     publishChange,
     unpublishChange,
