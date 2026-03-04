@@ -826,19 +826,23 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with risk-based inspection frequency.',
+      type: 'inspection_report',
+      details: 'Inspection report only. NO letter grade, NO numeric score, NO confirmed placard. Online inspection search available. MEDIUM transparency.',
     },
     populationTier: 'small',
     healthDepartment: {
-      name: 'Mendocino County Environmental Health',
+      name: 'Mendocino County Public Health — Environmental Health Division',
       phone: '(707) 234-6625',
-      website: 'https://www.mendocinocounty.org/government/health-human-services-agency/public-health/environmental-health',
-      inspectionFrequency: 'Risk-based: high risk annually, moderate every 18 months',
+      website: 'https://www.mendocinocounty.gov/departments/public-health/environmental-health/consumer-protection',
+      inspectionFrequency: 'Risk-based',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
-      'Standard CalCode enforcement',
+      'Inspection report only — NO letter grade, NO numeric score, NO confirmed placard',
+      'Online inspection search available (co.mendocino.ca.us)',
+      'Fort Bragg satellite office relocated June 2025',
+      'Wine country (Anderson Valley) and coastal market',
+      // SUGGESTION: verify if placard system has been adopted since last check
     ],
   },
 

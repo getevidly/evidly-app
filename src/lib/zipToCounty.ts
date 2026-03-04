@@ -484,7 +484,7 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '95918': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Browns Valley
   '95919': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Brownsville
   '95922': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Camptonville
-  '95924': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Challenge
+  '95925': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Challenge
   '95935': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Dobbins
   '95961': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Olivehurst / Linda
   '95962': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Oregon House

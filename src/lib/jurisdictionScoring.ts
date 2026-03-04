@@ -549,6 +549,8 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   // Gold Country / Sierra foothills
   'nevada': NEVADA_COUNTY,
   'amador': AMADOR_COUNTY,
+  // North Coast
+  'mendocino': MENDOCINO_COUNTY,
 };
 
 /**

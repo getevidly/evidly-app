@@ -1156,6 +1156,113 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'no_grade',
   },
   {
+    // ═══ AMADOR COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. Results at facility or EHD office in person.
+    // Transparency: LOW-MEDIUM.
+    // Source: amadorcounty.gov/departments/environmental-health/food-program — verified March 2026
+    id: 'demo-amador',
+    county: 'Amador',
+    agencyName: 'Amador County Environmental Health Department',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      reportAtFacility: true,
+      reportAtOffice: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'low-medium',
+      programNote: 'LOW-MEDIUM transparency. Results at facility or EHD in person only. No confirmed public online search. Jackson is county seat. Wine country foothill market.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Jackson Fire / Amador Fire Protection District',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 400,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~300–500 facilities. LOW-MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
+    // ═══ CALAVERAS COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. Results available at facility.
+    // Transparency: MEDIUM.
+    // Source: ema.calaverasgov.us — verified March 2026
+    id: 'demo-calaveras',
+    county: 'Calaveras',
+    agencyName: 'Calaveras County Environmental Management Agency — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'MEDIUM transparency. Sierra foothills wine country. San Andreas is county seat. Includes Stanislaus National Forest adjacent areas. No confirmed online portal.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Angels Camp Fire / Calaveras Consolidated Fire / Ebbetts Pass Fire District',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 500,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~400–600 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
+    // ═══ TUOLUMNE COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. Own Field Inspection Guide (Oct 2021).
+    // Transparency: MEDIUM.
+    // Source: tuolumnecounty.ca.gov/247/Safe-Food — verified March 2026
+    id: 'demo-tuolumne',
+    county: 'Tuolumne',
+    agencyName: 'Tuolumne County Community Development Department — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'MEDIUM transparency. Has its own Field Inspection Guide (Oct 2021). Includes Columbia State Historic Park food vendors. Sonora is county seat. No confirmed online portal or placard.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Sonora Fire / Tuolumne City Fire District / Groveland Community Services District',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: null,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~400-600 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
     // ═══ YUBA COUNTY — STANDARDIZED (March 2026) ═══
     // NO letter grade. NO numeric score. NO confirmed placard.
     // Inspection report only. ~500–700 facilities.
@@ -1748,12 +1855,12 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Imperial', agencyName: 'Imperial County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
   { county: 'Tuolumne', agencyName: 'Tuolumne County Community Development Department — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Nevada', agencyName: 'Nevada County Community Development Agency — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 750, tier: 4 },
-  { county: 'Mendocino', agencyName: 'Mendocino County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 600, tier: 4 },
+  { county: 'Mendocino', agencyName: 'Mendocino County Public Health — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 600, tier: 4 },
   { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
   { county: 'Yuba', agencyName: 'Yuba County Community Development Department — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 600, tier: 4 },
   { county: 'Lake', agencyName: 'Lake County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Tehama', agencyName: 'Tehama County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
-  { county: 'Calaveras', agencyName: 'Calaveras County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
+  { county: 'Calaveras', agencyName: 'Calaveras County Environmental Management Agency — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
   { county: 'Siskiyou', agencyName: 'Siskiyou County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'San Benito', agencyName: 'San Benito County Health & Human Services Agency — Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Amador', agencyName: 'Amador County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
