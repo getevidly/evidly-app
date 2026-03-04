@@ -768,6 +768,17 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
                       (passRequires === 'C' && score >= 70);
       return { grade: letter, passFail: passing ? 'pass' : 'fail', display: passing ? `${letter} \u2014 PASS` : `${letter} \u2014 FAIL` };
     }
+    case 'letter_grade_abc': {
+      // Kern County — A/B/C letter grade with closure threshold at 75 (not 70)
+      // A=90-100 PASS, B=80-89 WARNING, C=75-79 FAIL, <75 CLOSURE
+      const config = jurisdiction.gradingConfig || {};
+      const grades = config.grades || [];
+      if (score >= 90) return { grade: 'A', passFail: 'pass', display: `A \u2014 ${score}` };
+      if (score >= 80) return { grade: 'B', passFail: 'warning', display: `B \u2014 ${score}` };
+      const closureMin = (grades.find?.((g: any) => g.grade === 'CLOSURE')?.max ?? 74) + 1;
+      if (score >= closureMin) return { grade: 'C', passFail: 'fail', display: `C \u2014 ${score}` };
+      return { grade: 'CLOSURE', passFail: 'fail', display: `Closure \u2014 ${score}` };
+    }
     case 'color_placard': {
       // Simplified — in real engine this uses major violation count
       if (score >= 90) return { grade: 'Green', passFail: 'pass', display: 'Green' };
@@ -969,7 +980,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Santa Clara', agencyName: 'Santa Clara County DEH', scoringType: 'heavy_weighted', gradingType: 'color_placard', facilityCount: 10000, tier: 3 },
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
   { county: 'Fresno', agencyName: 'Fresno County Department of Public Health — Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 11000, tier: 3 },
-  { county: 'Kern', agencyName: 'Kern County PHS', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 4000, tier: 3 },
+  { county: 'Kern', agencyName: 'Kern County Public Health Services — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade_abc', facilityCount: 3500, tier: 1 },
   { county: 'Ventura', agencyName: 'Ventura County EHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4500, tier: 3 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
   { county: 'San Joaquin', agencyName: 'San Joaquin County Environmental Health Department', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2882, tier: 3 },
