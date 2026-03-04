@@ -67,7 +67,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
 
     if (data && !error) {
+      console.log('[Auth] fetchProfile result:', { userId, organization_id: data.organization_id, role: data.role, hasData: !!data });
       setProfile(data);
+    } else {
+      console.warn('[Auth] fetchProfile failed or empty:', { userId, error: error?.message, data });
     }
   };
 
