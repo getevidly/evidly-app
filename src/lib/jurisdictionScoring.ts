@@ -436,6 +436,36 @@ const SAN_FRANCISCO: CountyScoringProfile = {
   },
 };
 
+const COLUSA_COUNTY: CountyScoringProfile = {
+  countySlug: 'colusa',
+  countyName: 'Colusa County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Colusa has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
+    // ~140 facilities — one of the smallest EHDs in California
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
+const SUTTER_COUNTY: CountyScoringProfile = {
+  countySlug: 'sutter',
+  countyName: 'Sutter County',
+  systemType: 'color_placard',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // GYR placard — Green=≤1 major corrected, Yellow=2+ majors corrected, Red=imminent hazard
+    // Score-based approximation: hasCritical = imminent hazard proxy
+    if (hasCritical) return { label: 'RED', color: '#ef4444', passing: false, special: 'Closed — imminent health hazard' };
+    // In demo mode, simulate major count from score
+    if (_score < 70) return { label: 'YELLOW', color: '#f59e0b', passing: false };
+    return { label: 'GREEN', color: '#22c55e', passing: true };
+  },
+};
+
 // ── Profile Registry ──────────────────────────────────────────
 
 const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
@@ -470,6 +500,9 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'solano': SOLANO_COUNTY,
   // Bay Area
   'napa': NAPA_COUNTY,
+  // Sacramento Valley — small/rural
+  'sutter': SUTTER_COUNTY,
+  'colusa': COLUSA_COUNTY,
 };
 
 /**

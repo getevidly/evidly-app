@@ -1010,6 +1010,44 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'B — 88',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ COLUSA COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. ~140 facilities — one of the smallest EHDs in CA.
+    // No confirmed public online portal. Report at facility or EHD office.
+    // Transparency: LOW.
+    // Source: countyofcolusaca.gov/425/Retail-Food-Safety — verified March 2026
+    id: 'demo-colusa',
+    county: 'Colusa',
+    agencyName: 'Colusa County Environmental Health — Development Services Department',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      reportAtFacility: true,
+      reportAtOffice: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'low',
+      programNote: 'One of the smallest EHDs in California (~140 facilities). No confirmed public portal. Fees paid at office; cash or check only.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Colusa Fire / City of Williams Fire',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 140,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~140 facilities. LOW transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1565,7 +1603,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Tuolumne', agencyName: 'Tuolumne County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Nevada', agencyName: 'Nevada County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
   { county: 'Mendocino', agencyName: 'Mendocino County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 600, tier: 4 },
-  { county: 'Sutter', agencyName: 'Sutter County EH', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 500, tier: 4 },
+  { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
   { county: 'Yuba', agencyName: 'Yuba County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Lake', agencyName: 'Lake County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Tehama', agencyName: 'Tehama County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 350, tier: 4 },
@@ -1577,7 +1615,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Del Norte', agencyName: 'Del Norte County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Lassen', agencyName: 'Lassen County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Plumas', agencyName: 'Plumas County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
-  { county: 'Colusa', agencyName: 'Colusa County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 150, tier: 4 },
+  { county: 'Colusa', agencyName: 'Colusa County Environmental Health — Development Services Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 140, tier: 4 },
   { county: 'Mono', agencyName: 'Mono County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 150, tier: 4 },
   { county: 'Inyo', agencyName: 'Inyo County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 150, tier: 4 },
   { county: 'Trinity', agencyName: 'Trinity County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 120, tier: 4 },

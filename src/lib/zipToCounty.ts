@@ -445,6 +445,13 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '96156': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
   '96157': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
   '96158': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  // Colusa County — small rural county, Sacramento Valley
+  '95912': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Arbuckle
+  '95932': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Colusa (county seat / EHD office)
+  '95955': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Maxwell
+  '95970': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Princeton
+  '95979': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Stonyford
+  '95987': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Williams
   // Napa County (945xx range overlaps with Solano — overrides needed)
   '94503': { countyId: 'county-napa', countyName: 'Napa County' }, // American Canyon
   '94508': { countyId: 'county-napa', countyName: 'Napa County' }, // Angwin
@@ -458,6 +465,14 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '94576': { countyId: 'county-napa', countyName: 'Napa County' }, // Deer Park
   '94581': { countyId: 'county-napa', countyName: 'Napa County' }, // Napa (south)
   '94599': { countyId: 'county-napa', countyName: 'Napa County' }, // Yountville
+  // Sutter County (overrides Butte range 95901-95999)
+  '95953': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Live Oak
+  '95957': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Meridian
+  '95976': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Sutter
+  '95982': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City east
+  '95991': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City (county seat / EHD HQ)
+  '95992': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City south
+  '95993': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },
