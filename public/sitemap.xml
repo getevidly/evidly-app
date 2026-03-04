@@ -1,340 +1,406 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Static Pages -->
   <url>
-    <loc>https://evidly.com/</loc>
+    <loc>https://getevidly.com/</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://evidly.com/demo</loc>
+    <loc>https://getevidly.com/kitchen-to-community</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://evidly.com/enterprise</loc>
+    <loc>https://getevidly.com/demo</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://getevidly.com/assessment</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://evidly.com/providers</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/iot</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/passport/demo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/signup</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
-  </url>
-
-  <!-- California Food Safety Compliance Pages -->
-  <url>
-    <loc>https://evidly.com/compliance/california</loc>
+    <loc>https://getevidly.com/compliance/california</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://evidly.com/compliance/california/los-angeles</loc>
+    <loc>https://getevidly.com/enterprise</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://evidly.com/compliance/california/san-francisco</loc>
+    <loc>https://getevidly.com/providers</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://evidly.com/compliance/california/san-diego</loc>
+    <loc>https://getevidly.com/terms</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://evidly.com/compliance/california/sacramento</loc>
+    <loc>https://getevidly.com/privacy</loc>
+    <lastmod>2026-03-04</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.3</priority>
   </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/orange</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/riverside</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/san-bernardino</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/alameda</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/santa-clara</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/contra-costa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/fresno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/kern</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/ventura</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/san-mateo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/sonoma</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/placer</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/stanislaus</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/san-joaquin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/tulare</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/santa-barbara</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/solano</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/monterey</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/marin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/santa-cruz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/san-luis-obispo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/yolo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/butte</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/shasta</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/el-dorado</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/napa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/merced</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/madera</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/mariposa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/kings</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/tuolumne</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/calaveras</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/humboldt</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/mendocino</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/lake</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/sutter</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/yuba</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/tehama</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/nevada</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/siskiyou</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/del-norte</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/lassen</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/plumas</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/modoc</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/sierra</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/alpine</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/trinity</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/glenn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/colusa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/amador</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/mono</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/inyo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/imperial</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://evidly.com/compliance/california/san-benito</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
+
+  <!-- Alameda County -->
+  <url><loc>https://getevidly.com/alameda-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/alameda-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/alameda-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/alameda</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Alpine County -->
+  <url><loc>https://getevidly.com/alpine-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/alpine-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/alpine-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/alpine</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Amador County -->
+  <url><loc>https://getevidly.com/amador-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/amador-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/amador-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/amador</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Butte County -->
+  <url><loc>https://getevidly.com/butte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/butte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/butte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/butte</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Calaveras County -->
+  <url><loc>https://getevidly.com/calaveras-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/calaveras-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/calaveras-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/calaveras</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Colusa County -->
+  <url><loc>https://getevidly.com/colusa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/colusa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/colusa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/colusa</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Contra Costa County -->
+  <url><loc>https://getevidly.com/contra-costa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/contra-costa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/contra-costa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/contra-costa</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Del Norte County -->
+  <url><loc>https://getevidly.com/del-norte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/del-norte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/del-norte-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/del-norte</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- El Dorado County -->
+  <url><loc>https://getevidly.com/el-dorado-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/el-dorado-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/el-dorado-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/el-dorado</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Fresno County -->
+  <url><loc>https://getevidly.com/fresno-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/fresno-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/fresno-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/fresno</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Glenn County -->
+  <url><loc>https://getevidly.com/glenn-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/glenn-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/glenn-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/glenn</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Humboldt County -->
+  <url><loc>https://getevidly.com/humboldt-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/humboldt-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/humboldt-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/humboldt</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Imperial County -->
+  <url><loc>https://getevidly.com/imperial-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/imperial-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/imperial-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/imperial</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Inyo County -->
+  <url><loc>https://getevidly.com/inyo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/inyo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/inyo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/inyo</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Kern County -->
+  <url><loc>https://getevidly.com/kern-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/kern-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/kern-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/kern</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Kings County -->
+  <url><loc>https://getevidly.com/kings-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/kings-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/kings-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/kings</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Lake County -->
+  <url><loc>https://getevidly.com/lake-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/lake-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/lake-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/lake</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Lassen County -->
+  <url><loc>https://getevidly.com/lassen-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/lassen-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/lassen-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/lassen</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Los Angeles County -->
+  <url><loc>https://getevidly.com/los-angeles-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/los-angeles-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/los-angeles-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/los-angeles</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Madera County -->
+  <url><loc>https://getevidly.com/madera-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/madera-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/madera-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/madera</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Marin County -->
+  <url><loc>https://getevidly.com/marin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/marin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/marin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/marin</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Mariposa County -->
+  <url><loc>https://getevidly.com/mariposa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/mariposa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/mariposa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/mariposa</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Mendocino County -->
+  <url><loc>https://getevidly.com/mendocino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/mendocino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/mendocino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/mendocino</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Merced County -->
+  <url><loc>https://getevidly.com/merced-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/merced-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/merced-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/merced</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Modoc County -->
+  <url><loc>https://getevidly.com/modoc-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/modoc-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/modoc-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/modoc</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Mono County -->
+  <url><loc>https://getevidly.com/mono-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/mono-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/mono-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/mono</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Monterey County -->
+  <url><loc>https://getevidly.com/monterey-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/monterey-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/monterey-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/monterey</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Napa County -->
+  <url><loc>https://getevidly.com/napa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/napa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/napa-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/napa</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Nevada County -->
+  <url><loc>https://getevidly.com/nevada-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/nevada-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/nevada-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/nevada</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Orange County -->
+  <url><loc>https://getevidly.com/orange-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/orange-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/orange-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/orange</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Placer County -->
+  <url><loc>https://getevidly.com/placer-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/placer-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/placer-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/placer</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Plumas County -->
+  <url><loc>https://getevidly.com/plumas-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/plumas-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/plumas-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/plumas</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Riverside County -->
+  <url><loc>https://getevidly.com/riverside-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/riverside-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/riverside-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/riverside</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Sacramento County -->
+  <url><loc>https://getevidly.com/sacramento-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/sacramento-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/sacramento-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/sacramento</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Benito County -->
+  <url><loc>https://getevidly.com/san-benito-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-benito-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-benito-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-benito</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Bernardino County -->
+  <url><loc>https://getevidly.com/san-bernardino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-bernardino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-bernardino-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-bernardino</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Diego County -->
+  <url><loc>https://getevidly.com/san-diego-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-diego-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-diego-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-diego</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Francisco County -->
+  <url><loc>https://getevidly.com/san-francisco-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-francisco-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-francisco-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-francisco</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Joaquin County -->
+  <url><loc>https://getevidly.com/san-joaquin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-joaquin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-joaquin-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-joaquin</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Luis Obispo County -->
+  <url><loc>https://getevidly.com/san-luis-obispo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-luis-obispo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-luis-obispo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-luis-obispo</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- San Mateo County -->
+  <url><loc>https://getevidly.com/san-mateo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/san-mateo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/san-mateo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/san-mateo</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Santa Barbara County -->
+  <url><loc>https://getevidly.com/santa-barbara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/santa-barbara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/santa-barbara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/santa-barbara</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Santa Clara County -->
+  <url><loc>https://getevidly.com/santa-clara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/santa-clara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/santa-clara-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/santa-clara</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Santa Cruz County -->
+  <url><loc>https://getevidly.com/santa-cruz-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/santa-cruz-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/santa-cruz-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/santa-cruz</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Shasta County -->
+  <url><loc>https://getevidly.com/shasta-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/shasta-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/shasta-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/shasta</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Sierra County -->
+  <url><loc>https://getevidly.com/sierra-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/sierra-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/sierra-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/sierra</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Siskiyou County -->
+  <url><loc>https://getevidly.com/siskiyou-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/siskiyou-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/siskiyou-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/siskiyou</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Solano County -->
+  <url><loc>https://getevidly.com/solano-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/solano-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/solano-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/solano</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Sonoma County -->
+  <url><loc>https://getevidly.com/sonoma-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/sonoma-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/sonoma-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/sonoma</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Stanislaus County -->
+  <url><loc>https://getevidly.com/stanislaus-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/stanislaus-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/stanislaus-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/stanislaus</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Sutter County -->
+  <url><loc>https://getevidly.com/sutter-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/sutter-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/sutter-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/sutter</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Tehama County -->
+  <url><loc>https://getevidly.com/tehama-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/tehama-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/tehama-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/tehama</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Trinity County -->
+  <url><loc>https://getevidly.com/trinity-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/trinity-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/trinity-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/trinity</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Tulare County -->
+  <url><loc>https://getevidly.com/tulare-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/tulare-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/tulare-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/tulare</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Tuolumne County -->
+  <url><loc>https://getevidly.com/tuolumne-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/tuolumne-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/tuolumne-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/tuolumne</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Ventura County -->
+  <url><loc>https://getevidly.com/ventura-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/ventura-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/ventura-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/ventura</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Yolo County -->
+  <url><loc>https://getevidly.com/yolo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/yolo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/yolo-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/yolo</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+
+  <!-- Yuba County -->
+  <url><loc>https://getevidly.com/yuba-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://getevidly.com/scoretable/yuba-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/kitchen-check/yuba-county</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://getevidly.com/compliance/california/yuba</loc><lastmod>2026-03-04</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
 </urlset>
