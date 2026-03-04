@@ -37,6 +37,12 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/billing',               ['owner_operator', 'executive']],
   ['/org-hierarchy',         ['owner_operator', 'executive']],
   ['/team',                  ['owner_operator', 'executive', 'kitchen_manager', 'chef', 'facilities_manager']],
+
+  // Superadmin only — platform_admin bypasses all guards, so empty array = admin-only
+  ['/admin/demo-generator',  []],
+  ['/admin/demo-pipeline',   []],
+  ['/admin/demos',           []],
+
   ['/admin/',                ['owner_operator', 'executive']],
 
   // Enterprise — owner/exec only

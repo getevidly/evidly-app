@@ -26,7 +26,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ title, locations, selectedLocation, onLocationChange, demoMode = false }: TopBarProps) {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, signOut, isEvidlyAdmin } = useAuth();
   const navigate = useNavigate();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLocationMenu, setShowLocationMenu] = useState(false);
@@ -418,6 +418,17 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
                     >
                       {t('nav.settings')}
                     </button>
+                    {isEvidlyAdmin && (
+                      <button
+                        onClick={() => {
+                          navigate('/admin');
+                          setShowUserMenu(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150"
+                      >
+                        Admin Panel
+                      </button>
+                    )}
                     <div className="border-t border-gray-200 my-1" />
                     <button
                       onClick={handleSignOut}
