@@ -14,6 +14,7 @@ export type InspectionSystemType =
   | 'letter_grade'
   | 'color_placard'
   | 'pass_fail'
+  | 'violation_report'
   | 'standard'
   | 'none';
 
@@ -122,9 +123,11 @@ const SAN_BERNARDINO_COUNTY: CountyScoringProfile = {
   startingScore: 100,
   deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
   getGrade: (score) => {
+    // B is minimum passing per SBCC §33.1403. C = mandatory re-score.
     if (score >= 90) return { label: 'A', color: '#22c55e', passing: true };
     if (score >= 80) return { label: 'B', color: '#eab308', passing: true };
-    return { label: 'C', color: '#ef4444', passing: false };
+    if (score >= 70) return { label: 'C', color: '#ef4444', passing: false, special: 'Mandatory re-score required within 30 days' };
+    return { label: 'Below 70', color: '#ef4444', passing: false, special: 'Immediate closure / permit suspension' };
   },
 };
 
@@ -167,6 +170,19 @@ const SACRAMENTO_COUNTY: CountyScoringProfile = {
   },
 };
 
+const FRESNO_COUNTY: CountyScoringProfile = {
+  countySlug: 'fresno',
+  countyName: 'Fresno County',
+  systemType: 'violation_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Fresno has NO letter grade, NO numeric score — violation report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -193,8 +209,8 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'orange': ORANGE_COUNTY,
   'sacramento': SACRAMENTO_COUNTY,
   'generic': GENERIC_CALCODE,
-  // Central Valley demo counties → generic CalCode
-  'fresno': GENERIC_CALCODE,
+  // Central Valley counties
+  'fresno': FRESNO_COUNTY,
   'merced': GENERIC_CALCODE,
   'stanislaus': GENERIC_CALCODE,
 };

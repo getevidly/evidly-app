@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'report_only';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'report_only';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'violation_report' | 'report_only';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'violation_report_only' | 'report_only';
 
 export interface DemoJurisdiction {
   id: string;
@@ -41,24 +41,44 @@ export interface DemoJurisdiction {
 
 export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
   {
+    // ═══ FRESNO COUNTY — VERIFIED (2026-03) ═══
+    // NO letter grade. NO numeric score. Violation report only.
+    // Transparency: LOW — Grand Jury 2023-24 finding.
+    // High EvidLY value: platform provides what the jurisdiction lacks.
     id: 'demo-fresno',
     county: 'Fresno',
-    agencyName: 'Fresno County Department of Public Health',
-    scoringType: 'major_minor_reinspect',
-    gradingType: 'pass_reinspect',
-    gradingConfig: {},
+    agencyName: 'Fresno County Department of Public Health — Environmental Health Division',
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
+    gradingConfig: {
+      displayFormat: 'violation_report',
+      grades: null,
+      letterGrade: false,
+      numericScore: false,
+      gradeCardPosted: false,
+      violationCategories: ['major', 'minor'],
+      majorViolationAction: 'reinspection_usually_required_unless_corrected_onsite',
+      minorViolationAction: 'correction_required_reinspection_not_always_required',
+      transparencyLevel: 'low',
+      transparencyNote: 'Grand Jury 2023-24: inspections hard to locate, inconsistent enforcement, some facilities uninspected 1+ year, software failures.',
+      gradingNote: 'NO letter grade. NO numeric score. Fresno documents violations only. EvidLY provides the consistent analysis this jurisdiction lacks.',
+      grandJuryReport: {
+        title: 'Eat At Your Own Risk: The Quiet Reality of Health Inspections in Fresno County',
+        year: '2023-2024',
+      },
+    },
     passThreshold: null,
     warningThreshold: null,
     criticalThreshold: null,
-    fireAhjName: 'Fresno Fire Department',
+    fireAhjName: 'Fresno County Fire Protection District (unincorporated areas)',
     hoodCleaningDefault: 'quarterly',
-    facilityCount: 4500,
+    facilityCount: 11000,
     dataSourceTier: 3,
-    gradeLabel: 'Pass',
-    gradeExplanation: 'Pass / Reinspection Required — CalCode ORFIR standard. No numeric grade.',
-    passFailLabel: 'PASS',
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — No letter grade, no numeric score. EvidLY IS your grading system.',
+    passFailLabel: 'No Grade',
     demoScore: 88,
-    demoGrade: 'Pass',
+    demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
   {
@@ -246,6 +266,63 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ SAN BERNARDINO COUNTY — STANDARDIZED (March 2026) ═══
+    // B is MINIMUM passing grade. C = mandatory re-score within 30 days.
+    // Different from LA (B passes, no mandatory re-score) and Riverside (A-only passes).
+    // Source: SBCC Chapter 14 §33.1403, ehs.sbcounty.gov
+    id: 'demo-san-bernardino',
+    county: 'San Bernardino',
+    agencyName: 'San Bernardino County Department of Public Health — Environmental Health Services',
+    scoringType: 'weighted_deduction',
+    gradingType: 'letter_grade',
+    gradingConfig: {
+      displayFormat: 'letter_grade',
+      grades: {
+        A: { min: 90, max: 100, status: 'pass',  label: 'Excellent compliance' },
+        B: { min: 80, max: 89,  status: 'pass',  label: 'Minimum passing grade' },
+        C: { min: 70, max: 79,  status: 'fail',  label: 'Mandatory re-score required within 30 days' },
+        D: { min: 0,  max: 69,  status: 'fail',  label: 'Immediate closure / permit suspension' },
+      },
+      minimumPassingGrade: 'B',
+      rescoreTriggerGrade: 'C',
+      rescoreRequestWindowDays: 30,
+      rescoreCompletionDays: 10,
+      rescoreFee: true,
+      rescoreTargetGrade: 'B',
+      closureOnRescoreFailure: true,
+      violationCategories: ['major', 'minor'],
+      majorViolationsHighlighted: 'yellow_on_oir',
+      transparencyLevel: 'high',
+      yelpIntegration: true,
+      gradingNote: 'B is minimum passing. C = mandatory re-score (written request within 30 days, fee charged). Must achieve B on re-score to avoid closure.',
+      foodHandlerCard: {
+        issuer: 'San Bernardino County EHS',
+        windowDays: 60,
+        validityYears: 5,
+        note: 'SBC issues its own county card',
+      },
+      foodSafetyManager: {
+        required: true,
+        minPerFacility: 1,
+        examType: 'ANSI_accredited',
+        windowDays: 60,
+      },
+    },
+    passThreshold: 80,
+    warningThreshold: 79,
+    criticalThreshold: 69,
+    fireAhjName: 'San Bernardino County Fire Department (unincorporated areas)',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 15000,
+    dataSourceTier: 3,
+    gradeLabel: 'B',
+    gradeExplanation: 'Letter Grade — A (90+) pass, B (80-89) pass (minimum), C (70-79) FAIL (re-score required).',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'B',
+    demoPassFail: 'pass',
+  },
+  {
     // ═══ ORANGE COUNTY — VERIFIED (2026-03, Confidence: 90/100) ═══
     // Placard only: Pass / Reinspection Due-Pass / Closed
     // NO letter grade. NO numeric score.
@@ -326,7 +403,7 @@ export const DEMO_LOCATIONS = [
     score: 92,
     foodSafety: { ops: 97, docs: 94 },
     facilitySafety: { ops: 88, docs: 95 },
-    gradeDisplay: 'Pass',
+    gradeDisplay: 'No Open Majors',
     tagline: 'EvidLY IS your grading system',
   },
   {
@@ -383,7 +460,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
 }> = {
   'demo-loc-downtown': {
     foodSafety: {
-      grade: 'Pass',
+      grade: 'No Open Majors',
       gradeDisplay: 'No Open Majors',
       summary: '2 minor — corrected on-site',
       status: 'passing',
@@ -392,7 +469,7 @@ export const DEMO_LOCATION_GRADE_OVERRIDES: Record<string, {
     facilitySafety: {
       grade: 'No Status',
       gradeDisplay: 'Pending Verification',
-      summary: 'City of Fresno Fire Department',
+      summary: 'Fresno County Fire Protection District',
       status: 'at_risk',
       permitStatus: 'no_status',
       hoodStatus: 'no_status',
@@ -570,6 +647,30 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         totalPoints, majorViolations: 0, minorViolations: 0, uncorrectedMajors: 0,
       };
     }
+    case 'violation_report_only': {
+      // NO letter grade, NO numeric score — violation report only
+      // Demo: simulate major/minor counts from normalized score
+      const vrMajors = Math.max(0, Math.floor((100 - score) / 4));
+      const vrMinors = Math.max(0, Math.floor((100 - score) / 6));
+      const vrUncorrected = score >= 80 ? 0 : Math.max(1, Math.floor((80 - score) / 8));
+      if (vrUncorrected > 0) {
+        return {
+          grade: 'Major Violations',
+          passFail: 'fail',
+          display: `${vrUncorrected} Major Violation${vrUncorrected > 1 ? 's' : ''} Open`,
+          majorViolations: vrMajors, minorViolations: vrMinors,
+          uncorrectedMajors: vrUncorrected, totalPoints: 0,
+        };
+      }
+      const vrNote = vrMajors > 0 ? `${vrMajors} major corrected on-site` : 'No violations';
+      return {
+        grade: 'No Open Majors',
+        passFail: 'pass',
+        display: vrNote,
+        majorViolations: vrMajors, minorViolations: vrMinors,
+        uncorrectedMajors: 0, totalPoints: 0,
+      };
+    }
     case 'report_only':
     default:
       // DEPRECATED — treat same as pass_reinspect for backward compatibility
@@ -645,11 +746,11 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'San Luis Obispo', agencyName: 'SLO County Health', scoringType: 'negative_scale', gradingType: 'score_negative', facilityCount: 1800, tier: 2 },
   { county: 'San Diego', agencyName: 'SD County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 14000, tier: 3 },
   { county: 'Riverside', agencyName: 'Riverside County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
-  { county: 'San Bernardino', agencyName: 'SB County DPH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 9000, tier: 3 },
+  { county: 'San Bernardino', agencyName: 'San Bernardino County DPH — Environmental Health Services', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 15000, tier: 3 },
   { county: 'Alameda', agencyName: 'Alameda County DEH', scoringType: 'weighted_deduction', gradingType: 'color_placard', facilityCount: 8500, tier: 3 },
   { county: 'Santa Clara', agencyName: 'Santa Clara County DEH', scoringType: 'heavy_weighted', gradingType: 'color_placard', facilityCount: 10000, tier: 3 },
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
-  { county: 'Fresno', agencyName: 'Fresno County DPH', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 4500, tier: 3 },
+  { county: 'Fresno', agencyName: 'Fresno County Department of Public Health — Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 11000, tier: 3 },
   { county: 'Kern', agencyName: 'Kern County PHS', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 4000, tier: 3 },
   { county: 'Ventura', agencyName: 'Ventura County EHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 4500, tier: 3 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
@@ -716,17 +817,24 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     foodSafety: {
       id: 'fresno-food',
       pillar: 'food_safety',
-      agency_name: 'Fresno County Department of Public Health',
+      agency_name: 'Fresno County Department of Public Health — Environmental Health Division',
       agency_phone: '(559) 600-3357',
-      agency_website: 'https://www.co.fresno.ca.us/departments/public-health',
+      agency_website: 'https://www.fresnohealthinspections.com',
       code_basis: 'CalCode (updated Jan 1, 2025)',
-      code_references: ['CalCode \u00A7113700+', 'Fresno County local requirements'],
-      scoring_method: 'major_minor_reinspect',
-      grading_type: 'pass_reinspect',
-      grading_config: {},
-      inspection_frequency: null, // TODO: verify Fresno inspection frequency
+      code_references: ['CalCode \u00A7113700+'],
+      scoring_method: 'violation_report',
+      grading_type: 'violation_report_only',
+      grading_config: {
+        grades: null,
+        letterGrade: false,
+        numericScore: false,
+        gradeCardPosted: false,
+        violationCategories: ['major', 'minor'],
+        transparencyLevel: 'low',
+      },
+      inspection_frequency: null, // Grand Jury: 4x/year required but not met
       is_verified: true,
-      local_amendments: null, // TODO: research Fresno-specific additions to CalCode
+      local_amendments: null, // No local grading ordinance — CalCode only
     },
     facilitySafety: {
       id: 'fresno-fire',
