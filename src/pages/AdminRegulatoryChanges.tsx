@@ -22,90 +22,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
 import { useDemo } from '../contexts/DemoContext';
 import { MONITORED_SOURCES } from '../lib/regulatoryMonitor';
-
-// ── Types ───────────────────────────────────────────────
-
-interface RegChange {
-  id: string;
-  sourceShort: string;
-  sourceName: string;
-  changeType: string;
-  title: string;
-  summary: string;
-  impactDescription: string;
-  impactLevel: 'critical' | 'moderate' | 'informational';
-  affectedPillars: string[];
-  affectedStates: string[] | null;
-  effectiveDate: string | null;
-  sourceUrl: string;
-  aiGenerated: boolean;
-  published: boolean;
-  publishedAt: string | null;
-  affectedLocationCount: number;
-  createdAt: string;
-}
-
-// ── Demo Data ───────────────────────────────────────────
-
-const DEMO_CHANGES: RegChange[] = [
-  {
-    id: 'rc-001',
-    sourceShort: 'calcode',
-    sourceName: 'California Retail Food Code (CalCode)',
-    changeType: 'amendment',
-    title: 'CalCode §114099.7 — Grease trap sizing requirements updated',
-    summary: 'California has updated minimum grease trap sizing for commercial kitchens producing over 200 meals per day. Minimum capacity increased from 30 to 50 gallons for high-volume operations.',
-    impactDescription: 'Verify your grease trap meets the new 50-gallon minimum. If undersized, schedule replacement before July 1. Contact your plumbing vendor for assessment.',
-    impactLevel: 'moderate',
-    affectedPillars: ['facility_safety', 'vendor_compliance'],
-    affectedStates: ['CA'],
-    effectiveDate: '2026-07-01',
-    sourceUrl: 'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx',
-    aiGenerated: true,
-    published: false,
-    publishedAt: null,
-    affectedLocationCount: 0,
-    createdAt: '2026-02-10T09:00:00Z',
-  },
-  {
-    id: 'rc-002',
-    sourceShort: 'fda_food_code',
-    sourceName: 'FDA Food Code',
-    changeType: 'guidance',
-    title: 'FDA Guidance — Updated cold holding best practices',
-    summary: 'The FDA has released updated guidance on cold holding procedures for ready-to-eat foods. The guidance recommends monitoring cold holding temperatures every 2 hours instead of every 4 hours for high-risk items.',
-    impactDescription: 'Review your cold holding monitoring frequency. Consider increasing temperature checks to every 2 hours for high-risk items like cut leafy greens, sliced deli meats, and prepared salads.',
-    impactLevel: 'informational',
-    affectedPillars: ['food_safety'],
-    affectedStates: null,
-    effectiveDate: null,
-    sourceUrl: 'https://www.fda.gov/food/retail-food-protection/fda-food-code',
-    aiGenerated: true,
-    published: false,
-    publishedAt: null,
-    affectedLocationCount: 0,
-    createdAt: '2026-02-08T14:00:00Z',
-  },
-  {
-    id: 'rc-003',
-    sourceShort: 'nfpa_96',
-    sourceName: 'NFPA 96 (Ventilation & Fire Protection)',
-    changeType: 'amendment',
-    title: 'NFPA 96 (2024) Table 12.4 — Exhaust fan inspection frequency clarified',
-    summary: 'NFPA 96 has clarified that exhaust fan inspection must occur at the same frequency as hood exhaust system cleaning. Fan bearing lubrication must be documented separately from cleaning.',
-    impactDescription: 'Ensure your exhaust fan inspections are scheduled at the same frequency as hood cleaning. Ask your vendor to separately document fan bearing lubrication on each service report.',
-    impactLevel: 'moderate',
-    affectedPillars: ['facility_safety'],
-    affectedStates: null,
-    effectiveDate: '2026-07-01',
-    sourceUrl: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96',
-    aiGenerated: true,
-    published: true,
-    publishedAt: '2026-02-10T16:00:00Z',
-    affectedLocationCount: 47,
-    createdAt: '2026-02-06T10:00:00Z',
-  },
-];
+import { useRegulatoryChanges, type AdminRegChange } from '../hooks/useRegulatoryChanges';
 
 // ── Component ───────────────────────────────────────────
 
@@ -114,7 +31,25 @@ export function AdminRegulatoryChanges() {
   const { isDemoMode } = useDemo();
   const isAdmin = isEvidlyAdmin || isDemoMode;
 
-  const [changes, setChanges] = useState<RegChange[]>(DEMO_CHANGES);
+  const {
+    adminChanges,
+    sources: dbSources,
+    analyzeWithAI,
+    publishChange,
+    unpublishChange,
+    rejectChange,
+    updateSummary,
+    loading,
+  } = useRegulatoryChanges();
+
+  // Demo mode: local state for mutations (hook returns DEMO_ADMIN_CHANGES)
+  const [demoChanges, setDemoChanges] = useState<AdminRegChange[] | null>(null);
+
+  // Use demo local state if in demo mode, otherwise hook data
+  const changes = isDemoMode
+    ? (demoChanges ?? adminChanges)
+    : adminChanges;
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -143,7 +78,7 @@ export function AdminRegulatoryChanges() {
     informational: { dot: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe', label: 'Informational' },
   };
 
-  function handleAnalyze() {
+  async function handleAnalyze() {
     if (!newSource || !newRawText.trim()) {
       toast.error('Please select a source and paste the regulatory text');
       return;
@@ -151,80 +86,115 @@ export function AdminRegulatoryChanges() {
 
     setAnalyzing(true);
 
-    // Demo mode: simulate AI analysis
-    setTimeout(() => {
-      const source = MONITORED_SOURCES.find(s => s.abbreviation === newSource);
-      const newChange: RegChange = {
-        id: `rc-${Date.now()}`,
-        sourceShort: newSource,
-        sourceName: source?.name || newSource,
-        changeType: newChangeType,
-        title: `${source?.abbreviation || newSource} — AI-analyzed regulatory change`,
-        summary: 'This is an AI-generated summary of the regulatory change. In production, Claude would analyze the raw text and generate a plain-English summary for kitchen operators.',
-        impactDescription: 'Review the change details and determine if any operational changes are needed at your locations. Contact your compliance team for specific guidance.',
-        impactLevel: 'moderate',
-        affectedPillars: ['food_safety'],
-        affectedStates: source?.type === 'state' ? ['CA'] : null,
-        effectiveDate: null,
-        sourceUrl: newSourceUrl || source?.url || '',
-        aiGenerated: true,
-        published: false,
-        publishedAt: null,
-        affectedLocationCount: 0,
-        createdAt: new Date().toISOString(),
-      };
+    if (isDemoMode) {
+      // Demo mode: simulate AI analysis with local state
+      setTimeout(() => {
+        const source = MONITORED_SOURCES.find(s => s.abbreviation === newSource);
+        const newChange: AdminRegChange = {
+          id: `rc-${Date.now()}`,
+          sourceId: '',
+          sourceShort: newSource,
+          sourceName: source?.name || newSource,
+          changeType: newChangeType,
+          title: `${source?.abbreviation || newSource} — AI-analyzed regulatory change`,
+          summary: 'This is an AI-generated summary of the regulatory change. In production, Claude would analyze the raw text and generate a plain-English summary for kitchen operators.',
+          impactDescription: 'Review the change details and determine if any operational changes are needed at your locations. Contact your compliance team for specific guidance.',
+          impactLevel: 'moderate',
+          affectedPillars: ['food_safety'],
+          affectedStates: source?.type === 'state' ? ['CA'] : null,
+          effectiveDate: null,
+          sourceUrl: newSourceUrl || source?.url || '',
+          rawInputText: newRawText,
+          aiGenerated: true,
+          published: false,
+          publishedAt: null,
+          affectedLocationCount: 0,
+          createdAt: new Date().toISOString(),
+        };
 
-      setChanges(prev => [newChange, ...prev]);
-      setShowAddForm(false);
-      setNewSource('');
-      setNewChangeType('amendment');
-      setNewRawText('');
-      setNewSourceUrl('');
-      setAnalyzing(false);
-      toast.success('AI analysis complete — review before publishing');
-    }, 2000);
+        setDemoChanges(prev => [newChange, ...(prev ?? adminChanges)]);
+        setShowAddForm(false);
+        setNewSource('');
+        setNewChangeType('amendment');
+        setNewRawText('');
+        setNewSourceUrl('');
+        setAnalyzing(false);
+        toast.success('AI analysis complete — review before publishing');
+      }, 2000);
+    } else {
+      // Live mode: call edge function
+      try {
+        await analyzeWithAI(newSource, newRawText, newChangeType, newSourceUrl);
+        setShowAddForm(false);
+        setNewSource('');
+        setNewChangeType('amendment');
+        setNewRawText('');
+        setNewSourceUrl('');
+      } catch {
+        // Error already toasted inside hook
+      } finally {
+        setAnalyzing(false);
+      }
+    }
   }
 
-  function handlePublish(id: string) {
-    setChanges(prev =>
-      prev.map(c =>
-        c.id === id
-          ? { ...c, published: true, publishedAt: new Date().toISOString(), affectedLocationCount: 3 }
-          : c
-      )
-    );
-    toast.success('Change published — copilot insights created for affected locations');
+  async function handlePublish(id: string) {
+    if (isDemoMode) {
+      setDemoChanges(prev =>
+        (prev ?? adminChanges).map(c =>
+          c.id === id
+            ? { ...c, published: true, publishedAt: new Date().toISOString(), affectedLocationCount: 3 }
+            : c
+        )
+      );
+      toast.success('Change published — copilot insights created for affected locations');
+      return;
+    }
+    await publishChange(id);
   }
 
-  function handleUnpublish(id: string) {
-    setChanges(prev =>
-      prev.map(c =>
-        c.id === id
-          ? { ...c, published: false, publishedAt: null, affectedLocationCount: 0 }
-          : c
-      )
-    );
-    toast('Change unpublished');
+  async function handleUnpublish(id: string) {
+    if (isDemoMode) {
+      setDemoChanges(prev =>
+        (prev ?? adminChanges).map(c =>
+          c.id === id
+            ? { ...c, published: false, publishedAt: null, affectedLocationCount: 0 }
+            : c
+        )
+      );
+      toast('Change unpublished');
+      return;
+    }
+    await unpublishChange(id);
   }
 
-  function handleReject(id: string) {
-    setChanges(prev => prev.filter(c => c.id !== id));
-    toast('Change rejected and removed');
+  async function handleReject(id: string) {
+    if (isDemoMode) {
+      setDemoChanges(prev => (prev ?? adminChanges).filter(c => c.id !== id));
+      toast('Change rejected and removed');
+      return;
+    }
+    await rejectChange(id);
   }
 
-  function handleSaveEdit(id: string) {
-    setChanges(prev =>
-      prev.map(c =>
-        c.id === id
-          ? { ...c, summary: editSummary || c.summary, impactDescription: editImpact || c.impactDescription }
-          : c
-      )
-    );
+  async function handleSaveEdit(id: string) {
+    if (isDemoMode) {
+      setDemoChanges(prev =>
+        (prev ?? adminChanges).map(c =>
+          c.id === id
+            ? { ...c, summary: editSummary || c.summary, impactDescription: editImpact || c.impactDescription }
+            : c
+        )
+      );
+      setEditingId(null);
+      toast.success('Summary updated');
+      return;
+    }
+    await updateSummary(id, editSummary, editImpact);
     setEditingId(null);
-    toast.success('Summary updated');
   }
 
-  function startEdit(change: RegChange) {
+  function startEdit(change: AdminRegChange) {
     setEditingId(change.id);
     setEditSummary(change.summary);
     setEditImpact(change.impactDescription);
@@ -255,6 +225,13 @@ export function AdminRegulatoryChanges() {
         </button>
       </div>
 
+      {/* Loading */}
+      {!isDemoMode && loading && (
+        <div className="flex justify-center py-12">
+          <div className="h-8 w-8 border-2 border-gray-300 border-t-[#d4af37] rounded-full animate-spin" />
+        </div>
+      )}
+
       {/* Stats bar */}
       <div className="flex gap-4 mb-6">
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-2 text-sm">
@@ -281,9 +258,15 @@ export function AdminRegulatoryChanges() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
               >
                 <option value="">Select source...</option>
-                {MONITORED_SOURCES.map(s => (
-                  <option key={s.abbreviation} value={s.abbreviation}>{s.name}</option>
-                ))}
+                {isDemoMode ? (
+                  MONITORED_SOURCES.map(s => (
+                    <option key={s.abbreviation} value={s.abbreviation}>{s.name}</option>
+                  ))
+                ) : (
+                  dbSources.map(s => (
+                    <option key={s.id} value={s.id}>{s.code_name}</option>
+                  ))
+                )}
               </select>
             </div>
             <div>

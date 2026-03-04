@@ -14,6 +14,8 @@ import {
 } from '../lib/regulatoryMonitor';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
+import { useDemo } from '../contexts/DemoContext';
+import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -24,6 +26,8 @@ export function RegulatoryAlerts() {
 
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
+  const { isDemoMode } = useDemo();
+  const { alerts: liveAlerts, alertStatuses, markAsRead, loading, error } = useRegulatoryChanges();
 
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [impactFilter, setImpactFilter] = useState<string>('all');
@@ -33,16 +37,17 @@ export function RegulatoryAlerts() {
   const [dismissedBanner, setDismissedBanner] = useState(false);
   const [overriddenStatuses, setOverriddenStatuses] = useState<Record<string, AlertStatus>>({});
 
-  const markReviewed = (id: string) => {
-    setOverriddenStatuses(prev => ({ ...prev, [id]: 'reviewed' }));
+  const getAlertStatus = (alert: RegulatoryAlert): AlertStatus => {
+    if (isDemoMode) {
+      return overriddenStatuses[alert.id] || alert.status;
+    }
+    return alertStatuses[alert.id] || alert.status;
   };
 
-  const getAlertStatus = (alert: RegulatoryAlert): AlertStatus => {
-    return overriddenStatuses[alert.id] || alert.status;
-  };
+  const sourceAlerts = isDemoMode ? DEMO_ALERTS : liveAlerts;
 
   // Filter logic
-  const filteredAlerts = DEMO_ALERTS
+  const filteredAlerts = sourceAlerts
     .filter(alert => {
       if (sourceFilter !== 'all' && alert.source !== sourceFilter) return false;
       if (impactFilter !== 'all' && alert.impactLevel !== impactFilter) return false;
@@ -143,7 +148,7 @@ export function RegulatoryAlerts() {
   };
 
   // Upcoming effective dates (future only)
-  const upcomingDates = DEMO_ALERTS
+  const upcomingDates = sourceAlerts
     .filter(a => new Date(a.effectiveDate + 'T00:00:00') > new Date())
     .sort((a, b) => new Date(a.effectiveDate).getTime() - new Date(b.effectiveDate).getTime());
 
@@ -153,6 +158,17 @@ export function RegulatoryAlerts() {
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Regulatory Alerts' },
       ]} />
+
+      {!isDemoMode && loading && (
+        <div className="flex justify-center py-12">
+          <div className="h-8 w-8 border-2 border-gray-300 border-t-[#1e4d6b] rounded-full animate-spin" />
+        </div>
+      )}
+      {!isDemoMode && error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 mb-4">
+          Failed to load regulatory alerts. Please try again.
+        </div>
+      )}
 
       <div className="space-y-6">
         <div>
@@ -359,7 +375,13 @@ export function RegulatoryAlerts() {
                   <div className="flex items-center gap-3 pt-3 border-t border-gray-100 flex-wrap">
                     {status === 'new' && (
                       <button
-                        onClick={() => markReviewed(alert.id)}
+                        onClick={() => {
+                          if (isDemoMode) {
+                            setOverriddenStatuses(prev => ({ ...prev, [alert.id]: 'reviewed' }));
+                          } else {
+                            markAsRead(alert.id);
+                          }
+                        }}
                         className="px-4 py-2 bg-[#1e4d6b] text-white text-sm font-medium rounded-lg hover:bg-[#163a52] min-h-[44px]"
                       >
                         Mark as Reviewed
