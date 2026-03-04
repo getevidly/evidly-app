@@ -13,6 +13,9 @@ import {
   locationScoresThirtyDaysAgo,
 } from '../data/demoData';
 import { DEMO_INTELLIGENCE_INSIGHTS } from '../data/demoIntelligenceData';
+import { collectAllDemoData } from '../lib/complianceDataCollector';
+import { computeAllSnapshots, computeOrgScores } from '../lib/complianceEngine';
+import { ENGINE_TREND_DATA, getScoresThirtyDaysAgo } from '../data/complianceEngineDemoData';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -251,15 +254,39 @@ const DEMO_MODULE_STATUSES: ModuleStatus[] = [
 ];
 
 function buildDemoPayload(): DashboardPayload {
-  // Build 30-day-ago per-location scores for trend comparisons
+  // ── Use compliance engine for scores ──
+  const snapshots = collectAllDemoData();
+  const engineResults = computeAllSnapshots(snapshots);
+  const engineOrgScores = computeOrgScores(engineResults);
+  const engineThirtyDaysAgo = getScoresThirtyDaysAgo();
+
+  // Build per-location scores from engine (preserving LocationWithScores shape)
+  const engineLocations: LocationWithScores[] = LOCATIONS_WITH_SCORES.map(loc => {
+    const r = engineResults[loc.id];
+    if (!r) return loc; // fallback to static if engine doesn't have this location
+    return {
+      ...loc,
+      foodSafety: { ops: r.foodSafetyOps, docs: r.foodSafetyDocs },
+      facilitySafety: { ops: r.facilitySafetyOps, docs: r.facilitySafetyDocs },
+      foodScore: r.foodSafetyScore,
+      fireScore: r.facilitySafetyScore,
+      score: null,
+    };
+  });
+
+  // Build 30-day-ago per-location scores from engine
   const locationScoresPrev: Record<string, { foodSafety: number; facilitySafety: number }> = {};
-  for (const [locId, prev] of Object.entries(locationScoresThirtyDaysAgo)) {
+  for (const [locId, prev] of Object.entries(engineThirtyDaysAgo)) {
     locationScoresPrev[locId] = { foodSafety: prev.foodSafety, facilitySafety: prev.facilitySafety };
   }
 
   return {
-    orgScores: DEMO_ORG_SCORES,
-    locations: LOCATIONS_WITH_SCORES,
+    orgScores: {
+      overall: engineOrgScores.overall,
+      foodSafety: engineOrgScores.foodSafety,
+      facilitySafety: engineOrgScores.facilitySafety,
+    },
+    locations: engineLocations,
     locationScoresPrev,
     tasks: DEMO_TASKS,
     deadlines: DEMO_DEADLINES,
@@ -267,7 +294,7 @@ function buildDemoPayload(): DashboardPayload {
     impact: buildDemoImpact(),
     activity: DEMO_ACTIVITY,
     moduleStatuses: DEMO_MODULE_STATUSES,
-    trendData: DEMO_TREND_DATA,
+    trendData: ENGINE_TREND_DATA,
     weights: {
       ops: 50,
       docs: 50,

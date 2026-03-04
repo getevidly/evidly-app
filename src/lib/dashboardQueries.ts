@@ -13,6 +13,9 @@ import {
   type NeedsAttentionItem,
   type ScoreImpactItem,
 } from '../data/demoData';
+import { collectAllDemoData } from './complianceDataCollector';
+import { computeAllSnapshots, computeOrgScores } from './complianceEngine';
+import { getScoresThirtyDaysAgo } from '../data/complianceEngineDemoData';
 
 // ────────────────────────────────────────────────────────
 // Types
@@ -63,7 +66,8 @@ const EMPTY_SCORES: ComplianceScoresResult = {
 
 export async function fetchComplianceScores(organizationId?: string): Promise<ComplianceScoresResult> {
   if (!organizationId) {
-    return { scores: complianceScores, locationScores, scoresThirtyDaysAgo: complianceScoresThirtyDaysAgo, locationScoresThirtyDaysAgo };
+    // Demo mode: use compliance engine
+    return fetchComplianceScoresFromEngine();
   }
 
   try {
@@ -78,12 +82,60 @@ export async function fetchComplianceScores(organizationId?: string): Promise<Co
       return EMPTY_SCORES;
     }
 
-    // In a production build we would compute pillar scores from real data here.
-    // For now return empty scores — this path activates once the org has real temp logs.
+    // TODO: In live mode, collect real data and run through engine
     return EMPTY_SCORES;
   } catch {
     return EMPTY_SCORES;
   }
+}
+
+/** Compute compliance scores using the engine (demo mode). */
+function fetchComplianceScoresFromEngine(): ComplianceScoresResult {
+  const snapshots = collectAllDemoData();
+  const results = computeAllSnapshots(snapshots);
+  const orgScores = computeOrgScores(results);
+  const thirtyDaysAgo = getScoresThirtyDaysAgo();
+
+  // Build per-location scores
+  const locScores: Record<string, { overall: number; foodSafety: number; facilitySafety: number }> = {};
+  for (const [locId, r] of Object.entries(results)) {
+    locScores[locId] = {
+      overall: Math.round((r.foodSafetyScore + r.facilitySafetyScore) / 2),
+      foodSafety: r.foodSafetyScore,
+      facilitySafety: r.facilitySafetyScore,
+    };
+  }
+
+  // Build 30-day-ago scores
+  const locScoresAgo: Record<string, { overall: number; foodSafety: number; facilitySafety: number }> = {};
+  for (const [locId, ago] of Object.entries(thirtyDaysAgo)) {
+    locScoresAgo[locId] = {
+      overall: Math.round((ago.foodSafety + ago.facilitySafety) / 2),
+      foodSafety: ago.foodSafety,
+      facilitySafety: ago.facilitySafety,
+    };
+  }
+
+  // Compute org-level 30-day-ago scores
+  const agoEntries = Object.values(thirtyDaysAgo);
+  const orgAgo = agoEntries.length > 0
+    ? {
+        overall: Math.round(agoEntries.reduce((s, a) => s + (a.foodSafety + a.facilitySafety) / 2, 0) / agoEntries.length),
+        foodSafety: Math.round(agoEntries.reduce((s, a) => s + a.foodSafety, 0) / agoEntries.length),
+        facilitySafety: Math.round(agoEntries.reduce((s, a) => s + a.facilitySafety, 0) / agoEntries.length),
+      }
+    : { overall: 0, foodSafety: 0, facilitySafety: 0 };
+
+  return {
+    scores: {
+      overall: orgScores.overall ?? 0,
+      foodSafety: orgScores.foodSafety,
+      facilitySafety: orgScores.facilitySafety,
+    },
+    locationScores: locScores,
+    scoresThirtyDaysAgo: orgAgo,
+    locationScoresThirtyDaysAgo: locScoresAgo,
+  };
 }
 
 // ────────────────────────────────────────────────────────
@@ -266,7 +318,12 @@ export async function fetchNeedsAttention(organizationId?: string): Promise<Need
 // ────────────────────────────────────────────────────────
 
 export async function fetchScoreImpact(organizationId?: string): Promise<ScoreImpactItem[]> {
-  if (!organizationId) return scoreImpactData;
+  if (!organizationId) {
+    // Demo mode: use engine-generated ScoreImpactItems
+    const snapshots = collectAllDemoData();
+    const results = computeAllSnapshots(snapshots);
+    return Object.values(results).flatMap(r => r.scoreImpactItems);
+  }
   // Live mode: return empty — in production, derive from real compliance data
   return [];
 }

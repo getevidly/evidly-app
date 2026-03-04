@@ -217,6 +217,68 @@ export interface FoodSafetyData {
   haccpMonitoringRate: number;           // 0-100 %
 }
 
+// --------------- Food Safety Scoring ---------------
+
+export interface FoodSafetyWeights {
+  tempMonitoring: number;           // default 0.30
+  checklistCompletion: number;      // default 0.25
+  haccpMonitoring: number;          // default 0.20
+  incidentResolution: number;       // default 0.15
+  documentationCurrency: number;    // default 0.10
+}
+
+export const DEFAULT_FOOD_SAFETY_WEIGHTS: FoodSafetyWeights = {
+  tempMonitoring: 0.30,
+  checklistCompletion: 0.25,
+  haccpMonitoring: 0.20,
+  incidentResolution: 0.15,
+  documentationCurrency: 0.10,
+};
+
+/**
+ * Converts incident resolution average hours into a 0-100 score.
+ *
+ * | Avg Hours   | Score |
+ * |-------------|-------|
+ * | <= 2        | 100   |
+ * | 2 – 48      | linear 100→0 |
+ * | > 48        | 0     |
+ * | -1 (unresolved) | 20 |
+ */
+export function incidentResolutionScore(avgHours: number): number {
+  if (avgHours === -1) return 20; // unresolved incidents — significant penalty but not total
+  if (avgHours <= 2) return 100;
+  if (avgHours >= 48) return 0;
+  return Math.round(100 - ((avgHours - 2) / 46) * 100);
+}
+
+/**
+ * Calculates a weighted Food Safety score (0-100) from operational data.
+ *
+ * Weights default to: Temp Monitoring 30%, Checklist Completion 25%,
+ * HACCP Monitoring 20%, Incident Resolution 15%, Documentation Currency 10%.
+ *
+ * The `documentationCurrencyRate` parameter is optional (defaults to 100 if omitted)
+ * since the FoodSafetyData interface doesn't include it — it comes from the collector.
+ */
+export function calculateFoodSafetyScore(
+  data: FoodSafetyData,
+  documentationCurrencyRate?: number,
+  weights?: Partial<FoodSafetyWeights>,
+): number {
+  const w: FoodSafetyWeights = { ...DEFAULT_FOOD_SAFETY_WEIGHTS, ...weights };
+  const docRate = documentationCurrencyRate ?? 100;
+
+  const score =
+    data.tempCheckCompletionRate * w.tempMonitoring +
+    data.checklistCompletionRate * w.checklistCompletion +
+    data.haccpMonitoringRate * w.haccpMonitoring +
+    incidentResolutionScore(data.incidentResolutionAvgHours) * w.incidentResolution +
+    docRate * w.documentationCurrency;
+
+  return Math.round(Math.max(0, Math.min(100, score)));
+}
+
 // --------------- Temperature Compliance Helper ---------------
 
 export function buildTempComplianceItems(data: {
