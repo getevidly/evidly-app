@@ -465,6 +465,18 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '94576': { countyId: 'county-napa', countyName: 'Napa County' }, // Deer Park
   '94581': { countyId: 'county-napa', countyName: 'Napa County' }, // Napa (south)
   '94599': { countyId: 'county-napa', countyName: 'Napa County' }, // Yountville
+  // Yuba County (overrides Butte range 95901-95999)
+  // IMPORTANT: Yuba County ≠ Sutter County. Marysville = Yuba. Yuba City = Sutter.
+  '95901': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Marysville (county seat / EHD office)
+  '95903': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Beale AFB
+  '95918': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Browns Valley
+  '95919': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Brownsville
+  '95922': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Camptonville
+  '95924': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Challenge
+  '95935': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Dobbins
+  '95961': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Olivehurst / Linda
+  '95962': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Oregon House
+  '95977': { countyId: 'county-yuba', countyName: 'Yuba County' }, // Smartsville
   // Sutter County (overrides Butte range 95901-95999)
   '95953': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Live Oak
   '95957': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Meridian
@@ -473,6 +485,16 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '95991': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City (county seat / EHD HQ)
   '95992': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City south
   '95993': { countyId: 'county-sutter', countyName: 'Sutter County' }, // Yuba City
+  // Amador County (overrides Placer range 95601-95747)
+  '95601': { countyId: 'county-amador', countyName: 'Amador County' }, // Amador City (shared with El Dorado)
+  '95640': { countyId: 'county-amador', countyName: 'Amador County' }, // Ione
+  '95642': { countyId: 'county-amador', countyName: 'Amador County' }, // Jackson (county seat / EHD HQ)
+  '95644': { countyId: 'county-amador', countyName: 'Amador County' }, // Kit Carson
+  '95646': { countyId: 'county-amador', countyName: 'Amador County' }, // Pioneer
+  '95654': { countyId: 'county-amador', countyName: 'Amador County' }, // Plymouth
+  '95665': { countyId: 'county-amador', countyName: 'Amador County' }, // River Pines
+  '95669': { countyId: 'county-amador', countyName: 'Amador County' }, // Sutter Creek
+  '95685': { countyId: 'county-amador', countyName: 'Amador County' }, // Volcano
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },

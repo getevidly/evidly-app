@@ -450,6 +450,20 @@ const COLUSA_COUNTY: CountyScoringProfile = {
   },
 };
 
+const NEVADA_COUNTY: CountyScoringProfile = {
+  countySlug: 'nevada',
+  countyName: 'Nevada County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Nevada County has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
+    // ~600–900 facilities — Sierra foothills + mountain communities (includes Truckee)
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const SUTTER_COUNTY: CountyScoringProfile = {
   countySlug: 'sutter',
   countyName: 'Sutter County',
@@ -463,6 +477,34 @@ const SUTTER_COUNTY: CountyScoringProfile = {
     // In demo mode, simulate major count from score
     if (_score < 70) return { label: 'YELLOW', color: '#f59e0b', passing: false };
     return { label: 'GREEN', color: '#22c55e', passing: true };
+  },
+};
+
+const AMADOR_COUNTY: CountyScoringProfile = {
+  countySlug: 'amador',
+  countyName: 'Amador County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Amador has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
+const YUBA_COUNTY: CountyScoringProfile = {
+  countySlug: 'yuba',
+  countyName: 'Yuba County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Yuba has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
+    // ~500–700 facilities. Different from neighboring Sutter County (GYR placard).
+    // Marysville = Yuba County seat. Yuba City = Sutter County seat.
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
   },
 };
 
@@ -502,7 +544,11 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'napa': NAPA_COUNTY,
   // Sacramento Valley — small/rural
   'sutter': SUTTER_COUNTY,
+  'yuba': YUBA_COUNTY,
   'colusa': COLUSA_COUNTY,
+  // Gold Country / Sierra foothills
+  'nevada': NEVADA_COUNTY,
+  'amador': AMADOR_COUNTY,
 };
 
 /**
