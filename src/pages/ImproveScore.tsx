@@ -97,6 +97,8 @@ export function ImproveScore() {
   const [filter, setFilter] = useState<'all' | 'critical' | 'high' | 'medium' | 'low'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
+  const { result: riskResult } = useInsuranceRisk(locationParam, isDemoMode);
+
   // ── Live-mode empty state: no hardcoded demo data ──
   if (!isDemoMode) {
     return (
@@ -123,10 +125,6 @@ export function ImproveScore() {
       </div>
     );
   }
-
-  const riskResult: InsuranceRiskResult = locationParam === 'all'
-    ? calculateOrgInsuranceRiskScore()
-    : calculateInsuranceRiskScore(locationParam);
 
   const tierInfo = getInsuranceRiskTier(riskResult.overall);
 
