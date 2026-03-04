@@ -83,21 +83,35 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ FIRST VERIFIED JURISDICTION (JIE Crawl 2026-02-19, Confidence: 100/100) ═══
+    // Source: LA County DPH official documentation + LA County Code Title 8 §8.04.225
+    // Verified facts: 100-point deductive, FOIR format, A/B/C letter grades
+    // Below 70: numerical score card only. Below 70 twice in 12 months: closure.
     id: 'demo-la',
     county: 'Los Angeles',
-    agencyName: 'Los Angeles County DPH',
+    agencyName: 'Los Angeles County DPH — Environmental Health Division',
     scoringType: 'weighted_deduction',
     gradingType: 'letter_grade',
-    gradingConfig: { A: [90, 100], B: [80, 89], C: [70, 79], fail_below: 70 },
+    gradingConfig: {
+      A: [90, 100], B: [80, 89], C: [70, 79], fail_below: 70,
+      below_70_display: 'numerical_score_card',
+      closure_trigger: 'below_70_twice_in_12_months',
+      grade_posting: 'required_visible_to_patrons',
+      inspection_frequency: '1-3 per year based on risk level',
+      risk_categories: ['High', 'Moderate', 'Low'],
+      reinspection_trigger: 'Major CRF violations or score below 70',
+      code_basis: 'California Retail Food Code (CRFC)',
+      verified_from: 'LA County Code Title 8 §8.04.225',
+    },
     passThreshold: 90,
     warningThreshold: 79,
     criticalThreshold: 69,
     fireAhjName: 'LACoFD / LAFD',
-    hoodCleaningDefault: 'quarterly',
+    hoodCleaningDefault: 'semi-annual', // Verified: every 6 months per NFPA 96
     facilityCount: 88000,
     dataSourceTier: 1,
     gradeLabel: 'B',
-    gradeExplanation: 'Letter Grade — A (90+), B (80-89), C (70-79)',
+    gradeExplanation: 'Letter Grade — A (90+), B (80-89), C (70-79). Below 70 = no letter grade.',
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'B',
@@ -576,7 +590,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   facilityCount: number;
   tier: number;
 }> = [
-  { county: 'Los Angeles', agencyName: 'LA County DPH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 88000, tier: 1 },
+  { county: 'Los Angeles', agencyName: 'LA County DPH — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 88000, tier: 1 },
   { county: 'San Francisco', agencyName: 'SF DPH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 7500, tier: 1 },
   { county: 'Sonoma', agencyName: 'Sonoma County DHS', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 3200, tier: 1 },
   { county: 'Sacramento', agencyName: 'Sacramento County EMD', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 8500, tier: 2 },
@@ -685,6 +699,10 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
+    food_safety_weight: null, // Not verified from source data
+    facility_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
   },
 
   'demo-loc-airport': {
@@ -722,6 +740,10 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
+    food_safety_weight: null, // Not verified from source data
+    facility_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
   },
 
   'demo-loc-university': {
@@ -759,6 +781,10 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     },
     federalFoodOverlay: null,
     federalFireOverlay: null,
+    food_safety_weight: null, // Not verified from source data
+    facility_safety_weight: null,
+    ops_weight: null,
+    docs_weight: null,
   },
 };
 
