@@ -1104,19 +1104,27 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with risk-based inspection frequency.',
+      type: 'inspection_report',
+      details: 'NO letter grades, NO numeric scores, NO color placards confirmed. Inspection report only — standard CalCode violation classification. Most recent inspection results available online (with county disclaimer that data may not reflect current conditions). Full reports at facility or via Records Request. Transparency: MEDIUM.',
+      grades: [
+        { label: 'No Open Majors', range: 'All violations corrected' },
+        { label: 'Major Violations', range: 'Uncorrected major violations present' },
+      ],
     },
     populationTier: 'medium',
     healthDepartment: {
-      name: 'El Dorado County Environmental Management',
+      name: 'El Dorado County Environmental Management Department — Environmental Health Division',
       phone: '(530) 621-5300',
-      website: 'https://www.edcgov.us/Government/EMD',
-      inspectionFrequency: 'Risk-based: high risk annually, moderate every 18 months',
+      website: 'https://www.eldoradocounty.ca.gov/Public-Safety-Justice/Food-Safety/Inspection-Reports',
+      inspectionFrequency: 'Risk-based',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
-      'Standard CalCode enforcement',
+      'NO letter grades, NO numeric scores, NO color placards confirmed — inspection report only',
+      'Most recent inspection data available online (county disclaimer: may not reflect current conditions)',
+      'Full inspection reports available at facility or via Records Request',
+      'County includes Placerville (county seat) and South Lake Tahoe area',
+      'Lake Tahoe area involves jurisdictional complexity with Placer County and TRPA',
     ],
   },
 

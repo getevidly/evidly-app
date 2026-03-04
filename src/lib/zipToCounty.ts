@@ -414,6 +414,28 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '93955': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Seaside
   '93960': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Soledad
   '93962': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Spreckels
+  // El Dorado County — Placerville, El Dorado Hills, Lake Tahoe area
+  '95614': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Cool
+  '95619': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Diamond Springs
+  '95623': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // El Dorado
+  '95633': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Garden Valley
+  '95634': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Georgetown
+  '95636': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Grizzly Flats
+  '95651': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Lotus
+  '95656': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Mount Aukum
+  '95667': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Placerville (county seat)
+  '95672': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Rescue
+  '95682': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // El Dorado Hills
+  '95684': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // Shingle Springs
+  '95762': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // El Dorado Hills
+  '96150': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96151': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96152': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96154': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96155': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe (Meyers)
+  '96156': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96157': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  '96158': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },
