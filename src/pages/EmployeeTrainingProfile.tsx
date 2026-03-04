@@ -11,10 +11,11 @@ import { useDemo } from '../contexts/DemoContext';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
 import { AssignTrainingModal } from '../components/training/AssignTrainingModal';
+import { AddCertificationModal } from '../components/training/AddCertificationModal';
 import {
   TRAINING_EMPLOYEES, daysUntilExpiry, getTrainingStatus,
   getStatusLabel, getStatusColors,
-  type TrainingEmployee,
+  type TrainingEmployee, type TrainingEmployeeCert,
 } from '../data/trainingRecordsDemoData';
 import { certificationRequirements } from '../data/demoData';
 import { CARD_BG, CARD_BORDER, CARD_SHADOW, PANEL_BG, BODY_TEXT, MUTED, TEXT_TERTIARY } from '../components/dashboard/shared/constants';
@@ -59,9 +60,19 @@ export function EmployeeTrainingProfile() {
   const { isDemoMode } = useDemo();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [showCertModal, setShowCertModal] = useState(false);
+  const [editingCert, setEditingCert] = useState<TrainingEmployeeCert | null>(null);
+  const [localCerts, setLocalCerts] = useState<TrainingEmployeeCert[]>([]);
+  const [certsInitialized, setCertsInitialized] = useState(false);
 
   const employees = isDemoMode ? TRAINING_EMPLOYEES : [];
   const employee = employees.find(e => e.id === employeeId);
+
+  // Initialize local certs from employee data
+  if (employee && !certsInitialized) {
+    setLocalCerts(employee.certifications);
+    setCertsInitialized(true);
+  }
 
   if (!employee) {
     return (
@@ -88,8 +99,24 @@ export function EmployeeTrainingProfile() {
   const heldCertTypes = new Set(employee.certifications.map(c => c.type));
 
   const handleUpload = () => {
-    guardAction('upload', 'Training Records', () => {
-      toast.info('Certificate upload available in full version');
+    setEditingCert(null);
+    setShowCertModal(true);
+  };
+
+  const handleEditCert = (cert: TrainingEmployeeCert) => {
+    setEditingCert(cert);
+    setShowCertModal(true);
+  };
+
+  const handleCertSaved = (cert: TrainingEmployeeCert) => {
+    setLocalCerts(prev => {
+      const idx = prev.findIndex(c => c.id === cert.id);
+      if (idx >= 0) {
+        const updated = [...prev];
+        updated[idx] = cert;
+        return updated;
+      }
+      return [...prev, cert];
     });
   };
 
@@ -138,17 +165,17 @@ export function EmployeeTrainingProfile() {
       {/* ── Section 1: Food Handler Certifications ────────────────── */}
       <section style={{ marginBottom: 28 }}>
         <h2 style={{ fontSize: 16, fontWeight: 700, color: BODY_TEXT, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Award size={18} color={NAVY} /> Certifications ({employee.certifications.length})
+          <Award size={18} color={NAVY} /> Certifications ({localCerts.length})
         </h2>
 
-        {employee.certifications.length === 0 ? (
+        {localCerts.length === 0 ? (
           <div style={{ background: PANEL_BG, border: `1px solid ${CARD_BORDER}`, borderRadius: 10, padding: 32, textAlign: 'center' }}>
             <Award size={28} color="#d1d5db" />
             <p style={{ color: MUTED, fontSize: 13, marginTop: 8 }}>No certifications yet for {employee.name}. Upload a certification to get started.</p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 12 }}>
-            {employee.certifications.map(cert => {
+            {localCerts.map(cert => {
               const badge = certStatusBadge(cert.expires);
               return (
                 <div key={cert.id} style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, borderRadius: 10, padding: 16, boxShadow: CARD_SHADOW }}>
@@ -166,7 +193,7 @@ export function EmployeeTrainingProfile() {
                     <span style={{ padding: '2px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, background: badge.bg, color: badge.text }}>
                       {badge.label}
                     </span>
-                    <button onClick={handleUpload}
+                    <button onClick={() => handleEditCert(cert)}
                       style={{ fontSize: 12, color: NAVY, fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>
                       Update
                     </button>
@@ -283,7 +310,7 @@ export function EmployeeTrainingProfile() {
           </div>
         ) : (
           <div style={{ background: CARD_BG, borderRadius: 10, border: `1px solid ${CARD_BORDER}`, padding: 20, boxShadow: CARD_SHADOW }}>
-            {employee.certifications.map((cert, i) => {
+            {localCerts.map((cert, i) => {
               const days = daysUntilExpiry(cert.expires);
               let barColor = '#15803d'; // green
               if (days !== null) {
@@ -301,7 +328,7 @@ export function EmployeeTrainingProfile() {
               }
 
               return (
-                <div key={cert.id} style={{ marginBottom: i < employee.certifications.length - 1 ? 16 : 0 }}>
+                <div key={cert.id} style={{ marginBottom: i < localCerts.length - 1 ? 16 : 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       {getCertIcon(cert.type)}
@@ -378,6 +405,17 @@ export function EmployeeTrainingProfile() {
             toast.success(`Training assigned to ${data.employeeName} (demo)`);
             setShowAssignModal(false);
           }}
+        />
+      )}
+
+      {showCertModal && employee && (
+        <AddCertificationModal
+          isOpen={showCertModal}
+          onClose={() => { setShowCertModal(false); setEditingCert(null); }}
+          employeeId={employee.id}
+          employeeName={employee.name}
+          existingCert={editingCert}
+          onSaved={handleCertSaved}
         />
       )}
 

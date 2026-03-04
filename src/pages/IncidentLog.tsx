@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Plus, AlertTriangle, Clock, CheckCircle2, XCircle, User, MapPin,
   ChevronDown, ChevronRight, ArrowLeft, Filter, Download, MessageSquare,
@@ -76,6 +77,9 @@ interface Incident {
   sourceType?: 'temp_log' | 'checklist';
   sourceId?: string;
   sourceLabel?: string;
+  regulatoryReportRequired?: boolean;
+  regulatoryReportFiledAt?: string;
+  linkedCorrectiveActionId?: string;
   photos: PhotoRecord[];
   resolutionPhotos: PhotoRecord[];
   timeline: TimelineEntry[];
@@ -212,6 +216,9 @@ const DEMO_INCIDENTS: Incident[] = [
     resolvedAt: d(4),
     verifiedAt: d(3),
     verifiedBy: 'Sarah Chen',
+    regulatoryReportRequired: true,
+    regulatoryReportFiledAt: d(4),
+    linkedCorrectiveActionId: 'CA-003',
     photos: [],
     resolutionPhotos: [],
     resolutionSummary: 'All coolers reorganized per FIFO and cross-contamination guidelines. Staff retrained on proper storage protocol.',
@@ -262,6 +269,7 @@ const DEMO_INCIDENTS: Incident[] = [
     reportedBy: 'Maria Garcia',
     createdAt: h(8),
     updatedAt: h(6),
+    regulatoryReportRequired: true,
     photos: [],
     resolutionPhotos: [],
     correctiveAction: 'Called pest control. Discarded all open dry goods within 3 feet of droppings. Deep cleaning in progress.',
@@ -394,6 +402,7 @@ function isOverdue(incident: Incident): boolean {
 // ── Component ──────────────────────────────────────────────────────
 
 export function IncidentLog() {
+  const navigate = useNavigate();
   const { userRole, getAccessibleLocations } = useRole();
   const { t } = useTranslation();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
@@ -480,6 +489,7 @@ export function IncidentLog() {
   const [newDescription, setNewDescription] = useState('');
   const [newPhotos, setNewPhotos] = useState<PhotoRecord[]>([]);
   const [aiDraftApplied, setAiDraftApplied] = useState(false);
+  const [newRegulatoryRequired, setNewRegulatoryRequired] = useState(false);
 
   // Action form
   const [actionText, setActionText] = useState('');
@@ -601,6 +611,10 @@ export function IncidentLog() {
   // ── Filtered & sorted incidents ────────────────────────────────
   const filteredIncidents = useMemo(() => {
     let list = [...incidents];
+    // Role-based filtering: kitchen staff only sees incidents they reported or are assigned to
+    if (userRole === 'kitchen_staff') {
+      list = list.filter(i => i.reportedBy === 'Current User' || i.assignedTo === 'Current User');
+    }
     if (statusFilter !== 'all') list = list.filter(i => i.status === statusFilter);
     if (severityFilter !== 'all') list = list.filter(i => i.severity === severityFilter);
     if (typeFilter !== 'all') list = list.filter(i => i.type === typeFilter);
@@ -734,6 +748,7 @@ export function IncidentLog() {
       reportedBy: 'Current User',
       createdAt: nowIso,
       updatedAt: nowIso,
+      regulatoryReportRequired: newRegulatoryRequired || undefined,
       photos: newPhotos,
       resolutionPhotos: [],
       timeline: [
@@ -744,7 +759,7 @@ export function IncidentLog() {
     };
     setIncidents(prev => [newIncident, ...prev]);
     setShowCreateForm(false);
-    setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false);
+    setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false);
     setSelectedIncident(newIncident);
     showToast('Incident reported successfully.');
   };
@@ -1054,6 +1069,61 @@ export function IncidentLog() {
                     <span className="text-blue-800">{t('incidents.linked')} {inc.sourceLabel}</span>
                   </div>
                 )}
+                {/* Regulatory Report Flag */}
+                {inc.regulatoryReportRequired && (
+                  <div className={`flex items-center justify-between text-sm rounded-lg p-3 border ${inc.regulatoryReportFiledAt ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-300'}`}>
+                    <div className="flex items-center gap-2">
+                      <ShieldAlert className={`h-4 w-4 ${inc.regulatoryReportFiledAt ? 'text-green-600' : 'text-red-600'}`} />
+                      <span className={`font-semibold ${inc.regulatoryReportFiledAt ? 'text-green-800' : 'text-red-800'}`}>
+                        Regulatory Report {inc.regulatoryReportFiledAt ? 'Filed' : 'Required'}
+                      </span>
+                    </div>
+                    {inc.regulatoryReportFiledAt ? (
+                      <span className="text-xs text-green-700">Filed {format(new Date(inc.regulatoryReportFiledAt), 'MMM d, yyyy')}</span>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          guardAction('file_report', 'Incident Reports', () => {
+                            const updated = { ...inc, regulatoryReportFiledAt: new Date().toISOString() };
+                            setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+                            setSelectedIncident(updated);
+                            showToast('Regulatory report marked as filed.');
+                          });
+                        }}
+                        className="text-xs font-semibold text-red-700 hover:text-red-900 underline"
+                      >
+                        Mark as Filed
+                      </button>
+                    )}
+                  </div>
+                )}
+                {/* Linked Corrective Action */}
+                {inc.linkedCorrectiveActionId && (
+                  <div className="flex items-center gap-2 text-sm bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <ClipboardList className="h-4 w-4 text-amber-600" />
+                    <span className="text-amber-800">
+                      Linked Corrective Action: <button onClick={() => navigate('/corrective-actions')} className="font-semibold underline hover:text-amber-900">{inc.linkedCorrectiveActionId}</button>
+                    </span>
+                  </div>
+                )}
+                {/* Create Corrective Action from Incident */}
+                {!inc.linkedCorrectiveActionId && inc.status !== 'verified' && (
+                  <button
+                    onClick={() => {
+                      guardAction('create_ca', 'Corrective Actions', () => {
+                        const caId = `CA-${String(Math.floor(Math.random() * 900) + 100)}`;
+                        const updated = { ...inc, linkedCorrectiveActionId: caId };
+                        setIncidents(prev => prev.map(i => i.id === updated.id ? updated : i));
+                        setSelectedIncident(updated);
+                        showToast(`Corrective action ${caId} created from incident ${inc.id}`);
+                      });
+                    }}
+                    className="flex items-center gap-2 text-sm font-medium text-[#1e4d6b] hover:underline"
+                  >
+                    <ClipboardList className="h-4 w-4" />
+                    Create Corrective Action from this Incident
+                  </button>
+                )}
                 {inc.correctiveAction && (
                   <div>
                     <span className="text-gray-500 text-sm block mb-1">{t('common.correctiveAction')}</span>
@@ -1220,6 +1290,20 @@ export function IncidentLog() {
                     <div className="flex justify-between">
                       <span className="text-gray-500">{t('incidents.resolutionTime')}</span>
                       <span className="font-semibold text-[#1e4d6b]">{resTime}</span>
+                    </div>
+                  )}
+                  {inc.regulatoryReportRequired && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Regulatory Report</span>
+                      <span className={`font-medium ${inc.regulatoryReportFiledAt ? 'text-green-600' : 'text-red-600'}`}>
+                        {inc.regulatoryReportFiledAt ? 'Filed' : 'Required'}
+                      </span>
+                    </div>
+                  )}
+                  {inc.linkedCorrectiveActionId && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Corrective Action</span>
+                      <span className="font-medium text-[#1e4d6b]">{inc.linkedCorrectiveActionId}</span>
                     </div>
                   )}
                 </div>
@@ -1520,9 +1604,22 @@ export function IncidentLog() {
             onChange={setNewPhotos}
             label={t('incidents.photoOfIncident')}
           />
+          {/* Regulatory report flag */}
+          <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
+            <input
+              type="checkbox"
+              checked={newRegulatoryRequired}
+              onChange={e => setNewRegulatoryRequired(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+            />
+            <div>
+              <span className="text-sm font-medium text-gray-700">Requires regulatory report</span>
+              <p className="text-xs text-gray-500 mt-0.5">Check if this incident requires notification to health department or AHJ</p>
+            </div>
+          </label>
           <div className="flex gap-3">
             <button
-              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); }}
+              onClick={() => { setShowCreateForm(false); setNewTitle(''); setNewDescription(''); setNewPhotos([]); setAiDraftApplied(false); setNewRegulatoryRequired(false); }}
               className="flex-1 px-4 py-2.5 min-h-[44px] border-2 border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               {t('common.cancel')}
@@ -1675,6 +1772,11 @@ export function IncidentLog() {
                         {overdue && (
                           <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: '#dc2626', backgroundColor: '#fef2f2' }}>
                             {t('common.overdue')}
+                          </span>
+                        )}
+                        {inc.regulatoryReportRequired && (
+                          <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px', color: inc.regulatoryReportFiledAt ? '#15803d' : '#dc2626', backgroundColor: inc.regulatoryReportFiledAt ? '#f0fdf4' : '#fef2f2' }}>
+                            {inc.regulatoryReportFiledAt ? 'Report Filed' : 'Report Required'}
                           </span>
                         )}
                         {inc.photos.length > 0 && (

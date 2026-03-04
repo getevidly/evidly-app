@@ -158,3 +158,85 @@
 ### Sidebar Position
 - QR Scan appears in "Operations" section after Log Temp (all roles)
 - IoT Monitoring appears in "Operations" section after QR Scan
+
+---
+
+## Training Records (GAP-06)
+
+### Training Records Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/dashboard/training` | `TrainingRecords.tsx` | Employee training grid — cert status, filters, assignment |
+| `/dashboard/training/:employeeId` | `EmployeeTrainingProfile.tsx` | 5-section employee profile — certs, internal training, jurisdiction reqs, timeline, history |
+| `/dashboard/training-catalog` | `TrainingCatalog.tsx` | Training catalog browser — 22 system + org-specific items |
+
+### Features (GAP-06)
+- Add/edit certification per employee via AddCertificationModal
+- 9 certification types (food_handler, cfpm, haccp, fire_extinguisher, etc.)
+- Expiration tracking: Current (>90d), Coming Due (1-90d), Needs Renewal (past due)
+- TrainingComplianceWidget on OwnerOperatorDashboard
+- Role filtering: kitchen_staff sees only their own records
+
+### Role Access (GAP-06)
+
+| Route | Roles |
+|-------|-------|
+| `/dashboard/training` | owner_operator, executive, kitchen_manager, chef, compliance_manager, platform_admin |
+| `/dashboard/training/:employeeId` | All roles (kitchen_staff sees only self) |
+| `/dashboard/training-catalog` | owner_operator, executive, platform_admin |
+
+---
+
+## Equipment Maintenance & Calibration (GAP-07)
+
+### Equipment Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/equipment` | `Equipment.tsx` | Equipment registry — list/card view, status badges, QR labels |
+| `/equipment/:equipmentId` | `EquipmentDetail.tsx` | Equipment detail — 4 tabs (Overview, Service, Schedule, Lifecycle) |
+| `/equipment/:equipmentId/service/new` | `ServiceRecordEntry.tsx` | Service/calibration record entry — auto-calculates next due date |
+
+### Features (GAP-07)
+- 7 service types including Calibration
+- Auto-calculate next due date from service interval when recording service
+- Equipment-specific interval overrides (Hood=90d cleaning, Fire Suppression=365d cert)
+- EquipmentHealthWidget on OwnerOperatorDashboard
+- Overdue maintenance surfaced as compliance risk flag
+
+### Role Access (GAP-07)
+
+| Route | Roles |
+|-------|-------|
+| `/equipment` | owner_operator, executive, facilities_manager, platform_admin |
+| `/equipment/:equipmentId` | Same as above |
+| `/equipment/:equipmentId/service/new` | owner_operator, compliance_manager, facilities_manager |
+
+---
+
+## Incident & Complaint Documentation (GAP-09)
+
+### Incident Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/incidents` | `IncidentLog.tsx` | Incident list — 8 types, 3 severities, create/action/resolve/verify modals |
+
+### Features (GAP-09)
+- Case number auto-generation (INC-XXX)
+- 8-dimension filtering (status, severity, type, location, assignee, date, sort, regulatory)
+- Full incident detail with timeline, comments, photo evidence
+- Regulatory report flag — prominent badge, "Mark as Filed" workflow
+- Create Corrective Action from incident — links to corrective_actions module
+- Role-based list filtering: kitchen_staff sees only own reported/assigned incidents
+- IncidentSummaryWidget on OwnerOperatorDashboard
+
+### Role Access (GAP-09)
+
+| Route | Roles |
+|-------|-------|
+| `/incidents` (full access) | owner_operator, executive, compliance_manager, facilities_manager, kitchen_manager |
+| `/incidents` (view only) | chef, kitchen_staff |
+| Create incident | All roles |
+| Verify/Reject | owner_operator, executive only |

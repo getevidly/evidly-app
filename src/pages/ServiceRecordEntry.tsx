@@ -35,8 +35,31 @@ const SERVICE_TYPES = [
   { value: 'repair', label: 'Repair' },
   { value: 'replacement', label: 'Replacement' },
   { value: 'certification', label: 'Certification' },
+  { value: 'calibration', label: 'Calibration' },
   { value: 'maintenance', label: 'Maintenance' },
 ];
+
+// Default service intervals in days for auto-calculating next due date
+const DEFAULT_INTERVALS: Record<string, number> = {
+  inspection: 180,    // semi-annual
+  cleaning: 90,       // quarterly
+  repair: 0,          // no auto-schedule
+  replacement: 0,     // no auto-schedule
+  certification: 365, // annual
+  calibration: 90,    // quarterly
+  maintenance: 180,   // semi-annual
+};
+
+// Equipment-specific interval overrides (from demo data maintenance schedules)
+const EQUIPMENT_INTERVALS: Record<string, Record<string, number>> = {
+  'Hood System': { cleaning: 90, inspection: 180 },
+  'Fire Suppression System': { inspection: 180, certification: 365 },
+  'Walk-in Cooler': { calibration: 90, maintenance: 180 },
+  'Walk-in Freezer': { calibration: 90, maintenance: 180 },
+  'Commercial Fryer': { cleaning: 30, maintenance: 180 },
+  'Ice Machine': { cleaning: 90, maintenance: 180 },
+  'Exhaust Fan': { cleaning: 90, inspection: 180 },
+};
 
 interface FormState {
   serviceType: string;
@@ -79,7 +102,24 @@ export function ServiceRecordEntry() {
   });
 
   const update = (field: keyof FormState, value: string) => {
-    setForm(prev => ({ ...prev, [field]: value }));
+    setForm(prev => {
+      const next = { ...prev, [field]: value };
+      // Auto-calculate next service date when service type or date changes
+      if ((field === 'serviceType' || field === 'serviceDate') && !prev.nextServiceDate) {
+        const sType = field === 'serviceType' ? value : prev.serviceType;
+        const sDate = field === 'serviceDate' ? value : prev.serviceDate;
+        if (sType && sDate) {
+          const eqType = equipment?.type || '';
+          const interval = EQUIPMENT_INTERVALS[eqType]?.[sType] ?? DEFAULT_INTERVALS[sType] ?? 0;
+          if (interval > 0) {
+            const d = new Date(sDate);
+            d.setDate(d.getDate() + interval);
+            next.nextServiceDate = d.toISOString().split('T')[0];
+          }
+        }
+      }
+      return next;
+    });
   };
 
   const errors = useMemo(() => {
@@ -172,9 +212,14 @@ export function ServiceRecordEntry() {
               <input
                 type="date"
                 value={form.nextServiceDate}
-                onChange={e => update('nextServiceDate', e.target.value)}
+                onChange={e => setForm(prev => ({ ...prev, nextServiceDate: e.target.value }))}
                 className={inputClass}
               />
+              {form.nextServiceDate && form.serviceType && (DEFAULT_INTERVALS[form.serviceType] ?? 0) > 0 && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Auto-calculated from {SERVICE_TYPES.find(t => t.value === form.serviceType)?.label} interval ({DEFAULT_INTERVALS[form.serviceType]}d) — you can override
+                </p>
+              )}
             </div>
           </div>
 
