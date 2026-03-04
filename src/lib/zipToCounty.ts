@@ -391,6 +391,13 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '94086': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
   '94087': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
   '94089': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Sunnyvale
+  '94301': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Palo Alto
+  '94303': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Palo Alto (East)
+  '94304': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Palo Alto (Stanford Research Park)
+  '94305': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Stanford University
+  '94306': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Palo Alto (South)
+  '95013': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // Coyote
+  '95119': { countyId: 'county-santa-clara', countyName: 'Santa Clara County' }, // San Jose (south/Blossom Hill)
   // Monterey County — coastal and inland
   '93901': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (downtown)
   '93905': { countyId: 'county-monterey', countyName: 'Monterey County' }, // Salinas (east)

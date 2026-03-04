@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard' | 'color_placard_with_numeric_score' | 'color_placard_and_numeric' | 'inspection_report';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'green_yellow_red' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'green_yellow_red_numeric' | 'inspection_report';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard' | 'color_placard_and_numeric' | 'inspection_report';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'green_yellow_red' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_numeric' | 'inspection_report';
 
 export interface DemoJurisdiction {
   id: string;
@@ -1410,43 +1410,6 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         passFail: 'pass',
         display: '\u{1F7E2} Green — Pass',
         majorViolations: gyrNoScoreMajors, minorViolations: gyrNoScoreMinors,
-        uncorrectedMajors: 0, totalPoints: 0,
-      };
-    }
-    case 'green_yellow_red_with_score': {
-      // Santa Clara County — GYR placard + numeric score
-      // Placard based on major violation COUNT (not score)
-      // Score: Start 100, Major=8pts, Moderate=3pts, Minor=2pts
-      const gyrConfig = jurisdiction.gradingConfig || {};
-      const vp = gyrConfig.violationPoints || { major: 8, moderate: 3, minor: 2 };
-      // Demo: estimate violations from normalized score
-      const gyrMajors = Math.max(0, Math.floor((100 - score) / (vp.major || 8)));
-      const gyrMinors = Math.max(0, Math.floor(((100 - score) % (vp.major || 8)) / (vp.minor || 2)));
-      const gyrUncorrected = score < 60 ? gyrMajors : 0; // Below 60 = imminent threat
-      // Placard: GREEN ≤1 major corrected, YELLOW 2+ corrected, RED imminent threat
-      if (gyrUncorrected > 0) {
-        return {
-          grade: 'Red',
-          passFail: 'fail',
-          display: `\u{1F534} Red — ${score} (${gyrUncorrected} major uncorrected)`,
-          majorViolations: gyrMajors, minorViolations: gyrMinors,
-          uncorrectedMajors: gyrUncorrected, totalPoints: 0,
-        };
-      }
-      if (gyrMajors >= 2) {
-        return {
-          grade: 'Yellow',
-          passFail: 'warning',
-          display: `\u{1F7E1} Yellow — ${score} (${gyrMajors} major corrected)`,
-          majorViolations: gyrMajors, minorViolations: gyrMinors,
-          uncorrectedMajors: 0, totalPoints: 0,
-        };
-      }
-      return {
-        grade: 'Green',
-        passFail: 'pass',
-        display: `\u{1F7E2} Green — ${score}`,
-        majorViolations: gyrMajors, minorViolations: gyrMinors,
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
