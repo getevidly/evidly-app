@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'violation_report' | 'report_only';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only';
 
 export interface DemoJurisdiction {
   id: string;
@@ -34,7 +34,7 @@ export interface DemoJurisdiction {
 }
 
 // ═══════════════════════════════════════════════════════════
-// THE 12 DEMO JURISDICTIONS
+// THE 14 DEMO JURISDICTIONS
 // These power the jurisdiction switcher in sales demos.
 // Each demonstrates a different scoring/grading model.
 // ═══════════════════════════════════════════════════════════
@@ -449,6 +449,130 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ MADERA COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO score. NO placard. Violation report only.
+    // Transparency: LOW — no online portal.
+    // Annual inspections. Gateway to Yosemite south (distinct from NPS).
+    // Source: maderacounty.com/.../environmental-health-division/food-program
+    id: 'demo-madera',
+    county: 'Madera',
+    agencyName: 'Madera County Environmental Health Division',
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
+    gradingConfig: {
+      displayFormat: 'violation_report',
+      grades: null,
+      letterGrade: false,
+      numericScore: false,
+      placardPosted: false,
+      gradeCardPosted: false,
+      onSiteReportRequired: true,
+      publicPostingRequired: false,
+      inspectionFrequency: 'annual',
+      transparencyLevel: 'low',
+      transparencyNote: 'No public online inspection database identified. LOW transparency.',
+      gradingNote: 'NO letter grade. NO score. NO placard. Violation report only. Annual inspections. CalCode + Madera County Ordinance.',
+      permitCycle: 'Annual, valid Jan 1 through Dec 31',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Madera County OES / CAL FIRE (unincorporated)',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 800,
+    dataSourceTier: 4,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — No letter grade, no numeric score, no placard. LOW transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
+  {
+    // ═══ KERN COUNTY — VERIFIED (2026-03) ═══
+    // Letter grade A/B/C + numeric score. Closure threshold = 75 (not 70).
+    // Points: Major=5, Minor/Risk=3, Non-critical=1.
+    // Grade card posted. Safe Diner App. Transparency: HIGH.
+    // Source: Kern County Code Chapter 8.58, NACCHO case study, kernpublichealth.com
+    id: 'demo-kern',
+    county: 'Kern',
+    agencyName: 'Kern County Public Health Services — Environmental Health Division',
+    scoringType: 'weighted_deduction',
+    gradingType: 'letter_grade_abc',
+    gradingConfig: {
+      displayFormat: 'letter_grade_with_score',
+      grades: [
+        { grade: 'A', min: 90, max: 100, status: 'pass', label: 'Compliant with state law' },
+        { grade: 'B', min: 80, max: 89, status: 'warning', label: 'Below minimum health standards' },
+        { grade: 'C', min: 75, max: 79, status: 'fail', label: 'Poor compliance' },
+        { grade: 'CLOSURE', min: 0, max: 74, status: 'closed', label: 'Permit suspended — facility closed' },
+      ],
+      letterGrade: true,
+      numericScore: true,
+      scoreBase: 100,
+      scoreDirection: 'downward_deduction',
+      violationPoints: { major: 5, minorRiskFactor: 3, nonCritical: 1 },
+      placardPosted: true,
+      gradeCardPosted: true,
+      inspectionFrequency: 'risk_based_1_to_3_per_year',
+      transparencyLevel: 'high',
+      safeDinerApp: true,
+      localAuthority: 'Kern County Code Chapter 8.58',
+      gradingNote: 'Kern closure threshold = 75 (not 70). A=90-100, B=80-89, C=75-79, Closure=<75.',
+    },
+    passThreshold: 90,
+    warningThreshold: 80,
+    criticalThreshold: 75,
+    fireAhjName: 'Kern County Fire Department / CAL FIRE (unincorporated)',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 3500,
+    dataSourceTier: 1,
+    gradeLabel: 'B',
+    gradeExplanation: 'Letter Grade A/B/C — A (90+) PASS, B (80-89) WARNING, C (75-79) FAIL, <75 CLOSURE. Threshold 75 not 70.',
+    passFailLabel: 'WARNING',
+    demoScore: 88,
+    demoGrade: 'B — 88',
+    demoPassFail: 'warning',
+  },
+  {
+    // ═══ KINGS COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO score. NO placard. Violation report only.
+    // Transparency: MEDIUM — PDF inspection reports posted online.
+    // Source: kcdph.com/ehsfoodinspectionreports
+    id: 'demo-kings',
+    county: 'Kings',
+    agencyName: 'Kings County Department of Public Health — EHS Division',
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
+    gradingConfig: {
+      displayFormat: 'violation_report',
+      grades: null,
+      letterGrade: false,
+      numericScore: false,
+      placardPosted: false,
+      gradeCardPosted: false,
+      onSiteReportRequired: true,
+      publicPostingRequired: false,
+      transparencyLevel: 'medium',
+      transparencyNote: 'PDF inspection reports posted online at kcdph.com/ehsfoodinspectionreports organized by city and facility name.',
+      publicPortal: 'https://www.kcdph.com/ehsfoodinspectionreports',
+      gradingNote: 'NO letter grade. NO score. NO placard. PDF violation reports posted online by city/facility.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Kings County OES / CAL FIRE (unincorporated)',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 600,
+    dataSourceTier: 3,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — No letter grade, no numeric score, no placard. PDF reports online.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -654,6 +778,16 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       const t = jurisdiction.passThreshold || 70;
       return { grade: String(score), passFail: score >= t ? 'pass' : 'fail', display: String(score) };
     }
+    case 'numeric_score_no_letter': {
+      // Numeric score only — no letter grade, no placard
+      // Uses pass/warning/critical thresholds from jurisdiction config
+      const nsPass = jurisdiction.passThreshold || 90;
+      const nsCrit = jurisdiction.criticalThreshold || 70;
+      let nsPf: 'pass' | 'fail' | 'warning' = 'pass';
+      if (score < nsCrit) nsPf = 'fail';
+      else if (score < nsPass) nsPf = 'warning';
+      return { grade: String(score), passFail: nsPf, display: String(score) };
+    }
     case 'score_negative': {
       const neg = score - 100; // Convert normalized back to negative
       const config = jurisdiction.gradingConfig || {};
@@ -842,7 +976,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
   { county: 'Stanislaus', agencyName: 'Stanislaus County Environmental Resources', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2500, tier: 3 },
   { county: 'Monterey', agencyName: 'Monterey County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2500, tier: 3 },
-  { county: 'Tulare', agencyName: 'Tulare County HHSA', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 2000, tier: 3 },
+  { county: 'Tulare', agencyName: 'Tulare County Division of Environmental Health', scoringType: 'numeric_score', gradingType: 'numeric_score_no_letter', facilityCount: 3500, tier: 3 },
   { county: 'Placer', agencyName: 'Placer County Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
@@ -857,9 +991,9 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Los Angeles', city: 'Vernon', agencyName: 'Vernon EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 100, tier: 3 },
   // Tier 4 — remaining 28 small/rural counties
   { county: 'Merced', agencyName: 'Merced County Department of Public Health — Division of Environmental Health', scoringType: 'point_accumulation', gradingType: 'point_accumulation_tiered', facilityCount: 3500, tier: 3 },
-  { county: 'Madera', agencyName: 'Madera County DPH', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 700, tier: 4 },
+  { county: 'Madera', agencyName: 'Madera County Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 800, tier: 4 },
   { county: 'Mariposa', agencyName: 'Mariposa County + NPS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 150, tier: 4 },
-  { county: 'Kings', agencyName: 'Kings County DPH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
+  { county: 'Kings', agencyName: 'Kings County Department of Public Health — EHS Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 600, tier: 4 },
   { county: 'Humboldt', agencyName: 'Humboldt County DOH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
   { county: 'Imperial', agencyName: 'Imperial County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
   { county: 'Tuolumne', agencyName: 'Tuolumne County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },

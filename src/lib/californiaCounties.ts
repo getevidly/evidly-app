@@ -1540,19 +1540,23 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with risk-based inspection frequency.',
+      type: 'numeric_score',
+      details: 'Numeric score system (100-point base, deductions for violations). NO letter grade posted. NO placard at facility. Scores searchable online at tularecountyeh.org. Common range: 86-100. 100 = no violations.',
     },
     populationTier: 'medium',
     healthDepartment: {
-      name: 'Tulare County Environmental Health Services',
+      name: 'Tulare County Division of Environmental Health',
       phone: '(559) 624-7400',
-      website: 'https://tularehhsa.org/environmental-health/',
+      website: 'https://tularecountyeh.org/',
       inspectionFrequency: 'Risk-based: high risk annually, moderate every 18 months',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
-      'Standard CalCode enforcement',
+      'Numeric score only — no letter grade, no placard',
+      'Scores searchable at tularecountyeh.org/food-facilities-inspection-results',
+      '100-point deductive scoring (100 = no violations)',
+      'CalCode enforcement basis',
+      // SUGGESTION: Verify pass/fail threshold with county — no codified threshold found
     ],
   },
 

@@ -213,6 +213,21 @@ const STANISLAUS_COUNTY: CountyScoringProfile = {
   },
 };
 
+const TULARE_COUNTY: CountyScoringProfile = {
+  countySlug: 'tulare',
+  countyName: 'Tulare County',
+  systemType: 'standard', // numeric score, no letter grade
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score) => {
+    // Tulare uses numeric score only — NO letter grade, NO placard
+    // Thresholds estimated — verify with county (559) 624-7400
+    if (score >= 90) return { label: String(score), color: '#22c55e', passing: true };
+    if (score >= 70) return { label: String(score), color: '#f59e0b', passing: true };
+    return { label: String(score), color: '#ef4444', passing: false };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -243,6 +258,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'fresno': FRESNO_COUNTY,
   'merced': MERCED_COUNTY,
   'stanislaus': STANISLAUS_COUNTY,
+  'tulare': TULARE_COUNTY,
 };
 
 /**

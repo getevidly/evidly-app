@@ -27,7 +27,11 @@ const CA_ZIP_RANGES: ZipCountyMapping[] = [
   { zipStart: 93101, zipEnd: 93199, countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' },
   // San Luis Obispo County (934xx)
   { zipStart: 93401, zipEnd: 93499, countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' },
-  // Kern County (932xx, 935xx)
+  // Tulare County (932xx partial) — must come BEFORE Kern (more specific range)
+  { zipStart: 93201, zipEnd: 93298, countyId: 'county-tulare', countyName: 'Tulare County' },
+  // Kings County (932xx partial) — must come BEFORE Kern (more specific range)
+  { zipStart: 93230, zipEnd: 93246, countyId: 'county-kings', countyName: 'Kings County' },
+  // Kern County (932xx, 935xx) — broader range, checked after Tulare/Kings
   { zipStart: 93200, zipEnd: 93399, countyId: 'county-kern', countyName: 'Kern County' },
   { zipStart: 93500, zipEnd: 93599, countyId: 'county-kern', countyName: 'Kern County' },
   // San Bernardino County (917xx, 923xx-925xx)
@@ -44,10 +48,6 @@ const CA_ZIP_RANGES: ZipCountyMapping[] = [
   { zipStart: 92227, zipEnd: 92283, countyId: 'county-imperial', countyName: 'Imperial County' },
   // Fresno County (936xx-937xx)
   { zipStart: 93600, zipEnd: 93799, countyId: 'county-fresno', countyName: 'Fresno County' },
-  // Tulare County (932xx partial)
-  { zipStart: 93201, zipEnd: 93298, countyId: 'county-tulare', countyName: 'Tulare County' },
-  // Kings County (932xx partial)
-  { zipStart: 93230, zipEnd: 93246, countyId: 'county-kings', countyName: 'Kings County' },
   // Madera County (936xx partial)
   { zipStart: 93636, zipEnd: 93645, countyId: 'county-madera', countyName: 'Madera County' },
   // Merced County (953xx)
@@ -156,6 +156,17 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '93726': { countyId: 'county-fresno', countyName: 'Fresno County' },
   '93727': { countyId: 'county-fresno', countyName: 'Fresno County' },
   '93728': { countyId: 'county-fresno', countyName: 'Fresno County' },
+  // Madera County (inside Fresno's broad 93600-93799 range — overrides needed)
+  '93601': { countyId: 'county-madera', countyName: 'Madera County' }, // Ahwahnee
+  '93604': { countyId: 'county-madera', countyName: 'Madera County' }, // Bass Lake
+  '93614': { countyId: 'county-madera', countyName: 'Madera County' }, // Coarsegold
+  '93623': { countyId: 'county-madera', countyName: 'Madera County' }, // Fish Camp (southern Yosemite gateway)
+  '93637': { countyId: 'county-madera', countyName: 'Madera County' }, // Madera (city)
+  '93638': { countyId: 'county-madera', countyName: 'Madera County' }, // Madera (north)
+  '93639': { countyId: 'county-madera', countyName: 'Madera County' }, // Madera (east/airport)
+  '93644': { countyId: 'county-madera', countyName: 'Madera County' }, // Oakhurst
+  '93645': { countyId: 'county-madera', countyName: 'Madera County' }, // O'Neals
+  '93653': { countyId: 'county-madera', countyName: 'Madera County' }, // Raymond
   // Merced area
   '95340': { countyId: 'county-merced', countyName: 'Merced County' },
   '95341': { countyId: 'county-merced', countyName: 'Merced County' },
