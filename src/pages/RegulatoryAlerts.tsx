@@ -9,7 +9,7 @@ import {
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { Breadcrumb } from '../components/Breadcrumb';
 import {
-  DEMO_ALERTS, MONITORED_SOURCES,
+  DEMO_ALERTS,
   type RegulatoryAlert, type RegulatorySource, type ImpactLevel, type AlertStatus
 } from '../lib/regulatoryMonitor';
 import { useDemoGuard } from '../hooks/useDemoGuard';
@@ -27,7 +27,7 @@ export function RegulatoryAlerts() {
   const navigate = useNavigate();
   const { guardAction, showUpgrade, setShowUpgrade, upgradeAction, upgradeFeature } = useDemoGuard();
   const { isDemoMode } = useDemo();
-  const { alerts: liveAlerts, alertStatuses, markAsRead, jurisdictions, loading, error } = useRegulatoryChanges();
+  const { alerts: liveAlerts, alertStatuses, markAsRead, jurisdictions, monitoringSources, loading, error } = useRegulatoryChanges();
 
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [impactFilter, setImpactFilter] = useState<string>('all');
@@ -164,9 +164,9 @@ export function RegulatoryAlerts() {
           <div className="h-8 w-8 border-2 border-gray-300 border-t-[#1e4d6b] rounded-full animate-spin" />
         </div>
       )}
-      {!isDemoMode && error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-700 mb-4">
-          Failed to load regulatory alerts. Please try again.
+      {!isDemoMode && error && !loading && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-700 mb-4">
+          Unable to connect to regulatory monitoring service. Showing cached data if available.
         </div>
       )}
 
@@ -258,7 +258,7 @@ export function RegulatoryAlerts() {
                 <Filter className="w-8 h-8 text-gray-300 mx-auto mb-3" />
                 <p className="text-sm text-gray-500">
                   {sourceAlerts.length === 0
-                    ? 'No regulatory updates yet.'
+                    ? 'No regulatory alerts at this time. We\u2019ll notify you when updates affect your jurisdictions.'
                     : 'No alerts match your current filters.'}
                 </p>
               </div>
@@ -469,15 +469,19 @@ export function RegulatoryAlerts() {
                 <h3 className="font-semibold text-gray-900">Monitoring Sources</h3>
               </div>
               <div className="mt-3 space-y-3">
-                {MONITORED_SOURCES.map((src, i) => (
-                  <div key={i}>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">{src.name}</span>
-                      <span className={`px-2 py-0.5 text-xs rounded-full ${getSourceTypeBadge(src.type)}`}>{src.type}</span>
+                {monitoringSources.length === 0 ? (
+                  <p className="text-xs text-gray-400 py-2">No monitoring sources configured.</p>
+                ) : (
+                  monitoringSources.map((src, i) => (
+                    <div key={i}>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">{src.name}</span>
+                        <span className={`px-2 py-0.5 text-xs rounded-full ${getSourceTypeBadge(src.type)}`}>{src.type}</span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-0.5">Last checked: {formatDate(src.lastChecked)}</p>
                     </div>
-                    <p className="text-xs text-gray-400 mt-0.5">Last checked: {formatDate(src.lastChecked)}</p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 

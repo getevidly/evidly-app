@@ -61,27 +61,25 @@ export interface Jurisdiction {
   type: 'county' | 'city' | 'state';
 }
 
-// ── Monitored Sources ─────────────────────────────────────────
+// ── Monitored Sources (demo mode — dates computed dynamically) ────
+
+const _demoToday = new Date();
+const _daysAgo = (n: number): string => {
+  const d = new Date(_demoToday);
+  d.setDate(d.getDate() - n);
+  return d.toISOString().split('T')[0];
+};
 
 export const MONITORED_SOURCES: MonitoredSource[] = [
-  { name: 'FDA Food Code', abbreviation: 'FDA', type: 'federal', lastChecked: '2026-02-08', url: 'https://www.fda.gov/food/retail-food-protection/fda-food-code' },
-  { name: 'California Retail Food Code (CalCode)', abbreviation: 'CalCode', type: 'state', lastChecked: '2026-02-08', url: 'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx' },
-  { name: 'NFPA 96 (2024) (Hood & Ventilation)', abbreviation: 'NFPA 96', type: 'industry', lastChecked: '2026-02-07', url: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96' },
-  { name: 'NFPA 10 (2025 Edition) (Fire Extinguishers)', abbreviation: 'NFPA 10', type: 'industry', lastChecked: '2026-02-07', url: 'https://www.nfpa.org/codes-and-standards/nfpa-10-standard-development/10' },
-  { name: 'Cal/OSHA Workplace Safety', abbreviation: 'Cal/OSHA', type: 'state', lastChecked: '2026-02-06', url: 'https://www.dir.ca.gov/dosh/' },
-  { name: 'Fresno County Health Department', abbreviation: 'Fresno Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.fresno.ca.us/departments/public-health' },
-  { name: 'Merced County Division of Environmental Health', abbreviation: 'Merced Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.co.merced.ca.us/departments/community-and-economic-development/environmental-health' },
-  { name: 'Stanislaus County Environmental Resources', abbreviation: 'Stanislaus Co.', type: 'county', lastChecked: '2026-02-08', url: 'https://www.stancounty.com/er/environmental-health.shtm' },
-  { name: 'California Fire Code (CFC) / State Fire Marshal', abbreviation: 'CFC/SFM', type: 'state', lastChecked: '2026-02-07', url: 'https://osfm.fire.ca.gov/what-we-do/fire-engineering-and-investigations/codes-and-standards' },
-];
-
-// ── Customer Jurisdictions (auto-populated from location addresses) ──
-
-export const CUSTOMER_JURISDICTIONS: Jurisdiction[] = [
-  { name: 'Fresno County', state: 'CA', type: 'county' },
-  { name: 'Merced County', state: 'CA', type: 'county' },
-  { name: 'Stanislaus County', state: 'CA', type: 'county' },
-  { name: 'California', state: 'CA', type: 'state' },
+  { name: 'FDA Food Code', abbreviation: 'FDA', type: 'federal', lastChecked: _daysAgo(1), url: 'https://www.fda.gov/food/retail-food-protection/fda-food-code' },
+  { name: 'California Retail Food Code (CalCode)', abbreviation: 'CalCode', type: 'state', lastChecked: _daysAgo(1), url: 'https://www.cdph.ca.gov/Programs/CEH/DFDCS/Pages/FDBPrograms/FoodSafetyProgram.aspx' },
+  { name: 'NFPA 96 (2024) (Hood & Ventilation)', abbreviation: 'NFPA 96', type: 'industry', lastChecked: _daysAgo(2), url: 'https://www.nfpa.org/codes-and-standards/nfpa-96-standard-development/96' },
+  { name: 'NFPA 10 (2025 Edition) (Fire Extinguishers)', abbreviation: 'NFPA 10', type: 'industry', lastChecked: _daysAgo(2), url: 'https://www.nfpa.org/codes-and-standards/nfpa-10-standard-development/10' },
+  { name: 'Cal/OSHA Workplace Safety', abbreviation: 'Cal/OSHA', type: 'state', lastChecked: _daysAgo(3), url: 'https://www.dir.ca.gov/dosh/' },
+  { name: 'Fresno County Health Department', abbreviation: 'Fresno Co.', type: 'county', lastChecked: _daysAgo(1), url: 'https://www.co.fresno.ca.us/departments/public-health' },
+  { name: 'Merced County Division of Environmental Health', abbreviation: 'Merced Co.', type: 'county', lastChecked: _daysAgo(1), url: 'https://www.co.merced.ca.us/departments/community-and-economic-development/environmental-health' },
+  { name: 'Stanislaus County Environmental Resources', abbreviation: 'Stanislaus Co.', type: 'county', lastChecked: _daysAgo(1), url: 'https://www.stancounty.com/er/environmental-health.shtm' },
+  { name: 'California Fire Code (CFC) / State Fire Marshal', abbreviation: 'CFC/SFM', type: 'state', lastChecked: _daysAgo(2), url: 'https://osfm.fire.ca.gov/what-we-do/fire-engineering-and-investigations/codes-and-standards' },
 ];
 
 // ── Demo Alerts ───────────────────────────────────────────────

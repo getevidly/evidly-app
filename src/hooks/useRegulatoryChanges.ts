@@ -9,8 +9,10 @@ import {
   type RegulatoryAlert,
   type AlertStatus,
   type Jurisdiction,
+  type MonitoredSource,
 } from '../lib/regulatoryMonitor';
 import { locations as demoLocations } from '../data/demoData';
+import { demoLocationJurisdictions } from '../data/demoJurisdictions';
 import type { DbRegulatorySource, DbChangeWithSource } from '../types/regulatory';
 import { dbImpactToUiImpact, dbSourceToUiSource } from '../types/regulatory';
 
@@ -115,6 +117,7 @@ interface UseRegulatoryChangesReturn {
 
   adminChanges: AdminRegChange[];
   sources: DbRegulatorySource[];
+  monitoringSources: MonitoredSource[];
   jurisdictions: Jurisdiction[];
   analyzeWithAI: (sourceId: string, rawText: string, changeType: string, sourceUrl?: string) => Promise<void>;
   publishChange: (changeId: string) => Promise<void>;
@@ -142,6 +145,14 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
   // Demo mode local status overrides
   const [demoStatuses, setDemoStatuses] = useState<Record<string, AlertStatus>>({});
 
+  // Wrap each Supabase query so a missing table or RLS block
+  // returns {data: null, error} instead of throwing.
+  const safeQuery = <T,>(promise: PromiseLike<{ data: T | null; error: any }>) =>
+    Promise.resolve(promise).catch((err: any) => ({
+      data: null as T | null,
+      error: { message: err?.message ?? 'Query failed' },
+    }));
+
   const fetchData = useCallback(async () => {
     if (isDemoMode) {
       setLoading(false);
@@ -151,44 +162,43 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     setLoading(true);
     setError(null);
 
-    try {
-      const [changesRes, sourcesRes, locationsRes] = await Promise.all([
+    const [changesRes, sourcesRes, locationsRes] = await Promise.all([
+      safeQuery(
         supabase
           .from('regulatory_changes')
           .select('*, regulatory_sources(*), regulatory_change_reads(*)')
-          .order('created_at', { ascending: false }),
+          .order('created_at', { ascending: false })
+      ),
+      safeQuery(
         supabase
           .from('regulatory_sources')
           .select('*')
           .eq('active', true)
-          .order('code_name'),
+          .order('code_name')
+      ),
+      safeQuery(
         supabase
           .from('locations')
           .select('name, address, county')
-          .order('name'),
-      ]);
+          .order('name')
+      ),
+    ]);
 
-      // Table may not exist or RLS may block — treat as empty, not error
-      if (changesRes.error) {
-        console.warn('[Regulatory Changes] Changes query:', changesRes.error.message);
-      }
-      if (sourcesRes.error) {
-        console.warn('[Regulatory Changes] Sources query:', sourcesRes.error.message);
-      }
-      if (locationsRes.error) {
-        console.warn('[Regulatory Changes] Locations query:', locationsRes.error.message);
-      }
-
-      setDbChanges(changesRes.data ?? []);
-      setDbSources(sourcesRes.data ?? []);
-      setDbLocations(locationsRes.data ?? []);
-    } catch (err: any) {
-      // Only network/connection failures reach here
-      console.error('[Regulatory Changes] Connection error:', err);
-      setError(err.message ?? 'Failed to load regulatory data');
-    } finally {
-      setLoading(false);
+    // Missing tables / RLS blocks → warn and use empty, not error banner
+    if (changesRes.error) {
+      console.warn('[Regulatory] Changes query:', changesRes.error.message);
     }
+    if (sourcesRes.error) {
+      console.warn('[Regulatory] Sources query:', sourcesRes.error.message);
+    }
+    if (locationsRes.error) {
+      console.warn('[Regulatory] Locations query:', locationsRes.error.message);
+    }
+
+    setDbChanges((changesRes.data as any) ?? []);
+    setDbSources((sourcesRes.data as any) ?? []);
+    setDbLocations((locationsRes.data as any) ?? []);
+    setLoading(false);
   }, [isDemoMode]);
 
   useEffect(() => {
@@ -254,7 +264,10 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
 
   const jurisdictions = useMemo<Jurisdiction[]>(() => {
     const locs = isDemoMode
-      ? demoLocations.map(l => ({ name: l.name, address: l.address, county: undefined }))
+      ? demoLocations.map(l => {
+          const jData = demoLocationJurisdictions[`demo-loc-${l.urlId}`];
+          return { name: l.name, address: l.address, county: jData?.county };
+        })
       : dbLocations;
 
     if (locs.length === 0) return [];
@@ -302,6 +315,22 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
 
     return result;
   }, [isDemoMode, dbLocations]);
+
+  // ── Derived: Monitoring sources for display ────────────
+
+  const monitoringSources = useMemo<MonitoredSource[]>(() => {
+    if (isDemoMode) return MONITORED_SOURCES;
+
+    if (dbSources.length === 0) return [];
+
+    return dbSources.map(s => ({
+      name: s.code_name,
+      abbreviation: s.code_short,
+      type: s.jurisdiction_type === 'city' ? 'county' as const : s.jurisdiction_type,
+      lastChecked: s.last_checked ?? s.created_at.split('T')[0],
+      url: s.monitoring_url ?? '',
+    }));
+  }, [isDemoMode, dbSources]);
 
   // ── Derived: Admin changes ──────────────────────────────
 
@@ -519,6 +548,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     markAsRead,
     adminChanges,
     sources: isDemoMode ? [] : dbSources,
+    monitoringSources,
     jurisdictions,
     analyzeWithAI,
     publishChange,
