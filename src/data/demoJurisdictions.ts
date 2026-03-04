@@ -1048,6 +1048,41 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Grade',
     demoPassFail: 'no_grade',
   },
+  {
+    // ═══ GLENN COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. PDF reports posted online by facility name.
+    // Transparency: MEDIUM.
+    // Source: countyofglenn.net/.../food-facility-inspection-reports — verified March 2026
+    id: 'demo-glenn',
+    county: 'Glenn',
+    agencyName: 'Glenn County Environmental Health — Planning and Community Development Services',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'PDF reports posted by facility name on county website. MEDIUM transparency. Small agricultural county. Willows is county seat.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Willows Fire / City of Orland Fire',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: null,
+    dataSourceTier: 4,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~200-300 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1606,12 +1641,12 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
   { county: 'Yuba', agencyName: 'Yuba County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
   { county: 'Lake', agencyName: 'Lake County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
-  { county: 'Tehama', agencyName: 'Tehama County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 350, tier: 4 },
+  { county: 'Tehama', agencyName: 'Tehama County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
   { county: 'Calaveras', agencyName: 'Calaveras County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'Siskiyou', agencyName: 'Siskiyou County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'San Benito', agencyName: 'San Benito County Health & Human Services Agency — Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Amador', agencyName: 'Amador County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
-  { county: 'Glenn', agencyName: 'Glenn County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
+  { county: 'Glenn', agencyName: 'Glenn County Environmental Health — Planning and Community Development Services', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 200, tier: 4 },
   { county: 'Del Norte', agencyName: 'Del Norte County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Lassen', agencyName: 'Lassen County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Plumas', agencyName: 'Plumas County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
