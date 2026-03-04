@@ -635,6 +635,42 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ SAN BENITO COUNTY — VERIFIED (2026-03) ═══
+    // NO letter grade. NO numeric score. NO color placard.
+    // Inspection report only. Very small county (~400 facilities).
+    // No public online inspection database found. Transparency: LOW.
+    // Source: hhsa.sanbenitocountyca.gov, (831) 636-4035
+    id: 'demo-san-benito',
+    county: 'San Benito',
+    agencyName: 'San Benito County Health & Human Services Agency — Environmental Health',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: false,
+      reportAtFacility: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'low',
+      programNote: 'San Benito County uses standard CalCode inspection reports only. No letter grade, numeric score, or posted placard. No public online database found — reports available at facility or by records request. Second-smallest county in California by population.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'San Benito County Fire Department / CAL FIRE',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 400,
+    dataSourceTier: 4,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Inspection Report Only — No letter grade, no numeric score, no placard. No online portal. LOW transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 88,
+    demoGrade: 'No Open Majors',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -1119,7 +1155,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
   { county: 'Napa', agencyName: 'Napa County PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1100, tier: 3 },
-  { county: 'Santa Cruz', agencyName: 'Santa Cruz County HSA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1500, tier: 3 },
+  { county: 'Santa Cruz', agencyName: 'Santa Cruz County Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 3 },
   { county: 'Butte', agencyName: 'Butte County PH', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 1200, tier: 3 },
   { county: 'Shasta', agencyName: 'Shasta County HHSA', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1000, tier: 3 },
   { county: 'El Dorado', agencyName: 'El Dorado County EM', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 3 },
@@ -1143,7 +1179,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Tehama', agencyName: 'Tehama County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 350, tier: 4 },
   { county: 'Calaveras', agencyName: 'Calaveras County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'Siskiyou', agencyName: 'Siskiyou County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
-  { county: 'San Benito', agencyName: 'San Benito County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
+  { county: 'San Benito', agencyName: 'San Benito County Health & Human Services Agency — Environmental Health', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Amador', agencyName: 'Amador County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },
   { county: 'Glenn', agencyName: 'Glenn County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },
   { county: 'Del Norte', agencyName: 'Del Norte County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 200, tier: 4 },

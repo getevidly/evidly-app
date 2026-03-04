@@ -233,6 +233,19 @@ const MONTEREY_COUNTY: CountyScoringProfile = {
   },
 };
 
+const SAN_BENITO_COUNTY: CountyScoringProfile = {
+  countySlug: 'san-benito',
+  countyName: 'San Benito County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // San Benito has NO letter grade, NO numeric score, NO placard — inspection report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const STANISLAUS_COUNTY: CountyScoringProfile = {
   countySlug: 'stanislaus',
   countyName: 'Stanislaus County',
@@ -258,6 +271,20 @@ const TULARE_COUNTY: CountyScoringProfile = {
     if (score >= 90) return { label: String(score), color: '#22c55e', passing: true };
     if (score >= 70) return { label: String(score), color: '#f59e0b', passing: true };
     return { label: String(score), color: '#ef4444', passing: false };
+  },
+};
+
+const SANTA_CRUZ_COUNTY: CountyScoringProfile = {
+  countySlug: 'santa-cruz',
+  countyName: 'Santa Cruz County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Santa Cruz has NO letter grade, NO numeric score, NO placard — inspection report only
+    // Violations: critical (major/minor) + general
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
   },
 };
 
@@ -294,6 +321,8 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'merced': MERCED_COUNTY,
   'stanislaus': STANISLAUS_COUNTY,
   'tulare': TULARE_COUNTY,
+  'santa-cruz': SANTA_CRUZ_COUNTY,
+  'san-benito': SAN_BENITO_COUNTY,
 };
 
 /**
