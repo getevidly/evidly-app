@@ -201,6 +201,10 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
       console.warn('[Regulatory] Locations query:', locationsRes.error.message);
     }
 
+    console.log('[Regulatory] sourcesRes:', { data: sourcesRes.data, error: sourcesRes.error, rowCount: Array.isArray(sourcesRes.data) ? sourcesRes.data.length : null });
+    console.log('[Regulatory] changesRes:', { data: changesRes.data, error: changesRes.error, rowCount: Array.isArray(changesRes.data) ? changesRes.data.length : null });
+    console.log('[Regulatory] locationsRes:', { data: locationsRes.data, error: locationsRes.error, rowCount: Array.isArray(locationsRes.data) ? locationsRes.data.length : null });
+
     setDbChanges((changesRes.data as any) ?? []);
     setDbSources((sourcesRes.data as any) ?? []);
     setDbLocations((locationsRes.data as any) ?? []);
