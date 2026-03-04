@@ -1,3 +1,6 @@
+// AUDIT NOTE (PROMPT-05): Org Name input (line ~344) and Industry Type select (line ~351)
+// use defaultValue with no onChange — intentionally uncontrolled demo placeholders.
+// When wiring to Supabase, bind these to state and persist via organizations table update.
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { User, Building2, Bell, Lock, CreditCard, Upload, MapPin, Plug, CheckCircle2, Eye, EyeOff, Clock, Megaphone, Globe, Layers, KeyRound, ExternalLink, RefreshCw, Wifi, WifiOff, Smartphone, HardDrive, Trash2, Download, Check, FileText } from 'lucide-react';

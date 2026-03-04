@@ -95,15 +95,12 @@ const SHARED_ITEMS: SharedItem[] = [
   { id: '3', document: 'Facility Safety Inspection Report', recipient: 'firemarshal@city.gov', recipientType: 'Fire Marshal', date: '2026-02-01', status: 'sent' },
 ];
 
-const ALL_DOC_LOCATIONS = ['All Locations', 'Location 1', 'Location 2', 'Location 3']; // demo
-
 // Equipment/vendor documents — visible to Facilities + Management/Executive
 const FACILITIES_DOC_CATEGORIES = new Set(['Other']); // Hood cleaning, HVAC, fire suppression, pest control, grease trap, etc.
 const FACILITIES_DOC_TITLES = new Set([
   'Ansul System Certification',
   'Facility Safety Inspection Report',
 ]);
-const FACILITIES_DOC_INSURANCE_KEYWORDS = ['vendor coi', 'coi -'];
 
 // Operational documents — visible to Kitchen Staff + Management/Executive
 // License, Permit (health dept), Certificate (ServSafe), Training, general Insurance
@@ -212,7 +209,7 @@ export function Documents() {
   const locationFilteredDocs = useMemo(() => {
     if (selectedLocation === 'All Locations') return roleFilteredDocuments;
     return roleFilteredDocuments.filter(d => d.location === selectedLocation || d.location === 'All Locations');
-  }, [documents, selectedLocation]);
+  }, [roleFilteredDocuments, selectedLocation]);
 
   // Summary counts (reflect location filter)
   const statusCounts = useMemo(() => {
