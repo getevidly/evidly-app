@@ -1,28 +1,38 @@
 // ============================================================
 // ComplianceOverview — Dual-Pillar Compliance Status Page
 // ============================================================
-// Shows Food Safety + Facility Safety side by side.
-// Each pillar independently displays:
-//   1. Jurisdiction status (grade/pass-fail from verified source)
-//   2. EvidLY Internal score (ops + docs sub-scores)
-//   3. Operational items (scoreImpactItems filtered by pillar)
-// NO combined/overall score anywhere.
+// GAP-14: Food Safety + Facility Safety displayed side by side.
+// Each pillar scores independently using its own jurisdiction
+// methodology. NO combined score, NO unified math.
+//
+// Data sources:
+//   Food Safety  → useComplianceEngine → jurisdictionResult
+//   Facility Safety → JURISDICTION_DATABASE + DEMO_LOCATION_GRADE_OVERRIDES
+//   Inspection dates → demoIntelligence.complianceMatrix
+//
+// All scores/grades/thresholds from jurisdiction config — never hardcoded.
 // ============================================================
 
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, CheckCircle2, AlertTriangle, XCircle, ClipboardCheck,
-  UtensilsCrossed, Flame, Info,
+  UtensilsCrossed, Flame, Info, Calendar,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
 import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { useComplianceEngine } from '../hooks/useComplianceEngine';
 import { useDemo } from '../contexts/DemoContext';
-import { locations, type ScoreImpactItem } from '../data/demoData';
+import { locations, demoIntelligence, type ScoreImpactItem } from '../data/demoData';
 import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
+import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { getReadinessColor } from '../utils/inspectionReadiness';
+
+// ── Brand Colors (EvidLY spec) ───────────────────────────────
+
+const NAVY = '#1E2D4D';
+const GOLD = '#A08C5A';
 
 // ── Location-to-override-key mapping ─────────────────────────
 
@@ -37,6 +47,21 @@ const LOCATION_COUNTY: Record<string, string> = {
   airport: 'Merced',
   university: 'Stanislaus',
 };
+
+// ── Inspection date lookup from demoIntelligence ─────────────
+
+const INSPECTION_DATES: Record<string, string> = {};
+for (const row of demoIntelligence.complianceMatrix) {
+  INSPECTION_DATES[row.locationId] = row.lastInspectionDate;
+}
+
+// ── Jurisdiction authority lookup ─────────────────────────────
+
+function getJurisdictionEntry(county: string, pillar: 'food_safety' | 'facility_safety') {
+  return JURISDICTION_DATABASE.find(
+    j => j.county === county && j.pillar === pillar,
+  );
+}
 
 // ── Status colors ────────────────────────────────────────────
 
@@ -86,20 +111,59 @@ function statusLabel(status: string): string {
   }
 }
 
+// ── Score display: "—" when unavailable ───────────────────────
+
+function scoreDisplay(score: number | null | undefined): string {
+  if (score === null || score === undefined || score === 0) return '\u2014';
+  return String(score);
+}
+
+// ── Date formatting ───────────────────────────────────────────
+
+function formatInspectionDate(dateStr: string | undefined): string {
+  if (!dateStr) return 'No inspections on record';
+  try {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return 'No inspections on record';
+  }
+}
+
+// ── Pillar Card Loading Skeleton ──────────────────────────────
+
+function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' }) {
+  const Icon = pillar === 'food_safety' ? UtensilsCrossed : Flame;
+  const label = pillar === 'food_safety' ? 'Food Safety' : 'Facility Safety';
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
+      <div className="px-4 sm:px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+        <Icon className="w-5 h-5 text-gray-300" />
+        <h2 className="text-lg font-bold text-gray-400">{label}</h2>
+      </div>
+      <div className="p-4 sm:p-5 space-y-4">
+        <div className="h-20 bg-gray-100 rounded-lg" />
+        <div className="h-16 bg-gray-100 rounded-lg" />
+        <div className="h-12 bg-gray-100 rounded-lg" />
+      </div>
+    </div>
+  );
+}
+
 // ── Pillar Panel ──────────────────────────────────────────────
 
 interface PillarPanelProps {
   pillar: 'food_safety' | 'facility_safety';
-  score: number;
-  opsScore: number;
-  docsScore: number;
+  score: number | null;
+  opsScore: number | null;
+  docsScore: number | null;
   jurisdictionGrade: string;
   jurisdictionSummary: string;
   jurisdictionAuthority: string;
   jurisdictionStatus: 'passing' | 'failing' | 'at_risk';
   jurisdictionConfigured: boolean;
+  lastInspectionDate?: string;
   impactItems: ScoreImpactItem[];
-  /** Facility safety extra: fire equipment status bars */
   facilityStatusBars?: {
     permitStatus: string;
     hoodStatus: string;
@@ -112,23 +176,27 @@ interface PillarPanelProps {
 function PillarPanel({
   pillar, score, opsScore, docsScore,
   jurisdictionGrade, jurisdictionSummary, jurisdictionAuthority,
-  jurisdictionStatus, jurisdictionConfigured,
+  jurisdictionStatus, jurisdictionConfigured, lastInspectionDate,
   impactItems, facilityStatusBars, onEquipmentClick,
 }: PillarPanelProps) {
   const isFoodSafety = pillar === 'food_safety';
   const Icon = isFoodSafety ? UtensilsCrossed : Flame;
   const label = isFoodSafety ? 'Food Safety' : 'Facility Safety';
-  const scoreColor = getReadinessColor(score);
-  const opsColor = getReadinessColor(opsScore);
-  const docsColor = getReadinessColor(docsScore);
+  const hasScore = score !== null && score !== undefined && score > 0;
+  const scoreColor = hasScore ? getReadinessColor(score!) : '#94a3b8';
+  const opsColor = opsScore && opsScore > 0 ? getReadinessColor(opsScore) : '#94a3b8';
+  const docsColor = docsScore && docsScore > 0 ? getReadinessColor(docsScore) : '#94a3b8';
   const statusColors = STATUS_COLORS[jurisdictionStatus] || STATUS_COLORS.at_risk;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       {/* Pillar Header */}
-      <div className="px-4 sm:px-5 py-4 border-b border-gray-100 flex items-center gap-3">
-        <Icon className="w-5 h-5" style={{ color: scoreColor }} />
-        <h2 className="text-lg font-bold text-gray-900">{label}</h2>
+      <div
+        className="px-4 sm:px-5 py-4 border-b flex items-center gap-3"
+        style={{ borderBottomColor: '#E5E7EB' }}
+      >
+        <Icon className="w-5 h-5" style={{ color: hasScore ? scoreColor : NAVY }} />
+        <h2 className="text-lg font-bold" style={{ color: NAVY }}>{label}</h2>
       </div>
 
       <div className="p-4 sm:p-5 space-y-5">
@@ -136,7 +204,9 @@ function PillarPanel({
         <div>
           <div className="flex items-center gap-2 mb-3">
             <EvidlyIcon size={16} />
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">Jurisdiction Status</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: NAVY }}>
+              Jurisdiction Status
+            </h3>
           </div>
 
           {jurisdictionConfigured ? (
@@ -148,11 +218,16 @@ function PillarPanel({
                 />
                 <div className="flex-1">
                   <div className={`text-base font-bold ${statusColors.text}`}>
-                    {jurisdictionGrade}
+                    {jurisdictionGrade || '\u2014'}
                   </div>
                   <div className="text-sm text-gray-600 mt-1">{jurisdictionSummary}</div>
                   <div className="text-xs text-gray-400 mt-2">
                     Authority: {jurisdictionAuthority}
+                  </div>
+                  {/* Last inspection date */}
+                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
+                    <Calendar className="w-3 h-3" />
+                    <span>Last inspection: {formatInspectionDate(lastInspectionDate)}</span>
                   </div>
                 </div>
               </div>
@@ -162,22 +237,36 @@ function PillarPanel({
               <div className="flex items-start gap-3">
                 <Info className="w-5 h-5 text-gray-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <div className="text-sm font-medium text-gray-600">Scoring not configured</div>
+                  <div className="text-sm font-medium text-gray-600">
+                    {label} jurisdiction not configured
+                  </div>
                   <div className="text-xs text-gray-400 mt-1">
                     No verified jurisdiction methodology is available for {label.toLowerCase()} at this location.
                   </div>
+                  <button
+                    onClick={() => alert('Contact your EvidLY account manager to configure jurisdiction scoring.')}
+                    className="text-xs font-medium mt-2 hover:underline"
+                    style={{ color: NAVY }}
+                  >
+                    Configure jurisdiction &rarr;
+                  </button>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* ── Section 2: EvidLY Internal Score ── */}
+        {/* ── Section 2: EvidLY Score ── */}
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <ClipboardCheck className="w-4 h-4 text-[#1e4d6b]" />
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">EvidLY Score</h3>
-            <span className="text-[10px] font-semibold text-[#1e4d6b] bg-[#eef4f8] border border-[#b8d4e8] px-2 py-0.5 rounded-full uppercase tracking-wider">
+            <ClipboardCheck className="w-4 h-4" style={{ color: NAVY }} />
+            <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: NAVY }}>
+              EvidLY Score
+            </h3>
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider border"
+              style={{ color: NAVY, backgroundColor: '#F0F3F7', borderColor: '#D1D9E6' }}
+            >
               EvidLY Internal
             </span>
           </div>
@@ -186,21 +275,27 @@ function PillarPanel({
             {/* Overall pillar score */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">Overall</span>
-              <span className="text-xl font-bold" style={{ color: scoreColor }}>{score}</span>
+              <span className="text-xl font-bold" style={{ color: hasScore ? scoreColor : '#94a3b8' }}>
+                {scoreDisplay(score)}
+              </span>
             </div>
-            <ProgressBar value={score} color={scoreColor} />
+            {hasScore && <ProgressBar value={score!} color={scoreColor} />}
 
             {/* Sub-scores */}
             <div className="grid grid-cols-2 gap-3 pt-2">
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="text-xs text-gray-500 mb-1">Operations</div>
-                <div className="text-lg font-bold" style={{ color: opsColor }}>{opsScore}</div>
-                <ProgressBar value={opsScore} color={opsColor} />
+                <div className="text-lg font-bold" style={{ color: opsColor }}>
+                  {scoreDisplay(opsScore)}
+                </div>
+                {opsScore != null && opsScore > 0 && <ProgressBar value={opsScore} color={opsColor} />}
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="text-xs text-gray-500 mb-1">Documentation</div>
-                <div className="text-lg font-bold" style={{ color: docsColor }}>{docsScore}</div>
-                <ProgressBar value={docsScore} color={docsColor} />
+                <div className="text-lg font-bold" style={{ color: docsColor }}>
+                  {scoreDisplay(docsScore)}
+                </div>
+                {docsScore != null && docsScore > 0 && <ProgressBar value={docsScore} color={docsColor} />}
               </div>
             </div>
           </div>
@@ -222,7 +317,7 @@ function PillarPanel({
           </div>
         )}
 
-        {/* ── Section 4: Operational Items ── */}
+        {/* ── Section 4: Tracked Items ── */}
         {impactItems.length > 0 && (
           <div>
             <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">
@@ -281,14 +376,15 @@ export function ComplianceOverview() {
           <button
             onClick={() => navigate('/org-hierarchy')}
             className="px-5 py-2.5 text-sm font-medium text-white rounded-lg mb-3"
-            style={{ backgroundColor: '#1e4d6b' }}
+            style={{ backgroundColor: NAVY }}
           >
             Add Location
           </button>
           <br />
           <button
             onClick={() => navigate('/dashboard')}
-            className="text-sm font-medium text-[#1e4d6b] hover:underline"
+            className="text-sm font-medium hover:underline"
+            style={{ color: NAVY }}
           >
             Back to Dashboard
           </button>
@@ -300,11 +396,14 @@ export function ComplianceOverview() {
   const selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
   const overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';
   const gradeData = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
-  const county = (LOCATION_COUNTY[locationParam] || 'California') + ' County';
+  const county = LOCATION_COUNTY[locationParam] || 'California';
   const engineResult = compliance.results[locationParam];
+  const lastInspection = INSPECTION_DATES[locationParam];
 
-  // Get food safety jurisdiction info from engine
+  // Food safety jurisdiction — from engine + jurisdiction database
   const foodJurisdiction = useMemo(() => {
+    const jEntry = getJurisdictionEntry(county, 'food_safety');
+
     if (!engineResult?.jurisdictionResult) {
       return { configured: false, grade: '', summary: '', authority: '', status: 'at_risk' as const };
     }
@@ -316,14 +415,16 @@ export function ComplianceOverview() {
       configured: true,
       grade: gradeData.foodSafety.gradeDisplay,
       summary: gradeData.foodSafety.summary,
-      authority: jr.countyName,
+      authority: jEntry?.agencyName || jr.countyName,
       status: gradeData.foodSafety.status,
     };
-  }, [engineResult, gradeData]);
+  }, [engineResult, gradeData, county]);
 
-  // Facility safety jurisdiction: from grade overrides (NFPA 96 authority data)
+  // Facility safety jurisdiction — from jurisdiction database + grade overrides
   const facilityJurisdiction = useMemo(() => {
+    const jEntry = getJurisdictionEntry(county, 'facility_safety');
     const fs = gradeData.facilitySafety;
+
     // If all statuses are 'no_status', jurisdiction data is pending
     const allNoStatus = fs.permitStatus === 'no_status' &&
       fs.hoodStatus === 'no_status' &&
@@ -334,10 +435,10 @@ export function ComplianceOverview() {
       configured: !allNoStatus,
       grade: fs.gradeDisplay,
       summary: fs.summary,
-      authority: 'NFPA 96 (2024)',
+      authority: jEntry?.agencyName || 'NFPA 96 (2024)',
       status: fs.status,
     };
-  }, [gradeData]);
+  }, [gradeData, county]);
 
   // Filter impact items by pillar
   const foodItems = useMemo(() => {
@@ -350,7 +451,7 @@ export function ComplianceOverview() {
     return engineResult.scoreImpactItems.filter(i => i.pillar === 'Facility Safety');
   }, [engineResult]);
 
-  // Equipment click handler for facility safety
+  // Equipment click handler
   const handleEquipmentClick = (key: string) => {
     const routes: Record<string, string> = {
       permit: '/equipment?category=permit',
@@ -373,14 +474,15 @@ export function ComplianceOverview() {
       <div>
         <button
           onClick={() => navigate(`/dashboard?location=${locationParam}`)}
-          className="flex items-center gap-1 text-sm font-medium text-[#1e4d6b] hover:text-[#163a52] transition-colors mb-2 min-h-[44px]"
+          className="flex items-center gap-1 text-sm font-medium transition-colors mb-2 min-h-[44px]"
+          style={{ color: NAVY }}
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </button>
-        <h1 className="text-2xl font-bold text-gray-900">Compliance Overview</h1>
+        <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Compliance Overview</h1>
         <p className="text-gray-500 text-sm mt-1">
-          {selectedLocation.name} &mdash; {county}
+          {selectedLocation.name} &mdash; {county} County
         </p>
       </div>
 
@@ -392,19 +494,20 @@ export function ComplianceOverview() {
             onClick={() => navigate(`/compliance-overview?location=${loc.urlId}`)}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
               loc.urlId === locationParam
-                ? 'bg-white text-[#1e4d6b] shadow-sm'
+                ? 'bg-white shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
+            style={loc.urlId === locationParam ? { color: NAVY } : undefined}
           >
             {loc.name}
           </button>
         ))}
       </div>
 
-      {/* Dual Pillar Layout */}
-      {engineResult ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Food Safety */}
+      {/* Dual Pillar Layout — independent loading per card */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Food Safety */}
+        {engineResult ? (
           <PillarPanel
             pillar="food_safety"
             score={engineResult.foodSafetyScore}
@@ -415,10 +518,15 @@ export function ComplianceOverview() {
             jurisdictionAuthority={foodJurisdiction.authority}
             jurisdictionStatus={foodJurisdiction.status}
             jurisdictionConfigured={foodJurisdiction.configured}
+            lastInspectionDate={lastInspection}
             impactItems={foodItems}
           />
+        ) : (
+          <PillarSkeleton pillar="food_safety" />
+        )}
 
-          {/* Facility Safety */}
+        {/* Facility Safety */}
+        {engineResult ? (
           <PillarPanel
             pillar="facility_safety"
             score={engineResult.facilitySafetyScore}
@@ -429,6 +537,7 @@ export function ComplianceOverview() {
             jurisdictionAuthority={facilityJurisdiction.authority}
             jurisdictionStatus={facilityJurisdiction.status}
             jurisdictionConfigured={facilityJurisdiction.configured}
+            lastInspectionDate={lastInspection}
             impactItems={facilityItems}
             facilityStatusBars={{
               permitStatus: gradeData.facilitySafety.permitStatus,
@@ -438,12 +547,10 @@ export function ComplianceOverview() {
             }}
             onEquipmentClick={handleEquipmentClick}
           />
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <div className="animate-pulse text-gray-400">Loading compliance data...</div>
-        </div>
-      )}
+        ) : (
+          <PillarSkeleton pillar="facility_safety" />
+        )}
+      </div>
     </div>
   );
 }
