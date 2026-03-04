@@ -1,12 +1,13 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, MapPin, Users, Settings2, ArrowRight, AlertTriangle, Sparkles, CheckCircle2, Clock } from 'lucide-react';
+import { Building2, MapPin, Users, Settings2, ArrowRight, AlertTriangle, Sparkles, CheckCircle2, Clock, Copy, Check } from 'lucide-react';
 import { useDemo } from '../../contexts/DemoContext';
 import { useDemoGuard } from '../../hooks/useDemoGuard';
 import { isBlockedDomain, KITCHEN_TYPES, OPERATION_VOLUMES, US_STATES } from '../../data/demoGeneratorData';
 import { generateDemoData, GENERATION_STEPS } from '../../lib/demoDataGenerator';
 import type { GenerationProgress } from '../../lib/demoDataGenerator';
 import { DemoGenerationLoading } from '../../components/demo/DemoGenerationLoading';
+import { supabase } from '../../lib/supabase';
 
 const NAVY = '#1E2D4D';
 
@@ -30,6 +31,11 @@ interface FormData {
   includeCorrectiveActions: boolean;
   generateNow: boolean;
   scheduledDate: string;
+}
+
+interface GeneratedCredentials {
+  email: string;
+  temp_password: string;
 }
 
 export function DemoGenerator() {
@@ -61,11 +67,23 @@ export function DemoGenerator() {
   const [generating, setGenerating] = useState(false);
   const [generationSteps, setGenerationSteps] = useState<GenerationProgress[]>([]);
   const [success, setSuccess] = useState(false);
+  const [credentials, setCredentials] = useState<GeneratedCredentials | null>(null);
+  const [demoExpiresAt, setDemoExpiresAt] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const update = (field: keyof FormData, value: string | number | boolean) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setError(null);
   };
+
+  const copyCredentials = useCallback(() => {
+    if (!credentials) return;
+    const text = `Email: ${credentials.email}\nPassword: ${credentials.temp_password}`;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [credentials]);
 
   const handleGenerate = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,6 +112,72 @@ export function DemoGenerator() {
       setGenerationSteps(GENERATION_STEPS.map(s => ({ ...s, status: 'pending' as const })));
 
       try {
+        // ── Step 1: Create real DB account via edge function ──
+        // PROFILE DATA — writes to DB in all modes
+        if (!isDemoMode) {
+          // First, create a demo_sessions record
+          const { data: sessionData } = await supabase
+            .from('demo_sessions')
+            .insert({
+              prospect_name: form.prospectName,
+              prospect_email: form.prospectEmail,
+              prospect_phone: form.prospectPhone || null,
+              company_name: form.companyName,
+              company_type: form.companyType,
+              operation_type: form.operationVolume,
+              address: form.address,
+              city: form.city,
+              state: form.state,
+              zip_code: form.zipCode,
+              num_locations: form.numLocations,
+              demo_duration_days: form.demoDuration,
+              health_authority: `${form.city} County Department of Public Health`,
+              fire_authority: `${form.city} Fire Department`,
+              status: 'generating',
+              assigned_rep_email: 'arthur@getevidly.com',
+              created_by_type: 'sales_rep',
+            })
+            .select('id')
+            .single();
+
+          // Call edge function to create real auth account + org + locations
+          const { data: accountData, error: accountError } = await supabase.functions.invoke(
+            'demo-account-create',
+            {
+              body: {
+                prospect_name: form.prospectName,
+                prospect_email: form.prospectEmail,
+                prospect_phone: form.prospectPhone,
+                company_name: form.companyName,
+                company_type: form.companyType,
+                operation_type: form.operationVolume,
+                address: form.address,
+                city: form.city,
+                state: form.state,
+                zip_code: form.zipCode,
+                num_locations: form.numLocations,
+                demo_duration_days: form.demoDuration,
+                demo_session_id: sessionData?.id || null,
+              },
+            }
+          );
+
+          if (accountError) {
+            throw new Error(accountError.message || 'Failed to create demo account');
+          }
+
+          if (accountData?.error) {
+            throw new Error(accountData.error);
+          }
+
+          if (accountData?.credentials) {
+            setCredentials(accountData.credentials);
+            setDemoExpiresAt(accountData.demo_expires_at);
+          }
+        }
+
+        // ── Step 2: Generate mock operational data (local state) ──
+        // DEMO ONLY — local state, never persists
         await generateDemoData(
           {
             companyName: form.companyName,
@@ -117,15 +201,40 @@ export function DemoGenerator() {
           },
           (steps) => setGenerationSteps(steps),
         );
+
         setGenerating(false);
         setSuccess(true);
       } catch (err) {
         setGenerating(false);
-        setError('Demo generation failed. Please try again.');
+        const message = err instanceof Error ? err.message : 'Demo generation failed. Please try again.';
+        setError(message);
       }
     } else {
-      // Schedule for later
-      if (isDemoMode) {
+      // Schedule for later — create demo_sessions record only
+      if (!isDemoMode) {
+        await supabase
+          .from('demo_sessions')
+          .insert({
+            prospect_name: form.prospectName,
+            prospect_email: form.prospectEmail,
+            prospect_phone: form.prospectPhone || null,
+            company_name: form.companyName,
+            company_type: form.companyType,
+            operation_type: form.operationVolume,
+            address: form.address,
+            city: form.city,
+            state: form.state,
+            zip_code: form.zipCode,
+            num_locations: form.numLocations,
+            demo_duration_days: form.demoDuration,
+            health_authority: `${form.city} County Department of Public Health`,
+            fire_authority: `${form.city} Fire Department`,
+            status: 'scheduled',
+            scheduled_at: form.scheduledDate || null,
+            assigned_rep_email: 'arthur@getevidly.com',
+            created_by_type: 'sales_rep',
+          });
+      } else {
         alert('Demo session saved and scheduled. The demo data will be generated before the meeting.');
       }
       setSuccess(true);
@@ -153,14 +262,44 @@ export function DemoGenerator() {
             <CheckCircle2 className="w-8 h-8 text-green-600" />
           </div>
           <h2 className="text-xl font-bold mb-2" style={{ color: NAVY }}>
-            {form.generateNow ? 'Demo Ready!' : 'Demo Scheduled!'}
+            {form.generateNow ? 'Demo Account Ready!' : 'Demo Scheduled!'}
           </h2>
           <p className="text-gray-600 mb-1">
             Personalized demo for <span className="font-semibold">{form.companyName}</span>
           </p>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-gray-500 text-sm mb-4">
             {form.city}, {form.state} | {KITCHEN_TYPES.find(t => t.value === form.companyType)?.label} | {OPERATION_VOLUMES.find(v => v.value === form.operationVolume)?.label} Volume
           </p>
+
+          {/* Credentials display */}
+          {credentials && (
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 mb-6 text-left">
+              <h3 className="text-sm font-semibold mb-3" style={{ color: NAVY }}>Login Credentials</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Email:</span>
+                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-gray-200">{credentials.email}</code>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Password:</span>
+                  <code className="font-mono text-gray-800 bg-white px-2 py-0.5 rounded border border-gray-200">{credentials.temp_password}</code>
+                </div>
+                {demoExpiresAt && (
+                  <div className="flex items-center justify-between pt-1 border-t border-gray-200">
+                    <span className="text-gray-500">Expires:</span>
+                    <span className="text-gray-700">{new Date(demoExpiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={copyCredentials}
+                className="mt-3 w-full px-3 py-2 rounded-md text-sm font-medium border border-gray-300 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+              >
+                {copied ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Credentials</>}
+              </button>
+            </div>
+          )}
+
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => navigate('/admin/demos')}
@@ -170,7 +309,7 @@ export function DemoGenerator() {
               View Demo Pipeline
             </button>
             <button
-              onClick={() => { setSuccess(false); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
+              onClick={() => { setSuccess(false); setCredentials(null); setDemoExpiresAt(null); setForm(f => ({ ...f, prospectName: '', prospectEmail: '', prospectPhone: '', companyName: '', address: '', city: '', zipCode: '' })); }}
               className="px-6 py-2.5 rounded-lg font-medium text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Generate Another

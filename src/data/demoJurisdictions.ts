@@ -1086,6 +1086,43 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'no_grade',
   },
   {
+    // ═══ LAKE COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grade. NO numeric score. NO confirmed placard.
+    // Inspection report only. PDF reports posted online by community/alphabetical.
+    // Transparency: MEDIUM.
+    // Source: lakecountyca.gov/360/Food-Facility-Inspections — verified March 2026
+    id: 'demo-lake',
+    county: 'Lake',
+    agencyName: 'Lake County Health Services — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      reportAtFacility: true,
+      reportAtOffice: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'MEDIUM transparency. PDF reports by community/alphabetical list. Clear Lake tourism and wine (Lake County AVA). Significant wildfire history (Valley Fire 2015, River Fire, etc.) — seasonal food service volume varies.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Lakeport Fire / Clearlake Fire / Kelseyville Fire / Middletown Area Fire',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 500,
+    dataSourceTier: 3,
+    gradeLabel: 'N/A',
+    gradeExplanation: 'No grade system — inspection report only. ~400–600 facilities. MEDIUM transparency.',
+    passFailLabel: 'No Grade',
+    demoScore: 85,
+    demoGrade: 'No Grade',
+    demoPassFail: 'no_grade',
+  },
+  {
     // ═══ TEHAMA COUNTY — STANDARDIZED (March 2026) ═══
     // NO letter grade. NO numeric score. NO confirmed placard.
     // Inspection report only. Monthly PDF inspection reports published on county website by period.
@@ -1858,7 +1895,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Mendocino', agencyName: 'Mendocino County Public Health — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 600, tier: 4 },
   { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
   { county: 'Yuba', agencyName: 'Yuba County Community Development Department — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 600, tier: 4 },
-  { county: 'Lake', agencyName: 'Lake County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
+  { county: 'Lake', agencyName: 'Lake County Health Services — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 3 },
   { county: 'Tehama', agencyName: 'Tehama County Environmental Health Department', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
   { county: 'Calaveras', agencyName: 'Calaveras County Environmental Management Agency — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 500, tier: 4 },
   { county: 'Siskiyou', agencyName: 'Siskiyou County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 300, tier: 4 },

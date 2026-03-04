@@ -464,6 +464,20 @@ const NEVADA_COUNTY: CountyScoringProfile = {
   },
 };
 
+const LAKE_COUNTY: CountyScoringProfile = {
+  countySlug: 'lake',
+  countyName: 'Lake County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Lake County has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
+    // ~400–600 facilities — Clear Lake region, wine (Lake County AVA), wildfire-prone
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const SUTTER_COUNTY: CountyScoringProfile = {
   countySlug: 'sutter',
   countyName: 'Sutter County',
@@ -503,6 +517,19 @@ const YUBA_COUNTY: CountyScoringProfile = {
     // Yuba has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
     // ~500–700 facilities. Different from neighboring Sutter County (GYR placard).
     // Marysville = Yuba County seat. Yuba City = Sutter County seat.
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
+const MENDOCINO_COUNTY: CountyScoringProfile = {
+  countySlug: 'mendocino',
+  countyName: 'Mendocino County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Mendocino has NO letter grade, NO numeric score, NO confirmed placard — inspection report only
     if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
     return { label: 'No Open Majors', color: '#22c55e', passing: true };
   },

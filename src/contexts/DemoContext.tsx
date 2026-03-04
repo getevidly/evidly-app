@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, useRef, useMemo, useCallback, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { trackEvent } from '../utils/analytics';
-import { setDemoWriteGuard } from '../lib/supabaseGuard';
+import { setDemoWriteGuard, setDemoGuardMode } from '../lib/supabaseGuard';
+import { supabase } from '../lib/supabase';
 
 export interface DemoLead {
   fullName: string;
@@ -12,6 +13,10 @@ export interface DemoLead {
 
 interface DemoContextType {
   isDemoMode: boolean;
+  isAuthenticatedDemo: boolean;
+  isAnyDemoMode: boolean;
+  demoExpiresAt: Date | null;
+  isDemoExpired: boolean;
   enterDemo: (lead?: DemoLead) => void;
   exitDemo: () => void;
   demoLead: DemoLead | null;
@@ -60,7 +65,7 @@ function hasStoredAuthToken(): boolean {
 }
 
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const { session, signOut } = useAuth();
+  const { session, signOut, profile } = useAuth();
 
   const [rawDemoMode, setRawDemoMode] = useState(() => {
     // If a Supabase token exists in localStorage, never start in demo mode
@@ -72,20 +77,72 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     }
   });
 
-  // ── Core invariant: authenticated sessions are NEVER in demo mode ──
-  // Two layers of protection:
-  //   1. rawDemoMode initializes to false if localStorage has auth token (prevents flash on refresh)
-  //   2. isAuthenticated check blocks demo mode when session is active
-  // Note: we do NOT gate on authLoading or hasStoredAuthToken() at runtime —
-  // when the user explicitly clicks "Try Demo", isDemoMode must be true immediately.
+  // ── Core invariant: authenticated sessions are NEVER in anonymous demo mode ──
   const isAuthenticated = !!session?.user;
   const isDemoMode = rawDemoMode && !isAuthenticated;
 
-  // When user authenticates, clean up any stale demo state from sessionStorage
+  // ── Authenticated demo: user has session + org.is_demo = true ──
+  const [orgIsDemo, setOrgIsDemo] = useState(false);
+  const [orgDemoExpiresAt, setOrgDemoExpiresAt] = useState<Date | null>(null);
+
+  // Fetch org demo status when session changes
+  useEffect(() => {
+    if (!isAuthenticated || !profile?.organization_id) {
+      setOrgIsDemo(false);
+      setOrgDemoExpiresAt(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function fetchOrgDemoStatus() {
+      const { data } = await supabase
+        .from('organizations')
+        .select('is_demo, demo_expires_at')
+        .eq('id', profile!.organization_id)
+        .single();
+
+      if (cancelled) return;
+
+      if (data) {
+        setOrgIsDemo(data.is_demo === true);
+        setOrgDemoExpiresAt(data.demo_expires_at ? new Date(data.demo_expires_at) : null);
+      }
+    }
+
+    fetchOrgDemoStatus();
+
+    return () => { cancelled = true; };
+  }, [isAuthenticated, profile?.organization_id]);
+
+  const isAuthenticatedDemo = isAuthenticated && orgIsDemo;
+  const isAnyDemoMode = isDemoMode || isAuthenticatedDemo;
+  const demoExpiresAt = isAuthenticatedDemo ? orgDemoExpiresAt : null;
+
+  // Periodic expiration check (every 60 seconds)
+  const [isDemoExpired, setIsDemoExpired] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticatedDemo || !orgDemoExpiresAt) {
+      setIsDemoExpired(false);
+      return;
+    }
+
+    function checkExpiration() {
+      if (orgDemoExpiresAt && orgDemoExpiresAt.getTime() < Date.now()) {
+        setIsDemoExpired(true);
+      }
+    }
+
+    checkExpiration();
+    const interval = setInterval(checkExpiration, 60_000);
+    return () => clearInterval(interval);
+  }, [isAuthenticatedDemo, orgDemoExpiresAt]);
+
+  // When user authenticates, clean up any stale anonymous demo state
   useEffect(() => {
     if (isAuthenticated && rawDemoMode) {
       setRawDemoMode(false);
-      setDemoWriteGuard(false);
       try {
         sessionStorage.removeItem(DEMO_KEY);
         sessionStorage.removeItem(LEAD_KEY);
@@ -97,15 +154,20 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const [tourActive, setTourActive] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
-  // ── Sync demo mode → Supabase write guard ─────────
+  // ── Sync demo mode → Supabase write guard mode ─────────
   useEffect(() => {
-    setDemoWriteGuard(isDemoMode);
-  }, [isDemoMode]);
+    if (isDemoMode) {
+      setDemoGuardMode('anonymous_demo');
+    } else if (isAuthenticatedDemo) {
+      setDemoGuardMode('authenticated_demo');
+    } else {
+      setDemoGuardMode('live');
+    }
+  }, [isDemoMode, isAuthenticatedDemo]);
 
-  // ── Presenter Mode ──────────────────────────────────
+  // ── Presenter Mode ──────────────────────────────────────
   const [presenterMode, setPresenterMode] = useState(() => {
     try {
-      // Check URL param first
       const params = new URLSearchParams(window.location.search);
       if (params.get('presenter') === 'true') {
         sessionStorage.setItem(PRESENTER_KEY, 'true');
@@ -173,7 +235,6 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   const enterDemo = (lead?: DemoLead) => {
     // Clear any stale Supabase auth tokens so isDemoMode activates immediately
-    // and persists on page refresh (the rawDemoMode initializer checks hasStoredAuthToken)
     try {
       for (let i = localStorage.length - 1; i >= 0; i--) {
         const key = localStorage.key(i);
@@ -183,8 +244,6 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       }
     } catch {}
     // Also sign out from Supabase to clear the in-memory session.
-    // Fire-and-forget — the sessionStorage flag + ProtectedLayout fallback
-    // ensure demo access while this async operation completes.
     if (session?.user) {
       signOut().catch(() => {});
     }
@@ -213,7 +272,9 @@ export function DemoProvider({ children }: { children: ReactNode }) {
 
   return (
     <DemoContext.Provider value={{
-      isDemoMode, enterDemo, exitDemo,
+      isDemoMode, isAuthenticatedDemo, isAnyDemoMode,
+      demoExpiresAt, isDemoExpired,
+      enterDemo, exitDemo,
       demoLead, setDemoLead,
       tourActive, tourStep, setTourStep,
       startTour, completeTour,

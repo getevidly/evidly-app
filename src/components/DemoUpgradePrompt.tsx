@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X, Lock } from 'lucide-react';
 
 interface DemoUpgradePromptProps {
@@ -9,15 +9,20 @@ interface DemoUpgradePromptProps {
 }
 
 export function DemoUpgradePrompt({ action, featureName, onClose, isOpen }: DemoUpgradePromptProps) {
+  // Stable ref for onClose — avoids re-subscribing the keydown listener
+  // on every render when parent passes an inline arrow function.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   // Close on Escape key
   useEffect(() => {
     if (isOpen === false) return;
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, isOpen]);
+  }, [isOpen]);
 
   // Support isOpen prop — return null when explicitly false
   if (isOpen === false) return null;

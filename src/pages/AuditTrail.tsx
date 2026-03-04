@@ -1,5 +1,5 @@
 // TODO: Replace .overall with independent pillar scores (FIX-WEIGHTS)
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect, memo } from 'react';
 import { toast } from 'sonner';
 import {
   Download, Share2, Printer, FileText, Thermometer, CheckSquare,
@@ -352,6 +352,28 @@ const statusBg = (s: string) => {
   return '#f0fdf4';
 };
 
+// ── Section header (outside component to prevent remount on every render) ──
+
+const SectionHeader = memo(function SectionHeader({ id, icon: Icon, title, count, expanded, onToggle }: {
+  id: string; icon: typeof FileText; title: string; count?: number; expanded: boolean; onToggle: (id: string) => void;
+}) {
+  return (
+    <button
+      onClick={() => onToggle(id)}
+      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+    >
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
+        <span className="font-semibold text-gray-900 text-sm">{title}</span>
+        {count !== undefined && (
+          <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">{count}</span>
+        )}
+      </div>
+      {expanded ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
+    </button>
+  );
+});
+
 // ── Component ─────────────────────────────────────────────────────
 
 export function AuditTrail() {
@@ -389,17 +411,17 @@ export function AuditTrail() {
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
-  const toggleModule = (id: string) => {
+  const toggleModule = useCallback((id: string) => {
     setModules(prev => prev.map(m => m.id === id ? { ...m, enabled: !m.enabled } : m));
-  };
+  }, []);
 
-  const toggleExpand = (id: string) => {
+  const toggleExpand = useCallback((id: string) => {
     setExpandedSections(prev => ({ ...prev, [id]: !prev[id] }));
-  };
+  }, []);
 
   const days = dateRange === 'custom' ? 30 : parseInt(dateRange);
   const loc = locationFilter === 'all' ? null : locationFilter;
-  const enabledModules = modules.filter(m => m.enabled).map(m => m.id);
+  const enabledModules = useMemo(() => modules.filter(m => m.enabled).map(m => m.id), [modules]);
 
   // Generate report data (only in demo mode; live mode would fetch from database)
   const reportData = useMemo(() => {
@@ -428,26 +450,36 @@ export function AuditTrail() {
   }, [generated, isDemoMode]);
 
   // Compute hash when report generates
+  // Refs to capture current filter values without adding them to deps
+  const locationFilterRef = useRef(locationFilter);
+  locationFilterRef.current = locationFilter;
+  const dateRangeRef = useRef(dateRange);
+  dateRangeRef.current = dateRange;
+  const enabledModulesRef = useRef(enabledModules);
+  enabledModulesRef.current = enabledModules;
+
   useEffect(() => {
     if (!reportData || !generated) return;
     const num = generateReportNumber();
     setReportNumber(num);
     computeSHA256(reportData).then(hash => {
       setReportHash(hash);
-      // Save to history
+      // Save to history — use updater form to avoid stale closure on history
       const entry: ReportHistoryEntry = {
         id: crypto.randomUUID(),
         reportNumber: num,
         generatedAt: new Date().toISOString(),
         hash,
-        location: locationFilter,
-        dateRange,
-        modules: enabledModules,
+        location: locationFilterRef.current,
+        dateRange: dateRangeRef.current,
+        modules: enabledModulesRef.current,
         status: 'completed',
       };
-      const updated = [entry, ...history].slice(0, 20);
-      setHistory(updated);
-      saveHistory(updated);
+      setHistory(prev => {
+        const updated = [entry, ...prev].slice(0, 20);
+        saveHistory(updated);
+        return updated;
+      });
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generated, reportData]);
@@ -490,6 +522,8 @@ export function AuditTrail() {
   }, [generated, reportHash, reportNumber]);
 
   // ── Handlers ───────────────────────────────────────────────────
+
+  const handleCloseUpgrade = useCallback(() => setShowUpgrade(false), []);
 
   const handleGenerate = () => {
     if (enabledModules.length === 0) {
@@ -638,24 +672,6 @@ export function AuditTrail() {
   });
 
   const moduleEnabled = (id: string) => enabledModules.includes(id);
-
-  // ── Section renderer helper ────────────────────────────────────
-
-  const SectionHeader = ({ id, icon: Icon, title, count }: { id: string; icon: typeof FileText; title: string; count?: number }) => (
-    <button
-      onClick={() => toggleExpand(id)}
-      className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-    >
-      <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4" style={{ color: '#1e4d6b' }} />
-        <span className="font-semibold text-gray-900 text-sm">{title}</span>
-        {count !== undefined && (
-          <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">{count}</span>
-        )}
-      </div>
-      {expandedSections[id] ? <ChevronDown className="h-4 w-4 text-gray-400" /> : <ChevronRight className="h-4 w-4 text-gray-400" />}
-    </button>
-  );
 
   // ── Render ─────────────────────────────────────────────────────
 
@@ -1008,7 +1024,7 @@ export function AuditTrail() {
               {/* Temperature Logs */}
               {moduleEnabled('temp_logs') && reportData.tempLogs.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="temp_logs" icon={Thermometer} title="Temperature Logs" count={reportData.tempLogs.length} />
+                  <SectionHeader id="temp_logs" icon={Thermometer} title="Temperature Logs" count={reportData.tempLogs.length} expanded={!!expandedSections['temp_logs']} onToggle={toggleExpand} />
                   {expandedSections['temp_logs'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1054,7 +1070,7 @@ export function AuditTrail() {
               {/* Checklists */}
               {moduleEnabled('checklists') && reportData.checklists.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="checklists" icon={CheckSquare} title="Checklist Completions" count={reportData.checklists.length} />
+                  <SectionHeader id="checklists" icon={CheckSquare} title="Checklist Completions" count={reportData.checklists.length} expanded={!!expandedSections['checklists']} onToggle={toggleExpand} />
                   {expandedSections['checklists'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1098,7 +1114,7 @@ export function AuditTrail() {
               {/* Incidents */}
               {moduleEnabled('incidents') && reportData.incidents.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="incidents" icon={AlertTriangle} title="Incidents & Corrective Actions" count={reportData.incidents.length} />
+                  <SectionHeader id="incidents" icon={AlertTriangle} title="Incidents & Corrective Actions" count={reportData.incidents.length} expanded={!!expandedSections['incidents']} onToggle={toggleExpand} />
                   {expandedSections['incidents'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1137,7 +1153,7 @@ export function AuditTrail() {
               {/* Equipment */}
               {moduleEnabled('equipment') && reportData.equipment.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="equipment" icon={Wrench} title="Equipment Status" count={reportData.equipment.length} />
+                  <SectionHeader id="equipment" icon={Wrench} title="Equipment Status" count={reportData.equipment.length} expanded={!!expandedSections['equipment']} onToggle={toggleExpand} />
                   {expandedSections['equipment'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1174,7 +1190,7 @@ export function AuditTrail() {
               {/* Vendor Services */}
               {moduleEnabled('vendors') && reportData.vendors.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="vendors" icon={Truck} title="Vendor Service Records" count={reportData.vendors.length} />
+                  <SectionHeader id="vendors" icon={Truck} title="Vendor Service Records" count={reportData.vendors.length} expanded={!!expandedSections['vendors']} onToggle={toggleExpand} />
                   {expandedSections['vendors'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1211,7 +1227,7 @@ export function AuditTrail() {
               {/* Documents */}
               {moduleEnabled('documents') && reportData.documents.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="documents" icon={FileText} title="Document Registry" count={reportData.documents.length} />
+                  <SectionHeader id="documents" icon={FileText} title="Document Registry" count={reportData.documents.length} expanded={!!expandedSections['documents']} onToggle={toggleExpand} />
                   {expandedSections['documents'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1248,7 +1264,7 @@ export function AuditTrail() {
               {/* Compliance Scores */}
               {moduleEnabled('compliance') && reportData.complianceScores.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} />
+                  <SectionHeader id="compliance" icon={EvidlyIcon as any} title="Compliance Scores" count={reportData.complianceScores.length} expanded={!!expandedSections['compliance']} onToggle={toggleExpand} />
                   {expandedSections['compliance'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1293,7 +1309,7 @@ export function AuditTrail() {
               {/* Audit Activity */}
               {moduleEnabled('audit_activity') && reportData.auditActivity.length > 0 && (
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                  <SectionHeader id="audit_activity" icon={ClipboardList} title="Inspection Activity Log" count={reportData.auditActivity.length} />
+                  <SectionHeader id="audit_activity" icon={ClipboardList} title="Inspection Activity Log" count={reportData.auditActivity.length} expanded={!!expandedSections['audit_activity']} onToggle={toggleExpand} />
                   {expandedSections['audit_activity'] && (
                     <div className="overflow-x-auto">
                       <table className="w-full">
@@ -1330,7 +1346,7 @@ export function AuditTrail() {
 
               {/* Chain of Custody Certification */}
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden report-section">
-                <SectionHeader id="chain_of_custody" icon={Lock} title="Chain of Custody Certification" />
+                <SectionHeader id="chain_of_custody" icon={Lock} title="Chain of Custody Certification" expanded={!!expandedSections['chain_of_custody']} onToggle={toggleExpand} />
                 {expandedSections['chain_of_custody'] && (
                   <div className="p-4 sm:p-6 space-y-4">
                     {/* Timeline */}
@@ -1404,10 +1420,9 @@ export function AuditTrail() {
 
       <DemoUpgradePrompt
         isOpen={showUpgrade}
-        onClose={() => setShowUpgrade(false)}
+        onClose={handleCloseUpgrade}
         action={upgradeAction}
-        feature={upgradeFeature}
-       
+        featureName={upgradeFeature}
       />
     </>
   );

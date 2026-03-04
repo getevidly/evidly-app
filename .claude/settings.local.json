@@ -57,7 +57,8 @@
       "Bash(do echo \"$f:\")",
       "Bash(git check-ignore:*)",
       "WebSearch",
-      "WebFetch(domain:rivcoeh.org)"
+      "WebFetch(domain:rivcoeh.org)",
+      "Bash(npx vite build:*)"
     ]
   }
 }

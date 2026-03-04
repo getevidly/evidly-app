@@ -10,7 +10,7 @@
 export type CACategory = 'food_safety' | 'facility_safety' | 'operational';
 export type CASeverity = 'critical' | 'high' | 'medium' | 'low';
 export type CAStatus = 'created' | 'in_progress' | 'completed' | 'verified' | 'closed' | 'archived';
-export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual';
+export type CASourceType = 'inspection' | 'checklist' | 'temperature' | 'self_inspection' | 'manual' | 'incident';
 
 export interface CANote {
   text: string;

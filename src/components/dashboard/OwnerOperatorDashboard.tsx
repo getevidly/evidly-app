@@ -18,6 +18,9 @@ import { useAllComplianceScores } from '../../hooks/useComplianceScore';
 import type { LocationScore, LocationJurisdiction } from '../../types/jurisdiction';
 import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP } from './shared/constants';
 import { CorrectiveActionsWidget } from './CorrectiveActionsWidget';
+import { TrainingComplianceWidget } from './TrainingComplianceWidget';
+import { IncidentSummaryWidget } from './IncidentSummaryWidget';
+import { EquipmentHealthWidget } from '../EquipmentHealthWidget';
 import { K2CWidget } from '../referral/K2CWidget';
 import { K2CInviteModal } from '../referral/K2CInviteModal';
 import { demoReferral } from '../../data/demoData';
@@ -362,6 +365,21 @@ export default function OwnerOperatorDashboard() {
       {/* ─── ELEMENT 3.5: Corrective Actions Widget ──────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <CorrectiveActionsWidget navigate={navigate} />
+      </div>
+
+      {/* ─── ELEMENT 3.6: Training Compliance Widget ───────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <TrainingComplianceWidget navigate={navigate} />
+      </div>
+
+      {/* ─── ELEMENT 3.7: Equipment Health Widget ──────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <EquipmentHealthWidget locationId="all" />
+      </div>
+
+      {/* ─── ELEMENT 3.8: Incident Summary Widget ──────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <IncidentSummaryWidget navigate={navigate} />
       </div>
 
       {/* ─── ELEMENT 4: Location Status Rows (multi-location only) ── */}
