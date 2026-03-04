@@ -9,6 +9,7 @@ import { OfflineProvider } from './contexts/OfflineContext';
 import { InactivityProvider } from './contexts/InactivityContext';
 import { BrandingProvider } from './contexts/BrandingContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { EmulationProvider } from './contexts/EmulationContext';
 import { Toaster } from 'sonner';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { EnvBadge } from './components/ui/EnvBadge';
@@ -115,6 +116,7 @@ const AdminRegulatoryChanges = lazy(() => import('./pages/AdminRegulatoryChanges
 const AdminIntelligenceQueue = lazy(() => import('./pages/AdminIntelligenceQueue'));
 const CommandCenter = lazy(() => import('./pages/admin/CommandCenter'));
 const RfpIntelligence = lazy(() => import('./pages/admin/RfpIntelligence'));
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const EdgeFunctions = lazy(() => import('./pages/admin/system/EdgeFunctions'));
 const AuthCallback = lazy(() => import('./pages/AuthCallback').then(m => ({ default: m.AuthCallback })));
 const ReferralDashboard = lazy(() => import('./pages/ReferralDashboard').then(m => ({ default: m.ReferralDashboard })));
@@ -511,6 +513,7 @@ function AppRoutes() {
           <Route path="/admin/demos" element={<DemoPipeline />} />
           <Route path="/admin/assessments" element={<AssessmentLeads />} />
           <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />
@@ -559,6 +562,7 @@ function App() {
           <DemoProvider>
             <LanguageProvider>
               <RoleProvider>
+                <EmulationProvider>
                 <OperatingHoursProvider>
                   <OfflineProvider>
                     <InactivityProvider>
@@ -572,6 +576,7 @@ function App() {
                     </InactivityProvider>
                   </OfflineProvider>
                 </OperatingHoursProvider>
+                </EmulationProvider>
               </RoleProvider>
             </LanguageProvider>
           </DemoProvider>
