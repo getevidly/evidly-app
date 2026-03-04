@@ -136,6 +136,7 @@ const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
 const DemoSchedule = lazy(() => import('./pages/DemoSchedule'));
+const DemoExpired = lazy(() => import('./pages/DemoExpired'));
 const FoodSafetyHub = lazy(() => import('./pages/FoodSafetyHub').then(m => ({ default: m.FoodSafetyHub })));
 const ComplianceHub = lazy(() => import('./pages/ComplianceHub').then(m => ({ default: m.ComplianceHub })));
 const InsightsHub = lazy(() => import('./pages/InsightsHub').then(m => ({ default: m.InsightsHub })));
@@ -285,7 +286,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 function ProtectedLayout() {
   const { user, profile, loading, isEvidlyAdmin } = useAuth();
-  const { isDemoMode } = useDemo();
+  const { isDemoMode, isDemoExpired, isAuthenticatedDemo } = useDemo();
   const { userRole } = useRole();
   const location = useLocation();
 
@@ -310,6 +311,11 @@ function ProtectedLayout() {
     if (!user) {
       return <Navigate to="/login" replace />;
     }
+  }
+
+  // Authenticated demo expired — redirect to upgrade page (profile data intact)
+  if (isAuthenticatedDemo && isDemoExpired && location.pathname !== '/demo-expired') {
+    return <Navigate to="/demo-expired" replace />;
   }
 
   // Role-based route guard — redirect to dashboard if role not allowed
@@ -404,6 +410,9 @@ function AppRoutes() {
         <Route path="/business-intelligence" element={<Navigate to="/intelligence" replace />} />
         <Route path="/iot/hub" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><IoTSensorHub /></Suspense></ErrorBoundary></ProtectedRoute>} />
         <Route path="/onboarding" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><Onboarding /></Suspense></ErrorBoundary></ProtectedRoute>} />
+
+        {/* Demo expired — full-screen upgrade prompt, no layout chrome */}
+        <Route path="/demo-expired" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><DemoExpired /></Suspense></ErrorBoundary></ProtectedRoute>} />
 
         {/* Protected routes with shared layout — sidebar/topbar stay mounted */}
         <Route element={<ProtectedLayout />}>

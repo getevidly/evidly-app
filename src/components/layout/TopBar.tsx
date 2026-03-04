@@ -6,6 +6,7 @@ import { ProfileModal } from '../ProfileModal';
 import { NotificationCenter } from '../NotificationCenter';
 import { useRole } from '../../contexts/RoleContext';
 import { useDemo } from '../../contexts/DemoContext';
+import { DemoModeBadge } from '../DemoModeBadge';
 import { useTranslation } from '../../contexts/LanguageContext';
 import { SUPPORTED_LOCALES, LOCALE_META, type Locale } from '../../lib/i18n';
 import { DEMO_ROLES, checkTestMode } from '../../config/sidebarConfig';
@@ -39,7 +40,7 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
   const [showNewPw, setShowNewPw] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const { userRole, setUserRole } = useRole();
-  const { isDemoMode, companyName, userName } = useDemo();
+  const { isDemoMode, isAuthenticatedDemo, companyName, userName } = useDemo();
   const { t, locale, setLocale } = useTranslation();
 
   const isTestMode = useMemo(() => checkTestMode(), []);
@@ -145,8 +146,9 @@ export function TopBar({ title, locations, selectedLocation, onLocationChange, d
         <div className="flex-1 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div className="text-sm md:text-base font-semibold truncate max-w-[200px] lg:max-w-none" style={{ color: '#1E2D4D' }}>
-              {isDemoMode ? companyName : profile?.organization_name || title}
+              {(isDemoMode || isAuthenticatedDemo) ? companyName : profile?.organization_name || title}
             </div>
+            <DemoModeBadge />
             {userRole === 'platform_admin' && (
               <span className="px-2 py-0.5 text-[10px] font-bold tracking-wider rounded bg-[#d4af37] text-[#1E2D4D] uppercase whitespace-nowrap flex-shrink-0">
                 Platform Admin
