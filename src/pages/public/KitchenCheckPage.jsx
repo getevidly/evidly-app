@@ -32,6 +32,7 @@
  */
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 // ═══ PALETTE ═══
 const E={
@@ -246,10 +247,12 @@ function estimateOutcome(c,items,answers){
   var un=gaps.filter(function(item){return item.risk==="critical"||item.risk==="high";}).length;return{type:"reinspect",val:un,pass:un===0,label:un===0?"Pass":"Reinspection Required — "+un+" gap"+(un>1?"s":"")};}
 
 // ═══ MAIN ═══
-export default function KitchenCheckPage({county=DEFAULT_COUNTY}){
-  var c=COUNTY_DATA[county]||COUNTY_DATA[DEFAULT_COUNTY];
-  var items=getItems(county);
-  var isFilta=FILTA_COUNTIES.includes(county);
+export default function KitchenCheckPage({county: countyProp}){
+  var { slug } = useParams();
+  var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
+  var c=COUNTY_DATA[countyKey]||COUNTY_DATA[DEFAULT_COUNTY];
+  var items=getItems(countyKey);
+  var isFilta=FILTA_COUNTIES.includes(countyKey);
 
   // Gate state
   var [gName,setGName]=useState("");

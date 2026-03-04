@@ -21,6 +21,7 @@
  */
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 // ═══ PALETTE (lightened production version) ═══
 const E={
@@ -85,8 +86,11 @@ function TBadge({level}){var m={HIGH:{bg:E.grnBg,bd:E.grn,tx:"#065f46"},MEDIUM:{
 function SchemaMarkup({c}){var schema={"@context":"https://schema.org","@graph":[{"@type":"SoftwareApplication","name":"EvidLY","applicationCategory":"BusinessApplication","operatingSystem":"Web","description":"Commercial kitchen compliance platform for "+c.name+" County, California","url":"https://getevidly.com/"+c.slug,"offers":{"@type":"Offer","price":"99","priceCurrency":"USD"}},{"@type":"FAQPage","mainEntity":c.faq.map(function(f){return{"@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a}};})},{"@type":"LocalBusiness","name":"EvidLY","description":"Commercial kitchen compliance software","url":"https://getevidly.com","telephone":"(855) 384-3591","areaServed":{"@type":"State","name":"California"}}]};return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}}/>;}
 
 // ═══ MAIN ═══
-export default function CountyLandingPage({county=DEFAULT_COUNTY}){
-  var c=COUNTY_DATA[county]||COUNTY_DATA[DEFAULT_COUNTY];
+export default function CountyLandingPage({county: countyProp}){
+  var { slug } = useParams();
+  // URL is /merced-county → slug="merced-county" → key="merced"
+  var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
+  var c=COUNTY_DATA[countyKey]||COUNTY_DATA[DEFAULT_COUNTY];
 
   var [modal,setModal]=useState(null);
   var [mf,setMf]=useState({first:"",last:"",email:"",phone:"",company:"",locations:"1",msg:""});

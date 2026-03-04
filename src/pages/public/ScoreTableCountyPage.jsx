@@ -29,6 +29,7 @@
  */
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 // ═══ PALETTE ═══
 const E={
@@ -333,9 +334,11 @@ function getGradeColor(c,result){
   return result.val===0?{bg:E.grnBg,bd:E.grn,tx:"#065f46"}:{bg:E.redBg,bd:E.red,tx:"#991b1b"};}
 
 // ═══ MAIN ═══
-export default function ScoreTableCountyPage({county=DEFAULT_COUNTY}){
-  var c=COUNTY_DATA[county]||COUNTY_DATA[DEFAULT_COUNTY];
-  var isFilta=FILTA_COUNTIES.includes(county);
+export default function ScoreTableCountyPage({county: countyProp}){
+  var { slug } = useParams();
+  var countyKey = countyProp || (slug ? slug.replace(/-county$/, "") : DEFAULT_COUNTY);
+  var c=COUNTY_DATA[countyKey]||COUNTY_DATA[DEFAULT_COUNTY];
+  var isFilta=FILTA_COUNTIES.includes(countyKey);
 
   var [modal,setModal]=useState(null);
   var [mf,setMf]=useState({name:"",email:"",phone:"",biz:"",county:c.name,msg:""});
