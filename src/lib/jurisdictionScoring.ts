@@ -200,6 +200,19 @@ const MERCED_COUNTY: CountyScoringProfile = {
   },
 };
 
+const STANISLAUS_COUNTY: CountyScoringProfile = {
+  countySlug: 'stanislaus',
+  countyName: 'Stanislaus County',
+  systemType: 'violation_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Stanislaus has NO letter grade, NO numeric score, NO placard — violation report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -229,7 +242,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   // Central Valley counties
   'fresno': FRESNO_COUNTY,
   'merced': MERCED_COUNTY,
-  'stanislaus': GENERIC_CALCODE,
+  'stanislaus': STANISLAUS_COUNTY,
 };
 
 /**

@@ -277,24 +277,28 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ STANISLAUS COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grades, NO numeric scores, NO placards.
+    // Violation report only (CalCode ORFIR). Transparency: LOW.
+    // Source: stancounty.com/er, Modesto Bee 2024 investigation
     id: 'demo-stanislaus',
     county: 'Stanislaus',
-    agencyName: 'Stanislaus County Environmental Resources',
-    scoringType: 'major_minor_reinspect',
-    gradingType: 'pass_reinspect',
+    agencyName: 'Stanislaus County Environmental Resources Department',
+    scoringType: 'violation_report',
+    gradingType: 'violation_report_only',
     gradingConfig: {},
     passThreshold: null,
     warningThreshold: null,
     criticalThreshold: null,
-    fireAhjName: 'Modesto Fire Department',
+    fireAhjName: 'Modesto Fire Department (City); CAL FIRE (unincorporated)',
     hoodCleaningDefault: 'quarterly',
     facilityCount: 2500,
     dataSourceTier: 3,
-    gradeLabel: 'Pass',
-    gradeExplanation: 'Pass / Reinspection Required — CalCode ORFIR standard. No numeric grade.',
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Violation Report Only — NO letter grade, NO numeric score, NO placard. Results via CPRA request only. Transparency: LOW.',
     passFailLabel: 'PASS',
     demoScore: 88,
-    demoGrade: 'Pass',
+    demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
   {
@@ -791,7 +795,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
   { county: 'San Joaquin', agencyName: 'San Joaquin County PHS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 3500, tier: 3 },
   { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
-  { county: 'Stanislaus', agencyName: 'Stanislaus County HSA', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 2500, tier: 3 },
+  { county: 'Stanislaus', agencyName: 'Stanislaus County Environmental Resources', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2500, tier: 3 },
   { county: 'Monterey', agencyName: 'Monterey County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2500, tier: 3 },
   { county: 'Tulare', agencyName: 'Tulare County HHSA', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 2000, tier: 3 },
   { county: 'Placer', agencyName: 'Placer County Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
@@ -941,17 +945,17 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     foodSafety: {
       id: 'stanislaus-food',
       pillar: 'food_safety',
-      agency_name: 'Stanislaus County Environmental Resources',
+      agency_name: 'Stanislaus County Environmental Resources Department',
       agency_phone: '(209) 525-6700',
-      agency_website: 'https://www.stancounty.com/er/',
+      agency_website: 'https://www.stancounty.com/er/environmental-health.shtm',
       code_basis: 'CalCode (updated Jan 1, 2025)',
-      code_references: ['CalCode \u00A7113700+', 'Stanislaus County local requirements'],
-      scoring_method: 'major_minor_reinspect',
-      grading_type: 'pass_reinspect',
-      grading_config: {},
-      inspection_frequency: null, // TODO: verify Stanislaus inspection frequency
+      code_references: ['CalCode \u00A7113700+'],
+      scoring_method: 'violation_report',
+      grading_type: 'violation_report_only',
+      grading_config: { transparency: 'low', public_display: 'none', data_access: 'CPRA_request_only' },
+      inspection_frequency: 1, // Risk-based: high risk annually
       is_verified: true,
-      local_amendments: null, // TODO: research Stanislaus-specific additions to CalCode
+      local_amendments: null, // No local amendments to CalCode grading
     },
     facilitySafety: {
       id: 'modesto-fire',

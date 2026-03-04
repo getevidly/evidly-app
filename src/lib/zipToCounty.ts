@@ -168,6 +168,20 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '95356': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' },
   '95357': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' },
   '95358': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' },
+  // Additional Stanislaus County zips
+  '95307': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Ceres
+  '95316': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Denair
+  '95320': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Escalon
+  '95323': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Hickman
+  '95326': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Hughson
+  '95328': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Keyes
+  '95363': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Patterson
+  '95367': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Riverbank
+  '95368': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Salida
+  '95376': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Tracy (partly SJ)
+  '95380': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Turlock
+  '95382': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Turlock
+  '95397': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Waterford
   // Sacramento
   '95814': { countyId: 'county-sacramento', countyName: 'Sacramento County' },
   '95816': { countyId: 'county-sacramento', countyName: 'Sacramento County' },

@@ -748,8 +748,8 @@ const STANISLAUS_COUNTY: JurisdictionProfile = {
   requiredPostings: [],
   serviceFrequencies: [],
   inspectionSystem: {
-    type: 'standard',
-    details: 'Standard CalCode enforcement with risk-based inspection frequency. Inspection results available upon request.',
+    type: 'violation_report',
+    details: 'NO letter grades, NO numeric scores, NO placards. Violation report only (CalCode ORFIR). Results available only via CPRA request or on-site during inspection. No online data portal. Transparency: LOW (Modesto Bee 2024 investigation).',
   },
   populationTier: 'medium',
   healthDepartment: {
@@ -760,7 +760,9 @@ const STANISLAUS_COUNTY: JurisdictionProfile = {
     permitRenewal: 'Annual',
   },
   specialRequirements: [
-    'Standard CalCode enforcement',
+    'NO letter grades, NO numeric scores, NO color placards — violation report only',
+    'Inspection results available only via CPRA request or on-site during inspection',
+    'No online data portal for inspection results (Transparency: LOW)',
     'Retail food facilities, mobile food, and temporary events all under Environmental Resources Dept',
     'Plan review required for all new food facilities and significant remodels',
   ],
