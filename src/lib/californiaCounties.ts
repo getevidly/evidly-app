@@ -136,26 +136,27 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     serviceFrequencies: [],
     inspectionSystem: {
       type: 'letter_grade',
-      details: 'Letter grade system where only Grade A is considered passing. Grades B and C require mandatory re-inspection. "Award of Excellence" given to facilities scoring 95% or above on all inspections.',
+      details: 'Letter grade STRICT system where only Grade A is considered passing. Grades B and C = FAIL, require mandatory re-inspection. Award of Recognition (est. 1998) for facilities scoring 95%+ on all routine inspections previous calendar year (min 2 inspections). Grading since 1963, Ordinance No. 493/493.5.',
       grades: [
         { label: 'A', range: '90-100' },
         { label: 'B', range: '80-89' },
-        { label: 'C', range: '79 or below' },
+        { label: 'C', range: '0-79' },
       ],
     },
     populationTier: 'large',
     healthDepartment: {
-      name: 'Riverside County Dept of Environmental Health',
+      name: 'Riverside County Department of Environmental Health',
       phone: '(888) 722-4234',
       website: 'https://www.rivcoeh.org/',
       inspectionFrequency: 'Risk-based: high risk annually, re-inspection for B/C grades',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
-      'Only Grade A is considered passing',
+      'Only Grade A (90+) is considered passing — B and C are both FAIL',
       'Grades B and C trigger mandatory re-inspection',
-      '"Award of Excellence" recognition for facilities scoring 95% or above on all inspections',
-      'Grade card must be conspicuously posted',
+      'Award of Recognition (est. 1998): 95%+ on all routine inspections previous calendar year, min 2 inspections',
+      'Grade card posted conspicuously near entrance — colors: A=blue, B=green, C=red',
+      'Permit revocation if not 80%+ within 30 days of notice',
     ],
   },
 

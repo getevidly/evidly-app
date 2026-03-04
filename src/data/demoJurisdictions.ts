@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'violation_report' | 'report_only';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'violation_report_only' | 'report_only';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'violation_report' | 'report_only';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'color_placard' | 'score_100' | 'score_negative' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only';
 
 export interface DemoJurisdiction {
   id: string;
@@ -138,23 +138,35 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
-    // ═══ THE RIVERSIDE MOMENT ═══
+    // ═══ THE RIVERSIDE MOMENT — VERIFIED (2026-03, Confidence: 85/100) ═══
     // Same score (88) = FAIL here. This closes deals.
+    // Source: Riverside County Ordinance No. 493/493.5 + rivcoeh.org
+    // Verified: Only Grade A (90+) passes. B and C both = FAIL.
+    // C grade = below 80 (no lower bound), NOT 70-79.
+    // Grading program since 1963. Award of Recognition (est. 1998): 95%+ all inspections.
     id: 'demo-riverside',
     county: 'Riverside',
-    agencyName: 'Riverside County DEH',
+    agencyName: 'Riverside County Department of Environmental Health',
     scoringType: 'weighted_deduction',
     gradingType: 'letter_grade_strict',
-    gradingConfig: { A: [90, 100], B: [80, 89], C: [70, 79], pass_requires: 'A' },
+    gradingConfig: {
+      A: [90, 100], B: [80, 89], C: [0, 79], pass_requires: 'A',
+      fail_below: 90,
+      grade_posting: 'conspicuous_near_entrance',
+      grade_card_colors: { A: 'blue', B: 'green', C: 'red' },
+      award_of_recognition: { threshold: 95, min_inspections: 2 },
+      verified_from: 'Riverside County Ordinance No. 493/493.5',
+      grading_since: 1963,
+    },
     passThreshold: 90,
     warningThreshold: 89,
     criticalThreshold: 79,
-    fireAhjName: 'Riverside FD / CAL FIRE RRU',
+    fireAhjName: 'CAL FIRE RRU / Riverside County Fire Department',
     hoodCleaningDefault: 'quarterly',
     facilityCount: 12000,
     dataSourceTier: 3,
     gradeLabel: 'B',
-    gradeExplanation: 'Letter Grade STRICT — Only A (90+) passes. B = FAIL.',
+    gradeExplanation: 'Letter Grade STRICT — Only A (90+) passes. B = FAIL. C = FAIL. Ordinance 493.',
     passFailLabel: 'FAIL',
     demoScore: 88,
     demoGrade: 'B \u2014 FAIL',
@@ -224,21 +236,41 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ MERCED COUNTY — VERIFIED (2026-03) ═══
+    // Unique three-tier POINT-BASED system. Points accumulate upward.
+    // Good (0-6 pts) / Satisfactory (7-13 pts) / Unsatisfactory (14+ pts)
+    // NO letter grades. Transparency: HIGH.
+    // Award of Excellence program for zero-major facilities.
     id: 'demo-merced',
     county: 'Merced',
-    agencyName: 'Merced County Department of Public Health',
-    scoringType: 'violation_point_accumulation',
-    gradingType: 'three_tier_rating',
-    gradingConfig: { tiers: { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] } },
+    agencyName: 'Merced County Department of Public Health — Division of Environmental Health',
+    scoringType: 'point_accumulation',
+    gradingType: 'point_accumulation_tiered',
+    gradingConfig: {
+      displayFormat: 'point_accumulation_tiered',
+      tiers: { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] },
+      pointValues: { critical: 4, major: 2, minor: 1 },
+      direction: 'accumulate_up',
+      letterGrade: false,
+      numericScore: false,
+      gradeCardPosted: true,
+      transparencyLevel: 'high',
+      publicPortal: 'https://www.countyofmerced.com/departments/public-health',
+      awardOfExcellence: {
+        available: true,
+        criteria: 'Zero major violations across all routine inspections in evaluation period',
+      },
+      gradingNote: 'Points accumulate upward per violation. Good (0-6), Satisfactory (7-13), Unsatisfactory (14+). No letter grades. Award of Excellence for zero-major facilities.',
+    },
     passThreshold: null,
     warningThreshold: null,
     criticalThreshold: null,
-    fireAhjName: 'City of Merced Fire Department',
+    fireAhjName: 'City of Merced Fire Department (CAL FIRE MMU for unincorporated)',
     hoodCleaningDefault: 'quarterly',
-    facilityCount: 1200,
-    dataSourceTier: 4,
+    facilityCount: 3500,
+    dataSourceTier: 3,
     gradeLabel: 'Good',
-    gradeExplanation: 'Three-Tier Rating — Good (0-6 pts) / Satisfactory (7-13 pts) / Unsatisfactory (14+ pts)',
+    gradeExplanation: 'Point Accumulation — Good (0-6 pts) / Satisfactory (7-13 pts) / Unsatisfactory (14+ pts). No letter grade.',
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'Satisfactory',
@@ -413,8 +445,8 @@ export const DEMO_LOCATIONS = [
     score: 85,
     foodSafety: { ops: 88, docs: 80 },
     facilitySafety: { ops: 75, docs: 82 },
-    gradeDisplay: 'Unsatisfactory',
-    tagline: 'Three-tier point accumulation',
+    gradeDisplay: 'Satisfactory',
+    tagline: 'Point accumulation — Good/Satisfactory/Unsatisfactory',
   },
   {
     id: 'demo-loc-university',
@@ -618,8 +650,11 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
+    case 'point_accumulation_tiered':
     case 'three_tier_rating': {
-      // Merced County Model — points accumulate
+      // Merced County Model — points accumulate UPWARD per violation
+      // Good (0-6) / Satisfactory (7-13) / Unsatisfactory (14+)
+      // NO letter grades. Award of Excellence for zero-major facilities.
       // Demo: estimate points from normalized score
       const totalPoints = Math.max(0, 100 - score);
       const config = jurisdiction.gradingConfig || {};
@@ -745,7 +780,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Yolo', agencyName: 'Yolo County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 2 },
   { county: 'San Luis Obispo', agencyName: 'SLO County Health', scoringType: 'negative_scale', gradingType: 'score_negative', facilityCount: 1800, tier: 2 },
   { county: 'San Diego', agencyName: 'SD County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 14000, tier: 3 },
-  { county: 'Riverside', agencyName: 'Riverside County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
+  { county: 'Riverside', agencyName: 'Riverside County Department of Environmental Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
   { county: 'San Bernardino', agencyName: 'San Bernardino County DPH — Environmental Health Services', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 15000, tier: 3 },
   { county: 'Alameda', agencyName: 'Alameda County DEH', scoringType: 'weighted_deduction', gradingType: 'color_placard', facilityCount: 8500, tier: 3 },
   { county: 'Santa Clara', agencyName: 'Santa Clara County DEH', scoringType: 'heavy_weighted', gradingType: 'color_placard', facilityCount: 10000, tier: 3 },
@@ -772,7 +807,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Alameda', city: 'Berkeley', agencyName: 'Berkeley EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 800, tier: 3 },
   { county: 'Los Angeles', city: 'Vernon', agencyName: 'Vernon EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 100, tier: 3 },
   // Tier 4 — remaining 28 small/rural counties
-  { county: 'Merced', agencyName: 'Merced County DPH', scoringType: 'violation_point_accumulation', gradingType: 'three_tier_rating', facilityCount: 1200, tier: 4 },
+  { county: 'Merced', agencyName: 'Merced County Department of Public Health — Division of Environmental Health', scoringType: 'point_accumulation', gradingType: 'point_accumulation_tiered', facilityCount: 3500, tier: 3 },
   { county: 'Madera', agencyName: 'Madera County DPH', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 700, tier: 4 },
   { county: 'Mariposa', agencyName: 'Mariposa County + NPS', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 150, tier: 4 },
   { county: 'Kings', agencyName: 'Kings County DPH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 700, tier: 4 },
@@ -865,13 +900,13 @@ export const demoLocationJurisdictions: Record<string, LocationJurisdiction> = {
     foodSafety: {
       id: 'merced-food',
       pillar: 'food_safety',
-      agency_name: 'Merced County Department of Public Health',
+      agency_name: 'Merced County Department of Public Health — Division of Environmental Health',
       agency_phone: '(209) 381-1100',
       agency_website: 'https://www.countyofmerced.com/departments/public-health',
       code_basis: 'CalCode (updated Jan 1, 2025)',
       code_references: ['CalCode \u00A7113700+', 'Merced County local requirements'],
-      scoring_method: 'violation_point_accumulation',
-      grading_type: 'three_tier_rating',
+      scoring_method: 'point_accumulation',
+      grading_type: 'point_accumulation_tiered',
       grading_config: { tiers: { Good: [0, 6], Satisfactory: [7, 13], Unsatisfactory: [14, null] } },
       inspection_frequency: null, // TODO: verify Merced inspection frequency
       is_verified: true,

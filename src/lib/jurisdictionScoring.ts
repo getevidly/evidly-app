@@ -15,6 +15,7 @@ export type InspectionSystemType =
   | 'color_placard'
   | 'pass_fail'
   | 'violation_report'
+  | 'point_accumulation'
   | 'standard'
   | 'none';
 
@@ -183,6 +184,22 @@ const FRESNO_COUNTY: CountyScoringProfile = {
   },
 };
 
+const MERCED_COUNTY: CountyScoringProfile = {
+  countySlug: 'merced',
+  countyName: 'Merced County',
+  systemType: 'point_accumulation',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score) => {
+    // Merced uses point ACCUMULATION — points go UP with violations
+    // Convert deductive score to accumulated points
+    const points = 100 - score;
+    if (points <= 6) return { label: 'Good', color: '#22c55e', passing: true };
+    if (points <= 13) return { label: 'Satisfactory', color: '#f59e0b', passing: true };
+    return { label: 'Unsatisfactory', color: '#ef4444', passing: false };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -211,7 +228,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'generic': GENERIC_CALCODE,
   // Central Valley counties
   'fresno': FRESNO_COUNTY,
-  'merced': GENERIC_CALCODE,
+  'merced': MERCED_COUNTY,
   'stanislaus': GENERIC_CALCODE,
 };
 
