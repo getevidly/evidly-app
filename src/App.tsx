@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { RoleProvider } from './contexts/RoleContext';
@@ -134,6 +134,9 @@ const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m
 const CountyLandingPage = lazy(() => import('./pages/public/CountyLandingPage'));
 const ScoreTableCountyPage = lazy(() => import('./pages/public/ScoreTableCountyPage'));
 const KitchenCheckPage = lazy(() => import('./pages/public/KitchenCheckPage'));
+const CountyWrapper = () => { const { slug } = useParams(); return <CountyLandingPage county={slug?.replace("-county", "")} />; };
+const ScoreTableWrapper = () => { const { slug } = useParams(); return <ScoreTableCountyPage county={slug?.replace("-county", "")} />; };
+const KitchenCheckWrapper = () => { const { slug } = useParams(); return <KitchenCheckPage county={slug?.replace("-county", "")} />; };
 
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
@@ -387,8 +390,8 @@ function AppRoutes() {
         <Route path="/compliance/california" element={<Suspense fallback={<PageSkeleton />}><CaliforniaCompliance /></Suspense>} />
         <Route path="/compliance/california/:countySlug" element={<Suspense fallback={<PageSkeleton />}><CountyCompliance /></Suspense>} />
         <Route path="/assessment" element={<Suspense fallback={<PageSkeleton />}><AssessmentTool /></Suspense>} />
-        <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableCountyPage /></Suspense>} />
-        <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckPage /></Suspense>} />
+        <Route path="/scoretable/:slug" element={<Suspense fallback={<PageSkeleton />}><ScoreTableWrapper /></Suspense>} />
+        <Route path="/kitchen-check/:slug" element={<Suspense fallback={<PageSkeleton />}><KitchenCheckWrapper /></Suspense>} />
         <Route path="/kitchen-to-community" element={<Suspense fallback={<PageSkeleton />}><KitchenToCommunity /></Suspense>} />
         <Route path="/temp/log" element={<Suspense fallback={<PageSkeleton />}><TempLogQuick /></Suspense>} />
         <Route path="/temp-logs/scan" element={<Suspense fallback={<PageSkeleton />}><TempLogScan /></Suspense>} />
@@ -410,7 +413,7 @@ function AppRoutes() {
         <Route path="/vendor-update/:token" element={<Suspense fallback={<PageSkeleton />}><VendorServiceUpdate /></Suspense>} />
 
         {/* Catch-all county landing page — must be AFTER all other public routes */}
-        <Route path="/:slug" element={<Suspense fallback={<PageSkeleton />}><CountyLandingPage /></Suspense>} />
+        <Route path="/:slug" element={<Suspense fallback={<PageSkeleton />}><CountyWrapper /></Suspense>} />
 
         {/* Protected routes without shared layout */}
         <Route path="/vendor/dashboard" element={<ProtectedRoute><ErrorBoundary level="page"><Suspense fallback={<PageSkeleton />}><VendorDashboard /></Suspense></ErrorBoundary></ProtectedRoute>} />
