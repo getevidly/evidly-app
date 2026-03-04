@@ -1704,7 +1704,7 @@ export function Calendar() {
       <div style={{ maxWidth: '1400px', margin: '0 auto', fontFamily: "'DM Sans', sans-serif" }} className="px-3 sm:px-6">
         {/* Page Header */}
         <div style={{ marginBottom: '24px' }}>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')} <InfoTooltip content={ttCalendarSubtitle} /></h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#1e4d6b', margin: '0 0 4px 0', fontFamily: "'DM Sans', sans-serif" }}>{tr('pages.calendar.title')}</h1>
           <p style={{ fontSize: '14px', color: '#6b7280', margin: 0 }}>{tr('pages.calendar.subtitle')}</p>
         </div>
 
