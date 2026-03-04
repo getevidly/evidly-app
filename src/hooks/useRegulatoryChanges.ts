@@ -219,7 +219,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
     if (isDemoMode) return DEMO_ALERTS;
 
     return dbChanges
-      .filter(c => c.published)
+      .filter(c => c.published && c.regulatory_sources)
       .map(row => {
         const src = row.regulatory_sources;
         const isReadByUser = row.regulatory_change_reads?.some(
@@ -229,17 +229,17 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
         return {
           id: row.id,
           source: dbSourceToUiSource(src),
-          sourceDetail: src.code_name,
+          sourceDetail: src?.code_name ?? '',
           impactLevel: dbImpactToUiImpact(row.impact_level),
           status: (isReadByUser ? 'reviewed' : 'new') as AlertStatus,
           title: row.title,
-          effectiveDate: row.effective_date ?? row.created_at.split('T')[0],
-          postedDate: row.published_at?.split('T')[0] ?? row.created_at.split('T')[0],
+          effectiveDate: row.effective_date ?? row.created_at?.split('T')[0] ?? '',
+          postedDate: row.published_at?.split('T')[0] ?? row.created_at?.split('T')[0] ?? '',
           summary: row.summary,
           actionItems: row.impact_description
             ? row.impact_description.split('\n').filter(Boolean)
             : [],
-          affectedAreas: row.affected_pillars.map(p =>
+          affectedAreas: (row.affected_pillars ?? []).map(p =>
             p.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
           ),
           affectedLocations: [],
@@ -333,7 +333,7 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
       name: s.code_name,
       abbreviation: s.code_short,
       type: s.jurisdiction_type === 'city' ? 'county' as const : s.jurisdiction_type,
-      lastChecked: s.last_checked ?? s.created_at.split('T')[0],
+      lastChecked: s.last_checked ?? s.created_at?.split('T')[0] ?? '',
       url: s.monitoring_url ?? '',
     }));
   }, [isDemoMode, dbSources]);
@@ -343,11 +343,13 @@ export function useRegulatoryChanges(): UseRegulatoryChangesReturn {
   const adminChanges = useMemo<AdminRegChange[]>(() => {
     if (isDemoMode) return DEMO_ADMIN_CHANGES;
 
-    return dbChanges.map(row => ({
+    return dbChanges
+      .filter(row => row.regulatory_sources)
+      .map(row => ({
       id: row.id,
       sourceId: row.source_id,
-      sourceShort: row.regulatory_sources.code_short,
-      sourceName: row.regulatory_sources.code_name,
+      sourceShort: row.regulatory_sources?.code_short ?? '',
+      sourceName: row.regulatory_sources?.code_name ?? '',
       changeType: row.change_type,
       title: row.title,
       summary: row.summary,

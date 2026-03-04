@@ -57,19 +57,21 @@ export interface DbChangeWithSource extends DbRegulatoryChange {
 
 import type { ImpactLevel, RegulatorySource } from '../lib/regulatoryMonitor';
 
-export function dbImpactToUiImpact(dbLevel: DbRegulatoryChange['impact_level']): ImpactLevel {
+export function dbImpactToUiImpact(dbLevel: string | null | undefined): ImpactLevel {
   switch (dbLevel) {
     case 'critical': return 'action_required';
     case 'moderate': return 'awareness';
     case 'informational': return 'informational';
+    default: return 'informational';
   }
 }
 
 // ── Source Category Mapping ─────────────────────────────
 // Maps DB regulatory_sources → UI RegulatorySource union
 
-export function dbSourceToUiSource(source: DbRegulatorySource): RegulatorySource {
-  const cs = source.code_short;
+export function dbSourceToUiSource(source: DbRegulatorySource | null | undefined): RegulatorySource {
+  if (!source) return 'FDA';
+  const cs = source.code_short ?? '';
   if (cs === 'fda_food_code') return 'FDA';
   if (cs.startsWith('nfpa_')) return 'NFPA';
   if (cs === 'cal_osha') return 'OSHA';

@@ -18,7 +18,14 @@ import { useDemo } from '../contexts/DemoContext';
 import { useRegulatoryChanges } from '../hooks/useRegulatoryChanges';
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (!dateStr) return '—';
+  try {
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return '—';
+  }
 }
 
 export function RegulatoryAlerts() {
