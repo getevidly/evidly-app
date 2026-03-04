@@ -20,6 +20,7 @@ import { GOLD, NAVY, BODY_TEXT, FONT, JIE_LOC_MAP } from './shared/constants';
 import { CorrectiveActionsWidget } from './CorrectiveActionsWidget';
 import { TrainingComplianceWidget } from './TrainingComplianceWidget';
 import { IncidentSummaryWidget } from './IncidentSummaryWidget';
+import { ReScoreAlertsWidget } from './ReScoreAlertsWidget';
 import { EquipmentHealthWidget } from '../EquipmentHealthWidget';
 import { K2CWidget } from '../referral/K2CWidget';
 import { K2CInviteModal } from '../referral/K2CInviteModal';
@@ -380,6 +381,11 @@ export default function OwnerOperatorDashboard() {
       {/* ─── ELEMENT 3.8: Incident Summary Widget ──────────────────── */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
         <IncidentSummaryWidget navigate={navigate} />
+      </div>
+
+      {/* ─── ELEMENT 3.9: Re-Score Alerts Widget ─────────────────── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-4">
+        <ReScoreAlertsWidget navigate={navigate} />
       </div>
 
       {/* ─── ELEMENT 4: Location Status Rows (multi-location only) ── */}

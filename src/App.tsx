@@ -132,6 +132,7 @@ const AssessmentTool = lazy(() => import('./pages/public/AssessmentTool').then(m
 
 const VendorServiceUpdate = lazy(() => import('./pages/VendorServiceUpdate').then(m => ({ default: m.VendorServiceUpdate })));
 const AssessmentLeads = lazy(() => import('./pages/admin/AssessmentLeads'));
+const InsuranceApiKeys = lazy(() => import('./pages/admin/InsuranceApiKeys'));
 const DemoGenerator = lazy(() => import('./pages/admin/DemoGenerator'));
 const DemoPipeline = lazy(() => import('./pages/admin/DemoPipeline'));
 const DemoRequest = lazy(() => import('./pages/DemoRequest'));
@@ -509,6 +510,7 @@ function AppRoutes() {
           <Route path="/admin/demo-generator" element={<DemoGenerator />} />
           <Route path="/admin/demos" element={<DemoPipeline />} />
           <Route path="/admin/assessments" element={<AssessmentLeads />} />
+          <Route path="/admin/api-keys" element={<InsuranceApiKeys />} />
           <Route path="/admin/system/edge-functions" element={<EdgeFunctions />} />
           {/* Stub routes for upcoming features */}
           <Route path="/corrective-actions" element={<CorrectiveActions />} />

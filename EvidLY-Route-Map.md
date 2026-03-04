@@ -240,3 +240,54 @@
 | `/incidents` (view only) | chef, kitchen_staff |
 | Create incident | All roles |
 | Verify/Reject | owner_operator, executive only |
+
+---
+
+## Re-Score Alerts (GAP-11)
+
+### Dashboard Widget
+
+- **ReScoreAlertsWidget** on OwnerOperatorDashboard: severity breakdown (Critical/High/Medium), top 3 alerts preview with acknowledge, click-through to Command Center
+
+### Features (GAP-11)
+- Trigger evaluation engine: evaluates corrective actions, certifications, equipment, incidents, and intelligence signals
+- Alert severities: critical (overdue CA >48hrs, hood system overdue, critical incident), high (expired cert, equipment overdue), medium (cert expiring within 7 days)
+- Alert pillars: food, fire (facility safety), both
+- Acknowledge workflow — local state management in demo, Supabase in live
+- Demo data: 7 pre-built alerts (3 critical, 2 high, 1 medium, 1 resolved)
+
+### Data Files
+- `src/data/rescoreAlertsDemoData.ts` — types, trigger evaluation engine, demo alerts, helpers
+- `src/components/dashboard/ReScoreAlertsWidget.tsx` — dashboard widget
+
+---
+
+## Insurance Export API (GAP-08)
+
+### Routes
+
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/admin/api-keys` | `InsuranceApiKeys.tsx` | API key management — create, revoke, view request logs, API docs |
+
+### Features (GAP-08)
+- API key CRUD with one-time key reveal on creation
+- SHA-256 hashed key storage (never plaintext)
+- 3 permission scopes: compliance_score, inspection_history, risk_summary
+- Facility-scoped access (all facilities or specific facility IDs)
+- Request log with endpoint, method, status code, timestamp
+- KPI cards: Active Keys, Total Requests, Revoked/Expired
+- API documentation reference panel showing 3 endpoints
+
+### Edge Function
+- `supabase/functions/insurance-export/` — read-only API with Bearer token auth
+- Endpoints: compliance-score, inspection-history, risk-summary
+- Auth: Bearer token → SHA-256 hash → lookup in insurance_api_keys table
+- Permissions checked per-endpoint, facility scope enforced
+- All requests logged to insurance_api_request_log
+
+### Role Access (GAP-08)
+
+| Route | Roles |
+|-------|-------|
+| `/admin/api-keys` | platform_admin only |

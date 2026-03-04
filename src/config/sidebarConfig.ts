@@ -269,6 +269,13 @@ const I: Record<string, NavItem> = {
     badge: 'NEW',
   },
 
+  // ── Insurance API Keys (Admin) ──
+  apiKeys: {
+    id: 'api-keys', label: 'API Keys', path: '/admin/api-keys', icon: '🔑',
+    roles: [], description: 'Manage insurance partner API keys, view request logs, and configure data export permissions.',
+    badge: 'NEW',
+  },
+
   // ── System (Admin) ──
   edgeFunctions: {
     id: 'edge-functions', label: 'Edge Functions', path: '/admin/system/edge-functions', icon: '⚡',
@@ -343,7 +350,7 @@ const ROLE_CONFIGS: Record<UserRole, RoleSidebarConfig> = {
       ),
       section('administration', 'Administration', '⚙️',
         'Administration', 'Equipment, Internet of Things sensors, locations, settings, team, vendors, RFP monitor, assessment leads, command center, and role permissions.',
-        [I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
+        [I.apiKeys, I.assessmentLeads, I.commandCenter, I.equipment, I.iotSensors, I.locations, I.rfpIntelligence, I.settings, I.rolesPermissions, I.team, I.trainingRecords, I.trainingCatalog, I.vendors],
         '/admin',
       ),
       section('system', 'System', '🖥️',
