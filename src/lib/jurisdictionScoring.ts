@@ -350,6 +350,19 @@ const SAN_LUIS_OBISPO_COUNTY: CountyScoringProfile = {
   },
 };
 
+const EL_DORADO_COUNTY: CountyScoringProfile = {
+  countySlug: 'el-dorado',
+  countyName: 'El Dorado County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // El Dorado has NO letter grade, NO numeric score, NO placard — inspection report only
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const GENERIC_CALCODE: CountyScoringProfile = {
   countySlug: 'generic',
   countyName: 'California (Standard CalCode)',
@@ -391,6 +404,7 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'santa-barbara': SANTA_BARBARA_COUNTY,
   'ventura': VENTURA_COUNTY,
   'placer': PLACER_COUNTY,
+  'el-dorado': EL_DORADO_COUNTY,
 };
 
 /**
