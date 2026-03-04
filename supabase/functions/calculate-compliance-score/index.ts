@@ -116,7 +116,26 @@ serve(async (req: Request) => {
     // ── STEP 4: Get compliance data for this location ──
     const complianceData = await getComplianceData(supabase, location_id);
 
-    // ── STEP 5: Calculate score per jurisdiction ──
+    // ── STEP 5: Verify jurisdiction weights exist ──
+    // Weights must come from verified jurisdiction source data — NO defaults
+    for (const lj of locationJurisdictions) {
+      const j = (lj as any).jurisdictions;
+      if (j.food_safety_weight == null || j.facility_safety_weight == null || j.ops_weight == null || j.docs_weight == null) {
+        const jName = j.city ? `${j.city} (${j.county} County)` : `${j.county} County`;
+        return new Response(
+          JSON.stringify({
+            status: 'weights_not_verified',
+            message: 'Scoring methodology not yet verified for this jurisdiction',
+            locationId: location_id,
+            jurisdictionName: jName,
+            jurisdictionId: j.id,
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+    }
+
+    // ── STEP 6: Calculate score per jurisdiction ──
     const results: ScoringResult[] = [];
 
     for (const lj of locationJurisdictions) {
@@ -124,8 +143,8 @@ serve(async (req: Request) => {
       const layer = (lj as any).jurisdiction_layer;
       const pillar = layer.includes('fire') ? 'facility_safety' : 'food_safety';
 
-      const opsWeight = (jurisdiction.ops_weight || 60) / 100;
-      const docsWeight = (jurisdiction.docs_weight || 40) / 100;
+      const opsWeight = jurisdiction.ops_weight / 100;
+      const docsWeight = jurisdiction.docs_weight / 100;
 
       const jurisdictionOverrides = (overrides || []).filter(
         (o: any) => o.jurisdiction_id === jurisdiction.id
@@ -155,10 +174,10 @@ serve(async (req: Request) => {
       });
 
       const weights = {
-        foodSafety: jurisdiction.food_safety_weight || 60,
-        facilitySafety: jurisdiction.facility_safety_weight || 40,
-        ops: jurisdiction.ops_weight || 60,
-        docs: jurisdiction.docs_weight || 40,
+        foodSafety: jurisdiction.food_safety_weight,
+        facilitySafety: jurisdiction.facility_safety_weight,
+        ops: jurisdiction.ops_weight,
+        docs: jurisdiction.docs_weight,
       };
 
       const result: ScoringResult = {
@@ -190,12 +209,12 @@ serve(async (req: Request) => {
       results.push({ ...result, subComponent: 'documentation', rawScore: docsResult.rawScore, normalizedScore: Math.round(docsResult.rawScore), violations: docsResult.violations });
     }
 
-    // ── STEP 6: Calculate overall score ──
+    // ── STEP 7: Calculate overall score ──
     const mostRestrictive = locationJurisdictions.find((lj: any) => lj.is_most_restrictive) || locationJurisdictions[0];
     const mrJurisdiction = (mostRestrictive as any).jurisdictions;
 
-    const foodWeight = (mrJurisdiction.food_safety_weight || 60) / 100;
-    const fireWeight = (mrJurisdiction.facility_safety_weight || 40) / 100;
+    const foodWeight = mrJurisdiction.food_safety_weight / 100;
+    const fireWeight = mrJurisdiction.facility_safety_weight / 100;
 
     const foodResults = results.filter(r => r.pillar === 'food_safety' && r.subComponent === 'combined');
     const fireResults = results.filter(r => r.pillar === 'facility_safety' && r.subComponent === 'combined');
@@ -211,13 +230,13 @@ serve(async (req: Request) => {
     const overallScore: OverallScore = {
       locationId: location_id,
       overallScore: Math.round((foodScore * foodWeight) + (fireScore * fireWeight)),
-      foodSafety: { score: foodScore, ops: foodOps?.normalizedScore ?? 100, docs: foodDocs?.normalizedScore ?? 100, weight: mrJurisdiction.food_safety_weight || 60 },
-      facilitySafety: { score: fireScore, ops: fireOps?.normalizedScore ?? 100, docs: fireDocs?.normalizedScore ?? 100, weight: mrJurisdiction.facility_safety_weight || 40 },
+      foodSafety: { score: foodScore, ops: foodOps?.normalizedScore ?? 100, docs: foodDocs?.normalizedScore ?? 100, weight: mrJurisdiction.food_safety_weight },
+      facilitySafety: { score: fireScore, ops: fireOps?.normalizedScore ?? 100, docs: fireDocs?.normalizedScore ?? 100, weight: mrJurisdiction.facility_safety_weight },
       jurisdictions: results.filter(r => r.subComponent === 'combined'),
-      weightsUsed: { foodSafety: mrJurisdiction.food_safety_weight || 60, facilitySafety: mrJurisdiction.facility_safety_weight || 40, ops: mrJurisdiction.ops_weight || 60, docs: mrJurisdiction.docs_weight || 40 },
+      weightsUsed: { foodSafety: mrJurisdiction.food_safety_weight, facilitySafety: mrJurisdiction.facility_safety_weight, ops: mrJurisdiction.ops_weight, docs: mrJurisdiction.docs_weight },
     };
 
-    // ── STEP 7: Save to audit trail ──
+    // ── STEP 8: Save to audit trail ──
     if (save_to_audit !== false) {
       const auditRecords = results.map(r => ({
         location_id: r.locationId, jurisdiction_id: r.jurisdictionId,
@@ -231,7 +250,7 @@ serve(async (req: Request) => {
       await supabase.from('score_calculations').insert(auditRecords);
     }
 
-    // ── STEP 7b: Write canonical snapshot (Phase 1 — V14 fix) ──
+    // ── STEP 8b: Write canonical snapshot (Phase 1 — V14 fix) ──
     // Wrapped in try/catch — snapshot write failure must NOT break scoring response
     let snapshotId: string | null = null;
     try {

@@ -18,8 +18,8 @@ interface ScoringBreakdownPanelProps {
   violations: Violation[];
   scoringType: string;
   jurisdictionName: string;
-  opsWeight: number;
-  docsWeight: number;
+  opsWeight: number | null;
+  docsWeight: number | null;
 }
 
 export const ScoringBreakdownPanel: React.FC<ScoringBreakdownPanelProps> = ({
@@ -58,7 +58,7 @@ export const ScoringBreakdownPanel: React.FC<ScoringBreakdownPanelProps> = ({
             Score Breakdown
           </h3>
           <p style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#757575' }}>
-            {jurisdictionName} methodology (Ops {opsWeight} / Docs {docsWeight})
+            {jurisdictionName} methodology {opsWeight != null && docsWeight != null ? `(Ops ${opsWeight} / Docs ${docsWeight})` : '(Weights not yet verified)'}
           </p>
         </div>
         <div style={{ textAlign: 'right' }}>

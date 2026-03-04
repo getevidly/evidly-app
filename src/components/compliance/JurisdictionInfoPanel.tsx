@@ -10,10 +10,10 @@ interface JurisdictionInfo {
   scoringType: string;
   gradingType: string;
   passThreshold: number | null;
-  foodSafetyWeight: number;
-  facilitySafetyWeight: number;
-  opsWeight: number;
-  docsWeight: number;
+  foodSafetyWeight: number | null;
+  facilitySafetyWeight: number | null;
+  opsWeight: number | null;
+  docsWeight: number | null;
   fireAhjName: string;
 }
 
@@ -126,25 +126,31 @@ export const JurisdictionInfoPanel: React.FC<JurisdictionInfoPanelProps> = ({
         </div>
       )}
 
-      {/* Weights — from jurisdiction, not hardcoded */}
+      {/* Weights — only shown when verified from jurisdiction source data */}
       <div style={{ marginBottom: '12px' }}>
         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#616161', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Compliance Weights (Set by Jurisdiction)
+          Compliance Weights
         </span>
-        <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
-          <div style={{ flex: 1, backgroundColor: '#F3E5F5', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#6A1B9A' }}>
-              {jurisdiction.opsWeight}
+        {jurisdiction.opsWeight != null && jurisdiction.docsWeight != null ? (
+          <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+            <div style={{ flex: 1, backgroundColor: '#F3E5F5', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#6A1B9A' }}>
+                {jurisdiction.opsWeight}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#6A1B9A' }}>Operations</div>
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#6A1B9A' }}>Operations</div>
-          </div>
-          <div style={{ flex: 1, backgroundColor: '#E8EAF6', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#283593' }}>
-              {jurisdiction.docsWeight}
+            <div style={{ flex: 1, backgroundColor: '#E8EAF6', borderRadius: '8px', padding: '8px 12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#283593' }}>
+                {jurisdiction.docsWeight}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#283593' }}>Documentation</div>
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#283593' }}>Documentation</div>
           </div>
-        </div>
+        ) : (
+          <p style={{ margin: '8px 0 0', fontSize: '0.85rem', color: '#9E9E9E', fontStyle: 'italic' }}>
+            Scoring methodology not yet verified for this jurisdiction
+          </p>
+        )}
       </div>
 
       {/* Fire AHJ */}

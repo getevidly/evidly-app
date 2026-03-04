@@ -9,7 +9,7 @@
 // for non-grading counties. Letter grades for grading counties.
 // ═══════════════════════════════════════════════════════════
 
-import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade, demoLocationJurisdictions } from '../data/demoJurisdictions';
+import { DEMO_JURISDICTIONS, DEMO_LOCATIONS, calculateDemoGrade } from '../data/demoJurisdictions';
 import { DEMO_SCORE_BREAKDOWN } from '../data/demoCalcodeMap';
 
 export interface DemoScoreResult {
@@ -44,22 +44,19 @@ export function calculateDemoScore(
 
   const gradeResult = calculateDemoGrade(location.score, jurisdiction);
 
-  // Read ops/docs weights from jurisdiction data — no hardcoded weights
-  const locJurisdiction = demoLocationJurisdictions[location.id];
-  const opsW = locJurisdiction?.ops_weight ?? 0.5;
-  const docsW = locJurisdiction?.docs_weight ?? (1 - opsW);
-
+  // Demo mode: use simple average for pillar sub-score display
+  // No jurisdiction-verified weights exist — this is demo approximation only
   return {
     locationId: location.id,
     locationName: location.name,
     overallScore: location.score,
     foodSafety: {
-      score: Math.round(location.foodSafety.ops * opsW + location.foodSafety.docs * docsW),
+      score: Math.round((location.foodSafety.ops + location.foodSafety.docs) / 2),
       ops: location.foodSafety.ops,
       docs: location.foodSafety.docs,
     },
     facilitySafety: {
-      score: Math.round(location.facilitySafety.ops * opsW + location.facilitySafety.docs * docsW),
+      score: Math.round((location.facilitySafety.ops + location.facilitySafety.docs) / 2),
       ops: location.facilitySafety.ops,
       docs: location.facilitySafety.docs,
     },

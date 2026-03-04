@@ -117,21 +117,22 @@ Alpine, Amador, Calaveras, Glenn, Inyo, Lake, Lassen, Madera, Mariposa, Mendocin
 
 ## 5. WEIGHT VALIDATION
 
-### Pillar Weights (food_safety_weight + fire_safety_weight must = 100)
+**CRITICAL: 0 of 62 jurisdictions have verified weights from source data.**
 
-| Scope | food_safety | fire_safety | Sum | Status |
-|-------|------------|-------------|-----|--------|
-| Default (all) | 60 | 40 | 100 | PASS |
-| Mariposa/Yosemite | 50 | 50 | 100 | PASS |
+All previous weights (60/40 pillar, 60/40 ops/docs, Mariposa 50/50, Santa Clara 70/30) were fabricated defaults — never confirmed from actual jurisdiction methodology. The JIE crawl data contains ZERO weight information for any jurisdiction.
 
-### Sub-Component Weights (ops_weight + docs_weight must = 100)
+**Action taken:** All default weights removed. Migration `20260303100000_remove_default_weights.sql` sets all weight columns to NULL and removes column defaults. The scoring engine now returns `"Scoring methodology not yet verified for this jurisdiction"` when any weight is null.
 
-| Scope | ops | docs | Sum | Status |
-|-------|-----|------|-----|--------|
-| Default (all) | 60 | 40 | 100 | PASS |
-| Santa Clara | 70 | 30 | 100 | PASS |
+| Weight Column | Previous Default | Current Value | Source |
+|--------------|-----------------|---------------|--------|
+| food_safety_weight | 60 | NULL | No verified source |
+| fire_safety_weight | 40 | NULL | No verified source |
+| ops_weight | 60 | NULL | No verified source |
+| docs_weight | 40 | NULL | No verified source |
+| Mariposa (special) | 50/50 | NULL | Inferred, not verified |
+| Santa Clara (special) | 70/30 | NULL | Inferred, not verified |
 
-**Weight math: ALL PASS**
+**Weights will only be populated when confirmed from jurisdiction source documentation.**
 
 ---
 
@@ -255,10 +256,10 @@ Alpine, Amador, Calaveras, Glenn, Inyo, Lake, Lassen, Madera, Mariposa, Mendocin
 | fda_food_code_version | Default | Use "FDA Food Code 2022" for all |
 | nfpa_96_edition | Default | Use "NFPA 96 (2024)" for all |
 | hood_cleaning_frequency_table | Default | "quarterly" default per NFPA 96 |
-| food_safety_weight | Migration | 60 default (50 for Mariposa) |
-| fire_safety_weight | Migration | 40 default (50 for Mariposa) |
-| ops_weight | Migration | 60 default (70 for Santa Clara) |
-| docs_weight | Migration | 40 default (30 for Santa Clara) |
+| food_safety_weight | Migration | NULL — no verified data |
+| fire_safety_weight | Migration | NULL — no verified data |
+| ops_weight | Migration | NULL — no verified data |
+| docs_weight | Migration | NULL — no verified data |
 
 ---
 

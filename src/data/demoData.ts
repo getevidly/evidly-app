@@ -106,20 +106,13 @@ export const locations: Location[] = [
 // Documentation is INSIDE each pillar, NOT a separate pillar.
 // Vendor credentials fold into the pillar they serve.
 //
-// WEIGHTS ARE JURISDICTION-DEPENDENT:
-//   Defaults below are placeholders until Jurisdiction Intelligence is loaded.
+// NO JURISDICTION WEIGHTS — weights must come from verified jurisdiction data.
+// Demo mode uses simple average for display purposes only.
 // ============================================================
 
-// Component weights for pillar sub-scores (ops vs docs)
-const OPS_WEIGHT = 0.50;
-const DOCS_WEIGHT = 0.50;
-
-export function calcPillar(
-  p: { ops: number; docs: number },
-  opsWeight = OPS_WEIGHT,
-  docsWeight = DOCS_WEIGHT,
-): number {
-  return Math.round(p.ops * opsWeight + p.docs * docsWeight);
+/** Demo-only: simple average of ops + docs. NOT jurisdiction-weighted. */
+export function calcPillar(p: { ops: number; docs: number }): number {
+  return Math.round((p.ops + p.docs) / 2);
 }
 
 export const DEMO_ORG = {
