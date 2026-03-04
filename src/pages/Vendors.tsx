@@ -20,7 +20,6 @@ import { supabase } from '../lib/supabase';
 import { useDemoGuard } from '../hooks/useDemoGuard';
 import { EmptyState } from '../components/EmptyState';
 import { DemoUpgradePrompt } from '../components/DemoUpgradePrompt';
-import { AIAssistButton, AIGeneratedIndicator } from '../components/ui/AIAssistButton';
 import {
   VENDOR_CATEGORIES,
   SERVICE_TYPE_TO_CATEGORY,
@@ -33,6 +32,29 @@ import {
   DEMO_VERIFICATIONS,
   type ServiceWorkflowStep,
 } from '../data/vendorServiceWorkflowDemo';
+import { AddVendorModal, type AddVendorResult } from '../components/vendor/AddVendorModal';
+import { InviteVendorModal } from '../components/vendor/InviteVendorModal';
+
+// ══════════════════════════════════════════════════════════════════════
+// VENDOR BUTTON BUG — ROOT CAUSE ANALYSIS (PROMPT #12, 2026-03-04)
+// ══════════════════════════════════════════════════════════════════════
+//
+// BUG: Two "Add Vendor" buttons silently failed to open the form modal.
+//   - Line 1378 (required vendor inline button): called setShowAddVendorForm(true)
+//   - Line 1396 (empty state CTA): called setShowAddVendorForm(true)
+//   - The actual state setter is setShowAddVendorForm (line 198).
+//   - setShowAddVendorModal is undefined — no error thrown, just a no-op.
+//
+// ROOT CAUSE: State variable was renamed from showAddVendorModal to
+//   showAddVendorForm at some point, but two button onClick handlers
+//   were not updated to match. The header "Add Vendor" button (line 1126)
+//   used the correct setter and continued to work.
+//
+// FIX: (1) Renamed broken calls to use setShowAddVendorForm.
+//   (2) Extracted the inline modal into AddVendorModal.tsx (self-contained
+//   form state per prompt requirements).
+//   (3) Added InviteVendorModal.tsx for vendor invitation flow.
+// ══════════════════════════════════════════════════════════════════════
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -196,11 +218,7 @@ export function Vendors() {
   const [vendorPhotos, setVendorPhotos] = useState<PhotoRecord[]>([]);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showAddVendorForm, setShowAddVendorForm] = useState(false);
-  const [vendorForm, setVendorForm] = useState({
-    companyName: '', contactName: '', contactEmail: '', contactPhone: '',
-    categories: [] as string[], locationIds: [] as string[],
-    licenseCertNumber: '', hasInsuranceCOI: false, notes: '',
-  });
+  const [showInviteVendor, setShowInviteVendor] = useState(false);
   const [manualVendors, setManualVendors] = useState<ConsolidatedVendor[]>([]);
 
   const { profile } = useAuth();
@@ -209,7 +227,6 @@ export function Vendors() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [liveVendors, setLiveVendors] = useState<ConsolidatedVendor[]>([]);
-  const [aiFields, setAiFields] = useState<Set<string>>(new Set());
 
   const showToast = useCallback((msg: string) => {
     setToastMessage(msg);
@@ -1123,6 +1140,13 @@ export function Vendors() {
               <span>Import</span>
             </button>
             <button
+              onClick={() => setShowInviteVendor(true)}
+              className="flex items-center space-x-2 px-4 py-2 border border-[#1e4d6b] text-[#1e4d6b] rounded-lg hover:bg-[#eef4f8] shadow-sm transition-colors duration-150"
+            >
+              <Send className="h-4 w-4" />
+              <span>Invite Vendor</span>
+            </button>
+            <button
               onClick={() => setShowAddVendorForm(true)}
               className="flex items-center space-x-2 px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] shadow-sm transition-colors duration-150"
             >
@@ -1375,7 +1399,7 @@ export function Vendors() {
                         <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-800 font-semibold">Required</span>
                       </div>
                       <button
-                        onClick={() => setShowAddVendorModal(true)}
+                        onClick={() => setShowAddVendorForm(true)}
                         className="text-xs text-[#1e4d6b] hover:underline font-medium whitespace-nowrap ml-2"
                       >
                         Add Vendor
@@ -1393,7 +1417,7 @@ export function Vendors() {
                 description="Add your first vendor to track compliance."
                 action={{
                   label: 'Add Vendor',
-                  onClick: () => setShowAddVendorModal(true),
+                  onClick: () => setShowAddVendorForm(true),
                 }}
               />
             )}
@@ -1530,290 +1554,44 @@ export function Vendors() {
         )}
       </div>
 
-      {/* Unified Add Vendor Form Modal */}
-      {showAddVendorForm && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowAddVendorForm(false)} />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-[95vw] sm:w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="p-4 sm:p-6 border-b border-gray-200 sticky top-0 bg-white rounded-t-xl z-10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-[#eef4f8] rounded-lg">
-                      <Plus className="h-5 w-5 text-[#1e4d6b]" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900">Add Vendor</h3>
-                      <p className="text-sm text-gray-500">Enter vendor details and send an invite</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setShowAddVendorForm(false)} className="text-gray-400 hover:text-gray-600">
-                    <XCircle className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6 space-y-4">
-                {/* Company Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Company Name <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    value={vendorForm.companyName}
-                    onChange={(e) => setVendorForm({ ...vendorForm, companyName: e.target.value })}
-                    placeholder="e.g., Valley Fire Systems"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
-                  />
-                </div>
+      {/* Add Vendor Modal (self-contained form state) */}
+      <AddVendorModal
+        isOpen={showAddVendorForm}
+        onClose={() => setShowAddVendorForm(false)}
+        onVendorAdded={(result: AddVendorResult) => {
+          const newVendor: ConsolidatedVendor = {
+            id: result.id,
+            companyName: result.companyName,
+            contactName: result.contactName,
+            email: result.email,
+            phone: result.phone,
+            serviceType: result.serviceType,
+            locations: [],
+            overallStatus: 'current',
+            pendingDocuments: 0,
+            totalDocuments: 0,
+            autoRequestEnabled: false,
+            coiExpiration: '',
+            coiStatus: result.hasInsuranceCOI ? 'current' : 'expired',
+            invite_status: 'added',
+          };
+          setManualVendors((prev) => [...prev, newVendor]);
+        }}
+        isDemoMode={isDemoMode}
+        organizationId={profile?.organization_id || null}
+        accessibleLocations={vendorAccessibleLocs}
+        existingEmails={consolidatedVendors.map(v => v.email.toLowerCase())}
+      />
 
-                {/* Contact Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name <span className="text-red-500">*</span></label>
-                  <input
-                    type="text"
-                    value={vendorForm.contactName}
-                    onChange={(e) => setVendorForm({ ...vendorForm, contactName: e.target.value })}
-                    placeholder="e.g., John Smith"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
-                  />
-                </div>
-
-                {/* Contact Email & Phone */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email <span className="text-red-500">*</span></label>
-                    <input
-                      type="email"
-                      value={vendorForm.contactEmail}
-                      onChange={(e) => setVendorForm({ ...vendorForm, contactEmail: e.target.value })}
-                      placeholder="vendor@example.com"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
-                    <input
-                      type="tel"
-                      value={vendorForm.contactPhone}
-                      onChange={(e) => setVendorForm({ ...vendorForm, contactPhone: e.target.value })}
-                      placeholder="(555) 123-4567"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-
-                {/* Service Categories — multi-select checkboxes */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Service Categories</label>
-                  <div className="bg-gray-50 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto">
-                    {VENDOR_CATEGORIES.map((cat) => (
-                      <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={vendorForm.categories.includes(cat.id)}
-                          onChange={() => {
-                            setVendorForm(prev => ({
-                              ...prev,
-                              categories: prev.categories.includes(cat.id)
-                                ? prev.categories.filter(c => c !== cat.id)
-                                : [...prev.categories, cat.id],
-                            }));
-                          }}
-                          className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
-                        />
-                        <span className="text-sm text-gray-700">{cat.name}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Locations Served — multi-select checkboxes */}
-                {vendorAccessibleLocs.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Locations Served</label>
-                    <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                      {vendorAccessibleLocs.map((loc) => (
-                        <label key={loc.locationId} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={vendorForm.locationIds.includes(loc.locationId)}
-                            onChange={() => {
-                              setVendorForm(prev => ({
-                                ...prev,
-                                locationIds: prev.locationIds.includes(loc.locationId)
-                                  ? prev.locationIds.filter(id => id !== loc.locationId)
-                                  : [...prev.locationIds, loc.locationId],
-                              }));
-                            }}
-                            className="w-4 h-4 rounded border-gray-300 text-[#1e4d6b] focus:ring-[#1e4d6b]"
-                          />
-                          <span className="text-sm text-gray-700">{loc.locationName}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* License / Cert Number */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">License / Certification Number <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
-                  <input
-                    type="text"
-                    value={vendorForm.licenseCertNumber}
-                    onChange={(e) => setVendorForm({ ...vendorForm, licenseCertNumber: e.target.value })}
-                    placeholder="e.g., LIC-2026-12345"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent"
-                  />
-                </div>
-
-                {/* Insurance COI toggle */}
-                <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
-                  <div>
-                    <p className="text-sm font-medium text-gray-700">Insurance COI on File</p>
-                    <p className="text-xs text-gray-500">Certificate of Insurance has been received</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setVendorForm(prev => ({ ...prev, hasInsuranceCOI: !prev.hasInsuranceCOI }))}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      vendorForm.hasInsuranceCOI ? 'bg-[#1e4d6b]' : 'bg-gray-300'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      vendorForm.hasInsuranceCOI ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </div>
-
-                {/* Notes */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-sm font-medium text-gray-700">Notes <span className="text-gray-400 text-xs font-normal">(optional)</span></label>
-                    <AIAssistButton
-                      fieldLabel="Notes"
-                      context={{ vendorName: vendorForm.companyName }}
-                      currentValue={vendorForm.notes}
-                      onGenerated={(text) => { setVendorForm(prev => ({ ...prev, notes: text })); setAiFields(prev => new Set(prev).add('vendorNotes')); }}
-                    />
-                  </div>
-                  <textarea
-                    value={vendorForm.notes}
-                    onChange={(e) => { setVendorForm({ ...vendorForm, notes: e.target.value }); setAiFields(prev => { const s = new Set(prev); s.delete('vendorNotes'); return s; }); }}
-                    placeholder="Any additional details..."
-                    rows={2}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e4d6b] focus:border-transparent resize-none"
-                  />
-                  {aiFields.has('vendorNotes') && <AIGeneratedIndicator />}
-                </div>
-
-                {/* Info box */}
-                <div className="bg-[#eef4f8] rounded-lg p-3 border border-[#b8d4e8]">
-                  <p className="text-xs text-[#1e4d6b]">
-                    <strong>What happens next:</strong> The vendor record is created immediately. If an email is provided, they will receive a branded invitation to join EvidLY and upload their credentials.
-                  </p>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 bg-white rounded-b-xl">
-                <button
-                  onClick={() => setShowAddVendorForm(false)}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={async () => {
-                    // Validation
-                    if (!vendorForm.companyName.trim()) {
-                      showToast('Please enter a company name.');
-                      return;
-                    }
-                    if (!vendorForm.contactName.trim()) {
-                      showToast('Please enter a contact name.');
-                      return;
-                    }
-                    if (!vendorForm.contactEmail.trim()) {
-                      showToast('Please enter a contact email.');
-                      return;
-                    }
-                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorForm.contactEmail.trim())) {
-                      showToast('Please enter a valid email address.');
-                      return;
-                    }
-
-                    // Duplicate detection
-                    const emailLower = vendorForm.contactEmail.trim().toLowerCase();
-                    const duplicate = consolidatedVendors.find(v => v.email.toLowerCase() === emailLower);
-                    if (duplicate) {
-                      showToast(`A vendor with this email already exists: ${duplicate.companyName}`);
-                      return;
-                    }
-
-                    // Determine service type from first selected category
-                    const firstCat = vendorForm.categories.length > 0 ? getCategoryById(vendorForm.categories[0]) : null;
-                    const serviceType = firstCat?.name || 'General';
-
-                    if (!isDemoMode && profile?.organization_id) {
-                      const { data: vendorData, error: vendorError } = await supabase
-                        .from('vendors')
-                        .insert({
-                          company_name: vendorForm.companyName.trim(),
-                          contact_name: vendorForm.contactName.trim(),
-                          email: emailLower,
-                          phone: vendorForm.contactPhone.trim() || null,
-                          contact_phone: vendorForm.contactPhone.trim() || null,
-                          service_type: serviceType,
-                          status: 'current',
-                          invite_status: 'invited',
-                          license_cert_number: vendorForm.licenseCertNumber.trim() || null,
-                          has_insurance_coi: vendorForm.hasInsuranceCOI,
-                          notes: vendorForm.notes.trim() || null,
-                          location_ids: vendorForm.locationIds.length > 0 ? vendorForm.locationIds : null,
-                        })
-                        .select('id')
-                        .single();
-                      if (!vendorError && vendorData) {
-                        await supabase.from('vendor_client_relationships').insert({
-                          vendor_id: vendorData.id,
-                          organization_id: profile.organization_id,
-                          status: 'active',
-                        });
-                      }
-                    }
-
-                    // Add to local state for immediate display
-                    const newVendor: ConsolidatedVendor = {
-                      id: 'manual-' + Date.now(),
-                      companyName: vendorForm.companyName.trim(),
-                      contactName: vendorForm.contactName.trim(),
-                      email: emailLower,
-                      phone: vendorForm.contactPhone.trim(),
-                      serviceType,
-                      locations: [],
-                      overallStatus: 'current',
-                      pendingDocuments: 0,
-                      totalDocuments: 0,
-                      autoRequestEnabled: false,
-                      coiExpiration: '',
-                      coiStatus: vendorForm.hasInsuranceCOI ? 'current' : 'expired',
-                      invite_status: 'invited',
-                    };
-                    setManualVendors((prev) => [...prev, newVendor]);
-                    showToast(`${vendorForm.companyName.trim()} added — invitation sent to ${emailLower}`);
-                    setShowAddVendorForm(false);
-                    setVendorForm({
-                      companyName: '', contactName: '', contactEmail: '', contactPhone: '',
-                      categories: [], locationIds: [],
-                      licenseCertNumber: '', hasInsuranceCOI: false, notes: '',
-                    });
-                  }}
-                  className="px-4 py-2 bg-[#1e4d6b] text-white rounded-lg hover:bg-[#163a52] text-sm font-medium"
-                >
-                  Add Vendor
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {/* Invite Vendor Modal (self-contained form state) */}
+      <InviteVendorModal
+        isOpen={showInviteVendor}
+        onClose={() => setShowInviteVendor(false)}
+        onInviteSent={() => {}}
+        isDemoMode={isDemoMode}
+        organizationId={profile?.organization_id || null}
+        accessibleLocations={vendorAccessibleLocs}
+      />
 
       {/* Toast */}
       {toastMessage && (
