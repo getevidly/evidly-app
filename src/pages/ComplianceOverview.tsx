@@ -2,6 +2,9 @@
 // ComplianceOverview — Dual-Pillar Compliance Status Page
 // ============================================================
 // GAP-14: Food Safety + Facility Safety displayed side by side.
+// GAP-12: Multi-AHJ support — primary + federal overlay cards
+//         with worst-case compliance resolution.
+//
 // Each pillar scores independently using its own jurisdiction
 // methodology. NO combined score, NO unified math.
 //
@@ -9,6 +12,7 @@
 //   Food Safety  → useComplianceEngine → jurisdictionResult
 //   Facility Safety → JURISDICTION_DATABASE + DEMO_LOCATION_GRADE_OVERRIDES
 //   Inspection dates → demoIntelligence.complianceMatrix
+//   Yosemite (multi-AHJ) → DEMO_LOCATIONS + demoLocationJurisdictions
 //
 // All scores/grades/thresholds from jurisdiction config — never hardcoded.
 // ============================================================
@@ -17,7 +21,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, CheckCircle2, AlertTriangle, XCircle, ClipboardCheck,
-  UtensilsCrossed, Flame, Info, Calendar,
+  UtensilsCrossed, Flame, Info, Calendar, Shield,
 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { EvidlyIcon } from '../components/ui/EvidlyIcon';
@@ -25,7 +29,11 @@ import { FireStatusBars } from '../components/shared/FireStatusBars';
 import { useComplianceEngine } from '../hooks/useComplianceEngine';
 import { useDemo } from '../contexts/DemoContext';
 import { locations, demoIntelligence, type ScoreImpactItem } from '../data/demoData';
-import { DEMO_LOCATION_GRADE_OVERRIDES } from '../data/demoJurisdictions';
+import {
+  DEMO_LOCATION_GRADE_OVERRIDES,
+  DEMO_LOCATIONS,
+  demoLocationJurisdictions,
+} from '../data/demoJurisdictions';
 import { JURISDICTION_DATABASE } from '../data/jurisdictionData';
 import { getReadinessColor } from '../utils/inspectionReadiness';
 
@@ -40,13 +48,26 @@ const LOCATION_OVERRIDE_KEY: Record<string, string> = {
   downtown: 'demo-loc-downtown',
   airport: 'demo-loc-airport',
   university: 'demo-loc-university',
+  yosemite: 'demo-loc-yosemite',
 };
 
 const LOCATION_COUNTY: Record<string, string> = {
   downtown: 'Fresno',
   airport: 'Merced',
   university: 'Stanislaus',
+  yosemite: 'Mariposa',
 };
+
+// ── Yosemite static data (no engine — uses DEMO_LOCATIONS) ───
+
+const YOSEMITE_DATA = DEMO_LOCATIONS.find(l => l.id === 'demo-loc-yosemite');
+
+// ── All location tabs (3 from demoData + Yosemite multi-AHJ) ─
+
+const ALL_LOCATION_TABS = [
+  ...locations.map(l => ({ urlId: l.urlId, name: l.name })),
+  { urlId: 'yosemite', name: 'Yosemite (Aramark)' },
+];
 
 // ── Inspection date lookup from demoIntelligence ─────────────
 
@@ -54,6 +75,8 @@ const INSPECTION_DATES: Record<string, string> = {};
 for (const row of demoIntelligence.complianceMatrix) {
   INSPECTION_DATES[row.locationId] = row.lastInspectionDate;
 }
+// Yosemite: static demo date
+INSPECTION_DATES['yosemite'] = '2026-02-10';
 
 // ── Jurisdiction authority lookup ─────────────────────────────
 
@@ -61,6 +84,21 @@ function getJurisdictionEntry(county: string, pillar: 'food_safety' | 'facility_
   return JURISDICTION_DATABASE.find(
     j => j.county === county && j.pillar === pillar,
   );
+}
+
+// ── Worst-case status resolution (GAP-12) ────────────────────
+// When multiple AHJs exist, compliance = MORE STRINGENT outcome
+
+type JurisdictionStatus = 'passing' | 'failing' | 'at_risk';
+
+const STATUS_SEVERITY: Record<JurisdictionStatus, number> = {
+  passing: 0,
+  at_risk: 1,
+  failing: 2,
+};
+
+function worstCaseStatus(a: JurisdictionStatus, b: JurisdictionStatus): JurisdictionStatus {
+  return STATUS_SEVERITY[a] >= STATUS_SEVERITY[b] ? a : b;
 }
 
 // ── Status colors ────────────────────────────────────────────
@@ -111,7 +149,7 @@ function statusLabel(status: string): string {
   }
 }
 
-// ── Score display: "—" when unavailable ───────────────────────
+// ── Score display: "\u2014" when unavailable ───────────────────────
 
 function scoreDisplay(score: number | null | undefined): string {
   if (score === null || score === undefined || score === 0) return '\u2014';
@@ -150,7 +188,67 @@ function PillarSkeleton({ pillar }: { pillar: 'food_safety' | 'facility_safety' 
   );
 }
 
+// ── AHJ Card (single authority display) ──────────────────────
+
+interface AhjCardProps {
+  label: string;
+  grade: string;
+  summary: string;
+  authority: string;
+  status: JurisdictionStatus;
+  lastInspectionDate?: string;
+  isFederal?: boolean;
+}
+
+function AhjCard({ label, grade, summary, authority, status, lastInspectionDate, isFederal }: AhjCardProps) {
+  const statusColors = STATUS_COLORS[status] || STATUS_COLORS.at_risk;
+  return (
+    <div className={`rounded-lg p-4 border ${statusColors.bg} ${statusColors.border}`}>
+      <div className="flex items-start gap-3">
+        <div
+          className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
+          style={{ backgroundColor: statusColors.dot }}
+        />
+        <div className="flex-1">
+          {/* AHJ label (Primary / Federal Overlay) */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded uppercase tracking-wider"
+              style={{
+                color: isFederal ? '#92400e' : NAVY,
+                backgroundColor: isFederal ? '#fef3c7' : '#F0F3F7',
+                border: `1px solid ${isFederal ? '#fbbf24' : '#D1D9E6'}`,
+              }}
+            >
+              {label}
+            </span>
+          </div>
+          <div className={`text-base font-bold ${statusColors.text}`}>
+            {grade || '\u2014'}
+          </div>
+          <div className="text-sm text-gray-600 mt-1">{summary}</div>
+          <div className="text-xs text-gray-400 mt-2">
+            Authority: {authority}
+          </div>
+          {lastInspectionDate && (
+            <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
+              <Calendar className="w-3 h-3" />
+              <span>Last inspection: {formatInspectionDate(lastInspectionDate)}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Pillar Panel ──────────────────────────────────────────────
+
+interface FederalOverlayData {
+  grade: string;
+  summary: string;
+  authority: string;
+  status: JurisdictionStatus;
+}
 
 interface PillarPanelProps {
   pillar: 'food_safety' | 'facility_safety';
@@ -160,7 +258,7 @@ interface PillarPanelProps {
   jurisdictionGrade: string;
   jurisdictionSummary: string;
   jurisdictionAuthority: string;
-  jurisdictionStatus: 'passing' | 'failing' | 'at_risk';
+  jurisdictionStatus: JurisdictionStatus;
   jurisdictionConfigured: boolean;
   lastInspectionDate?: string;
   impactItems: ScoreImpactItem[];
@@ -171,6 +269,7 @@ interface PillarPanelProps {
     ansulStatus: string;
   };
   onEquipmentClick?: (key: string) => void;
+  federalOverlay?: FederalOverlayData;
 }
 
 function PillarPanel({
@@ -178,6 +277,7 @@ function PillarPanel({
   jurisdictionGrade, jurisdictionSummary, jurisdictionAuthority,
   jurisdictionStatus, jurisdictionConfigured, lastInspectionDate,
   impactItems, facilityStatusBars, onEquipmentClick,
+  federalOverlay,
 }: PillarPanelProps) {
   const isFoodSafety = pillar === 'food_safety';
   const Icon = isFoodSafety ? UtensilsCrossed : Flame;
@@ -186,7 +286,12 @@ function PillarPanel({
   const scoreColor = hasScore ? getReadinessColor(score!) : '#94a3b8';
   const opsColor = opsScore && opsScore > 0 ? getReadinessColor(opsScore) : '#94a3b8';
   const docsColor = docsScore && docsScore > 0 ? getReadinessColor(docsScore) : '#94a3b8';
-  const statusColors = STATUS_COLORS[jurisdictionStatus] || STATUS_COLORS.at_risk;
+
+  // Worst-case resolution: if federal overlay exists, use more stringent status
+  const resolvedStatus = federalOverlay
+    ? worstCaseStatus(jurisdictionStatus, federalOverlay.status)
+    : jurisdictionStatus;
+  const hasMultiAhj = !!federalOverlay;
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -197,6 +302,15 @@ function PillarPanel({
       >
         <Icon className="w-5 h-5" style={{ color: hasScore ? scoreColor : NAVY }} />
         <h2 className="text-lg font-bold" style={{ color: NAVY }}>{label}</h2>
+        {hasMultiAhj && (
+          <span
+            className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1"
+            style={{ color: '#92400e', backgroundColor: '#fef3c7', border: '1px solid #fbbf24' }}
+          >
+            <Shield className="w-3 h-3" />
+            Multi-AHJ
+          </span>
+        )}
       </div>
 
       <div className="p-4 sm:p-5 space-y-5">
@@ -207,30 +321,36 @@ function PillarPanel({
             <h3 className="text-sm font-semibold uppercase tracking-wider" style={{ color: NAVY }}>
               Jurisdiction Status
             </h3>
+            {hasMultiAhj && (
+              <span className="text-[10px] text-gray-400">
+                Resolved: {resolvedStatus === 'passing' ? 'Passing' : resolvedStatus === 'at_risk' ? 'At Risk' : 'Failing'}
+              </span>
+            )}
           </div>
 
           {jurisdictionConfigured ? (
-            <div className={`rounded-lg p-4 border ${statusColors.bg} ${statusColors.border}`}>
-              <div className="flex items-start gap-3">
-                <div
-                  className="w-3 h-3 rounded-full mt-1 flex-shrink-0"
-                  style={{ backgroundColor: statusColors.dot }}
+            <div className="space-y-3">
+              {/* Primary AHJ */}
+              <AhjCard
+                label={hasMultiAhj ? 'Primary AHJ' : 'Authority'}
+                grade={jurisdictionGrade}
+                summary={jurisdictionSummary}
+                authority={jurisdictionAuthority}
+                status={jurisdictionStatus}
+                lastInspectionDate={lastInspectionDate}
+              />
+
+              {/* Federal Overlay AHJ (GAP-12) */}
+              {federalOverlay && (
+                <AhjCard
+                  label="Federal Overlay"
+                  grade={federalOverlay.grade}
+                  summary={federalOverlay.summary}
+                  authority={federalOverlay.authority}
+                  status={federalOverlay.status}
+                  isFederal
                 />
-                <div className="flex-1">
-                  <div className={`text-base font-bold ${statusColors.text}`}>
-                    {jurisdictionGrade || '\u2014'}
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">{jurisdictionSummary}</div>
-                  <div className="text-xs text-gray-400 mt-2">
-                    Authority: {jurisdictionAuthority}
-                  </div>
-                  {/* Last inspection date */}
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-1">
-                    <Calendar className="w-3 h-3" />
-                    <span>Last inspection: {formatInspectionDate(lastInspectionDate)}</span>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           ) : (
             <div className="rounded-lg p-4 border border-gray-200 bg-gray-50">
@@ -357,6 +477,7 @@ export function ComplianceOverview() {
   const { isDemoMode } = useDemo();
   const params = new URLSearchParams(window.location.search);
   const locationParam = params.get('location') || 'downtown';
+  const isYosemite = locationParam === 'yosemite';
 
   const compliance = useComplianceEngine(
     ['downtown', 'airport', 'university'],
@@ -393,16 +514,38 @@ export function ComplianceOverview() {
     );
   }
 
-  const selectedLocation = locations.find(l => l.urlId === locationParam) || locations[0];
+  // Location display name
+  const selectedLocation = isYosemite
+    ? { name: 'Yosemite (Aramark)', urlId: 'yosemite' }
+    : locations.find(l => l.urlId === locationParam) || locations[0];
+
   const overrideKey = LOCATION_OVERRIDE_KEY[locationParam] || 'demo-loc-downtown';
   const gradeData = DEMO_LOCATION_GRADE_OVERRIDES[overrideKey];
   const county = LOCATION_COUNTY[locationParam] || 'California';
-  const engineResult = compliance.results[locationParam];
   const lastInspection = INSPECTION_DATES[locationParam];
 
-  // Food safety jurisdiction — from engine + jurisdiction database
+  // Jurisdiction data for multi-AHJ detection
+  const jurisdictionData = demoLocationJurisdictions[overrideKey];
+  const hasFoodOverlay = !!jurisdictionData?.federalFoodOverlay;
+  const hasFireOverlay = !!jurisdictionData?.federalFireOverlay;
+
+  // Engine results (null for Yosemite — uses static DEMO_LOCATIONS data)
+  const engineResult = isYosemite ? null : compliance.results[locationParam];
+
+  // ── Food safety jurisdiction ──────────────────────────────
   const foodJurisdiction = useMemo(() => {
     const jEntry = getJurisdictionEntry(county, 'food_safety');
+
+    if (isYosemite) {
+      // Yosemite: use grade overrides directly
+      return {
+        configured: true,
+        grade: gradeData.foodSafety.gradeDisplay,
+        summary: gradeData.foodSafety.summary,
+        authority: jEntry?.agencyName || 'Mariposa County Environmental Health',
+        status: gradeData.foodSafety.status,
+      };
+    }
 
     if (!engineResult?.jurisdictionResult) {
       return { configured: false, grade: '', summary: '', authority: '', status: 'at_risk' as const };
@@ -418,9 +561,22 @@ export function ComplianceOverview() {
       authority: jEntry?.agencyName || jr.countyName,
       status: gradeData.foodSafety.status,
     };
-  }, [engineResult, gradeData, county]);
+  }, [engineResult, gradeData, county, isYosemite]);
 
-  // Facility safety jurisdiction — from jurisdiction database + grade overrides
+  // ── Food safety federal overlay (GAP-12) ──────────────────
+  const foodFederalOverlay = useMemo((): FederalOverlayData | undefined => {
+    if (!hasFoodOverlay || !jurisdictionData?.federalFoodOverlay) return undefined;
+    const overlay = jurisdictionData.federalFoodOverlay;
+    const details = gradeData.foodSafety.details;
+    return {
+      grade: details?.federalStatus === 'passing' ? 'In Compliance' : 'Priority Violation',
+      summary: `${overlay.code_basis} \u2014 federal inspection program`,
+      authority: overlay.agency_name,
+      status: (details?.federalStatus as JurisdictionStatus) || 'passing',
+    };
+  }, [hasFoodOverlay, jurisdictionData, gradeData]);
+
+  // ── Facility safety jurisdiction ──────────────────────────
   const facilityJurisdiction = useMemo(() => {
     const jEntry = getJurisdictionEntry(county, 'facility_safety');
     const fs = gradeData.facilitySafety;
@@ -435,10 +591,35 @@ export function ComplianceOverview() {
       configured: !allNoStatus,
       grade: fs.gradeDisplay,
       summary: fs.summary,
-      authority: jEntry?.agencyName || 'NFPA 96 (2024)',
+      authority: jEntry?.agencyName || jurisdictionData?.facilitySafety?.agency_name || 'NFPA 96 (2024)',
       status: fs.status,
     };
-  }, [gradeData, county]);
+  }, [gradeData, county, jurisdictionData]);
+
+  // ── Facility safety federal overlay (GAP-12) ──────────────
+  const facilityFederalOverlay = useMemo((): FederalOverlayData | undefined => {
+    if (!hasFireOverlay || !jurisdictionData?.federalFireOverlay) return undefined;
+    const overlay = jurisdictionData.federalFireOverlay;
+    return {
+      grade: 'Compliant',
+      summary: `${overlay.code_basis} \u2014 federal fire management`,
+      authority: overlay.agency_name,
+      status: 'passing' as JurisdictionStatus,
+    };
+  }, [hasFireOverlay, jurisdictionData]);
+
+  // ── Scores (engine for standard, static for Yosemite) ─────
+  const foodScore = isYosemite
+    ? (YOSEMITE_DATA ? Math.round((YOSEMITE_DATA.foodSafety.ops + YOSEMITE_DATA.foodSafety.docs) / 2) : null)
+    : (engineResult?.foodSafetyScore ?? null);
+  const foodOps = isYosemite ? (YOSEMITE_DATA?.foodSafety.ops ?? null) : (engineResult?.foodSafetyOps ?? null);
+  const foodDocs = isYosemite ? (YOSEMITE_DATA?.foodSafety.docs ?? null) : (engineResult?.foodSafetyDocs ?? null);
+
+  const facilityScore = isYosemite
+    ? (YOSEMITE_DATA ? Math.round((YOSEMITE_DATA.facilitySafety.ops + YOSEMITE_DATA.facilitySafety.docs) / 2) : null)
+    : (engineResult?.facilitySafetyScore ?? null);
+  const facilityOps = isYosemite ? (YOSEMITE_DATA?.facilitySafety.ops ?? null) : (engineResult?.facilitySafetyOps ?? null);
+  const facilityDocs = isYosemite ? (YOSEMITE_DATA?.facilitySafety.docs ?? null) : (engineResult?.facilitySafetyDocs ?? null);
 
   // Filter impact items by pillar
   const foodItems = useMemo(() => {
@@ -462,18 +643,21 @@ export function ComplianceOverview() {
     navigate(routes[key] || '/equipment');
   };
 
+  // Determine if data is ready (engine loaded or Yosemite static)
+  const dataReady = isYosemite || !!engineResult;
+
   return (
     <div className="space-y-6">
       <Breadcrumb items={[
         { label: 'Dashboard', href: '/dashboard' },
-        { label: selectedLocation.name, href: `/dashboard?location=${locationParam}` },
+        { label: selectedLocation.name, href: isYosemite ? undefined : `/dashboard?location=${locationParam}` },
         { label: 'Compliance Overview' },
       ]} />
 
       {/* Header */}
       <div>
         <button
-          onClick={() => navigate(`/dashboard?location=${locationParam}`)}
+          onClick={() => navigate(isYosemite ? '/dashboard' : `/dashboard?location=${locationParam}`)}
           className="flex items-center gap-1 text-sm font-medium transition-colors mb-2 min-h-[44px]"
           style={{ color: NAVY }}
         >
@@ -483,12 +667,15 @@ export function ComplianceOverview() {
         <h1 className="text-2xl font-bold" style={{ color: NAVY }}>Compliance Overview</h1>
         <p className="text-gray-500 text-sm mt-1">
           {selectedLocation.name} &mdash; {county} County
+          {(hasFoodOverlay || hasFireOverlay) && (
+            <span className="ml-2 text-amber-700 font-medium">(Multi-AHJ)</span>
+          )}
         </p>
       </div>
 
       {/* Location Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
-        {locations.map(loc => (
+      <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit flex-wrap">
+        {ALL_LOCATION_TABS.map(loc => (
           <button
             key={loc.urlId}
             onClick={() => navigate(`/compliance-overview?location=${loc.urlId}`)}
@@ -507,12 +694,12 @@ export function ComplianceOverview() {
       {/* Dual Pillar Layout — independent loading per card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Food Safety */}
-        {engineResult ? (
+        {dataReady ? (
           <PillarPanel
             pillar="food_safety"
-            score={engineResult.foodSafetyScore}
-            opsScore={engineResult.foodSafetyOps}
-            docsScore={engineResult.foodSafetyDocs}
+            score={foodScore}
+            opsScore={foodOps}
+            docsScore={foodDocs}
             jurisdictionGrade={foodJurisdiction.grade}
             jurisdictionSummary={foodJurisdiction.summary}
             jurisdictionAuthority={foodJurisdiction.authority}
@@ -520,18 +707,19 @@ export function ComplianceOverview() {
             jurisdictionConfigured={foodJurisdiction.configured}
             lastInspectionDate={lastInspection}
             impactItems={foodItems}
+            federalOverlay={foodFederalOverlay}
           />
         ) : (
           <PillarSkeleton pillar="food_safety" />
         )}
 
         {/* Facility Safety */}
-        {engineResult ? (
+        {dataReady ? (
           <PillarPanel
             pillar="facility_safety"
-            score={engineResult.facilitySafetyScore}
-            opsScore={engineResult.facilitySafetyOps}
-            docsScore={engineResult.facilitySafetyDocs}
+            score={facilityScore}
+            opsScore={facilityOps}
+            docsScore={facilityDocs}
             jurisdictionGrade={facilityJurisdiction.grade}
             jurisdictionSummary={facilityJurisdiction.summary}
             jurisdictionAuthority={facilityJurisdiction.authority}
@@ -546,6 +734,7 @@ export function ComplianceOverview() {
               ansulStatus: gradeData.facilitySafety.ansulStatus,
             }}
             onEquipmentClick={handleEquipmentClick}
+            federalOverlay={facilityFederalOverlay}
           />
         ) : (
           <PillarSkeleton pillar="facility_safety" />
