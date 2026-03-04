@@ -9,6 +9,7 @@ const ROUTE_ROLE_MAP: [string, UserRole[]][] = [
   ['/analysis',              ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/audit-trail',           ['owner_operator', 'executive', 'compliance_manager']],
   ['/benchmarks',            ['owner_operator', 'executive']],
+  ['/compliance-trends',     ['owner_operator', 'executive', 'compliance_manager', 'kitchen_manager']],
   ['/intelligence',          ['owner_operator', 'executive', 'compliance_manager']],
   ['/iot-monitoring',        ['owner_operator', 'executive', 'compliance_manager', 'facilities_manager']],
   ['/jurisdiction',          ['owner_operator', 'executive', 'compliance_manager']],

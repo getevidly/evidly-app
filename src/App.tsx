@@ -58,6 +58,7 @@ const JurisdictionSettings = lazy(() => import('./pages/JurisdictionSettings').t
 const HealthDeptReport = lazy(() => import('./pages/HealthDeptReport').then(m => ({ default: m.HealthDeptReport })));
 const ScoringBreakdown = lazy(() => import('./pages/ScoringBreakdown').then(m => ({ default: m.ScoringBreakdown })));
 const Benchmarks = lazy(() => import('./pages/Benchmarks').then(m => ({ default: m.Benchmarks })));
+const ComplianceTrends = lazy(() => import('./pages/ComplianceTrends').then(m => ({ default: m.ComplianceTrends })));
 const ComplianceIndex = lazy(() => import('./pages/ComplianceIndex').then(m => ({ default: m.ComplianceIndex })));
 const InsuranceRisk = lazy(() => import('./pages/InsuranceRisk').then(m => ({ default: m.InsuranceRisk })));
 const InsuranceRiskShared = lazy(() => import('./pages/InsuranceRiskShared'));
@@ -448,6 +449,7 @@ function AppRoutes() {
           <Route path="/health-dept-report" element={<HealthDeptReport />} />
           <Route path="/scoring-breakdown" element={<ScoringBreakdown />} />
           <Route path="/benchmarks" element={<Benchmarks />} />
+          <Route path="/compliance-trends" element={<ComplianceTrends />} />
           <Route path="/org-hierarchy" element={<OrgHierarchy />} />
           <Route path="/compliance-index" element={<ComplianceIndex />} />
           <Route path="/insurance-risk" element={<InsuranceRisk />} />
