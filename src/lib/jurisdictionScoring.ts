@@ -469,6 +469,8 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'butte': BUTTE_COUNTY,
   'el-dorado': EL_DORADO_COUNTY,
   'solano': SOLANO_COUNTY,
+  // Bay Area
+  'napa': NAPA_COUNTY,
 };
 
 /**

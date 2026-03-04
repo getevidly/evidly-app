@@ -173,43 +173,44 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'fail',
   },
   {
-    // ═══ SANTA CLARA COUNTY — STANDARDIZED (March 2026) ═══
-    // GYR placard (based on major violation COUNT) + numeric score (100-pt deductive).
-    // GREEN=pass (≤1 major corrected), YELLOW=conditional (2+ majors corrected),
-    // RED=closure (imminent threat). Transparency: HIGH. SCCDineOut app.
-    // Source: deh.santaclaracounty.gov, eservices.sccgov.org/facilityinspection
+    // ═══ SANTA CLARA COUNTY — STANDARDIZED (March 2026, updated) ═══
+    // DUAL: GYR placard + numeric score (0-100), both published.
+    // GREEN=90-100, YELLOW=70-89, RED=<70. Score: 100-pt deductive.
+    // Major=8pts, Moderate=3pts, Minor=2pts. Transparency: HIGH.
+    // SCCDineOut app + eservices.sccgov.org/facilityinspection
+    // Source: sccphd.org, eservices.sccgov.org — verified March 2026
     id: 'demo-santa-clara',
     county: 'Santa Clara',
-    agencyName: 'Santa Clara County Department of Environmental Health',
-    scoringType: 'color_placard_with_numeric_score',
-    gradingType: 'green_yellow_red_with_score',
+    agencyName: 'Santa Clara County Public Health Department — Environmental Health Division',
+    scoringType: 'color_placard_and_numeric',
+    gradingType: 'green_yellow_red_numeric',
     gradingConfig: {
-      displayFormat: 'color_placard_with_score',
+      displayFormat: 'green_yellow_red_numeric',
       placards: [
-        { color: 'green', status: 'pass', label: 'PASS', criteria: 'No more than 1 major violation observed, corrected during inspection' },
-        { color: 'yellow', status: 'conditional_pass', label: 'CONDITIONAL PASS', criteria: '2+ major violations observed, all corrected during inspection. Reinspection within 3 business days.' },
-        { color: 'red', status: 'closed', label: 'CLOSURE', criteria: 'Imminent threat to health/safety; violations not corrected during inspection.' },
+        { color: 'green', status: 'pass', label: 'PASS', range: '90-100', criteria: 'Low violation burden — facility in compliance' },
+        { color: 'yellow', status: 'conditional_pass', label: 'CONDITIONAL PASS', range: '70-89', criteria: 'Violations corrected during inspection. Reinspection within 3 business days.' },
+        { color: 'red', status: 'closed', label: 'CLOSURE', range: 'Below 70', criteria: 'Imminent threat to health/safety; violations not corrected during inspection.' },
       ],
       numericScore: true,
       scoreBase: 100,
       scoreDirection: 'downward_deduction',
       violationPoints: { major: 8, moderate: 3, minor: 2 },
-      scoreNote: 'Numeric score is compliance indicator only — separate from placard color. Placard = status; score = compliance depth.',
+      scoreNote: 'GYR placard color determined by numeric score thresholds. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
       placardPosted: true,
       inspectionFrequency: 'risk_based_1_to_3_per_year',
       transparencyLevel: 'high',
       sccDineOutApp: true,
       programLaunched: '2014-10-01',
     },
-    passThreshold: null,
-    warningThreshold: null,
-    criticalThreshold: null,
+    passThreshold: 90,
+    warningThreshold: 70,
+    criticalThreshold: 70,
     fireAhjName: 'Santa Clara County Fire Dept / City departments (San Jose, Sunnyvale, etc.)',
     hoodCleaningDefault: 'quarterly',
     facilityCount: 10000,
     dataSourceTier: 1,
     gradeLabel: '\u{1F7E2} 92',
-    gradeExplanation: 'GYR Placard + Numeric Score — Green=pass (≤1 major), Yellow=conditional (2+ majors), Red=closure. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
+    gradeExplanation: 'DUAL: GYR Placard + Numeric Score — Green=90-100, Yellow=70-89, Red=<70. Score: 100-pt deductive (Major=8, Moderate=3, Minor=2).',
     passFailLabel: 'PASS',
     demoScore: 92,
     demoGrade: '\u{1F7E2} Green — 92',
@@ -1569,7 +1570,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Riverside', agencyName: 'Riverside County Department of Environmental Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
   { county: 'San Bernardino', agencyName: 'San Bernardino County DPH — Environmental Health Services', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 15000, tier: 3 },
   { county: 'Alameda', agencyName: 'Alameda County DEH', scoringType: 'weighted_deduction', gradingType: 'color_placard', facilityCount: 8500, tier: 3 },
-  { county: 'Santa Clara', agencyName: 'Santa Clara County Department of Environmental Health', scoringType: 'color_placard_with_numeric_score', gradingType: 'green_yellow_red_with_score', facilityCount: 10000, tier: 1 },
+  { county: 'Santa Clara', agencyName: 'Santa Clara County Public Health Department — Environmental Health Division', scoringType: 'color_placard_and_numeric', gradingType: 'green_yellow_red_numeric', facilityCount: 10000, tier: 1 },
   { county: 'Contra Costa', agencyName: 'Contra Costa Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 5500, tier: 3 },
   { county: 'Fresno', agencyName: 'Fresno County Department of Public Health — Environmental Health Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 11000, tier: 3 },
   { county: 'Kern', agencyName: 'Kern County Public Health Services — Environmental Health Division', scoringType: 'weighted_deduction', gradingType: 'letter_grade_abc', facilityCount: 3500, tier: 1 },

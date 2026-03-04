@@ -364,8 +364,14 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with SCORES (San Francisco Online Restaurant Inspection Scores) system for public access to inspection results online.',
+      type: 'green_yellow_red_numeric',
+      details: 'DUAL: GYR placard + numeric score (0-100), both published. CRITICAL: SF uses High/Moderate/Low RISK TIERS — not CalCode Major/Minor. Agency is SFDPH (not a county EHD). Consolidated city-county. GREEN=90-100, YELLOW=70-89, RED=<70. SCORES portal for public access.',
+      grades: [
+        { label: 'GREEN (PASS)', range: '90-100 — low violation burden' },
+        { label: 'YELLOW (CONDITIONAL PASS)', range: '70-89 — violations corrected' },
+        { label: 'RED (CLOSED)', range: 'Below 70 or imminent health hazard' },
+      ],
+      // SUGGESTION: verify exact deduction points per risk tier from SFDPH
     },
     minimumWage: {
       general: 19.18,
@@ -374,17 +380,20 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     },
     populationTier: 'large',
     healthDepartment: {
-      name: 'San Francisco Dept of Public Health, Environmental Health Branch',
+      name: 'San Francisco Department of Public Health (SFDPH) — Environmental Health Branch',
       phone: '(415) 252-3800',
-      website: 'https://www.sfdph.org/dph/EH/',
-      inspectionFrequency: 'Risk-based: high risk annually',
+      website: 'https://www.sfdph.org/dph/EH/food/default.asp',
+      inspectionFrequency: 'Risk-based: ~7,000+ permitted food facilities',
       permitRenewal: 'Annual',
     },
     specialRequirements: [
+      'CONSOLIDATED city-county — SFDPH (not a standard county EHD)',
+      'GYR placard + numeric score BOTH published (HIGH transparency)',
+      'Risk tiers: High / Moderate / Low (NOT Major/Minor)',
+      'SF Health Code Article 22 supplements CalCode',
+      'SCORES portal: public online access to inspection results',
       'Local minimum wage $19.18/hr (higher than state minimum)',
       'Mandatory composting and recycling for all food service establishments',
-      'Health Care Security Ordinance applies to businesses with 20+ employees',
-      'SCORES system provides public online access to inspection results',
     ],
   },
 

@@ -266,6 +266,8 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '94132': { countyId: 'county-sf', countyName: 'San Francisco County' },
   '94133': { countyId: 'county-sf', countyName: 'San Francisco County' },
   '94134': { countyId: 'county-sf', countyName: 'San Francisco County' },
+  '94128': { countyId: 'county-sf', countyName: 'San Francisco County' }, // SFO Airport
+  '94158': { countyId: 'county-sf', countyName: 'San Francisco County' }, // Mission Bay
   // LA specific
   '90001': { countyId: 'county-la', countyName: 'Los Angeles County' },
   '90012': { countyId: 'county-la', countyName: 'Los Angeles County' },
@@ -436,6 +438,19 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '96156': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
   '96157': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
   '96158': { countyId: 'county-el-dorado', countyName: 'El Dorado County' }, // South Lake Tahoe
+  // Napa County (945xx range overlaps with Solano — overrides needed)
+  '94503': { countyId: 'county-napa', countyName: 'Napa County' }, // American Canyon
+  '94508': { countyId: 'county-napa', countyName: 'Napa County' }, // Angwin
+  '94515': { countyId: 'county-napa', countyName: 'Napa County' }, // Calistoga
+  '94558': { countyId: 'county-napa', countyName: 'Napa County' }, // Napa
+  '94559': { countyId: 'county-napa', countyName: 'Napa County' }, // Napa (EHD HQ)
+  '94562': { countyId: 'county-napa', countyName: 'Napa County' }, // Oakville
+  '94567': { countyId: 'county-napa', countyName: 'Napa County' }, // Pope Valley
+  '94573': { countyId: 'county-napa', countyName: 'Napa County' }, // Rutherford
+  '94574': { countyId: 'county-napa', countyName: 'Napa County' }, // St. Helena
+  '94576': { countyId: 'county-napa', countyName: 'Napa County' }, // Deer Park
+  '94581': { countyId: 'county-napa', countyName: 'Napa County' }, // Napa (south)
+  '94599': { countyId: 'county-napa', countyName: 'Napa County' }, // Yountville
   // Alameda / Oakland
   '94501': { countyId: 'county-alameda', countyName: 'Alameda County' },
   '94536': { countyId: 'county-alameda', countyName: 'Alameda County' },
