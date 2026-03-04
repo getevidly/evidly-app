@@ -262,6 +262,35 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '92307': { countyId: 'county-san-bernardino', countyName: 'San Bernardino County' },
   '92394': { countyId: 'county-san-bernardino', countyName: 'San Bernardino County' },
   '92395': { countyId: 'county-san-bernardino', countyName: 'San Bernardino County' },
+  // Ventura County (inside LA's broad 91001-91899 range — overrides needed)
+  '91319': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Newbury Park
+  '91320': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Newbury Park
+  '91360': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Thousand Oaks
+  '91361': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Westlake Village
+  '91362': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Thousand Oaks
+  '91377': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oak Park
+  // Ventura County (930xx range — key cities)
+  '93001': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Ventura
+  '93003': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Ventura
+  '93004': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Ventura
+  '93009': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Ventura (EHD HQ)
+  '93010': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Camarillo
+  '93012': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Camarillo
+  '93015': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Fillmore
+  '93020': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Moorpark
+  '93021': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Moorpark
+  '93022': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oak View
+  '93023': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Ojai
+  '93030': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oxnard
+  '93033': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oxnard
+  '93035': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oxnard/Port Hueneme
+  '93036': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Oxnard
+  '93040': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Piru
+  '93041': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Port Hueneme
+  '93060': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Santa Paula
+  '93063': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Simi Valley
+  '93065': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Simi Valley
+  '93066': { countyId: 'county-ventura', countyName: 'Ventura County' }, // Somis
   // Orange County
   '92602': { countyId: 'county-orange', countyName: 'Orange County' },
   '92614': { countyId: 'county-orange', countyName: 'Orange County' },
