@@ -452,6 +452,18 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '95970': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Princeton
   '95979': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Stonyford
   '95987': { countyId: 'county-colusa', countyName: 'Colusa County' }, // Williams
+  // Nevada County — Sierra foothills + mountain communities (includes Truckee)
+  '95945': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Grass Valley
+  '95949': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Grass Valley (north)
+  '95959': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Nevada City (county seat / EHD office)
+  '95946': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Penn Valley
+  '95960': { countyId: 'county-nevada', countyName: 'Nevada County' }, // North San Juan
+  '95924': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Cedar Ridge
+  '95975': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Rough and Ready
+  '95986': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Washington
+  '96160': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Truckee (Lake Tahoe–adjacent)
+  '96161': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Truckee
+  '96162': { countyId: 'county-nevada', countyName: 'Nevada County' }, // Truckee (Donner area)
   // Napa County (945xx range overlaps with Solano — overrides needed)
   '94503': { countyId: 'county-napa', countyName: 'Napa County' }, // American Canyon
   '94508': { countyId: 'county-napa', countyName: 'Napa County' }, // Angwin

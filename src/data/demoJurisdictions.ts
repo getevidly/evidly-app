@@ -1746,7 +1746,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Kings', agencyName: 'Kings County Department of Public Health — EHS Division', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 600, tier: 4 },
   { county: 'Humboldt', agencyName: 'Humboldt County DOH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
   { county: 'Imperial', agencyName: 'Imperial County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 900, tier: 4 },
-  { county: 'Tuolumne', agencyName: 'Tuolumne County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 400, tier: 4 },
+  { county: 'Tuolumne', agencyName: 'Tuolumne County Community Development Department — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 400, tier: 4 },
   { county: 'Nevada', agencyName: 'Nevada County Community Development Agency — Environmental Health Division', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 750, tier: 4 },
   { county: 'Mendocino', agencyName: 'Mendocino County EH', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 600, tier: 4 },
   { county: 'Sutter', agencyName: 'Sutter County Development Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 500, tier: 3 },
