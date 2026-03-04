@@ -193,6 +193,46 @@ const SPECIFIC_ZIP_OVERRIDES: Record<string, { countyId: string; countyName: str
   '95380': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Turlock
   '95382': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Turlock
   '95397': { countyId: 'county-stanislaus', countyName: 'Stanislaus County' }, // Waterford
+  // Santa Barbara County (934xx zips inside SLO's broad range)
+  '93427': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Buellton
+  '93430': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Casmalia
+  '93433': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Guadalupe
+  '93434': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Guadalupe
+  '93436': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Lompoc
+  '93437': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Lompoc (VAFB)
+  '93440': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Los Alamos
+  '93441': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Los Olivos
+  '93454': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Santa Maria
+  '93455': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Santa Maria
+  '93456': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Santa Maria
+  '93458': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Santa Maria
+  '93460': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Santa Ynez
+  '93463': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Solvang
+  '93464': { countyId: 'county-santa-barbara', countyName: 'Santa Barbara County' }, // Solvang
+  // San Luis Obispo County (934xx range — key cities, ensures correct mapping vs Santa Barbara)
+  '93401': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Luis Obispo (EHD HQ)
+  '93405': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Luis Obispo
+  '93406': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Luis Obispo
+  '93407': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Luis Obispo (Cal Poly)
+  '93408': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Luis Obispo
+  '93420': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Arroyo Grande
+  '93422': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Atascadero
+  '93423': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Atascadero
+  '93424': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Avila Beach
+  '93428': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Cambria
+  '93432': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Creston
+  '93442': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Morro Bay
+  '93443': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Morro Bay
+  '93444': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Nipomo
+  '93445': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Oceano
+  '93446': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Paso Robles
+  '93447': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Paso Robles
+  '93449': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Pismo Beach
+  '93451': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Miguel
+  '93452': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // San Simeon
+  '93453': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Santa Margarita
+  '93461': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Shandon
+  '93465': { countyId: 'county-san-luis-obispo', countyName: 'San Luis Obispo County' }, // Templeton
   // Sacramento
   '95814': { countyId: 'county-sacramento', countyName: 'Sacramento County' },
   '95816': { countyId: 'county-sacramento', countyName: 'Sacramento County' },

@@ -246,6 +246,20 @@ const SAN_BENITO_COUNTY: CountyScoringProfile = {
   },
 };
 
+const PLACER_COUNTY: CountyScoringProfile = {
+  countySlug: 'placer',
+  countyName: 'Placer County',
+  systemType: 'color_placard',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score, hasCritical) => {
+    // GYR placard — Yellow = ANY uncorrected major (stricter than Sacramento)
+    if (score < 60) return { label: 'RED', color: '#ef4444', passing: false, special: 'Closed — imminent danger' };
+    if (hasCritical) return { label: 'YELLOW', color: '#f59e0b', passing: false };
+    return { label: 'GREEN', color: '#22c55e', passing: true };
+  },
+};
+
 const STANISLAUS_COUNTY: CountyScoringProfile = {
   countySlug: 'stanislaus',
   countyName: 'Stanislaus County',
@@ -288,6 +302,20 @@ const SANTA_CRUZ_COUNTY: CountyScoringProfile = {
   },
 };
 
+const SANTA_BARBARA_COUNTY: CountyScoringProfile = {
+  countySlug: 'santa-barbara',
+  countyName: 'Santa Barbara County',
+  systemType: 'inspection_report',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (_score, hasCritical) => {
+    // Santa Barbara has NO letter grade, NO numeric score, NO placard — inspection report only
+    // Reports emailed to operator; no public online database
+    if (hasCritical) return { label: 'Major Violations', color: '#ef4444', passing: false };
+    return { label: 'No Open Majors', color: '#22c55e', passing: true };
+  },
+};
+
 const VENTURA_COUNTY: CountyScoringProfile = {
   countySlug: 'ventura',
   countyName: 'Ventura County',
@@ -300,6 +328,25 @@ const VENTURA_COUNTY: CountyScoringProfile = {
     // Closure notice posted separately if facility fails
     if (hasCritical) return { label: 'CLOSED', color: '#ef4444', passing: false, special: 'Facility closed until violations corrected' };
     return { label: 'PASS', color: '#22c55e', passing: true };
+  },
+};
+
+const SAN_LUIS_OBISPO_COUNTY: CountyScoringProfile = {
+  countySlug: 'san-luis-obispo',
+  countyName: 'San Luis Obispo County',
+  // SUGGESTION: SLO uses a unique NEGATIVE scoring system (effective May 2025).
+  // 0 = perfect, violations deduct into negative territory. The engine currently
+  // uses a 100-point deductive model as proxy. A dedicated negative-scale engine
+  // would more accurately represent SLO's system.
+  systemType: 'standard',
+  startingScore: 100,
+  deductions: { critical: 4, major: 2, minor: 1, good_practice: 0 },
+  getGrade: (score) => {
+    // SLO has NO letter grade, NO placard — numeric score only
+    // Using score display as label (no grade classification)
+    if (score >= 90) return { label: String(score), color: '#22c55e', passing: true };
+    if (score >= 70) return { label: String(score), color: '#f59e0b', passing: true };
+    return { label: String(score), color: '#ef4444', passing: false };
   },
 };
 
@@ -338,7 +385,10 @@ const COUNTY_PROFILES: Record<string, CountyScoringProfile> = {
   'tulare': TULARE_COUNTY,
   'santa-cruz': SANTA_CRUZ_COUNTY,
   'san-benito': SAN_BENITO_COUNTY,
+  // Central Coast
+  'san-luis-obispo': SAN_LUIS_OBISPO_COUNTY,
   // Southern California
+  'santa-barbara': SANTA_BARBARA_COUNTY,
   'ventura': VENTURA_COUNTY,
 };
 

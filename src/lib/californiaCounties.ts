@@ -641,19 +641,25 @@ export const ADDITIONAL_COUNTIES: JurisdictionProfile[] = [
     requiredPostings: [],
     serviceFrequencies: [],
     inspectionSystem: {
-      type: 'standard',
-      details: 'Standard CalCode enforcement with risk-based inspection frequency.',
+      type: 'inspection_report',
+      details: 'NO letter grade, NO numeric score, NO color placard. Inspection report only. Reports emailed to facility operator within ~2 business days. No public online results database found. Minimum 1 routine inspection/year. MEDIUM-LOW transparency.',
     },
     populationTier: 'medium',
     healthDepartment: {
-      name: 'Santa Barbara County Environmental Health Services',
+      name: 'Santa Barbara County Public Health Department — Environmental Health Services',
       phone: '(805) 681-4900',
-      website: 'https://www.countyofsb.org/phd/environmental-health-services',
-      inspectionFrequency: 'Risk-based: high risk annually, moderate every 18 months',
-      permitRenewal: 'Annual',
+      website: 'https://www.countyofsb.org/2118/Retail-Food',
+      inspectionFrequency: 'Minimum 1 routine inspection per year',
+      permitRenewal: 'Anniversary-date billing cycle',
     },
     specialRequirements: [
-      'Standard CalCode enforcement',
+      'NO letter grades, NO numeric scores, NO color placards — inspection report only',
+      'Reports emailed to facility operator within ~2 business days',
+      'No public online inspection results database found',
+      'Two offices: Santa Barbara (805-681-4900) and Santa Maria',
+      'Health permit required, displayed prominently',
+      'Plan check required before new construction or remodeling',
+      // SUGGESTION: Verify if any online inspection portal exists — none found as of March 2026
     ],
   },
 

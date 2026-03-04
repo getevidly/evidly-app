@@ -6,8 +6,8 @@
 
 import type { LocationJurisdiction } from '../types/jurisdiction';
 
-export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard_with_numeric_score' | 'inspection_report';
-export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'inspection_report';
+export type ScoringType = 'weighted_deduction' | 'heavy_weighted' | 'major_violation_count' | 'negative_scale' | 'major_minor_reinspect' | 'violation_point_accumulation' | 'point_accumulation' | 'numeric_score' | 'violation_report' | 'report_only' | 'color_placard' | 'color_placard_with_numeric_score' | 'inspection_report';
+export type GradingType = 'letter_grade' | 'letter_grade_strict' | 'letter_grade_abc' | 'color_placard' | 'green_yellow_red' | 'score_100' | 'score_negative' | 'numeric_score_no_letter' | 'pass_reinspect' | 'three_tier_rating' | 'point_accumulation_tiered' | 'violation_report_only' | 'report_only' | 'green_yellow_red_with_score' | 'inspection_report';
 
 export interface DemoJurisdiction {
   id: string;
@@ -34,7 +34,7 @@ export interface DemoJurisdiction {
 }
 
 // ═══════════════════════════════════════════════════════════
-// THE 14 DEMO JURISDICTIONS
+// THE 15 DEMO JURISDICTIONS
 // These power the jurisdiction switcher in sales demos.
 // Each demonstrates a different scoring/grading model.
 // ═══════════════════════════════════════════════════════════
@@ -216,25 +216,53 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
-    id: 'demo-slo',
+    // ═══ SAN LUIS OBISPO COUNTY — STANDARDIZED (March 2026) ═══
+    // Unique NEGATIVE SCORING effective May 5, 2025. 0 = perfect.
+    // Violations deduct from 0 → score becomes negative.
+    // More negative = more/more serious violations.
+    // NO letter grade. NO placard. Numeric score only.
+    // Prior system (pre-May 2025): traditional 0-100 positive.
+    // EatSafeSLO interactive map. Award of Excellence program.
+    // Transparency: HIGH. ~2,000 facilities.
+    // Source: slocounty.ca.gov — verified March 2026
+    id: 'demo-san-luis-obispo',
     county: 'San Luis Obispo',
-    agencyName: 'SLO County Health Department',
-    scoringType: 'negative_scale',
-    gradingType: 'score_negative',
-    gradingConfig: { perfect: 0, warning: -10, critical: -25 },
+    agencyName: 'San Luis Obispo County Health Agency — Environmental Health Services Division',
+    scoringType: 'numeric_score',
+    gradingType: 'numeric_score',
+    gradingConfig: {
+      displayFormat: 'numeric_score',
+      placards: [],
+      numericScore: true,
+      scoringDirection: 'negative',  // UNIQUE: 0 = perfect, negative = violations
+      scoringNote: 'Perfect score is 0. Each violation deducts points, resulting in a negative number. More negative = more/more serious violations. Effective May 5, 2025.',
+      legacySystem: {
+        active: false,
+        type: 'positive_100_point',
+        description: 'Before May 5, 2025: 0–100 scale, 100 = perfect. Legacy data in 2-Year Inspections Report.',
+      },
+      placardPosted: false,
+      reportOnline: true,
+      interactiveMap: 'EatSafeSLO',
+      interactiveMapUrl: 'https://www.slocounty.ca.gov/eatsafeslo',
+      awardOfExcellence: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'high',
+      programNote: 'SLO County uses a unique negative scoring system (effective May 5, 2025). 0 = perfect; violations yield negative scores. No letter grade or color placard. Interactive EatSafeSLO map shows all fixed permitted facilities. Award of Excellence for top-performing facilities. Historical data (pre-May 2025) uses the traditional 100-point positive scale.',
+    },
     passThreshold: null,
-    warningThreshold: -10,
-    criticalThreshold: -25,
-    fireAhjName: 'CAL FIRE SLU / SLO City FD',
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City Fire Departments',
     hoodCleaningDefault: 'quarterly',
-    facilityCount: 1800,
+    facilityCount: 2000,
     dataSourceTier: 2,
-    gradeLabel: '-12',
-    gradeExplanation: 'Negative Score — 0 is perfect. More negative = worse.',
-    passFailLabel: 'WARNING',
+    gradeLabel: '-3',
+    gradeExplanation: 'Negative Score — 0 is perfect. More negative = more/more serious violations. No letter grade. No placard. EatSafeSLO map.',
+    passFailLabel: 'SCORE',
     demoScore: 88,  // EvidLY normalized
-    demoGrade: '-12',
-    demoPassFail: 'warning',
+    demoGrade: '-3',
+    demoPassFail: 'pass',
   },
   {
     id: 'demo-yosemite',
@@ -672,6 +700,46 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoPassFail: 'pass',
   },
   {
+    // ═══ PLACER COUNTY — VERIFIED (2026-03) ═══
+    // GREEN/YELLOW/RED placard system. Modeled after Sacramento GYR.
+    // Green=Pass. Yellow=Conditional Pass. Red=Closed.
+    // Yellow = ANY uncorrected major (differs from Sacramento 2+ threshold).
+    // Two offices: Auburn and Tahoe. Transparency: HIGH.
+    id: 'demo-placer',
+    county: 'Placer',
+    agencyName: 'Placer County Health and Human Services — Environmental Health Division',
+    scoringType: 'color_placard',
+    gradingType: 'green_yellow_red',
+    gradingConfig: {
+      displayFormat: 'color_placard',
+      placards: [
+        { color: 'green', status: 'pass', label: 'PASS', criteria: 'No major violations observed, or all corrected/mitigated by end of inspection.' },
+        { color: 'yellow', status: 'conditional_pass', label: 'CONDITIONAL PASS', criteria: 'Failure to correct or mitigate any major violation, or violation of a Compliance Agreement.' },
+        { color: 'red', status: 'closed', label: 'CLOSED', criteria: 'Imminent danger that cannot be corrected during inspection.' },
+      ],
+      numericScore: false,
+      placardPosted: true,
+      placardLocation: 'Near front door of restaurant, grocery store, or convenience store',
+      reportOnline: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'high',
+      programNote: 'Yellow threshold differs from Sacramento — failure to correct even a single major triggers Yellow. Two offices: Auburn and Tahoe.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / Placer Hills Fire / City Fire Departments / South Placer Fire District',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 2200,
+    dataSourceTier: 1,
+    gradeLabel: 'GREEN',
+    gradeExplanation: 'GYR Placard — Green=PASS, Yellow=Conditional (any uncorrected major), Red=CLOSED. No numeric score.',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'GREEN',
+    demoPassFail: 'pass',
+  },
+  {
     // ═══ VENTURA COUNTY — STANDARDIZED (March 2026) ═══
     // Pass/fail inspection placard. NOT Green/Yellow/Red color-coded.
     // Placard = dated pass card with inspector name, EHD website, EHD phone.
@@ -719,6 +787,101 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     passFailLabel: 'PASS',
     demoScore: 88,
     demoGrade: 'PASSED INSPECTION',
+    demoPassFail: 'pass',
+  },
+  {
+    // ═══ YOLO COUNTY — STANDARDIZED (March 2026) ═══
+    // Green/Yellow/Red placard system launched July 1, 2017.
+    // Modeled after Sacramento County GYR program.
+    // QR code on placard links to Yolo County EH inspection database.
+    // Transparency: HIGH. ~700 fixed facilities. Single EHD office in Woodland.
+    // Source: yolocounty.gov Consumer Protection Programs; Winters Express July 2017;
+    //   West Sacramento News-Ledger July 2024 Food Safety Forum — verified March 2026.
+    id: 'demo-yolo',
+    county: 'Yolo',
+    agencyName: 'Yolo County Environmental Health Division',
+    scoringType: 'color_placard',
+    gradingType: 'green_yellow_red',
+    gradingConfig: {
+      displayFormat: 'color_placard',
+      placards: [
+        {
+          color: 'green',
+          status: 'pass',
+          label: 'PASS',
+          criteria: 'No more than one major violation observed and corrected. Facility compliant.',
+        },
+        {
+          color: 'yellow',
+          status: 'conditional_pass',
+          label: 'CONDITIONAL PASS',
+          criteria: 'One or more major violations observed. Re-inspection within 3 business days. Green issued if violations permanently corrected.',
+        },
+        {
+          color: 'red',
+          status: 'closed',
+          label: 'CLOSED',
+          criteria: 'Imminent health hazard not correctable during inspection (vermin, no refrigeration, no hot water, sewage).',
+        },
+      ],
+      numericScore: false,
+      placardPosted: true,
+      qrCodeOnPlacard: true,
+      inspectionFrequency: 'risk_based_1_to_2_per_year',
+      transparencyLevel: 'high',
+      programLaunched: 'July 1, 2017',
+      gradingNote: 'GYR placard launched July 2017, modeled on Sacramento County program. QR code on placard links directly to Yolo County EH inspection database. CFOs and temp event booths not included in placarding.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Yolo County OES / City fire departments (Davis, Woodland, West Sacramento)',
+    hasLocalAmendments: false,
+    facilityCount: 700,
+    dataSourceTier: 1,
+    gradeLabel: 'Green',
+    gradeExplanation: 'Green/Yellow/Red Placard — GYR color placard posted at facility with QR code. Green=PASS. Yellow=CONDITIONAL PASS. Red=CLOSED. HIGH transparency.',
+    passFailLabel: 'GREEN',
+    demoScore: 92,
+    demoGrade: 'Green',
+    demoPassFail: 'pass',
+  },
+  {
+    // ═══ EL DORADO COUNTY — STANDARDIZED (March 2026) ═══
+    // NO letter grades, NO numeric scores, NO color placards confirmed.
+    // Inspection report only. Most recent data online (with disclaimer).
+    // Full reports via Records Request. Transparency: MEDIUM.
+    // Source: eldoradocounty.ca.gov/Public-Safety-Justice/Food-Safety/Inspection-Reports
+    id: 'demo-el-dorado',
+    county: 'El Dorado',
+    agencyName: 'El Dorado County Environmental Management Department — Environmental Health Division',
+    scoringType: 'inspection_report',
+    gradingType: 'inspection_report',
+    gradingConfig: {
+      displayFormat: 'inspection_report',
+      placards: [],
+      numericScore: false,
+      placardPosted: false,
+      reportOnline: true,
+      onlineDataNote: 'Most recent inspection data. County disclaimer: may not reflect current conditions.',
+      fullReportAtFacility: true,
+      recordsRequestAvailable: true,
+      inspectionFrequency: 'risk_based',
+      transparencyLevel: 'medium',
+      programNote: 'El Dorado County provides standard CalCode inspection reports. No confirmed letter grade, numeric score, or color placard. Most recent inspection info available online; complete reports at facility or via Records Request.',
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'CAL FIRE / City of Placerville Fire / City of South Lake Tahoe Fire',
+    hoodCleaningDefault: 'quarterly',
+    facilityCount: 1200,
+    dataSourceTier: 3,
+    gradeLabel: 'No Open Majors',
+    gradeExplanation: 'Inspection Report Only — No letter grade, no numeric score, no placard confirmed. Most recent data online with disclaimer.',
+    passFailLabel: 'No Grade',
+    demoScore: 90,
+    demoGrade: 'No Open Majors',
     demoPassFail: 'pass',
   },
 ];
@@ -967,11 +1130,15 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
       if (score >= closureMin) return { grade: 'C', passFail: 'fail', display: `C \u2014 ${score}` };
       return { grade: 'CLOSURE', passFail: 'fail', display: `Closure \u2014 ${score}` };
     }
+    case 'green_yellow_red':
     case 'color_placard': {
-      // Simplified — in real engine this uses major violation count
-      if (score >= 90) return { grade: 'Green', passFail: 'pass', display: 'Green' };
-      if (score >= 75) return { grade: 'Yellow', passFail: 'warning', display: 'Yellow' };
-      return { grade: 'Red', passFail: 'fail', display: 'Red' };
+      // GYR placard — Green=pass, Yellow=conditional, Red=closed
+      // In demo mode, score >= 80 = all majors corrected (Green)
+      // score 60-79 = uncorrected major exists (Yellow)
+      // score < 60 = imminent danger (Red)
+      if (score >= 80) return { grade: 'GREEN', passFail: 'pass', display: 'GREEN' };
+      if (score >= 60) return { grade: 'YELLOW', passFail: 'warning', display: 'YELLOW — Conditional' };
+      return { grade: 'RED', passFail: 'fail', display: 'RED — Closed' };
     }
     case 'score_100': {
       const t = jurisdiction.passThreshold || 70;
@@ -1085,6 +1252,39 @@ export function calculateDemoGrade(score: number, jurisdiction: DemoJurisdiction
         passFail: 'pass',
         display: vrNote,
         majorViolations: vrMajors, minorViolations: vrMinors,
+        uncorrectedMajors: 0, totalPoints: 0,
+      };
+    }
+    case 'green_yellow_red': {
+      // Yolo County — GYR placard WITHOUT numeric score
+      // Green = PASS (≤1 major corrected), Yellow = CONDITIONAL PASS (1+ major),
+      // Red = CLOSED (imminent health hazard)
+      const gyrNoScoreMajors = Math.max(0, Math.floor((100 - score) / 10));
+      const gyrNoScoreMinors = Math.max(0, Math.floor(((100 - score) % 10) / 3));
+      const gyrNoScoreUncorrected = score < 60 ? gyrNoScoreMajors : 0;
+      if (gyrNoScoreUncorrected > 0) {
+        return {
+          grade: 'Red',
+          passFail: 'fail',
+          display: `\u{1F534} Red — CLOSED (${gyrNoScoreUncorrected} major uncorrected)`,
+          majorViolations: gyrNoScoreMajors, minorViolations: gyrNoScoreMinors,
+          uncorrectedMajors: gyrNoScoreUncorrected, totalPoints: 0,
+        };
+      }
+      if (gyrNoScoreMajors >= 2) {
+        return {
+          grade: 'Yellow',
+          passFail: 'warning',
+          display: `\u{1F7E1} Yellow — Conditional Pass (${gyrNoScoreMajors} major corrected)`,
+          majorViolations: gyrNoScoreMajors, minorViolations: gyrNoScoreMinors,
+          uncorrectedMajors: 0, totalPoints: 0,
+        };
+      }
+      return {
+        grade: 'Green',
+        passFail: 'pass',
+        display: '\u{1F7E2} Green — Pass',
+        majorViolations: gyrNoScoreMajors, minorViolations: gyrNoScoreMinors,
         uncorrectedMajors: 0, totalPoints: 0,
       };
     }
@@ -1224,8 +1424,8 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Sonoma', agencyName: 'Sonoma County DHS', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 3200, tier: 1 },
   { county: 'Sacramento', agencyName: 'Sacramento County EMD', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 8500, tier: 2 },
   { county: 'Orange', agencyName: 'Orange County Health Care Agency — Environmental Health Division', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 17000, tier: 2 },
-  { county: 'Yolo', agencyName: 'Yolo County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 2 },
-  { county: 'San Luis Obispo', agencyName: 'SLO County Health', scoringType: 'negative_scale', gradingType: 'score_negative', facilityCount: 1800, tier: 2 },
+  { county: 'Yolo', agencyName: 'Yolo County Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 700, tier: 1 },
+  { county: 'San Luis Obispo', agencyName: 'San Luis Obispo County Health Agency — Environmental Health Services Division', scoringType: 'numeric_score', gradingType: 'numeric_score', facilityCount: 2000, tier: 2 },
   { county: 'San Diego', agencyName: 'SD County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 14000, tier: 3 },
   { county: 'Riverside', agencyName: 'Riverside County Department of Environmental Health', scoringType: 'weighted_deduction', gradingType: 'letter_grade_strict', facilityCount: 12000, tier: 3 },
   { county: 'San Bernardino', agencyName: 'San Bernardino County DPH — Environmental Health Services', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 15000, tier: 3 },
@@ -1237,11 +1437,11 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'Ventura', agencyName: 'Ventura County Resource Management Agency — Environmental Health Division', scoringType: 'pass_fail_placard', gradingType: 'pass_fail_placard', facilityCount: 5000, tier: 2 },
   { county: 'San Mateo', agencyName: 'San Mateo County Health', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 3800, tier: 3 },
   { county: 'San Joaquin', agencyName: 'San Joaquin County Environmental Health Department', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2882, tier: 3 },
-  { county: 'Santa Barbara', agencyName: 'SB County PHD', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 2800, tier: 3 },
+  { county: 'Santa Barbara', agencyName: 'Santa Barbara County Public Health Department — Environmental Health Services', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 3 },
   { county: 'Stanislaus', agencyName: 'Stanislaus County Environmental Resources', scoringType: 'violation_report', gradingType: 'violation_report_only', facilityCount: 2500, tier: 3 },
   { county: 'Monterey', agencyName: 'Monterey County Health Department — Environmental Health Bureau', scoringType: 'inspection_report', gradingType: 'inspection_report', facilityCount: 2000, tier: 2 },
   { county: 'Tulare', agencyName: 'Tulare County Division of Environmental Health', scoringType: 'numeric_score', gradingType: 'numeric_score_no_letter', facilityCount: 3500, tier: 3 },
-  { county: 'Placer', agencyName: 'Placer County Health', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
+  { county: 'Placer', agencyName: 'Placer County Health and Human Services — Environmental Health Division', scoringType: 'color_placard', gradingType: 'green_yellow_red', facilityCount: 2200, tier: 1 },
   { county: 'Solano', agencyName: 'Solano County DRM', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 2200, tier: 3 },
   { county: 'Marin', agencyName: 'Marin County CDA', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1800, tier: 3 },
   { county: 'Napa', agencyName: 'Napa County PH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 1100, tier: 3 },
