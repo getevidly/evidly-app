@@ -34,14 +34,14 @@ import { useDemo } from '../contexts/DemoContext';
 import { getAiTier, isFeatureAvailable } from '../lib/aiTier';
 import { locations, locationScores, vendors, needsAttentionItems } from '../data/demoData';
 import {
-  calculateInsuranceRiskScore,
-  calculateOrgInsuranceRiskScore,
   getInsuranceRiskTier,
   type InsuranceRiskCategory,
   type InsuranceRiskFactor,
   type InsuranceActionItem,
   type InsuranceRiskResult,
 } from '../lib/insuranceRiskScore';
+import { useInsuranceRisk } from '../hooks/useInsuranceRisk';
+import { useDemoGuard } from '../hooks/useDemoGuard';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
@@ -425,19 +425,34 @@ export function InsuranceRisk() {
   const [shareScope, setShareScope] = useState({ overall: true, factors: true, trend: true, percentile: true, incidents: false, equipment: false });
   const [shareToken] = useState(() => crypto.randomUUID().replace(/-/g, '').slice(0, 24));
 
-  // Calculate scores (only meaningful in demo mode)
-  const riskResult: InsuranceRiskResult = locationParam === 'all'
-    ? calculateOrgInsuranceRiskScore()
-    : calculateInsuranceRiskScore(locationParam);
+  useDemoGuard();
+
+  // v2 scoring engine (reads ComplianceDataSnapshot + TrendAnalysis)
+  const {
+    result: riskResult,
+    locationResults,
+    profile,
+    setProfileId,
+    availableProfiles,
+    trendModifier,
+  } = useInsuranceRisk(locationParam, isDemoMode);
 
   const tierInfo = getInsuranceRiskTier(riskResult.overall);
 
   // Demo 12-month score trend
   const SCORE_TREND = isDemoMode ? [
-    { month: 'Mar', score: 82 }, { month: 'Apr', score: 83 }, { month: 'May', score: 85 },
-    { month: 'Jun', score: 84 }, { month: 'Jul', score: 81 }, { month: 'Aug', score: 83 },
-    { month: 'Sep', score: 86 }, { month: 'Oct', score: 88 }, { month: 'Nov', score: 90 },
-    { month: 'Dec', score: 91 }, { month: 'Jan', score: 92 }, { month: 'Feb', score: riskResult.overall },
+    { month: 'Mar', score: Math.round(riskResult.overall - 10) },
+    { month: 'Apr', score: Math.round(riskResult.overall - 9) },
+    { month: 'May', score: Math.round(riskResult.overall - 7) },
+    { month: 'Jun', score: Math.round(riskResult.overall - 8) },
+    { month: 'Jul', score: Math.round(riskResult.overall - 11) },
+    { month: 'Aug', score: Math.round(riskResult.overall - 9) },
+    { month: 'Sep', score: Math.round(riskResult.overall - 6) },
+    { month: 'Oct', score: Math.round(riskResult.overall - 4) },
+    { month: 'Nov', score: Math.round(riskResult.overall - 2) },
+    { month: 'Dec', score: Math.round(riskResult.overall - 1) },
+    { month: 'Jan', score: Math.round(riskResult.overall) },
+    { month: 'Feb', score: riskResult.overall },
   ] : [];
 
   const handleLocationChange = (locId: string) => {
@@ -503,6 +518,24 @@ export function InsuranceRisk() {
         ))}
       </div>
 
+      {/* Scoring Profile Selector */}
+      <div className="flex items-center gap-2 mb-6 flex-wrap">
+        <span className="text-xs font-medium text-gray-500 mr-1">Profile:</span>
+        {availableProfiles.map(p => (
+          <button
+            key={p.id}
+            onClick={() => setProfileId(p.id)}
+            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap"
+            style={profile.id === p.id
+              ? { backgroundColor: '#1e4d6b', color: 'white' }
+              : { backgroundColor: '#f3f4f6', color: '#374151' }}
+            title={p.description}
+          >
+            {p.name}
+          </button>
+        ))}
+      </div>
+
       {/* Overall Score Hero */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-8 mb-6">
         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -523,6 +556,14 @@ export function InsuranceRisk() {
             >
               {riskResult.tier}
             </div>
+            {trendModifier !== 0 && (
+              <div
+                className="mt-2 text-xs font-medium"
+                style={{ color: trendModifier > 0 ? '#22c55e' : '#ef4444' }}
+              >
+                {trendModifier > 0 ? '+' : ''}{trendModifier} trend {trendModifier > 0 ? 'bonus' : 'risk'}
+              </div>
+            )}
           </div>
 
           {/* Score Details */}
@@ -666,7 +707,8 @@ export function InsuranceRisk() {
               </thead>
               <tbody>
                 {locations.map(loc => {
-                  const locResult = calculateInsuranceRiskScore(loc.urlId);
+                  const locResult = locationResults[loc.urlId];
+                  if (!locResult) return null;
                   const locTier = getInsuranceRiskTier(locResult.overall);
                   return (
                     <tr key={loc.urlId} className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer" onClick={() => handleLocationChange(loc.urlId)}>

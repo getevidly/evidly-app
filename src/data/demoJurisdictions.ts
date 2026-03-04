@@ -245,6 +245,52 @@ export const DEMO_JURISDICTIONS: DemoJurisdiction[] = [
     demoGrade: 'Pass',
     demoPassFail: 'pass',
   },
+  {
+    // ═══ ORANGE COUNTY — VERIFIED (2026-03, Confidence: 90/100) ═══
+    // Placard only: Pass / Reinspection Due-Pass / Closed
+    // NO letter grade. NO numeric score.
+    // Source: OCHCA Environmental Health Division, ocfoodinfo.com
+    id: 'demo-orange',
+    county: 'Orange',
+    agencyName: 'Orange County Health Care Agency — Environmental Health Division',
+    scoringType: 'major_minor_reinspect',
+    gradingType: 'pass_reinspect',
+    gradingConfig: {
+      displayFormat: 'pass_reinspect',
+      outcomes: ['Pass', 'Reinspection Due-Pass', 'Closed'],
+      passCondition: 'no_uncorrected_major_crf',
+      reinspectCondition: 'major_crf_corrected_on_site',
+      closureCondition: 'imminent_health_hazard_uncorrectable',
+      violationCategories: ['major_crf', 'minor_crf', 'grp'],
+      cosFlag: true,
+      transparencyLevel: 'moderate',
+      gradingNote: 'OC uses placard only. No letter grade. No numeric score. Inspection reports public at ocfoodinfo.com.',
+      awardOfExcellence: {
+        issued: 'annually_february',
+        criteria: {
+          zeroMajorCrfAnyRoutine: true,
+          maxMinorCrfPerInspection: 2,
+          maxGrpPerInspection: 5,
+          foodSafetyManagerCertRequired: true,
+          foodHandlerCardsRequired: true,
+          minRoutineInspectionsPerYear: 2,
+        },
+      },
+    },
+    passThreshold: null,
+    warningThreshold: null,
+    criticalThreshold: null,
+    fireAhjName: 'Orange County Fire Authority (OCFA) — unincorporated areas only',
+    hoodCleaningDefault: 'semi-annual',
+    facilityCount: 17000,
+    dataSourceTier: 2,
+    gradeLabel: 'Pass',
+    gradeExplanation: 'Placard Only — Pass / Reinspection Due-Pass / Closed. No letter grade. No numeric score.',
+    passFailLabel: 'PASS',
+    demoScore: 88,
+    demoGrade: 'Pass',
+    demoPassFail: 'pass',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -594,7 +640,7 @@ export const ALL_CA_JURISDICTIONS: Array<{
   { county: 'San Francisco', agencyName: 'SF DPH', scoringType: 'weighted_deduction', gradingType: 'score_100', facilityCount: 7500, tier: 1 },
   { county: 'Sonoma', agencyName: 'Sonoma County DHS', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 3200, tier: 1 },
   { county: 'Sacramento', agencyName: 'Sacramento County EMD', scoringType: 'major_violation_count', gradingType: 'color_placard', facilityCount: 8500, tier: 2 },
-  { county: 'Orange', agencyName: 'OC Health Care Agency', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 18000, tier: 2 },
+  { county: 'Orange', agencyName: 'Orange County Health Care Agency — Environmental Health Division', scoringType: 'major_minor_reinspect', gradingType: 'pass_reinspect', facilityCount: 17000, tier: 2 },
   { county: 'Yolo', agencyName: 'Yolo County Health', scoringType: 'weighted_deduction', gradingType: 'report_only', facilityCount: 1200, tier: 2 },
   { county: 'San Luis Obispo', agencyName: 'SLO County Health', scoringType: 'negative_scale', gradingType: 'score_negative', facilityCount: 1800, tier: 2 },
   { county: 'San Diego', agencyName: 'SD County DEH', scoringType: 'weighted_deduction', gradingType: 'letter_grade', facilityCount: 14000, tier: 3 },

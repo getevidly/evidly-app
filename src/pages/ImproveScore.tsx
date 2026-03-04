@@ -25,12 +25,11 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { useDemo } from '../contexts/DemoContext';
 import { locations } from '../data/demoData';
 import {
-  calculateInsuranceRiskScore,
-  calculateOrgInsuranceRiskScore,
   getInsuranceRiskTier,
   type InsuranceActionItem,
   type InsuranceRiskResult,
 } from '../lib/insuranceRiskScore';
+import { useInsuranceRisk } from '../hooks/useInsuranceRisk';
 
 const F: React.CSSProperties = { fontFamily: "'DM Sans', sans-serif" };
 
