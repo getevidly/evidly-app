@@ -291,3 +291,49 @@
 | Route | Roles |
 |-------|-------|
 | `/admin/api-keys` | platform_admin only |
+
+---
+
+## Document Workflow — Vendor Config (AUDIT 2026-03-04)
+
+### Audit Findings
+
+| # | Question | Finding | Status |
+|---|----------|---------|--------|
+| 1 | Document types vendors can upload | VendorSecureUpload: PDF, JPG, PNG, HEIC, DOC, DOCX (25MB). SmartUploadModal: PDF, DOCX, XLSX, JPG, PNG, CSV (10MB). AI classifies 20+ types across 4 pillars. | OK |
+| 2 | Cross-vendor visibility | **GAP**: `vendor_documents` RLS was org-scoped only. Any user in the org could query ALL vendor documents. Vendor portal users could see other vendors' docs. | FIXED |
+| 3 | RLS enforcement level | `documents` table: org-scoped via `user_location_access` (correct). `vendor_documents`: was app-layer only, **now DB-enforced** via `linked_vendor_id` check. | FIXED |
+| 4 | Workflow triggers | **GAP**: `vendor-secure-upload` sent `new_upload` to hardcoded `team@getevidly.com`. Compliance Officer was NOT notified. | FIXED |
+| 5 | Location scoping | `vendor_documents.location_id` correctly scopes to facilities. Nullable for org-wide docs (COI, Business License). | OK |
+
+### Corrective Actions
+
+1. **Migration `20260304040000_vendor_document_rls_vendor_scoping.sql`**
+   - Added `linked_vendor_id UUID` column to `user_profiles` (nullable, references `vendors.id`)
+   - Replaced `vendor_documents` SELECT/INSERT/UPDATE policies with vendor-scoped check
+   - Internal org users (linked_vendor_id IS NULL): retain full org-scoped access
+   - Vendor portal users (linked_vendor_id IS NOT NULL): restricted to own `vendor_id` only
+   - Applied same scoping to `vendor_document_notifications` SELECT policy
+
+2. **Fixed `vendor-secure-upload` edge function**
+   - Now queries `user_profiles` for `compliance_manager` + `owner_operator` users in the org
+   - Sends individual `new_upload` notification to each (parallel, fire-and-forget)
+   - Falls back to `team@getevidly.com` only if no recipients found
+   - Timeout increased from 5s to 8s for parallel notifications
+
+3. **Audit comment block** added to `src/pages/VendorDetail.tsx` (lines 1-48)
+
+### Regression Test Cases
+
+| # | Test Case | Expected Result | Priority |
+|---|-----------|-----------------|----------|
+| T1 | Internal user queries `vendor_documents` via Supabase | Returns all vendor docs in their org (unchanged) | P0 |
+| T2 | Vendor portal user (linked_vendor_id = V1) queries `vendor_documents` | Returns only docs where vendor_id = V1 | P0 |
+| T3 | Vendor portal user tries to INSERT doc for different vendor_id | Rejected by RLS policy | P0 |
+| T4 | Vendor portal user queries `vendor_document_notifications` | Returns only notifications for their vendor_id | P1 |
+| T5 | Vendor uploads via secure link | compliance_manager + owner_operator receive email notification | P0 |
+| T6 | Vendor uploads via secure link (org has no compliance_manager) | Falls back to team@getevidly.com | P1 |
+| T7 | VendorDetail page filters docs by vendorId from URL params | Shows only docs for selected vendor (app-layer check) | P1 |
+| T8 | Documents page filters by role | kitchen_staff sees operational docs only; exec sees all | P1 |
+| T9 | Vendor document with location_id = specific facility | Correctly scoped in UI; org-wide docs show for all locations | P2 |
+| T10 | Service role access to vendor_documents | Full access (edge functions work correctly) | P0 |

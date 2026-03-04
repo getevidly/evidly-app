@@ -1,3 +1,53 @@
+// ══════════════════════════════════════════════════════════════════════
+// VENDOR DOCUMENT CONFIGURATION AUDIT — 2026-03-04
+// ══════════════════════════════════════════════════════════════════════
+//
+// 1. DOCUMENT TYPES VENDORS CAN UPLOAD
+//    - VendorSecureUpload (token-based): PDF, JPG, PNG, HEIC, DOC, DOCX (25MB max)
+//    - SmartUploadModal (in-app AI classify): PDF, DOCX, XLSX, JPG, PNG, CSV (10MB max)
+//    - AI classifier recognizes 20+ types across 4 pillars:
+//      * Facility Safety: hood_cleaning_cert, fire_suppression_report, fire_extinguisher_tag,
+//        ansul_cert, exhaust_fan_service, building_fire_inspection
+//      * Food Safety: health_permit, food_handler_cert, food_manager_cert, haccp_plan,
+//        allergen_training, pest_control_report
+//      * Vendor: vendor_coi, vendor_licenses, service_agreements
+//      * Facility: business_license, certificate_occupancy, grease_trap_records, backflow_test
+//
+// 2. CROSS-VENDOR VISIBILITY
+//    FINDING: vendor_documents RLS was org-scoped ONLY (organization_id check).
+//    Any user in the org could query ALL vendor documents. Vendors using a future
+//    vendor-portal auth flow could see other vendors' documents.
+//    FIX: Migration 20260304040000 adds linked_vendor_id to user_profiles and
+//    replaces the SELECT policy with a vendor-scoping check: if user has
+//    linked_vendor_id, they see only their own vendor docs.
+//    Internal org users retain full org-scoped access (unchanged behavior).
+//
+// 3. SUPABASE RLS ENFORCEMENT
+//    - `documents` table: org-scoped via user_location_access — CORRECT for internal docs.
+//    - `vendor_documents` table: was org-only; NOW vendor-scoped for vendor users.
+//    - `vendor_document_notifications`: was org-only; NOW vendor-scoped for vendor users.
+//    - `vendor_document_reviews`: org-scoped — CORRECT (only internal reviewers access).
+//    - Service role policy exists for edge function access.
+//
+// 4. WORKFLOW TRIGGERS
+//    FINDING: vendor-secure-upload sent "new_upload" notification to hardcoded
+//    team@getevidly.com only. Compliance Officer role was NOT notified.
+//    FIX: Updated vendor-secure-upload to query user_profiles for compliance_manager
+//    and owner_operator users in the org and notify each one individually.
+//    Active triggers:
+//      - vendor-document-notify: 10 notification types (new_upload, updated,
+//        expiring_90/60/30/14, expired, review_required, review_completed, flagged)
+//      - send-document-alerts: daily cron for expiration warnings (30/14/7/1/0 days)
+//      - auto-request-documents: daily cron for auto-requesting expiring vendor docs
+//
+// 5. LOCATION SCOPING
+//    vendor_documents.location_id (nullable) correctly scopes documents to
+//    specific facilities. Org-wide documents (COI, Business License) use
+//    location_id = NULL. Demo data confirms proper scoping. No RLS enforcement
+//    at location level — correct, since org members should see all locations.
+//
+// ══════════════════════════════════════════════════════════════════════
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';

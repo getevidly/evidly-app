@@ -185,30 +185,49 @@ Deno.serve(async (req: Request) => {
         .select()
         .single();
 
-      // Fire-and-forget: notify via vendor-document-notify edge function
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      // Fire-and-forget: notify compliance_manager + owner_operator users in org
+      // FIX (2026-03-04): Was hardcoded to team@getevidly.com — now queries
+      // user_profiles for the right roles and notifies each individually.
       const notifyUrl = `${supabaseUrl}/functions/v1/vendor-document-notify`;
       try {
+        // Look up compliance_manager and owner_operator users in the org
+        const { data: recipients } = await supabase
+          .from("user_profiles")
+          .select("id, email, full_name, role")
+          .eq("organization_id", tokenRecord.organization_id)
+          .in("role", ["compliance_manager", "owner_operator"])
+          .not("email", "is", null);
+
+        const recipientList = recipients && recipients.length > 0
+          ? recipients.map((r: any) => ({ email: r.email, name: r.full_name || "Team" }))
+          : [{ email: "team@getevidly.com", name: (tokenRecord as any).organizations?.name || "Team" }];
+
         const controller = new AbortController();
-        setTimeout(() => controller.abort(), 5000);
-        await fetch(notifyUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-          },
-          body: JSON.stringify({
-            recipientEmail: "team@getevidly.com",
-            recipientName: (tokenRecord as any).organizations?.name || "Team",
-            notificationType: "new_upload",
-            vendorName: (tokenRecord as any).vendors?.name,
-            documentType: tokenRecord.document_type,
-            documentTitle: vendorDocRecord?.title || tokenRecord.document_type,
-            status: "Pending Review",
-            actionUrl: `https://app.getevidly.com/vendors/${tokenRecord.vendor_id}`,
-          }),
-          signal: controller.signal,
-        });
+        setTimeout(() => controller.abort(), 8000);
+
+        // Notify each recipient (fire-and-forget, parallel)
+        await Promise.allSettled(
+          recipientList.map((recipient: { email: string; name: string }) =>
+            fetch(notifyUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+              },
+              body: JSON.stringify({
+                recipientEmail: recipient.email,
+                recipientName: recipient.name,
+                notificationType: "new_upload",
+                vendorName: (tokenRecord as any).vendors?.name,
+                documentType: tokenRecord.document_type,
+                documentTitle: vendorDocRecord?.title || tokenRecord.document_type,
+                status: "Pending Review",
+                actionUrl: `https://app.getevidly.com/vendors/${tokenRecord.vendor_id}`,
+              }),
+              signal: controller.signal,
+            })
+          )
+        );
       } catch {
         // Silent fail — notification is non-critical
       }
